@@ -108,10 +108,10 @@
     <ClCompile Include="ServerComponent.cpp">
       <Filter>NetEntity\ServerObject\ServerComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Protocols\CreateBuffer4Client.cpp">
+    <ClCompile Include="..\Protocols\CreateBuffer4Client.cpp">
       <Filter>Protocols\Protocol</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Protocols\s2c_PacketHandler.cpp">
+    <ClCompile Include="..\Protocols\s2c_PacketHandler.cpp">
       <Filter>Protocols\Protocol</Filter>
     </ClCompile>
     <ClCompile Include="EntityMovement.cpp">
@@ -170,19 +170,19 @@
     <ClInclude Include="ServerComponent.h">
       <Filter>NetEntity\ServerObject\ServerComponent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Protocols\enum_generated.h">
+    <ClInclude Include="..\Protocols\enum_generated.h">
       <Filter>Protocols\generated</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Protocols\protocol_generated.h">
+    <ClInclude Include="..\Protocols\protocol_generated.h">
       <Filter>Protocols\generated</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Protocols\struct_generated.h">
+    <ClInclude Include="..\Protocols\struct_generated.h">
       <Filter>Protocols\generated</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Protocols\CreateBuffer4Client.h">
+    <ClInclude Include="..\Protocols\CreateBuffer4Client.h">
       <Filter>Protocols\Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Protocols\s2c_PacketHandler.h">
+    <ClInclude Include="..\Protocols\s2c_PacketHandler.h">
       <Filter>Protocols\Protocol</Filter>
     </ClInclude>
     <ClInclude Include="define.h">
@@ -209,7 +209,7 @@
     <ClInclude Include="PlayerRenderer.h">
       <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Protocols\protocol_define.h">
+    <ClInclude Include="..\Protocols\protocol_define.h">
       <Filter>Protocols\Protocol</Filter>
     </ClInclude>
     <ClInclude Include="ObjectIdentifier.h">
@@ -217,24 +217,24 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Protocols\enum.fbs">
+    <None Include="..\Protocols\enum.fbs">
       <Filter>Protocols\fbs</Filter>
     </None>
-    <None Include="..\..\Protocols\struct.fbs">
+    <None Include="..\Protocols\struct.fbs">
       <Filter>Protocols\fbs</Filter>
     </None>
-    <None Include="..\..\Protocols\create_packet_handler.h.j2">
+    <None Include="..\Protocols\create_packet_handler.h.j2">
       <Filter>Protocols\templates</Filter>
     </None>
-    <None Include="..\..\Protocols\create_packet_template.cpp.j2">
+    <None Include="..\Protocols\create_packet_template.cpp.j2">
       <Filter>Protocols\templates</Filter>
     </None>
-    <None Include="..\..\Protocols\create_packet_template.h.j2">
+    <None Include="..\Protocols\create_packet_template.h.j2">
       <Filter>Protocols\templates</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\Protocols\protocol.fbs">
+    <CustomBuild Include="..\Protocols\protocol.fbs">
       <Filter>Protocols\fbs</Filter>
     </CustomBuild>
   </ItemGroup>
