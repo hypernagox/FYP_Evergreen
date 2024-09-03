@@ -1,0 +1,22 @@
+#pragma once
+
+#include "pch.h"
+
+using namespace udsdx;
+
+class PlayerRenderer : public Component
+{
+protected:
+	std::shared_ptr<SceneObject> m_rendererObj;
+	std::shared_ptr<udsdx::Material> m_playerMaterial;
+
+public:
+	Transform* m_transformBody;
+	PlayerRenderer(const std::shared_ptr<SceneObject>& object);
+	~PlayerRenderer();
+
+	void Update(const Time& time, Scene& scene) override;
+
+	Transform* const GetRenderObjTransform() const noexcept { return m_rendererObj->GetTransform(); }
+	void SetRotation(const Quaternion& rotation) { m_rendererObj->GetTransform()->SetLocalRotation(rotation); }
+};

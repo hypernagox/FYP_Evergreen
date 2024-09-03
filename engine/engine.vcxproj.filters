@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="tracy\public\TracyClient.cpp">
+      <Filter>External Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\pch.cpp">
+      <Filter>Precompiled Headers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\material.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\mesh.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resource.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resource_object.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\shader.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\texture.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\audio_clip.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\camera.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\component.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\light_directional.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\mesh_renderer.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene_object.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\transform.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\screen_space_ao.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\shadow_map.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\time_measure.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vertex.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\audio.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\debug_console.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\frame_debug.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\frame_resource.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\input.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\updown_studio.cpp" />
+    <ClCompile Include="source\allocation.cpp">
+      <Filter>Utility Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\d3dUtil.cpp">
+      <Filter>Utility Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rigged_mesh_renderer.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Precompiled Headers">
+      <UniqueIdentifier>{3aab767c-37c5-441b-a44e-d1ab6547e6c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Sources">
+      <UniqueIdentifier>{2a4c4a61-42fa-46c7-a545-6fe2054977ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility Sources">
+      <UniqueIdentifier>{b297e601-7f28-49fb-822e-cc2b76964f1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{d2660dd7-6cd3-4ae9-81ee-b69cc83014af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resource">
+      <UniqueIdentifier>{eb55cbc2-6a33-41a7-a54a-47e1effd7e1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Runtime">
+      <UniqueIdentifier>{ad6e46dd-10b9-42f9-9140-69f76530286a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="external-include\d3dx12.h">
+      <Filter>External Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="external-include\stb_image.h">
+      <Filter>External Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="external-include\UploadBuffer.h">
+      <Filter>External Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene_object.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\transform.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\camera.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\component.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\light_directional.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\mesh_renderer.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\shader.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\texture.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\audio_clip.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\material.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\mesh.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\resource.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\resource_object.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\time_measure.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vertex.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\audio.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\debug_console.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\frame_debug.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\frame_resource.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\input.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\shadow_map.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\updown_studio.h" />
+    <ClInclude Include="source\custom_math.h">
+      <Filter>Utility Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="source\define.h">
+      <Filter>Utility Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="source\singleton.h">
+      <Filter>Utility Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="source\d3dUtil.h">
+      <Filter>Utility Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="source\pch.h">
+      <Filter>Precompiled Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\screen_space_ao.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\rigged_mesh_renderer.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
