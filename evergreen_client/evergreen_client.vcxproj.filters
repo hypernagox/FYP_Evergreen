@@ -108,12 +108,6 @@
     <ClCompile Include="ServerComponent.cpp">
       <Filter>NetEntity\ServerObject\ServerComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\Protocols\CreateBuffer4Client.cpp">
-      <Filter>Protocols\Protocol</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Protocols\s2c_PacketHandler.cpp">
-      <Filter>Protocols\Protocol</Filter>
-    </ClCompile>
     <ClCompile Include="EntityMovement.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
@@ -140,6 +134,12 @@
     </ClCompile>
     <ClCompile Include="ObjectIdentifier.cpp">
       <Filter>NetEntity\ServerObject\ServerComponent\ObjectIdentifier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Protocols\CreateBuffer4Client.cpp">
+      <Filter>Protocols\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Protocols\s2c_PacketHandler.cpp">
+      <Filter>Protocols\Protocol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,12 +179,6 @@
     <ClInclude Include="..\Protocols\struct_generated.h">
       <Filter>Protocols\generated</Filter>
     </ClInclude>
-    <ClInclude Include="..\Protocols\CreateBuffer4Client.h">
-      <Filter>Protocols\Protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Protocols\s2c_PacketHandler.h">
-      <Filter>Protocols\Protocol</Filter>
-    </ClInclude>
     <ClInclude Include="define.h">
       <Filter>Header Files\func</Filter>
     </ClInclude>
@@ -209,11 +203,14 @@
     <ClInclude Include="PlayerRenderer.h">
       <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Protocols\protocol_define.h">
-      <Filter>Protocols\Protocol</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectIdentifier.h">
       <Filter>NetEntity\ServerObject\ServerComponent\ObjectIdentifier</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Protocols\CreateBuffer4Client.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Protocols\s2c_PacketHandler.h">
+      <Filter>Protocols\Protocol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -87,13 +87,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)..\Libraries\libs\ServerCore\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <LibraryPath>$(SolutionDir)..\Libraries\libs\;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\Libraries\inc\;$(IncludePath);$(SolutionDir)libray\inc\;$(SolutionDir)library\inc\</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)library\lib\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)library\inc\;$(IncludePath);$(SolutionDir)libray\inc\;$(SolutionDir)library\inc\</IncludePath>
   </PropertyGroup>
@@ -147,7 +147,7 @@
       <PrecompiledHeaderFile>ServerCorePch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UnityFilesDirectory>$(SolutionDir)\UnitiBulid\$(IntDir)\</UnityFilesDirectory>
+      <UnityFilesDirectory>$(ProjectDir)UnitiyBulid\x64\$(Configuration)\</UnityFilesDirectory>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -170,7 +170,7 @@
       <PrecompiledHeaderFile>ServerCorePch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UnityFilesDirectory>$(SolutionDir)\UnitiBulid\$(IntDir)\</UnityFilesDirectory>
+      <UnityFilesDirectory>$(ProjectDir)UnitiyBulid\x64\$(Configuration)\</UnityFilesDirectory>
     </ClCompile>
     <Link>
       <SubSystem>

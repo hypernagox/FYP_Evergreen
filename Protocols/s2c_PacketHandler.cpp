@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "flatbuffers/pch/pch.h"
 #include "flatbuffers/pch/flatc_pch.h"
 #include "flatbuffers/flatbuffers.h"
@@ -79,4 +80,3 @@ const bool Handle_s2c_MONSTER_AGGRO_END(const NetHelper::S_ptr<NetHelper::Packet
 	std::cout << "아무래도 여우는 당신에게 흥미가 없어진 것 같다 ..." << std::endl;
 	return true;
 }
-

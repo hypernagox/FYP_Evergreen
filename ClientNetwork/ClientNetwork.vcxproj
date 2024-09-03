@@ -144,7 +144,7 @@
       <PrecompiledHeaderFile>ClientNetworkPch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UnityFilesDirectory>$(ProjectDir)\UnitiyBulid\x64\$(Configuration)\</UnityFilesDirectory>
+      <UnityFilesDirectory>$(ProjectDir)UnitiyBulid\x64\$(Configuration)\</UnityFilesDirectory>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -164,7 +164,7 @@
       <PrecompiledHeaderFile>ClientNetworkPch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UnityFilesDirectory>$(ProjectDir)\UnitiyBulid\x64\$(Configuration)\</UnityFilesDirectory>
+      <UnityFilesDirectory>$(ProjectDir)UnitiyBulid\x64\$(Configuration)\</UnityFilesDirectory>
     </ClCompile>
     <Link>
       <SubSystem>

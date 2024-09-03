@@ -49,23 +49,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Protocols\enum.fbs">
-      <Filter>Protocols\fbs</Filter>
-    </None>
-    <None Include="..\Protocols\struct.fbs">
-      <Filter>Protocols\fbs</Filter>
-    </None>
-    <None Include="..\Protocols\create_packet_handler.h.j2">
-      <Filter>Protocols\templates</Filter>
-    </None>
-    <None Include="..\Protocols\create_packet_template.cpp.j2">
-      <Filter>Protocols\templates</Filter>
-    </None>
-    <None Include="..\Protocols\create_packet_template.h.j2">
-      <Filter>Protocols\templates</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -74,12 +57,6 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>predefine\pch</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Protocols\c2s_PacketHandler.cpp">
-      <Filter>Protocols\Protocol</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Protocols\CreateBuffer4Server.cpp">
-      <Filter>Protocols\Protocol</Filter>
     </ClCompile>
     <ClCompile Include="SectorPredicate.cpp">
       <Filter>SectorPredicate</Filter>
@@ -95,6 +72,12 @@
     </ClCompile>
     <ClCompile Include="ContentsBehaviorNode.cpp">
       <Filter>EntityFactory\ContentsBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Protocols\c2s_PacketHandler.cpp">
+      <Filter>Protocols\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Protocols\CreateBuffer4Server.cpp">
+      <Filter>Protocols\Protocol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -112,12 +95,6 @@
     </ClInclude>
     <ClInclude Include="..\Protocols\struct_generated.h">
       <Filter>Protocols\generated</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Protocols\c2s_PacketHandler.h">
-      <Filter>Protocols\Protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Protocols\CreateBuffer4Server.h">
-      <Filter>Protocols\Protocol</Filter>
     </ClInclude>
     <ClInclude Include="SectorPredicate.h">
       <Filter>SectorPredicate</Filter>
@@ -137,6 +114,29 @@
     <ClInclude Include="..\Protocols\protocol_define.h">
       <Filter>Protocols\Protocol</Filter>
     </ClInclude>
+    <ClInclude Include="..\Protocols\c2s_PacketHandler.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Protocols\CreateBuffer4Server.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Protocols\enum.fbs">
+      <Filter>Protocols\fbs</Filter>
+    </None>
+    <None Include="..\Protocols\struct.fbs">
+      <Filter>Protocols\fbs</Filter>
+    </None>
+    <None Include="..\Protocols\create_packet_handler.h.j2">
+      <Filter>Protocols\templates</Filter>
+    </None>
+    <None Include="..\Protocols\create_packet_template.cpp.j2">
+      <Filter>Protocols\templates</Filter>
+    </None>
+    <None Include="..\Protocols\create_packet_template.h.j2">
+      <Filter>Protocols\templates</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\Protocols\protocol.fbs">
