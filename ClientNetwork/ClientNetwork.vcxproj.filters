@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Utills">
+      <UniqueIdentifier>{ba88ea25-4416-4faa-b3c6-07e7474b8ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session">
+      <UniqueIdentifier>{5505bdca-40cf-4b7b-b46a-7eb15b254724}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffer">
+      <UniqueIdentifier>{79d5e3a7-14e7-431b-8ea6-ffa0e45808b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{958c4499-25aa-4d8b-8b96-d1a9350798af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SocketUtills">
+      <UniqueIdentifier>{40aed97f-1a7e-468c-901c-d191608c619d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetAddress">
+      <UniqueIdentifier>{76323ef0-1dc7-4263-a5fa-8468e9da0a4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utills\pch">
+      <UniqueIdentifier>{787bcab2-b13f-4ee9-a22c-77516fd9a652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utills\func">
+      <UniqueIdentifier>{dd15e139-ea91-4dd7-856d-d252360309cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\NetworkMgr">
+      <UniqueIdentifier>{e839b37c-e967-406c-b359-a54e9896ea94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffer\RecvBuffer">
+      <UniqueIdentifier>{979cf5a6-6ce0-4d48-8cd9-8cd220e11fa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffer\SendBuffer">
+      <UniqueIdentifier>{f2704ed5-fae5-401a-b609-d696c7ef33cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\SendBufferMgr">
+      <UniqueIdentifier>{5a5587ca-6477-46ee-a1dc-8a37c90c1c8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\SendBufferMgr\SendBufferChunk">
+      <UniqueIdentifier>{89977cc5-1c38-4ebf-bb11-1e74927fb549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEvents">
+      <UniqueIdentifier>{5b0336cb-8342-47f6-9358-2b41ae45407b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\PacketSession">
+      <UniqueIdentifier>{8f077bdb-6ae2-43fe-bf94-481490195a98}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SocketUtils.h">
+      <Filter>SocketUtills</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Utills</Filter>
+    </ClInclude>
+    <ClInclude Include="NetAddress.h">
+      <Filter>NetAddress</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>Utills</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientNetworkPch.h">
+      <Filter>Utills\pch</Filter>
+    </ClInclude>
+    <ClInclude Include="func.h">
+      <Filter>Utills\func</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.hpp">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkMgr.h">
+      <Filter>Manager\NetworkMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvBuffer.h">
+      <Filter>Buffer\RecvBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBuffer.h">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBufferMgr.h">
+      <Filter>Manager\SendBufferMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBufferChunk.h">
+      <Filter>Manager\SendBufferMgr\SendBufferChunk</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="NetEvents.h">
+      <Filter>NetEvents</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketSession.h">
+      <Filter>Session\PacketSession</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketHeader.h">
+      <Filter>Session\PacketSession</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientNetHelper.h">
+      <Filter>Utills\pch</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpolator.hpp">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="SpinLock.hpp">
+      <Filter>Utills</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketArray.hpp">
+      <Filter>Session</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SocketUtils.cpp">
+      <Filter>SocketUtills</Filter>
+    </ClCompile>
+    <ClCompile Include="NetAddress.cpp">
+      <Filter>NetAddress</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientNetworkPch.cpp">
+      <Filter>Utills\pch</Filter>
+    </ClCompile>
+    <ClCompile Include="func.cpp">
+      <Filter>Utills\func</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkMgr.cpp">
+      <Filter>Manager\NetworkMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvBuffer.cpp">
+      <Filter>Buffer\RecvBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBuffer.cpp">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBufferMgr.cpp">
+      <Filter>Manager\SendBufferMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBufferChunk.cpp">
+      <Filter>Manager\SendBufferMgr\SendBufferChunk</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="NetEvents.cpp">
+      <Filter>NetEvents</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketSession.cpp">
+      <Filter>Session\PacketSession</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
