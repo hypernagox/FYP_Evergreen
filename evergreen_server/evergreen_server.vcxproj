@@ -74,12 +74,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)library\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)library\lib\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)library\inc\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
@@ -138,6 +138,9 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)\pch\$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,9 +153,30 @@
     <ProjectReference Include="..\common\common.vcxproj">
       <Project>{c0cbe185-8506-4671-9f9a-813fd075e8c4}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\ServerCore\ServerCore.vcxproj">
+      <Project>{cac2b122-7251-4759-8d77-04cd547b7348}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClientSession.cpp" />
+    <ClCompile Include="ContentsBehaviorNode.cpp" />
+    <ClCompile Include="ContentsWorld.cpp" />
+    <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="PositionComponent.cpp" />
+    <ClCompile Include="SectorPredicate.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ClientSession.h" />
+    <ClInclude Include="ContentsBehaviorNode.h" />
+    <ClInclude Include="ContentsWorld.h" />
+    <ClInclude Include="EntityFactory.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="PositionComponent.h" />
+    <ClInclude Include="SectorPredicate.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
