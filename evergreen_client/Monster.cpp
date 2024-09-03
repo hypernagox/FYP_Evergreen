@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Monster.h"
+#include "EntityMovement.h"
 
 Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 {

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "PlayerRenderer.h"
 
 PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Component(object)

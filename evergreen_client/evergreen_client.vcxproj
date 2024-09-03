@@ -74,13 +74,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath);$(SolutionDir)Protocols\</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(IncludePath);$(SolutionDir)Protocols\</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -127,6 +127,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)library\lib\$(Configuration)\dll\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -146,10 +149,19 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)library\lib\$(Configuration)\dll\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Protocols\CreateBuffer4Client.cpp" />
-    <ClCompile Include="..\Protocols\s2c_PacketHandler.cpp" />
+    <ClCompile Include="..\Protocols\CreateBuffer4Client.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Protocols\s2c_PacketHandler.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="AuthenticPlayer.cpp" />
     <ClCompile Include="EntityBuilder.cpp" />
     <ClCompile Include="EntityMovement.cpp" />

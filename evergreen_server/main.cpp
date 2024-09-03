@@ -3,6 +3,7 @@
 #include "ClientSession.h"
 #include "SectorPredicate.h"
 #include "ContentsWorld.h"
+#include <filesystem>
 
 using namespace ServerCore;
 constexpr const int32_t NUM_OF_NPC = 1024;
