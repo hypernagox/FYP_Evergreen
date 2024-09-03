@@ -11,7 +11,7 @@
 #include "EventTimer.h"
 #include "ServerSession.h"
 
-#include "HeightMap.h"
+#include <HeightMap.h>
 #include "AuthenticPlayer.h"
 #include "PlayerRenderer.h"
 #include "MovePacketSender.h"

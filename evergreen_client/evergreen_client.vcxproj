@@ -74,6 +74,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -112,9 +120,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -126,16 +136,39 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AuthenticPlayer.cpp" />
+    <ClCompile Include="EntityBuilder.cpp" />
+    <ClCompile Include="EntityMovement.cpp" />
+    <ClCompile Include="EventTimer.cpp" />
+    <ClCompile Include="func.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Monster.cpp" />
+    <ClCompile Include="MoveInterpolator.cpp" />
+    <ClCompile Include="MovePacketSender.cpp" />
+    <ClCompile Include="ObjectIdentifier.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="PlayerRenderer.cpp" />
+    <ClCompile Include="PositionSetter.cpp" />
+    <ClCompile Include="ServerComponent.cpp" />
+    <ClCompile Include="ServerObject.cpp" />
+    <ClCompile Include="ServerObjectMgr.cpp" />
+    <ClCompile Include="ServerSession.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientNetwork\ClientNetwork.vcxproj">
@@ -147,6 +180,26 @@
     <ProjectReference Include="..\engine\engine.vcxproj">
       <Project>{1833101c-6a08-4950-a674-9c948732d737}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AuthenticPlayer.h" />
+    <ClInclude Include="define.h" />
+    <ClInclude Include="EntityBuilder.h" />
+    <ClInclude Include="EntityMovement.h" />
+    <ClInclude Include="EventTimer.h" />
+    <ClInclude Include="func.h" />
+    <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="Monster.h" />
+    <ClInclude Include="MoveInterpolator.h" />
+    <ClInclude Include="MovePacketSender.h" />
+    <ClInclude Include="ObjectIdentifier.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="PlayerRenderer.h" />
+    <ClInclude Include="PositionSetter.h" />
+    <ClInclude Include="ServerComponent.h" />
+    <ClInclude Include="ServerObject.h" />
+    <ClInclude Include="ServerObjectMgr.h" />
+    <ClInclude Include="ServerSession.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

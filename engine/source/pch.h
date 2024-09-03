@@ -92,15 +92,15 @@ using namespace DirectX;
 #pragma comment(lib, "runtimeobject.lib")
 
 #if defined(DEBUG) || defined(_DEBUG)
-#pragma comment(lib, "debug/zlibstaticd.lib")
-#pragma comment(lib, "debug/assimp-vc143-mtd.lib")
-#pragma comment(lib, "debug/DirectXTex.lib")
-#pragma comment(lib, "debug/DirectXTK12.lib")
+#pragma comment(lib, "zlibstaticd.lib")
+#pragma comment(lib, "assimp-vc143-mtd.lib")
+#pragma comment(lib, "DirectXTex.lib")
+#pragma comment(lib, "DirectXTK12.lib")
 
 #else
-#pragma comment(lib, "release/zlibstatic.lib")
-#pragma comment(lib, "release/assimp-vc143-mt.lib")
-#pragma comment(lib, "release/DirectXTex.lib")
-#pragma comment(lib, "release/DirectXTK12.lib")
+#pragma comment(lib, "zlibstatic.lib")
+#pragma comment(lib, "assimp-vc143-mt.lib")
+#pragma comment(lib, "DirectXTex.lib")
+#pragma comment(lib, "DirectXTK12.lib")
 
 #endif

@@ -87,12 +87,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)\inc\;$(ProjectDir)\inc\Protocols\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\libs\;$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)x64\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(ProjectDir)\inc\;$(ProjectDir)\inc\Protocols\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\libs\;$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)x64\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
