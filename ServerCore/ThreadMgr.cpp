@@ -1,0 +1,192 @@
+#include "ServerCorePch.h"
+#include "ThreadMgr.h"
+#include "CoreTLS.h"
+#include "CoreGlobal.h"
+#include "TaskQueueable.h"
+#include "Service.h"
+#include "IocpCore.h"
+#include "TaskTimerMgr.h"
+#include "SendBufferMgr.h"
+#include "WorldMgr.h"
+
+/*------------------
+	ThreadMgr
+-------------------*/
+
+namespace ServerCore
+{
+	constinit extern thread_local uint64 LEndTickCount;
+	constinit extern thread_local class TaskQueueable* LCurTaskQueue;
+
+	//thread_local moodycamel::ProducerToken* LPro_token;
+	//thread_local moodycamel::ConsumerToken* LCon_token;
+	constinit thread_local moodycamel::ProducerToken* LPro_tokenGlobalTask;
+	constinit thread_local moodycamel::ConsumerToken* LCon_tokenGlobalTask;
+
+	ThreadMgr::ThreadMgr()
+	{
+		// Main Thread
+		InitTLS();
+		LThreadId = 1;
+	}
+
+	ThreadMgr::~ThreadMgr()
+	{
+		std::atomic_thread_fence(std::memory_order_seq_cst);
+		if (!m_bStopRequest)
+		{
+			Join();
+		}
+		Task task;
+		while (m_globalTask.try_dequeue(*LCon_tokenGlobalTask, task)) { std::destroy_at<Task>(&task); }
+
+		DestroyTLS();
+
+		//xdelete<moodycamel::ProducerToken>(LPro_token);
+		//xdelete<moodycamel::ConsumerToken>(LCon_token);
+
+		//xdelete<moodycamel::ProducerToken>(LPro_tokenGlobalTask);
+		//xdelete<moodycamel::ConsumerToken>(LCon_tokenGlobalTask);
+	}
+
+	void ThreadMgr::Launch(const uint64_t num_of_threads, Service& target_service, std::function<void(void)> destroyTLSCallBack, std::function<void(void)> initTLSCallBack)
+	{
+		m_iocpHandle = IocpCore::GetIocpHandleGlobal();
+		g_initTLSCallBack.swap(initTLSCallBack);
+		g_destroyTLSCallBack.swap(destroyTLSCallBack);
+
+		m_pMainService = &target_service;
+		m_threads.reserve(num_of_threads);
+		for (int i = 0; i < num_of_threads; ++i)
+		{
+			m_threads.emplace_back(&ThreadMgr::WorkerThreadFunc);
+		}
+
+		while (g_threadID.load(std::memory_order_seq_cst) <= num_of_threads);
+		std::atomic_thread_fence(std::memory_order_seq_cst);
+
+		m_timerThread = std::thread{ []()noexcept
+			{
+				Mgr(ThreadMgr)->InitTLS();
+				const bool& bStopRequest = Mgr(ThreadMgr)->m_bStopRequest;
+				TaskTimerMgr& taskTimer = *Mgr(TaskTimerMgr);
+				for (;;)
+				{
+					if (bStopRequest) [[unlikely]]
+						break;
+
+					taskTimer.DistributeTask();
+
+					std::this_thread::yield();
+				}
+				Mgr(ThreadMgr)->DestroyTLS();
+			} };
+
+		std::string strFin(32, 0);
+		if (SERVICE_TYPE::SERVER == m_pMainService->GetServiceType())
+		{
+			NAGOX_ASSERT(ThreadMgr::NUM_OF_THREADS == num_of_threads);
+			static std::atomic_bool registerFinish = false;
+			while (!m_bStopRequest)
+			{
+				std::cin >> strFin;
+
+				if ("EXIT" == strFin)
+				{
+					if (false == registerFinish.exchange(true))
+					{
+						m_pMainService->CloseService();
+						Mgr(Logger)->m_bStopRequest = true;
+						Mgr(WorldMgr)->ClearWorld();
+						std::this_thread::sleep_for(std::chrono::seconds(5));
+						Join();
+					}
+				}
+
+				std::this_thread::sleep_for(std::chrono::seconds(5));
+			}
+		}
+	}
+
+	void ThreadMgr::Join()
+	{
+		if (m_bStopRequest)
+			return;
+		m_bStopRequest = true;
+		std::atomic_thread_fence(std::memory_order_seq_cst);
+		for (int i = 0; i < NUM_OF_THREADS; ++i)
+			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+		for (auto& t : m_threads)
+		{
+			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			t.join();
+		}
+		if (m_timerThread.joinable())
+			m_timerThread.join();
+	}
+
+	void ThreadMgr::InitTLS()
+	{
+		LThreadId = g_threadID.fetch_add(1);
+
+		//LPro_token = xnew<moodycamel::ProducerToken>(m_globalTaskQueue);
+		thread_local moodycamel::ProducerToken pro_token{ m_globalTask };
+		LPro_tokenGlobalTask = &pro_token;
+
+		//LCon_token = xnew <moodycamel::ConsumerToken>(m_globalTaskQueue);
+		thread_local moodycamel::ConsumerToken con_token{ m_globalTask };
+		LCon_tokenGlobalTask = &con_token;
+
+		if (NUM_OF_THREADS >= LThreadId && 0 < LThreadId) 
+		{
+			LSendBufferChunk = SendBufferMgr::Pop();
+			if (g_initTLSCallBack)
+			{
+				g_initTLSCallBack();
+			}
+		}
+
+		LRandSeed = std::uniform_int_distribution<uint32_t>{ 0, UINT32_MAX }(g_RandEngine);
+	}
+
+	void ThreadMgr::DestroyTLS()
+	{
+		if (NUM_OF_THREADS >= LThreadId && 0 < LThreadId)
+		{
+			if (g_initTLSCallBack)
+			{
+				g_initTLSCallBack();
+			}
+		}
+	}
+
+	void ThreadMgr::TryGlobalQueueTask()noexcept
+	{
+		Task task;
+		while (m_globalTask.try_dequeue(*LCon_tokenGlobalTask, task)) {
+			task.ExecuteTask();
+			//std::destroy_at<Task>(&task);
+		}
+	}
+	void ThreadMgr::WorkerThreadFunc() noexcept
+	{
+		constinit extern thread_local uint64_t LEndTickCount;
+		constinit extern thread_local uint64_t LCurHandleSessionID;
+
+		ThreadMgr& threadMgr = *Mgr(ThreadMgr);
+		threadMgr.InitTLS();
+		const bool& bStopRequest = threadMgr.GetStopFlagRef();
+		const HANDLE iocpHandle = IocpCore::GetIocpHandleGlobal();
+		for (;;)
+		{
+			if (bStopRequest) [[unlikely]]
+				break;
+
+			if (false == IocpCore::Dispatch(iocpHandle,INFINITE))
+			{
+				threadMgr.TryGlobalQueueTask();
+			}
+		}
+		threadMgr.DestroyTLS();
+	}
+}

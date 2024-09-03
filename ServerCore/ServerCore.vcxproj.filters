@@ -1,0 +1,500 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Network">
+      <UniqueIdentifier>{44015ff7-f5fe-4ecb-9510-ba792e92d6c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{1c94faf8-d38f-44b3-b3f3-39ba3c6951e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{903143c9-12f7-436d-8004-490b4f0d31bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\SocketUtils">
+      <UniqueIdentifier>{43a71967-998d-4271-87a7-7c6dfcd5f778}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\NetAddress">
+      <UniqueIdentifier>{64507ba9-2ca2-4f6f-b6b7-2ea61aadb09d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\IocpCore">
+      <UniqueIdentifier>{6c21ba5c-d141-48f1-bc7d-0e432fd18c86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\IocpCore\IocpObject">
+      <UniqueIdentifier>{aa24b983-17eb-4999-bdc6-e4f33ff3821e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\IocpCore\IocpEvent">
+      <UniqueIdentifier>{dce2d3a9-d0dc-4acc-a354-8b0aeeb13bb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Listener">
+      <UniqueIdentifier>{2330430e-a45d-481c-abeb-4f74d8b91ccc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Session">
+      <UniqueIdentifier>{25759da4-18a9-46e1-801b-114d97aedefc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\func">
+      <UniqueIdentifier>{eb7efb6e-7b1d-4ada-a062-dd10ec08db1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Service">
+      <UniqueIdentifier>{70ebd7cd-ac71-4abe-b84d-54be0aee236c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Buffer">
+      <UniqueIdentifier>{f8cc8f49-8aa3-4f33-8153-c028c43b3dca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Buffer\RecvBuffer">
+      <UniqueIdentifier>{39b06587-1f55-4a2b-9458-2c1a1f0d5241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Buffer\SendBuffer">
+      <UniqueIdentifier>{bcd43fa4-7fe8-418d-9bfd-93cea4735e1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Buffer\SendBuffer\SendBufferChunk">
+      <UniqueIdentifier>{9c5d1d07-0b4c-4997-a0ce-97b899c4a3b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\struct">
+      <UniqueIdentifier>{d3a28e46-e9db-47ee-81b5-2ddc808c143b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Task">
+      <UniqueIdentifier>{50b481db-9cde-4d31-bc10-98611b158e03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{19f43450-47de-4647-8c34-c6a45ea4e5ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Core">
+      <UniqueIdentifier>{38a14444-d686-40a1-8d33-d4a20af7e46c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\MemoryMgr">
+      <UniqueIdentifier>{ae839f12-bc19-4e7c-af20-da6e74d0ea84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\TaskTimerMgr">
+      <UniqueIdentifier>{9e03ec84-86fd-448d-85f5-54bd291be1c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\ThreadMgr">
+      <UniqueIdentifier>{cb6dd78f-4f7e-4dbd-aa14-af9d28dd3145}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\DeadLockProfiler">
+      <UniqueIdentifier>{b37477d9-fe30-4340-b44b-2b9a1311c9c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Locks">
+      <UniqueIdentifier>{7f43475c-75fa-4c90-9191-38576b1eb7a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Locks\Lock">
+      <UniqueIdentifier>{7c907f03-48a6-4984-8530-f55c89f080be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory\AtomicNonTemplate">
+      <UniqueIdentifier>{35e601fe-34f4-44bd-b758-f4d74e161692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\predefine">
+      <UniqueIdentifier>{c0b75513-7471-4500-a833-2626c5040f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\SendBufferMgr">
+      <UniqueIdentifier>{bd4b8682-fe99-44a0-b987-ec1822cd77bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Logger">
+      <UniqueIdentifier>{da330e5c-802c-4df3-ba47-a9b843fac149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\IDGenerator">
+      <UniqueIdentifier>{7ae3946b-07a7-459a-814c-ae765f342e0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Timer">
+      <UniqueIdentifier>{431f723f-0d4f-4ad2-8516-f0f2772957c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\IocpCore\TimerObject">
+      <UniqueIdentifier>{5c55d9c2-4448-40be-b24d-52f0afb69500}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB">
+      <UniqueIdentifier>{db3e12db-74e2-4e2f-a246-43de8b28cb2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\DBMgr">
+      <UniqueIdentifier>{de6dc4bc-aa45-41b7-818b-aa179596311b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\DBBindRAII">
+      <UniqueIdentifier>{322d00a5-429d-417b-b336-6a5ba50dc6ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\DBConnectionHandle">
+      <UniqueIdentifier>{8e94f928-1224-4e46-970f-df52c2b239a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\DBPacketSender">
+      <UniqueIdentifier>{a62e4011-64e5-45cd-a1ea-115eea45d0b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\DBProtocols">
+      <UniqueIdentifier>{e95a64ca-0cbe-4529-95a0-c77b23204b1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\struct\CustomDS">
+      <UniqueIdentifier>{909a6c27-5e21-47f1-a3c4-144bf04f496b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement">
+      <UniqueIdentifier>{390f4dca-66eb-408f-8ba4-b30ee5fdf01a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement\Sector">
+      <UniqueIdentifier>{d8a6d64d-66e6-40f4-bdc0-bc7066586ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement\MoveBroadcaster">
+      <UniqueIdentifier>{9f94fe66-69e2-447b-9f7e-99e1a671b6f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement\ContentsComponent">
+      <UniqueIdentifier>{564a7c27-91c4-4ad2-9393-a0a6af90e65a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement\Queueabler">
+      <UniqueIdentifier>{f45b39ec-c039-4c1f-8135-4c5be8d584f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement\SectorBehavior">
+      <UniqueIdentifier>{dd3a803d-bea2-4323-b261-5b54cf4cc009}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement\World">
+      <UniqueIdentifier>{c1e810d3-6b1c-4042-8a02-e4d60537fb8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\WorldMgr">
+      <UniqueIdentifier>{602c92fb-c3bc-435a-86a3-46ad953e0839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement\BehaviorTree">
+      <UniqueIdentifier>{8882d5d3-da86-4088-a3af-b7d6cf629302}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CorePch.h">
+      <Filter>Utils\predefine</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerCorePch.h">
+      <Filter>Utils\predefine</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Utils\predefine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreMacro.h">
+      <Filter>Utils\predefine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreTLS.h">
+      <Filter>Utils\predefine</Filter>
+    </ClInclude>
+    <ClInclude Include="Allocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Container.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryHeader.hpp">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketUtils.h">
+      <Filter>Network\SocketUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="NetAddress.h">
+      <Filter>Network\NetAddress</Filter>
+    </ClInclude>
+    <ClInclude Include="IocpCore.h">
+      <Filter>Network\IocpCore</Filter>
+    </ClInclude>
+    <ClInclude Include="IocpObject.h">
+      <Filter>Network\IocpCore\IocpObject</Filter>
+    </ClInclude>
+    <ClInclude Include="IocpEvent.h">
+      <Filter>Network\IocpCore\IocpEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="Listener.h">
+      <Filter>Network\Listener</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="func.h">
+      <Filter>Utils\func</Filter>
+    </ClInclude>
+    <ClInclude Include="Service.h">
+      <Filter>Network\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvBuffer.h">
+      <Filter>Network\Buffer\RecvBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBuffer.h">
+      <Filter>Network\Buffer\SendBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBufferChunk.h">
+      <Filter>Network\Buffer\SendBuffer\SendBufferChunk</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBufferMgr.h">
+      <Filter>Manager\SendBufferMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="AtomicNonTemplate.h">
+      <Filter>Memory\AtomicNonTemplate</Filter>
+    </ClInclude>
+    <ClInclude Include="Sector.h">
+      <Filter>EntityManagement\Sector</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketSession.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="ConcurrentHash.hpp">
+      <Filter>Utils\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketHeader.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="Task.h">
+      <Filter>Task</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskQueueable.h">
+      <Filter>Task</Filter>
+    </ClInclude>
+    <ClInclude Include="CoRoutine.hpp">
+      <Filter>Utils\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreGlobal.h">
+      <Filter>Manager\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryMgr.h">
+      <Filter>Manager\MemoryMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.hpp">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskTimerMgr.h">
+      <Filter>Manager\TaskTimerMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPool.hpp">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadMgr.h">
+      <Filter>Manager\ThreadMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="DeadLockProfiler.h">
+      <Filter>Manager\DeadLockProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="Lock.h">
+      <Filter>Locks\Lock</Filter>
+    </ClInclude>
+    <ClInclude Include="SRWLock.hpp">
+      <Filter>Locks</Filter>
+    </ClInclude>
+    <ClInclude Include="SpinLock.hpp">
+      <Filter>Locks</Filter>
+    </ClInclude>
+    <ClInclude Include="AtomicMemoryPool.hpp">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeCast.h">
+      <Filter>Utils\predefine</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Manager\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="concurrentqueue.h">
+      <Filter>Utils\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="IDGenerator.hpp">
+      <Filter>Network\IDGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpolator.hpp">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="ID_Ptr.hpp">
+      <Filter>Utils\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketArray.hpp">
+      <Filter>Utils\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Utils\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="TickTimer.h">
+      <Filter>Network\IocpCore\TimerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="BackOff.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DBMgr.h">
+      <Filter>Manager\DBMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="DBBindRAII.h">
+      <Filter>DB\DBBindRAII</Filter>
+    </ClInclude>
+    <ClInclude Include="DBConnectionHandle.h">
+      <Filter>DB\DBConnectionHandle</Filter>
+    </ClInclude>
+    <ClInclude Include="DBPacketSender.h">
+      <Filter>DB\DBPacketSender</Filter>
+    </ClInclude>
+    <ClInclude Include="DBPacket.h">
+      <Filter>DB\DBProtocols</Filter>
+    </ClInclude>
+    <ClInclude Include="DBEvent.h">
+      <Filter>DB\DBProtocols</Filter>
+    </ClInclude>
+    <ClInclude Include="EBR.hpp">
+      <Filter>Utils\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="RefCountable.h">
+      <Filter>Utils\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkedHashMap.hpp">
+      <Filter>Utils\struct\CustomDS</Filter>
+    </ClInclude>
+    <ClInclude Include="MPSCQueue.hpp">
+      <Filter>Utils\struct\CustomDS</Filter>
+    </ClInclude>
+    <ClInclude Include="SlimLinkedHashMap.hpp">
+      <Filter>Utils\struct\CustomDS</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorHash.hpp">
+      <Filter>Utils\struct\CustomDS</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveBroadcaster.h">
+      <Filter>EntityManagement\MoveBroadcaster</Filter>
+    </ClInclude>
+    <ClInclude Include="Queueabler.h">
+      <Filter>EntityManagement\Queueabler</Filter>
+    </ClInclude>
+    <ClInclude Include="ContentsComponent.h">
+      <Filter>EntityManagement\ContentsComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="SectorBehavior.h">
+      <Filter>EntityManagement\SectorBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>EntityManagement\World</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldMgr.h">
+      <Filter>Manager\WorldMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorTree.hpp">
+      <Filter>EntityManagement\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentSystem.h">
+      <Filter>Network\IocpCore\IocpObject</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleLinkedList.hpp">
+      <Filter>Utils\struct\CustomDS</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CorePch.cpp">
+      <Filter>Utils\predefine</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerCorePch.cpp">
+      <Filter>Utils\predefine</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreTLS.cpp">
+      <Filter>Utils\predefine</Filter>
+    </ClCompile>
+    <ClCompile Include="Allocator.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketUtils.cpp">
+      <Filter>Network\SocketUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="NetAddress.cpp">
+      <Filter>Network\NetAddress</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpCore.cpp">
+      <Filter>Network\IocpCore</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpObject.cpp">
+      <Filter>Network\IocpCore\IocpObject</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpEvent.cpp">
+      <Filter>Network\IocpCore\IocpEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="Listener.cpp">
+      <Filter>Network\Listener</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="func.cpp">
+      <Filter>Utils\func</Filter>
+    </ClCompile>
+    <ClCompile Include="Service.cpp">
+      <Filter>Network\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvBuffer.cpp">
+      <Filter>Network\Buffer\RecvBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBuffer.cpp">
+      <Filter>Network\Buffer\SendBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBufferChunk.cpp">
+      <Filter>Network\Buffer\SendBuffer\SendBufferChunk</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBufferMgr.cpp">
+      <Filter>Manager\SendBufferMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="AtomicNonTemplate.cpp">
+      <Filter>Memory\AtomicNonTemplate</Filter>
+    </ClCompile>
+    <ClCompile Include="Sector.cpp">
+      <Filter>EntityManagement\Sector</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketSession.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="Task.cpp">
+      <Filter>Task</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskQueueable.cpp">
+      <Filter>Task</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreGlobal.cpp">
+      <Filter>Manager\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryMgr.cpp">
+      <Filter>Manager\MemoryMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskTimerMgr.cpp">
+      <Filter>Manager\TaskTimerMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadMgr.cpp">
+      <Filter>Manager\ThreadMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="DeadLockProfiler.cpp">
+      <Filter>Manager\DeadLockProfiler</Filter>
+    </ClCompile>
+    <ClCompile Include="Lock.cpp">
+      <Filter>Locks\Lock</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Manager\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Utils\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="TickTimer.cpp">
+      <Filter>Network\IocpCore\TimerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DBMgr.cpp">
+      <Filter>Manager\DBMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="DBBindRAII.cpp">
+      <Filter>DB\DBBindRAII</Filter>
+    </ClCompile>
+    <ClCompile Include="DBConnectionHandle.cpp">
+      <Filter>DB\DBConnectionHandle</Filter>
+    </ClCompile>
+    <ClCompile Include="DBPacketSender.cpp">
+      <Filter>DB\DBPacketSender</Filter>
+    </ClCompile>
+    <ClCompile Include="RefCountable.cpp">
+      <Filter>Utils\struct</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveBroadcaster.cpp">
+      <Filter>EntityManagement\MoveBroadcaster</Filter>
+    </ClCompile>
+    <ClCompile Include="Queueabler.cpp">
+      <Filter>EntityManagement\Queueabler</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>EntityManagement\World</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldMgr.cpp">
+      <Filter>Manager\WorldMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentSystem.cpp">
+      <Filter>Network\IocpCore\IocpObject</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="delay_loop.asm">
+      <Filter>Utils</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
+</Project>
