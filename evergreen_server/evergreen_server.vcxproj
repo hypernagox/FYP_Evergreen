@@ -79,7 +79,7 @@
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)ServerCore\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
@@ -158,6 +158,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Protocols\c2s_PacketHandler.cpp" />
+    <ClCompile Include="..\Protocols\CreateBuffer4Server.cpp" />
     <ClCompile Include="ClientSession.cpp" />
     <ClCompile Include="ContentsBehaviorNode.cpp" />
     <ClCompile Include="ContentsWorld.cpp" />
@@ -170,6 +172,12 @@
     <ClCompile Include="SectorPredicate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Protocols\c2s_PacketHandler.h" />
+    <ClInclude Include="..\Protocols\CreateBuffer4Server.h" />
+    <ClInclude Include="..\Protocols\enum_generated.h" />
+    <ClInclude Include="..\Protocols\protocol_define.h" />
+    <ClInclude Include="..\Protocols\protocol_generated.h" />
+    <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="ClientSession.h" />
     <ClInclude Include="ContentsBehaviorNode.h" />
     <ClInclude Include="ContentsWorld.h" />

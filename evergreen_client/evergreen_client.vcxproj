@@ -74,7 +74,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,6 +148,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Protocols\CreateBuffer4Client.cpp" />
+    <ClCompile Include="..\Protocols\s2c_PacketHandler.cpp" />
     <ClCompile Include="AuthenticPlayer.cpp" />
     <ClCompile Include="EntityBuilder.cpp" />
     <ClCompile Include="EntityMovement.cpp" />
@@ -182,6 +184,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Protocols\CreateBuffer4Client.h" />
+    <ClInclude Include="..\Protocols\enum_generated.h" />
+    <ClInclude Include="..\Protocols\protocol_define.h" />
+    <ClInclude Include="..\Protocols\protocol_generated.h" />
+    <ClInclude Include="..\Protocols\s2c_PacketHandler.h" />
+    <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="AuthenticPlayer.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="EntityBuilder.h" />

@@ -4,7 +4,7 @@
 #include "ServerObject.h"
 #include "AuthenticPlayer.h"
 
-#include <Protocols/CreateBuffer4Client.h>
+#include <CreateBuffer4Client.h>
 
 extern Vector3 g_curPos;
 extern void SetTerrainPos(const std::shared_ptr<SceneObject>& p);

@@ -10,7 +10,7 @@ constexpr const int32_t NUM_OF_NPC = 1024;
 int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
+	
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
 	

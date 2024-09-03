@@ -1,0 +1,69 @@
+#pragma once
+{% if namespace_prefix == 'ServerCore::' %}
+#include "../ServerCore/ServerCorePch.h"
+{% else %}
+#include "../ClientNetwork/ClientNetHelper.h"
+{% endif %}
+#include "enum_generated.h"
+#include "struct_generated.h"
+#include "protocol_generated.h"
+
+template<typename T> requires std::is_enum_v<T>
+static inline constexpr const uint16_t net_etoi(const T eType_) noexcept { return static_cast<const uint16_t>(eType_); }
+
+enum class PKT_ID : uint16_t {
+    {% for packet in all_packets %}
+    {{ packet.name }} = {{ packet.id }},
+    {% endfor %}
+};
+
+class {{ namespace_prefix }}PacketSession;
+class {{ namespace_prefix }}Session;
+class {{ namespace_prefix }}SendBuffer;
+
+flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept;
+static inline const bool Handle_Invalid(const {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) noexcept { return false; }
+
+{% for packet in packets %}
+const bool Handle_{{ packet.name }}(const {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}PacketSession>& pSession_, const Nagox::Protocol::{{ packet.name }}& pkt_);
+{% endfor %}
+
+class {{ handler_class }} {
+    using PacketHandlerFunc = const bool (*)(const {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}PacketSession>&, const BYTE* const, const int32_t);
+    constinit static inline PacketHandlerFunc g_fpPacketHandler[UINT16_MAX] = {};
+public:
+    static void Init() noexcept {
+        {% for packet in packets %}
+        RegisterHandler<PKT_ID::{{ packet.name }}, Nagox::Protocol::{{ packet.name }}>(Handle_{{ packet.name }});
+        {% endfor %}
+        for (auto& fpHandlerFunc : g_fpPacketHandler) {
+            if (nullptr == fpHandlerFunc)
+                fpHandlerFunc = Handle_Invalid;
+        }
+    }
+
+    static inline const PacketHandlerFunc* const GetPacketHandlerList() noexcept { return g_fpPacketHandler; }
+
+    static void AddProtocol(uint16_t pktID_, PacketHandlerFunc fpPacketHandler_) noexcept {
+        g_fpPacketHandler[pktID_] = fpPacketHandler_;
+    }
+
+public:
+    {{ handler_class }}() = delete;
+    {{ handler_class }}(const {{ handler_class }}&) = delete;
+    {{ handler_class }}({{ handler_class }}&&)noexcept = delete;
+    {{ handler_class }}& operator=(const {{ handler_class }}&) = delete;
+    {{ handler_class }}& operator=({{ handler_class }}&&)noexcept = delete;
+    ~{{ handler_class }}() = delete;
+
+private:
+    template<PKT_ID packetId, typename PacketType>
+    static void RegisterHandler(const bool(*handlerFunc)(const {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}PacketSession>&, const PacketType&)) {
+        static const auto handler = handlerFunc;
+        g_fpPacketHandler[net_etoi(packetId)] = [](const {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) -> const bool {
+            const uint8_t* const pkt_ptr = reinterpret_cast<const uint8_t* const>(pBuff_ + sizeof({{ namespace_prefix }}PacketHeader));
+            flatbuffers::Verifier verifier{ pkt_ptr, static_cast<const size_t>(len_ - static_cast<const int32_t>(sizeof({{ namespace_prefix }}PacketHeader))) };
+            return verifier.VerifyBuffer<PacketType>() && handler(pSession_, *flatbuffers::GetRoot<PacketType>(pkt_ptr));
+        };
+    }
+};
