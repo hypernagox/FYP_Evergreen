@@ -127,7 +127,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /S "$(SolutionDir)library\lib\$(Configuration)\dll\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /Y /S "$(SolutionDir)library\lib\$(Configuration)\dll\*.dll" "$(OutDir)" /D</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -152,7 +152,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /S "$(SolutionDir)library\lib\$(Configuration)\dll\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /Y /S "$(SolutionDir)library\lib\$(Configuration)\dll\*.dll" "$(OutDir)" /D</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

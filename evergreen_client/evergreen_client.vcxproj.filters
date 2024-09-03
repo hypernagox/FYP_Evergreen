@@ -1,73 +1,241 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Precompiled Headers">
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\func">
+      <UniqueIdentifier>{a3b78d78-bc3c-4ad2-afa1-dfe5ec474e72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\pch">
+      <UniqueIdentifier>{0911c02a-5bb2-4b3f-b392-4a966e2d5d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity">
+      <UniqueIdentifier>{e1497873-6b8e-47e5-8c4d-38b6b7c9c765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ServerObject">
+      <UniqueIdentifier>{1c251fea-1034-4ce6-96b9-deda0ddee154}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ServerObjectMgr">
+      <UniqueIdentifier>{253bfdf2-3603-42e5-a285-ef43c5c70f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ServerSession">
+      <UniqueIdentifier>{02fc1176-4263-43b0-8a31-7b5ddddaf310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ServerObject\ServerComponent">
+      <UniqueIdentifier>{d7f05348-14b6-4aa3-9be4-281d11aaf843}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ServerObject\ServerComponent\MoveInterpolator">
+      <UniqueIdentifier>{3957d1d2-6e72-45d6-a6ba-860d48c8cf69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ServerObject\ServerComponent\MovePacketSender">
+      <UniqueIdentifier>{bc3bc666-c239-4510-8066-107d165163e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ServerObject\ServerComponent\PositionSetter">
+      <UniqueIdentifier>{e9965f76-f94f-4e49-9118-d525940474f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{6f7cb342-b4f6-47e3-8169-8f0bee75395f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocols">
+      <UniqueIdentifier>{d9a533a4-8fd3-4109-94f0-202a296b58b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocols\fbs">
+      <UniqueIdentifier>{0a185541-5a7d-46b6-87cc-fb867b1ba9b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocols\generated">
+      <UniqueIdentifier>{ab05689d-ff73-4ca4-a28e-e7868fe04ae1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocols\Protocol">
+      <UniqueIdentifier>{78773fa1-af42-41d8-a268-bac33b924262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocols\templates">
+      <UniqueIdentifier>{de598f1d-23ef-411c-ba46-9fc7caae580e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity">
+      <UniqueIdentifier>{fa78d7cf-eb35-467b-b500-6667d59c56a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EventTimer">
+      <UniqueIdentifier>{155dc9df-ac89-4351-8343-63e5a1e3c79d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputHandler">
+      <UniqueIdentifier>{8bdac965-f7c3-4e93-90a7-66d5c9c42ee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityBuilder">
+      <UniqueIdentifier>{18cb6b2f-23c6-407c-8bc2-a8cb6058d216}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Monster">
+      <UniqueIdentifier>{5b9e1f8d-9a15-4410-bce9-381734102083}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ServerObject\ServerComponent\ObjectIdentifier">
+      <UniqueIdentifier>{6e0ef11e-072d-491e-bf80-15bee75703ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>Precompiled Headers</Filter>
+    <ClCompile Include="func.cpp">
+      <Filter>Header Files\func</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectIdentifier.cpp" />
-    <ClCompile Include="PlayerRenderer.cpp" />
-    <ClCompile Include="PositionSetter.cpp" />
-    <ClCompile Include="ServerComponent.cpp" />
-    <ClCompile Include="ServerObject.cpp" />
-    <ClCompile Include="ServerObjectMgr.cpp" />
-    <ClCompile Include="ServerSession.cpp" />
-    <ClCompile Include="AuthenticPlayer.cpp" />
-    <ClCompile Include="EntityBuilder.cpp" />
-    <ClCompile Include="EntityMovement.cpp" />
-    <ClCompile Include="EventTimer.cpp" />
-    <ClCompile Include="func.cpp" />
-    <ClCompile Include="InputHandler.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Monster.cpp" />
-    <ClCompile Include="MoveInterpolator.cpp" />
-    <ClCompile Include="MovePacketSender.cpp" />
-    <ClCompile Include="..\Protocols\CreateBuffer4Client.cpp" />
-    <ClCompile Include="..\Protocols\s2c_PacketHandler.cpp" />
+    <ClCompile Include="pch.cpp">
+      <Filter>Header Files\pch</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveInterpolator.cpp">
+      <Filter>NetEntity\ServerObject\ServerComponent\MoveInterpolator</Filter>
+    </ClCompile>
+    <ClCompile Include="MovePacketSender.cpp">
+      <Filter>NetEntity\ServerObject\ServerComponent\MovePacketSender</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionSetter.cpp">
+      <Filter>NetEntity\ServerObject\ServerComponent\PositionSetter</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerObjectMgr.cpp">
+      <Filter>NetEntity\ServerObjectMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerSession.cpp">
+      <Filter>NetEntity\ServerSession</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerObject.cpp">
+      <Filter>NetEntity\ServerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerComponent.cpp">
+      <Filter>NetEntity\ServerObject\ServerComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocols\CreateBuffer4Client.cpp">
+      <Filter>Protocols\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocols\s2c_PacketHandler.cpp">
+      <Filter>Protocols\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityMovement.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTimer.cpp">
+      <Filter>EventTimer</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHandler.cpp">
+      <Filter>InputHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityBuilder.cpp">
+      <Filter>EntityBuilder</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="AuthenticPlayer.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerRenderer.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectIdentifier.cpp">
+      <Filter>NetEntity\ServerObject\ServerComponent\ObjectIdentifier</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="func.h">
+      <Filter>Header Files\func</Filter>
+    </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Precompiled Headers</Filter>
+      <Filter>Header Files\pch</Filter>
     </ClInclude>
-    <ClInclude Include="ServerSession.h" />
-    <ClInclude Include="AuthenticPlayer.h" />
-    <ClInclude Include="define.h" />
-    <ClInclude Include="EntityBuilder.h" />
-    <ClInclude Include="EntityMovement.h" />
-    <ClInclude Include="EventTimer.h" />
-    <ClInclude Include="func.h" />
-    <ClInclude Include="InputHandler.h" />
-    <ClInclude Include="Monster.h" />
-    <ClInclude Include="MoveInterpolator.h" />
-    <ClInclude Include="MovePacketSender.h" />
-    <ClInclude Include="ObjectIdentifier.h" />
-    <ClInclude Include="PlayerRenderer.h" />
-    <ClInclude Include="PositionSetter.h" />
-    <ClInclude Include="ServerComponent.h" />
-    <ClInclude Include="ServerObject.h" />
-    <ClInclude Include="ServerObjectMgr.h" />
-    <ClInclude Include="..\Protocols\CreateBuffer4Client.h">
-      <Filter>Precompiled Headers</Filter>
+    <ClInclude Include="MoveInterpolator.h">
+      <Filter>NetEntity\ServerObject\ServerComponent\MoveInterpolator</Filter>
     </ClInclude>
-    <ClInclude Include="..\Protocols\enum_generated.h">
-      <Filter>Precompiled Headers</Filter>
+    <ClInclude Include="MovePacketSender.h">
+      <Filter>NetEntity\ServerObject\ServerComponent\MovePacketSender</Filter>
     </ClInclude>
-    <ClInclude Include="..\Protocols\protocol_define.h">
-      <Filter>Precompiled Headers</Filter>
+    <ClInclude Include="PositionSetter.h">
+      <Filter>NetEntity\ServerObject\ServerComponent\PositionSetter</Filter>
     </ClInclude>
-    <ClInclude Include="..\Protocols\protocol_generated.h">
-      <Filter>Precompiled Headers</Filter>
+    <ClInclude Include="ServerObjectMgr.h">
+      <Filter>NetEntity\ServerObjectMgr</Filter>
     </ClInclude>
-    <ClInclude Include="..\Protocols\s2c_PacketHandler.h">
-      <Filter>Precompiled Headers</Filter>
+    <ClInclude Include="ServerSession.h">
+      <Filter>NetEntity\ServerSession</Filter>
     </ClInclude>
-    <ClInclude Include="..\Protocols\struct_generated.h">
-      <Filter>Precompiled Headers</Filter>
+    <ClInclude Include="ServerObject.h">
+      <Filter>NetEntity\ServerObject</Filter>
     </ClInclude>
+    <ClInclude Include="ServerComponent.h">
+      <Filter>NetEntity\ServerObject\ServerComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocols\enum_generated.h">
+      <Filter>Protocols\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocols\protocol_generated.h">
+      <Filter>Protocols\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocols\struct_generated.h">
+      <Filter>Protocols\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocols\CreateBuffer4Client.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocols\s2c_PacketHandler.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>Header Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityMovement.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTimer.h">
+      <Filter>EventTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.h">
+      <Filter>InputHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityBuilder.h">
+      <Filter>EntityBuilder</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="AuthenticPlayer.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerRenderer.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocols\protocol_define.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectIdentifier.h">
+      <Filter>NetEntity\ServerObject\ServerComponent\ObjectIdentifier</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Protocols\enum.fbs">
+      <Filter>Protocols\fbs</Filter>
+    </None>
+    <None Include="..\..\Protocols\struct.fbs">
+      <Filter>Protocols\fbs</Filter>
+    </None>
+    <None Include="..\..\Protocols\create_packet_handler.h.j2">
+      <Filter>Protocols\templates</Filter>
+    </None>
+    <None Include="..\..\Protocols\create_packet_template.cpp.j2">
+      <Filter>Protocols\templates</Filter>
+    </None>
+    <None Include="..\..\Protocols\create_packet_template.h.j2">
+      <Filter>Protocols\templates</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\Protocols\protocol.fbs">
+      <Filter>Protocols\fbs</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

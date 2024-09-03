@@ -5,89 +5,142 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="ClientSession">
+      <UniqueIdentifier>{7dba2f76-5c3c-49c9-bb4e-88376fee2a86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="predefine">
+      <UniqueIdentifier>{fd6ca222-4d0e-4084-bfca-ea4ccad816e0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="pch">
-      <UniqueIdentifier>{3df5d7c9-3daf-45df-98df-b3503d1c1c93}</UniqueIdentifier>
+    <Filter Include="predefine\pch">
+      <UniqueIdentifier>{c86498ff-aec7-4710-86c8-45bc8c11fd80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocols">
+      <UniqueIdentifier>{7a1e115b-9a7a-4076-90d3-e9602cea8d24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocols\fbs">
+      <UniqueIdentifier>{c03d9115-f426-40c7-84e6-962a959e532e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocols\generated">
+      <UniqueIdentifier>{f63eb009-5f61-4113-82e4-7c31774d4a88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocols\Protocol">
+      <UniqueIdentifier>{4138fc27-3396-4ca0-85a4-518e2b04553f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocols\templates">
+      <UniqueIdentifier>{aea5e660-90d6-4955-ada0-858870b72855}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SectorPredicate">
+      <UniqueIdentifier>{9fe04f13-b05e-4bd4-9d52-d183d2037262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ContentsComponents">
+      <UniqueIdentifier>{ff710fd3-b914-4706-9803-18e44195083e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ContentsComponents\PositionComponent">
+      <UniqueIdentifier>{c56a17d5-d4fd-4828-9dde-2cc0e863020b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ContentsWorld">
+      <UniqueIdentifier>{540180f5-2d59-4307-85b1-3c367df4b752}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityFactory">
+      <UniqueIdentifier>{8f9455ea-949c-4ff6-b81c-db37c85ec045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityFactory\ContentsBehaviorNode">
+      <UniqueIdentifier>{87376198-e8bb-421f-929b-bb14619f1050}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Protocols\enum.fbs">
+      <Filter>Protocols\fbs</Filter>
+    </None>
+    <None Include="..\Protocols\struct.fbs">
+      <Filter>Protocols\fbs</Filter>
+    </None>
+    <None Include="..\Protocols\create_packet_handler.h.j2">
+      <Filter>Protocols\templates</Filter>
+    </None>
+    <None Include="..\Protocols\create_packet_template.cpp.j2">
+      <Filter>Protocols\templates</Filter>
+    </None>
+    <None Include="..\Protocols\create_packet_template.h.j2">
+      <Filter>Protocols\templates</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ClientSession.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ContentsBehaviorNode.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ContentsWorld.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="EntityFactory.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PositionComponent.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SectorPredicate.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>ClientSession</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>pch</Filter>
+      <Filter>predefine\pch</Filter>
     </ClCompile>
     <ClCompile Include="..\Protocols\c2s_PacketHandler.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Protocols\Protocol</Filter>
     </ClCompile>
     <ClCompile Include="..\Protocols\CreateBuffer4Server.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Protocols\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="SectorPredicate.cpp">
+      <Filter>SectorPredicate</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionComponent.cpp">
+      <Filter>ContentsComponents\PositionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="ContentsWorld.cpp">
+      <Filter>ContentsWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityFactory.cpp">
+      <Filter>EntityFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="ContentsBehaviorNode.cpp">
+      <Filter>EntityFactory\ContentsBehaviorNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientSession.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ContentsBehaviorNode.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ContentsWorld.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityFactory.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PositionComponent.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="SectorPredicate.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>ClientSession</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>pch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Protocols\c2s_PacketHandler.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Protocols\CreateBuffer4Server.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>predefine\pch</Filter>
     </ClInclude>
     <ClInclude Include="..\Protocols\enum_generated.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Protocols\protocol_define.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Protocols\generated</Filter>
     </ClInclude>
     <ClInclude Include="..\Protocols\protocol_generated.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Protocols\generated</Filter>
     </ClInclude>
     <ClInclude Include="..\Protocols\struct_generated.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Protocols\generated</Filter>
     </ClInclude>
+    <ClInclude Include="..\Protocols\c2s_PacketHandler.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Protocols\CreateBuffer4Server.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="SectorPredicate.h">
+      <Filter>SectorPredicate</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionComponent.h">
+      <Filter>ContentsComponents\PositionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="ContentsWorld.h">
+      <Filter>ContentsWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityFactory.h">
+      <Filter>EntityFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="ContentsBehaviorNode.h">
+      <Filter>EntityFactory\ContentsBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Protocols\protocol_define.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Protocols\protocol.fbs">
+      <Filter>Protocols\fbs</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
