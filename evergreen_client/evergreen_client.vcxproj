@@ -138,6 +138,9 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClientNetwork\ClientNetwork.vcxproj">
+      <Project>{7ce04002-f924-48ae-a29a-ab30be842f2c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\common\common.vcxproj">
       <Project>{c0cbe185-8506-4671-9f9a-813fd075e8c4}</Project>
     </ProjectReference>
