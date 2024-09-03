@@ -1,0 +1,69 @@
+include "enum.fbs";
+include "struct.fbs";
+
+namespace Nagox.Protocol;
+
+table c2s_LOGIN
+{
+    name:string;
+}
+
+table s2c_LOGIN
+{
+    obj_id:uint32;
+}
+
+table c2s_ENTER
+{
+    pos:Nagox.Struct.Vec3;
+}
+
+table s2c_APPEAR_OBJECT
+{
+    obj_id: uint32;
+    group_type: Nagox.Enum.GROUP_TYPE;
+    obj_type_info: ubyte;
+    appear_pos: Nagox.Struct.Vec3;
+}
+
+table s2c_REMOVE_OBJECT
+{
+    obj_id:uint32;
+}
+
+table c2s_MOVE
+{
+    pos: Nagox.Struct.Vec3;
+    vel: Nagox.Struct.Vec3;
+    accel: Nagox.Struct.Vec3;
+    body_angle: float;
+    time_stamp: uint64;
+}
+
+table s2c_MOVE
+{
+    obj_id : uint64;
+    pos: Nagox.Struct.Vec3;
+    vel: Nagox.Struct.Vec3;
+    accel: Nagox.Struct.Vec3;
+    body_angle: float;
+    time_stamp: uint64;
+}
+
+
+table s2c_MONSTER_ATTACK
+{
+    dmg : uint32;
+}
+
+table s2c_MONSTER_AGGRO_START
+{
+    group_type: Nagox.Enum.GROUP_TYPE;
+    obj_type_info: ubyte;
+}
+
+table s2c_MONSTER_AGGRO_END
+{
+    group_type: Nagox.Enum.GROUP_TYPE;
+    obj_type_info: ubyte;
+}
