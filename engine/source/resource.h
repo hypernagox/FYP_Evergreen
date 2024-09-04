@@ -62,6 +62,7 @@ namespace udsdx
 	class Resource
 	{
 	private:
+		std::wstring m_resourceRootPath;
 		std::unordered_map<std::wstring, std::unique_ptr<ResourceObject>> m_resources;
 
 		std::unordered_map<std::wstring, std::unique_ptr<ResourceLoader>> m_loaders;
@@ -73,6 +74,7 @@ namespace udsdx
 		~Resource();
 
 		void Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* rootSignature);
+		void SetResourceRootPath(std::wstring_view path);
 
 	private:
 		void InitializeLoaders(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* rootSignature);

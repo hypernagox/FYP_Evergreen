@@ -7,16 +7,16 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 
 	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
 
-	auto shader = INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\color.hlsl");
+	auto shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl"));
 	m_playerMaterial = std::make_shared<udsdx::Material>();
-	m_playerMaterial->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\Sprite-0001.png"));
+	m_playerMaterial->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
 	m_transformBody = pBody->GetTransform();
 	m_rendererObj->AddChild(pBody);
 	m_rendererObj->GetTransform()->SetLocalPosition(Vector3::Up * -0.05f);
 
 	auto pBodyMesh = pBody->AddComponent<MeshRenderer>();
-	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(L"resource\\char_sample.fbx"));
+	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"char_sample.fbx")));
 	pBodyMesh->SetShader(shader);
 	pBodyMesh->SetMaterial(m_playerMaterial.get());
 

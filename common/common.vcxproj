@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />
+    <ClCompile Include="PathManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HeightMap.h" />
+    <ClInclude Include="PathManager.h" />
     <ClInclude Include="SimpleMath.h" />
   </ItemGroup>
   <ItemGroup>

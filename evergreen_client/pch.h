@@ -13,6 +13,8 @@
 
 #include <ClientNetworkPch.h>
 
+#include <PathManager.h>
+
 #include <updown_studio.h>
 
 #include "define.h"

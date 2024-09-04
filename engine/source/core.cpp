@@ -59,9 +59,9 @@ namespace udsdx
 			m_frameResources[i] = std::make_unique<FrameResource>(m_d3dDevice.Get());
 		}
 
-		auto audio = Singleton<Audio>::CreateInstance();
-		auto resource = Singleton<Resource>::CreateInstance();
-		m_timeMeasure = Singleton<TimeMeasure>::CreateInstance();
+		auto audio = Singleton<Audio>::GetInstance();
+		auto resource = Singleton<Resource>::GetInstance();
+		m_timeMeasure = Singleton<TimeMeasure>::GetInstance();
 
 #if defined(DEBUG) || defined(_DEBUG)
 		Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE);

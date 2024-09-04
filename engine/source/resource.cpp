@@ -21,21 +21,16 @@ namespace udsdx
 
 	void Resource::Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* rootSignature)
 	{ ZoneScoped;
-		std::wstring path = L"resource\\";
-
 		InitializeLoaders(device, commandQueue, commandList, rootSignature);
 		InitializeExtensionDictionary();
 		InitializeIgnoreFiles();
 
 		DebugConsole::Log("Registering resources...");
 		
-		// if the directory does not exist, create it
-		if (!std::filesystem::exists(path))
-		{
-			std::filesystem::create_directory(path);
-		}
+		// if the directory does not exist, this must be an error
+		assert(std::filesystem::exists(m_resourceRootPath));
 
-		for (const auto& directory : std::filesystem::recursive_directory_iterator(path))
+		for (const auto& directory : std::filesystem::recursive_directory_iterator(m_resourceRootPath))
 		{
 			// if the file is not a regular file(e.g. if it is a directory), skip it
 			if (!directory.is_regular_file())
@@ -73,6 +68,11 @@ namespace udsdx
 			m_resources.insert(std::make_pair(path, loader_iter->second->Load(path)));
 		}
 		std::cout << std::endl;
+	}
+
+	void Resource::SetResourceRootPath(std::wstring_view path)
+	{
+		m_resourceRootPath = path;
 	}
 
 	void Resource::InitializeLoaders(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* rootSignature)

@@ -65,6 +65,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
+    INSTANCE(Resource)->SetResourceRootPath(RESOURCE_PATH(L""));
     UpdownStudio::Initialize(hInstance);
     UpdownStudio::RegisterUpdateCallback(Update);
 
@@ -105,13 +106,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     auto res = INSTANCE(Resource);
-    auto shader = res->Load<Shader>(L"resource\\color.hlsl");
+    auto shader = res->Load<Shader>(RESOURCE_PATH(L"color.hlsl"));
 
     playerMaterial = std::make_shared<udsdx::Material>();
-    playerMaterial->SetMainTexture(res->Load<udsdx::Texture>(L"resource\\Sprite-0001.png"));
+    playerMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
     terrainMaterial = std::make_shared<udsdx::Material>();
-    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(L"resource\\terrain_diffuse.png"));
+    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"terrain_diffuse.png")));
 
     scene = std::make_shared<Scene>();
 
@@ -134,7 +135,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     scene->AddObject(playerLightObj);
 
-    heightMap = std::make_unique<HeightMap>(L"resource\\terrain_height.raw", 4096, 4096);
+    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 4096, 4096);
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 1000, 1000, 1.0f);
     terrainMesh->CreateBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
@@ -151,8 +152,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_skyboxObject->GetTransform()->SetLocalScale(Vector3::One * 500.0f);
     g_skyboxObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromAxisAngle(Vector3::Right, PIDIV2));
 
-    auto skyboxMesh = INSTANCE(Resource)->Load<udsdx::Mesh>(L"resource\\Skybox.fbx");
-    auto skyboxTexture = INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\Skybox.jpg");
+    auto skyboxMesh = INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Skybox.fbx"));
+    auto skyboxTexture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"));
 
     g_skyboxMaterial = std::make_shared<udsdx::Material>();
     g_skyboxMaterial->SetMainTexture(skyboxTexture);
@@ -160,7 +161,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     auto skyboxRenderer = g_skyboxObject->AddComponent<MeshRenderer>();
     skyboxRenderer->SetMesh(skyboxMesh);
     skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
-    skyboxRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\skybox.hlsl"));
+    skyboxRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"skybox.hlsl")));
     skyboxRenderer->SetCastShadow(false);
 
     scene->AddObject(g_skyboxObject);

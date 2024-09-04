@@ -8,16 +8,16 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 
 	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
 
-	auto shader = INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\color.hlsl");
+	auto shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl"));
 	m_monsterMaterial = std::make_shared<udsdx::Material>();
-	m_monsterMaterial->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\Sprite-0001.png"));
+	m_monsterMaterial->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
 	m_transformBody = pBody->GetTransform();
 	m_rendererObj->AddChild(pBody);
 	m_rendererObj->GetTransform()->SetLocalPosition(Vector3::Up * -0.05f);
 
 	auto pBodyMesh = pBody->AddComponent<MeshRenderer>();
-	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(L"resource\\fox_v1.fbx"));
+	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"fox_v1.fbx")));
 	pBodyMesh->SetShader(shader);
 	pBodyMesh->SetMaterial(m_monsterMaterial.get());
 
