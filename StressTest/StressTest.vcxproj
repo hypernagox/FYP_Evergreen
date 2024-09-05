@@ -132,6 +132,9 @@
       <Command>
       </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)library\lib\$(Configuration)\dll\*.dll" "$(OutDir)" /D</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -157,6 +160,9 @@
       <Command>
       </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy /Y /S "$(SolutionDir)library\lib\$(Configuration)\dll\*.dll" "$(OutDir)" /D</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Protocols\CreateBuffer4Dummy.cpp" />
