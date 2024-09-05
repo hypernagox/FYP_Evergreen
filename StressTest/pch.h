@@ -2,15 +2,18 @@
 #include "flatbuffers/pch/pch.h"
 #include "flatbuffers/pch/flatc_pch.h"
 #include "flatbuffers/flatbuffers.h"
+#include "ServerCorePch.h"
 #include "enum_generated.h"
 #include "struct_generated.h"
 #include "protocol_generated.h"
-#include "CreateBuffer4Server.h"
-#include "c2s_PacketHandler.h"
-
+#include "s2c_DummyPacketHandler.h"
+#include "CreateBuffer4Dummy.h"
+#include "HeightMap.h"
 #include "SimpleMath.h"
-
-#include "ServerCorePch.h"
-#include "protocol_define.h"
-#include "ContentsComponent.h"
 #include "PathManager.h"
+
+#include "func.h"
+
+using DirectX::SimpleMath::Vector3;
+
+#pragma comment(lib, "common.lib")

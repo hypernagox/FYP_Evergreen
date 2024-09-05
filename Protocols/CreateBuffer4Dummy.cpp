@@ -7,7 +7,6 @@
 #include "protocol_generated.h"
 #include "s2c_DummyPacketHandler.h"
 
-
 static ServerCore::S_ptr<ServerCore::SendBuffer> CreateSendBuffer(const uint8_t* const flatBufferPtr, const PKT_ID pktId, const uint16_t dataSize) noexcept
 {
     const uint16_t packetSize = dataSize + static_cast<c_uint16>(sizeof(ServerCore::PacketHeader));
