@@ -1,7 +1,5 @@
 #include "pch.h"
-#include "flatbuffers/pch/pch.h"
-#include "flatbuffers/pch/flatc_pch.h"
-#include "flatbuffers/flatbuffers.h"
+#include <flatbuffers/flatbuffers.h>
 #include "s2c_PacketHandler.h"
 #include "../evergreen_client/ServerObjectMgr.h"
 #include "../evergreen_client/ServerObject.h"

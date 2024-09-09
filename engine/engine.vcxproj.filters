@@ -111,12 +111,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="external-include\d3dx12.h">
-      <Filter>External Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="external-include\stb_image.h">
-      <Filter>External Sources</Filter>
-    </ClInclude>
     <ClInclude Include="external-include\UploadBuffer.h">
       <Filter>External Sources</Filter>
     </ClInclude>
@@ -210,6 +204,9 @@
     </ClInclude>
     <ClInclude Include="source\rigged_mesh_renderer.h">
       <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\UploadBuffer.h">
+      <Filter>External Sources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
