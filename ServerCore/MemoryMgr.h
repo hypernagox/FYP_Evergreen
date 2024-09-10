@@ -34,7 +34,7 @@ namespace ServerCore
 	//};
 
 
-#define USE_TC_MALLOC
+// #define USE_TC_MALLOC
 
 	class Memory
 	{

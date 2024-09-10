@@ -9,16 +9,9 @@
 
 using namespace ServerCore;
 
-class TCMallocAllocator 
-	: public flatbuffers::Allocator {
-public:
-	virtual uint8_t* allocate(size_t size) override { return static_cast<uint8_t* const>(::tc_malloc(size)); }
-	virtual void deallocate(uint8_t* p, size_t size) override { return ::tc_free_sized(p, size); }
-};
-
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
-	thread_local TCMallocAllocator tc_alloc;
-	thread_local flatbuffers::FlatBufferBuilder buillder{ 256 ,&tc_alloc };
+	//thread_local TCMallocAllocator tc_alloc;
+	thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 	return &buillder;
 }
 

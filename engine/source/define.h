@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pch.h"
-#include <d3dx12.h>
+#include <directx/d3dx12.h>
 
 namespace udsdx
 {

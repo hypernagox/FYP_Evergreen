@@ -200,6 +200,6 @@ namespace ServerCore
 			m_ebrPQ.emplace(node);
 		}
 	private:
-		tbb::concurrent_priority_queue <EBRNode*, EBRCompare, StlAllocator64<EBRNode*>> m_ebrPQ;
+		tbb::concurrent_priority_queue <EBRNode*, EBRCompare> m_ebrPQ;
 	};
 }
