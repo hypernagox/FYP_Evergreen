@@ -206,7 +206,6 @@ namespace ServerCore
 	{
 		Sector* const before_sector = pBeforSector.get();
 		pEntity_->SetSectorInfo(before_sector->GetSectorID(), this);
-		std::atomic_thread_fence(std::memory_order_seq_cst);
 		Enter(group_type, obj_id, pEntity_);
 		before_sector->LeaveEnqueue(uint8_t{ group_type }, uint32_t{ obj_id });
 		MigrationAfterBehavior(before_sector, pEntity_);

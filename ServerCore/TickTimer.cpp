@@ -78,7 +78,7 @@ namespace ServerCore
 
 		const TIMER_STATE eCurState = TimerUpdate();
 
-		m_timer_state.store(TIMER_STATE::PREPARE, std::memory_order_relaxed);
+		m_timer_state.store(TIMER_STATE::PREPARE, std::memory_order_seq_cst);
 		const TIMER_STATE ePrevState = m_timer_state.exchange(eCurState, std::memory_order_release);
 		if (TIMER_STATE::RUN == eCurState && TIMER_STATE::PREPARE == ePrevState)
 		{

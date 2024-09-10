@@ -50,7 +50,7 @@ namespace ServerCore
 				if (oldTail != tail)continue;
 				if(true == compareExchange(&tail, &oldTail, value))
 				{
-					oldTail->next.store(value, std::memory_order_release);
+					oldTail->next.store(value, std::memory_order_seq_cst);
 					return;
 				}
 				bo.delay();
@@ -58,7 +58,7 @@ namespace ServerCore
 		}
 		const bool try_pop_single(T& _target)noexcept {
 			Node* const head_temp = head.load(std::memory_order_relaxed);
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_acquire))
+			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
 			{
 				Node* const oldHead = head_temp;
 				head.store(newHead, std::memory_order_release);
@@ -73,7 +73,7 @@ namespace ServerCore
 		}
 		const bool try_pop_single(Vector<T>& _targetForPushBack)noexcept {
 			Node* const head_temp = head.load(std::memory_order_relaxed);
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_acquire))
+			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
 			{
 				Node* const oldHead = head_temp;
 				head.store(newHead, std::memory_order_release);
@@ -84,7 +84,7 @@ namespace ServerCore
 			return false;
 		}
 		const bool try_pop_single(T& _target, Node*& head_temp)noexcept {
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_acquire))
+			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
 			{
 				Node* const oldHead = head_temp;
 				head_temp = newHead;
@@ -98,7 +98,7 @@ namespace ServerCore
 			return false;
 		}
 		const bool try_pop_single(Vector<T>& _targetForPushBack, Node*& head_temp)noexcept {
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_acquire))
+			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
 			{
 				Node* const oldHead = head_temp;
 				head_temp = newHead;
@@ -109,7 +109,7 @@ namespace ServerCore
 			return false;
 		}
 		const bool try_pop_single(std::vector<T>& _targetForPushBack, Node*& head_temp)noexcept {
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_acquire))
+			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
 			{
 				Node* const oldHead = head_temp;
 				head_temp = newHead;

@@ -80,7 +80,7 @@ namespace ServerCore
 		constexpr inline const T* const GetCurWorld()const noexcept { return m_moveBroadcaster.GetCurWorld<T>(); }
 	public:
 		inline const ID_Ptr<ServerCore::Sector> GetCombinedSectorInfo()const noexcept { return m_CurrentSectorInfo.load(std::memory_order_acquire); }
-		inline void SetSectorInfo(const uint16_t prev_sector_id, const ServerCore::Sector* const cur_sector)noexcept { m_CurrentSectorInfo.store(ID_Ptr<ServerCore::Sector>{ prev_sector_id, cur_sector }, std::memory_order_release); }
+		inline void SetSectorInfo(const uint16_t prev_sector_id, const ServerCore::Sector* const cur_sector)noexcept { m_CurrentSectorInfo.store(ID_Ptr<ServerCore::Sector>{ prev_sector_id, cur_sector }, std::memory_order_seq_cst); }
 		inline const uint16_t GetPrevSectorID()const noexcept { return GetCombinedSectorInfo().GetID(); }
 		template <typename T = ServerCore::Sector>
 		inline T* const GetCurSector()const noexcept { return static_cast<T* const>(GetCombinedSectorInfo().GetPtr()); }

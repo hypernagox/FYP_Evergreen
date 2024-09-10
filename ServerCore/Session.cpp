@@ -263,7 +263,7 @@ namespace ServerCore
 		if (0 == num)
 		{
 			const S_ptr<Session> temp_session{ send_event->PassIocpObject() };
-			m_bIsSendRegistered.store(false, std::memory_order_release);
+			m_bIsSendRegistered.store(false, std::memory_order_seq_cst);
 			std::this_thread::yield();
 			if (false == m_sendQueue.empty_single())
 				TrySend();
@@ -296,7 +296,7 @@ namespace ServerCore
 
 		OnSend(numofBytes_);
 
-		m_bIsSendRegistered.store(false, std::memory_order_release);
+		m_bIsSendRegistered.store(false, std::memory_order_seq_cst);
 
 		if (!m_sendQueue.empty_single() && false == m_bIsSendRegistered.exchange(true, std::memory_order_relaxed))
 			RegisterSend(std::move(pThisSessionPtr));
