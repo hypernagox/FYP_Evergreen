@@ -84,6 +84,9 @@
     <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

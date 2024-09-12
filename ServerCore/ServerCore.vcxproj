@@ -88,14 +88,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <LibraryPath>$(SolutionDir)..\Libraries\libs\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)..\Libraries\inc\;$(IncludePath);$(SolutionDir)libray\inc\;$(SolutionDir)library\inc\</IncludePath>
+    <LibraryPath>$(SolutionDir)..\Libraries\libs\;$(LibraryPath);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\Libraries\inc\;$(IncludePath);$(SolutionDir)libray\inc\;$(SolutionDir)library\inc\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)library\inc\;$(IncludePath);$(SolutionDir)libray\inc\;$(SolutionDir)library\inc\</IncludePath>
+    <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)library\inc\;$(IncludePath);$(SolutionDir)libray\inc\;$(SolutionDir)library\inc\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -92,6 +92,9 @@
     <IncludePath>$(SolutionDir)evergreen_server\;$(SolutionDir)ServerCore\;$(SolutionDir)library\inc\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

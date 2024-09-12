@@ -1,0 +1,12 @@
+{
+    "name": "evergreen-libs",
+    "version-string": "1.0.0",
+    "dependencies": [
+        "lua",
+        "flatbuffers",
+        "assimp",
+        "directxtex",
+        "directxtk12",
+        "tbb"
+    ]
+}

@@ -52,9 +52,10 @@
 using namespace Microsoft::WRL;
 
 // DirectX12 Library
-#include <directx/d3d12.h>
 #include <directx/d3dx12.h>
-//#include <directx/dxgi1_6.h>
+#include <d3d12.h>
+
+
 #include <d3dcompiler.h>
 
 #include <DirectXMath.h>
