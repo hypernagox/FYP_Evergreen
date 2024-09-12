@@ -278,7 +278,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\library\inc\UploadBuffer.h" />
-    <ClInclude Include="external-include\UploadBuffer.h" />
     <ClInclude Include="source\audio.h" />
     <ClInclude Include="source\audio_clip.h" />
     <ClInclude Include="source\camera.h" />

@@ -53,9 +53,6 @@ using namespace Microsoft::WRL;
 
 // DirectX12 Library
 #include <directx/d3dx12.h>
-//#include <d3d12.h>
-
-
 #include <d3dcompiler.h>
 
 #include <DirectXMath.h>
@@ -92,17 +89,3 @@ using namespace DirectX;
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "runtimeobject.lib")
-
-//#if defined(DEBUG) || defined(_DEBUG)
-//#pragma comment(lib, "zlibstaticd.lib")
-//#pragma comment(lib, "assimp-vc143-mtd.lib")
-//#pragma comment(lib, "DirectXTex.lib")
-//#pragma comment(lib, "DirectXTK12.lib")
-//
-//#else
-//#pragma comment(lib, "zlibstatic.lib")
-//#pragma comment(lib, "assimp-vc143-mt.lib")
-//#pragma comment(lib, "DirectXTex.lib")
-//#pragma comment(lib, "DirectXTK12.lib")
-//
-//#endif

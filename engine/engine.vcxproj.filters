@@ -80,14 +80,14 @@
     <ClCompile Include="source\allocation.cpp">
       <Filter>Utility Sources</Filter>
     </ClCompile>
-    <ClCompile Include="source\d3dUtil.cpp">
-      <Filter>Utility Sources</Filter>
-    </ClCompile>
     <ClCompile Include="source\scene.cpp">
       <Filter>Engine\Runtime</Filter>
     </ClCompile>
     <ClCompile Include="source\rigged_mesh_renderer.cpp">
       <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\d3dUtil.cpp">
+      <Filter>External Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,9 +111,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="external-include\UploadBuffer.h">
-      <Filter>External Sources</Filter>
-    </ClInclude>
     <ClInclude Include="source\scene_object.h">
       <Filter>Engine\Runtime</Filter>
     </ClInclude>
@@ -190,9 +187,6 @@
     <ClInclude Include="source\singleton.h">
       <Filter>Utility Sources</Filter>
     </ClInclude>
-    <ClInclude Include="source\d3dUtil.h">
-      <Filter>Utility Sources</Filter>
-    </ClInclude>
     <ClInclude Include="source\pch.h">
       <Filter>Precompiled Headers</Filter>
     </ClInclude>
@@ -204,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="source\rigged_mesh_renderer.h">
       <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\d3dUtil.h">
+      <Filter>External Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\library\inc\UploadBuffer.h">
       <Filter>External Sources</Filter>
