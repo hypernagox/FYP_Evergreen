@@ -59,7 +59,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableUnitySupport>false</EnableUnitySupport>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -67,7 +67,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableUnitySupport>false</EnableUnitySupport>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -75,7 +75,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableUnitySupport>false</EnableUnitySupport>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -104,19 +104,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
-    <ExternalIncludePath>$(SolutionDir)library\inc\;$(IncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)library\inc\;$(IncludePath);$(ExternalIncludePath)</ExternalIncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
-    <ExternalIncludePath>$(SolutionDir)library\inc\;$(IncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)library\inc\;$(IncludePath);$(ExternalIncludePath)</ExternalIncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(ProjectDir)include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
-    <ExternalIncludePath>$(SolutionDir)library\inc\;$(IncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)library\inc\;$(IncludePath);$(ExternalIncludePath)</ExternalIncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">

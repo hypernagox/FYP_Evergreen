@@ -86,11 +86,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)evergreen_server\;$(SolutionDir)ServerCore\;$(SolutionDir)library\inc\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)library\lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)evergreen_server\;$(SolutionDir)ServerCore\;$(SolutionDir)library\inc\;$(IncludePath);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)library\lib\;$(LibraryPath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
