@@ -401,19 +401,19 @@ namespace udsdx
 
 	bool Core::CheckTearingSupport() const
 	{
-		return false;
-//#ifndef PIXSUPPORT
-//		ComPtr<IDXGIFactory6> factory;
-//		HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&factory));
-//		BOOL allowTearing = FALSE;
-//		if (SUCCEEDED(hr))
-//		{
-//			hr = factory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));
-//		}
-//		return SUCCEEDED(hr) && allowTearing;
-//#else
-//		return true;
-//#endif
+// #ifndef PIXSUPPORT
+#if FALSE
+		ComPtr<IDXGIFactory6> factory;
+		HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&factory));
+		BOOL allowTearing = FALSE;
+		if (SUCCEEDED(hr))
+		{
+			hr = factory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));
+		}
+		return SUCCEEDED(hr) && allowTearing;
+#else
+		return true;
+#endif
 	}
 
 	void Core::LogAdapterInfo()
