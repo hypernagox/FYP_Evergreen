@@ -8,88 +8,6 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/IOStream.hpp>
 
-//class CustomIOStream : public Assimp::IOStream
-//{
-//public:
-//	CustomIOStream(const std::wstring& filePath, const char* mode) {
-//		file.open(filePath.c_str(), std::ios::binary);
-//	}
-//
-//	~CustomIOStream() override {
-//		if (file.is_open()) {
-//			file.close();
-//		}
-//	}
-//
-//	size_t Read(void* buffer, size_t size, size_t count) override {
-//		file.read(static_cast<char*>(buffer), size * count);
-//		return file.gcount();
-//	}
-//
-//	size_t Write(const void* buffer, size_t size, size_t count) override {
-//		return 0; // Read-only implementation
-//	}
-//
-//	aiReturn Seek(size_t offset, aiOrigin origin) override {
-//		std::ios_base::seekdir dir;
-//		switch (origin) {
-//		case aiOrigin_SET: dir = std::ios::beg; break;
-//		case aiOrigin_CUR: dir = std::ios::cur; break;
-//		case aiOrigin_END: dir = std::ios::end; break;
-//		default: return aiReturn_FAILURE;
-//		}
-//		file.seekg(offset, dir);
-//		return file.good() ? aiReturn_SUCCESS : aiReturn_FAILURE;
-//	}
-//
-//	size_t Tell() const override {
-//		return static_cast<size_t>(file.tellg());
-//	}
-//
-//	size_t FileSize() const override {
-//		std::ifstream in(file_path, std::ios::binary | std::ios::ate);
-//		return static_cast<size_t>(in.tellg());
-//	}
-//
-//	void Flush() override {}
-//
-//private:
-//	std::ifstream file;
-//	std::wstring file_path;
-//};
-//
-//class CustomIOSystem : public Assimp::IOSystem
-//{
-//public:
-//	CustomIOSystem(const std::wstring& baseDir) : mBaseDir(baseDir) {}
-//
-//	bool Exists(const char* file) const override
-//	{
-//		std::wstring fullPath = mBaseDir + "/" + file;
-//		std::ifstream f(fullPath.c_str());
-//		return f.good();
-//	}
-//
-//	char getOsSeparator() const override
-//	{
-//		return '/';
-//	}
-//
-//	Assimp::IOStream* Open(const char* file, const char* mode = "rb") override
-//	{
-//		std::wstring fullPath = mBaseDir + "/" + file;
-//		return new CustomIOStream(fullPath, mode);
-//	}
-//
-//	void Close(Assimp::IOStream* stream) override
-//	{
-//		delete stream;
-//	}
-//
-//private:
-//	std::string mBaseDir;
-//};
-
 namespace udsdx
 {
 	D3D12_VERTEX_BUFFER_VIEW Mesh::VertexBufferView() const
@@ -133,6 +51,11 @@ namespace udsdx
 
 	Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<UINT> indices) : ResourceObject()
 	{
+		if (vertices.empty() || indices.empty())
+		{
+			throw std::invalid_argument("Vertices and indices cannot be empty.");
+		}
+
 		Submesh submesh{};
 		submesh.IndexCount = static_cast<UINT>(indices.size());
 		submesh.StartIndexLocation = 0;
@@ -164,6 +87,11 @@ namespace udsdx
 		ComPtr<ID3DBlob> modelData;
 		ThrowIfFailed(D3DReadFileToBlob(resourcePath.data(), &modelData));
 
+		// Change the working directory to the resource path (for additional resources)
+		std::filesystem::path workingDirectory = std::filesystem::absolute(resourcePath).parent_path();
+		std::filesystem::path lastWorkingDirectory = std::filesystem::current_path();
+		std::filesystem::current_path(workingDirectory);
+
 		// Load the model using Assimp
 		Assimp::Importer importer;
 
@@ -172,6 +100,9 @@ namespace udsdx
 			static_cast<size_t>(modelData->GetBufferSize()),
 			aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_CalcTangentSpace
 		);
+
+		// Restore the working directory
+		std::filesystem::current_path(lastWorkingDirectory);
 
 		assert(model != nullptr);
 
