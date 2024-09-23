@@ -1,6 +1,7 @@
 {
     "name": "evergreen-libs",
     "version-string": "1.0.0",
+    "builtin-baseline": "98aa6396292d57e737a6ef999d4225ca488859d5", 
     "dependencies": [
         "lua",
         "flatbuffers",
@@ -8,5 +9,13 @@
         "directxtex",
         "directxtk12",
         "tbb"
+    ],
+    "overrides": [
+        {
+            "name": "assimp",
+            "version": "5.3.1#4"
+        }
     ]
 }
+
+

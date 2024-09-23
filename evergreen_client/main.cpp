@@ -112,7 +112,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     playerMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
     terrainMaterial = std::make_shared<udsdx::Material>();
-    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"terrain_diffuse.png")));
+    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Black_Sand_BaseColor.tif")));
 
     scene = std::make_shared<Scene>();
 
@@ -135,7 +135,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     scene->AddObject(playerLightObj);
 
-    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 4096, 4096);
+    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_heightmap_test.raw"), 128, 128);
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 1000, 1000, 1.0f);
     terrainMesh->CreateBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
@@ -210,7 +210,7 @@ void Update(const Time& time)
     Vector3 terrainPos = g_heroObj->GetTransform()->GetLocalPosition() * 0.01f;
     terrainPos.x = fmod(terrainPos.x + 1.0f, 1.0f);
     terrainPos.z = fmod(terrainPos.z + 1.0f, 1.0f);
-    float terrainHeight = heightMap->GetHeight(terrainPos.x * 4096, terrainPos.z * 4096);
+    float terrainHeight = heightMap->GetHeight(terrainPos.x * 4096/8, terrainPos.z * 4096/8);
     terrainPos.y = max(terrainPos.y, terrainHeight);
     g_heroObj->GetTransform()->SetLocalPosition(terrainPos * 100.0f);
     g_curPos = terrainPos * 100.0f;

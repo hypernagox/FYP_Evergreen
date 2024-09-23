@@ -95,6 +95,7 @@ namespace udsdx
 		m_extensionDictionary.insert(std::make_pair(L".gltf", L"model"));
 		m_extensionDictionary.insert(std::make_pair(L".hlsl", L"shader"));
 		m_extensionDictionary.insert(std::make_pair(L".wav", L"audio"));
+		m_extensionDictionary.insert(std::make_pair(L".fbx", L"model"));
 	}
 
 	void Resource::InitializeIgnoreFiles()

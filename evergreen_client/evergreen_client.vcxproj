@@ -206,6 +206,7 @@
   <ItemGroup>
     <ClInclude Include="..\Protocols\CreateBuffer4Client.h" />
     <ClInclude Include="..\Protocols\enum_generated.h" />
+    <ClInclude Include="..\Protocols\protocol_define.h" />
     <ClInclude Include="..\Protocols\protocol_generated.h" />
     <ClInclude Include="..\Protocols\s2c_PacketHandler.h" />
     <ClInclude Include="..\Protocols\struct_generated.h" />

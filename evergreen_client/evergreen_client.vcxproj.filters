@@ -212,6 +212,9 @@
     <ClInclude Include="..\Protocols\s2c_PacketHandler.h">
       <Filter>Protocols\Protocol</Filter>
     </ClInclude>
+    <ClInclude Include="..\Protocols\protocol_define.h">
+      <Filter>Protocols</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\enum.fbs">
