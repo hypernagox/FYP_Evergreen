@@ -92,6 +92,7 @@ namespace udsdx
 		m_extensionDictionary.insert(std::make_pair(L".tga", L"texture"));
 		m_extensionDictionary.insert(std::make_pair(L".tif", L"texture"));
 		m_extensionDictionary.insert(std::make_pair(L".obj", L"model"));
+		m_extensionDictionary.insert(std::make_pair(L".fbx", L"model"));
 		m_extensionDictionary.insert(std::make_pair(L".gltf", L"model"));
 		m_extensionDictionary.insert(std::make_pair(L".hlsl", L"shader"));
 		m_extensionDictionary.insert(std::make_pair(L".wav", L"audio"));

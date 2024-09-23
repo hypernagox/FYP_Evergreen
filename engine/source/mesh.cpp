@@ -91,6 +91,7 @@ namespace udsdx
 		std::filesystem::path workingDirectory = std::filesystem::absolute(resourcePath).parent_path();
 		std::filesystem::path lastWorkingDirectory = std::filesystem::current_path();
 		std::filesystem::current_path(workingDirectory);
+		std::string extension = std::filesystem::path(resourcePath).extension().string().substr(1);
 
 		// Load the model using Assimp
 		Assimp::Importer importer;
@@ -98,7 +99,8 @@ namespace udsdx
 		auto model = importer.ReadFileFromMemory(
 			modelData->GetBufferPointer(),
 			static_cast<size_t>(modelData->GetBufferSize()),
-			aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_CalcTangentSpace
+			aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_CalcTangentSpace,
+			extension.data()
 		);
 
 		// Restore the working directory
