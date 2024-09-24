@@ -137,7 +137,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_test.raw"), 4096/8, 4096/8);
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 1000, 1000, 1.0f);
-    terrainMesh->CreateBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
+    terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
     terrainObj = std::make_shared<SceneObject>();
     terrainObj->GetTransform()->SetLocalScale(Vector3::One * 100.0f);

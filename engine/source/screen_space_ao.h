@@ -55,6 +55,13 @@ namespace udsdx
 		void BuildOffsetVectors();
 		void BuildBlurWeights();
 
+	public:
+		CD3DX12_GPU_DESCRIPTOR_HANDLE GetAmbientMapGpuSrv() const { return m_ambientMapGpuSrv; }
+		CD3DX12_GPU_DESCRIPTOR_HANDLE GetSSAOMapGpuSrv() const { return m_ssaomapGpuSrv; }
+		CD3DX12_GPU_DESCRIPTOR_HANDLE GetBlurMapGpuSrv() const { return m_blurMapGpuSrv; }
+		CD3DX12_GPU_DESCRIPTOR_HANDLE GetNormalMapGpuSrv() const { return m_normalMapGpuSrv; }
+		CD3DX12_GPU_DESCRIPTOR_HANDLE GetDepthMapGpuSrv() const { return m_depthMapGpuSrv; }
+
 	private:
 		ID3D12Device* m_device;
 

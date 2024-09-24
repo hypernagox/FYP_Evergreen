@@ -5,7 +5,7 @@
 namespace udsdx
 {
 	class SceneObject;
-	class MeshRenderer;
+	class RendererBase;
 	class Camera;
 	class LightDirectional;
 
@@ -25,11 +25,11 @@ namespace udsdx
 	public:
 		void EnqueueRenderCamera(Camera* camera);
 		void EnqueueRenderLight(LightDirectional* light);
-		void EnqueueRenderObject(MeshRenderer* object);
-		void EnqueueRenderShadowObject(MeshRenderer* object);
+		void EnqueueRenderObject(RendererBase* object);
+		void EnqueueRenderShadowObject(RendererBase* object);
 
 		void RenderShadowSceneObjects(RenderParam& param, int instances = 1);
-		void RenderSceneObjects(RenderParam& param, int instances = 1, std::function<void(RenderParam&, MeshRenderer*)> preProcessor = nullptr);
+		void RenderSceneObjects(RenderParam& param, int instances = 1);
 
 	private:
 		void PassRenderShadow(RenderParam& param, Camera* camera, LightDirectional* light);
@@ -42,8 +42,8 @@ namespace udsdx
 
 		std::vector<Camera*> m_renderCameraQueue;
 		std::vector<LightDirectional*> m_renderLightQueue;
-		std::vector<MeshRenderer*> m_renderObjectQueue;
-		std::vector<MeshRenderer*> m_renderShadowObjectQueue;
+		std::vector<RendererBase*> m_renderObjectQueue;
+		std::vector<RendererBase*> m_renderShadowObjectQueue;
 	};
 }
 

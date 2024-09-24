@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "screen_space_ao.h"
+#include "deferred_renderer.h"
 #include "frame_resource.h"
 #include "scene_object.h"
 #include "transform.h"
@@ -215,8 +216,7 @@ namespace udsdx
 		SamplerState gsamDepthMap : register(s2);
 		SamplerState gsamLinearWrap : register(s3);
  
-		static const float2 gTexCoords[6] =
-		{
+		static const float2 gTexCoords[6] = {
 			float2(0.0f, 1.0f),
 			float2(0.0f, 0.0f),
 			float2(1.0f, 0.0f),
@@ -325,7 +325,7 @@ namespace udsdx
 		memcpy(ssaoCB.OffsetVectors, m_offsets, sizeof(m_offsets));
 
 		// Coordinates given in view space.
-		ssaoCB.OcclusionRadius = 0.5f;
+		ssaoCB.OcclusionRadius = 0.25f;
 		ssaoCB.OcclusionFadeStart = 0.2f;
 		ssaoCB.OcclusionFadeEnd = 1.0f;
 		ssaoCB.SurfaceEpsilon = 0.05f;
@@ -407,7 +407,8 @@ namespace udsdx
 
 		pCommandList->SetGraphicsRootSignature(m_ssaoRootSignature.Get());
 		pCommandList->SetGraphicsRootConstantBufferView(0, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
-		pCommandList->SetGraphicsRootDescriptorTable(1, m_normalMapGpuSrv);
+		pCommandList->SetGraphicsRootDescriptorTable(1, param.Renderer->GetGBufferSrv(1));
+		pCommandList->SetGraphicsRootDescriptorTable(2, param.Renderer->GetDepthBufferSrv());
 
 		pCommandList->SetPipelineState(m_ssaoPSO.Get());
 
@@ -450,7 +451,8 @@ namespace udsdx
 		pCommandList->SetGraphicsRoot32BitConstant(0, 0, 0);
 		pCommandList->SetGraphicsRootConstantBufferView(1, m_blurConstantBuffer->Resource()->GetGPUVirtualAddress());
 		pCommandList->SetGraphicsRootDescriptorTable(2, m_ssaomapGpuSrv);
-		pCommandList->SetGraphicsRootDescriptorTable(3, m_normalMapGpuSrv);
+		pCommandList->SetGraphicsRootDescriptorTable(3, param.Renderer->GetGBufferSrv(1));
+		pCommandList->SetGraphicsRootDescriptorTable(4, param.Renderer->GetDepthBufferSrv());
 
 		pCommandList->DrawInstanced(6, 1, 0, 0);
 
@@ -469,8 +471,10 @@ namespace udsdx
 		pCommandList->OMSetRenderTargets(1, &m_ambientMapCpuRtv, true, nullptr);
 
 		pCommandList->SetGraphicsRoot32BitConstant(0, 1, 0);
+		pCommandList->SetGraphicsRootConstantBufferView(1, m_blurConstantBuffer->Resource()->GetGPUVirtualAddress());
 		pCommandList->SetGraphicsRootDescriptorTable(2, m_blurMapGpuSrv);
-		pCommandList->SetGraphicsRootDescriptorTable(3, m_normalMapGpuSrv);
+		pCommandList->SetGraphicsRootDescriptorTable(3, param.Renderer->GetGBufferSrv(1));
+		pCommandList->SetGraphicsRootDescriptorTable(4, param.Renderer->GetDepthBufferSrv());
 
 		pCommandList->DrawInstanced(6, 1, 0, 0);
 
@@ -667,18 +671,22 @@ namespace udsdx
 		};
 
 		{
-			CD3DX12_DESCRIPTOR_RANGE texTable;
-			texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 0, 0);
+			CD3DX12_DESCRIPTOR_RANGE texTable1;
+			texTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
+			CD3DX12_DESCRIPTOR_RANGE texTable2;
+			texTable2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
 
 			// Root parameter can be a table, root descriptor or root constants.
-			CD3DX12_ROOT_PARAMETER slotRootParameter[2];
+			CD3DX12_ROOT_PARAMETER slotRootParameter[3];
 
 			// Perfomance TIP: Order from most frequent to least frequent.
 			slotRootParameter[0].InitAsConstantBufferView(0);
-			slotRootParameter[1].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
+			slotRootParameter[1].InitAsDescriptorTable(1, &texTable1, D3D12_SHADER_VISIBILITY_PIXEL);
+			slotRootParameter[2].InitAsDescriptorTable(1, &texTable2, D3D12_SHADER_VISIBILITY_PIXEL);
 
 			// A root signature is an array of root parameters.
-			CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter,
+			CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(3, slotRootParameter,
 				(UINT)staticSamplers.size(), staticSamplers.data(),
 				D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
@@ -706,17 +714,21 @@ namespace udsdx
 			texTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 			CD3DX12_DESCRIPTOR_RANGE texTable2;
-			texTable2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 1);
+			texTable2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
 
-			CD3DX12_ROOT_PARAMETER slotRootParameter[4];
+			CD3DX12_DESCRIPTOR_RANGE texTable3;
+			texTable3.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
+
+			CD3DX12_ROOT_PARAMETER slotRootParameter[5];
 
 			slotRootParameter[0].InitAsConstants(1, 0);
 			slotRootParameter[1].InitAsConstantBufferView(1);
 			slotRootParameter[2].InitAsDescriptorTable(1, &texTable1, D3D12_SHADER_VISIBILITY_PIXEL);
 			slotRootParameter[3].InitAsDescriptorTable(1, &texTable2, D3D12_SHADER_VISIBILITY_PIXEL);
+			slotRootParameter[4].InitAsDescriptorTable(1, &texTable3, D3D12_SHADER_VISIBILITY_PIXEL);
 
 			// A root signature is an array of root parameters.
-			CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(4, slotRootParameter,
+			CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(5, slotRootParameter,
 				(UINT)staticSamplers.size(), staticSamplers.data(),
 				D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 

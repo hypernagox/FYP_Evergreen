@@ -1,11 +1,17 @@
 #include "pch.h"
-#include "resource.h"
+#include "resource_load.h"
 #include "texture.h"
 #include "mesh.h"
+#include "rigged_mesh.h"
 #include "shader.h"
 #include "debug_console.h"
 #include "audio.h"
 #include "audio_clip.h"
+
+// Assimp Library
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace udsdx
 {
@@ -26,7 +32,7 @@ namespace udsdx
 		InitializeIgnoreFiles();
 
 		DebugConsole::Log("Registering resources...");
-		
+
 		// if the directory does not exist, this must be an error
 		assert(std::filesystem::exists(m_resourceRootPath));
 
@@ -65,9 +71,17 @@ namespace udsdx
 			}
 
 			DebugConsole::Log(L"> " + iter->second + L": " + path);
-			m_resources.insert(std::make_pair(path, loader_iter->second->Load(path)));
+			m_resources.emplace(path, loader_iter->second->Load(path));
 		}
 		std::cout << std::endl;
+	}
+
+	void Resource::InitializeLoaders(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* rootSignature)
+	{
+		m_loaders.emplace(L"texture", std::make_unique<TextureLoader>(device, commandQueue, commandList));
+		m_loaders.emplace(L"model", std::make_unique<ModelLoader>(device, commandList));
+		m_loaders.emplace(L"shader", std::make_unique<ShaderLoader>(device, commandList, rootSignature));
+		m_loaders.emplace(L"audio", std::make_unique<AudioClipLoader>(device, commandList));
 	}
 
 	void Resource::SetResourceRootPath(std::wstring_view path)
@@ -75,28 +89,20 @@ namespace udsdx
 		m_resourceRootPath = path;
 	}
 
-	void Resource::InitializeLoaders(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* rootSignature)
-	{
-		m_loaders.insert(std::make_pair(L"texture", std::make_unique<TextureLoader>(device, commandQueue, commandList)));
-		m_loaders.insert(std::make_pair(L"model", std::make_unique<ModelLoader>(device, commandList)));
-		m_loaders.insert(std::make_pair(L"shader", std::make_unique<ShaderLoader>(device, commandList, rootSignature)));
-		m_loaders.insert(std::make_pair(L"audio", std::make_unique<AudioClipLoader>(device, commandList)));
-	}
-
 	void Resource::InitializeExtensionDictionary()
 	{
-		m_extensionDictionary.insert(std::make_pair(L".png", L"texture"));
-		m_extensionDictionary.insert(std::make_pair(L".jpg", L"texture"));
-		m_extensionDictionary.insert(std::make_pair(L".jpeg", L"texture"));
-		m_extensionDictionary.insert(std::make_pair(L".bmp", L"texture"));
-		m_extensionDictionary.insert(std::make_pair(L".tga", L"texture"));
-		m_extensionDictionary.insert(std::make_pair(L".tif", L"texture"));
-		m_extensionDictionary.insert(std::make_pair(L".obj", L"model"));
-		m_extensionDictionary.insert(std::make_pair(L".fbx", L"model"));
-		m_extensionDictionary.insert(std::make_pair(L".gltf", L"model"));
-		m_extensionDictionary.insert(std::make_pair(L".hlsl", L"shader"));
-		m_extensionDictionary.insert(std::make_pair(L".wav", L"audio"));
-		m_extensionDictionary.insert(std::make_pair(L".fbx", L"model"));
+		m_extensionDictionary.emplace(L".png", L"texture");
+		m_extensionDictionary.emplace(L".jpg", L"texture");
+		m_extensionDictionary.emplace(L".jpeg", L"texture");
+		m_extensionDictionary.emplace(L".bmp", L"texture");
+		m_extensionDictionary.emplace(L".tif", L"texture");
+		m_extensionDictionary.emplace(L".obj", L"model");
+		m_extensionDictionary.emplace(L".fbx", L"model");
+		m_extensionDictionary.emplace(L".dae", L"model");
+		m_extensionDictionary.emplace(L".glb", L"model");
+		m_extensionDictionary.emplace(L".gltf", L"model");
+		m_extensionDictionary.emplace(L".hlsl", L"shader");
+		m_extensionDictionary.emplace(L".wav", L"audio");
 	}
 
 	void Resource::InitializeIgnoreFiles()
@@ -129,10 +135,48 @@ namespace udsdx
 
 	std::unique_ptr<ResourceObject> ModelLoader::Load(std::wstring_view path)
 	{ ZoneScoped;
-		auto modelResource = std::make_unique<Mesh>(path);
-		modelResource->CreateBuffers(m_device, m_commandList);
+		std::filesystem::path pathString(path);
 
-		return modelResource;
+		// Load the model using Assimp
+		Assimp::Importer importer;
+		auto assimpScene = importer.ReadFile(
+			pathString.string(),
+			aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights
+		);
+
+		assert(assimpScene != nullptr);
+
+		bool hasBones = false;
+		for (UINT i = 0; i < assimpScene->mNumMeshes && !hasBones; ++i)
+		{
+			hasBones |= assimpScene->mMeshes[i]->HasBones();
+		}
+
+		XMFLOAT4X4 preMultiplication;
+		std::string extension = pathString.extension().string();
+		transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+		if (extension == ".fbx")
+		{
+			XMStoreFloat4x4(&preMultiplication, XMMatrixRotationX(XM_PIDIV2));
+		}
+		else
+		{
+			XMStoreFloat4x4(&preMultiplication, XMMatrixIdentity());
+		}
+
+		std::unique_ptr<MeshBase> mesh = nullptr;
+		if (hasBones)
+		{
+			mesh = std::make_unique<RiggedMesh>(*assimpScene, preMultiplication);
+			DebugConsole::Log("\tRegistered the resource as RiggedMesh");
+		}
+		else
+		{
+			mesh = std::make_unique<Mesh>(*assimpScene, preMultiplication);
+			DebugConsole::Log("\tRegistered the resource as Mesh");
+		}
+		mesh->UploadBuffers(m_device, m_commandList);
+		return mesh;
 	}
 
 	ShaderLoader::ShaderLoader(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* rootSignature) : ResourceLoader(device, commandList), m_rootSignature(rootSignature)

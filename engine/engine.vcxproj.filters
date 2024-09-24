@@ -13,9 +13,6 @@
     <ClCompile Include="source\mesh.cpp">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="source\resource.cpp">
-      <Filter>Engine\Resource</Filter>
-    </ClCompile>
     <ClCompile Include="source\resource_object.cpp">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
@@ -86,8 +83,23 @@
     <ClCompile Include="source\rigged_mesh_renderer.cpp">
       <Filter>Engine\Runtime</Filter>
     </ClCompile>
+    <ClCompile Include="source\rigged_mesh.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\mesh_base.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\renderer_base.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\deferred_renderer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
     <ClCompile Include="source\d3dUtil.cpp">
       <Filter>External Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resource_load.cpp">
+      <Filter>Engine\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +120,9 @@
     </Filter>
     <Filter Include="Engine\Runtime">
       <UniqueIdentifier>{ad6e46dd-10b9-42f9-9140-69f76530286a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{999016cd-aabb-44ef-a37f-7d3d53d75760}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -142,9 +157,6 @@
       <Filter>Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="source\mesh.h">
-      <Filter>Engine\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="source\resource.h">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="source\resource_object.h">
@@ -199,11 +211,34 @@
     <ClInclude Include="source\rigged_mesh_renderer.h">
       <Filter>Engine\Runtime</Filter>
     </ClInclude>
+    <ClInclude Include="source\rigged_mesh.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\mesh_base.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\renderer_base.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\deferred_renderer.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\UploadBuffer.h">
+      <Filter>External Sources</Filter>
+    </ClInclude>
     <ClInclude Include="source\d3dUtil.h">
       <Filter>External Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\library\inc\UploadBuffer.h">
-      <Filter>External Sources</Filter>
+    <ClInclude Include="source\resource_load.h">
+      <Filter>Engine\Resource</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource\engine.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

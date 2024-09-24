@@ -2,15 +2,17 @@
 
 #include "pch.h"
 
-#include "resource.h"
+#include "resource_load.h"
 #include "resource_object.h"
 #include "material.h"
 #include "mesh.h"
+#include "rigged_mesh.h"
 #include "texture.h"
 #include "shader.h"
 #include "texture.h"
 #include "audio_clip.h"
 #include "shadow_map.h"
+#include "deferred_renderer.h"
 
 #include "debug_console.h"
 #include "time_measure.h"
@@ -23,6 +25,7 @@
 #include "transform.h"
 #include "component.h"
 #include "mesh_renderer.h"
+#include "rigged_mesh_renderer.h"
 #include "camera.h"
 #include "light_directional.h"
 

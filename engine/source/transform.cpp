@@ -127,9 +127,10 @@ namespace udsdx
 		}
 
 		// All properties of the transform are converted to XMVECTOR without an explicit conversion.
-		XMMATRIX m = XMMatrixScalingFromVector(m_scale);
-		m = XMMatrixMultiply(m, XMMatrixRotationQuaternion(m_rotation));
-		m = XMMatrixMultiply(m, XMMatrixTranslationFromVector(m_position));
+		XMVECTOR t = XMLoadFloat3(&m_position);
+		XMVECTOR r = XMLoadFloat4(&m_rotation);
+		XMVECTOR s = XMLoadFloat3(&m_scale);
+		XMMATRIX m = XMMatrixAffineTransformation(s, XMVectorZero(), r, t);
 
 		// Apply the local SRT matrix.
 		XMStoreFloat4x4(&m_localSRTMatrix, m);

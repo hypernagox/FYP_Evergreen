@@ -18,11 +18,11 @@ namespace udsdx
 	public:
 		void OnResize(UINT newWidth, UINT newHeight, ID3D12Device* device);
 		void BuildDescriptors(DescriptorParam& descriptorParam, ID3D12Device* device);
-		void BuildPipelineState(ID3D12Device* pDevice, ID3D12RootSignature* pRootSignature);
 
 		void Pass(RenderParam& param, Scene* target, Camera* camera, LightDirectional* light);
 
 	public:
+		D3D12_GPU_VIRTUAL_ADDRESS GetConstantBuffer(int frameResourceIndex) const;
 		D3D12_GPU_DESCRIPTOR_HANDLE GetSrvGpu() const;
 
 		void SetShadowRange(UINT index, float value);
@@ -43,7 +43,6 @@ namespace udsdx
 		D3D12_GPU_DESCRIPTOR_HANDLE m_srvGpu;
 
 		ComPtr<ID3D12Resource> m_shadowMap;
-		ComPtr<ID3D12PipelineState> m_shadowPso;
 
 		std::array<std::unique_ptr<UploadBuffer<ShadowConstants>>, FrameResourceCount> m_constantBuffers;
 	};

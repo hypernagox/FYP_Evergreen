@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.h"
-#include <directx/d3dx12.h>
 
 namespace udsdx
 {
@@ -24,12 +23,16 @@ namespace udsdx
 
 	class ShadowMap;
 	class ScreenSpaceAO;
+	class DeferredRenderer;
+
 	struct RenderParam
 	{
 		ID3D12Device* Device;
 		ID3D12GraphicsCommandList* CommandList;
 		ID3D12RootSignature* RootSignature;
 		ID3D12DescriptorHeap* SRVDescriptorHeap;
+
+		DeferredRenderer* Renderer;
 
 		float AspectRatio;
 		int FrameResourceIndex;
@@ -63,6 +66,19 @@ namespace udsdx
 		UINT CbvSrvUavDescriptorSize;
 		UINT RtvDescriptorSize;
 		UINT DsvDescriptorSize;
+	};
+
+	enum RootParam : UINT
+	{
+		PerObjectCBV = 0,
+		PerCameraCBV = 1,
+		BonesCBV = 2,
+		PerShadowCBV = 3,
+		PerFrameCBV = 4,
+		MainTexSRV = 5,
+		NormalSRV = 6,
+		ShadowMapSRV = 7,
+		SSAOMapSRV = 8
 	};
 
 	static constexpr int FrameResourceCount = 2;

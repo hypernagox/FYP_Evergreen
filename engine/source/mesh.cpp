@@ -1,112 +1,34 @@
 #include "pch.h"
 #include "mesh.h"
+#include "debug_console.h"
 
 // Assimp Library
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <assimp/IOSystem.hpp>
-#include <assimp/IOStream.hpp>
 
 namespace udsdx
 {
-	D3D12_VERTEX_BUFFER_VIEW Mesh::VertexBufferView() const
+	Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<UINT> indices) : MeshBase()
 	{
-		D3D12_VERTEX_BUFFER_VIEW vbv;
-		vbv.BufferLocation = m_vertexBufferGPU->GetGPUVirtualAddress();
-		vbv.StrideInBytes = m_vertexByteStride;
-		vbv.SizeInBytes = m_vertexBufferByteSize;
-
-		return vbv;
-	}
-
-	D3D12_INDEX_BUFFER_VIEW Mesh::IndexBufferView() const
-	{
-		D3D12_INDEX_BUFFER_VIEW ibv;
-		ibv.BufferLocation = m_indexBufferGPU->GetGPUVirtualAddress();
-		ibv.Format = m_indexFormat;
-		ibv.SizeInBytes = m_indexBufferByteSize;
-
-		return ibv;
-	}
-
-	const std::vector<Mesh::Submesh>& Mesh::GetSubmeshes() const
-	{
-		return m_submeshes;
-	}
-
-	void Mesh::DisposeUploaders()
-	{
-		m_vertexBufferUploader = nullptr;
-		m_indexBufferUploader = nullptr;
-
-		m_vertexBufferCPU = nullptr;
-		m_indexBufferCPU = nullptr;
-	}
-
-	const BoundingBox& Mesh::GetBounds() const
-	{
-		return m_bounds;
-	}
-
-	Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<UINT> indices) : ResourceObject()
-	{
-		if (vertices.empty() || indices.empty())
-		{
-			throw std::invalid_argument("Vertices and indices cannot be empty.");
-		}
-
 		Submesh submesh{};
 		submesh.IndexCount = static_cast<UINT>(indices.size());
 		submesh.StartIndexLocation = 0;
 		submesh.BaseVertexLocation = 0;
 		m_submeshes.emplace_back(submesh);
 
-		const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-		const UINT ibByteSize = (UINT)indices.size() * sizeof(UINT);
-
-		ThrowIfFailed(D3DCreateBlob(vbByteSize, &m_vertexBufferCPU));
-		CopyMemory(m_vertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
-
-		ThrowIfFailed(D3DCreateBlob(ibByteSize, &m_indexBufferCPU));
-		CopyMemory(m_indexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
-
-		m_vertexByteStride = sizeof(Vertex);
-		m_vertexBufferByteSize = vbByteSize;
-		m_indexBufferByteSize = ibByteSize;
-
+		MeshBase::CreateBuffers<Vertex>(vertices, indices);
 		BoundingBox::CreateFromPoints(m_bounds, vertices.size(), &vertices[0].position, sizeof(Vertex));
 	}
 
-	Mesh::Mesh(std::wstring_view resourcePath) : ResourceObject()
+	Mesh::Mesh(const aiScene& assimpScene, const Matrix4x4& preMultiplication) : MeshBase()
 	{
+		XMMATRIX vertexTransform = XMLoadFloat4x4(&preMultiplication);
+
 		std::vector<Vertex> vertices;
 		std::vector<UINT> indices;
 
-		// Read the model from file
-		ComPtr<ID3DBlob> modelData;
-		ThrowIfFailed(D3DReadFileToBlob(resourcePath.data(), &modelData));
-
-		// Change the working directory to the resource path (for additional resources)
-		std::filesystem::path workingDirectory = std::filesystem::absolute(resourcePath).parent_path();
-		std::filesystem::path lastWorkingDirectory = std::filesystem::current_path();
-		std::filesystem::current_path(workingDirectory);
-		std::string extension = std::filesystem::path(resourcePath).extension().string().substr(1);
-
-		// Load the model using Assimp
-		Assimp::Importer importer;
-
-		auto model = importer.ReadFileFromMemory(
-			modelData->GetBufferPointer(),
-			static_cast<size_t>(modelData->GetBufferSize()),
-			aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_CalcTangentSpace,
-			extension.data()
-		);
-
-		// Restore the working directory
-		std::filesystem::current_path(lastWorkingDirectory);
-
-		assert(model != nullptr);
+		auto model = &assimpScene;
 
 		for (UINT k = 0; k < model->mNumMeshes; ++k)
 		{
@@ -142,7 +64,18 @@ namespace udsdx
 					vertex.tangent.y = mesh->mTangents[i].y;
 					vertex.tangent.z = mesh->mTangents[i].z;
 				}
-				vertices.push_back(vertex);
+
+				XMVECTOR pos = XMLoadFloat3(&vertex.position);
+				XMVECTOR nor = XMLoadFloat3(&vertex.normal);
+				XMVECTOR tan = XMLoadFloat3(&vertex.tangent);
+				pos = XMVector3Transform(pos, vertexTransform);
+				nor = XMVector3TransformNormal(nor, vertexTransform);
+				tan = XMVector3TransformNormal(tan, vertexTransform);
+				XMStoreFloat3(&vertex.position, pos);
+				XMStoreFloat3(&vertex.normal, nor);
+				XMStoreFloat3(&vertex.tangent, tan);
+
+				vertices.emplace_back(vertex);
 			}
 
 			for (UINT i = 0; i < mesh->mNumFaces; ++i)
@@ -153,40 +86,11 @@ namespace udsdx
 					indices.push_back(face.mIndices[j]);
 				}
 			}
+
+			DebugConsole::Log(std::string("\tSubmesh \'") + submesh.Name.c_str() + "\' generated");
 		}
 
-		const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-		const UINT ibByteSize = (UINT)indices.size() * sizeof(UINT);
-
-		ThrowIfFailed(D3DCreateBlob(vbByteSize, &m_vertexBufferCPU));
-		CopyMemory(m_vertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
-
-		ThrowIfFailed(D3DCreateBlob(ibByteSize, &m_indexBufferCPU));
-		CopyMemory(m_indexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
-
-		m_vertexByteStride = sizeof(Vertex);
-		m_vertexBufferByteSize = vbByteSize;
-		m_indexBufferByteSize = ibByteSize;
-
+		CreateBuffers<Vertex>(vertices, indices);
 		BoundingBox::CreateFromPoints(m_bounds, vertices.size(), &vertices[0].position, sizeof(Vertex));
-	}
-
-	void Mesh::CreateBuffers(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
-	{
-		m_vertexBufferGPU = d3dUtil::CreateDefaultBuffer(
-			device,
-			commandList,
-			m_vertexBufferCPU->GetBufferPointer(),
-			m_vertexBufferByteSize,
-			m_vertexBufferUploader
-		);
-
-		m_indexBufferGPU = d3dUtil::CreateDefaultBuffer(
-			device,
-			commandList,
-			m_indexBufferCPU->GetBufferPointer(),
-			m_indexBufferByteSize,
-			m_indexBufferUploader
-		);
 	}
 }

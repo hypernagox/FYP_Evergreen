@@ -2,8 +2,16 @@
 
 #include "pch.h"
 
+#include <assimp/LogStream.hpp>
+
 namespace udsdx
 {
+	class AssimpLogStream : public Assimp::LogStream
+	{
+	public:
+		void write(const char* message) override;
+	};
+
 	class DebugConsole
 	{
 	private:

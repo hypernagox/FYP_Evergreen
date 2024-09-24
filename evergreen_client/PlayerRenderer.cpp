@@ -15,8 +15,8 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_rendererObj->AddChild(pBody);
 	m_rendererObj->GetTransform()->SetLocalPosition(Vector3::Up * -0.05f);
 
-	auto pBodyMesh = pBody->AddComponent<MeshRenderer>();
-	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"char_sample.gltf")));
+	auto pBodyMesh = pBody->AddComponent<RiggedMeshRenderer>();
+	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"char_sample.gltf")));
 	pBodyMesh->SetShader(shader);
 	pBodyMesh->SetMaterial(m_playerMaterial.get());
 

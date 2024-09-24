@@ -18,8 +18,18 @@ namespace udsdx
 		m_mainTex = texture;
 	}
 
+	void Material::SetNormalTexture(Texture* texture)
+	{
+		m_normalTex = texture;
+	}
+
 	Texture* Material::GetMainTexture() const
 	{
 		return m_mainTex;
+	}
+
+	Texture* Material::GetNormalTexture() const
+	{
+		return m_normalTex;
 	}
 }

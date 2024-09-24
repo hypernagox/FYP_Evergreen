@@ -10,6 +10,7 @@ namespace udsdx
 	class Scene;
 	class ShadowMap;
 	class ScreenSpaceAO;
+	class DeferredRenderer;
 
 	class Core
 	{
@@ -25,9 +26,11 @@ namespace udsdx
 		void DisplayFrameStats();
 		void OnDestroy();
 
-		void BuildDescriptorHeaps();
+		void RegisterDescriptorsToHeaps();
 		void BuildConstantBuffers();
 		void BuildRootSignature();
+
+		void CreateMRTRenderTargetViews();
 
 		void ExecuteCommandList();
 		void FlushCommandQueue();
@@ -76,9 +79,11 @@ namespace udsdx
 		void CreateSwapChain();
 
 		// Create Direct3D 12 Descriptor Heaps for
+		// * Constant Buffer View (CBV)
+		// * Shader Resource View (SRV)
 		// * Render Target View (RTV)
 		// * Depth/Stencil View (DSV)
-		void CreateRtvAndDsvDescriptorHeaps();
+		void CreateDescriptorHeaps();
 
 		// Enumerate adapters and outputs using DXGI Factory
 		void LogAdapterInfo();
@@ -168,7 +173,10 @@ namespace udsdx
 		std::array<ComPtr<ID3D12Resource>, SwapChainBufferCount> m_swapChainBuffers;
 		int m_currBackBuffer = 0;
 
-		//
+		// Deferred Renderer
+		std::unique_ptr<DeferredRenderer> m_deferredRenderer;
+
+		// Depth/Stencil Buffer
 		ComPtr<ID3D12Resource> m_depthStencilBuffer;
 
 		// Descriptor Heap

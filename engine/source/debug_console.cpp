@@ -3,6 +3,17 @@
 
 namespace udsdx
 {
+	void AssimpLogStream::write(const char* message)
+	{
+		// remove the newline character
+		std::string_view messageView(message);
+		if (messageView.back() == '\n')
+		{
+			messageView.remove_suffix(1);
+		}
+		DebugConsole::Log(messageView);
+	}
+
 	std::string ToNarrowString(std::wstring_view wideString)
 	{
 		std::string narrowString;

@@ -1,33 +1,21 @@
 #include "common.hlsl"
 
-struct VertexIn
-{
-	float3 PosL         : POSITION;
-    float2 Tex          : TEXCOORD;
-    float3 Normal       : NORMAL;
-    float3 Tangent      : TANGENT;
-};
-
-struct VertexOut
-{
-	float4 PosH         : SV_POSITION;
-    float4 PosW         : POSITION;
-    float2 Tex          : TEXCOORD;
-};
-
 VertexOut VS(VertexIn vin)
 {
-	VertexOut vout;
-	
-	// Transform to homogeneous clip space.
-    vout.PosW = mul(float4(vin.PosL, 1.0f), gWorld);
-	vout.PosH = mul(mul(vout.PosW, gView), gProj);
-    vout.Tex = vin.Tex;
-    
+    VertexOut vout;
+    ConstructVSOutput(vin, vout);
+
     return vout;
 }
 
-float4 PS(VertexOut pin) : SV_Target
+PixelOut PS(VertexOut pin)
 {
-    return gMainTex.Sample(gSampler, pin.Tex);
+    PixelOut pOut;
+    float3 normal = normalize(mul(pin.NormalW.xyz, (float3x3) gView));
+    float4 texColor = gMainTex.Sample(gSampler, pin.Tex);
+     
+    pOut.Buffer1 = texColor;
+    pOut.Buffer2.xyz = normal;
+    pOut.Buffer3 = pin.PosW;
+    return pOut;
 }

@@ -10,12 +10,12 @@ namespace udsdx
 	private:
 		// Pipeline State Object:
 		// used to define the pipeline state (works like a program in OpenGL)
-		ComPtr<ID3D12PipelineState> m_pipelineState;
+		ComPtr<ID3D12PipelineState> m_defaultPipelineState;
+		ComPtr<ID3D12PipelineState> m_riggedPipelineState;
+		ComPtr<ID3D12PipelineState> m_shadowPipelineState;
+		ComPtr<ID3D12PipelineState> m_riggedShadowPipelineState;
 
-		// Compiled Vertex Shader Code (bytecode)
-		ComPtr<ID3DBlob> m_vsByteCode;
-		// Compiled Pixel Shader Code (bytecode)
-		ComPtr<ID3DBlob> m_psByteCode;
+		std::wstring m_path;
 
 	public:
 		Shader(std::wstring_view path);
@@ -24,6 +24,9 @@ namespace udsdx
 		void BuildPipelineState(ID3D12Device* pDevice, ID3D12RootSignature* pRootSignature);
 
 	public:
-		ID3D12PipelineState* PipelineState() const;
+		ID3D12PipelineState* DefaultPipelineState() const;
+		ID3D12PipelineState* RiggedPipelineState() const;
+		ID3D12PipelineState* ShadowPipelineState() const;
+		ID3D12PipelineState* RiggedShadowPipelineState() const;
 	};
 }

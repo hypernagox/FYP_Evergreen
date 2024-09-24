@@ -13,9 +13,13 @@ namespace udsdx
 
 	private:
 		Texture* m_mainTex = nullptr;
+		Texture* m_normalTex = nullptr;
 
 	public:
 		void SetMainTexture(Texture* texture);
+		void SetNormalTexture(Texture* texture);
+
 		Texture* GetMainTexture() const;
+		Texture* GetNormalTexture() const;
 	};
 }

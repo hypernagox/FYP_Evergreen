@@ -61,7 +61,7 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	case 2:
 	{
 		float target = fMaxDist;
-		pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, min(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
+		pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, std::min(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
 		pCameraTransfrom->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PI, 0.0f, 0.0f));
 		break;
 	}
