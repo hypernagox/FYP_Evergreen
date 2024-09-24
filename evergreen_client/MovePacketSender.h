@@ -12,6 +12,6 @@ public:
 	void SetSendInterval(const float interval_)noexcept { m_sendInterval = interval_; }
 private:
 	float m_accTime = 0.f;
-	float m_sendInterval = 0.15f;
+	float m_sendInterval = 0.5f;
 };
 

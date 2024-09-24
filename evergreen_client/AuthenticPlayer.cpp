@@ -169,7 +169,10 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	m_playerRenderer->SetRotation(Quaternion::CreateFromYawPitchRoll(m_rendererBodyAngleY * DEG2RAD + PI, 0.0f, 0.0f));
 
 	const bool vec3int_equal = vPrevState.x == m_vCurState.x && vPrevState.y == m_vCurState.y && vPrevState.z == m_vCurState.z;
-	m_bSendFlag = (!vec3int_equal);
+
+	auto sceneObject = GetSceneObject();
+	const auto input_handler = sceneObject->GetComponent<InputHandler>();
+	m_bSendFlag = (!vec3int_equal) || input_handler->IsKeyHit();
 
 
 	// 무브패킷 센드 업데이트

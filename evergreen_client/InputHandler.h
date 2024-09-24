@@ -50,6 +50,7 @@ public:
 	void AddKeyFunc(Keyboard::Keys key, KEY_STATE key_state, KeyFunc key_func)noexcept { m_keyTable[key_state][key] += std::move(key_func); }
 	template<typename Fp,typename... Args>
 	void AddKeyFunc(Keyboard::Keys key, KEY_STATE key_state, Fp&& fp, Args&&... args)noexcept { m_keyTable[key_state][key] += [fp, args...]()noexcept {std::invoke(fp, (args)...); }; }
+	bool IsKeyHit()const noexcept;
 private:
 	using KeyTable = std::unordered_map<Keyboard::Keys, DelegaterVoid>;
 

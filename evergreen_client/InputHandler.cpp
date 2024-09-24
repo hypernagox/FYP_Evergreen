@@ -26,3 +26,18 @@ void InputHandler::Update(const udsdx::Time& time, udsdx::Scene& scene)
 	}
 }
 
+bool InputHandler::IsKeyHit() const noexcept
+{
+	for (const auto& key : m_keyTable[KEY_STATE::KET_TAP] | std::views::keys) 
+	{
+		if (g_keyCheckFunc[KEY_STATE::KET_TAP](key))
+			return true;
+	}
+	for (const auto& key : m_keyTable[KEY_STATE::KEY_AWAY] | std::views::keys)
+	{
+		if (g_keyCheckFunc[KEY_STATE::KEY_AWAY](key))
+			return true;
+	}
+	return false;
+}
+
