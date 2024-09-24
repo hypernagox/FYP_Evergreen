@@ -459,7 +459,7 @@ namespace udsdx
 			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
 	}
 
-	void DeferredRenderer::PassRender(RenderParam& renderParam)
+	void DeferredRenderer::PassRender(RenderParam& renderParam, CameraConstants cameraConstants)
 	{
 		ID3D12GraphicsCommandList* pCommandList = renderParam.CommandList;
 
@@ -476,6 +476,7 @@ namespace udsdx
 
 		pCommandList->SetPipelineState(m_renderPipelineState.Get());
 
+		renderParam.CommandList->SetGraphicsRoot32BitConstants(0, sizeof(CameraConstants) / 4, &cameraConstants, 0);
 		pCommandList->SetGraphicsRootConstantBufferView(1, renderParam.RenderShadowMap->GetConstantBuffer(renderParam.FrameResourceIndex));
 		pCommandList->SetGraphicsRootDescriptorTable(2, m_gBuffersGpuSrv[0]);
 		pCommandList->SetGraphicsRootDescriptorTable(3, renderParam.RenderShadowMap->GetSrvGpu());

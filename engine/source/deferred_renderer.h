@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.h"
+#include "frame_resource.h"
 
 namespace udsdx
 {
@@ -24,7 +25,7 @@ namespace udsdx
 		void SetRenderTargets(ID3D12GraphicsCommandList* commandList);
 		void PassBufferPreparation(RenderParam& renderParam);
 		void PassBufferPostProcess(RenderParam& renderParam);
-		void PassRender(RenderParam& renderParam);
+		void PassRender(RenderParam& renderParam, CameraConstants cameraConstants);
 
 	public:
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetGBufferSrv(UINT index) const { return m_gBuffersGpuSrv[index]; }

@@ -125,8 +125,7 @@ namespace udsdx
 
 		PassRenderSSAO(param, camera);
 
-		param.CommandList->SetGraphicsRoot32BitConstants(0, sizeof(CameraConstants) / 4, &cameraConstants, 0);
-		param.Renderer->PassRender(param);
+		param.Renderer->PassRender(param, cameraConstants);
 	}
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)
