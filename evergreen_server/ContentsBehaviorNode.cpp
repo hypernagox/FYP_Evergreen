@@ -169,25 +169,25 @@ NodeStatus ChaseNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTi
    // std::cout << cur_pos.x << ' ' << cur_pos.y << ' ' << cur_pos.z << '\n';
     
     const auto dest_pos = awaker->GetComp<PositionComponent>()->pos;
-    static NaviMesh& nav = GetNavMesh("ExportedNavMesh.obj");
+    //static NaviMesh& nav = GetNavMesh("ExportedNavMesh.obj");
    // const auto  n  = nav.FindCellForPoint({ cur_pos.x / 1,cur_pos.y / 1,cur_pos.z / 1 });
     //std::cout << n->center.x << ' ' << n->center.y << ' ' << n->center.z << '\n';
-    const auto path = AStar(nav.FindCellForPoint({ cur_pos.x,cur_pos.y,cur_pos.z}), nav.FindCellForPoint({ dest_pos.x,dest_pos.y,dest_pos.z }));
-
-    if (path.size() >= 2) {
-        const auto vvv = GetMoveTargetPosition(path[0], path[1], { cur_pos.x,cur_pos.y,cur_pos.z }
-        , { dest_pos.x,dest_pos.y,dest_pos.z });
-        owner_comp_sys->GetComp<PositionComponent>()->pos = { vvv.x,vvv.y,vvv.z };
-        std::cout << path.size() << std::endl;
-        return NodeStatus::RUNNING;
-    }
-    else if (path.size() == 1) {
-       // owner_comp_sys->GetComp<PositionComponent>()->pos = dest_pos;
-      //  std::cout << path.size() << std::endl;
-    }
-    else {
-        return NodeStatus::FAILURE;
-    }
+   //const auto path = AStar(nav.FindCellForPoint({ cur_pos.x,cur_pos.y,cur_pos.z}), nav.FindCellForPoint({ dest_pos.x,dest_pos.y,dest_pos.z }));
+   //
+   //if (path.size() >= 2) {
+   //    const auto vvv = GetMoveTargetPosition(path[0], path[1], { cur_pos.x,cur_pos.y,cur_pos.z }
+   //    , { dest_pos.x,dest_pos.y,dest_pos.z });
+   //    owner_comp_sys->GetComp<PositionComponent>()->pos = { vvv.x,vvv.y,vvv.z };
+   //    std::cout << path.size() << std::endl;
+   //    return NodeStatus::RUNNING;
+   //}
+   //else if (path.size() == 1) {
+   //   // owner_comp_sys->GetComp<PositionComponent>()->pos = dest_pos;
+   //  //  std::cout << path.size() << std::endl;
+   //}
+   //else {
+   //    return NodeStatus::FAILURE;
+   //}
     const auto dx = dest_pos.x - cur_pos.x;
     const auto dy = dest_pos.y - cur_pos.y;
     const auto dz = dest_pos.z - cur_pos.z;
