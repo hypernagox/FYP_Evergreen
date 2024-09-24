@@ -187,6 +187,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)evergreen_server\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)evergreen_server\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="AStar.cpp" />
     <ClCompile Include="ClientSession.cpp" />
     <ClCompile Include="ContentsBehaviorNode.cpp" />
     <ClCompile Include="ContentsWorld.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="..\Protocols\protocol_define.h" />
     <ClInclude Include="..\Protocols\protocol_generated.h" />
     <ClInclude Include="..\Protocols\struct_generated.h" />
+    <ClInclude Include="AStar.h" />
     <ClInclude Include="ClientSession.h" />
     <ClInclude Include="ContentsBehaviorNode.h" />
     <ClInclude Include="ContentsWorld.h" />

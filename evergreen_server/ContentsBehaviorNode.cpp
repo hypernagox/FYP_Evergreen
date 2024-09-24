@@ -2,9 +2,15 @@
 #include "ContentsBehaviorNode.h"
 #include "TickTimer.h"
 #include "Session.h"
-
+#include "AStar.h"
 using namespace ServerCore;
 
+static NaviMesh& GetNavMesh(std::string_view fileName)
+{
+    static NaviMesh navMesh(50.0f);
+    navMesh.LoadObj(fileName.data());
+    return navMesh;
+}
 NodeStatus MoveNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
     //const auto cur_pos = pOwnerEntity->GetComp<PositionComponent>()->pos;
@@ -119,15 +125,69 @@ NodeStatus AttackNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickT
 
     return NodeStatus::RUNNING;
 }
+Vertex GetMoveTargetPosition(NaviCell* currentCell, NaviCell* nextCell, const Vertex& origin, const Vertex& dest) {
+    // 1. 두 셀이 공유하는 변이 있는지 확인
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            // 두 셀이 공유하는 변이 있으면 그 변의 중점을 반환
+            if ((currentCell->v1.x == nextCell->v1.x && currentCell->v1.z == nextCell->v1.z && currentCell->v2.x == nextCell->v2.x && currentCell->v2.z == nextCell->v2.z) ||
+                (currentCell->v2.x == nextCell->v2.x && currentCell->v2.z == nextCell->v2.z && currentCell->v3.x == nextCell->v3.x && currentCell->v3.z == nextCell->v3.z) ||
+                (currentCell->v3.x == nextCell->v3.x && currentCell->v3.z == nextCell->v3.z && currentCell->v1.x == nextCell->v1.x && currentCell->v1.z == nextCell->v1.z)) {
+                return currentCell->mid[i];  // 공유된 변의 중점(mid)을 반환
+            }
+        }
+    }
+
+    // 2. 공유된 변이 없는 경우, 현재 셀의 이웃들 중 가장 적당한 이동 위치 찾기
+    float minDistance = std::numeric_limits<float>::infinity();  // 최소 거리 값을 매우 큰 값으로 초기화
+    Vertex bestMidPoint = dest;  // 기본값으로 origin 위치
+
+    for (int i = 0; i < 3; ++i) {
+        NaviCell* neighbor = currentCell->link[i];
+        if (neighbor != nullptr) {
+            float distance = CalculateDistance(currentCell->center, neighbor->center);
+
+            // 적당한 이웃: 거리가 최소인 이웃을 선택
+            if (distance < minDistance) {
+                minDistance = distance;
+                bestMidPoint = currentCell->mid[i];  // 그 변의 중점을 반환
+            }
+        }
+    }
+
+    // 3. 가장 적당한 이웃이 없으면 origin 반환
+    return bestMidPoint;
+}
+
 
 NodeStatus ChaseNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
     const auto cur_pos = owner_comp_sys->GetComp<PositionComponent>()->pos;
     const auto pOwnerEntity = bt_root_timer->GetOwnerEntity();
     if (!awaker)return NodeStatus::FAILURE;
-        
+    
+   // std::cout << cur_pos.x << ' ' << cur_pos.y << ' ' << cur_pos.z << '\n';
+    
     const auto dest_pos = awaker->GetComp<PositionComponent>()->pos;
+    static NaviMesh& nav = GetNavMesh("ExportedNavMesh.obj");
+   // const auto  n  = nav.FindCellForPoint({ cur_pos.x / 1,cur_pos.y / 1,cur_pos.z / 1 });
+    //std::cout << n->center.x << ' ' << n->center.y << ' ' << n->center.z << '\n';
+    const auto path = AStar(nav.FindCellForPoint({ cur_pos.x,cur_pos.y,cur_pos.z}), nav.FindCellForPoint({ dest_pos.x,dest_pos.y,dest_pos.z }));
 
+    if (path.size() >= 2) {
+        const auto vvv = GetMoveTargetPosition(path[0], path[1], { cur_pos.x,cur_pos.y,cur_pos.z }
+        , { dest_pos.x,dest_pos.y,dest_pos.z });
+        owner_comp_sys->GetComp<PositionComponent>()->pos = { vvv.x,vvv.y,vvv.z };
+        std::cout << path.size() << std::endl;
+        return NodeStatus::RUNNING;
+    }
+    else if (path.size() == 1) {
+       // owner_comp_sys->GetComp<PositionComponent>()->pos = dest_pos;
+      //  std::cout << path.size() << std::endl;
+    }
+    else {
+        return NodeStatus::FAILURE;
+    }
     const auto dx = dest_pos.x - cur_pos.x;
     const auto dy = dest_pos.y - cur_pos.y;
     const auto dz = dest_pos.z - cur_pos.z;

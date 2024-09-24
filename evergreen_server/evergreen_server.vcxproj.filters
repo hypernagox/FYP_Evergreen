@@ -47,6 +47,12 @@
     <Filter Include="EntityFactory\ContentsBehaviorNode">
       <UniqueIdentifier>{87376198-e8bb-421f-929b-bb14619f1050}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PathModule">
+      <UniqueIdentifier>{75e5ad96-098d-4e22-aa59-a065a032d140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PathModule\AStar">
+      <UniqueIdentifier>{e42cb977-e108-4133-a9be-7d4517751e48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -78,6 +84,9 @@
     </ClCompile>
     <ClCompile Include="..\Protocols\CreateBuffer4Server.cpp">
       <Filter>Protocols\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="AStar.cpp">
+      <Filter>PathModule\AStar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +128,9 @@
     </ClInclude>
     <ClInclude Include="..\Protocols\CreateBuffer4Server.h">
       <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="AStar.h">
+      <Filter>PathModule\AStar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

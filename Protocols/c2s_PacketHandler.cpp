@@ -48,13 +48,18 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	EntityBuilder b;
 	b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 	b.obj_type = MONSTER_TYPE_INFO::FOX;
-	b.x = 0;
-	b.y = 0;
-	b.z = 0;
+	
+	b.x = 14.6667;
+	b.y = 0.0833333;
+	b.z = 14.6667;
 	static bool b2 = true;
 	if (b2)
 	{
 		const auto m = EntityFactory::CreateMonster(b);
+		m->GetComp<PositionComponent>()->pos.x = 14.6667f;
+		m->GetComp<PositionComponent>()->pos.y = 0.0833333f;
+		m->GetComp<PositionComponent>()->pos.z = 14.6667f;
+		
 		Mgr(WorldMgr)->GetWorld(0)->EnterWorldNPC(m);
 		b2 = false;
 	}

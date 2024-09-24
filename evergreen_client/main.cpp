@@ -135,7 +135,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     scene->AddObject(playerLightObj);
 
-    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_heightmap_test.raw"), 128, 128);
+    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_test.raw"), 4096/8, 4096/8);
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 1000, 1000, 1.0f);
     terrainMesh->CreateBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
@@ -225,7 +225,7 @@ void SetTerrainPos(const std::shared_ptr<SceneObject>& p)
     Vector3 terrainPos = p->GetTransform()->GetLocalPosition() * 0.01f;
     terrainPos.x = fmod(terrainPos.x + 1.0f, 1.0f);
     terrainPos.z = fmod(terrainPos.z + 1.0f, 1.0f);
-    float terrainHeight = heightMap->GetHeight(terrainPos.x * 4096, terrainPos.z * 4096);
+    float terrainHeight = heightMap->GetHeight(terrainPos.x * 4096/8, terrainPos.z * 4096/8);
     terrainPos.y = max(terrainPos.y, terrainHeight);
     p->GetTransform()->SetLocalPosition(terrainPos * 100.0f);
 }
