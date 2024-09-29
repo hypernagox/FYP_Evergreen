@@ -1,5 +1,5 @@
+#include "pch.h"
 #include "PathManager.h"
-#include <Windows.h>
 
 PathManager::PathManager()
 {

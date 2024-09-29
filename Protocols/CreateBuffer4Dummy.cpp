@@ -1,5 +1,4 @@
-#include "flatbuffers/pch/pch.h"
-#include "flatbuffers/pch/flatc_pch.h"
+#include <flatbuffers/flatbuffers.h>
 #include "flatbuffers/flatbuffers.h"
 #include "../ServerCore/ServerCorePch.h"
 #include "enum_generated.h"

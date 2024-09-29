@@ -7,7 +7,9 @@
         "assimp",
         "directxtex",
         "directxtk12",
-        "tbb"
+        "tbb",
+        "jemalloc"
     ]
 }
+
 

@@ -41,6 +41,30 @@ namespace ServerCore
 		friend constexpr const bool operator!=(const StlAllocator<T>& a, const StlAllocator<T>& b)noexcept { return !(a == b); }
 	};
 
+	template<typename T>
+	class StlAllocator64
+	{
+	public:
+		using value_type = T;
+
+		constexpr StlAllocator64()noexcept {}
+
+		template<typename Other>
+		StlAllocator64(const StlAllocator64<Other>&) {}
+
+		constexpr static T* const allocate(const size_t count)noexcept {
+			return Memory::AlignedAlloc<T>((sizeof(T) * count), std::hardware_constructive_interference_size);
+		}
+
+		constexpr static void deallocate(T* const ptr, const size_t count)noexcept { 
+			return Memory::AlignedFree(ptr, std::hardware_constructive_interference_size);
+		}
+
+		friend constexpr const bool operator==(const StlAllocator64<T>&, const StlAllocator64<T>&)noexcept { return true; }
+
+		friend constexpr const bool operator!=(const StlAllocator64<T>& a, const StlAllocator64<T>& b)noexcept { return !(a == b); }
+	};
+
 	template <typename T>
 	struct UDeleter { constexpr inline void operator()(T* const ptr) const noexcept { xdelete<T>(ptr); } };
 

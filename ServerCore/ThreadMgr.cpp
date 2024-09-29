@@ -153,11 +153,12 @@ namespace ServerCore
 	{
 		if (NUM_OF_THREADS >= LThreadId && 0 < LThreadId)
 		{
-			if (g_initTLSCallBack)
+			if (g_destroyTLSCallBack)
 			{
-				g_initTLSCallBack();
+				g_destroyTLSCallBack();
 			}
 		}
+		LSendBufferChunk.reset();
 	}
 
 	void ThreadMgr::TryGlobalQueueTask()noexcept

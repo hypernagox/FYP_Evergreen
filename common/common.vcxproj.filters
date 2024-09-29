@@ -4,12 +4,44 @@
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="PathManager.h" />
+    <ClInclude Include="NaviCell.h">
+      <Filter>Navigation\NaviCell</Filter>
+    </ClInclude>
+    <ClInclude Include="NaviMesh.h">
+      <Filter>Navigation\NaviMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>pch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="PathManager.cpp" />
+    <ClCompile Include="NaviCell.cpp">
+      <Filter>Navigation\NaviCell</Filter>
+    </ClCompile>
+    <ClCompile Include="NaviMesh.cpp">
+      <Filter>Navigation\NaviMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Navigation">
+      <UniqueIdentifier>{e798a5b7-4f39-4998-bb94-bb35498fe522}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Navigation\NaviCell">
+      <UniqueIdentifier>{3ce7a38c-d0d0-4bbb-8362-4e70fb215be3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Navigation\NaviMesh">
+      <UniqueIdentifier>{f97c0b5c-fe99-44c9-9ced-d51df696305d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{a7d34600-7870-4f24-8b53-fd3b2f3f99fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -3,6 +3,8 @@
 
 namespace ServerCore
 {
+	extern thread_local Vector<WSABUF> wsaBufs;
+
     void DBPacketSender::Init() noexcept
     {
 		m_iocpEvent.SetIocpObject(SharedFromThis<IocpObject>());
@@ -19,7 +21,7 @@ namespace ServerCore
 
 		m_sendVec.reserve(temp.size());
 
-		m_bRegisterSend.store(false, std::memory_order_release);
+		m_bRegisterSend.store(false, std::memory_order_seq_cst);
 
 		if (!m_sendQueue.empty_single() && false == m_bRegisterSend.exchange(true, std::memory_order_relaxed))
 			RegisterDBPacket();
@@ -27,6 +29,8 @@ namespace ServerCore
 
     void DBPacketSender::RegisterDBPacket() noexcept
     {
+		extern thread_local Vector<WSABUF> wsaBufs;
+
 		m_sendQueue.try_flush_single(m_sendVec);
 
 		const auto num = m_sendVec.size();
@@ -37,14 +41,6 @@ namespace ServerCore
 			return;
 		}
 
-		Vector<WSABUF> wsaBufs;
-		wsaBufs.reserve(num);
-
-		for (const auto& sb : m_sendVec)
-		{
-			wsaBufs.emplace_back(static_cast<const ULONG>(sb->WriteSize()), reinterpret_cast<char* const>(sb->Buffer()));
-		}
-		
 		m_iocpEvent.Init();
 
 		if (SOCKET_ERROR == ::WSASend(m_queryServerSocket, wsaBufs.data(), static_cast<const DWORD>(num), NULL, 0, &m_iocpEvent, nullptr))

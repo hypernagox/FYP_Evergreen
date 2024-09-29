@@ -102,6 +102,12 @@ namespace ServerCore
 		).count();
 	}
 
+	constexpr static inline const uint64_t GetSystemTimeStampMilliseconds() noexcept {
+		return std::chrono::duration_cast<std::chrono::duration<uint64_t, std::milli>>(
+			std::chrono::system_clock::now().time_since_epoch()
+		).count();
+	}
+
 	constexpr static inline const float GetTimeStampSeconds()noexcept {
 		return static_cast<const float>(GetTimeStampMilliseconds()) / 1000.f;
 	}

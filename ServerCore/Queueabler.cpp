@@ -41,7 +41,7 @@ namespace ServerCore
 		Task task;
 		bool flag = false;
 		auto& origin_head = m_taskQueue.head_for_single_pop();
-		auto head_temp = origin_head.load(std::memory_order_acquire);
+		auto head_temp = origin_head.load(std::memory_order_seq_cst);
 		for (;;)
 		{
 			int32_t taskCount = 0;

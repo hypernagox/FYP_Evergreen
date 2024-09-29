@@ -12,6 +12,8 @@ void MoveInterpolator::Update() noexcept
 
 	const auto move_data = m_interpolator.GetInterPolatedData();
 	
+	owner_player->SetVelocity(move_data.vel);
+	owner_player->SetAcceleration(move_data.accel);
 	root_obj->GetTransform()->SetLocalPosition(move_data.pos);
 	SetTerrainPos(root_obj);
 	owner_player->SetRotation(Quaternion::CreateFromYawPitchRoll(move_data.body_angleY * DEG2RAD + PI, 0.0f, 0.0f));
@@ -24,12 +26,16 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	const auto pos = ToOriginVec3(pkt_.pos());
 	const auto vel = ToOriginVec3(pkt_.vel());
 	const auto accel = ToOriginVec3(pkt_.accel());
-
-	const Vector3 vFutureVel = vel + accel * DT;
-
-	const Vector3 vFuturePos = pos + vFutureVel * DT + accel * DT * DT * 0.5f;
 	
-	m_interpolator.UpdateNewData(MoveData{ vFuturePos ,pkt_.body_angle() });
+	const auto dt = (NetHelper::GetSystemTimeStampMilliseconds() - pkt_.time_stamp()) / 2000.f;
+
+	//const auto dt = DT;
+
+	const Vector3 vFutureVel = vel + accel * dt;
+
+	const Vector3 vFuturePos = pos + vFutureVel * dt + accel * dt * dt * 0.5f;
+	
+	m_interpolator.UpdateNewData(MoveData{ vFuturePos ,pkt_.body_angle(),vFutureVel,accel });
 	const auto& root_obj = owner_player->GetSceneObject();
 	const auto move_data = m_interpolator.GetInterPolatedData();
 	root_obj->GetTransform()->SetLocalPosition(move_data.pos);
