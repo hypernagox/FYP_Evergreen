@@ -138,7 +138,7 @@ namespace udsdx
 			float diffuse = pow(saturate(dot(normalW, -gDirLight) * 1.1f - 0.1f), 0.3f);
 			float shadowValue = ShadowValue(PosW, normalW, distanceH);
 			float AOFactor = gSSAOMap.Sample(gsamLinearClamp, pin.TexC).r;
-			gBuffer1Color.rgb = (gBuffer1Color.rgb - (1.0f - min(diffuse, shadowValue)) * 0.75f) * AOFactor;
+			// gBuffer1Color.rgb = (gBuffer1Color.rgb - (1.0f - diffuse) * 0.75f) * AOFactor;
 			return gBuffer1Color;
 		}
 	)";
