@@ -47,6 +47,11 @@ namespace udsdx
 		return m_materials[index];
 	}
 
+	void RendererBase::SetTopology(D3D_PRIMITIVE_TOPOLOGY value)
+	{
+		m_topology = value;
+	}
+
 	void RendererBase::SetCastShadow(bool value)
 	{
 		m_castShadow = value;
@@ -55,6 +60,11 @@ namespace udsdx
 	void RendererBase::SetReceiveShadow(bool value)
 	{
 		m_receiveShadow = value;
+	}
+
+	D3D_PRIMITIVE_TOPOLOGY RendererBase::GetTopology() const
+	{
+		return m_topology;
 	}
 
 	bool RendererBase::GetCastShadow() const

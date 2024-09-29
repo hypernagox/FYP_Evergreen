@@ -22,7 +22,6 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	pBodyMesh->SetMaterial(m_monsterMaterial.get());
 
 	m_transformBody->SetLocalPosition(Vector3::Up * 0.8f);
-	m_transformBody->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, PIDIV2, 0.0f));
 	m_transformBody->SetLocalScale(Vector3::One * 0.025f);
 
 	m_entityMovement = object->AddComponent<EntityMovement>();

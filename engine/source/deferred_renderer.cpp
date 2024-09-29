@@ -125,6 +125,10 @@ namespace udsdx
  
 		float4 PS(VertexOut pin) : SV_Target
 		{
+			float depth = gBufferDSV.Sample(gsamLinearClamp, pin.TexC).r;
+			if (depth == 1.0f)
+				return float4(1.0f, 1.0f, 1.0f, 1.0f);
+
 			float4 gBuffer1Color = gBuffer1.Sample(gsamLinearClamp, pin.TexC);
 			float3 normalV = gBuffer2.Sample(gsamLinearClamp, pin.TexC).xyz;
 			float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
@@ -442,8 +446,6 @@ namespace udsdx
 
 		pCommandList->RSSetViewports(1, &renderParam.Viewport);
 		pCommandList->RSSetScissorRects(1, &renderParam.ScissorRect);
-
-		pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	void DeferredRenderer::PassBufferPostProcess(RenderParam& renderParam)

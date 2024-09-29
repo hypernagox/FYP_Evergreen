@@ -129,7 +129,6 @@ namespace udsdx
 		m_constantBuffers[param.FrameResourceIndex]->CopyData(0, shadowConstants);
 
 		param.CommandList->SetGraphicsRootConstantBufferView(3, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
-		param.CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		param.UseFrustumCulling = false;
 		target->RenderShadowSceneObjects(param, 4);
