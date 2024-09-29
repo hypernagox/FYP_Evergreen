@@ -31,7 +31,8 @@ public:
 
     float CalculateY(const float x, const float z) const noexcept
     {
-        return (-m_plane.Normal().x * x - m_plane.Normal().z * z - m_plane.D()) / m_plane.Normal().y;
+        const auto abc = m_plane.Normal();
+        return (-abc.x * x - abc.z * z - m_plane.D()) / abc.y;
     }
 
     float CalculateSelfSlopeAngle() const noexcept
