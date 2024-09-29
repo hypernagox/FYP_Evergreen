@@ -75,6 +75,7 @@ namespace udsdx
 
 		param.CommandList->IASetVertexBuffers(0, 1, &m_riggedMesh->VertexBufferView());
 		param.CommandList->IASetIndexBuffer(&m_riggedMesh->IndexBufferView());
+		param.CommandList->IASetPrimitiveTopology(m_topology);
 
 		const auto& submeshes = m_riggedMesh->GetSubmeshes();
 		for (size_t index = 0; index < submeshes.size(); ++index)

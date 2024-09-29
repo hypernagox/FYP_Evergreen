@@ -9,7 +9,9 @@
 void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
 {
 	Transform* camTrans = m_cameraAnchor->GetTransform();
-	Vector3 delta = Vector3(INSTANCE(Input)->GetMouseY(), INSTANCE(Input)->GetMouseX(), 0.0f);
+	float mouse_dx = static_cast<float>(INSTANCE(Input)->GetMouseX());
+	float mouse_dy = static_cast<float>(INSTANCE(Input)->GetMouseY());
+	Vector3 delta = Vector3(mouse_dy, mouse_dx, 0.0f);
 	m_cameraAngleAxis += delta * m_fCamSensivity;
 	m_cameraAngleAxis.x = std::clamp(m_cameraAngleAxis.x, -89.0f, 89.0f);
 

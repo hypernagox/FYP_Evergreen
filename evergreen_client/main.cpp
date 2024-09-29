@@ -26,7 +26,6 @@ using namespace udsdx;
 std::shared_ptr<Scene> scene;
 
 std::shared_ptr<SceneObject> playerLightObj;
-std::shared_ptr<SceneObject> g_skyboxObject;
 
 std::shared_ptr<SceneObject> g_heroObj;
 
@@ -139,32 +138,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 1000, 1000, 1.0f);
     terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
+    constexpr float terrainScale = 100.0f;
+    constexpr float terrainOffset = 100.0f;
     terrainObj = std::make_shared<SceneObject>();
-    terrainObj->GetTransform()->SetLocalScale(Vector3::One * 100.0f);
+    terrainObj->GetTransform()->SetLocalScale(Vector3::One / 1024.0f * terrainScale);
+    terrainObj->GetTransform()->SetLocalPosition(Vector3(terrainOffset, 0.0f, terrainOffset));
     auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-    terrainRenderer->SetMesh(terrainMesh.get());
+    terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"Terrain.obj")));
     terrainRenderer->SetMaterial(terrainMaterial.get());
     terrainRenderer->SetShader(shader);
 
     scene->AddObject(terrainObj);
-
-    g_skyboxObject = std::make_shared<SceneObject>();
-    g_skyboxObject->GetTransform()->SetLocalScale(Vector3::One * 500.0f);
-    g_skyboxObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromAxisAngle(Vector3::Right, PIDIV2));
-
-    auto skyboxMesh = INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Skybox.fbx"));
-    auto skyboxTexture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"));
-
-    g_skyboxMaterial = std::make_shared<udsdx::Material>();
-    g_skyboxMaterial->SetMainTexture(skyboxTexture);
-
-    auto skyboxRenderer = g_skyboxObject->AddComponent<MeshRenderer>();
-    skyboxRenderer->SetMesh(skyboxMesh);
-    skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
-    skyboxRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"skybox.hlsl")));
-    skyboxRenderer->SetCastShadow(false);
-
-    scene->AddObject(g_skyboxObject);
 
     if constexpr (true == g_bUseNetWork)
     {

@@ -22,9 +22,11 @@ namespace udsdx
 		void SetShader(Shader* shader);
 		void SetMaterial(Material* material, int index = 0);
 
+		void SetTopology(D3D_PRIMITIVE_TOPOLOGY value);
 		void SetCastShadow(bool value);
 		void SetReceiveShadow(bool value);
 
+		D3D_PRIMITIVE_TOPOLOGY GetTopology() const;
 		Shader* GetShader() const;
 		Material* GetMaterial(int index = 0) const;
 
@@ -38,6 +40,7 @@ namespace udsdx
 		Shader* m_shader = nullptr;
 		std::vector<Material*> m_materials;
 
+		D3D_PRIMITIVE_TOPOLOGY m_topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		bool m_castShadow = true;
 		bool m_receiveShadow = true;
 	};
