@@ -43,28 +43,21 @@ public:
 
     bool ContainsPoint(const DirectX::SimpleMath::Vector3& point) const noexcept
     {
-        const DirectX::SimpleMath::Vector3 v0 = m_vertices[1] - m_vertices[0];
-        const DirectX::SimpleMath::Vector3 v1 = m_vertices[2] - m_vertices[0];
-        const DirectX::SimpleMath::Vector3 v2 = point - m_vertices[0];
+        const DirectX::SimpleMath::Vector3 AB = m_vertices[1] - m_vertices[0];
+        const DirectX::SimpleMath::Vector3 BC = m_vertices[2] - m_vertices[1];
+        const DirectX::SimpleMath::Vector3 CA = m_vertices[0] - m_vertices[2];
 
-        const float d00 = v0.Dot(v0);
-        const float d01 = v0.Dot(v1);
-        const float d11 = v1.Dot(v1);
-        const float d20 = v2.Dot(v0);
-        const float d21 = v2.Dot(v1);
+        const DirectX::SimpleMath::Vector3 AP = point - m_vertices[0];
+        const DirectX::SimpleMath::Vector3 BP = point - m_vertices[1];
+        const DirectX::SimpleMath::Vector3 CP = point - m_vertices[2];
 
-        const float denom = d00 * d11 - d01 * d01;
-        if (std::abs(denom) < NAVI_EPSILON)
-        {
-            return false;
-        }
-
-        const float invDenom = 1.0f / denom;
-        const float u = (d11 * d20 - d01 * d21) * invDenom;
-        const float v = (d00 * d21 - d01 * d20) * invDenom;
-
-        return (u >= -NAVI_EPSILON) && (v >= -NAVI_EPSILON) && (u + v <= 1.0f + NAVI_EPSILON);
+        const DirectX::SimpleMath::Vector3 cross1 = AB.Cross(AP);
+        const DirectX::SimpleMath::Vector3 cross2 = BC.Cross(BP);
+        const DirectX::SimpleMath::Vector3 cross3 = CA.Cross(CP);
+       
+        return cross1.Dot(cross2) >= 0.0f && cross1.Dot(cross3) >= 0.0f;
     }
+
 
     float CalculateSlopeAngleDifference(const NaviCell& otherCell) const noexcept
     {
