@@ -1,5 +1,7 @@
 #pragma once
 #include "pch.h"
+#include "DirectXCollision.h"
+#include "SimpleMath.h"
 
 class NaviCell
 {
