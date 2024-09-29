@@ -23,7 +23,7 @@ void MovePacketSender::Update() noexcept
 		const auto vel = owner_movement->GetVelocity();
 		const auto accel = owner_movement->GetAcceleration();
 		const auto bodyY = owner_hero->GetYAngle();
-		const auto time_stamp = NetHelper::GetTimeStampMilliseconds();
+		const auto time_stamp = NetHelper::GetSystemTimeStampMilliseconds();
 		Send(
 			Create_c2s_MOVE(
 				  ToFlatVec3(pos)

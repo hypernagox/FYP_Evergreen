@@ -1,8 +1,6 @@
 #pragma once
+#include "pch.h"
 
-#include <vector>
-#include <string_view>
-#include <Windows.h>
 
 class HeightMap
 {

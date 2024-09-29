@@ -120,13 +120,13 @@ namespace ServerCore
 			return false;
 		}
 		Vector<T> try_flush_single()noexcept {
-			Node* head_temp = head.load(std::memory_order_acquire);
+			Node* head_temp = head.load(std::memory_order_seq_cst);
 			Vector<T> vec; vec.reserve(32); while (try_pop_single(vec, head_temp));
 			head.store(head_temp, std::memory_order_release);
 			return vec;
 		}
 		void try_flush_single(Vector<T>& vec_)noexcept {
-			Node* head_temp = head.load(std::memory_order_acquire);
+			Node* head_temp = head.load(std::memory_order_seq_cst);
 			if constexpr (std::same_as<std::decay_t<T>, S_ptr<SendBuffer>>){
 				extern thread_local Vector<WSABUF> wsaBufs;
 				wsaBufs.clear();
@@ -141,8 +141,18 @@ namespace ServerCore
 			head.store(head_temp, std::memory_order_release);
 		}
 		void try_flush_single(std::vector<T>& vec_)noexcept {
-			Node* head_temp = head.load(std::memory_order_acquire);
-			while (try_pop_single(vec_, head_temp));
+			Node* head_temp = head.load(std::memory_order_seq_cst);
+			if constexpr (std::same_as<std::decay_t<T>, S_ptr<SendBuffer>>) {
+				extern thread_local Vector<WSABUF> wsaBufs;
+				wsaBufs.clear();
+				while (try_pop_single(vec_, head_temp)) {
+					const auto& sb = vec_.back();
+					wsaBufs.emplace_back(static_cast<const ULONG>(sb->WriteSize()), reinterpret_cast<char* const>(sb->Buffer()));
+				}
+			}
+			else {
+				while (try_pop_single(vec_, head_temp));
+			}
 			head.store(head_temp, std::memory_order_release);
 		}
 		const bool empty_single()const noexcept {

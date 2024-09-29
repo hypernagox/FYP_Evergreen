@@ -14,7 +14,7 @@ namespace ServerCore
 		enum { HEART_BEAT_TICK = 15000 };
 	public:
 		Sector(const uint8_t num_of_groups, const uint8_t x, const uint8_t y, World* const parentWorld)noexcept
-			: m_vectorHashMapForEntity{ CreateTCMallocArray<VectorHashMap4ID<uint32_t, ContentsEntity*>>(num_of_groups) }
+			: m_vectorHashMapForEntity{ CreateJEMallocArray<VectorHashMap4ID<uint32_t, ContentsEntity*>>(num_of_groups) }
 			, m_sectorID{ Point2D::CombineXY(x,y) }
 			, m_pParentWorld{ parentWorld }
 		{

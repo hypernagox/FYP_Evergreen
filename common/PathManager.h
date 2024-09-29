@@ -1,7 +1,6 @@
 #pragma once
+#include "pch.h"
 
-#include <iostream>
-#include <filesystem>
 
 #define RESOURCE_PATH(RELATIVE) (PathManager::GetInstance()->GetResourcePath(RELATIVE))
 

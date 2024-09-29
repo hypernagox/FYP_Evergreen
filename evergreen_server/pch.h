@@ -1,4 +1,7 @@
 #pragma once
+#define WIN32_LEAN_AND_MEAN 
+#define NOMINMAX
+
 #include <flatbuffers/flatbuffers.h>
 #include "enum_generated.h"
 #include "struct_generated.h"
@@ -12,3 +15,5 @@
 #include "protocol_define.h"
 #include "ContentsComponent.h"
 #include "PathManager.h"
+#include <fstream>
+#include <string_view>

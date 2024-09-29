@@ -180,6 +180,7 @@
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MoveInterpolator.cpp" />
     <ClCompile Include="MovePacketSender.cpp" />
+    <ClCompile Include="NavMeshRenderer.cpp" />
     <ClCompile Include="ObjectIdentifier.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -220,6 +221,7 @@
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MoveInterpolator.h" />
     <ClInclude Include="MovePacketSender.h" />
+    <ClInclude Include="NavMeshRenderer.h" />
     <ClInclude Include="ObjectIdentifier.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerRenderer.h" />

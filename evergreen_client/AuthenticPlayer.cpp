@@ -131,6 +131,14 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 {
 	const Transform* transform = GetSceneObject()->GetTransform();
 
+	// 무브패킷 센드 업데이트
+	//auto sceneObject = GetSceneObject();
+	//const auto input_handler = sceneObject->GetComponent<InputHandler>();
+	//m_bSendFlag = input_handler->IsKeyHit();
+	//m_pServerObject->ServerCompUpdate<MovePacketSender>();
+	//
+	//m_bSendFlag = false;
+
 	m_entityMovement->SetAcceleration(Vector3::Down * 40.0f);
 
 	const Vector3Int vPrevState = m_vCurState;
@@ -174,12 +182,12 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 
 	auto sceneObject = GetSceneObject();
 	const auto input_handler = sceneObject->GetComponent<InputHandler>();
-	m_bSendFlag = (!vec3int_equal) || input_handler->IsKeyHit();
-
-
-	// 무브패킷 센드 업데이트
-	m_pServerObject->ServerCompUpdate<MovePacketSender>();
+	m_bSendFlag = input_handler->IsKeyHit();
+	//m_bSendFlag = false;
 	//
+	//// 무브패킷 센드 업데이트
+	m_pServerObject->ServerCompUpdate<MovePacketSender>();
+	////
 	m_bSendFlag = false;
 }
 

@@ -54,7 +54,7 @@ namespace ServerCore
 		Task task;
 		// TODO: 동적 월드/섹터라면 일 시작할때 카운터 올리고 끝나고 내리는걸 고려해야 할 수도 있다.
 		auto& origin_head = m_taskQueue.head_for_single_pop();
-		auto head_temp = origin_head.load(std::memory_order_acquire);
+		auto head_temp = origin_head.load(std::memory_order_seq_cst);
 		for (;;)
 		{
 			int32_t taskCount = 0;

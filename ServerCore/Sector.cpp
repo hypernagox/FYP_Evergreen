@@ -23,7 +23,7 @@ namespace ServerCore
 	Sector::~Sector()noexcept
 	{
 		std::cout << "¼½ÅÍ ¼Ò¸ê" << std::endl;
-		DeleteTCMallocArray(m_vectorHashMapForEntity);
+		DeleteJEMallocArray(m_vectorHashMapForEntity);
 	}
 
 	void Sector::BroadCastParallel(const S_ptr<SendBuffer>& pSendBuffer, const std::span<Sector* const>& sectors) noexcept

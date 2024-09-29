@@ -34,39 +34,39 @@ namespace ServerCore
 	//};
 
 
-// #define USE_TC_MALLOC
+#define USE_JE_MALLOC
 
 	class Memory
 	{
 	public:
 		template<typename T>
 		static inline T* const Alloc(const size_t size) noexcept {
-#ifdef USE_TC_MALLOC
-			return static_cast<T* const>(::tc_malloc(size));
+#ifdef USE_JE_MALLOC
+			return static_cast<T* const>(::je_malloc(size));
 #else
 			return static_cast<T* const>(_aligned_malloc(size, 8));
 #endif
 		}
 
 		static inline void* const Alloc(const size_t size) noexcept {
-#ifdef USE_TC_MALLOC
-			return ::tc_malloc(size);
+#ifdef USE_JE_MALLOC
+			return ::je_malloc(size);
 #else
 			return _aligned_malloc(size, 8);
 #endif
 		}
 
 		static inline void Free(void* const ptr) noexcept {
-#ifdef USE_TC_MALLOC
-			return ::tc_free(ptr);
+#ifdef USE_JE_MALLOC
+			return ::je_free(ptr);
 #else
 			return _aligned_free(ptr);
 #endif
 		}
 
 		static inline void Free_Sized(void* const ptr, const uint32_t obj_size) noexcept {
-#ifdef USE_TC_MALLOC
-			return ::tc_free_sized(ptr, obj_size);
+#ifdef USE_JE_MALLOC
+			return ::je_free(ptr);
 #else
 			return _aligned_free(ptr);
 #endif
@@ -74,32 +74,32 @@ namespace ServerCore
 
 		template<typename T>
 		static inline T* const AlignedAlloc(const size_t size, const size_t align_val) noexcept {
-#ifdef USE_TC_MALLOC
-			return static_cast<T* const>(::tc_new_aligned_nothrow(size, std::align_val_t{ align_val }, std::nothrow_t{}));
+#ifdef USE_JE_MALLOC
+			return static_cast<T* const>(::je_aligned_alloc(align_val, size));
 #else
 			return static_cast<T* const>(_aligned_malloc(size, align_val));
 #endif
 		}
 
 		static inline void* const AlignedAlloc(const size_t size, const size_t align_val) noexcept {
-#ifdef USE_TC_MALLOC
-			return ::tc_new_aligned_nothrow(size, std::align_val_t{ align_val }, std::nothrow_t{});
+#ifdef USE_JE_MALLOC
+			return ::je_aligned_alloc(align_val, size);
 #else
 			return _aligned_malloc(size, align_val);
 #endif
 		}
 
 		static inline void AlignedFree(void* const ptr, const size_t align_val) noexcept {
-#ifdef USE_TC_MALLOC
-			return ::tc_delete_aligned_nothrow(ptr, std::align_val_t{ align_val }, std::nothrow_t{});
+#ifdef USE_JE_MALLOC
+			return ::je_free(ptr);
 #else
 			return _aligned_free(ptr);
 #endif
 		}
 
 		static inline void AlignedFree_Sized(void* const ptr, const size_t size, const size_t align_val) noexcept {
-#ifdef USE_TC_MALLOC
-			return ::tc_delete_sized_aligned(ptr, size, std::align_val_t{ align_val });
+#ifdef USE_JE_MALLOC
+			return ::je_free(ptr);
 #else
 			return _aligned_free(ptr);
 #endif
@@ -160,7 +160,7 @@ namespace ServerCore
 	inline auto& GetTLSetForUnique()noexcept { thread_local HashSet<T> th_set(1024); th_set.clear(); return th_set; }
 
 	template<typename T, typename... Args>
-	static constexpr inline const std::span<T> CreateTCMallocArray(const size_t num_of_elements, Args&&... args)noexcept
+	static constexpr inline const std::span<T> CreateJEMallocArray(const size_t num_of_elements, Args&&... args)noexcept
 	{
 		const auto arr_ptr = static_cast<T* const>(Memory::AlignedAlloc(sizeof(T) * num_of_elements, alignof(T)));
 		const auto e = arr_ptr + num_of_elements;
@@ -169,7 +169,7 @@ namespace ServerCore
 	}
 
 	template<typename T>
-	static constexpr inline void DeleteTCMallocArray(const std::span<T> target_arr)noexcept
+	static constexpr inline void DeleteJEMallocArray(const std::span<T> target_arr)noexcept
 	{
 		const auto arr_ptr = target_arr.data();
 		const size_t num_of_elements = target_arr.size();

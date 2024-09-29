@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "HeightMap.h"
 
 HeightMap::HeightMap(std::wstring_view filename, LONG width, LONG height) : m_width(width), m_height(height)

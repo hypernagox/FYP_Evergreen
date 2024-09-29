@@ -10,6 +10,8 @@ struct MoveData
 {
     Vector3 pos;
     float body_angleY;
+    Vector3 vel;
+    Vector3 accel;
 };
 
 class InterpolatorConcrete
@@ -20,8 +22,10 @@ public:
     {
         UpdateInterpolationParam();
         return MoveData{
-            SmoothLinearInterpolation(m_curData.pos, m_newData.pos) ,
-            SmoothLinearInterpolation(m_curData.body_angleY, m_newData.body_angleY)
+            LinearInterpolation(m_curData.pos, m_newData.pos) ,
+            LinearInterpolation(m_curData.body_angleY, m_newData.body_angleY),
+            LinearInterpolation(m_curData.vel,m_newData.vel),
+            LinearInterpolation(m_curData.accel,m_newData.accel),
         };
     }
 };
