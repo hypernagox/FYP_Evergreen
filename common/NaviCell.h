@@ -1,13 +1,11 @@
 #pragma once
 #include "pch.h"
-#include "DirectXCollision.h"
-#include "SimpleMath.h"
 
 class NaviCell
 {
     friend class NaviMesh;
 
-    static constexpr const float NAVI_EPSILON = 1e-6f;
+    static constexpr const float NAVI_EPSILON = FLT_EPSILON;
 
     static DirectX::SimpleMath::Plane CreateNormalizedPlane(const DirectX::SimpleMath::Vector3& v1, const DirectX::SimpleMath::Vector3& v2, const DirectX::SimpleMath::Vector3& v3) noexcept {
         DirectX::SimpleMath::Plane plane{ v1,v2,v3 };

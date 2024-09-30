@@ -36,10 +36,6 @@
     <ClInclude Include="NaviMesh.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="SimpleMath.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SimpleMath.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

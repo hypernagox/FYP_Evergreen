@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="HeightMap.h" />
-    <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="NaviCell.h">
       <Filter>Navigation\NaviCell</Filter>
@@ -26,9 +25,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>pch</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Navigation">
