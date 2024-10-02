@@ -9,11 +9,10 @@
 #include "CreateBuffer4Server.h"
 #include "c2s_PacketHandler.h"
 
-#include "SimpleMath.h"
-
 #include "ServerCorePch.h"
 #include "protocol_define.h"
 #include "ContentsComponent.h"
 #include "PathManager.h"
 #include <fstream>
 #include <string_view>
+#include <directxtk12/SimpleMath.h>
