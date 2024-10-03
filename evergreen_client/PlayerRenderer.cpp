@@ -13,15 +13,11 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 
 	m_transformBody = pBody->GetTransform();
 	m_rendererObj->AddChild(pBody);
-	m_rendererObj->GetTransform()->SetLocalPositionY(2.0f);
 
 	auto pBodyMesh = pBody->AddComponent<MeshRenderer>();
-	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"char_sample.fbx")));
+	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"char_sample.obj")));
 	pBodyMesh->SetShader(shader);
 	pBodyMesh->SetMaterial(m_playerMaterial.get());
-
-	m_transformBody->SetLocalScale(Vector3::One * 0.05f);
-	m_transformBody->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PIDIV2, 0.0f, 0.0f));
 
 	auto sceneObject = GetSceneObject();
 	sceneObject->AddChild(m_rendererObj);
