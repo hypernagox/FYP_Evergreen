@@ -11,11 +11,11 @@ VertexOut VS(VertexIn vin)
 PixelOut PS(VertexOut pin)
 {
     PixelOut pOut;
-    float3 normal = normalize(mul(pin.NormalW.xyz, (float3x3) gView));
+    float3 normal = normalize(mul(pin.NormalW.xyz, (float3x3)gView));
     float4 texColor = gMainTex.Sample(gSampler, pin.Tex);
      
     pOut.Buffer1 = texColor;
-    pOut.Buffer2.xyz = normal;
+    pOut.Buffer2 = (normal.xy + 1.0f) * 0.5f;
     pOut.Buffer3 = pin.PosW;
     return pOut;
 }

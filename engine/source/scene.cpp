@@ -28,17 +28,21 @@ namespace udsdx
 
 	void Scene::Update(const Time& time)
 	{ ZoneScoped;
+		m_rootObject->Update(time, *this);
+	}
+
+	void Scene::PostUpdate(const Time& time)
+	{
 		m_renderCameraQueue.clear();
 		m_renderLightQueue.clear();
 		m_renderObjectQueue.clear();
 		m_renderShadowObjectQueue.clear();
 
-		m_rootObject->Update(time, *this, false);
+		m_rootObject->PostUpdate(time, *this, false);
 	}
 
 	void Scene::Render(RenderParam& param)
 	{ ZoneScoped;
-	
 		// Shadow map rendering pass
 		if (!m_renderLightQueue.empty() && !m_renderCameraQueue.empty())
 		{

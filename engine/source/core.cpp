@@ -591,6 +591,10 @@ namespace udsdx
 			.TracyQueueContext = &m_tracyQueueCtx
 		};
 
+		FlushCommandQueue();
+
+		m_scene->PostUpdate(m_timeMeasure->GetTime());
+
 		ThrowIfFailed(cmdListAlloc->Reset());
 		// Resets a command list back to its initial state as if a new command list was just created.
 		// ID3D12PipelineState: This is optional and can be NULL.

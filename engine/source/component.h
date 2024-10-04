@@ -16,7 +16,8 @@ namespace udsdx
 		virtual ~Component();
 
 	public:
-		virtual void Update(const Time& time, Scene& scene) = 0;
+		virtual void Update(const Time& time, Scene& scene);
+		virtual void PostUpdate(const Time& time, Scene& scene);
 
 	public:
 		std::shared_ptr<SceneObject> GetSceneObject() const;

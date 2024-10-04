@@ -14,7 +14,7 @@ namespace udsdx
 		Camera(const std::shared_ptr<SceneObject>& object);
 
 	public:
-		virtual void Update(const Time& time, Scene& scene) override;
+		virtual void PostUpdate(const Time& time, Scene& scene) override;
 
 	public:
 		virtual Matrix4x4 GetViewMatrix() const;

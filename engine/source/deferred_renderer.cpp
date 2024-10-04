@@ -130,7 +130,10 @@ namespace udsdx
 				return float4(1.0f, 1.0f, 1.0f, 1.0f);
 
 			float4 gBuffer1Color = gBuffer1.Sample(gsamLinearClamp, pin.TexC);
-			float3 normalV = gBuffer2.Sample(gsamLinearClamp, pin.TexC).xyz;
+
+			float3 normalV;
+			normalV.xy = gBuffer2.Sample(gsamLinearClamp, pin.TexC).xy * 2.0f - 1.0f;
+			normalV.z = -sqrt(1.0f - saturate(dot(normalV.xy, normalV.xy)));
 			float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
 			float4 PosW = float4(gBuffer3.Sample(gsamLinearClamp, pin.TexC).xyz, 1.0f);
 			float distanceH = length(PosW.xyz - gEyePosW.xyz);

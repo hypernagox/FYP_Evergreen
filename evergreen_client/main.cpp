@@ -123,8 +123,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     
     g_heroObj->AddComponent<InputHandler>();
     g_heroObj->AddComponent<PlayerRenderer>();
-    g_heroObj->AddComponent<EntityMovement>();
     g_heroComponent = g_heroObj->AddComponent<AuthenticPlayer>();
+    g_heroObj->AddComponent<EntityMovement>();
   
     scene->AddObject(g_heroObj);
 
@@ -191,13 +191,6 @@ void Update(const Time& time)
         UpdownStudio::Quit();
     }
 
-    Vector3 terrainPos = g_heroObj->GetTransform()->GetLocalPosition() * 0.01f;
-    terrainPos.x = fmod(terrainPos.x + 1.0f, 1.0f);
-    terrainPos.z = fmod(terrainPos.z + 1.0f, 1.0f);
-    float terrainHeight = heightMap->GetHeight(terrainPos.x * 4096/8, terrainPos.z * 4096/8);
-    terrainPos.y = max(terrainPos.y, terrainHeight);
-    g_heroObj->GetTransform()->SetLocalPosition(terrainPos * 100.0f);
-    g_curPos = terrainPos * 100.0f;
     g_lightAngle += DT * 0.5f;
     float theta = 105.0f * DEG2RAD;
     Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));

@@ -13,7 +13,7 @@ namespace udsdx
 		LightDirectional(const std::shared_ptr<SceneObject>& object);
 
 	public:
-		virtual void Update(const Time& time, Scene& scene) override;
+		virtual void PostUpdate(const Time& time, Scene& scene) override;
 
 	public:
 		Vector3 GetLightDirection() const;

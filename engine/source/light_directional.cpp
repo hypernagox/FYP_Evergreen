@@ -7,13 +7,12 @@
 
 namespace udsdx
 {
-	LightDirectional::LightDirectional(const std::shared_ptr<SceneObject>& object)
-		: Component(object)
+	LightDirectional::LightDirectional(const std::shared_ptr<SceneObject>& object) : Component(object)
 	{
 
 	}
 
-	void LightDirectional::Update(const Time& time, Scene& scene)
+	void LightDirectional::PostUpdate(const Time& time, Scene& scene)
 	{
 		scene.EnqueueRenderLight(this);
 	}

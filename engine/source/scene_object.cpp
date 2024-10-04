@@ -25,20 +25,13 @@ namespace udsdx
 		m_components.clear();
 	}
 
-	void SceneObject::Update(const Time& time, Scene& scene, bool forceValidate)
+	void SceneObject::Update(const Time& time, Scene& scene)
 	{
 		// Update siblings backwards due to its order
 		if (m_sibling != nullptr)
 		{
 			std::shared_ptr<SceneObject> sibling = m_sibling;
-			sibling->Update(time, scene, forceValidate);
-		}
-
-		// Validate SRT matrix
-		forceValidate |= m_transform.ValidateLocalSRTMatrix();
-		if (forceValidate)
-		{
-			m_transform.ValidateWorldSRTMatrix();
+			sibling->Update(time, scene);
 		}
 
 		// Update components
@@ -51,7 +44,35 @@ namespace udsdx
 		if (m_child != nullptr)
 		{
 			std::shared_ptr<SceneObject> child = m_child;
-			m_child->Update(time, scene, forceValidate);
+			child->Update(time, scene);
+		}
+	}
+
+	void SceneObject::PostUpdate(const Time& time, Scene& scene, bool forceValidate)
+	{
+		// Postprocess siblings backwards due to its order
+		if (m_sibling != nullptr)
+		{
+			m_sibling->PostUpdate(time, scene, forceValidate);
+		}
+
+		// Validate SRT matrix
+		forceValidate |= m_transform.ValidateLocalSRTMatrix();
+		if (forceValidate)
+		{
+			m_transform.ValidateWorldSRTMatrix();
+		}
+
+		// Update components
+		for (auto& component : m_components)
+		{
+			component->PostUpdate(time, scene);
+		}
+
+		// Update children, recursively
+		if (m_child != nullptr)
+		{
+			m_child->PostUpdate(time, scene, forceValidate);
 		}
 	}
 

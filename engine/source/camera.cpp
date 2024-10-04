@@ -11,7 +11,7 @@ namespace udsdx
 
 	}
 
-	void Camera::Update(const Time& time, Scene& scene)
+	void Camera::PostUpdate(const Time& time, Scene& scene)
 	{
 		scene.EnqueueRenderCamera(this);
 	}
