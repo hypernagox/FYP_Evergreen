@@ -139,7 +139,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	//
 	//m_bSendFlag = false;
 
-	m_entityMovement->SetAcceleration(Vector3::Down * 40.0f);
+	// m_entityMovement->SetAcceleration(Vector3::Down * 40.0f);
 
 	const Vector3Int vPrevState = m_vCurState;
 	m_vCurState = {};
