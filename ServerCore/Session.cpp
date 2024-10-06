@@ -298,7 +298,7 @@ namespace ServerCore
 
 		m_bIsSendRegistered.store(false, std::memory_order_seq_cst);
 
-		if (!m_sendQueue.empty_single() && false == m_bIsSendRegistered.exchange(true, std::memory_order_relaxed))
+		if (!m_sendQueue.empty_single() && false == m_bIsSendRegistered.exchange(true, std::memory_order_seq_cst))
 			RegisterSend(std::move(pThisSessionPtr));
 	}
 

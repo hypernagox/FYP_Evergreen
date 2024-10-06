@@ -80,7 +80,7 @@ namespace ServerCore
 
 			origin_head.store(head_temp, std::memory_order_release);
 			
-			if (m_taskCount.fetch_sub(taskCount, std::memory_order_release) == taskCount)
+			if (m_taskCount.fetch_sub(taskCount, std::memory_order_seq_cst) == taskCount)
 			{
 				break;
 			}

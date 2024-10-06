@@ -10,7 +10,7 @@ class ServerObject : public Component
 {
 public:
 	ServerObject(const std::shared_ptr<SceneObject>& object);
-
+	~ServerObject();
 public:
 	virtual void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
@@ -43,7 +43,11 @@ private:
 		const auto iter = m_mapServerComp.find(comp_id);
 		return m_mapServerComp.cend() != iter ? iter->second.get() : nullptr;
 	}
+	// TODO: 어따 놓을지 몰라서 임시
+public:
+	class NaviAgent* m_pNaviAgent = nullptr;
 private:
+	
 	uint32_t m_objID;
 	std::unordered_map<uint64_t, std::unique_ptr<ServerComponent>> m_mapServerComp;
 };

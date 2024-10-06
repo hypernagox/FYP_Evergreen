@@ -1,5 +1,4 @@
 #include "pch.h"
-
 // Windows Header Files
 #include <windows.h>
 // C RunTime Header Files
@@ -20,6 +19,9 @@
 #include "InputHandler.h"
 #include "ServerObjectMgr.h"
 #include "ServerObject.h"
+#include "NaviMesh.h"
+#include "NaviCell.h"
+#include "Navigator.h"
 
 using namespace udsdx;
 
@@ -47,8 +49,6 @@ float g_lightAngle = 0.0f;
 
 void Update(const Time& time);
 
-void SetTerrainPos(const std::shared_ptr<SceneObject>& p);
-
 std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap, LONG segmentWidth, LONG segmentHeight, float heightScale);
 
 bool isValidIPAddress(std::wstring_view ipAddress) {
@@ -68,7 +68,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UpdownStudio::Initialize(hInstance);
     UpdownStudio::RegisterUpdateCallback(Update);
 
+    NAVIGATION->Init();
+    NAVIGATION->RegisterDestroy();
     s2c_PacketHandler::Init();
+    
+    NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)-> Load(RESOURCE_PATH(L"NAVIMESH.bin"));
 
     if constexpr (true == g_bUseNetWork)
     {
@@ -116,8 +120,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     scene = std::make_shared<Scene>();
 
     g_heroObj = std::make_shared<SceneObject>();
-    g_heroObj->GetTransform()->SetLocalPosition(Vector3(75.0f, 0.0f, 25.0f));
-
+    
+    g_heroObj->GetTransform()->SetLocalPosition(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FindCellContainingOrClosestPoint({})->GetCellCenter());
+   
     auto heroServerComponent = g_heroObj->AddComponent<ServerObject>();
     heroServerComponent->AddComp<MovePacketSender>();
     
@@ -139,16 +144,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
     constexpr float terrainScale = 100.0f;
-    constexpr float terrainOffset = 100.0f;
+    constexpr float terrainOffset = -1200.0f;
     terrainObj = std::make_shared<SceneObject>();
-    terrainObj->GetTransform()->SetLocalScale(Vector3::One / 1024.0f * terrainScale);
-    terrainObj->GetTransform()->SetLocalPosition(Vector3(terrainOffset, 0.0f, terrainOffset));
+   //terrainObj->GetTransform()->SetLocalScale(Vector3::One *0.5f);
+   //terrainObj->GetTransform()->SetLocalPosition(Vector3(terrainOffset, 0.0f, -terrainOffset));
+    //terrainObj->GetTransform()->SetLocalPosition(Vector3(500, 0.0f, 500));
     auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
     terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"Terrain.obj")));
-    terrainRenderer->SetMaterial(terrainMaterial.get());
+   // terrainRenderer->SetMaterial(terrainMaterial.get());
     terrainRenderer->SetShader(shader);
 
-    scene->AddObject(terrainObj);
+    {
+        auto terrainObj = std::make_shared<SceneObject>();
+       // terrainObj->GetTransform()->SetLocalScale(Vector3::One *2.f);
+       // terrainObj->GetTransform()->SetLocalScale(Vector3::One * 1.f);;
+       // terrainObj->GetTransform()->SetLocalPosition(Vector3(-256, 0.0f, -256 ));
+        auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
+        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh.obj")));
+        terrainRenderer->SetMaterial(terrainMaterial.get());
+       // terrainRenderer->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
+        terrainRenderer->SetShader(shader);
+        scene->AddObject(terrainObj);
+    }
+   // scene->AddObject(terrainObj);
 
     if constexpr (true == g_bUseNetWork)
     {
@@ -195,23 +213,14 @@ void Update(const Time& time)
     terrainPos.x = fmod(terrainPos.x + 1.0f, 1.0f);
     terrainPos.z = fmod(terrainPos.z + 1.0f, 1.0f);
     float terrainHeight = heightMap->GetHeight(terrainPos.x * 4096/8, terrainPos.z * 4096/8);
-    terrainPos.y = max(terrainPos.y, terrainHeight);
-    g_heroObj->GetTransform()->SetLocalPosition(terrainPos * 100.0f);
-    g_curPos = terrainPos * 100.0f;
+    terrainPos.y = std::max(terrainPos.y, terrainHeight);
+    //g_heroObj->GetTransform()->SetLocalPosition(terrainPos * 100.0f);
+   // g_curPos = terrainPos * 100.0f;
+   // SetTerrainPos(g_heroObj);
     g_lightAngle += DT * 0.5f;
     float theta = 105.0f * DEG2RAD;
     Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
     playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PI / 3.0f, 0) * Quaternion::CreateFromAxisAngle(n, g_lightAngle));
-}
-
-void SetTerrainPos(const std::shared_ptr<SceneObject>& p)
-{
-    Vector3 terrainPos = p->GetTransform()->GetLocalPosition() * 0.01f;
-    terrainPos.x = fmod(terrainPos.x + 1.0f, 1.0f);
-    terrainPos.z = fmod(terrainPos.z + 1.0f, 1.0f);
-    float terrainHeight = heightMap->GetHeight(terrainPos.x * 4096/8, terrainPos.z * 4096/8);
-    terrainPos.y = max(terrainPos.y, terrainHeight);
-    p->GetTransform()->SetLocalPosition(terrainPos * 100.0f);
 }
 
 std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap, LONG segmentWidth, LONG segmentHeight, float heightScale)

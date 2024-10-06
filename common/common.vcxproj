@@ -20,7 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />
+    <ClCompile Include="NaviAgent.cpp" />
     <ClCompile Include="NaviCell.cpp" />
+    <ClCompile Include="Navigator.cpp" />
     <ClCompile Include="NaviMesh.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="pch.cpp">
@@ -31,8 +33,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommonComponent.hpp" />
     <ClInclude Include="HeightMap.h" />
+    <ClInclude Include="NaviAgent.h" />
     <ClInclude Include="NaviCell.h" />
+    <ClInclude Include="Navigator.h" />
     <ClInclude Include="NaviMesh.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="pch.h" />
@@ -93,12 +98,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)library\inc;$(IncludePath)</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)evergreen_server\;$(SolutionDir)ServerCore\;$(SolutionDir)library\inc\;$(IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)evergreen_server\;$(SolutionDir)ServerCore\;$(SolutionDir)library\inc\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\;$(LibraryPath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">

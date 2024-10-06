@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "EntityMovement.h"
+#include "NaviAgent.h"
+#include "ServerObject.h"
 
 EntityMovement::EntityMovement(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
 {
@@ -47,6 +49,10 @@ void EntityMovement::Update(const Time& time, Scene& scene)
 		const float ratio = m_velocityVMax / newVelocityVLength;
 		m_velocity.y *= ratio;
 	}
-
+	//m_velocity.y = 0;
 	transform->SetLocalPosition(position + m_velocity * time.deltaTime);
+
+	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->m_pNaviAgent;
+	transform->SetLocalPosition(navi->GetNaviPos(transform->GetLocalPosition()));
+
 }

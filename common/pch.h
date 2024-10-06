@@ -13,3 +13,8 @@
 #include <iostream>
 #include <filesystem>
 #include <Windows.h>
+#include <array>
+#include <unordered_set>
+#include <span>
+
+//#include "CommonComponent.hpp"

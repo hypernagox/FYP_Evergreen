@@ -2,8 +2,7 @@
 #include "ServerObject.h"
 #include "EntityMovement.h"
 #include "MoveInterpolator.h"
-
-extern void SetTerrainPos(const std::shared_ptr<SceneObject>& p);
+#include "NaviAgent.h"
 
 void MoveInterpolator::Update() noexcept
 {
@@ -15,7 +14,9 @@ void MoveInterpolator::Update() noexcept
 	owner_player->SetVelocity(move_data.vel);
 	owner_player->SetAcceleration(move_data.accel);
 	root_obj->GetTransform()->SetLocalPosition(move_data.pos);
-	SetTerrainPos(root_obj);
+	
+	const auto pos = root_obj->GetComponent<ServerObject>()->m_pNaviAgent->GetNaviPos(root_obj->GetTransform()->GetLocalPosition());
+	root_obj->GetTransform()->SetLocalPosition(pos);
 	owner_player->SetRotation(Quaternion::CreateFromYawPitchRoll(move_data.body_angleY * DEG2RAD + PI, 0.0f, 0.0f));
 }
 
@@ -39,5 +40,4 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	const auto& root_obj = owner_player->GetSceneObject();
 	const auto move_data = m_interpolator.GetInterPolatedData();
 	root_obj->GetTransform()->SetLocalPosition(move_data.pos);
-	SetTerrainPos(root_obj);
 }

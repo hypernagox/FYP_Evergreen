@@ -56,7 +56,7 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	case 1:
 	{
 		float target = -fMaxDist;
-		pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, max(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
+		pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, std::max(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
 		pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
 	}
 	break;
@@ -131,14 +131,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 {
 	const Transform* transform = GetSceneObject()->GetTransform();
 
-	// 무브패킷 센드 업데이트
-	//auto sceneObject = GetSceneObject();
-	//const auto input_handler = sceneObject->GetComponent<InputHandler>();
-	//m_bSendFlag = input_handler->IsKeyHit();
-	//m_pServerObject->ServerCompUpdate<MovePacketSender>();
-	//
-	//m_bSendFlag = false;
-
 	m_entityMovement->SetAcceleration(Vector3::Down * 40.0f);
 
 	const Vector3Int vPrevState = m_vCurState;
@@ -146,7 +138,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 
 	if (INSTANCE(Input)->GetKey(Keyboard::E))
 	{
-		m_fovBase = max(m_fovBase + PIDIV4 * time.deltaTime, PIDIV2);
+		m_fovBase = std::max(m_fovBase + PIDIV4 * time.deltaTime, PIDIV2);
 	}
 	if (INSTANCE(Input)->GetKey(Keyboard::Space))
 	{

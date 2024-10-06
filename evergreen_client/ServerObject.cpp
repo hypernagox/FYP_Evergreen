@@ -2,9 +2,16 @@
 #include "ServerObject.h"
 #include "ServerComponent.h"
 #include "MoveInterpolator.h"
+#include "NaviAgent.h"
 
 ServerObject::ServerObject(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
+	m_pNaviAgent = new NaviAgent;
+}
+
+ServerObject::~ServerObject()
+{
+	delete m_pNaviAgent;
 }
 
 void ServerObject::Update(const udsdx::Time& time, udsdx::Scene& scene)

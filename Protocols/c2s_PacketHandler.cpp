@@ -53,16 +53,16 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	b.y = 0.0833333;
 	b.z = 14.6667;
 	static bool b2 = true;
-	if (b2)
-	{
-		const auto m = EntityFactory::CreateMonster(b);
-		m->GetComp<PositionComponent>()->pos.x = 14.6667f;
-		m->GetComp<PositionComponent>()->pos.y = 0.0833333f;
-		m->GetComp<PositionComponent>()->pos.z = 14.6667f;
-		
-		Mgr(WorldMgr)->GetWorld(0)->EnterWorldNPC(m);
-		b2 = false;
-	}
+	//if (b2)
+	//{
+	//	const auto m = EntityFactory::CreateMonster(b);
+	//	m->GetComp<PositionComponent>()->pos.x = 14.6667f;
+	//	m->GetComp<PositionComponent>()->pos.y = 0.0833333f;
+	//	m->GetComp<PositionComponent>()->pos.z = 14.6667f;
+	//	
+	//	Mgr(WorldMgr)->GetWorld(0)->EnterWorldNPC(m);
+	//	b2 = false;
+	//}
 	return true;
 }
 

@@ -20,7 +20,7 @@ namespace ServerCore
 		alignas(64) std::atomic<Node*> head;
 	private:
 		void reset()noexcept {
-			Node* curHead = head.load(std::memory_order_acquire);
+			Node* curHead = head.load(std::memory_order_seq_cst);
 			const Node* const curTail = tail;
 			while (curTail != curHead)
 			{
@@ -50,7 +50,7 @@ namespace ServerCore
 				if (oldTail != tail)continue;
 				if(true == compareExchange(&tail, &oldTail, value))
 				{
-					oldTail->next.store(value, std::memory_order_seq_cst);
+					oldTail->next.store(value, std::memory_order_release);
 					return;
 				}
 				bo.delay();

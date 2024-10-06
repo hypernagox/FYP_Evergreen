@@ -50,7 +50,7 @@ namespace NetHelper
             return LinearInterpolation(start, end, m_fCurSmoothInterpolationParam);
         }
         constexpr const float GetInterpolationParam()const noexcept {
-            return std::clamp(static_cast<const float>(GetTimeStampMilliseconds() - m_iLastDataArrivedTime) / max(static_cast<const float>(m_iNewTimeStamp - m_iOldTimeStamp), MIN_UPDATE_INTERVAL), 0.f, 1.f);
+            return std::clamp(static_cast<const float>(GetTimeStampMilliseconds() - m_iLastDataArrivedTime) / std::max(static_cast<const float>(m_iNewTimeStamp - m_iOldTimeStamp), MIN_UPDATE_INTERVAL), 0.f, 1.f);
         }
         constexpr const float GetSmoothInterpolationParam()const noexcept {
             return  SmoothStep(0.f, 1.f, GetInterpolationParam());

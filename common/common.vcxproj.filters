@@ -6,11 +6,20 @@
     <ClInclude Include="NaviCell.h">
       <Filter>Navigation\NaviCell</Filter>
     </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>pch</Filter>
+    </ClInclude>
     <ClInclude Include="NaviMesh.h">
       <Filter>Navigation\NaviMesh</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>pch</Filter>
+    <ClInclude Include="Navigator.h">
+      <Filter>Navigation\Navigator</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonComponent.hpp">
+      <Filter>CommonComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="NaviAgent.h">
+      <Filter>Navigation\NaviAgent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -19,11 +28,17 @@
     <ClCompile Include="NaviCell.cpp">
       <Filter>Navigation\NaviCell</Filter>
     </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
     <ClCompile Include="NaviMesh.cpp">
       <Filter>Navigation\NaviMesh</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>pch</Filter>
+    <ClCompile Include="Navigator.cpp">
+      <Filter>Navigation\Navigator</Filter>
+    </ClCompile>
+    <ClCompile Include="NaviAgent.cpp">
+      <Filter>Navigation\NaviAgent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,6 +53,15 @@
     </Filter>
     <Filter Include="pch">
       <UniqueIdentifier>{a7d34600-7870-4f24-8b53-fd3b2f3f99fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Navigation\Navigator">
+      <UniqueIdentifier>{53283f19-a1f4-4167-b33d-f7e92c2a9547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommonComponent">
+      <UniqueIdentifier>{a7038537-d5cf-4f59-8f96-c4ad57051842}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Navigation\NaviAgent">
+      <UniqueIdentifier>{bb8f550c-bdf1-44b0-b3ac-d89f29de659b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

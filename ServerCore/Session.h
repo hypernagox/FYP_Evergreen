@@ -48,9 +48,8 @@ namespace ServerCore
 		}
 		inline void TrySend()const noexcept
 		{
-			if (false == m_bIsSendRegistered.exchange(true, std::memory_order_relaxed))
+			if (false == m_bIsSendRegistered.exchange(true, std::memory_order_seq_cst))
 			{
-				std::atomic_thread_fence(std::memory_order_acquire);
 				const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
 				const auto register_send_event = m_pSendEvent->m_registerSendEvent;
 				register_send_event->SetIocpObject(SharedFromThis<IocpObject>());

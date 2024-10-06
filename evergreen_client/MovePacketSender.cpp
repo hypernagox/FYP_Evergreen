@@ -7,7 +7,6 @@
 #include <CreateBuffer4Client.h>
 
 extern Vector3 g_curPos;
-extern void SetTerrainPos(const std::shared_ptr<SceneObject>& p);
 
 void MovePacketSender::Update() noexcept
 {
@@ -18,7 +17,7 @@ void MovePacketSender::Update() noexcept
 	 if (flag || m_sendInterval <= m_accTime)
 	{
 		const auto root_obj = owner_hero->GetSceneObject();
-		SetTerrainPos(root_obj);
+		
 		const auto pos = root_obj->GetTransform()->GetLocalPosition();
 		const auto vel = owner_movement->GetVelocity();
 		const auto accel = owner_movement->GetAcceleration();
