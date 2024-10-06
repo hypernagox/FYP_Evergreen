@@ -49,7 +49,7 @@ void EntityMovement::Update(const Time& time, Scene& scene)
 		const float ratio = m_velocityVMax / newVelocityVLength;
 		m_velocity.y *= ratio;
 	}
-	//m_velocity.y = 0;
+	m_velocity.y = 0;
 	transform->SetLocalPosition(position + m_velocity * time.deltaTime);
 
 	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->m_pNaviAgent;
