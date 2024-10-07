@@ -18,7 +18,8 @@ namespace udsdx
 
 	public:
 		Transform* GetTransform();
-		void Update(const Time& time, Scene& scene, bool forceValidate);
+		void Update(const Time& time, Scene& scene);
+		void PostUpdate(const Time& time, Scene& scene, bool forceValidate);
 
 	public:
 		void AddChild(std::shared_ptr<SceneObject> child);
@@ -50,11 +51,15 @@ namespace udsdx
 		}
 		void RemoveAllComponents();
 
+	private:
+		void DetachFromHierarchy();
+
 	protected:
 		Transform m_transform = Transform();
 		std::vector<std::unique_ptr<Component>> m_components;
 
 	protected:
+		bool m_detachDirty = false;
 		SceneObject* m_parent = nullptr;
 		std::shared_ptr<SceneObject> m_sibling = nullptr;
 		std::shared_ptr<SceneObject> m_child = nullptr;

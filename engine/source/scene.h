@@ -17,10 +17,10 @@ namespace udsdx
 
 	public:
 		virtual void Update(const Time& time);
+		virtual void PostUpdate(const Time& time);
 		void Render(RenderParam& param);
 
 		void AddObject(std::shared_ptr<SceneObject> object);
-		void RemoveObject(std::shared_ptr<SceneObject> object);
 
 	public:
 		void EnqueueRenderCamera(Camera* camera);

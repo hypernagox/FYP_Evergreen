@@ -14,7 +14,7 @@ namespace udsdx
 	{
 	}
 
-	void RendererBase::Update(const Time& time, Scene& scene)
+	void RendererBase::PostUpdate(const Time& time, Scene& scene)
 	{
 		scene.EnqueueRenderObject(this);
 		if (m_castShadow)

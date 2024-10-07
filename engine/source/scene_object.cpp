@@ -2,6 +2,7 @@
 #include "scene_object.h"
 #include "transform.h"
 #include "component.h"
+#include "core.h"
 
 namespace udsdx
 {
@@ -25,13 +26,63 @@ namespace udsdx
 		m_components.clear();
 	}
 
-	void SceneObject::Update(const Time& time, Scene& scene, bool forceValidate)
+	void SceneObject::DetachFromHierarchy()
+	{
+		if (m_sibling != nullptr)
+		{
+			m_sibling->m_parent = m_parent;
+		}
+		if (m_parent->m_sibling.get() == this)
+		{
+			m_parent->m_sibling = m_sibling;
+		}
+		if (m_parent->m_child.get() == this)
+		{
+			m_parent->m_child = m_sibling;
+		}
+
+		m_parent = nullptr;
+		m_sibling = nullptr;
+
+		m_transform.SetParent(nullptr);
+
+		m_detachDirty = false;
+	}
+
+	void SceneObject::Update(const Time& time, Scene& scene)
 	{
 		// Update siblings backwards due to its order
 		if (m_sibling != nullptr)
 		{
+			m_sibling->Update(time, scene);
+		}
+
+		// Update components
+		for (auto& component : m_components)
+		{
+			component->Update(time, scene);
+		}
+
+		// Update children, recursively
+		if (m_child != nullptr)
+		{
+			m_child->Update(time, scene);
+		}
+	}
+
+	void SceneObject::PostUpdate(const Time& time, Scene& scene, bool forceValidate)
+	{
+		// Postprocess siblings backwards due to its order
+		if (m_sibling != nullptr)
+		{
 			std::shared_ptr<SceneObject> sibling = m_sibling;
-			sibling->Update(time, scene, forceValidate);
+			sibling->PostUpdate(time, scene, forceValidate);
+		}
+
+		if (m_detachDirty)
+		{
+			DetachFromHierarchy();
+			return;
 		}
 
 		// Validate SRT matrix
@@ -44,14 +95,14 @@ namespace udsdx
 		// Update components
 		for (auto& component : m_components)
 		{
-			component->Update(time, scene);
+			component->PostUpdate(time, scene);
 		}
 
 		// Update children, recursively
 		if (m_child != nullptr)
 		{
 			std::shared_ptr<SceneObject> child = m_child;
-			m_child->Update(time, scene, forceValidate);
+			child->PostUpdate(time, scene, forceValidate);
 		}
 	}
 
@@ -71,28 +122,9 @@ namespace udsdx
 
 	void SceneObject::RemoveFromParent()
 	{
-		if (m_parent == nullptr)
-		{
-			return;
-		}
+		m_detachDirty = true;
 
-		if (m_sibling != nullptr)
-		{
-			m_sibling->m_parent = m_parent;
-		}
-		if (m_parent->m_sibling.get() == this)
-		{
-			m_parent->m_sibling = m_sibling;
-		}
-		if (m_parent->m_child.get() == this)
-		{
-			m_parent->m_child = m_sibling;
-		}
-
-		m_parent = nullptr;
-		m_sibling = nullptr;
-
-		m_transform.SetParent(nullptr);
+		INSTANCE(Core)->FlushCommandQueue();
 	}
 
 	std::shared_ptr<SceneObject> SceneObject::GetParent() const

@@ -6,6 +6,8 @@
 #include "PlayerRenderer.h"
 #include "MovePacketSender.h"
 
+extern void SetTerrainPos(const std::shared_ptr<SceneObject>& p);
+
 void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
 {
 	Transform* camTrans = m_cameraAnchor->GetTransform();
@@ -160,6 +162,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	const Vector3 velocity = m_entityMovement->GetVelocity();
 	m_fMoveTime += Vector2(velocity.x, velocity.z).Length() * time.deltaTime;
 
+	SetTerrainPos(GetSceneObject());
 	UpdatePlayerCamFpsMode(time.deltaTime);
 	UpdateCameraTransform(m_cameraObj->GetTransform(), time.deltaTime);
 

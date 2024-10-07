@@ -75,7 +75,7 @@ struct VertexOut
 struct PixelOut
 {
 	float4 Buffer1 : SV_TARGET0;
-    float4 Buffer2 : SV_TARGET1;
+    float2 Buffer2 : SV_TARGET1;
     float4 Buffer3 : SV_TARGET2;
 };
 

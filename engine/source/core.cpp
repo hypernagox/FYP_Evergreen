@@ -542,6 +542,7 @@ namespace udsdx
 
 		BroadcastUpdateMessage();
 		m_scene->Update(m_timeMeasure->GetTime());
+		m_scene->PostUpdate(m_timeMeasure->GetTime());
 
 		// Update the constant buffer with the latest view and project matrix.
 		UpdateMainPassCB();

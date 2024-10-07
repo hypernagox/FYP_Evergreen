@@ -131,7 +131,7 @@ namespace udsdx
 			j *= 0.125f;
 			r.y = frac(512.0f * j);
 			return r - 0.5f;
-		}
+		}	
 
 		// Determines how much the sample point q occludes the point p as a function
 		// of distZ.
@@ -158,7 +158,9 @@ namespace udsdx
 			// Extract random vector and map from [0,1] --> [-1, +1].
 			float3 randVec = 2.0f * rand3(float3(pin.TexC, 0.0f));
 
-			float3 n = normalize(gNormalMap.SampleLevel(gsamPointClamp, pin.TexC, 0.0f).xyz);
+			float3 n;
+			n.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC).xy * 2.0f - 1.0f;
+			n.z = -sqrt(1.0f - saturate(dot(n.xy, n.xy)));
 			float3 u = normalize(randVec - n * dot(randVec, n));
 			float3 v = cross(n, u);
 			float3x3 tbn = float3x3(u, v, n);
@@ -262,7 +264,9 @@ namespace udsdx
 			float4 color = 0.0f;
 			float weightSum = 0.0f;
 
-			float3 n = gNormalMap.Sample(gsamPointClamp, pin.TexC).xyz;
+			float3 n;
+			n.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC).xy * 2.0f - 1.0f;
+			n.z = -sqrt(1.0f - saturate(dot(n.xy, n.xy)));
 			float p = gDepthMap.Sample(gsamPointClamp, pin.TexC).x;
 
 			for (uint i = 0; i < BLUR_SAMPLE; ++i)

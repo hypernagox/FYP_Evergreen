@@ -14,6 +14,16 @@ namespace udsdx
 
 	}
 
+	void Component::Update(const Time& time, Scene& scene)
+	{
+
+	}
+
+	void Component::PostUpdate(const Time& time, Scene& scene)
+	{
+
+	}
+
 	std::shared_ptr<SceneObject> Component::GetSceneObject() const
 	{
 		return m_object.lock();
