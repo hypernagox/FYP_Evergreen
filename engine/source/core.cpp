@@ -542,6 +542,7 @@ namespace udsdx
 
 		BroadcastUpdateMessage();
 		m_scene->Update(m_timeMeasure->GetTime());
+		m_scene->PostUpdate(m_timeMeasure->GetTime());
 
 		// Update the constant buffer with the latest view and project matrix.
 		UpdateMainPassCB();
@@ -590,10 +591,6 @@ namespace udsdx
 
 			.TracyQueueContext = &m_tracyQueueCtx
 		};
-
-		FlushCommandQueue();
-
-		m_scene->PostUpdate(m_timeMeasure->GetTime());
 
 		ThrowIfFailed(cmdListAlloc->Reset());
 		// Resets a command list back to its initial state as if a new command list was just created.

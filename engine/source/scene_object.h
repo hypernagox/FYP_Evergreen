@@ -51,11 +51,15 @@ namespace udsdx
 		}
 		void RemoveAllComponents();
 
+	private:
+		void DetachFromHierarchy();
+
 	protected:
 		Transform m_transform = Transform();
 		std::vector<std::unique_ptr<Component>> m_components;
 
 	protected:
+		bool m_detachDirty = false;
 		SceneObject* m_parent = nullptr;
 		std::shared_ptr<SceneObject> m_sibling = nullptr;
 		std::shared_ptr<SceneObject> m_child = nullptr;
