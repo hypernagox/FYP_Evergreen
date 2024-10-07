@@ -10,7 +10,7 @@ namespace ServerCore
 	{
 		const auto monster_entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
 
-		const auto bt_timer = monster_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>(),30*30);
+		const auto bt_timer = monster_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>(),300*300);
 
 		const auto& bt_root = bt_timer->GetRootNode();
 
@@ -22,10 +22,10 @@ namespace ServerCore
 
 		const auto s1 = bt_root->AddChild<SequenceNode>();
 
-		s1->AddChild<RangeCheckNode>(30);
+		s1->AddChild<RangeCheckNode>(300);
 		const auto s2 = s1->AddChild<SequenceNode>();
 
-		s2->AddChild<RangeCheckNode>(10);
+		s2->AddChild<RangeCheckNode>(100);
 		s2->AddChild<AttackNode>();
 
 		s1->AddChild<ChaseNode>();

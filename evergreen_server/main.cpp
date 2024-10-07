@@ -4,7 +4,8 @@
 #include "SectorPredicate.h"
 #include "ContentsWorld.h"
 #include <filesystem>
-
+#include "Navigator.h"
+#include "NaviMesh.h"
 using namespace ServerCore;
 constexpr const int32_t NUM_OF_NPC = 1024;
 
@@ -14,7 +15,10 @@ int main()
 	
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
-	
+	NAVIGATION->Init();
+	//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->LoadByObj(RESOURCE_PATH(L"navmesh10.obj"));
+	NAVIGATION->RegisterDestroy();
+
 	Mgr(WorldMgr)->SetNumOfNPC<NUM_OF_NPC>();
 	Mgr(WorldMgr)->RegisterWolrd<ContentsWorld>(0);
 

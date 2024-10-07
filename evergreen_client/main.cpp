@@ -72,8 +72,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     NAVIGATION->RegisterDestroy();
     s2c_PacketHandler::Init();
     
-    NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)-> Load(RESOURCE_PATH(L"NAVIMESH.bin"));
-
+   // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)-> Load(RESOURCE_PATH(L"NAVIMESH.bin"));
+    //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->LoadByObj(RESOURCE_PATH(L"navmesh10.obj"));
     if constexpr (true == g_bUseNetWork)
     {
         if constexpr (true == g_bUseDefaultIP)
@@ -146,12 +146,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     constexpr float terrainScale = 100.0f;
     constexpr float terrainOffset = -1200.0f;
     terrainObj = std::make_shared<SceneObject>();
-   //terrainObj->GetTransform()->SetLocalScale(Vector3::One *0.5f);
+    //terrainObj->GetTransform()->SetLocalScale(Vector3::One *0.8f);
    //terrainObj->GetTransform()->SetLocalPosition(Vector3(terrainOffset, 0.0f, -terrainOffset));
     //terrainObj->GetTransform()->SetLocalPosition(Vector3(500, 0.0f, 500));
     auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-    terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"Terrain.obj")));
-   // terrainRenderer->SetMaterial(terrainMaterial.get());
+    terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"Terrain10.obj")));
+    terrainRenderer->SetMaterial(terrainMaterial.get());
     terrainRenderer->SetShader(shader);
 
     {
@@ -160,13 +160,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
        // terrainObj->GetTransform()->SetLocalScale(Vector3::One * 1.f);;
        // terrainObj->GetTransform()->SetLocalPosition(Vector3(-256, 0.0f, -256 ));
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh.obj")));
+        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh10.obj")));
         terrainRenderer->SetMaterial(terrainMaterial.get());
-       // terrainRenderer->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
+        terrainRenderer->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
         terrainRenderer->SetShader(shader);
         scene->AddObject(terrainObj);
     }
-   // scene->AddObject(terrainObj);
+    scene->AddObject(terrainObj);
 
     if constexpr (true == g_bUseNetWork)
     {

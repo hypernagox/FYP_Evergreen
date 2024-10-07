@@ -131,7 +131,7 @@ public:
         for (uint8_t i = m_runningChildIndex; i < numOfChildren; ++i)
         {
             const NodeStatus status = children[i]->Tick(owner_comp_sys, bt_root_timer, awaker);
-            if (NodeStatus::FAILURE != status)
+                if (NodeStatus::FAILURE != status)
             {
                 m_runningChildIndex = i & (-(NodeStatus::RUNNING == status));
                 return status;

@@ -16,7 +16,7 @@ void MoveInterpolator::Update() noexcept
 	root_obj->GetTransform()->SetLocalPosition(move_data.pos);
 	
 	const auto pos = root_obj->GetComponent<ServerObject>()->m_pNaviAgent->GetNaviPos(root_obj->GetTransform()->GetLocalPosition());
-	root_obj->GetTransform()->SetLocalPosition(pos);
+	//root_obj->GetTransform()->SetLocalPosition(pos);
 	owner_player->SetRotation(Quaternion::CreateFromYawPitchRoll(move_data.body_angleY * DEG2RAD + PI, 0.0f, 0.0f));
 }
 

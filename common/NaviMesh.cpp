@@ -133,7 +133,8 @@ void NaviMesh::Load(const std::wstring_view path)
     in.read((char*)&num_of_cells, sizeof(num_of_cells));
     if (0 == num_of_cells)
     {
-        throw std::runtime_error{ "Cannot Read Bin" };
+        return;
+        //throw std::runtime_error{ "Cannot Read Bin" };
     }
     m_cells.resize(num_of_cells);
     m_neighbourhoodDists.resize(num_of_cells);
@@ -235,7 +236,7 @@ const NaviCell* NaviMesh::FindRayIntersectingCellInNeighbourhoods(const NaviCell
     // DFS 탐색으로 적당한 깊이까지 이웃셀을 조사해본다.
     // 상용 프로덕트에서 리커전은 죄악
     const NaviCell* firstIntersectedCell = nullptr;
-    float minT = std::numeric_limits<float>::max();
+    float minT = std::numeric_limits<float>::min();
 
     // 자주 쓸 녀석인데 메모리 할당하고 함수 끝나면 해제하고 반복하는게 서버입장에선 오버헤드
     thread_local std::unordered_set<const NaviCell*> s;
@@ -259,7 +260,7 @@ const NaviCell* NaviMesh::FindRayIntersectingCellInNeighbourhoods(const NaviCell
         float t;
         if (cur_cell->RayIntersectsCell(point, t))
         {
-            if (t < minT)
+            if (t > minT)
             {
                 minT = t;
                 firstIntersectedCell = cur_cell;

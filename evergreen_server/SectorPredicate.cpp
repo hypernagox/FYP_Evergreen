@@ -39,7 +39,7 @@ bool SectorPredicate::SectorHuristicFunc2NPC(const ServerCore::ContentsEntity* c
 	const int dz = (int)(a_pos.z - b_pos.z);
 
 	const uint32_t dist = ((dx * dx + dy * dy + dz * dz));
-	const bool bRes = (50 * 50) >= dist;
+	const bool bRes = (500 * 500) >= dist;
 
 	if (bRes)
 	{
