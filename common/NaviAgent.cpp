@@ -12,6 +12,7 @@ NaviAgent::NaviAgent()
 
 const NaviCell* NaviAgent::GetPostCell(const DirectX::SimpleMath::Vector3& pos) const noexcept
 {
+	return m_pNaviMesh->FindRayIntersectingCell(pos);
 	return m_pNaviMesh->FindRayIntersectingCellInNeighbourhoods(m_pNaviCell, pos, NAVI_DEPTH);
 }
 

@@ -208,68 +208,87 @@ const NaviCell* NaviMesh::FindCellWithClosestCenter(const DirectX::SimpleMath::V
 
 const NaviCell* NaviMesh::FindRayIntersectingCell(const DirectX::SimpleMath::Vector3& point) const noexcept
 {
-    const NaviCell* firstIntersectedCell = nullptr;
-    float minT = std::numeric_limits<float>::max();
+    const NaviCell* highestIntersectedCell = nullptr;
+    float maxY = std::numeric_limits<float>::lowest(); 
+    float minT = std::numeric_limits<float>::max();   
 
     auto b = m_cells.data();
     const auto e = b + m_cells.size();
+
+    // 모든 네비셀을 순회하며 교차 여부 확인
     while (e != b)
     {
         float t;
         if (b->RayIntersectsCell(point, t))
         {
-            if (t < minT)
+          
+            const DirectX::SimpleMath::Vector3 cellCenter = b->GetCellCenter();
+
+           
+            if (cellCenter.y > maxY || (cellCenter.y == maxY && t < minT))
             {
+                maxY = cellCenter.y;
                 minT = t;
-                firstIntersectedCell = b;
+                highestIntersectedCell = b;
             }
         }
         ++b;
     }
 
-    return firstIntersectedCell;
+    return highestIntersectedCell;
 }
+
 
 const NaviCell* NaviMesh::FindRayIntersectingCellInNeighbourhoods(const NaviCell* const cell, const DirectX::SimpleMath::Vector3& point, const int depth) const noexcept
 {
-    // 밑에꺼랑 중복 스멜이긴 한데, 앞으로 보정을 어떻게하냐에 따라 일단 냅둠
-    // DFS 탐색으로 적당한 깊이까지 이웃셀을 조사해본다.
-    // 상용 프로덕트에서 리커전은 죄악
-    const NaviCell* firstIntersectedCell = nullptr;
-    float minT = std::numeric_limits<float>::min();
+    const NaviCell* highestIntersectedCell = nullptr;
+    float maxY = std::numeric_limits<float>::lowest(); 
+    float minT = std::numeric_limits<float>::max();   
 
-    // 자주 쓸 녀석인데 메모리 할당하고 함수 끝나면 해제하고 반복하는게 서버입장에선 오버헤드
-    thread_local std::unordered_set<const NaviCell*> s;
-    thread_local std::vector<std::pair<const NaviCell*,int>> v;
-    v.emplace_back(cell, 0);
-    while (!v.empty())
+   
+    thread_local std::unordered_set<const NaviCell*> visited;
+    thread_local std::vector<std::pair<const NaviCell*, int>> stack;
+    stack.emplace_back(cell, 0);
+
+    while (!stack.empty())
     {
-        const auto [cur_cell, cur_depth] = v.back();
-        v.pop_back();
-        if (depth > cur_depth)
+        const auto [cur_cell, cur_depth] = stack.back();
+        stack.pop_back();
+
+
+        if (cur_depth < depth)
         {
+            // 이웃 셀 탐색
             for (int i = 0; i < 3; ++i)
             {
-                if (const auto n = cur_cell->GetNeighbourhood(this, i))
+                if (const auto neighbour = cur_cell->GetNeighbourhood(this, i))
                 {
-                    if (true == s.emplace(n).second)
-                        v.emplace_back(n, cur_depth + 1);
+                    if (visited.emplace(neighbour).second)
+                        stack.emplace_back(neighbour, cur_depth + 1);
                 }
             }
         }
+
         float t;
         if (cur_cell->RayIntersectsCell(point, t))
         {
-            if (t > minT)
+            const DirectX::SimpleMath::Vector3 cellCenter = cur_cell->GetCellCenter();
+
+            if (cellCenter.y > maxY || (cellCenter.y == maxY && t < minT))
             {
+                maxY = cellCenter.y;
                 minT = t;
-                firstIntersectedCell = cur_cell;
+                highestIntersectedCell = cur_cell;
             }
         }
     }
-    s.clear(); v.clear();
-    return firstIntersectedCell;
+
+    visited.clear();
+    stack.clear();
+
+    return highestIntersectedCell;
 }
+
 
 std::vector<const NaviCell*> NaviMesh::GetAdjacentCells(const NaviCell* const cell,const int depth) const noexcept
 {
