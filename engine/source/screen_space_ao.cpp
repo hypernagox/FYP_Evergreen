@@ -159,7 +159,7 @@ namespace udsdx
 			float3 randVec = 2.0f * rand3(float3(pin.TexC, 0.0f));
 
 			float3 n;
-			n.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC).xy * 2.0f - 1.0f;
+			n.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC).xy;
 			n.z = -sqrt(1.0f - saturate(dot(n.xy, n.xy)));
 			float3 u = normalize(randVec - n * dot(randVec, n));
 			float3 v = cross(n, u);
@@ -265,7 +265,7 @@ namespace udsdx
 			float weightSum = 0.0f;
 
 			float3 n;
-			n.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC).xy * 2.0f - 1.0f;
+			n.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC).xy;
 			n.z = -sqrt(1.0f - saturate(dot(n.xy, n.xy)));
 			float p = gDepthMap.Sample(gsamPointClamp, pin.TexC).x;
 
@@ -274,7 +274,9 @@ namespace udsdx
 				float2 offset = (i - (BLUR_SAMPLE - 1) / 2.0f).xx * texOffset;
 				float4 sample = gSrcTex.Sample(gsamPointClamp, pin.TexC + offset);
 
-				float3 np = gNormalMap.Sample(gsamPointClamp, pin.TexC + offset).xyz;
+				float3 np;
+				np.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC + offset).xy;
+				np.z = -sqrt(1.0f - saturate(dot(np.xy, np.xy)));
 				float pp = gDepthMap.Sample(gsamPointClamp, pin.TexC + offset).x;
 
                 if (dot(n, np) > 0.8f && abs(p - pp) < 0.05f)

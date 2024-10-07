@@ -127,12 +127,14 @@ namespace udsdx
 		{
 			float depth = gBufferDSV.Sample(gsamLinearClamp, pin.TexC).r;
 			if (depth == 1.0f)
+			{
 				return float4(1.0f, 1.0f, 1.0f, 1.0f);
+			}
 
 			float4 gBuffer1Color = gBuffer1.Sample(gsamLinearClamp, pin.TexC);
 
 			float3 normalV;
-			normalV.xy = gBuffer2.Sample(gsamLinearClamp, pin.TexC).xy * 2.0f - 1.0f;
+			normalV.xy = gBuffer2.Sample(gsamLinearClamp, pin.TexC).xy;
 			normalV.z = -sqrt(1.0f - saturate(dot(normalV.xy, normalV.xy)));
 			float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
 			float4 PosW = float4(gBuffer3.Sample(gsamLinearClamp, pin.TexC).xyz, 1.0f);
@@ -141,7 +143,7 @@ namespace udsdx
 			float diffuse = pow(saturate(dot(normalW, -gDirLight) * 1.1f - 0.1f), 0.3f);
 			float shadowValue = ShadowValue(PosW, normalW, distanceH);
 			float AOFactor = gSSAOMap.Sample(gsamLinearClamp, pin.TexC).r;
-			// gBuffer1Color.rgb = (gBuffer1Color.rgb - (1.0f - diffuse) * 0.75f) * AOFactor;
+			gBuffer1Color.rgb = (gBuffer1Color.rgb - (1.0f - min(shadowValue, diffuse)) * 0.75f) * AOFactor;
 			return gBuffer1Color;
 		}
 	)";

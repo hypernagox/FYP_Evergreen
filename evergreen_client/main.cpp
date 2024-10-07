@@ -217,7 +217,7 @@ void Update(const Time& time)
     //g_heroObj->GetTransform()->SetLocalPosition(terrainPos * 100.0f);
    // g_curPos = terrainPos * 100.0f;
    // SetTerrainPos(g_heroObj);
-    g_lightAngle += DT * 0.5f;
+    // g_lightAngle += DT * 0.5f;
     float theta = 105.0f * DEG2RAD;
     Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
     playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PI / 3.0f, 0) * Quaternion::CreateFromAxisAngle(n, g_lightAngle));

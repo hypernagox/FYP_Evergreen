@@ -22,7 +22,7 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	auto sceneObject = GetSceneObject();
 	sceneObject->AddChild(m_rendererObj);
 
-	m_rendererObj->GetTransform()->SetLocalRotation(Quaternion::Identity);
+	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 64);
 }
 
 PlayerRenderer::~PlayerRenderer()

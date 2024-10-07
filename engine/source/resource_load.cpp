@@ -141,7 +141,7 @@ namespace udsdx
 		Assimp::Importer importer;
 		auto assimpScene = importer.ReadFile(
 			pathString.string(),
-			aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights
+			aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights
 		);
 
 		assert(assimpScene != nullptr);
