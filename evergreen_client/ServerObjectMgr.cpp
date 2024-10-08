@@ -43,11 +43,6 @@ void ServerObjectMgr::RemoveObject(const uint64_t id)
 	// 더미 클라이언트 지금 천개씩 넣다 뻈다 하는중임
 
 	// 씬이 지정되어 있지 않다면 삭제할 수 없다.
-	if (targetScene == nullptr)
-	{
-		std::cout << "Target Scene is not set" << std::endl;
-		return;
-	}
 
 	const auto iter = m_mapServerObj.find(id);
 	if (m_mapServerObj.cend() != iter)
@@ -59,6 +54,14 @@ void ServerObjectMgr::RemoveObject(const uint64_t id)
 	// 없는데 지우라고 오면 뭔가 이상한 상황이다.
 	// 뭔가 없는데 지우라고 했다거나 이런 기대하지 않은 동작에 대한 예외처리가
 	// 앞으로의 대부분의 로직 대부분에 필요하다
+
+	if (targetScene == nullptr)
+	{
+		std::cout << "Target Scene is not set" << std::endl;
+		return;
+	}
+
+	
 }
 
 Component* const ServerObjectMgr::GetServerObjComp(const uint64_t id) const noexcept
