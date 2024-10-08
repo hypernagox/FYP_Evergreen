@@ -206,6 +206,8 @@ void Update(const Time& time)
 
     if (INSTANCE(Input)->GetKeyDown(Keyboard::Escape))
     {
+        // TODO: 일단 끄기전 서버오브젝트 컨테이너 밀어줌
+        ServerObjectMgr::GetInst()->Clear();
         UpdownStudio::Quit();
     }
 

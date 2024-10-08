@@ -26,7 +26,7 @@ public:
 	SceneObject* const GetServerObjRoot(const uint64_t id) const noexcept;
 
 	void SetTargetScene(const std::shared_ptr<Scene>& scene) noexcept;
-
+	void Clear()noexcept { m_mapServerObj.clear(); }
 private:
 	std::shared_ptr<Scene> targetScene;
 	std::unordered_map<uint64_t, ServerObject*> m_mapServerObj;
