@@ -23,6 +23,7 @@ namespace ServerCore
 		void SetTickInterval(const uint32_t tick_ms)noexcept { m_tickInterval = tick_ms; }
 		const S_ptr<ContentsEntity>& GetAwaker()const noexcept { return m_curAwaker; }
 		const uint32_t GetAwakeDistance()const noexcept { return m_npcAwakeDistance; }
+		const auto& GetCurObjInSight()const noexcept { return m_curObjInSight; }
 	protected:
 		void AwakerInformation(const ContentsEntity* const awaker)noexcept { m_curAwaker = awaker->SharedFromThis(); }
 		virtual const ServerCore::TIMER_STATE TimerUpdate()noexcept = 0;
@@ -38,6 +39,7 @@ namespace ServerCore
 		std::atomic<TIMER_STATE> m_timer_state = TIMER_STATE::IDLE;
 		uint32_t m_tickInterval = 200;
 		S_ptr<ContentsEntity> m_curAwaker;
+		Vector<uint32_t> m_curObjInSight;
 		IocpEvent* m_timerEvent = xnew<IocpEvent>(EVENT_TYPE::TIMER, SharedFromThis());
 	};
 }

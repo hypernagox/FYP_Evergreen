@@ -60,16 +60,6 @@ namespace ServerCore
 			Mgr(TaskTimerMgr)->ReserveAsyncTask(tickAfter, this,
 				Task(memFunc, iocp_comp, std::move(args)...));
 		}
-		template<typename Ret, typename... Args>
-		void EnqueueBroadcastEvent(Ret(MoveBroadcaster::* const broadCastFunc)(Args...)noexcept, MoveBroadcaster* const broadCaster, Args&&... args)noexcept
-		{
-			EnqueueAsyncTaskPushOnly(broadCastFunc, static_cast<MoveBroadcaster* const>(broadCaster), std::forward<Args>(args)...);
-		}
-		template<typename Ret, typename... Args>
-		void EnqueueBroadcastEventTryExecute(Ret(MoveBroadcaster::* const broadCastFunc)(Args...)noexcept, MoveBroadcaster* const broadCaster, Args&&... args)noexcept
-		{
-			EnqueueAsyncTask(broadCastFunc, static_cast<MoveBroadcaster* const>(broadCaster), std::forward<Args>(args)...);
-		}
 	protected:
 		virtual void Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept override;
 		virtual void OnDestroy()noexcept override { EnqueueAsyncTask(&Queueabler::Destroy, this); }

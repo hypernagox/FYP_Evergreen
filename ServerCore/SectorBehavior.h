@@ -1,9 +1,8 @@
 #pragma once
 #include "ServerCorePch.h"
-#include "MoveBroadcaster.h"
 #include "ID_Ptr.hpp"
 
-class ServerCore::Sector;
+//class ServerCore::Sector;
 class ServerCore::ContentsEntity;
 class ServerCore::PacketSession;
 
@@ -21,6 +20,7 @@ enum SECTOR_BEHAVIOR : uint8_t
 
 namespace ServerCore
 {
+	class Sector;
 	class SectorBehavior
 	{
 	public:

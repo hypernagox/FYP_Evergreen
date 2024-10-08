@@ -2,6 +2,7 @@
 #include "TickTimer.h"
 #include "TaskTimerMgr.h"
 #include "Queueabler.h"
+#include "SectorInfoHelper.h"
 
 namespace ServerCore
 {
@@ -66,17 +67,19 @@ namespace ServerCore
 
 	void TickTimer::Tick() noexcept
 	{
+		const auto pOwner = GetOwnerEntity();
+
 		if (false == IsValid() && m_timerEvent)
 		{
-			const auto pOwner = GetOwnerEntity();
-			pOwner->GetMoveBroadcaster()->ReleaseViewList();
 			m_curAwaker.reset();
 			xdelete_sized<IocpEvent>(m_timerEvent, sizeof(IocpEvent));
 			m_timerEvent = nullptr;
 			return;
 		}
 
-		const TIMER_STATE eCurState = TimerUpdate();
+		m_curObjInSight = ServerCore::SectorInfoHelper::FillterSessionEntities(pOwner);
+
+		const TIMER_STATE eCurState = m_curObjInSight.empty() ? TIMER_STATE::IDLE : TimerUpdate();
 
 		m_timer_state.store(TIMER_STATE::PREPARE, std::memory_order_seq_cst);
 		const TIMER_STATE ePrevState = m_timer_state.exchange(eCurState, std::memory_order_release);
@@ -90,18 +93,27 @@ namespace ServerCore
 
 const ServerCore::TIMER_STATE TickTimerBT::TimerUpdate() noexcept
 {
-	const auto owner_comp_sys = static_cast<const ComponentSystemEX* const>(GetOwnerEntity()->GetComponentSystem());
-	const uint64_t cur_time = ::GetTickCount64();
-	const uint16_t diff_time = m_lastTickTime == 0 ? m_tickInterval : static_cast<const uint16_t>(cur_time - m_lastTickTime);
-	m_accBTRevaluateTime += diff_time;
-	if (m_btRevaluateInterval <= m_accBTRevaluateTime)
+	// TODO: 섹터 이동
+	const auto pOwnerEntity = GetOwnerEntity();
+	m_curObjInSight = ServerCore::SectorInfoHelper::FillterSessionEntities(pOwnerEntity);
+	NodeStatus cur_status;
+	if (m_curObjInSight.empty())cur_status = NodeStatus::FAILURE;
+	else
 	{
-		m_rootNode->Reset(owner_comp_sys, this);
-		m_accBTRevaluateTime = 0;
+		const auto owner_comp_sys = static_cast<const ComponentSystemNPC* const>(pOwnerEntity->GetComponentSystem());
+		const uint64_t cur_time = ::GetTickCount64();
+		const uint16_t diff_time = m_lastTickTime == 0 ? m_tickInterval : static_cast<const uint16_t>(cur_time - m_lastTickTime);
+		m_accBTRevaluateTime += diff_time;
+		if (m_btRevaluateInterval <= m_accBTRevaluateTime)
+		{
+			m_rootNode->Reset(owner_comp_sys, this);
+			m_accBTRevaluateTime = 0;
+		}
+		m_curBTTimerDT = static_cast<const float>(diff_time) / 1000.f;
+		owner_comp_sys->Update(m_curBTTimerDT);
+		cur_status = m_rootNode->Tick(owner_comp_sys, this, m_curAwaker);
+		m_lastTickTime = static_cast<const uint32_t>(cur_time);
 	}
-	m_curBTTimerDT = static_cast<const float>(diff_time) / 1000.f;
-	owner_comp_sys->Update(m_curBTTimerDT);
-	const NodeStatus cur_status = m_rootNode->Tick(owner_comp_sys, this, m_curAwaker);
 	if (NodeStatus::FAILURE == cur_status && NodeStatus::FAILURE == m_prevStatus)
 	{
 		m_prevStatus = NodeStatus::SUCCESS;
@@ -109,6 +121,5 @@ const ServerCore::TIMER_STATE TickTimerBT::TimerUpdate() noexcept
 		return ServerCore::TIMER_STATE::IDLE;
 	}
 	m_prevStatus = cur_status;
-	m_lastTickTime = static_cast<const uint32_t>(cur_time);
 	return ServerCore::TIMER_STATE::RUN;
 }

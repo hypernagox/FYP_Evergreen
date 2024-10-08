@@ -1,6 +1,5 @@
 #pragma once
 #include "ServerCorePch.h"
-#include "MoveBroadcaster.h"
 #include "RefCountable.h"
 #include "ID_Ptr.hpp"
 #include "ComponentSystem.h"
@@ -48,16 +47,8 @@ namespace ServerCore
 	{
 		friend class Sector;
 	public:
-		ContentsEntity(const uint16_t type_id, const uint8_t obj_type_info) noexcept
-			: m_objectCombineID{ CombineObjectID(type_id,IDGenerator::GenerateID()) }
-			, m_objTypeInfo{ obj_type_info }
-			, m_componentSystem{ xnew<ComponentSystemEX>(m_bIsValid,this) }
-		{}
-		ContentsEntity(Session* const session_) noexcept
-			: m_objectCombineID{ CombineObjectID(0,IDGenerator::GenerateID()) }
-			, m_pSession{ reinterpret_cast<PacketSession* const>(session_) }
-			, m_componentSystem{ xnew<ComponentSystem>(m_bIsValid) }
-		{}
+		ContentsEntity(const uint16_t type_id, const uint8_t obj_type_info) noexcept;
+		ContentsEntity(Session* const session_) noexcept;
 		~ContentsEntity()noexcept;
 	public:
 		template<typename T, typename U, typename Ret, typename... Args> requires std::derived_from<U, T>
@@ -74,12 +65,8 @@ namespace ServerCore
 	public:
 		constexpr inline const PacketSession* const GetSession()const noexcept { return m_pSession; }
 		inline const ClientSession* const GetClientSession()const noexcept { return reinterpret_cast<const ClientSession* const>(m_pSession); }
-		constexpr inline MoveBroadcaster* const GetMoveBroadcaster()const noexcept { return m_moveBroadcaster; }
-		inline const int BroadcastMove(const float x, const float y, Vector<Sector*> sectors)const noexcept { return m_moveBroadcaster->BroadcastMove(x, y, std::move(sectors)); }
-		template <typename T = class World>
-		constexpr inline const T* const GetCurWorld()const noexcept { return m_moveBroadcaster.GetCurWorld<T>(); }
 	public:
-		inline const ID_Ptr<ServerCore::Sector> GetCombinedSectorInfo()const noexcept { return m_CurrentSectorInfo.load(std::memory_order_acquire); }
+		inline const ID_Ptr<ServerCore::Sector> GetCombinedSectorInfo()const noexcept { return m_CurrentSectorInfo.load(std::memory_order_seq_cst); }
 		inline void SetSectorInfo(const uint16_t prev_sector_id, const ServerCore::Sector* const cur_sector)noexcept { m_CurrentSectorInfo.store(ID_Ptr<ServerCore::Sector>{ prev_sector_id, cur_sector }, std::memory_order_seq_cst); }
 		inline const uint16_t GetPrevSectorID()const noexcept { return GetCombinedSectorInfo().GetID(); }
 		template <typename T = ServerCore::Sector>
@@ -122,26 +109,17 @@ namespace ServerCore
 		}
 		template <typename T = Queueabler>
 		constexpr inline Queueabler* const GetQueueabler()const noexcept { return GetIocpComponent<T>(); }
-		template <typename T = Queueabler>
-		constexpr inline void MoveBroadcastEnqueue(const float x, const float y, Vector<Sector*>&& sectors) const noexcept {
-			GetQueueabler<T>()->EnqueueBroadcastEventTryExecute(&MoveBroadcaster::BroadcastMove, const_cast<MoveBroadcaster* const>(m_moveBroadcaster), float{ x }, float{ y }, std::move(sectors));
-		}
 	public:
 		template <typename T> requires std::is_enum_v<T>
 		void SetObjectTypeInfo(const T obj_type_info)noexcept { m_objTypeInfo = static_cast<const uint8_t>(obj_type_info); }
 		const uint8_t GetObjectTypeInfo()const noexcept { return m_objTypeInfo; }
-		inline void Update(const float dt_)noexcept {
-			if (true == m_bNowUpdateFlag.exchange(true, std::memory_order_relaxed))
-				return;
-			m_componentSystem->Update(dt_);
-			m_bNowUpdateFlag.store(false, std::memory_order_release);
-		}
-		inline void UpdateNonCheck(const float dt_)const noexcept { m_componentSystem->Update(dt_); }
+		void Update(const float dt_)noexcept;
+		void UpdateNonCheck(const float dt_)const noexcept;
 		template <typename T, typename... Args>
 		T* const AddComp(Args&&... args)noexcept { return m_componentSystem->AddComp<T>(this, std::forward<Args>(args)...); }
 		template <typename T>
-		constexpr inline T* const GetComp()const noexcept { return m_componentSystem->GetComp<T>(); }
-		inline const ComponentSystem* const GetComponentSystem()const noexcept { return m_componentSystem; }
+		inline T* const GetComp()const noexcept { return m_componentSystem->GetComp<T>(); }
+		inline const class ComponentSystem* const GetComponentSystem()const noexcept { return m_componentSystem; }
 	private:
 		void PostEntityTask(Task&& task_)const noexcept;
 		void OnDestroy()noexcept;
@@ -150,8 +128,7 @@ namespace ServerCore
 		alignas(64) PacketSession* const m_pSession = nullptr;
 		const uint64_t m_objectCombineID;
 		uint8_t m_objTypeInfo;
-		ComponentSystem* const m_componentSystem;
-		MoveBroadcaster* const m_moveBroadcaster = xnew<MoveBroadcaster>(this);
+		class ComponentSystem* const m_componentSystem;
 		IocpComponent* m_arrIocpComponents[etoi(IOCP_COMPONENT::END)] = {};
 		alignas(64) std::atomic_bool m_bIsValid = true;
 		std::atomic_bool m_bNowUpdateFlag = false;

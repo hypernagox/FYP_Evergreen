@@ -6,10 +6,13 @@
 #include "Navigator.h"
 #include "NaviMesh.h"
 #include "NaviCell.h"
+#include "ComponentSystem.h"
+#include "MoveBroadcaster.h"
+#include "SectorInfoHelper.h"
 
 using namespace ServerCore;
 
-NodeStatus MoveNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus MoveNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
     //const auto cur_pos = pOwnerEntity->GetComp<PositionComponent>()->pos;
     ////if (!m_bHasDest)
@@ -40,7 +43,7 @@ NodeStatus MoveNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTim
     return NodeStatus::SUCCESS;
 }
 
-NodeStatus RangeCheckNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
     const auto cur_pos = owner_comp_sys->GetComp<PositionComponent>()->pos;
     auto& awaker_ = bt_root_timer->GetMutableAwaker();
@@ -96,7 +99,7 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemEX* const owner_comp_sys, T
     return NodeStatus::SUCCESS;
 }
 
-NodeStatus AttackNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
     const auto cur_pos = owner_comp_sys->GetComp<PositionComponent>()->pos;
 
@@ -124,7 +127,7 @@ NodeStatus AttackNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickT
     return NodeStatus::RUNNING;
 }
 
-NodeStatus ChaseNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
     const auto cur_pos = owner_comp_sys->GetComp<PositionComponent>()->pos;
     const auto pOwnerEntity = bt_root_timer->GetOwnerEntity();
@@ -170,9 +173,10 @@ NodeStatus ChaseNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTi
             pOwnerEntity->GetComp<PositionComponent>()->pos = Vec3{ dx2,std::abs(dy2),dz2 };
 
             ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
-
+            
+            ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
             //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-            const int sector_state = pOwnerEntity->BroadcastMove(0, 0, std::move(sectors));
+            
         }
         else
         {
@@ -186,7 +190,7 @@ NodeStatus ChaseNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTi
             ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
             //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-            const int sector_state = pOwnerEntity->BroadcastMove(0, 0, std::move(sectors));
+            ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
         }
 
         return NodeStatus::RUNNING;
@@ -215,11 +219,11 @@ NodeStatus ChaseNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTi
     ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-    const int sector_state = pOwnerEntity->BroadcastMove(0, 0, std::move(sectors));
+    ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
 
-    if (SECTOR_STATE::USER_EMPTY & sector_state) {
-        return NodeStatus::FAILURE;
-    }
+   // if (SECTOR_STATE::USER_EMPTY & sector_state) {
+   //     return NodeStatus::FAILURE;
+   // }
 
    // if (10 * 10 <= dx * dx + dy * dy + dz * dz) {
    //     std::cout << "추격 성공" << std::endl;
@@ -232,17 +236,17 @@ NodeStatus ChaseNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTi
     return NodeStatus::RUNNING;
 }
 
-NodeStatus PatrolNode::Tick(const ComponentSystemEX* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus PatrolNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
     owner_comp_sys->GetComp<PositionComponent>()->body_angle += 1000.f * bt_root_timer->GetBTTimerDT();
     const auto pOwnerEntity = owner_comp_sys->GetOwnerEntity();
     ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-    const int sector_state = pOwnerEntity->BroadcastMove(0, 0, std::move(sectors));
+    ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
 
-    if (SECTOR_STATE::USER_EMPTY & sector_state)
-        return NodeStatus::FAILURE;
+    //if (SECTOR_STATE::USER_EMPTY & sector_state)
+    //    return NodeStatus::FAILURE;
 
     return NodeStatus::SUCCESS;
 }

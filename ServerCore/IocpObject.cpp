@@ -5,19 +5,48 @@
 #include "Service.h"
 #include "ContentsComponent.h"
 #include "WorldMgr.h"
+#include "SectorInfoHelper.h"
 
 namespace ServerCore
 {
+	ContentsEntity::ContentsEntity(const uint16_t type_id, const uint8_t obj_type_info) noexcept
+		: m_objectCombineID{ CombineObjectID(type_id,IDGenerator::GenerateID()) }
+		, m_objTypeInfo{ obj_type_info }
+		, m_componentSystem{ xnew<ComponentSystemNPC>(m_bIsValid,this) }
+	{
+		AddComp<SectorInfoHelper>();
+	}
+
+	ContentsEntity::ContentsEntity(Session* const session_) noexcept
+		: m_objectCombineID{ CombineObjectID(0,IDGenerator::GenerateID()) }
+		, m_pSession{ reinterpret_cast<PacketSession* const>(session_) }
+		, m_componentSystem{ xnew<ComponentSystem>(m_bIsValid) }
+	{
+		AddComp<SectorInfoHelper>();
+	}
+	
 	ContentsEntity::~ContentsEntity() noexcept
 	{
 		std::cout << "DESTROY" << std::endl;
 		
-		xdelete_sized<MoveBroadcaster>(m_moveBroadcaster, sizeof(MoveBroadcaster));
 		xdelete<ComponentSystem>(m_componentSystem);
 		if (m_pSession) 
 			m_pSession->DecRef();
 		for (const auto iocp_comp : m_arrIocpComponents)if (iocp_comp)iocp_comp->DecRef();
 
+	}
+
+	void ContentsEntity::Update(const float dt_) noexcept
+	{
+		if (true == m_bNowUpdateFlag.exchange(true, std::memory_order_relaxed))
+			return;
+		m_componentSystem->Update(dt_);
+		m_bNowUpdateFlag.store(false, std::memory_order_release);
+	}
+
+	void ContentsEntity::UpdateNonCheck(const float dt_) const noexcept
+	{
+		m_componentSystem->Update(dt_);
 	}
 
 	void ContentsEntity::PostEntityTask(Task&& task_) const noexcept

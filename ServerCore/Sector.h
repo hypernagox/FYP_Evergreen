@@ -1,6 +1,7 @@
 #pragma once
 #include "ServerCorePch.h"
 #include "VectorHash.hpp"
+#include "MoveBroadcaster.h"
 
 namespace ServerCore
 {

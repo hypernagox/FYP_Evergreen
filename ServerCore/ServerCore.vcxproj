@@ -233,6 +233,7 @@
     <ClInclude Include="PacketSession.h" />
     <ClInclude Include="RefCountable.h" />
     <ClInclude Include="SectorBehavior.h" />
+    <ClInclude Include="SectorInfoHelper.h" />
     <ClInclude Include="ServerCorePch.h" />
     <ClInclude Include="RecvBuffer.h" />
     <ClInclude Include="SendBuffer.h" />
@@ -284,6 +285,7 @@
     <ClCompile Include="NetAddress.cpp" />
     <ClCompile Include="PacketSession.cpp" />
     <ClCompile Include="RefCountable.cpp" />
+    <ClCompile Include="SectorInfoHelper.cpp" />
     <ClCompile Include="ServerCorePch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

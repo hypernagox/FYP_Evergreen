@@ -8,7 +8,7 @@ class ComponentSystem
 {
 	friend class ServerCore::ContentsEntity;
 public:
-	ComponentSystem(const std::atomic_bool& bValidFlag_)noexcept :m_bOwnerValidFlag{ bValidFlag_ } {}
+	ComponentSystem(const std::atomic_bool& bValidFlag_)noexcept;
 	~ComponentSystem()noexcept;
 public:
 	template <typename T>
@@ -21,7 +21,7 @@ protected:
 private:
 	template <typename T, typename... Args>
 	T* const AddComp(Args&&... args)noexcept {
-		const auto comp_ptr = xnew<T>(std::forward<Args>(args)...);
+		const auto comp_ptr = ServerCore::xnew<T>(std::forward<Args>(args)...);
 		NAGOX_ASSERT(m_mapContentsComponents.try_emplace(T::GetCompTypeNameGlobal(), comp_ptr).second);
 		if constexpr (std::derived_from<T, ContentsUpdateComponent>)
 			m_vecUpdateComponents.emplace_back(comp_ptr);
@@ -37,16 +37,16 @@ private:
 	ServerCore::Vector<ContentsUpdateComponent*> m_vecUpdateComponents;
 };
 
-class ComponentSystemEX
+class ComponentSystemNPC
 	:public ComponentSystem
 {
 	friend class TickTimerBT;
 public:
-	ComponentSystemEX(const std::atomic_bool& bValidFlag_, ServerCore::ContentsEntity* const pOwner_)noexcept
+	ComponentSystemNPC(const std::atomic_bool& bValidFlag_, ServerCore::ContentsEntity* const pOwner_)noexcept
 		: ComponentSystem{ bValidFlag_ }
 		, m_pOwnerEntity{ pOwner_ }
 	{}
-	~ComponentSystemEX()noexcept = default;
+	~ComponentSystemNPC()noexcept = default;
 public:
 	inline ServerCore::ContentsEntity* const GetOwnerEntity()const noexcept { return m_pOwnerEntity; }
 private:

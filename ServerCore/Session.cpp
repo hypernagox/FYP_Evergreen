@@ -7,6 +7,7 @@
 #include "SendBuffer.h"
 #include "PacketSession.h"
 #include "Queueabler.h"
+#include "MoveBroadcaster.h"
 
 namespace ServerCore
 {
@@ -157,8 +158,7 @@ namespace ServerCore
 				ContentsEntity* const pOwner = GetOwnerEntity();
 				pOwner->TryOnDestroy();
 				GetService()->ReleaseSession(this);
-				if (const auto queueabler = pOwner->GetQueueabler())
-					queueabler->EnqueueBroadcastEventTryExecute(&MoveBroadcaster::ReleaseViewList, pOwner->GetMoveBroadcaster());
+				pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
 				pOwner->DecRef();
 				
 				return false;
@@ -174,8 +174,7 @@ namespace ServerCore
 		ContentsEntity* const pOwner = GetOwnerEntity();
 		pOwner->TryOnDestroy();
 		GetService()->ReleaseSession(this);
-		if (const auto queueabler = pOwner->GetQueueabler())
-			queueabler->EnqueueBroadcastEventTryExecute(&MoveBroadcaster::ReleaseViewList, pOwner->GetMoveBroadcaster());
+		pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
 		pOwner->DecRef();
 	}
 

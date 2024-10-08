@@ -3,6 +3,7 @@
 #include "Sector.h"
 #include "Queueabler.h"
 #include "TaskTimerMgr.h"
+#include "MoveBroadcaster.h"
 
 std::atomic_int cnt = 0;
 
@@ -24,6 +25,7 @@ void ClientSession::OnConnected()
 	const auto pOwner = GetOwnerEntity();
 	pOwner->SetObjectTypeInfo(PLAYER_TYPE_INFO::WARRIOR);
 	pOwner->AddIocpComponent<ServerCore::Queueabler>();
+	pOwner->AddComp<ServerCore::MoveBroadcaster>();
 }
 
 void ClientSession::OnDisconnected(const ID_Ptr<ServerCore::Sector> curSectorInfo_)noexcept

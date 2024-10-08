@@ -4,6 +4,7 @@
 
 Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
+	std::cout << "¸÷ ¶¹À½!!" << std::endl;
 	m_rendererObj = std::make_shared<SceneObject>();
 
 	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
@@ -31,6 +32,7 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 
 Monster::~Monster()
 {
+	std::cout << "¼Ò¸ê!!" << std::endl;
 }
 
 void Monster::Update(const Time& time, Scene& scene)

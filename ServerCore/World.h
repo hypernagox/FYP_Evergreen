@@ -2,6 +2,7 @@
 #include "ServerCorePch.h"
 #include "TaskQueueable.h"
 #include "WorldMgr.h"
+#include "SectorInfoHelper.h"
 
 namespace ServerCore
 {
@@ -48,23 +49,28 @@ namespace ServerCore
 		}
 		void EnterWorld(ContentsEntity* const pEntity_)noexcept {
 			IncRef();
-			const auto broad_caster = pEntity_->GetMoveBroadcaster();
-			if (const auto prev_world = broad_caster->GetCurWorld())
-				prev_world->DecRef();
+			if (const auto sector = pEntity_->GetCurSector())
+			{
+				sector->GetParentWorld()->DecRef();
+			}
 			else
+			{
 				pEntity_->IncRef();
-			broad_caster->SetWorld(this);
+			}
+			pEntity_->GetComp<ServerCore::SectorInfoHelper>()->SetSectorXY(m_start_x, m_start_y);
 			m_vecSectors[m_start_y][m_start_x]->EnterEnqueue(pEntity_);
 		}
 		void EnterWorldWithXY(const uint8_t start_x, const uint8_t start_y, ContentsEntity* const pEntity_)noexcept {
 			IncRef();
-			const auto broad_caster = pEntity_->GetMoveBroadcaster();
-			if (const auto prev_world = broad_caster->GetCurWorld())
-				prev_world->DecRef();
+			if (const auto sector = pEntity_->GetCurSector())
+			{
+				sector->GetParentWorld()->DecRef();
+			}
 			else
+			{
 				pEntity_->IncRef();
-			broad_caster->SetWorld(this);
-			broad_caster->InitSectorXY(start_x, start_y);
+			}
+			pEntity_->GetComp<SectorInfoHelper>()->SetSectorXY(start_x, start_y);
 			m_vecSectors[start_y][start_x]->EnterEnqueue(pEntity_);
 		}
 		void EndWorldEnqueue()noexcept { EnqueueAsync(&World::EndWorld); }

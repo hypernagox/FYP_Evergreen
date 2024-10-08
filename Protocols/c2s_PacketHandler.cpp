@@ -9,6 +9,8 @@
 #include "Navigator.h"
 #include "NaviMesh.h"
 #include "NaviCell.h"
+#include "MoveBroadcaster.h"
+#include "SectorInfoHelper.h"
 
 using namespace ServerCore;
 
@@ -35,7 +37,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	//pSession_->SetEntity(entity);
 	//entity->AddIocpComponent<Queueabler>();
 	entity->AddComp<PositionComponent>()->pos = ToOriginVec3(pkt_.pos());
-
+	
 	//Mgr(WorldMgr)->GetWorld(0) ->GetStartSector()->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER));
 	Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
 	
@@ -52,9 +54,9 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 	b.obj_type = MONSTER_TYPE_INFO::FOX;
 	
-	b.x = 14.6667;
-	b.y = 0.0833333;
-	b.z = 14.6667;
+	b.x = 14.6667f;
+	b.y = 0.0833333f;
+	b.z = 14.6667f;
 	static bool b2 = true;
 	if (b2)
 	{
@@ -90,7 +92,9 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 	//	pEntity->body_angle,
 	//	pEntity->time_stamp));
 	//g_sector->MoveBroadCast(pSession_, s);
-	pSession_->MoveBroadcastEnqueue(0, 0, std::move(s));
+	
+	pSession_->GetOwnerEntity()->GetComp<ServerCore::MoveBroadcaster>()->BroadcastMove();
+	pSession_->GetOwnerEntity()->GetComp<ServerCore::SectorInfoHelper>()->ImmigrationSector(0, 0);
 	//const auto en = pSession_->GetOwnerEntity();
 	//g_sector->BroadCastParallel(MoveBroadcaster::CreateMovePacket(en), s, en);
 	//pSession_->GetCurWorld()->GetStartSector()->BroadCastParallel(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()), s, pSession_->GetOwnerEntity(),true);

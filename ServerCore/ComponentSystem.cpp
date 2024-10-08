@@ -2,6 +2,10 @@
 #include "ComponentSystem.h"
 #include "ContentsComponent.h"
 
+ComponentSystem::ComponentSystem(const std::atomic_bool& bValidFlag_) noexcept
+	:m_bOwnerValidFlag{ bValidFlag_ }
+{}
+
 ComponentSystem::~ComponentSystem() noexcept
 {
 	for (const auto contents_comp : m_mapContentsComponents | std::views::values)ServerCore::xdelete<ContentsComponent>(contents_comp);

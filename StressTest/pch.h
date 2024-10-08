@@ -7,7 +7,7 @@
 #include "s2c_DummyPacketHandler.h"
 #include "CreateBuffer4Dummy.h"
 #include "HeightMap.h"
-#include "SimpleMath.h"
+#include <directxtk12/SimpleMath.h>
 #include "PathManager.h"
 
 #include "func.h"

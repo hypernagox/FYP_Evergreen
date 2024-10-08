@@ -50,7 +50,7 @@ namespace ServerCore
 	private:
 		tbb::concurrent_unordered_map<uint8_t, S_ptr<World>> m_mapWorld;
 
-		mutable tbb::concurrent_unordered_map<uint32_t, uint16_t, std::hash<uint32_t>, std::equal_to<uint32_t>, StlAllocator<std::pair<const uint32_t, uint16_t>>> m_id2Index;
+		mutable tbb::concurrent_unordered_map<uint32_t, uint16_t, std::hash<uint32_t>, std::equal_to<uint32_t>> m_id2Index;
 		std::span<AtomicNPCPtr> m_arrNPC;
 		tbb::concurrent_bounded_queue<int32> m_idxQueue;
 	};

@@ -363,6 +363,9 @@
     <ClInclude Include="SimpleLinkedList.hpp">
       <Filter>Utils\struct\CustomDS</Filter>
     </ClInclude>
+    <ClInclude Include="SectorInfoHelper.h">
+      <Filter>EntityManagement\MoveBroadcaster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -487,6 +490,9 @@
     </ClCompile>
     <ClCompile Include="ComponentSystem.cpp">
       <Filter>Network\IocpCore\IocpObject</Filter>
+    </ClCompile>
+    <ClCompile Include="SectorInfoHelper.cpp">
+      <Filter>EntityManagement\MoveBroadcaster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

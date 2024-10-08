@@ -24,7 +24,7 @@ bool SectorPredicate::SectorHuristicFunc2Session(const ServerCore::ContentsEntit
 	const int dx = (int)(a_pos.x - b_pos.x);
 	const int dy = (int)(a_pos.y - b_pos.y);
 	const int dz = (int)(a_pos.z - b_pos.z);
-
+	return true;
 	return ((50 * 50) >= (dx * dx + dy * dy + dz * dz));
 }
 
@@ -39,7 +39,7 @@ bool SectorPredicate::SectorHuristicFunc2NPC(const ServerCore::ContentsEntity* c
 	const int dz = (int)(a_pos.z - b_pos.z);
 
 	const uint32_t dist = ((dx * dx + dy * dy + dz * dz));
-	const bool bRes = (500 * 500) >= dist;
+	const bool bRes = (50 * 50) >= dist;
 
 	if (bRes)
 	{
