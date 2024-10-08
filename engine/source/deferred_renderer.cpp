@@ -103,7 +103,7 @@ namespace udsdx
 				// Texel size.
 				float dx = 1.0f / (float)width;
 				float tanLight = abs(length(cross(normalW, -gDirLight)) / dot(normalW, -gDirLight));
-				float bias = tanLight * 2e-5f;
+				float bias = 1e-4f;
 
 				const float2 offsets[9] = {
 					float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),

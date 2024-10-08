@@ -37,7 +37,6 @@ void AuthenticPlayer::InitCamDirection()
 {
 	m_cameraAngleAxis = Vector3::Zero;
 	m_cameraAngleAxisSmooth = Vector3::Zero;
-	m_cameraAnchor->GetTransform()->SetLocalRotation(Quaternion::Identity);
 
 	m_pCamera->GetSceneObject()->GetTransform()->SetLocalRotation(Quaternion::Identity);
 	GetSceneObject()->GetTransform()->SetLocalRotation(Quaternion::Identity);
@@ -46,11 +45,11 @@ void AuthenticPlayer::InitCamDirection()
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
 	Vector3 wv = GetSceneObject()->GetTransform()->GetLocalPosition() + m_cameraAnchor->GetTransform()->GetLocalPosition();
-	const float fMaxDist = 5.0f;
+	const float fMaxDist = 4.0f;
 	switch (m_curCamMode)
 	{
 	case 0:
-		pCameraTransfrom->SetLocalPosition(Vector3::Zero);
+		pCameraTransfrom->SetLocalPosition(Vector3::Backward * 0.5f);
 		pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
 		break;
 	case 1:
@@ -58,8 +57,8 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 		float target = -fMaxDist;
 		pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, std::max(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
 		pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
+		break;
 	}
-	break;
 	case 2:
 	{
 		float target = fMaxDist;
@@ -76,7 +75,6 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
 {
-
 	m_fpChangeCamMode[0] = [this]() noexcept {
 		m_cameraObj->GetTransform()->SetLocalPosition(Vector3::Zero);
 		m_cameraObj->GetTransform()->SetLocalRotation(Quaternion::Identity);
@@ -91,7 +89,7 @@ AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 		};
 
 	m_cameraAnchor = std::make_shared<SceneObject>();
-	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3(0.0f, 1.7f, 0.0f));
+	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3(0.0f, 2.0f, 0.0f));
 
 	m_cameraObj = std::make_shared<SceneObject>();
 	m_fpChangeCamMode[m_curCamMode]();
@@ -138,7 +136,11 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 
 	if (INSTANCE(Input)->GetKey(Keyboard::E))
 	{
-		m_fovBase = std::max(m_fovBase + PIDIV4 * time.deltaTime, PIDIV2);
+		m_fovBase = std::min(m_fovBase + time.deltaTime, 170.0f * DEG2RAD);
+	}
+	if (INSTANCE(Input)->GetKey(Keyboard::Q))
+	{
+		m_fovBase = std::max(m_fovBase - time.deltaTime, 10.0f * DEG2RAD);
 	}
 	if (INSTANCE(Input)->GetKey(Keyboard::Space))
 	{
