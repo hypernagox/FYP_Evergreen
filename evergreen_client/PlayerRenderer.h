@@ -8,7 +8,7 @@ class PlayerRenderer : public Component
 {
 protected:
 	std::shared_ptr<SceneObject> m_rendererObj;
-	std::shared_ptr<udsdx::Material> m_playerMaterial;
+	std::array<std::shared_ptr<udsdx::Material>, 5> m_playerMaterials;
 
 public:
 	Transform* m_transformBody;

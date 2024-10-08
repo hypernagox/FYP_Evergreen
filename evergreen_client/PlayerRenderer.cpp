@@ -8,21 +8,28 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
 
 	auto shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl"));
-	m_playerMaterial = std::make_shared<udsdx::Material>();
-	m_playerMaterial->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
 	m_transformBody = pBody->GetTransform();
 	m_rendererObj->AddChild(pBody);
 
-	auto pBodyMesh = pBody->AddComponent<RiggedMeshRenderer>();
-	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"char_sample.gltf")));
+	auto pBodyMesh = pBody->AddComponent<MeshRenderer>();
+	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\zelda_modified.obj")));
 	pBodyMesh->SetShader(shader);
-	pBodyMesh->SetMaterial(m_playerMaterial.get());
+
+	for (size_t i = 0; i < m_playerMaterials.size(); ++i)
+	{
+		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
+		pBodyMesh->SetMaterial(m_playerMaterials[i].get(), i);
+	}
+	m_playerMaterials[0]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
+	m_playerMaterials[1]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_body_BaseColor.png")));
+	m_playerMaterials[2]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
+	m_playerMaterials[4]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
 
 	auto sceneObject = GetSceneObject();
 	sceneObject->AddChild(m_rendererObj);
 
-	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 64);
+	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 32);
 }
 
 PlayerRenderer::~PlayerRenderer()
