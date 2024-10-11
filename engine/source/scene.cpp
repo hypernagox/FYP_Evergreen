@@ -114,14 +114,8 @@ namespace udsdx
 		Matrix4x4 projMat = camera->GetProjMatrix(param.AspectRatio);
 		param.ViewFrustumWorld = camera->GetViewFrustumWorld(param.AspectRatio);
 
-		CameraConstants cameraConstants;
-		cameraConstants.View = viewMat.Transpose();
-		cameraConstants.Proj = projMat.Transpose();
-
-		Matrix4x4 worldMat = camera->GetSceneObject()->GetTransform()->GetWorldSRTMatrix();
-		cameraConstants.CameraPosition = Vector4::Transform(Vector4::UnitW, worldMat);
-
-		param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerCameraCBV, sizeof(CameraConstants) / 4, &cameraConstants, 0);
+		D3D12_GPU_VIRTUAL_ADDRESS cbvGpu = camera->UpdateConstantBuffer(param.FrameResourceIndex, param.AspectRatio);
+		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cbvGpu);
 
 		RenderSceneObjects(param, 1);
 
@@ -129,7 +123,7 @@ namespace udsdx
 
 		PassRenderSSAO(param, camera);
 
-		param.Renderer->PassRender(param, cameraConstants);
+		param.Renderer->PassRender(param, cbvGpu);
 	}
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)

@@ -18,6 +18,5 @@ PixelOut PS(VertexOut pin)
      
     pOut.Buffer1 = texColor;
     pOut.Buffer2 = normal.xy;
-    pOut.Buffer3 = pin.PosW;
     return pOut;
 }

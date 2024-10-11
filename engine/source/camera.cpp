@@ -3,17 +3,42 @@
 #include "scene.h"
 #include "scene_object.h"
 #include "transform.h"
+#include "frame_resource.h"
+#include "core.h"
 
 namespace udsdx
 {
 	Camera::Camera(const std::shared_ptr<SceneObject>& object) : Component(object)
 	{
-
+		for (auto& buffer : m_constantBuffers)
+		{
+			buffer = std::make_unique<UploadBuffer<CameraConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
+		}
 	}
 
 	void Camera::PostUpdate(const Time& time, Scene& scene)
 	{
 		scene.EnqueueRenderCamera(this);
+	}
+
+	D3D12_GPU_VIRTUAL_ADDRESS Camera::UpdateConstantBuffer(int frameResourceIndex, float aspect)
+	{
+		CameraConstants constants;
+		Matrix4x4 worldMat = GetTransform()->GetWorldSRTMatrix();
+		Matrix4x4 viewMat = GetViewMatrix();
+		Matrix4x4 projMat = GetProjMatrix(aspect);
+		Matrix4x4 viewProjMat = viewMat * projMat;
+
+		constants.View = viewMat.Transpose();
+		constants.Proj = projMat.Transpose();
+		constants.ViewProj = viewProjMat.Transpose();
+		constants.ViewInverse = viewMat.Invert().Transpose();
+		constants.ProjInverse = projMat.Invert().Transpose();
+		constants.ViewProjInverse = viewProjMat.Invert().Transpose();
+		constants.CameraPosition = Vector4::Transform(Vector4::UnitW, worldMat);
+
+		m_constantBuffers[frameResourceIndex]->CopyData(0, constants);
+		return m_constantBuffers[frameResourceIndex]->Resource()->GetGPUVirtualAddress();
 	}
 
 	Matrix4x4 Camera::GetViewMatrix() const

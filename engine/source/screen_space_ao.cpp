@@ -19,6 +19,10 @@ namespace udsdx
 		{
 			float4x4 gView;
 			float4x4 gProj;
+			float4x4 gViewProj;
+			float4x4 gViewInverse;
+			float4x4 gProjInverse;
+			float4x4 gViewProjInverse;
 			float4 gEyePosW;
 		};
 

@@ -12,6 +12,10 @@ namespace udsdx
 		{
 			float4x4 gView;
 			float4x4 gProj;
+			float4x4 gViewProj;
+			float4x4 gViewInverse;
+			float4x4 gProjInverse;
+			float4x4 gViewProjInverse;
 			float4 gEyePosW;
 		}
 
@@ -133,11 +137,15 @@ namespace udsdx
 
 			float4 gBuffer1Color = gBuffer1.Sample(gsamLinearClamp, pin.TexC);
 
+			// Compute world space position from depth value.
+			float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
+            float4 PosW = mul(PosNDC, gViewProjInverse);
+			PosW /= PosW.w;
+
 			float3 normalV;
 			normalV.xy = gBuffer2.Sample(gsamLinearClamp, pin.TexC).xy;
 			normalV.z = -sqrt(1.0f - saturate(dot(normalV.xy, normalV.xy)));
 			float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
-			float4 PosW = float4(gBuffer3.Sample(gsamLinearClamp, pin.TexC).xyz, 1.0f);
 			float distanceH = length(PosW.xyz - gEyePosW.xyz);
 
 			float diffuse = pow(saturate(dot(normalW, -gDirLight) * 1.1f - 0.1f), 0.3f);
@@ -254,7 +262,7 @@ namespace udsdx
 		CD3DX12_ROOT_PARAMETER slotRootParameter[6];
 
 		// Perfomance TIP: Order from most frequent to least frequent.
-		slotRootParameter[0].InitAsConstants(sizeof(CameraConstants) / 4, 0);
+		slotRootParameter[0].InitAsConstantBufferView(0);
 		slotRootParameter[1].InitAsConstantBufferView(1);
 		slotRootParameter[2].InitAsDescriptorTable(1, &texTable1, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[3].InitAsDescriptorTable(1, &texTable2, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -466,7 +474,7 @@ namespace udsdx
 			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
 	}
 
-	void DeferredRenderer::PassRender(RenderParam& renderParam, CameraConstants cameraConstants)
+	void DeferredRenderer::PassRender(RenderParam& renderParam, D3D12_GPU_VIRTUAL_ADDRESS cbvGpu)
 	{
 		ID3D12GraphicsCommandList* pCommandList = renderParam.CommandList;
 
@@ -483,7 +491,7 @@ namespace udsdx
 
 		pCommandList->SetPipelineState(m_renderPipelineState.Get());
 
-		renderParam.CommandList->SetGraphicsRoot32BitConstants(0, sizeof(CameraConstants) / 4, &cameraConstants, 0);
+		renderParam.CommandList->SetGraphicsRootConstantBufferView(0, cbvGpu);
 		pCommandList->SetGraphicsRootConstantBufferView(1, renderParam.RenderShadowMap->GetConstantBuffer(renderParam.FrameResourceIndex));
 		pCommandList->SetGraphicsRootDescriptorTable(2, m_gBuffersGpuSrv[0]);
 		pCommandList->SetGraphicsRootDescriptorTable(3, renderParam.RenderShadowMap->GetSrvGpu());

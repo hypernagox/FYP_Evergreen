@@ -13,6 +13,10 @@ namespace udsdx
 	{
 		Matrix4x4 View = Matrix4x4::Identity;
 		Matrix4x4 Proj = Matrix4x4::Identity;
+		Matrix4x4 ViewProj = Matrix4x4::Identity;
+		Matrix4x4 ViewInverse = Matrix4x4::Identity;
+		Matrix4x4 ProjInverse = Matrix4x4::Identity;
+		Matrix4x4 ViewProjInverse = Matrix4x4::Identity;
 		Vector4 CameraPosition = Vector4::Zero;
 	};
 

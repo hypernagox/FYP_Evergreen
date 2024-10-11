@@ -352,7 +352,7 @@ namespace udsdx
 		shadowMapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 2);
 
 		slotRootParameter[RootParam::PerObjectCBV].InitAsConstants(sizeof(ObjectConstants) / 4, 0);
-		slotRootParameter[RootParam::PerCameraCBV].InitAsConstants(sizeof(CameraConstants) / 4, 1);
+		slotRootParameter[RootParam::PerCameraCBV].InitAsConstantBufferView(1);
 		slotRootParameter[RootParam::BonesCBV].InitAsConstantBufferView(2);
 		slotRootParameter[RootParam::PerShadowCBV].InitAsConstantBufferView(3);
 		slotRootParameter[RootParam::PerFrameCBV].InitAsConstantBufferView(4);
