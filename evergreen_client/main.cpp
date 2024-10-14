@@ -187,6 +187,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             NetMgr(NetworkMgr)->DoNetworkIO();
             });
     }
+
+    INSTANCE(Core)->GetRenderer()->SetEnvironmentMap(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg")));
+
     return UpdownStudio::Run(scene, nCmdShow);
 }
 

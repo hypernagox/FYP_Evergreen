@@ -913,6 +913,11 @@ namespace udsdx
 		return m_commandList.Get();
 	}
 
+	DeferredRenderer* Core::GetRenderer() const
+	{
+		return m_deferredRenderer.get();
+	}
+
 	ID3D12Resource* Core::CurrentBackBuffer() const
 	{
 		return m_swapChainBuffers[m_currBackBuffer].Get();
