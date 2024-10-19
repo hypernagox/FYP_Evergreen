@@ -47,11 +47,20 @@
     <Filter Include="EntityFactory\ContentsBehaviorNode">
       <UniqueIdentifier>{87376198-e8bb-421f-929b-bb14619f1050}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PathModule">
-      <UniqueIdentifier>{75e5ad96-098d-4e22-aa59-a065a032d140}</UniqueIdentifier>
+    <Filter Include="Navigation">
+      <UniqueIdentifier>{905d396c-0025-45a8-8a32-e3710cd69110}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PathModule\AStar">
-      <UniqueIdentifier>{e42cb977-e108-4133-a9be-7d4517751e48}</UniqueIdentifier>
+    <Filter Include="Navigation\NaviAgent">
+      <UniqueIdentifier>{85e5d1e4-7516-497d-8cc2-42a90cac7d9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommonComponent">
+      <UniqueIdentifier>{45885e52-b213-44c4-9844-aa3903ea2108}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommonComponent\NaviAgent">
+      <UniqueIdentifier>{6376c18d-c380-4662-8bb4-425dca78e181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommonComponent\PathFinder">
+      <UniqueIdentifier>{f94ddb3f-e2ac-4c09-846f-b68950212697}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -85,8 +94,11 @@
     <ClCompile Include="..\Protocols\CreateBuffer4Server.cpp">
       <Filter>Protocols\Protocol</Filter>
     </ClCompile>
-    <ClCompile Include="AStar.cpp">
-      <Filter>PathModule\AStar</Filter>
+    <ClCompile Include="NaviAgent_Common.cpp">
+      <Filter>CommonComponent\NaviAgent</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFinder_Common.cpp">
+      <Filter>CommonComponent\PathFinder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -129,8 +141,11 @@
     <ClInclude Include="..\Protocols\CreateBuffer4Server.h">
       <Filter>Protocols\Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="AStar.h">
-      <Filter>PathModule\AStar</Filter>
+    <ClInclude Include="NaviAgent_Common.h">
+      <Filter>CommonComponent\NaviAgent</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFinder_Common.h">
+      <Filter>CommonComponent\PathFinder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

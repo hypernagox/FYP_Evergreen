@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="tracy\public\TracyClient.cpp">
-      <Filter>External Sources</Filter>
+      <Filter>Engine\External Sources</Filter>
     </ClCompile>
     <ClCompile Include="source\pch.cpp">
       <Filter>Precompiled Headers</Filter>
@@ -96,7 +96,7 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="source\d3dUtil.cpp">
-      <Filter>External Sources</Filter>
+      <Filter>Engine\External Sources</Filter>
     </ClCompile>
     <ClCompile Include="source\resource_load.cpp">
       <Filter>Engine\Resource</Filter>
@@ -105,9 +105,6 @@
   <ItemGroup>
     <Filter Include="Precompiled Headers">
       <UniqueIdentifier>{3aab767c-37c5-441b-a44e-d1ab6547e6c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="External Sources">
-      <UniqueIdentifier>{2a4c4a61-42fa-46c7-a545-6fe2054977ec}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utility Sources">
       <UniqueIdentifier>{b297e601-7f28-49fb-822e-cc2b76964f1f}</UniqueIdentifier>
@@ -123,6 +120,9 @@
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{999016cd-aabb-44ef-a37f-7d3d53d75760}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\External Sources">
+      <UniqueIdentifier>{2a4c4a61-42fa-46c7-a545-6fe2054977ec}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -227,10 +227,10 @@
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="source\UploadBuffer.h">
-      <Filter>External Sources</Filter>
+      <Filter>Engine\External Sources</Filter>
     </ClInclude>
     <ClInclude Include="source\d3dUtil.h">
-      <Filter>External Sources</Filter>
+      <Filter>Engine\External Sources</Filter>
     </ClInclude>
     <ClInclude Include="source\resource_load.h">
       <Filter>Engine\Resource</Filter>

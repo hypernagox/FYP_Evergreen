@@ -3,10 +3,12 @@
 #include "ServerComponent.h"
 #include "MoveInterpolator.h"
 #include "NaviAgent.h"
+#include "Navigator.h"
 
 ServerObject::ServerObject(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
-	m_pNaviAgent = new NaviAgent;
+	m_pNaviAgent = new Common::NaviAgent;
+	m_pNaviAgent->SetNavMesh(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
 }
 
 ServerObject::~ServerObject()

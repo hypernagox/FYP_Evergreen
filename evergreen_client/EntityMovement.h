@@ -30,6 +30,8 @@ public:
 	Vector3 GetPosition() const { return GetSceneObject()->GetTransform()->GetLocalPosition(); }
 	Quaternion GetRotation() const { return GetSceneObject()->GetTransform()->GetLocalRotation(); }
 
+	// TODO: юс╫ц
+	Vector3 prev_pos;
 private:
 	Vector3 m_velocity = Vector3::Zero;
 	Vector3 m_acceleration = Vector3::Zero;

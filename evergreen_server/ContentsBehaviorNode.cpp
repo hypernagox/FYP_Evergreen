@@ -2,13 +2,14 @@
 #include "ContentsBehaviorNode.h"
 #include "TickTimer.h"
 #include "Session.h"
-#include "AStar.h"
 #include "Navigator.h"
-#include "NaviMesh.h"
 #include "NaviCell.h"
 #include "ComponentSystem.h"
 #include "MoveBroadcaster.h"
 #include "SectorInfoHelper.h"
+#include "NavigationMesh.h"
+#include "NaviAgent_Common.h"
+#include "PathFinder_Common.h"
 
 using namespace ServerCore;
 
@@ -75,8 +76,9 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
         if (target)
         {
             awaker_ = target->SharedFromThis();
-            if(m_range * m_range > min_dist && prev_awaker != awaker_.get())
-                awaker_->GetSession()->SendAsync(Create_s2c_MONSTER_AGGRO_START((Nagox::Enum::GROUP_TYPE)pOwnerEntity->GetObjectType(), pOwnerEntity->GetObjectTypeInfo()));
+            // TODO: 스트레스 테스트 아직 패킷없음
+            //if(m_range * m_range > min_dist && prev_awaker != awaker_.get())
+            //    awaker_->GetSession()->SendAsync(Create_s2c_MONSTER_AGGRO_START((Nagox::Enum::GROUP_TYPE)pOwnerEntity->GetObjectType(), pOwnerEntity->GetObjectTypeInfo()));
         }
     }
     
@@ -93,6 +95,7 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
     
     if (m_range * m_range <= dx * dx + dy * dy + dz * dz) 
     {
+       
         return NodeStatus::FAILURE;
     }
     
@@ -115,11 +118,12 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 
     if (m_attack_range * m_attack_range <= dx * dx + dy * dy + dz * dz)
         return NodeStatus::SUCCESS;
-
+   
     m_accTime -= bt_root_timer->GetBTTimerDT();
     if (0.f >= m_accTime)
     {
-        awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(10));
+        // TODO: 스트레스 테스트 아직 패킷없음
+       //  awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(10));
 
         m_accTime = 1.5f;
     }
@@ -129,110 +133,45 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 
 NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
-    const auto cur_pos = owner_comp_sys->GetComp<PositionComponent>()->pos;
     const auto pOwnerEntity = bt_root_timer->GetOwnerEntity();
     if (!awaker)return NodeStatus::FAILURE;
-    
-   // std::cout << cur_pos.x << ' ' << cur_pos.y << ' ' << cur_pos.z << '\n';
-    
+     
     const auto dest_pos = awaker->GetComp<PositionComponent>()->pos;
-    
-    const auto dx = dest_pos.x - cur_pos.x;
-    const auto dy = dest_pos.y - cur_pos.y;
-    const auto dz = dest_pos.z - cur_pos.z;
-    
-    auto dir = DirectX::SimpleMath::Vector3{ dx,dy,dz };
+    const auto cur_pos = pOwnerEntity->GetComp<PositionComponent>()->pos;
+ 
+   // if (15 * 15 <= (dest_pos - cur_pos).LengthSquared())
+   //     return NodeStatus::FAILURE;
+
+    const auto path = pOwnerEntity->GetComp<PathFinder>()->GetPath(cur_pos, dest_pos);
+
+    if(path.empty()) return NodeStatus::FAILURE;
+
+    auto dir = path.size() >= 2 ? path[1] : path[0];
+    dir -= cur_pos;
+
     dir.Normalize();
     
-    const auto pNavi = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0);
-    const auto dest = pNavi->FindRayIntersectingCell({ dest_pos.x,dest_pos.y,dest_pos.z });
-    const auto start = pNavi->FindRayIntersectingCell({ cur_pos.x,cur_pos.y,cur_pos.z });
-
-    if (start && dest)
-    {
-        const auto path = AStar::GetAStarPath(pNavi, start->GetCellIndex(pNavi), dest->GetCellIndex(pNavi), {dest_pos.x,dest_pos.y,dest_pos.z});
-       
-        if (path.size() >= 2)
-        {
-            const float dt_ = bt_root_timer->GetBTTimerDT();
-            dir.x = path[path.size() - 1].x - cur_pos.x;
-            dir.y = path[path.size() - 1].y - cur_pos.y;
-            dir.z = path[path.size() - 1].z - cur_pos.z;
-            dir.Normalize();
-
-            const auto dx2 = cur_pos.x + dir.x * 5.2f * dt_;
-            const auto dy2 = cur_pos.y + dir.y * 5.2f * dt_;
-            const auto dz2 = cur_pos.z + dir.z * 5.2f * dt_;
-            
-            const auto pppp = pNavi->FindRayIntersectingCell({ dx2, dy2, dz2 });
-            if (pppp)
-            {
-                pOwnerEntity->GetComp<PositionComponent>()->pos = Vec3{ dx2,pppp->CalculateY(dx2,dz2),dz2};
-            }
-            else
-            pOwnerEntity->GetComp<PositionComponent>()->pos = Vec3{ dx2,std::abs(dy2),dz2 };
-
-            ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
-            
-            ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-            //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-            
-        }
-        else
-        {
-            const float dt_ = bt_root_timer->GetBTTimerDT();
-            const auto dx2 = cur_pos.x + dir.x * 3.2f * dt_;
-            const auto dy2 = cur_pos.y + dir.y * 3.2f * dt_;
-            const auto dz2 = cur_pos.z + dir.z * 3.2f * dt_;
-
-            pOwnerEntity->GetComp<PositionComponent>()->pos = Vec3{ dx2,dy2,dz2 };
-
-            ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
-
-            //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-            ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-        }
-
-        return NodeStatus::RUNNING;
-    }
-    else
-    {
-        std::cout << "??" << std::endl;
-    }
-
-   //if (10 * 10 <= dx * dx + dy * dy + dz * dz) 
-   //{
-   //    awaker->GetSession()->SendAsync(Create_s2c_MONSTER_AGGRO_END((Nagox::Enum::GROUP_TYPE)pOwnerEntity->GetObjectType(), pOwnerEntity->GetObjectTypeInfo()));
-   //    return NodeStatus::FAILURE;
-   //}
-    //if (2 * 2 >= dx * dx + dy * dy + dz * dz) {
-    //    std::cout << "추격 성공" << std::endl;
-    //    return NodeStatus::SUCCESS;
-    //}
     const float dt_ = bt_root_timer->GetBTTimerDT();
-    const auto dx2 = cur_pos.x + dir.x * 3.2f * dt_;
-    const auto dy2 = cur_pos.y + dir.y * 3.2f * dt_;
-    const auto dz2 = cur_pos.z + dir.z * 3.2f * dt_;
 
-    pOwnerEntity->GetComp<PositionComponent>()->pos = Vec3{ dx2,dy2,dz2 };
+    const auto dx2 = cur_pos.x + dir.x * 10.2f * dt_;
+    const auto dy2 = cur_pos.y + dir.y * 10.2f * dt_;
+    const auto dz2 = cur_pos.z + dir.z * 10.2f * dt_;
 
+    pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(cur_pos,Vector3{ dx2,dy2,dz2 });
+    
     ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
-    //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
+
     ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    
 
-   // if (SECTOR_STATE::USER_EMPTY & sector_state) {
-   //     return NodeStatus::FAILURE;
-   // }
-
-   // if (10 * 10 <= dx * dx + dy * dy + dz * dz) {
-   //     std::cout << "추격 성공" << std::endl;
-   //     return NodeStatus::SUCCESS;
-   // }
-    if (2 * 2 >= dx * dx + dy * dy + dz * dz) {
+    if (2 * 2 >= (dest_pos - cur_pos).LengthSquared())
+    {
         std::cout << "추격 성공" << std::endl;
         return NodeStatus::SUCCESS;
     }
+
+    
     return NodeStatus::RUNNING;
 }
 

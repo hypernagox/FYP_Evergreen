@@ -8,10 +8,10 @@ using udsdx::Vector3;
 
 struct MoveData
 {
-    Vector3 pos;
-    float body_angleY;
-    Vector3 vel;
-    Vector3 accel;
+    Vector3 pos{};
+    float body_angleY{};
+    Vector3 vel{};
+    Vector3 accel{};
 };
 
 class InterpolatorConcrete

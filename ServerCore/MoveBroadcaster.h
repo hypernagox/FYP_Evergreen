@@ -23,13 +23,12 @@ namespace ServerCore
 		using PacketFunc = S_ptr<SendBuffer>(*)(const ContentsEntity* const)noexcept;
 	public:
 		void BroadcastMove()noexcept;
-		inline const auto& GetViewListCopy()const noexcept 
+		inline Vector<uint32_t> GetViewListCopy()const noexcept
 		{
-			extern thread_local Vector<uint32_t> LViewListForCopy;
 			m_srwLock.lock_shared();
-			LViewListForCopy = m_vecViewListForCopy;
+			Vector<uint32_t> viewListForCopy{ m_vecViewListForCopy };
 			m_srwLock.unlock_shared();
-			return LViewListForCopy;
+			return viewListForCopy;
 		}
 		
 		void ReleaseViewList()noexcept

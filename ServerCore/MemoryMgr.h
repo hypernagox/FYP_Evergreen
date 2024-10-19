@@ -44,7 +44,7 @@ namespace ServerCore
 #ifdef USE_JE_MALLOC
 			return static_cast<T* const>(::je_malloc(size));
 #else
-			return static_cast<T* const>(_aligned_malloc(size, 8));
+			return static_cast<T* const>(::malloc(size));
 #endif
 		}
 
@@ -52,7 +52,7 @@ namespace ServerCore
 #ifdef USE_JE_MALLOC
 			return ::je_malloc(size);
 #else
-			return _aligned_malloc(size, 8);
+			return ::malloc(size);
 #endif
 		}
 
@@ -60,7 +60,7 @@ namespace ServerCore
 #ifdef USE_JE_MALLOC
 			return ::je_free(ptr);
 #else
-			return _aligned_free(ptr);
+			return ::free(ptr);
 #endif
 		}
 
@@ -68,7 +68,7 @@ namespace ServerCore
 #ifdef USE_JE_MALLOC
 			return ::je_free(ptr);
 #else
-			return _aligned_free(ptr);
+			return ::free(ptr);
 #endif
 		}
 

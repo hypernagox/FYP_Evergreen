@@ -22,6 +22,7 @@ namespace ServerCore
 		, m_pSession{ reinterpret_cast<PacketSession* const>(session_) }
 		, m_componentSystem{ xnew<ComponentSystem>(m_bIsValid) }
 	{
+		AddComp<MoveBroadcaster>();
 		AddComp<SectorInfoHelper>();
 	}
 	
@@ -32,8 +33,13 @@ namespace ServerCore
 		xdelete<ComponentSystem>(m_componentSystem);
 		if (m_pSession) 
 			m_pSession->DecRef();
-		for (const auto iocp_comp : m_arrIocpComponents)if (iocp_comp)iocp_comp->DecRef();
-
+		auto b = m_arrIocpComponents;
+		const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
+		while (e != b)
+		{
+			if (const auto iocp_comp = *b++)
+				iocp_comp->DecRef();
+		}
 	}
 
 	void ContentsEntity::Update(const float dt_) noexcept
@@ -78,10 +84,12 @@ namespace ServerCore
 	{
 		//if (m_pSession) 
 		//	m_pSession->OnDestroy(); // 나중에, 하트비트 같은거로 튕길 땐 써야할 듯
-		for (const auto& comp : m_arrIocpComponents)
+		auto b = m_arrIocpComponents;
+		const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
+		while (e != b)
 		{
-			if (comp)
-				comp->OnDestroy();
+			if (const auto iocp_comp = *b++)
+				iocp_comp->OnDestroy();
 		}
 		if (nullptr == m_pSession)
 			Mgr(WorldMgr)->ReleaseNPC(this);

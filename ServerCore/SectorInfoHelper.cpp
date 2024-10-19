@@ -1,6 +1,7 @@
 #include "ServerCorePch.h"
 #include "SectorInfoHelper.h"
 #include "World.h"
+#include "Service.h"
 
 namespace ServerCore
 {
@@ -44,11 +45,12 @@ namespace ServerCore
 	}
 	void SectorInfoHelper::BroadcastWithID(const Vector<uint32_t>& id, const S_ptr<SendBuffer>& pkt_) noexcept
 	{
+		const auto service = Service::GetMainService();
 		auto b = id.data();
 		const auto e = b + id.size();
 		while (e != b)
 		{
-			if (const auto session = GetSession((*b++)))
+			if (const auto session = service->GetSession((*b++)))
 				session->GetSession()->SendAsync(pkt_);
 		}
 	}

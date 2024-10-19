@@ -48,7 +48,7 @@ namespace ServerCore
 		LRandSeed = LRandSeed * 1103515245 + 12345;
 		return (LRandSeed >> 16) & RAND_MAX;
 	}
-	
+	static inline float my_frand()noexcept { return static_cast<float>(my_rand()); }
 	S_ptr<ContentsEntity> GetSession(const uint64_t sessionID_)noexcept;
 
 	void SendPacket(const uint64_t target_session_id, S_ptr<SendBuffer> pSendBuffer)noexcept;

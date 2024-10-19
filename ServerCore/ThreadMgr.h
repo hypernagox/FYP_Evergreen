@@ -30,7 +30,7 @@ namespace ServerCore
 		};
 	public:
 		static constexpr const uint64 NUM_OF_THREADS = ServerCore::NUM_OF_THREADS;
-		void Launch(const uint64_t num_of_threads, Service& target_service, std::function<void(void)> destroyTLSCallBack = nullptr, std::function<void(void)> initTLSCallBack = nullptr);
+		void Launch(const uint64_t num_of_threads, std::function<void(void)> destroyTLSCallBack = nullptr, std::function<void(void)> initTLSCallBack = nullptr);
 		static c_uint32 GetCurThreadID()noexcept { 
 			constinit extern thread_local uint32_t LThreadId;
 			return LThreadId;
@@ -103,7 +103,6 @@ namespace ServerCore
 			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
 			return res_future;
 		}
-		const Service* const GetMainService()noexcept { return m_pMainService; }
 		const bool& GetStopFlagRef()const noexcept { return m_bStopRequest; }
 	public:
 		void InitTLS();
@@ -113,15 +112,12 @@ namespace ServerCore
 	private:
 		bool m_bStopRequest = false;
 		HANDLE m_iocpHandle;
-		Service* m_pMainService;
 		moodycamel::ConcurrentQueue<Task, LFQueueAllocator> m_globalTask{ 32 };
 		std::vector<std::thread> m_threads;
 		std::thread m_timerThread;
-		//SpinLock m_heartBeatFuncLock;
-		constinit static inline std::atomic<uint32_t> g_threadID = 0;
-
-		//moodycamel::ConcurrentQueue<S_ptr<TaskQueueable>, LFQueueAllocator> m_globalTaskQueue{ 32 };
 		
+
+		constinit static inline std::atomic<uint32_t> g_threadID = 0;
 		static inline std::function<void(void)> g_initTLSCallBack = {};
 		static inline std::function<void(void)> g_destroyTLSCallBack = {};
 		enum { WORKER_TICK = 64 };

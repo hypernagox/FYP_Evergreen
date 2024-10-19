@@ -19,14 +19,13 @@ int main()
 			  Mgr(CoreGlobal)->GetIocpCore()
 			, ServerCore::NetAddress{ L"127.0.0.1",7777 }
 			, ServerCore::MakeSharedAligned<ServerSession>
-			, 500
+			, 100
 		);
 
 	ASSERT_CRASH(pClientService->Start());
 
 	Mgr(ThreadMgr)->Launch(
 		  2
-		, *pClientService
 		, []() noexcept {const volatile auto init_builder = GetBuilder(); }
 	);
 

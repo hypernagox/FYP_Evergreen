@@ -8,11 +8,8 @@
 
 namespace ServerCore
 {
-	thread_local Vector<uint32_t> LViewListForCopy(1024);
-
 	void MoveBroadcaster::BroadcastMove()noexcept
 	{
-		extern thread_local Vector<uint32_t> LViewListForCopy;
 		thread_local HashSet<const ContentsEntity*> new_view_list(1024);
 		
 		const auto pOwnerEntity = GetOwnerEntityRaw();
@@ -34,7 +31,7 @@ namespace ServerCore
 
 		const auto huristic_func = g_huristic;
 
-		m_spinLock.lock();
+		if (false == m_spinLock.try_lock())return;
 		const S_ptr<ViewListWrapper> viewListPtr{ m_viewListPtr };
 		m_spinLock.unlock();
 
@@ -94,6 +91,9 @@ namespace ServerCore
 			}
 		}
 
+		Vector<uint32_t> viewListForCopy;
+		viewListForCopy.reserve(new_view_list.size());
+
 		for (auto iter = m_viewList.cbegin(); iter != m_viewList.cend();)
 		{
 			const auto entity_ptr = *iter;
@@ -111,13 +111,14 @@ namespace ServerCore
 			}
 			else
 			{
+				viewListForCopy.emplace_back(entity_ptr->GetObjectID());
 				++iter;
 			}
 			entity_ptr->DecRef();
 		}
 		
 		m_srwLock.lock();
-		m_vecViewListForCopy.swap(LViewListForCopy);
+		m_vecViewListForCopy.swap(viewListForCopy);
 		m_srwLock.unlock();
 	}
 

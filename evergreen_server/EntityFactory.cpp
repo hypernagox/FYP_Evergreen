@@ -3,6 +3,9 @@
 #include "TickTimer.h"
 #include "ContentsBehaviorNode.h"
 #include "Queueabler.h"
+#include "NaviAgent_Common.h"
+#include "PathFinder_Common.h"
+#include "Navigator.h"
 
 namespace ServerCore
 {
@@ -19,10 +22,9 @@ namespace ServerCore
 		bt_timer->SetTickInterval(200);
 		
 		
-
 		const auto s1 = bt_root->AddChild<SequenceNode>();
 
-		s1->AddChild<RangeCheckNode>(300);
+		s1->AddChild<RangeCheckNode>(30);
 		const auto s2 = s1->AddChild<SequenceNode>();
 
 		s2->AddChild<RangeCheckNode>(100);
@@ -31,6 +33,12 @@ namespace ServerCore
 		s1->AddChild<ChaseNode>();
 
 		bt_root->AddChild<PatrolNode>();
+
+		const auto agent = monster_entity->AddComp<NaviAgent>();
+		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
+		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+
+		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
 
 		return monster_entity;
 	}

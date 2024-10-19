@@ -97,29 +97,32 @@ const ServerCore::TIMER_STATE TickTimerBT::TimerUpdate() noexcept
 	const auto pOwnerEntity = GetOwnerEntity();
 	m_curObjInSight = ServerCore::SectorInfoHelper::FillterSessionEntities(pOwnerEntity);
 	NodeStatus cur_status;
+	const uint64_t cur_time = ::GetTickCount64();
 	if (m_curObjInSight.empty())cur_status = NodeStatus::FAILURE;
 	else
 	{
 		const auto owner_comp_sys = static_cast<const ComponentSystemNPC* const>(pOwnerEntity->GetComponentSystem());
-		const uint64_t cur_time = ::GetTickCount64();
+	
 		const uint16_t diff_time = m_lastTickTime == 0 ? m_tickInterval : static_cast<const uint16_t>(cur_time - m_lastTickTime);
+		
 		m_accBTRevaluateTime += diff_time;
 		if (m_btRevaluateInterval <= m_accBTRevaluateTime)
 		{
 			m_rootNode->Reset(owner_comp_sys, this);
 			m_accBTRevaluateTime = 0;
 		}
-		m_curBTTimerDT = static_cast<const float>(diff_time) / 1000.f;
+		m_curBTTimerDT = std::min(static_cast<const float>(diff_time) / 1000.f,0.2f);
 		owner_comp_sys->Update(m_curBTTimerDT);
 		cur_status = m_rootNode->Tick(owner_comp_sys, this, m_curAwaker);
-		m_lastTickTime = static_cast<const uint32_t>(cur_time);
 	}
+
 	if (NodeStatus::FAILURE == cur_status && NodeStatus::FAILURE == m_prevStatus)
 	{
 		m_prevStatus = NodeStatus::SUCCESS;
 		m_lastTickTime = 0;
 		return ServerCore::TIMER_STATE::IDLE;
 	}
+	m_lastTickTime = static_cast<const uint32_t>(cur_time);
 	m_prevStatus = cur_status;
 	return ServerCore::TIMER_STATE::RUN;
 }

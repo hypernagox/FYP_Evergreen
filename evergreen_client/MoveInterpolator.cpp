@@ -15,8 +15,9 @@ void MoveInterpolator::Update() noexcept
 	owner_player->SetAcceleration(move_data.accel);
 	root_obj->GetTransform()->SetLocalPosition(move_data.pos);
 	
-	const auto pos = root_obj->GetComponent<ServerObject>()->m_pNaviAgent->GetNaviPos(root_obj->GetTransform()->GetLocalPosition());
-	root_obj->GetTransform()->SetLocalPosition(pos);
+	// TODO: 본인 말고 다른 오브젝트를 지형보정 해주던 부분인데 고민을 해보도록해요
+	//const auto pos = root_obj->GetComponent<ServerObject>()->m_pNaviAgent->GetNaviPos(root_obj->GetTransform()->GetLocalPosition());
+	//root_obj->GetTransform()->SetLocalPosition(pos);
 	owner_player->SetRotation(Quaternion::CreateFromYawPitchRoll(move_data.body_angleY * DEG2RAD + PI, 0.0f, 0.0f));
 }
 
@@ -38,6 +39,7 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	
 	m_interpolator.UpdateNewData(MoveData{ vFuturePos ,pkt_.body_angle(),vFutureVel,accel });
 	const auto& root_obj = owner_player->GetSceneObject();
+	// TOOD: 지형보정 방식은 앞으로 바뀔 듯 해요
 	const auto move_data = m_interpolator.GetInterPolatedData();
 	root_obj->GetTransform()->SetLocalPosition(move_data.pos);
 }

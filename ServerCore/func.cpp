@@ -25,12 +25,12 @@ namespace ServerCore
 
 	S_ptr<ContentsEntity> GetSession(const uint64_t sessionID_) noexcept
 	{
-		return Mgr(ThreadMgr)->GetMainService()->GetSession(sessionID_);
+		return Service::GetMainService()->GetSession(sessionID_);
 	}
 
 	void SendPacket(const uint64_t target_session_id, S_ptr<SendBuffer> pSendBuffer) noexcept
 	{
-		if (const auto pSessionEntity = Mgr(ThreadMgr)->GetMainService()->GetSession(target_session_id))
+		if (const auto pSessionEntity = Service::GetMainService()->GetSession(target_session_id))
 			pSessionEntity->GetSession()->SendAsync(std::move(pSendBuffer));
 	}
 

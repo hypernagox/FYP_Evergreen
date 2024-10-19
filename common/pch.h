@@ -4,17 +4,26 @@
 #define NOMINMAX
 
 #include <directxtk12/SimpleMath.h>
+#include <recastnavigation/Recast.h>
+#include <recastnavigation/DetourNavMesh.h>
+#include <recastnavigation/DetourNavMeshQuery.h>
+
+#include <rapidjson/document.h>
 
 #include <execution>
 #include <string_view>
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <iostream>
+#include <iostream>	
 #include <filesystem>
 #include <Windows.h>
 #include <array>
 #include <unordered_set>
 #include <span>
 #include <format>
-//#include "CommonComponent.hpp"
+#include <algorithm>
+
+using Vector3 = DirectX::SimpleMath::Vector3;
+
+#include "CommonMath.h"

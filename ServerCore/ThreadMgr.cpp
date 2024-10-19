@@ -49,14 +49,13 @@ namespace ServerCore
 		//xdelete<moodycamel::ConsumerToken>(LCon_tokenGlobalTask);
 	}
 
-	void ThreadMgr::Launch(const uint64_t num_of_threads, Service& target_service, std::function<void(void)> destroyTLSCallBack, std::function<void(void)> initTLSCallBack)
+	void ThreadMgr::Launch(const uint64_t num_of_threads, std::function<void(void)> destroyTLSCallBack, std::function<void(void)> initTLSCallBack)
 	{
 		m_iocpHandle = IocpCore::GetIocpHandleGlobal();
 		g_initTLSCallBack.swap(initTLSCallBack);
 		g_destroyTLSCallBack.swap(destroyTLSCallBack);
-
-		m_pMainService = &target_service;
 		m_threads.reserve(num_of_threads);
+
 		for (int i = 0; i < num_of_threads; ++i)
 		{
 			m_threads.emplace_back(&ThreadMgr::WorkerThreadFunc);
@@ -83,7 +82,8 @@ namespace ServerCore
 			} };
 
 		std::string strFin(32, 0);
-		if (SERVICE_TYPE::SERVER == m_pMainService->GetServiceType())
+		const auto main_service = const_cast<Service* const>(Service::GetMainService());
+		if (SERVICE_TYPE::SERVER == main_service->GetServiceType())
 		{
 			NAGOX_ASSERT(ThreadMgr::NUM_OF_THREADS == num_of_threads);
 			static std::atomic_bool registerFinish = false;
@@ -95,7 +95,7 @@ namespace ServerCore
 				{
 					if (false == registerFinish.exchange(true))
 					{
-						m_pMainService->CloseService();
+						main_service->CloseService();
 						Mgr(Logger)->m_bStopRequest = true;
 						Mgr(WorldMgr)->ClearWorld();
 						std::this_thread::sleep_for(std::chrono::seconds(5));

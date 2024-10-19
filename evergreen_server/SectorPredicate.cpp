@@ -24,7 +24,7 @@ bool SectorPredicate::SectorHuristicFunc2Session(const ServerCore::ContentsEntit
 	const int dx = (int)(a_pos.x - b_pos.x);
 	const int dy = (int)(a_pos.y - b_pos.y);
 	const int dz = (int)(a_pos.z - b_pos.z);
-	return true;
+	//return true;
 	return ((50 * 50) >= (dx * dx + dy * dy + dz * dz));
 }
 

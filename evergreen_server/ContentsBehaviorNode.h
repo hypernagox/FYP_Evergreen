@@ -59,8 +59,8 @@ public:
 private:
 	bool m_bReEvaluate = false;
 
-	Vec3 dest_pos;
-	Vec3 dir;
+	Vector3 dest_pos;
+	Vector3 dir;
 	float m_accDist = 0.f;
 
 };

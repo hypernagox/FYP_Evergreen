@@ -1,45 +1,43 @@
 #include "pch.h"
 #include "NaviAgent.h"
 #include "Navigator.h"
-#include "NaviMesh.h"
 #include "NaviCell.h"
+#include "NavigationMesh.h"
 
-NaviAgent::NaviAgent()
+namespace Common
 {
-	m_pNaviMesh = NAVIGATION->GetNavMesh(NUM_0);
-	m_pNaviCell = m_pNaviMesh->FindCellContainingOrClosestPoint({});
-}
-
-const NaviCell* NaviAgent::GetPostCell(const DirectX::SimpleMath::Vector3& pos) const noexcept
-{
-	return m_pNaviMesh->FindRayIntersectingCell(pos);
-	return m_pNaviMesh->FindRayIntersectingCellInNeighbourhoods(m_pNaviCell, pos, NAVI_DEPTH);
-}
-
-float NaviAgent::GetSlope() const noexcept
-{
-	return m_pNaviCell->CalculateSelfSlopeAngle();
-}
-
-float NaviAgent::GetSlope(const NaviCell* const cell) const noexcept
-{
-	return m_pNaviCell->CalculateSlopeAngleDifference(cell);
-}
-
-float NaviAgent::GetCellDist(const NaviCell* const cell) const noexcept
-{
-	return (m_pNaviCell->GetCellCenter() - cell->GetCellCenter()).LengthSquared();
-}
-
-DirectX::SimpleMath::Vector3 NaviAgent::GetNaviPos(const DirectX::SimpleMath::Vector3& pos) noexcept
-{
-	auto post_cell = GetPostCell(pos);
-	if (nullptr == post_cell)
+	NaviCell NaviAgent::GetPostCell(DirectX::SimpleMath::Vector3& pos)const noexcept
 	{
-		// 이번에 가야할 위치에 셀이 없음
-		// 그나마 가까운셀로간다.
-		post_cell = m_pNaviMesh->FindCellWithClosestCenter(pos);
+		return m_pNavMesh->GetNaviCell(pos);
 	}
-	m_pNaviCell = post_cell;
-	return { pos.x,post_cell->CalculateY(pos.x,pos.z),pos.z };
+
+	DirectX::SimpleMath::Vector3 NaviAgent::GetNaviPos(const DirectX::SimpleMath::Vector3& pos) noexcept
+	{
+		const auto y = m_curCell.CalculateHeight(pos, m_pNavMesh);
+
+		return { pos.x,y,pos.z };
+	}
+
+	void NaviAgent::SetCurCell(DirectX::SimpleMath::Vector3& pos) noexcept
+	{
+		m_curCell = GetPostCell(pos);
+	}
+
+	void NaviAgent::SetCellPos(const Vector3& prev_pos, const Vector3& post_pos, Vector3& out_pos) noexcept
+	{
+		// TODO: 매직넘버
+		dtPolyRef p[10]{ m_curCell.GetPolyRef() };
+		int v = 1;
+
+		const auto prev_z = CommonMath::InverseZ(prev_pos);
+		const auto post_z = CommonMath::InverseZ(post_pos);
+
+		const auto nav_q = m_pNavMesh->GetNavMeshQuery();
+
+		nav_q->moveAlongSurface(p[0], &prev_z.x, &post_z.x, m_pNavMesh->GetNavFilter(), &out_pos.x, p, &v, 10);
+		m_curCell.SetPolyRef(p[v - 1]);
+
+		nav_q->getPolyHeight(p[v - 1], &out_pos.x, &out_pos.y);
+		CommonMath::InverseZ(out_pos);
+	}
 }

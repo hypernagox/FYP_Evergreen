@@ -29,7 +29,7 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	// 앞으로도 이렇게 하드코딩해서 객체를 만들 순 없다.
 
 	const auto obj_id = pkt_.obj_id();
-	std::cout << obj_id << std::endl;
+	
 	if (Mgr(ServerObjectMgr)->GetServerObj(obj_id))
 		return true;
 
@@ -38,7 +38,7 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	b.obj_type = pkt_.obj_type_info();
 	b.group_type = pkt_.group_type();
 	b.obj_pos = ::ToOriginVec3(pkt_.appear_pos());
-	std::cout << b.obj_pos.x << ' ' << b.obj_pos.y << ' ' << b.obj_pos.z << std::endl;
+
 	Mgr(ServerObjectMgr)->AddObject(&b);
 	return true;
 }

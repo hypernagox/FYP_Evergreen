@@ -15,6 +15,7 @@ namespace ServerCore
 		, m_maxSessionCount{ maxSessionCount_ }
 		, m_arrSession{ CreateDynamicSpan<AtomicSessionPtr>(maxSessionCount_ + 1) }
 	{
+		g_mainService = this;
 		m_idxQueue.set_capacity(maxSessionCount_ + 1);
 		m_id2Index.reserve(maxSessionCount_ * 2);
 		for (int i = 1; i <= m_maxSessionCount; ++i)

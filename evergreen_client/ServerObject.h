@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "ServerComponent.h"
 #include "Component.h"
+#include "NaviAgent.h"
 
 using udsdx::Component;
 class ServerComponent;
@@ -45,7 +46,7 @@ private:
 	}
 	// TODO: 어따 놓을지 몰라서 임시
 public:
-	class NaviAgent* m_pNaviAgent = nullptr;
+	Common::NaviAgent* m_pNaviAgent = nullptr;
 private:
 	
 	uint32_t m_objID;

@@ -25,17 +25,16 @@ void ClientSession::OnConnected()
 	const auto pOwner = GetOwnerEntity();
 	pOwner->SetObjectTypeInfo(PLAYER_TYPE_INFO::WARRIOR);
 	pOwner->AddIocpComponent<ServerCore::Queueabler>();
-	pOwner->AddComp<ServerCore::MoveBroadcaster>();
 }
 
 void ClientSession::OnDisconnected(const ID_Ptr<ServerCore::Sector> curSectorInfo_)noexcept
 {
-	//if (const auto sector_ptr = curSectorInfo_.GetPtr())
-	//{
-	//	const ServerCore::Vector<ServerCore::Sector*> temp{ sector_ptr };
-	//	const auto ptr = SharedFromThis<PacketSession>();
-	//	sector_ptr->BroadCastParallel(Create_s2c_REMOVE_OBJECT(GetSessionID()), temp, GetOwnerEntity());
-	//}
+	if (const auto sector_ptr = curSectorInfo_.GetPtr())
+	{
+		const ServerCore::Vector<ServerCore::Sector*> temp{ sector_ptr };
+		const auto ptr = SharedFromThis<PacketSession>();
+		sector_ptr->BroadCastParallel(Create_s2c_REMOVE_OBJECT(GetSessionID()), temp, GetOwnerEntity());
+	}
 	std::cout << "DisConnect !" << std::endl;
 	//std::cout << cnt << std::endl;
 	//Mgr(TaskTimerMgr)->ReserveAsyncTask(1000 + ServerCore::my_rand() % 1000, [e = GetOwnerEntity()->SharedFromThis()]() {

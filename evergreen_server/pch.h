@@ -16,3 +16,5 @@
 #include <fstream>
 #include <string_view>
 #include <directxtk12/SimpleMath.h>
+
+using Vector3 = DirectX::SimpleMath::Vector3;

@@ -60,7 +60,7 @@ namespace ServerCore
 		if (false == m_bConnected.exchange(false, std::memory_order_relaxed))
 			return false;
 		m_bConnectedNonAtomicForRecv = m_bConnectedNonAtomic = false;
-		m_bIsSendRegistered.store(true, std::memory_order_relaxed);
+		m_bIsSendRegistered.store(true, std::memory_order_seq_cst);
 		RegisterDisconnect();
 		return true;
 	}

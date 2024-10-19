@@ -9,17 +9,95 @@
     <ClInclude Include="pch.h">
       <Filter>pch</Filter>
     </ClInclude>
-    <ClInclude Include="NaviMesh.h">
-      <Filter>Navigation\NaviMesh</Filter>
-    </ClInclude>
     <ClInclude Include="Navigator.h">
       <Filter>Navigation\Navigator</Filter>
     </ClInclude>
-    <ClInclude Include="CommonComponent.hpp">
-      <Filter>CommonComponent</Filter>
-    </ClInclude>
     <ClInclude Include="NaviAgent.h">
       <Filter>Navigation\NaviAgent</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationMesh.h">
+      <Filter>Navigation\NavigationMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFinder.h">
+      <Filter>Navigation\PathFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DebugDraw.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourAlloc.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourCommon.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourCrowd.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourDebugDraw.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourLocalBoundary.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourMath.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourNavMesh.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourNavMeshBuilder.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourNavMeshQuery.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourNode.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourObstacleAvoidance.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourPathCorridor.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourPathQueue.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourProximityGrid.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourStatus.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourTileCache.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourTileCacheBuilder.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\Recast.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\RecastAlloc.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\RecastDebugDraw.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\RecastDump.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\version.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\RecastAssert.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\recastnavigation\DetourAssert.h">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonMath.h">
+      <Filter>pch\CommonMath</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -31,14 +109,110 @@
     <ClCompile Include="pch.cpp">
       <Filter>pch</Filter>
     </ClCompile>
-    <ClCompile Include="NaviMesh.cpp">
-      <Filter>Navigation\NaviMesh</Filter>
-    </ClCompile>
     <ClCompile Include="Navigator.cpp">
       <Filter>Navigation\Navigator</Filter>
     </ClCompile>
     <ClCompile Include="NaviAgent.cpp">
       <Filter>Navigation\NaviAgent</Filter>
+    </ClCompile>
+    <ClCompile Include="NavigationMesh.cpp">
+      <Filter>Navigation\NavigationMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFinder.cpp">
+      <Filter>Navigation\PathFinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DebugDraw.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourAlloc.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourCommon.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourCrowd.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourDebugDraw.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourLocalBoundary.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourNavMesh.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourNavMeshBuilder.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourNavMeshQuery.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourNode.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourObstacleAvoidance.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourPathCorridor.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourPathQueue.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourProximityGrid.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourTileCache.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourTileCacheBuilder.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\Recast.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastAlloc.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastArea.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastContour.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastDebugDraw.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastDump.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastFilter.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastLayers.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastMesh.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastMeshDetail.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastRasterization.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastRegion.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\RecastAssert.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\recastnavigation\DetourAssert.cpp">
+      <Filter>Navigation\recastnavigation</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonMath.cpp">
+      <Filter>pch\CommonMath</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -48,20 +222,26 @@
     <Filter Include="Navigation\NaviCell">
       <UniqueIdentifier>{3ce7a38c-d0d0-4bbb-8362-4e70fb215be3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Navigation\NaviMesh">
-      <UniqueIdentifier>{f97c0b5c-fe99-44c9-9ced-d51df696305d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="pch">
       <UniqueIdentifier>{a7d34600-7870-4f24-8b53-fd3b2f3f99fa}</UniqueIdentifier>
     </Filter>
     <Filter Include="Navigation\Navigator">
       <UniqueIdentifier>{53283f19-a1f4-4167-b33d-f7e92c2a9547}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CommonComponent">
-      <UniqueIdentifier>{a7038537-d5cf-4f59-8f96-c4ad57051842}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Navigation\NaviAgent">
       <UniqueIdentifier>{bb8f550c-bdf1-44b0-b3ac-d89f29de659b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Navigation\NavigationMesh">
+      <UniqueIdentifier>{5e942b22-6bf9-43e4-b441-8ca9165d99ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Navigation\PathFinder">
+      <UniqueIdentifier>{3dbe64fe-5cca-40c7-8d0c-ff9cd597385c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Navigation\recastnavigation">
+      <UniqueIdentifier>{9a27d5d6-b6d7-4fb2-abc6-dd65b45c0709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pch\CommonMath">
+      <UniqueIdentifier>{e8ce808a-b60f-487f-acba-b5d31ea22d8e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

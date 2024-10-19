@@ -5,6 +5,7 @@
 #include "EntityMovement.h"
 #include "PlayerRenderer.h"
 #include "MovePacketSender.h"
+#include "NaviAgent.h"
 
 void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
 {
@@ -127,7 +128,7 @@ void AuthenticPlayer::Start()
 
 void AuthenticPlayer::Update(const Time& time, Scene& scene)
 {
-	const Transform* transform = GetSceneObject()->GetTransform();
+	Transform* transform = GetSceneObject()->GetTransform();
 
 	 m_entityMovement->SetAcceleration(Vector3::Down * 40.0f);
 
@@ -177,6 +178,13 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	auto sceneObject = GetSceneObject();
 	const auto input_handler = sceneObject->GetComponent<InputHandler>();
 	m_bSendFlag = input_handler->IsKeyHit();
+
+	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->m_pNaviAgent;
+	const auto prev_pos = GetSceneObject()->GetComponent<EntityMovement>()->prev_pos;
+	Vector3 temp;
+	navi->SetCellPos(prev_pos, transform->GetLocalPosition(), temp);
+	transform->SetLocalPosition(temp);
+	GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
 	//m_bSendFlag = false;
 	//
 	//// 무브패킷 센드 업데이트

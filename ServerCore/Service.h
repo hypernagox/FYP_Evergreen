@@ -27,6 +27,9 @@ namespace ServerCore
 		{
 			AtomicS_ptr<ContentsEntity> ptr;
 		};
+		constinit static inline const Service* g_mainService;
+	public:
+		static inline constexpr const Service* const GetMainService()noexcept { return g_mainService; }
 	public:
 		Service(const IocpCore& iocpCore_, SERVICE_TYPE eServiceType_, NetAddress addr_, SessionFactory factory_, c_int32 maxSessionCount_ = 1);
 		virtual ~Service();

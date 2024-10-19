@@ -1,5 +1,6 @@
 #pragma once
 #include "../ServerCore/Singleton.hpp"
+#include "NavigationMesh.h"
 
 enum NAVI_MESH_NUM : uint8_t
 {
@@ -9,7 +10,7 @@ enum NAVI_MESH_NUM : uint8_t
 	NUM_END,
 };
 
-class NaviMesh;
+class Common::NavigationMesh;
 
 class Navigator
 	:public ServerCore::Singleton<Navigator>
@@ -21,9 +22,10 @@ public:
 	// 네비메시들 초기화 방법은 더 생각.
 	void Init()noexcept;
 public:
-	NaviMesh* GetNavMesh(const NAVI_MESH_NUM eType)const noexcept { return m_arrNavMesh[eType]; }
+	Common::NavigationMesh* GetNavMesh(const NAVI_MESH_NUM eType)const noexcept { return m_arrNavMesh[eType]; }
+
 private:
-	NaviMesh* m_arrNavMesh[NAVI_MESH_NUM::NUM_END] = {};
+	Common::NavigationMesh* m_arrNavMesh[NAVI_MESH_NUM::NUM_END] = {};
 };
 
 #define NAVIGATION (Navigator::GetInst())

@@ -19,7 +19,6 @@
 #include "InputHandler.h"
 #include "ServerObjectMgr.h"
 #include "ServerObject.h"
-#include "NaviMesh.h"
 #include "NaviCell.h"
 #include "Navigator.h"
 
@@ -71,9 +70,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     NAVIGATION->Init();
     NAVIGATION->RegisterDestroy();
     s2c_PacketHandler::Init();
-    
+   
    // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)-> Load(RESOURCE_PATH(L"NAVIMESH.bin"));
-    //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->LoadByObj(RESOURCE_PATH(L"navmesh10.obj"));
+   //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->LoadByObj(RESOURCE_PATH(L"navmesh1000.obj"));
     if constexpr (true == g_bUseNetWork)
     {
         if constexpr (true == g_bUseDefaultIP)
@@ -115,15 +114,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     playerMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
     terrainMaterial = std::make_shared<udsdx::Material>();
-    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Black_Sand_BaseColor.tif")));
+   // terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Black_Sand_BaseColor.tif")));
 
     scene = std::make_shared<Scene>();
 
     g_heroObj = std::make_shared<SceneObject>();
     
-    g_heroObj->GetTransform()->SetLocalPosition(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FindCellContainingOrClosestPoint({})->GetCellCenter());
-   
+    
     auto heroServerComponent = g_heroObj->AddComponent<ServerObject>();
+  
     heroServerComponent->AddComp<MovePacketSender>();
     
     g_heroObj->AddComponent<InputHandler>();
@@ -131,6 +130,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_heroObj->AddComponent<EntityMovement>();
     g_heroComponent = g_heroObj->AddComponent<AuthenticPlayer>();
   
+    Vector3 temp = {};
+    auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
+    cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(temp);
+
+    g_heroObj->GetTransform()->SetLocalPosition(temp);
+
     scene->AddObject(g_heroObj);
 
     playerLightObj = std::make_shared<SceneObject>();
@@ -150,7 +155,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    //terrainObj->GetTransform()->SetLocalPosition(Vector3(terrainOffset, 0.0f, -terrainOffset));
     //terrainObj->GetTransform()->SetLocalPosition(Vector3(500, 0.0f, 500));
     auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-    terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"Terrain10.obj")));
+    //terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"TerrainWithTrees.obj")));
     terrainRenderer->SetMaterial(terrainMaterial.get());
     terrainRenderer->SetShader(shader);
 
@@ -160,13 +165,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
        // terrainObj->GetTransform()->SetLocalScale(Vector3::One * 1.f);;
        // terrainObj->GetTransform()->SetLocalPosition(Vector3(-256, 0.0f, -256 ));
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh10.obj")));
+        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh1000.obj")));
         terrainRenderer->SetMaterial(terrainMaterial.get());
-        terrainRenderer->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
+        //terrainRenderer->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
         terrainRenderer->SetShader(shader);
         scene->AddObject(terrainObj);
     }
-    scene->AddObject(terrainObj);
+  //  scene->AddObject(terrainObj);
 
     if constexpr (true == g_bUseNetWork)
     {
@@ -208,6 +213,8 @@ void Update(const Time& time)
     {
         // TODO: 일단 끄기전 서버오브젝트 컨테이너 밀어줌
         ServerObjectMgr::GetInst()->Clear();
+        // TODO: 이거해야 메모리릭 없는데 왜 터짐?
+       // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
         UpdownStudio::Quit();
     }
 

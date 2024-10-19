@@ -6,11 +6,11 @@ class ComponentSystem;
 
 class ContentsComponent
 {
-	static inline std::set<uint64_t> g_setForCheckHashCollision;
-	static inline std::mutex g_checkHashCollisionMutex;
 protected:
 	template<typename T>
 	static const bool CheckHashCollision()noexcept {
+		static std::set<uint64_t> g_setForCheckHashCollision;
+		static std::mutex g_checkHashCollisionMutex;
 		g_checkHashCollisionMutex.lock();
 		if (!g_setForCheckHashCollision.emplace(T::GetCompTypeNameGlobal()).second) {
 			ServerCore::LogStackTrace();
