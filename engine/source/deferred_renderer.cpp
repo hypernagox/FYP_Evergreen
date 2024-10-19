@@ -2,6 +2,7 @@
 #include "deferred_renderer.h"
 #include "screen_space_ao.h"
 #include "shadow_map.h"
+#include "texture.h"
 #include "scene.h"
 
 namespace udsdx
@@ -12,6 +13,10 @@ namespace udsdx
 		{
 			float4x4 gView;
 			float4x4 gProj;
+			float4x4 gViewProj;
+			float4x4 gViewInverse;
+			float4x4 gProjInverse;
+			float4x4 gViewProjInverse;
 			float4 gEyePosW;
 		}
 
@@ -31,6 +36,7 @@ namespace udsdx
 		Texture2D gShadowMap  : register(t3);
 		Texture2D gSSAOMap	  : register(t4);
 		Texture2D gBufferDSV  : register(t5);
+		Texture2D gEnvironmentMap : register(t6);
 
 		SamplerState gsamPointClamp : register(s0);
 		SamplerState gsamLinearClamp : register(s1);
@@ -122,27 +128,42 @@ namespace udsdx
     
 			return percentLit / 9.0f;
 		}
+
+		float2 DirectionToEnvironmentUV(float3 dir)
+		{
+			const float PI = 3.14159265359f;
+			float t = atan2(dir.z, dir.x);
+			float p = asin(dir.y);
+			return float2(t / PI * -0.5f + 0.5f, -p / PI + 0.5f);
+		}
  
 		float4 PS(VertexOut pin) : SV_Target
 		{
-			float depth = gBufferDSV.Sample(gsamLinearClamp, pin.TexC).r;
+			float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
+			// Compute world space position from depth value.
+			float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
+            float4 PosW = mul(PosNDC, gViewProjInverse);
+			PosW /= PosW.w;
+
 			if (depth == 1.0f)
 			{
-				return float4(1.0f, 1.0f, 1.0f, 1.0f);
+				float3 delta = normalize(PosW.xyz - gEyePosW.xyz);
+				float2 uv = DirectionToEnvironmentUV(delta);
+				float4 color = gEnvironmentMap.Sample(gsamLinearClamp, uv);
+				return color;
 			}
 
-			float4 gBuffer1Color = gBuffer1.Sample(gsamLinearClamp, pin.TexC);
+			float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
 
 			float3 normalV;
-			normalV.xy = gBuffer2.Sample(gsamLinearClamp, pin.TexC).xy;
+			normalV.xy = gBuffer2.Sample(gsamPointClamp, pin.TexC).xy;
 			normalV.z = -sqrt(1.0f - saturate(dot(normalV.xy, normalV.xy)));
 			float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
-			float4 PosW = float4(gBuffer3.Sample(gsamLinearClamp, pin.TexC).xyz, 1.0f);
 			float distanceH = length(PosW.xyz - gEyePosW.xyz);
 
 			float diffuse = pow(saturate(dot(normalW, -gDirLight) * 1.1f - 0.1f), 0.3f);
 			float shadowValue = ShadowValue(PosW, normalW, distanceH);
-			float AOFactor = gSSAOMap.Sample(gsamLinearClamp, pin.TexC).r;
+			float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
 			gBuffer1Color.rgb = (gBuffer1Color.rgb - (1.0f - min(shadowValue, diffuse)) * 0.75f) * AOFactor;
 			return gBuffer1Color;
 		}
@@ -251,15 +272,19 @@ namespace udsdx
 		CD3DX12_DESCRIPTOR_RANGE texTable4;
 		texTable4.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 5);
 
-		CD3DX12_ROOT_PARAMETER slotRootParameter[6];
+		CD3DX12_DESCRIPTOR_RANGE texTable5;
+		texTable5.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 6);
+
+		CD3DX12_ROOT_PARAMETER slotRootParameter[7];
 
 		// Perfomance TIP: Order from most frequent to least frequent.
-		slotRootParameter[0].InitAsConstants(sizeof(CameraConstants) / 4, 0);
+		slotRootParameter[0].InitAsConstantBufferView(0);
 		slotRootParameter[1].InitAsConstantBufferView(1);
 		slotRootParameter[2].InitAsDescriptorTable(1, &texTable1, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[3].InitAsDescriptorTable(1, &texTable2, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[4].InitAsDescriptorTable(1, &texTable3, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[5].InitAsDescriptorTable(1, &texTable4, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[6].InitAsDescriptorTable(1, &texTable5, D3D12_SHADER_VISIBILITY_PIXEL);
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(_countof(slotRootParameter), slotRootParameter,
 			static_cast<UINT>(staticSamplers.size()), staticSamplers.data(),
@@ -466,7 +491,7 @@ namespace udsdx
 			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
 	}
 
-	void DeferredRenderer::PassRender(RenderParam& renderParam, CameraConstants cameraConstants)
+	void DeferredRenderer::PassRender(RenderParam& renderParam, D3D12_GPU_VIRTUAL_ADDRESS cbvGpu)
 	{
 		ID3D12GraphicsCommandList* pCommandList = renderParam.CommandList;
 
@@ -483,12 +508,14 @@ namespace udsdx
 
 		pCommandList->SetPipelineState(m_renderPipelineState.Get());
 
-		renderParam.CommandList->SetGraphicsRoot32BitConstants(0, sizeof(CameraConstants) / 4, &cameraConstants, 0);
+		renderParam.CommandList->SetGraphicsRootConstantBufferView(0, cbvGpu);
 		pCommandList->SetGraphicsRootConstantBufferView(1, renderParam.RenderShadowMap->GetConstantBuffer(renderParam.FrameResourceIndex));
 		pCommandList->SetGraphicsRootDescriptorTable(2, m_gBuffersGpuSrv[0]);
 		pCommandList->SetGraphicsRootDescriptorTable(3, renderParam.RenderShadowMap->GetSrvGpu());
 		pCommandList->SetGraphicsRootDescriptorTable(4, renderParam.RenderScreenSpaceAO->GetAmbientMapGpuSrv());
 		pCommandList->SetGraphicsRootDescriptorTable(5, m_depthBufferGpuSrv);
+		if (m_environmentMap)
+			pCommandList->SetGraphicsRootDescriptorTable(6, m_environmentMap->GetSrvGpu());
 
 		pCommandList->DrawInstanced(6, 1, 0, 0);
 	}

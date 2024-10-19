@@ -5,8 +5,12 @@ cbuffer cbPerObject : register(b0)
 
 cbuffer cbPerCamera : register(b1)
 {
-	float4x4 gView;
+    float4x4 gView;
     float4x4 gProj;
+    float4x4 gViewProj;
+    float4x4 gViewInverse;
+    float4x4 gProjInverse;
+    float4x4 gViewProjInverse;
     float4 gEyePosW;
 }
 
@@ -76,7 +80,6 @@ struct PixelOut
 {
 	float4 Buffer1 : SV_TARGET0;
     float2 Buffer2 : SV_TARGET1;
-    float4 Buffer3 : SV_TARGET2;
 };
 
 #ifdef RIGGED

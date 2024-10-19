@@ -15,6 +15,7 @@ namespace udsdx
 
 	public:
 		virtual void PostUpdate(const Time& time, Scene& scene) override;
+		D3D12_GPU_VIRTUAL_ADDRESS UpdateConstantBuffer(int frameResourceIndex, float aspect);
 
 	public:
 		virtual Matrix4x4 GetViewMatrix() const;
@@ -23,6 +24,8 @@ namespace udsdx
 
 		void SetClearColor(const Color& color);
 		Color GetClearColor() const;
+
+
 
 	protected:
 		std::array<std::unique_ptr<UploadBuffer<CameraConstants>>, FrameResourceCount> m_constantBuffers;
