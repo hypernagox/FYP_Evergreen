@@ -6,6 +6,7 @@
 #include "ContentsComponent.h"
 #include "WorldMgr.h"
 #include "SectorInfoHelper.h"
+#include "EBR.hpp"
 
 namespace ServerCore
 {
@@ -57,7 +58,10 @@ namespace ServerCore
 
 	void ContentsEntity::PostEntityTask(Task&& task_) const noexcept
 	{
-		::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, xnew<ContentsEntityTask>(SharedFromThis(), std::move(task_)));
+		auto& ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
+		ebr_pool.Start();
+		const auto ebr_node = ebr_pool.PopNode(SharedFromThis(), std::move(task_));
+		::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, &ebr_node->box_object);
 	}
 
 	void ContentsEntity::Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes) noexcept
@@ -65,7 +69,10 @@ namespace ServerCore
 		const S_ptr<ContentsEntity> temp{ iocpEvent_->PassIocpObject() };
 		ContentsEntityTask* const entity_task = static_cast<ContentsEntityTask* const>(iocpEvent_);
 		entity_task->m_contents_entity_task.ExecuteTask();
-		xdelete_sized<ContentsEntityTask>(entity_task, sizeof(ContentsEntityTask));
+		auto& ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
+		ebr_pool.PushNode(EBRBox<ContentsEntityTask>::GetEBRNodeAddress(entity_task));
+		ebr_pool.End();
+		//xdelete_sized<ContentsEntityTask>(entity_task, sizeof(ContentsEntityTask));
 	}
 
 	void ContentsEntity::OnDestroy() noexcept

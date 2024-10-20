@@ -11,6 +11,7 @@ namespace ServerCore
 		, m_npcAwakeDistance{ awakeDist_ }
 		, m_timerEvent{ xnew<IocpEvent>(EVENT_TYPE::TIMER, SharedFromThis()) }
 	{
+		// TODO: EBR로 바꾸기
 		pOwner_->AddIocpComponent<Queueabler>();
 	}
 	const bool TickTimer::TryExecuteTimer(const ContentsEntity* const awaker)noexcept

@@ -10,6 +10,19 @@ namespace ServerCore
 	};
 
 	template <typename T>
+	struct EBRBox
+		:public EBRNode
+	{
+		T box_object;
+		template <typename... Args>
+		EBRBox(Args&&... args)noexcept :box_object{ std::forward<Args>(args)... } {}
+
+		static EBRNode* const GetEBRNodeAddress(void* const box_ptr) noexcept {
+			return reinterpret_cast<EBRNode* const>(reinterpret_cast<char* const>(box_ptr) - offsetof(EBRBox, box_object));
+		}
+	};
+
+	template <typename T>
 	struct alignas(64) CacheLineSeperator
 	{
 		T data;
@@ -36,21 +49,21 @@ namespace ServerCore
 			const int32 thIdx = ThreadMgr::GetCurThreadIdx();
 			m_thCounter[thIdx].data.store(0, std::memory_order_seq_cst);
 		}
-		inline void SetRemovePoint(std::atomic<uint64_t>& remove_point)const noexcept { remove_point.store(GetMaxEpoch(), std::memory_order_release); }
+		inline void SetRemovePoint(std::atomic<uint64_t>& remove_point)const noexcept { remove_point.store(GetMaxEpoch(), std::memory_order_seq_cst); }
 		inline void SetRemovePoint(uint64_t& remove_point)const noexcept { remove_point = GetMaxEpoch(); std::atomic_thread_fence(std::memory_order_release); }
 		inline const bool NowUsing(const uint64_t remove_point)const noexcept { return remove_point >= GetMinEpoch(); }
 	private:
 		inline const uint64_t GetMaxEpoch()const noexcept {
 			uint64_t max_epoch = std::numeric_limits<uint64_t>::min();
 			for (int i = 0; i < ThreadMgr::NUM_OF_THREADS; ++i)
-				max_epoch = std::max(max_epoch, m_thCounter[i].data.load(std::memory_order_acquire));
+				max_epoch = std::max(max_epoch, m_thCounter[i].data.load(std::memory_order_seq_cst));
 			return max_epoch;
 		}
 		inline const uint64_t GetMinEpoch()const noexcept {
 			uint64_t min_epoch = std::numeric_limits<uint64_t>::max();
 			for (int i = 0; i < ThreadMgr::NUM_OF_THREADS; ++i)
 			{
-				const uint64_t e = m_thCounter[i].data.load(std::memory_order_acquire);
+				const uint64_t e = m_thCounter[i].data.load(std::memory_order_seq_cst);
 				if (0 != e)min_epoch = std::min(min_epoch, e);
 			}
 			return min_epoch;
@@ -83,6 +96,11 @@ namespace ServerCore
 		:public EBR
 	{
 	public:
+		static auto& GetEBRPool()noexcept
+		{
+			static EBRPool ebr_pool;
+			return ebr_pool;
+		}
 		template <typename... Args>
 		static T* const GetNewNode(Args&&... args)noexcept { return EBRPool<T>::GetEBRPool().PopNode(std::forward<Args>(args)...); }
 		static void RemoveNode(EBRNode* const node)noexcept { return  EBRPool<T>::GetEBRPool().PushNode(node); }
@@ -105,11 +123,6 @@ namespace ServerCore
 				q.pop();
 			}
 		}
-		static auto& GetEBRPool()noexcept
-		{
-			static EBRPool ebr_pool;
-			return ebr_pool;
-		}
 		void Clear()noexcept
 		{
 			for (int i = 0; i < ThreadMgr::NUM_OF_THREADS; ++i)
@@ -117,6 +130,7 @@ namespace ServerCore
 				Clear(i);
 			}
 		}
+	public:
 		template <typename... Args>
 		T* const PopNode(Args&&... args)noexcept
 		{

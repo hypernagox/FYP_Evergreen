@@ -128,12 +128,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 			const auto owner = pCol->GetOwnerEntity();
 			if (pCol->IsCollision(box))
 			{
-				
-				owner->TryOnDestroy();
-				//owner->GetQueueabler()->EnqueueAsyncPushOnly([owner]() 
-				//	{
-				//		owner->TryOnDestroy();
-				//	});
+				owner->PostEntityTask(&ContentsEntity::TryOnDestroy);
 			}
 			owner->DecRef();
 		}

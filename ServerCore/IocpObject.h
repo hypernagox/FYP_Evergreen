@@ -55,6 +55,10 @@ namespace ServerCore
 		void PostEntityTask(Ret(T::* const memFunc)(Args...)noexcept, S_ptr<U>&& ptr, Args&&... args)noexcept {
 			PostEntityTask(Task{ memFunc, std::move(ptr), std::forward<Args>(args)... });
 		}
+		template<typename Ret, typename... Args>
+		void PostEntityTask(Ret(ContentsEntity::* const memFunc)(Args...)noexcept, Args&&... args)noexcept {
+			PostEntityTask(Task{ memFunc, this, std::forward<Args>(args)... });
+		}
 		virtual void Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept override final;
 	public:
 		inline S_ptr<ContentsEntity> SharedFromThis()const noexcept { return S_ptr<ContentsEntity>{this}; }
