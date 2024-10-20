@@ -99,6 +99,9 @@
     <ClInclude Include="CommonMath.h">
       <Filter>pch\CommonMath</Filter>
     </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />
@@ -214,6 +217,9 @@
     <ClCompile Include="CommonMath.cpp">
       <Filter>pch\CommonMath</Filter>
     </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Navigation">
@@ -242,6 +248,9 @@
     </Filter>
     <Filter Include="pch\CommonMath">
       <UniqueIdentifier>{e8ce808a-b60f-487f-acba-b5d31ea22d8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collider">
+      <UniqueIdentifier>{be3d3258-9b56-4957-a9b9-2e9270bd0ee9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

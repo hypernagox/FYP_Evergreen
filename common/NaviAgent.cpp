@@ -26,7 +26,8 @@ namespace Common
 	void NaviAgent::SetCellPos(const Vector3& prev_pos, const Vector3& post_pos, Vector3& out_pos) noexcept
 	{
 		// TODO: 매직넘버
-		dtPolyRef p[10]{ m_curCell.GetPolyRef() };
+		const auto cur_poly_ref = m_curCell.GetPolyRef();
+		dtPolyRef p[10]{ cur_poly_ref };
 		int v = 1;
 
 		const auto prev_z = CommonMath::InverseZ(prev_pos);
@@ -34,10 +35,12 @@ namespace Common
 
 		const auto nav_q = m_pNavMesh->GetNavMeshQuery();
 
-		nav_q->moveAlongSurface(p[0], &prev_z.x, &post_z.x, m_pNavMesh->GetNavFilter(), &out_pos.x, p, &v, 10);
-		m_curCell.SetPolyRef(p[v - 1]);
+		nav_q->moveAlongSurface(cur_poly_ref, &prev_z.x, &post_z.x, m_pNavMesh->GetNavFilter(), &out_pos.x, p, &v, 10);
+		const auto post_poly_ref = p[v - 1];
 
-		nav_q->getPolyHeight(p[v - 1], &out_pos.x, &out_pos.y);
+		m_curCell.SetPolyRef(post_poly_ref);
+
+		nav_q->getPolyHeight(post_poly_ref, &out_pos.x, &out_pos.y);
 		CommonMath::InverseZ(out_pos);
 	}
 }

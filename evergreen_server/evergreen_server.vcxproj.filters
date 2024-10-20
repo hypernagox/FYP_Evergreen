@@ -62,6 +62,9 @@
     <Filter Include="CommonComponent\PathFinder">
       <UniqueIdentifier>{f94ddb3f-e2ac-4c09-846f-b68950212697}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CommonComponent\Collider">
+      <UniqueIdentifier>{5002fbc6-c24a-4439-b7d0-d0ec85a9b66a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -99,6 +102,9 @@
     </ClCompile>
     <ClCompile Include="PathFinder_Common.cpp">
       <Filter>CommonComponent\PathFinder</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider_Common.cpp">
+      <Filter>CommonComponent\Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +152,9 @@
     </ClInclude>
     <ClInclude Include="PathFinder_Common.h">
       <Filter>CommonComponent\PathFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider_Common.h">
+      <Filter>CommonComponent\Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

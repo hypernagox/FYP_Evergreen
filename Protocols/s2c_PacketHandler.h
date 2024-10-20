@@ -18,6 +18,7 @@ enum class PKT_ID : uint16_t {
     s2c_MONSTER_ATTACK = 1007,
     s2c_MONSTER_AGGRO_START = 1008,
     s2c_MONSTER_AGGRO_END = 1009,
+    c2s_PLAYER_ATTACK = 1010,
 };
 
 class NetHelper::PacketSession;

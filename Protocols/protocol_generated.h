@@ -49,6 +49,9 @@ struct s2c_MONSTER_AGGRO_STARTBuilder;
 struct s2c_MONSTER_AGGRO_END;
 struct s2c_MONSTER_AGGRO_ENDBuilder;
 
+struct c2s_PLAYER_ATTACK;
+struct c2s_PLAYER_ATTACKBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -678,6 +681,35 @@ inline ::flatbuffers::Offset<s2c_MONSTER_AGGRO_END> Creates2c_MONSTER_AGGRO_END(
   s2c_MONSTER_AGGRO_ENDBuilder builder_(_fbb);
   builder_.add_obj_type_info(obj_type_info);
   builder_.add_group_type(group_type);
+  return builder_.Finish();
+}
+
+struct c2s_PLAYER_ATTACK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_PLAYER_ATTACKBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_PLAYER_ATTACKBuilder {
+  typedef c2s_PLAYER_ATTACK Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit c2s_PLAYER_ATTACKBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_PLAYER_ATTACK> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_PLAYER_ATTACK>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_PLAYER_ATTACK> Createc2s_PLAYER_ATTACK(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  c2s_PLAYER_ATTACKBuilder builder_(_fbb);
   return builder_.Finish();
 }
 

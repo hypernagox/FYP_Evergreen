@@ -67,3 +67,7 @@ table s2c_MONSTER_AGGRO_END
     group_type: Nagox.Enum.GROUP_TYPE;
     obj_type_info: ubyte;
 }
+
+table c2s_PLAYER_ATTACK
+{
+}

@@ -27,3 +27,6 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_MOVE(
     const uint64_t time_stamp,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_ATTACK(
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

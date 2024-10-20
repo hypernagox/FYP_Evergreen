@@ -73,3 +73,14 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_MOVE(
 
     return CreateSendBuffer(builder, PKT_ID::c2s_MOVE);
 }
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_ATTACK(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto serializedc2s_PLAYER_ATTACK = Nagox::Protocol::Createc2s_PLAYER_ATTACK(
+        builder
+    );
+    builder.Finish(serializedc2s_PLAYER_ATTACK);
+
+    return CreateSendBuffer(builder, PKT_ID::c2s_PLAYER_ATTACK);
+}

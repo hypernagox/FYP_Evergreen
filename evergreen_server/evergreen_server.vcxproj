@@ -188,6 +188,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)evergreen_server\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="ClientSession.cpp" />
+    <ClCompile Include="Collider_Common.cpp" />
     <ClCompile Include="ContentsBehaviorNode.cpp" />
     <ClCompile Include="ContentsWorld.cpp" />
     <ClCompile Include="EntityFactory.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="..\Protocols\protocol_generated.h" />
     <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="ClientSession.h" />
+    <ClInclude Include="Collider_Common.h" />
     <ClInclude Include="ContentsBehaviorNode.h" />
     <ClInclude Include="ContentsWorld.h" />
     <ClInclude Include="EntityFactory.h" />

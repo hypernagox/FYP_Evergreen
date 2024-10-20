@@ -62,7 +62,19 @@ namespace ServerCore
 
 	void TickTimer::OnDestroy() noexcept
 	{
-		GetOwnerEntity()->GetQueueabler()->EnqueueAsyncTask(&TickTimer::Tick, this);
+		const TIMER_STATE ePrevState = m_timer_state.exchange(TIMER_STATE::RUN, std::memory_order_relaxed);
+		if (TIMER_STATE::IDLE == ePrevState)
+		{
+			const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
+			IncOwnerRef();
+			::PostQueuedCompletionStatus(iocp_handle, 0, 0, m_timerEvent);
+			
+		}
+		else if (TIMER_STATE::PREPARE == ePrevState)
+		{
+			IncOwnerRef();
+			Mgr(TaskTimerMgr)->ReserveAsyncTask(m_tickInterval, m_timerEvent);
+		}
 	}
 
 	void TickTimer::Tick() noexcept

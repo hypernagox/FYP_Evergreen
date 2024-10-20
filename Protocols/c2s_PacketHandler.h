@@ -18,6 +18,7 @@ enum class PKT_ID : uint16_t {
     s2c_MONSTER_ATTACK = 1007,
     s2c_MONSTER_AGGRO_START = 1008,
     s2c_MONSTER_AGGRO_END = 1009,
+    c2s_PLAYER_ATTACK = 1010,
 };
 
 class ServerCore::PacketSession;
@@ -30,6 +31,7 @@ static inline const bool Handle_Invalid(const ServerCore::S_ptr<ServerCore::Pack
 const bool Handle_c2s_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_);
 const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_ENTER& pkt_);
 const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_);
+const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_);
 
 class c2s_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const ServerCore::S_ptr<ServerCore::PacketSession>&, const BYTE* const, const int32_t);
@@ -39,6 +41,7 @@ public:
         RegisterHandler<PKT_ID::c2s_LOGIN, Nagox::Protocol::c2s_LOGIN>(Handle_c2s_LOGIN);
         RegisterHandler<PKT_ID::c2s_ENTER, Nagox::Protocol::c2s_ENTER>(Handle_c2s_ENTER);
         RegisterHandler<PKT_ID::c2s_MOVE, Nagox::Protocol::c2s_MOVE>(Handle_c2s_MOVE);
+        RegisterHandler<PKT_ID::c2s_PLAYER_ATTACK, Nagox::Protocol::c2s_PLAYER_ATTACK>(Handle_c2s_PLAYER_ATTACK);
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

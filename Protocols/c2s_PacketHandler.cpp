@@ -11,6 +11,7 @@
 #include "MoveBroadcaster.h"
 #include "SectorInfoHelper.h"
 #include "NaviAgent_Common.h"
+#include "Collider_Common.h"
 
 using namespace ServerCore;
 
@@ -36,7 +37,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	//pSession_->SetEntity(entity);
 	//entity->AddIocpComponent<Queueabler>();
 	entity->AddComp<PositionComponent>()->pos = ToOriginVec3(pkt_.pos());
-	
+	entity->AddComp<Collider>()->SetBox(entity->GetComp<PositionComponent>(), { 1,2,1.5f });
 	//Mgr(WorldMgr)->GetWorld(0) ->GetStartSector()->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER));
 	Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
 	
@@ -99,6 +100,44 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 	//const auto en = pSession_->GetOwnerEntity();
 	//g_sector->BroadCastParallel(MoveBroadcaster::CreateMovePacket(en), s, en);
 	//pSession_->GetCurWorld()->GetStartSector()->BroadCastParallel(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()), s, pSession_->GetOwnerEntity(),true);
+	return true;
+}
+
+const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_)
+{
+	const auto pOwner = pSession_->GetOwnerEntity();
+
+	const auto pos_comp = pOwner->GetComp<PositionComponent>();
+	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
+
+	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pos_comp->body_angle);
+
+	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
+
+	const auto& box = pOwner->GetComp<Collider>()->GetBox(rotatedForward);
+
+	if (const auto sector = pOwner->GetCurSector())
+	{
+		const auto mon_list = sector->GetEntityCopyListIncRef(1);
+		
+		auto b = mon_list.data();
+		const auto e = b + mon_list.size();
+		while (e != b)
+		{
+			const auto pCol = (*b++)->GetComp<Collider>();
+			const auto owner = pCol->GetOwnerEntity();
+			if (pCol->IsCollision(box))
+			{
+				
+				owner->TryOnDestroy();
+				//owner->GetQueueabler()->EnqueueAsyncPushOnly([owner]() 
+				//	{
+				//		owner->TryOnDestroy();
+				//	});
+			}
+			owner->DecRef();
+		}
+	}
 	return true;
 }
 

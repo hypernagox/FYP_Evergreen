@@ -6,6 +6,7 @@
 #include "NaviAgent_Common.h"
 #include "PathFinder_Common.h"
 #include "Navigator.h"
+#include "Collider_Common.h"
 
 namespace ServerCore
 {
@@ -39,6 +40,7 @@ namespace ServerCore
 		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
 
 		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
+		monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
 
 		return monster_entity;
 	}
