@@ -167,7 +167,7 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
 
     if (2 * 2 >= (dest_pos - cur_pos).LengthSquared())
     {
-        std::cout << "추격 성공" << std::endl;
+        //std::cout << "추격 성공" << std::endl;
         return NodeStatus::SUCCESS;
     }
 

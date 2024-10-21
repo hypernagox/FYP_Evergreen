@@ -70,4 +70,5 @@ table s2c_MONSTER_AGGRO_END
 
 table c2s_PLAYER_ATTACK
 {
+    body_angle: float;
 }

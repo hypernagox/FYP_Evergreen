@@ -75,9 +75,10 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 
 void AuthenticPlayer::DoAttack()
 {
-	Send(
-		Create_c2s_PLAYER_ATTACK()
-	);
+	if constexpr (g_bUseNetWork)
+		Send(
+			Create_c2s_PLAYER_ATTACK(m_rendererBodyAngleY)
+		);
 }
 
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)

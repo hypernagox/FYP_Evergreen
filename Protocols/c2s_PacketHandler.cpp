@@ -110,7 +110,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
 	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
 
-	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pos_comp->body_angle);
+	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pkt_.body_angle());
 
 	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
 

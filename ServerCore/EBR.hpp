@@ -55,15 +55,19 @@ namespace ServerCore
 	private:
 		inline const uint64_t GetMaxEpoch()const noexcept {
 			uint64_t max_epoch = std::numeric_limits<uint64_t>::min();
-			for (int i = 0; i < ThreadMgr::NUM_OF_THREADS; ++i)
-				max_epoch = std::max(max_epoch, m_thCounter[i].data.load(std::memory_order_seq_cst));
+			auto b = m_thCounter;
+			const auto e = b + ThreadMgr::NUM_OF_THREADS;
+			while (e != b)
+				max_epoch = std::max(max_epoch, (b++)->data.load(std::memory_order_seq_cst));
 			return max_epoch;
 		}
 		inline const uint64_t GetMinEpoch()const noexcept {
 			uint64_t min_epoch = std::numeric_limits<uint64_t>::max();
-			for (int i = 0; i < ThreadMgr::NUM_OF_THREADS; ++i)
+			auto b = m_thCounter;
+			const auto e = b + ThreadMgr::NUM_OF_THREADS;
+			while (e != b)
 			{
-				const uint64_t e = m_thCounter[i].data.load(std::memory_order_seq_cst);
+				const uint64_t e = (b++)->data.load(std::memory_order_seq_cst);
 				if (0 != e)min_epoch = std::min(min_epoch, e);
 			}
 			return min_epoch;

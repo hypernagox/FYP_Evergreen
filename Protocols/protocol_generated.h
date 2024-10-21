@@ -686,8 +686,18 @@ inline ::flatbuffers::Offset<s2c_MONSTER_AGGRO_END> Creates2c_MONSTER_AGGRO_END(
 
 struct c2s_PLAYER_ATTACK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_PLAYER_ATTACKBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_BODY_ANGLE = 4
+  };
+  float body_angle() const {
+    return GetField<float>(VT_BODY_ANGLE, 0.0f);
+  }
+  bool mutate_body_angle(float _body_angle = 0.0f) {
+    return SetField<float>(VT_BODY_ANGLE, _body_angle, 0.0f);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<float>(verifier, VT_BODY_ANGLE, 4) &&
            verifier.EndTable();
   }
 };
@@ -696,6 +706,9 @@ struct c2s_PLAYER_ATTACKBuilder {
   typedef c2s_PLAYER_ATTACK Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_body_angle(float body_angle) {
+    fbb_.AddElement<float>(c2s_PLAYER_ATTACK::VT_BODY_ANGLE, body_angle, 0.0f);
+  }
   explicit c2s_PLAYER_ATTACKBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -708,8 +721,10 @@ struct c2s_PLAYER_ATTACKBuilder {
 };
 
 inline ::flatbuffers::Offset<c2s_PLAYER_ATTACK> Createc2s_PLAYER_ATTACK(
-    ::flatbuffers::FlatBufferBuilder &_fbb) {
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    float body_angle = 0.0f) {
   c2s_PLAYER_ATTACKBuilder builder_(_fbb);
+  builder_.add_body_angle(body_angle);
   return builder_.Finish();
 }
 
