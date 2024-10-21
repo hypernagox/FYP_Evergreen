@@ -56,7 +56,7 @@ namespace Common
         const auto GetAgent()const noexcept { return m_agent; }
         void SetNaviAgent(NaviAgent* const agent)noexcept { m_agent = agent; }
     public:
-        std::span<DirectX::SimpleMath::Vector3> GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest)const noexcept;
+        std::span<DirectX::SimpleMath::Vector3> GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest,int idx)const noexcept;
     private:
         NaviAgent* m_agent;
     };

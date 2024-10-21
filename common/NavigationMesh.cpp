@@ -33,6 +33,8 @@ namespace Common
 
 	NavigationMesh::~NavigationMesh()
 	{
+		// TODO: crowd 悼矫己力绢
+		// crowd 皋葛府包府けじ
 		dtFreeNavMesh(m_navMesh);
 		delete m_filter;
 	}
@@ -45,6 +47,8 @@ namespace Common
 			m_filter = new dtQueryFilter;
 			m_filter->setIncludeFlags(0xFFFF);
 			m_filter->setExcludeFlags(0);
+			m_crowd = new dtCrowd;
+			m_crowd->init(100, 5.f, m_navMesh);
 		}
 		return m_navMesh != NULL ? 1 : 0;
 	}

@@ -19,6 +19,8 @@ public:
 public:
 	void SetCellPos(const Vector3& prev_pos, const Vector3& post_pos)noexcept;
 	const auto GetAgentConcreate()noexcept { return &m_agent; }
+
+	int m_my_idx = -1;
 private:
 	Common::NaviAgent m_agent;
 	PositionComponent* m_posComp;

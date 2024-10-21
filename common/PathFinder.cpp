@@ -2,10 +2,11 @@
 #include "PathFinder.h"
 #include "NavigationMesh.h"
 #include "NaviAgent.h"
+#include "Navigator.h"
 
 namespace Common
 {
-    std::span<DirectX::SimpleMath::Vector3> PathFinder::GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest) const noexcept
+    std::span<DirectX::SimpleMath::Vector3> PathFinder::GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest,int idx) const noexcept
     {
         // TODO: 매직넘버
         dtPolyRef path[10];
@@ -33,10 +34,12 @@ namespace Common
 
         dtPolyRef dest_poly;
 
+
         nav_q->findNearestPoly(&dest_z_pos.x, NaviCell::g_extent, nav_f, &dest_poly, &dest_z_pos.x);
-
         
+        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveTarget(idx, dest_poly, &dest_z_pos.x);
 
+        return {};
         status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
 
         if (dtStatusFailed(status))

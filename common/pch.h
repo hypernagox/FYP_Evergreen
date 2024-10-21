@@ -23,6 +23,7 @@
 #include <span>
 #include <format>
 #include <algorithm>
+#include "recastnavigation/DetourCrowd.h"
 
 using Vector3 = DirectX::SimpleMath::Vector3;
 
