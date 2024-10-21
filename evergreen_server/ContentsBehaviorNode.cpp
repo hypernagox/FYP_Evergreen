@@ -97,6 +97,9 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
     if (m_range * m_range <= dx * dx + dy * dy + dz * dz) 
     {
         NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+        float temp[3]{};
+        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
+        
         ag->active = false;
         return NodeStatus::FAILURE;
     }
@@ -149,6 +152,8 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
         ag->active = false;
         //std::cout << "추격 성공" << std::endl;
         NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+        float temp[3]{};
+        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
         return NodeStatus::SUCCESS;
     }
 

@@ -36,10 +36,12 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	const Vector3 vFutureVel = vel + accel * dt;
 
 	const Vector3 vFuturePos = pos + vFutureVel * dt + accel * dt * dt * 0.5f;
-	
+	auto move_data = m_interpolator.GetInterPolatedData();
+
 	m_interpolator.UpdateNewData(MoveData{ vFuturePos ,pkt_.body_angle(),vFutureVel,accel });
+	m_interpolator.GetCurData().pos = move_data.pos;
 	const auto& root_obj = owner_player->GetSceneObject();
 	// TOOD: 지형보정 방식은 앞으로 바뀔 듯 해요
-	const auto move_data = m_interpolator.GetInterPolatedData();
-	root_obj->GetTransform()->SetLocalPosition(move_data.pos);
+	// auto move_data = m_interpolator.GetInterPolatedData();
+	//root_obj->GetTransform()->SetLocalPosition(move_data.pos);
 }
