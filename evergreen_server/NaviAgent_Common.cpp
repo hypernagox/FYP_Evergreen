@@ -25,6 +25,7 @@ void NaviAgent::InitRandPos(Common::NavigationMesh* const pNavMesh) noexcept
 	params.collisionQueryRange = params.radius * 36.0f; 
 	params.pathOptimizationRange = params.radius * 30.0f;
 	params.separationWeight = 3.0f;  
+	params.updateFlags = DT_CROWD_SEPARATION;
 
 	auto pos = m_posComp->pos;
 	CommonMath::InverseZ(pos);
