@@ -22,9 +22,9 @@ void NaviAgent::InitRandPos(Common::NavigationMesh* const pNavMesh) noexcept
 	params.height = 2.0f;           
 	params.maxAcceleration = 8.0f;   
 	params.maxSpeed = 8.5f;       
-	params.collisionQueryRange = params.radius * 12.0f; 
+	params.collisionQueryRange = params.radius * 36.0f; 
 	params.pathOptimizationRange = params.radius * 30.0f;
-	params.separationWeight = 4.0f;  
+	params.separationWeight = 3.0f;  
 
 	auto pos = m_posComp->pos;
 	CommonMath::InverseZ(pos);

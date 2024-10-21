@@ -34,7 +34,7 @@ namespace Common
 	NavigationMesh::~NavigationMesh()
 	{
 		// TODO: crowd 悼矫己力绢
-		// crowd 皋葛府包府けじ
+		// crowd 皋葛府包府
 		dtFreeNavMesh(m_navMesh);
 		delete m_filter;
 	}

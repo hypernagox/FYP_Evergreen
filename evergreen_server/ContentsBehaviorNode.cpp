@@ -143,7 +143,16 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
  
    // if (15 * 15 <= (dest_pos - cur_pos).LengthSquared())
    //     return NodeStatus::FAILURE;
-    
+    if (2 * 2 >= (dest_pos - cur_pos).LengthSquared())
+    {
+        const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+        ag->active = false;
+        //std::cout << "추격 성공" << std::endl;
+        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+        return NodeStatus::SUCCESS;
+    }
+
+
     const auto path = pOwnerEntity->GetComp<PathFinder>()->GetPath(cur_pos, dest_pos);
     {
     ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };

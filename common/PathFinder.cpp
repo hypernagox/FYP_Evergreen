@@ -22,15 +22,15 @@ namespace Common
 
         const auto start_poly = m_agent->GetCurCell().GetPolyRef();
 
-        dtStatus status = nav_q->raycast(start_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, &t, hitNormal, path, &pathCount, 10);
-
-        if (status == DT_SUCCESS && t == 1.0f)
-        {
-            // TODO: 더 아름다운 방법으로 변경
-            thread_local Vector3 p[1];
-            p[0] = dest;
-            return p;
-        }
+       //dtStatus status = nav_q->raycast(start_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, &t, hitNormal, path, &pathCount, 10);
+       //
+       //if (status == DT_SUCCESS && t == 1.0f)
+       //{
+       //    // TODO: 더 아름다운 방법으로 변경
+       //    thread_local Vector3 p[1];
+       //    p[0] = dest;
+       //    return p;
+       //}
 
         dtPolyRef dest_poly;
 
@@ -40,7 +40,7 @@ namespace Common
         NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveTarget(idx, dest_poly, &dest_z_pos.x);
 
         return {};
-        status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
+        dtStatus status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
 
         if (dtStatusFailed(status))
         {
