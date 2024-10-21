@@ -17,7 +17,11 @@ namespace udsdx
 	{
 		for (auto& buffer : m_constantBuffers)
 		{
-			buffer = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
+			buffer.resize(10);
+			for (auto& subBuffer : buffer)
+			{
+				subBuffer = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
+			}
 		}
 	}
 
@@ -31,6 +35,7 @@ namespace udsdx
 
 	void RiggedMeshRenderer::Render(RenderParam& param, int instances)
 	{
+		const auto& submeshes = m_riggedMesh->GetSubmeshes();
 		Transform* transform = GetSceneObject()->GetTransform();
 		Matrix4x4 worldMat = transform->GetWorldSRTMatrix();
 
@@ -50,7 +55,7 @@ namespace udsdx
 		if (m_isMatrixDirty)
 		{
 			BoneConstants boneConstants{};
-			std::vector<Matrix4x4> boneTransforms;
+			std::vector<std::vector<Matrix4x4>> boneTransforms;
 			if (!m_animationName.empty())
 			{
 				m_riggedMesh->PopulateTransforms(m_animationName, m_animationTime, boneTransforms);
@@ -59,11 +64,15 @@ namespace udsdx
 			{
 				m_riggedMesh->PopulateTransforms(boneTransforms);
 			}
-			for (size_t i = 0; i < boneTransforms.size(); ++i)
+			for (size_t s = 0; s < submeshes.size(); ++s)
 			{
-				boneConstants.BoneTransforms[i] = boneTransforms[i].Transpose();
+				for (size_t i = 0; i < boneTransforms[s].size(); ++i)
+				{
+					boneConstants.BoneTransforms[i] = boneTransforms[s][i].Transpose();
+				}
+				uploader[s]->CopyData(0, boneConstants);
 			}
-			uploader->CopyData(0, boneConstants);
+
 			m_isMatrixDirty = false;
 		}
 
@@ -71,15 +80,15 @@ namespace udsdx
 		objectConstants.World = worldMat.Transpose();
 
 		param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerObjectCBV, sizeof(ObjectConstants) / 4, &objectConstants, 0);
-		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::BonesCBV, uploader->Resource()->GetGPUVirtualAddress());
-
 		param.CommandList->IASetVertexBuffers(0, 1, &m_riggedMesh->VertexBufferView());
 		param.CommandList->IASetIndexBuffer(&m_riggedMesh->IndexBufferView());
 		param.CommandList->IASetPrimitiveTopology(m_topology);
 
-		const auto& submeshes = m_riggedMesh->GetSubmeshes();
 		for (size_t index = 0; index < submeshes.size(); ++index)
 		{
+			const auto& submesh = submeshes[index];
+			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::BonesCBV, uploader[index]->Resource()->GetGPUVirtualAddress());
+
 			if (index < m_materials.size() && m_materials[index] != nullptr)
 			{
 				Texture* mainTex = m_materials[index]->GetMainTexture();
@@ -93,7 +102,6 @@ namespace udsdx
 					param.CommandList->SetGraphicsRootDescriptorTable(RootParam::NormalSRV, normalTex->GetSrvGpu());
 				}
 			}
-			const auto& submesh = submeshes[index];
 			param.CommandList->DrawIndexedInstanced(submesh.IndexCount, instances, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 		}
 	}

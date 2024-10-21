@@ -7,10 +7,16 @@ namespace udsdx
 {
 	struct Submesh
 	{
+		// For Regular Mesh
 		std::string Name;
 		UINT IndexCount = 0;
 		UINT StartIndexLocation = 0;
 		UINT BaseVertexLocation = 0;
+
+		// For Rigged Mesh
+		UINT NodeID = 0;
+		std::vector<UINT> BoneNodeIDs;
+		std::vector<Matrix4x4> BoneOffsets;
 	};
 
 	class MeshBase : public ResourceObject

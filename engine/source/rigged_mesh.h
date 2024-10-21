@@ -33,7 +33,6 @@ namespace udsdx
 	struct Bone
 	{
 		std::string Name{};
-		Matrix4x4 Offset{};
 		Matrix4x4 Transform{};
 	};
 
@@ -43,8 +42,8 @@ namespace udsdx
 		RiggedMesh(const aiScene& assimpScene, const Matrix4x4& preMultiplication);
 
 		// Matrices for default pose (no animation)
-		void PopulateTransforms(std::vector<Matrix4x4>& out) const;
-		void PopulateTransforms(std::string_view animationKey, float time, std::vector<Matrix4x4>& out) const;
+		void PopulateTransforms(std::vector<std::vector<Matrix4x4>>& out) const;
+		void PopulateTransforms(std::string_view animationKey, float time, std::vector<std::vector<Matrix4x4>>& out) const;
 		int GetBoneIndex(std::string_view boneName) const;
 
 	protected:

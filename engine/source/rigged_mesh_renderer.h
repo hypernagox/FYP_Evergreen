@@ -37,6 +37,6 @@ namespace udsdx
 		float m_animationTime = 0.0f;
 		bool m_isMatrixDirty = true;
 
-		std::array<std::unique_ptr<UploadBuffer<BoneConstants>>, FrameResourceCount> m_constantBuffers;
+		std::array<std::vector<std::unique_ptr<UploadBuffer<BoneConstants>>>, FrameResourceCount> m_constantBuffers;
 	};
 }

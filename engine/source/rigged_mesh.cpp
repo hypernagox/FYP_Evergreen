@@ -49,6 +49,7 @@ namespace udsdx
 
 		// Depth-first traversal of the scene graph to collect the bones
 		std::vector<std::pair<aiNode*, int>> nodeStack;
+		std::vector<std::pair<aiNode*, aiMesh*>> meshStack;
 		nodeStack.emplace_back(model->mRootNode, -1);
 		while (!nodeStack.empty())
 		{
@@ -58,7 +59,11 @@ namespace udsdx
 			Bone boneData{};
 			boneData.Name = node.first->mName.C_Str();
 			boneData.Transform = ToMatrix4x4(node.first->mTransformation);
-			XMStoreFloat4x4(&boneData.Offset, XMMatrixIdentity());
+
+			for (UINT i = 0; i < node.first->mNumMeshes; ++i)
+			{
+				meshStack.emplace_back(node.first, model->mMeshes[node.first->mMeshes[i]]);
+			}
 
 			m_boneIndexMap[boneData.Name] = static_cast<int>(m_bones.size());
 			m_bones.emplace_back(boneData);
@@ -72,14 +77,13 @@ namespace udsdx
 		UINT numNodes = static_cast<UINT>(m_bones.size());
 
 		// Append the vertices and indices
-		for (UINT k = 0; k < model->mNumMeshes; ++k)
+		for (auto [node, mesh] : meshStack)
 		{
-			auto mesh = model->mMeshes[k];
-
 			Submesh submesh{};
-			submesh.Name = mesh->mName.C_Str();
+			submesh.Name = node->mName.C_Str();
 			submesh.StartIndexLocation = static_cast<UINT>(indices.size());
 			submesh.BaseVertexLocation = static_cast<UINT>(vertices.size());
+			submesh.NodeID = GetBoneIndex(submesh.Name);
 
 			for (UINT i = 0; i < mesh->mNumVertices; ++i)
 			{
@@ -106,12 +110,13 @@ namespace udsdx
 					vertex.tangent.z = mesh->mTangents[i].z;
 				}
 
+				XMMATRIX transform = vertexTransform;
 				XMVECTOR pos = XMLoadFloat3(&vertex.position);
 				XMVECTOR nor = XMLoadFloat3(&vertex.normal);
 				XMVECTOR tan = XMLoadFloat3(&vertex.tangent);
-				pos = XMVector3Transform(pos, vertexTransform);
-				nor = XMVector3TransformNormal(nor, vertexTransform);
-				tan = XMVector3TransformNormal(tan, vertexTransform);
+				pos = XMVector3Transform(pos, transform);
+				nor = XMVector3TransformNormal(nor, transform);
+				tan = XMVector3TransformNormal(tan, transform);
 				XMStoreFloat3(&vertex.position, pos);
 				XMStoreFloat3(&vertex.normal, nor);
 				XMStoreFloat3(&vertex.tangent, tan);
@@ -132,20 +137,7 @@ namespace udsdx
 				}
 			}
 
-			submesh.IndexCount = static_cast<UINT>(indices.size()) - submesh.StartIndexLocation;
-			m_submeshes.emplace_back(submesh);
-
-			// If the mesh has no bones, fallback to the hierarchy
-			if (!mesh->HasBones())
-			{
-				UINT boneIndex = m_boneIndexMap[mesh->mName.C_Str()];
-				for (UINT i = submesh.BaseVertexLocation; i < vertices.size(); ++i)
-				{
-					vertices[i].boneIndices = boneIndex;
-					vertices[i].boneWeights.x = 1.0f;
-				}
-			}
-			else
+			if (mesh->HasBones())
 			{
 				std::vector<UINT> countTable(vertices.size(), 0);
 
@@ -153,8 +145,10 @@ namespace udsdx
 				for (UINT i = 0; i < mesh->mNumBones; ++i)
 				{
 					auto boneSrc = mesh->mBones[i];
-					auto boneIndex = m_boneIndexMap[boneSrc->mName.C_Str()];
-					m_bones[boneIndex].Offset = ToMatrix4x4(boneSrc->mOffsetMatrix);
+					auto boneIndex = i;
+
+					submesh.BoneNodeIDs.emplace_back(GetBoneIndex(boneSrc->mName.C_Str()));
+					submesh.BoneOffsets.emplace_back(ToMatrix4x4(boneSrc->mOffsetMatrix));
 
 					for (UINT j = 0; j < boneSrc->mNumWeights; ++j)
 					{
@@ -186,6 +180,9 @@ namespace udsdx
 					}
 				}
 			}
+
+			submesh.IndexCount = static_cast<UINT>(indices.size()) - submesh.StartIndexLocation;
+			m_submeshes.emplace_back(submesh);
 
 			// Post-process the bone weights to ensure they sum to 1
 			//for (auto& vertex : vertices)
@@ -241,7 +238,7 @@ namespace udsdx
 					channel.Scales.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z);
 				}
 
-				int channelIndex = m_boneIndexMap[channel.Name];
+				int channelIndex = GetBoneIndex(channel.Name);
 				animation.Channels[channelIndex] = channel;
 			}
 
@@ -253,33 +250,43 @@ namespace udsdx
 		BoundingBox::CreateFromPoints(m_bounds, vertices.size(), &vertices[0].position, sizeof(RiggedVertex));
 	}
 
-	void RiggedMesh::PopulateTransforms(std::vector<Matrix4x4>& out) const
+	void RiggedMesh::PopulateTransforms(std::vector<std::vector<Matrix4x4>>& out) const
 	{
-		out.resize(m_bones.size());
-		for (UINT i = 0; i < out.size(); ++i)
+		std::vector<Matrix4x4> in(m_bones.size());
+
+		for (UINT i = 0; i < in.size(); ++i)
 		{
 			const Bone& bone = m_bones[i];
-			XMMATRIX tParent = m_boneParents[i] < 0 ? XMMatrixIdentity() : XMLoadFloat4x4(&out[m_boneParents[i]]);
+			XMMATRIX tParent = m_boneParents[i] < 0 ? XMMatrixIdentity() : XMLoadFloat4x4(&in[m_boneParents[i]]);
 			XMMATRIX tLocal = XMLoadFloat4x4(&bone.Transform);
-			XMStoreFloat4x4(&out[i], XMMatrixMultiply(tLocal, tParent));
+			XMStoreFloat4x4(&in[i], XMMatrixMultiply(tLocal, tParent));
 		}
 
-		for (UINT i = 0; i < out.size(); ++i)
+		out.resize(m_submeshes.size());
+		for (UINT i = 0; i < m_submeshes.size(); ++i)
 		{
-			XMMATRIX offset = XMLoadFloat4x4(&m_bones[i].Offset);
-			XMMATRIX transform = XMLoadFloat4x4(&out[i]);
-			transform = XMMatrixMultiply(offset, transform);
-			XMStoreFloat4x4(&out[i], transform);
+			const Submesh& submesh = m_submeshes[i];
+			XMMATRIX meshInverse = XMLoadFloat4x4(&in[submesh.NodeID].Invert());
+			out[i].resize(submesh.BoneNodeIDs.size());
+
+			for (UINT j = 0; j < submesh.BoneNodeIDs.size(); ++j)
+			{
+				UINT boneID = submesh.BoneNodeIDs[j];
+				XMMATRIX boneTransform = XMLoadFloat4x4(&in[boneID]);
+				XMMATRIX boneOffset = XMLoadFloat4x4(&submesh.BoneOffsets[j]);
+				XMMATRIX transform = meshInverse * boneTransform * boneOffset;
+				XMStoreFloat4x4(&out[i][j], transform);
+			}
 		}
 	}
 
-	void RiggedMesh::PopulateTransforms(std::string_view animationKey, float time, std::vector<Matrix4x4>& out) const
+	void RiggedMesh::PopulateTransforms(std::string_view animationKey, float time, std::vector<std::vector<Matrix4x4>>& out) const
 	{
 		const Animation& anim = m_animations.at(animationKey.data());
 		time = fmod(time * anim.TicksPerSecond, anim.Duration);
-		out.resize(m_bones.size());
+		std::vector<Matrix4x4> in(m_bones.size());
 
-		for (UINT i = 0; i < out.size(); ++i)
+		for (UINT i = 0; i < m_bones.size(); ++i)
 		{
 			const Bone& bone = m_bones[i];
 			const Animation::Channel& channel = anim.Channels[i];
@@ -287,7 +294,7 @@ namespace udsdx
 			XMMATRIX tParent = XMMatrixIdentity();
 			if (m_boneParents[i] != -1)
 			{
-				tParent = XMLoadFloat4x4(&out[m_boneParents[i]]);
+				tParent = XMLoadFloat4x4(&in[m_boneParents[i]]);
 			}
 
 			XMMATRIX tLocal;
@@ -314,15 +321,23 @@ namespace udsdx
 				tLocal = XMMatrixAffineTransformation(s, XMVectorZero(), q, p);
 			}
 
-			XMStoreFloat4x4(&out[i], XMMatrixMultiply(tLocal, tParent));
+			XMStoreFloat4x4(&in[i], tLocal * tParent);
 		}
 
+		out.resize(m_submeshes.size());
 		for (UINT i = 0; i < out.size(); ++i)
 		{
-			XMMATRIX offset = XMLoadFloat4x4(&m_bones[i].Offset);
-			XMMATRIX transform = XMLoadFloat4x4(&out[i]);
-			transform = XMMatrixMultiply(offset, transform);
-			XMStoreFloat4x4(&out[i], transform);
+			const Submesh& submesh = m_submeshes[i];
+			XMMATRIX meshInverse = XMLoadFloat4x4(&in[submesh.NodeID].Invert());
+
+			out[i].resize(submesh.BoneNodeIDs.size());
+			for (UINT j = 0; j < out[i].size(); ++j)
+			{
+				UINT boneID = submesh.BoneNodeIDs[j];
+				XMMATRIX boneTransform = XMLoadFloat4x4(&in[boneID]);
+				XMMATRIX boneOffset = XMLoadFloat4x4(&submesh.BoneOffsets[j]);
+				XMStoreFloat4x4(&out[i][j], boneOffset * boneTransform);
+			}
 		}
 	}
 
