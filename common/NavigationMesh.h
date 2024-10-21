@@ -38,13 +38,14 @@ namespace Common
 		}
 		dtQueryFilter* const GetNavFilter()const noexcept { return const_cast<NavigationMesh*>(this)->m_filter; }
 		NaviCell GetNaviCell(Vector3& pos)const noexcept { return NaviCell{ pos,this }; }
+		dtCrowd* GetCrowd()noexcept { return m_crowd; }
 	protected:
 		static int ParseJson(const std::wstring_view path, rapidjson::Document& doc);
 		static int FullPolyDataFromJsonObj(rapidjson::Document& doc, struct rcPolyMesh& mesh);
 	private:
 		dtNavMesh* m_navMesh;
 		dtQueryFilter* m_filter;
-
+		dtCrowd* m_crowd;
 		static constexpr float m_polyPickExt[3]{ 2,4,2 };
 
 	};

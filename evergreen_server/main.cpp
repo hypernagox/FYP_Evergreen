@@ -52,7 +52,6 @@ int main()
 		const auto m = EntityFactory::CreateMonster(b);
 		Mgr(WorldMgr)->GetWorld(0)->EnterWorldNPC(m);
 	}
-	
 	const auto pServerService = std::make_unique<ServerCore::ServerService>
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()

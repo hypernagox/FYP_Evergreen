@@ -15,6 +15,21 @@ void NaviAgent::InitRandPos(Common::NavigationMesh* const pNavMesh) noexcept
 {
 	m_agent.SetNavMesh(pNavMesh);
 	pNavMesh->GetRandomPos(m_posComp->pos, m_agent.GetCurCell());
+
+	dtCrowdAgentParams params;
+	memset(&params, 0, sizeof(params));
+	params.radius = 1.6f;           
+	params.height = 2.0f;           
+	params.maxAcceleration = 8.0f;   
+	params.maxSpeed = 8.5f;       
+	params.collisionQueryRange = params.radius * 36.0f; 
+	params.pathOptimizationRange = params.radius * 30.0f;
+	params.separationWeight = 3.0f;  
+	params.updateFlags = DT_CROWD_SEPARATION;
+
+	auto pos = m_posComp->pos;
+	CommonMath::InverseZ(pos);
+	m_my_idx = pNavMesh->GetCrowd()->addAgent(&pos.x, &params);
 }
 
 void NaviAgent::SetCellPos(const Vector3& prev_pos, const Vector3& post_pos) noexcept

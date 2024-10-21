@@ -128,6 +128,8 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 			const auto owner = pCol->GetOwnerEntity();
 			if (pCol->IsCollision(box))
 			{
+				NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
+
 				owner->PostEntityTask(&ContentsEntity::TryOnDestroy);
 			}
 			owner->DecRef();

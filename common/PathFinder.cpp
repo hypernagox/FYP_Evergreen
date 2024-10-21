@@ -2,10 +2,11 @@
 #include "PathFinder.h"
 #include "NavigationMesh.h"
 #include "NaviAgent.h"
+#include "Navigator.h"
 
 namespace Common
 {
-    std::span<DirectX::SimpleMath::Vector3> PathFinder::GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest) const noexcept
+    std::span<DirectX::SimpleMath::Vector3> PathFinder::GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest,int idx) const noexcept
     {
         // TODO: 매직넘버
         dtPolyRef path[10];
@@ -21,23 +22,25 @@ namespace Common
 
         const auto start_poly = m_agent->GetCurCell().GetPolyRef();
 
-        dtStatus status = nav_q->raycast(start_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, &t, hitNormal, path, &pathCount, 10);
-
-        if (status == DT_SUCCESS && t == 1.0f)
-        {
-            // TODO: 더 아름다운 방법으로 변경
-            thread_local Vector3 p[1];
-            p[0] = dest;
-            return p;
-        }
+       //dtStatus status = nav_q->raycast(start_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, &t, hitNormal, path, &pathCount, 10);
+       //
+       //if (status == DT_SUCCESS && t == 1.0f)
+       //{
+       //    // TODO: 더 아름다운 방법으로 변경
+       //    thread_local Vector3 p[1];
+       //    p[0] = dest;
+       //    return p;
+       //}
 
         dtPolyRef dest_poly;
 
+
         nav_q->findNearestPoly(&dest_z_pos.x, NaviCell::g_extent, nav_f, &dest_poly, &dest_z_pos.x);
-
         
+        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveTarget(idx, dest_poly, &dest_z_pos.x);
 
-        status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
+        return {};
+        dtStatus status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
 
         if (dtStatusFailed(status))
         {

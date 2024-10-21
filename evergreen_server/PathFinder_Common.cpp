@@ -5,5 +5,5 @@
 
 std::span<Vector3> PathFinder::GetPath(const Vector3& start, const Vector3& dest) const noexcept
 {
-    return m_pathFinder.GetPath(start, dest);
+    return m_pathFinder.GetPath(start, dest, GetOwnerEntity()->GetComp<NaviAgent>()->m_my_idx);
 }

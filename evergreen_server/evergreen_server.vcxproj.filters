@@ -47,12 +47,6 @@
     <Filter Include="EntityFactory\ContentsBehaviorNode">
       <UniqueIdentifier>{87376198-e8bb-421f-929b-bb14619f1050}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Navigation">
-      <UniqueIdentifier>{905d396c-0025-45a8-8a32-e3710cd69110}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Navigation\NaviAgent">
-      <UniqueIdentifier>{85e5d1e4-7516-497d-8cc2-42a90cac7d9d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="CommonComponent">
       <UniqueIdentifier>{45885e52-b213-44c4-9844-aa3903ea2108}</UniqueIdentifier>
     </Filter>
