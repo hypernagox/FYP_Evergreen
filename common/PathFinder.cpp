@@ -16,15 +16,33 @@ namespace Common
         const auto start_z_pos = CommonMath::InverseZ(start);
         auto dest_z_pos = CommonMath::InverseZ(dest);
 
+        float t;
+        float hitNormal[3];
+
+        const auto start_poly = m_agent->GetCurCell().GetPolyRef();
+
+        dtStatus status = nav_q->raycast(start_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, &t, hitNormal, path, &pathCount, 10);
+
+        if (status == DT_SUCCESS && t == 1.0f)
+        {
+            // TODO: 더 아름다운 방법으로 변경
+            thread_local Vector3 p[1];
+            p[0] = dest;
+            return p;
+        }
+
         dtPolyRef dest_poly;
 
         nav_q->findNearestPoly(&dest_z_pos.x, NaviCell::g_extent, nav_f, &dest_poly, &dest_z_pos.x);
 
-        dtStatus status = nav_q->findPath(m_agent->GetCurCell().GetPolyRef(), dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
+        
+
+        status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
 
         if (dtStatusFailed(status))
         {
             std::cout << "못 찾음\n";
+            return {};
         }
 
         // TODO: 매직넘버
@@ -38,6 +56,7 @@ namespace Common
         if (dtStatusFailed(status))
         {
             std::cout << "못 찾음\n";
+            return {};
         }
 
         auto b = straightPath;
