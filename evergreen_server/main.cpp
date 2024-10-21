@@ -44,7 +44,7 @@ int main()
 	ServerCore::MoveBroadcaster::RegisterRemovePacketFunc(SectorPredicate::SectorRemovePacketFunc);
 	ServerCore::MoveBroadcaster::RegisterMovePacketFunc(SectorPredicate::SectorMovePacketFunc);
 	
-	for(int i=0;i<10000;++i)
+	for(int i=0;i<100;++i)
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;

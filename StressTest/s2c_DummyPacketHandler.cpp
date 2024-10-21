@@ -30,7 +30,7 @@ flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 const bool Handle_s2c_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_)
 {
 	const auto session = ServerCore::StaticCast<ServerSession>(pSession_);
-	const auto vv = Vector3{ 75.0f, 0.0f, 25.0f } + dir[ServerCore::my_rand() % 4] * 10.f;
+	const auto vv = Vector3{ -30.0f, 0.0f, -30.0f } + dir[ServerCore::my_rand() % 4] * 10.f;
 	//const auto v = Nagox::Struct::Vec3{ 75.0f, 0.0f, 25.0f };
 	pSession_ << Create_c2s_ENTER(F_VEC3(vv));
 	
