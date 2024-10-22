@@ -124,10 +124,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     auto heroServerComponent = g_heroObj->AddComponent<ServerObject>();
   
     heroServerComponent->AddComp<MovePacketSender>();
-    
-    g_heroObj->AddComponent<InputHandler>();
-    g_heroObj->AddComponent<PlayerRenderer>();
-    g_heroObj->AddComponent<EntityMovement>();
     g_heroComponent = g_heroObj->AddComponent<AuthenticPlayer>();
   
     Vector3 temp = {};

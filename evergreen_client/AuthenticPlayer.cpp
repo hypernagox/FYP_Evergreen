@@ -122,7 +122,7 @@ void AuthenticPlayer::Start()
 	sceneObject->AddChild(m_cameraAnchor);
 	m_cameraAnchor->AddChild(m_cameraObj);
 
-	const auto input_handler = sceneObject->GetComponent<InputHandler>();
+	const auto input_handler = AddComponent<InputHandler>();
 
 	input_handler->AddKeyFunc(Keyboard::A, KEY_STATE::KEY_HOLD, &AuthenticPlayer::MoveByView, this, Vector3(-1.0f, 0.0f, 0.0f) * 100.0f);
 	input_handler->AddKeyFunc(Keyboard::W, KEY_STATE::KEY_HOLD, &AuthenticPlayer::MoveByView, this, Vector3(0.0f, 0.0f, 1.0f) * 100.0f);
@@ -131,16 +131,16 @@ void AuthenticPlayer::Start()
 
 	input_handler->AddKeyFunc(Keyboard::Space, KEY_STATE::KET_TAP, &AuthenticPlayer::DoAttack, this);
 
-	m_playerRenderer = sceneObject->GetComponent<PlayerRenderer>();
-	m_entityMovement = sceneObject->AddComponent<EntityMovement>();
-	m_pServerObject = sceneObject->GetComponent<ServerObject>();
+	m_pServerObject = GetComponent<ServerObject>();
+	m_entityMovement = AddComponent<EntityMovement>();
+	m_playerRenderer = AddComponent<PlayerRenderer>();
 }
 
 void AuthenticPlayer::Update(const Time& time, Scene& scene)
 {
 	Transform* transform = GetSceneObject()->GetTransform();
 
-	 m_entityMovement->SetAcceleration(Vector3::Down * 40.0f);
+	 m_entityMovement->SetAcceleration(Vector3::Zero);
 
 	const Vector3Int vPrevState = m_vCurState;
 	m_vCurState = {};
@@ -201,17 +201,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	m_pServerObject->ServerCompUpdate<MovePacketSender>();
 	////
 	m_bSendFlag = false;
-
-	// check if xz component of velocity is not zero
-	float mag = Vector2(velocity.x, velocity.z).Length();
-	if (mag > 1.0f)
-	{
-		m_playerRenderer->SetAnimation("Bip001|run|BaseLayer");
-	}
-	else
-	{
-		m_playerRenderer->SetAnimation("Bip001|idle|BaseLayer");
-	}
 }
 
 Vector3 AuthenticPlayer::GetPlayerLook() const noexcept
