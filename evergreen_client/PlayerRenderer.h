@@ -7,6 +7,7 @@ using namespace udsdx;
 class PlayerRenderer : public Component
 {
 protected:
+	RiggedMeshRenderer* m_renderer;
 	std::shared_ptr<SceneObject> m_rendererObj;
 	std::array<std::shared_ptr<udsdx::Material>, 5> m_playerMaterials;
 
@@ -19,4 +20,5 @@ public:
 
 	Transform* const GetRenderObjTransform() const noexcept { return m_rendererObj->GetTransform(); }
 	void SetRotation(const Quaternion& rotation) { m_rendererObj->GetTransform()->SetLocalRotation(rotation); }
+	void SetAnimation(const std::string& animationName) { m_renderer->SetAnimation(animationName); }
 };

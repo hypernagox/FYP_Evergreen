@@ -201,6 +201,17 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	m_pServerObject->ServerCompUpdate<MovePacketSender>();
 	////
 	m_bSendFlag = false;
+
+	// check if xz component of velocity is not zero
+	float mag = Vector2(velocity.x, velocity.z).Length();
+	if (mag > 1.0f)
+	{
+		m_playerRenderer->SetAnimation("Bip001|run|BaseLayer");
+	}
+	else
+	{
+		m_playerRenderer->SetAnimation("Bip001|idle|BaseLayer");
+	}
 }
 
 Vector3 AuthenticPlayer::GetPlayerLook() const noexcept
