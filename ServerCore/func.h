@@ -25,7 +25,7 @@ namespace ServerCore
 	constexpr inline T rcast(const T val)noexcept { return val; }
 
 	template <typename T> requires (!std::is_fundamental_v<std::decay_t<T>>)
-	constexpr inline T rcast(T&& val)noexcept { return std::forward<T>(val); }
+	constexpr inline std::decay_t<T> rcast(T&& val)noexcept { return std::forward<T>(val); }
 
 	template <typename T>
 	static inline const bool compareExchange(T* volatile* const ptr, T** const old_ptr, const T* const new_ptr)noexcept

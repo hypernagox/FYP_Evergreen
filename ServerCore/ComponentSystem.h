@@ -22,17 +22,25 @@ private:
 	template <typename T, typename... Args>
 	T* const AddComp(Args&&... args)noexcept {
 		const auto comp_ptr = ServerCore::xnew<T>(std::forward<Args>(args)...);
-		NAGOX_ASSERT(m_mapContentsComponents.try_emplace(T::GetCompTypeNameGlobal(), comp_ptr).second);
+		NAGOX_ASSERT(!GetComp<T>());
+		m_contentsComponents.emplace_back(T::GetCompTypeNameGlobal(), comp_ptr);
 		if constexpr (std::derived_from<T, ContentsUpdateComponent>)
 			m_vecUpdateComponents.emplace_back(comp_ptr);
+		// TODO: shrink to fit
 		return comp_ptr;
 	}
 	template <const uint64_t COMP_ID>
 	constexpr inline ContentsComponent* const GetCompInternal()const noexcept {
-		return const_cast<ComponentSystem* const>(this)->m_mapContentsComponents[COMP_ID];
+		auto b = m_contentsComponents.data();
+		const auto e = b + m_contentsComponents.size();
+		while (e != b) {
+			if (COMP_ID == b->first)return b->second;
+			++b;
+		}
+		return nullptr;
 	}
 private:
-	ServerCore::Map<uint64_t, ContentsComponent* const> m_mapContentsComponents;
+	ServerCore::Vector<std::pair<const uint64_t, ContentsComponent* const>> m_contentsComponents;
 	const std::atomic_bool& m_bOwnerValidFlag;
 	ServerCore::Vector<ContentsUpdateComponent*> m_vecUpdateComponents;
 };

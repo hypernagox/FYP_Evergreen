@@ -151,6 +151,12 @@
     <Filter Include="EntityManagement\Sector\SectorUpdateQueue">
       <UniqueIdentifier>{8c5dbcb0-0d8d-4b94-9e0a-53e93cdfe860}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EntityManagement\Sector\Cluster">
+      <UniqueIdentifier>{c3d31f4f-feb9-417e-878a-0fc587560358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement\World\Field">
+      <UniqueIdentifier>{45a77ca9-e46b-4019-b176-defc4cb8df41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -369,8 +375,14 @@
     <ClInclude Include="SectorInfoHelper.h">
       <Filter>EntityManagement\MoveBroadcaster</Filter>
     </ClInclude>
-    <ClInclude Include="SectorUpdateQueue.h">
+    <ClInclude Include="ClusterUpdateQueue.h">
       <Filter>EntityManagement\Sector\SectorUpdateQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="Cluster.h">
+      <Filter>EntityManagement\Sector\Cluster</Filter>
+    </ClInclude>
+    <ClInclude Include="Field.h">
+      <Filter>EntityManagement\World\Field</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -500,8 +512,14 @@
     <ClCompile Include="SectorInfoHelper.cpp">
       <Filter>EntityManagement\MoveBroadcaster</Filter>
     </ClCompile>
-    <ClCompile Include="SectorUpdateQueue.cpp">
+    <ClCompile Include="ClusterUpdateQueue.cpp">
       <Filter>EntityManagement\Sector\SectorUpdateQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="Cluster.cpp">
+      <Filter>EntityManagement\Sector\Cluster</Filter>
+    </ClCompile>
+    <ClCompile Include="Field.cpp">
+      <Filter>EntityManagement\World\Field</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

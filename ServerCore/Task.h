@@ -270,7 +270,7 @@ namespace ServerCore
 				};
 		}
 	public:
-		inline constexpr void ExecuteSectorTask(void* const memFuncInstance)const noexcept { m_fpTask(argPtr, memFuncInstance); }
+		inline constexpr void InvokeTask(void* const memFuncInstance)const noexcept { m_fpTask(argPtr, memFuncInstance); }
 	private:
 		mutable void* argPtr;
 		void (*m_fpTask)(const void* const, void* const) noexcept;

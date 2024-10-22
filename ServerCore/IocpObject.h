@@ -42,9 +42,16 @@ namespace ServerCore
 	class Queueabler;
 	class TickTimer;
 
+	struct ClusterInfo
+	{
+		uint8_t fieldID;
+		Point2D clusterID;
+	};
+
 	class alignas(64) ContentsEntity final
 		:public IocpObject
 	{
+		friend class Cluster;
 		friend class Sector;
 	public:
 		ContentsEntity(const uint16_t type_id, const uint8_t obj_type_info) noexcept;
@@ -135,6 +142,8 @@ namespace ServerCore
 		class ComponentSystem* const m_componentSystem;
 		IocpComponent* m_arrIocpComponents[etoi(IOCP_COMPONENT::END)] = {};
 		alignas(64) std::atomic_bool m_bIsValid = true;
+		std::atomic_int8_t m_curRefCluster = ThreadMgr::NUM_OF_THREADS;
+		std::atomic<ClusterInfo> m_clusterInfo;
 		std::atomic_bool m_bNowUpdateFlag = false;
 		std::atomic<ID_Ptr<ServerCore::Sector>> m_CurrentSectorInfo;
 	};

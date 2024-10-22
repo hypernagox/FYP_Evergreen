@@ -4,6 +4,8 @@
 namespace ServerCore
 {
 	class World;
+	class Field;
+	class Cluster;
 
 	class WorldMgr
 		:public Singleton<WorldMgr>
@@ -26,6 +28,24 @@ namespace ServerCore
 			temp_ptr->InitWorld();
 			return temp_ptr;
 		}
+
+		template <typename T, typename... Args>
+		T* RegisterField(const uint8_t fieldID, Args&&... args)noexcept {
+			const auto temp = xnew<T>(std::forward<Args>(args)...);
+			temp->InitField();
+			m_mapField.emplace(fieldID, temp);
+			return temp;
+		}
+		template <typename T = Field>
+		inline T* GetField(const uint8_t fieldID)noexcept {
+			return static_cast<T* const>(m_mapField[fieldID]);
+		}
+
+		template <typename T = Cluster>
+		inline T* GetCluster(const uint8_t fieldID,const Point2D sectorID)noexcept {
+			return GetField(fieldID)->GetCluster(sectorID);
+		}
+
 		template <typename T = World>
 		inline S_ptr<T> GetWorld(const uint8_t worldID)noexcept { return ServerCore::StaticCast<T>(m_mapWorld[worldID]); }
 		S_ptr<ContentsEntity> GetNPC(const uint32_t npc_id)const noexcept;
@@ -47,9 +67,12 @@ namespace ServerCore
 	private:
 		void RegisterNPC(S_ptr<ContentsEntity>& pNPC)noexcept;
 		void ReleaseNPC(const ContentsEntity* const pNPC)noexcept;
-	private:
-		tbb::concurrent_unordered_map<uint8_t, S_ptr<World>> m_mapWorld;
 
+	private:
+		HashMap<uint8_t, Field*> m_mapField;
+
+		tbb::concurrent_unordered_map<uint8_t, S_ptr<World>> m_mapWorld;
+		
 		mutable tbb::concurrent_unordered_map<uint32_t, uint16_t, std::hash<uint32_t>, std::equal_to<uint32_t>> m_id2Index;
 		std::span<AtomicNPCPtr> m_arrNPC;
 		tbb::concurrent_bounded_queue<int32> m_idxQueue;

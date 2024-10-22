@@ -1,5 +1,5 @@
 #include "ServerCorePch.h"
-#include "SectorUpdateQueue.h"
+#include "Field.h"
 
 namespace ServerCore
 {

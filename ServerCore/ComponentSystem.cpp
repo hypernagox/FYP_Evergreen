@@ -8,7 +8,11 @@ ComponentSystem::ComponentSystem(const std::atomic_bool& bValidFlag_) noexcept
 
 ComponentSystem::~ComponentSystem() noexcept
 {
-	for (const auto contents_comp : m_mapContentsComponents | std::views::values)ServerCore::xdelete<ContentsComponent>(contents_comp);
+	auto b = m_contentsComponents.data();
+	const auto e = b + m_contentsComponents.size();
+	while (e != b) {
+		ServerCore::xdelete<ContentsComponent>((*b++).second);
+	}
 }
 
 void ComponentSystem::Update(const float dt_) const noexcept

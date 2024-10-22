@@ -192,6 +192,7 @@
     <ClInclude Include="AtomicNonTemplate.h" />
     <ClInclude Include="BackOff.h" />
     <ClInclude Include="BehaviorTree.hpp" />
+    <ClInclude Include="Cluster.h" />
     <ClInclude Include="ComponentSystem.h" />
     <ClInclude Include="ContentsComponent.h" />
     <ClInclude Include="DBBindRAII.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="DBMgr.h" />
     <ClInclude Include="DBPacket.h" />
     <ClInclude Include="DBPacketSender.h" />
+    <ClInclude Include="Field.h" />
     <ClInclude Include="Queueabler.h" />
     <ClInclude Include="EBR.hpp" />
     <ClInclude Include="MoveBroadcaster.h" />
@@ -234,7 +236,7 @@
     <ClInclude Include="RefCountable.h" />
     <ClInclude Include="SectorBehavior.h" />
     <ClInclude Include="SectorInfoHelper.h" />
-    <ClInclude Include="SectorUpdateQueue.h" />
+    <ClInclude Include="ClusterUpdateQueue.h" />
     <ClInclude Include="ServerCorePch.h" />
     <ClInclude Include="RecvBuffer.h" />
     <ClInclude Include="SendBuffer.h" />
@@ -264,11 +266,13 @@
   <ItemGroup>
     <ClCompile Include="Allocator.cpp" />
     <ClCompile Include="AtomicNonTemplate.cpp" />
+    <ClCompile Include="Cluster.cpp" />
     <ClCompile Include="ComponentSystem.cpp" />
     <ClCompile Include="DBBindRAII.cpp" />
     <ClCompile Include="DBConnectionHandle.cpp" />
     <ClCompile Include="DBMgr.cpp" />
     <ClCompile Include="DBPacketSender.cpp" />
+    <ClCompile Include="Field.cpp" />
     <ClCompile Include="Queueabler.cpp" />
     <ClCompile Include="MoveBroadcaster.cpp" />
     <ClCompile Include="CoreGlobal.cpp" />
@@ -287,7 +291,7 @@
     <ClCompile Include="PacketSession.cpp" />
     <ClCompile Include="RefCountable.cpp" />
     <ClCompile Include="SectorInfoHelper.cpp" />
-    <ClCompile Include="SectorUpdateQueue.cpp" />
+    <ClCompile Include="ClusterUpdateQueue.cpp" />
     <ClCompile Include="ServerCorePch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

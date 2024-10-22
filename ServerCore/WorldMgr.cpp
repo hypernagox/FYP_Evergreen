@@ -1,6 +1,7 @@
 #include "ServerCorePch.h"
 #include "WorldMgr.h"
 #include "World.h"
+#include "Field.h"
 
 namespace ServerCore
 {
@@ -33,6 +34,10 @@ namespace ServerCore
 			auto b = m_mapWorld.cbegin();
 			const auto e = m_mapWorld.cend();
 			while (e != b) { (*b++).second->EndWorldEnqueue(); }
+		}
+		for (const auto [key, val] : m_mapField)
+		{
+			xdelete<Field>(val);
 		}
 	}
 	void WorldMgr::RegisterNPC(S_ptr<ContentsEntity>& pNPC) noexcept
