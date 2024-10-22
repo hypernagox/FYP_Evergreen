@@ -24,6 +24,7 @@ namespace ServerCore
 		std::atomic_uint8_t m_refCount = ThreadMgr::NUM_OF_THREADS;
 		TaskInvoker m_invoker;
 	};
+
 	class SectorUpdateQueue
 	{
 	public:
@@ -45,6 +46,7 @@ namespace ServerCore
 			for (;;)
 			{
 				const auto task = GetTask(0);// 스레드로칼인덱스
+				if (!task)return;
 				const bool bIsFinish = task->Execute(nullptr); //적절한포인터
 				if (bIsFinish)PopTask(0);//적절한인덱스
 				// TODO: 인덱스 증가
