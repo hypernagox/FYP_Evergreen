@@ -114,6 +114,10 @@ namespace udsdx
 
 	void RiggedMeshRenderer::SetAnimation(std::string_view animationName)
 	{
+		if (m_animationName == animationName)
+		{
+			return;
+		}
 		m_animationTime = 0.0f;
 		m_animationName = animationName;
 		m_isMatrixDirty = true;
