@@ -17,6 +17,7 @@ namespace udsdx
 	{
 		for (auto& buffer : m_constantBuffers)
 		{
+			// TODO: 10 is a magic number; it needs to resize optimally by the number of submeshes
 			buffer.resize(10);
 			for (auto& subBuffer : buffer)
 			{

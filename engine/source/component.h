@@ -25,7 +25,7 @@ namespace udsdx
 		template <typename Component_T>
 		Component_T* AddComponent() { return GetSceneObject()->AddComponent<Component_T>(); }
 		template <typename Component_T>
-		Component* GetComponent() const { return GetSceneObject()->GetComponent<Component_T>(); }
+		Component_T* GetComponent() const { return GetSceneObject()->GetComponent<Component_T>(); }
 
 	protected:
 		std::weak_ptr<SceneObject> m_object;

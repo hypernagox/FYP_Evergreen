@@ -39,6 +39,15 @@ PlayerRenderer::~PlayerRenderer()
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
-
+	const Vector3 velocity = GetComponent<EntityMovement>()->GetVelocity();
+	// check if xz component of velocity is not zero
+	float mag = Vector2(velocity.x, velocity.z).LengthSquared();
+	if (mag > 1.0f)
+	{
+		SetAnimation("Bip001|run|BaseLayer");
+	}
+	else
+	{
+		SetAnimation("Bip001|idle|BaseLayer");
+	}
 }
-
