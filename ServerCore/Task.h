@@ -234,10 +234,46 @@ namespace ServerCore
 		constexpr static inline const auto CallFunctionWithTuple(const Function func, T&& obj, std::tuple<>&&, std::index_sequence<>) noexcept {
 			return (*std::forward<T>(obj).*func)();
 		}
-
+	public:
 		template<typename Function, typename T, typename Tuple, typename Indices = std::make_index_sequence<std::tuple_size_v<std::decay_t<Tuple>>>>
 		constexpr static inline const auto invokeMemberFunction(Function&& func, T&& obj, Tuple&& tup) noexcept {
 			return CallFunctionWithTuple(std::forward<Function>(func), std::forward<T>(obj), std::forward<Tuple>(tup), Indices{});
 		}
+	};
+
+	class TaskInvoker
+	{
+	public:
+		~TaskInvoker()noexcept { m_fpTaskDeleter(argPtr); }
+	public:
+		template<typename T, typename Ret, typename... Args>
+		constexpr TaskInvoker(Ret(T::* const memFunc)(Args...), Args&&... args) noexcept
+		{
+			struct CallBack
+			{
+				Ret(T::* const memFunc)(Args...);
+				const std::tuple<std::decay_t<Args>...> args;
+				constexpr CallBack(Ret(T::* const memFunc_)(Args...), Args&&... args_) noexcept
+					: memFunc{ memFunc_ }, args{ std::forward<Args>(args_)... } {}
+
+				inline constexpr const void Execute(void* const memFuncInstance) const noexcept
+				{
+					Task::invokeMemberFunction(memFunc, static_cast<T* const>(memFuncInstance), args);
+				}
+			};
+			argPtr = xnew<CallBack>(memFunc, std::forward<Args>(args)...);
+			m_fpTaskDeleter = [](void* const callBackPtr_) noexcept {
+				xdelete_sized<CallBack>(static_cast<CallBack* const>(callBackPtr_), sizeof(CallBack));
+				};
+			m_fpTask = [](const void* const callBackPtr_, void* const memFuncInstance) noexcept {
+				static_cast<const CallBack* const>(callBackPtr_)->Execute(memFuncInstance);
+				};
+		}
+	public:
+		inline constexpr void ExecuteSectorTask(void* const memFuncInstance)const noexcept { m_fpTask(argPtr, memFuncInstance); }
+	private:
+		mutable void* argPtr;
+		void (*m_fpTask)(const void* const, void* const) noexcept;
+		void(*m_fpTaskDeleter)(void* const)noexcept;
 	};
 }

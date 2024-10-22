@@ -148,6 +148,9 @@
     <Filter Include="EntityManagement\BehaviorTree">
       <UniqueIdentifier>{8882d5d3-da86-4088-a3af-b7d6cf629302}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EntityManagement\Sector\SectorUpdateQueue">
+      <UniqueIdentifier>{8c5dbcb0-0d8d-4b94-9e0a-53e93cdfe860}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -366,6 +369,9 @@
     <ClInclude Include="SectorInfoHelper.h">
       <Filter>EntityManagement\MoveBroadcaster</Filter>
     </ClInclude>
+    <ClInclude Include="SectorUpdateQueue.h">
+      <Filter>EntityManagement\Sector\SectorUpdateQueue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -493,6 +499,9 @@
     </ClCompile>
     <ClCompile Include="SectorInfoHelper.cpp">
       <Filter>EntityManagement\MoveBroadcaster</Filter>
+    </ClCompile>
+    <ClCompile Include="SectorUpdateQueue.cpp">
+      <Filter>EntityManagement\Sector\SectorUpdateQueue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
