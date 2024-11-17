@@ -17,6 +17,7 @@ namespace udsdx
 			float4x4 gViewInverse;
 			float4x4 gProjInverse;
 			float4x4 gViewProjInverse;
+			float4x4 gPrevViewProj;
 			float4 gEyePosW;
 		}
 
@@ -153,7 +154,15 @@ namespace udsdx
 				return color;
 			}
 
-			float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
+			float2 motionVector = gBuffer3.Sample(gsamPointClamp, pin.TexC).xy;
+		    const int sampleCount = 8;
+			float4 gBuffer1Color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+			for (int i = 0; i < sampleCount; ++i)
+			{
+				float2 offset = -motionVector * ((float)i / (sampleCount - 1));
+				gBuffer1Color += gBuffer1.Sample(gsamPointClamp, pin.TexC + offset);
+			}
+			gBuffer1Color /= sampleCount;
 
 			float3 normalV;
 			normalV.xy = gBuffer2.Sample(gsamPointClamp, pin.TexC).xy;

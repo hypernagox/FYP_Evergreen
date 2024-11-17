@@ -25,12 +25,11 @@ namespace udsdx
 		void SetClearColor(const Color& color);
 		Color GetClearColor() const;
 
-
-
 	protected:
 		std::array<std::unique_ptr<UploadBuffer<CameraConstants>>, FrameResourceCount> m_constantBuffers;
 
 		Color m_clearColor = Color(0.0f, 0.0f, 0.0f, 1.0f);
+		Matrix4x4 m_prevViewProjMatrix = Matrix4x4::Identity;
 	};
 
 	class CameraPerspective : public Camera

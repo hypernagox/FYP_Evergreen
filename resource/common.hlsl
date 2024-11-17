@@ -11,6 +11,7 @@ cbuffer cbPerCamera : register(b1)
     float4x4 gViewInverse;
     float4x4 gProjInverse;
     float4x4 gViewProjInverse;
+	float4x4 gPrevViewProj;
     float4 gEyePosW;
 }
 
@@ -68,11 +69,12 @@ struct VertexOut
 	float4 PosH         : SV_POSITION;
     float4 PosW         : POSITION0;
     float4 SSAOPosH     : POSITION1;
+    float4 PrevPosH	    : POSITION2;
     float2 Tex          : TEXCOORD;
     float4 NormalW      : NORMAL;
     float4 TangentW     : TANGENT;
 #ifdef GENERATE_SHADOWS
-    float4 PosP         : POSITION2;
+    float4 PosP         : POSITION3;
 #endif
 };
 
@@ -80,6 +82,7 @@ struct PixelOut
 {
 	float4 Buffer1 : SV_TARGET0;
     float2 Buffer2 : SV_TARGET1;
+    float2 Buffer3 : SV_TARGET2;
 };
 
 #ifdef RIGGED
@@ -133,6 +136,7 @@ inline float3 LocalToWorldNormal(float3 normalL)
 	vout.PosW = ObjectToWorldPos(LocalToObjectPos(vin));            \
 	vout.PosH = WorldToClipPos(vout.PosW, vin);                     \
 	vout.SSAOPosH = mul(vout.PosH, gTex);                           \
+    vout.PrevPosH = mul(vout.PosW, gPrevViewProj);                  \
 	vout.Tex = vin.Tex;                                             \
 	vout.NormalW = ObjectToWorldNormal(LocalToObjectNormal(vin, vin.Normal));       \
     vout.TangentW = ObjectToWorldNormal(LocalToObjectNormal(vin, vin.Tangent));     \
