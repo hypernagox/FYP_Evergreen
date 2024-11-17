@@ -1,11 +1,5 @@
 #pragma once
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers.
-#endif
-
-#define NOMINMAX
-
 // C++ Standard Library
 #include <algorithm>
 #include <array>
@@ -41,8 +35,10 @@
 #include <vector>
 
 // Windows Library
-#include <Windows.h>
-#include <windowsx.h>
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+
+#include <windows.h>
 #include <wrl.h>
 #include <shellapi.h>
 #include <shlwapi.h>

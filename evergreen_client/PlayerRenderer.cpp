@@ -17,7 +17,7 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"character.glb")));
 	m_renderer->SetShader(shader);
 
-	for (size_t i = 0; i < m_playerMaterials.size(); ++i)
+	for (int i = 0; i < m_playerMaterials.size(); ++i)
 	{
 		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
 		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
