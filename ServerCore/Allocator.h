@@ -32,7 +32,7 @@ namespace ServerCore
 		template<typename Other>
 		StlAllocator(const StlAllocator<Other>&) {}
 
-		constexpr static T* const allocate(const size_t count)noexcept { return Memory::Alloc<T>(sizeof(T) * count); }
+		constexpr static T* const allocate(const size_t count)noexcept { return static_cast<T* const>(Memory::Alloc(sizeof(T) * count)); }
 
 		constexpr static void deallocate(T* const ptr, const size_t count)noexcept { return Memory::Free_Sized(ptr, static_cast<const uint32_t>(sizeof(T) * count)); }
 
@@ -53,7 +53,7 @@ namespace ServerCore
 		StlAllocator64(const StlAllocator64<Other>&) {}
 
 		constexpr static T* const allocate(const size_t count)noexcept {
-			return Memory::AlignedAlloc<T>((sizeof(T) * count), std::hardware_constructive_interference_size);
+			return static_cast<T* const>(Memory::AlignedAlloc((sizeof(T) * count), std::hardware_constructive_interference_size));
 		}
 
 		constexpr static void deallocate(T* const ptr, const size_t count)noexcept { 

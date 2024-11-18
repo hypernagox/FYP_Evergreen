@@ -97,7 +97,7 @@ namespace ServerCore
 		std::future<std::invoke_result_t<Func, Args...>> EnqueueGlobalTaskFuture(Func&& fp, Args&&... args) noexcept
 		{
 			using return_type = std::invoke_result_t<Func, Args...>;
-			auto task = ::MakeUnique<std::packaged_task<return_type(void)>>(std::bind_front(std::forward<Func>(fp), std::forward<Args>(args)...));
+			auto task = MakeUnique<std::packaged_task<return_type(void)>>(std::bind_front(std::forward<Func>(fp), std::forward<Args>(args)...));
 			std::future<return_type> res_future = task->get_future();
 			EnqueueGlobalTask(Task(([task = std::move(task)]() noexcept {(*task)(); })));
 			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
