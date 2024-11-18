@@ -57,7 +57,7 @@ int main()
 			  Mgr(CoreGlobal)->GetIocpCore()
 			, ServerCore::NetAddress{ L"0.0.0.0",7777 }
 			, ServerCore::MakeSharedAligned<ClientSession>
-			, 1001
+			, 5001
 		);
 
 	ASSERT_CRASH(pServerService->Start());
