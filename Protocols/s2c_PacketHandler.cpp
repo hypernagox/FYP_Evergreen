@@ -28,6 +28,7 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	// 적당히 enum값이 오면 알아서 만들어서 씬 오브젝트 뱉는 구조가 필요하다.
 	// 앞으로도 이렇게 하드코딩해서 객체를 만들 순 없다.
 
+	if (pkt_.group_type() != Nagox::Enum::GROUP_TYPE_MONSTER)return true;
 	const auto obj_id = pkt_.obj_id();
 	
 	if (Mgr(ServerObjectMgr)->GetServerObj(obj_id))

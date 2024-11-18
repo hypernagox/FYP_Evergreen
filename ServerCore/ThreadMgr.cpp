@@ -184,7 +184,7 @@ namespace ServerCore
 			if (bStopRequest) [[unlikely]]
 				break;
 
-			if (false == IocpCore::Dispatch(iocpHandle,0))
+			if (false == IocpCore::Dispatch(iocpHandle,10))
 			{
 				//threadMgr.TryGlobalQueueTask();
 			}
