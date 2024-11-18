@@ -52,6 +52,12 @@ struct s2c_MONSTER_AGGRO_ENDBuilder;
 struct c2s_PLAYER_ATTACK;
 struct c2s_PLAYER_ATTACKBuilder;
 
+struct s2c_PLAYER_DEATH;
+struct s2c_PLAYER_DEATHBuilder;
+
+struct c2s_PLAYER_DEATH;
+struct c2s_PLAYER_DEATHBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -725,6 +731,92 @@ inline ::flatbuffers::Offset<c2s_PLAYER_ATTACK> Createc2s_PLAYER_ATTACK(
     float body_angle = 0.0f) {
   c2s_PLAYER_ATTACKBuilder builder_(_fbb);
   builder_.add_body_angle(body_angle);
+  return builder_.Finish();
+}
+
+struct s2c_PLAYER_DEATH FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PLAYER_DEATHBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_PLAYER_ID = 4,
+    VT_REBIRTH_POS = 6
+  };
+  uint64_t player_id() const {
+    return GetField<uint64_t>(VT_PLAYER_ID, 0);
+  }
+  bool mutate_player_id(uint64_t _player_id = 0) {
+    return SetField<uint64_t>(VT_PLAYER_ID, _player_id, 0);
+  }
+  const Nagox::Struct::Vec3 *rebirth_pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_REBIRTH_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_rebirth_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_REBIRTH_POS);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_PLAYER_ID, 8) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_REBIRTH_POS, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PLAYER_DEATHBuilder {
+  typedef s2c_PLAYER_DEATH Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_player_id(uint64_t player_id) {
+    fbb_.AddElement<uint64_t>(s2c_PLAYER_DEATH::VT_PLAYER_ID, player_id, 0);
+  }
+  void add_rebirth_pos(const Nagox::Struct::Vec3 *rebirth_pos) {
+    fbb_.AddStruct(s2c_PLAYER_DEATH::VT_REBIRTH_POS, rebirth_pos);
+  }
+  explicit s2c_PLAYER_DEATHBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PLAYER_DEATH> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PLAYER_DEATH>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PLAYER_DEATH> Creates2c_PLAYER_DEATH(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t player_id = 0,
+    const Nagox::Struct::Vec3 *rebirth_pos = nullptr) {
+  s2c_PLAYER_DEATHBuilder builder_(_fbb);
+  builder_.add_player_id(player_id);
+  builder_.add_rebirth_pos(rebirth_pos);
+  return builder_.Finish();
+}
+
+struct c2s_PLAYER_DEATH FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_PLAYER_DEATHBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_PLAYER_DEATHBuilder {
+  typedef c2s_PLAYER_DEATH Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit c2s_PLAYER_DEATHBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_PLAYER_DEATH> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_PLAYER_DEATH>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_PLAYER_DEATH> Createc2s_PLAYER_DEATH(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  c2s_PLAYER_DEATHBuilder builder_(_fbb);
   return builder_.Finish();
 }
 

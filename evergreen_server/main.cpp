@@ -7,6 +7,7 @@
 #include "EntityFactory.h"
 #include "Field.h"
 #include "Cluster.h"
+#include "ContentsField.h"
 
 using namespace ServerCore;
 constexpr const int32_t NUM_OF_NPC = 10240;

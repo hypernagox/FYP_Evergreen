@@ -11,6 +11,7 @@
 #include "PathFinder_Common.h"
 #include "Cluster.h"
 #include "ClusterInfoHelper.h"
+#include "HP.h"
 
 using namespace ServerCore;
 
@@ -130,7 +131,8 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     if (0.f >= m_accTime)
     {
         // TODO: 스트레스 테스트 아직 패킷없음
-       //  awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(10));
+        awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(1));
+        awaker->GetComp<HP>()->PostDoDmg(1);
 
         m_accTime = 1.5f;
     }

@@ -5,6 +5,8 @@
 #include "MoveBroadcaster.h"
 #include "Cluster.h"
 #include "ClusterInfoHelper.h"
+#include "HP.h"
+#include "Death.h"
 
 std::atomic_int cnt = 0;
 
@@ -26,6 +28,8 @@ void ClientSession::OnConnected()
 	const auto pOwner = GetOwnerEntity();
 	pOwner->SetObjectTypeInfo(PLAYER_TYPE_INFO::WARRIOR);
 	pOwner->AddIocpComponent<ServerCore::Queueabler>();
+	pOwner->AddComp<HP>()->InitHP(5);
+	pOwner->AddComp<PlayerDeath>();
 }
 
 void ClientSession::OnDisconnected(const ServerCore::Cluster* const curCluster_)noexcept

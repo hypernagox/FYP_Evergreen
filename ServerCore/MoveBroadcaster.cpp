@@ -87,7 +87,7 @@ namespace ServerCore
 			}
 		}
 		
-		Vector<uint32_t> viewListForCopy;
+		Vector<uint64_t> viewListForCopy;
 		viewListForCopy.reserve(new_view_list.size());
 		
 		for (auto iter = m_viewList.cbegin(); iter != m_viewList.cend();)
@@ -109,7 +109,7 @@ namespace ServerCore
 			}
 			else
 			{
-				viewListForCopy.emplace_back(entity_ptr->GetObjectID());
+				viewListForCopy.emplace_back(entity_ptr->GetObjectCombineID());
 				++iter;
 			}
 		}

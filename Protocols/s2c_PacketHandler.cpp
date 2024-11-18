@@ -13,6 +13,7 @@ flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 }
 
 extern std::shared_ptr<Scene> scene;
+extern std::shared_ptr<SceneObject> g_heroObj;
 
 #define Mgr(type)	(type::GetInst())
 
@@ -28,7 +29,6 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	// 적당히 enum값이 오면 알아서 만들어서 씬 오브젝트 뱉는 구조가 필요하다.
 	// 앞으로도 이렇게 하드코딩해서 객체를 만들 순 없다.
 
-	if (pkt_.group_type() != Nagox::Enum::GROUP_TYPE_MONSTER)return true;
 	const auto obj_id = pkt_.obj_id();
 	
 	if (Mgr(ServerObjectMgr)->GetServerObj(obj_id))
@@ -78,5 +78,23 @@ const bool Handle_s2c_MONSTER_AGGRO_START(const NetHelper::S_ptr<NetHelper::Pack
 const bool Handle_s2c_MONSTER_AGGRO_END(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_END& pkt_)
 {
 	std::cout << "아무래도 여우는 당신에게 흥미가 없어진 것 같다 ..." << std::endl;
+	return true;
+}
+
+const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_DEATH& pkt_)
+{
+	if (NetMgr(NetworkMgr)->GetSessionID() == pkt_.player_id())
+	{
+		std::cout << "사망\n";
+		g_heroObj->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
+		NetMgr(NetworkMgr)->Send(Create_c2s_PLAYER_DEATH());
+	}
+	else
+	{
+		if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.player_id()))
+		{
+			obj->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
+		}
+	}
 	return true;
 }

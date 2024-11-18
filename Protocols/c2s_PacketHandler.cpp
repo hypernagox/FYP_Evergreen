@@ -11,6 +11,8 @@
 #include "NaviAgent_Common.h"
 #include "Collider_Common.h"
 #include "Field.h"
+#include "HP.h"
+
 
 using namespace ServerCore;
 
@@ -129,14 +131,24 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 			const auto owner = pCol->GetOwnerEntity();
 			if (pCol->IsCollision(box))
 			{
-				NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
-
-				owner->TryOnDestroy();
+				//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
+				//
+				//owner->TryOnDestroy();
+				owner->GetComp<HP>()->PostDoDmg(1);
 			}
 		}
 	}
 	return true;
 }
 
+const bool Handle_c2s_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_DEATH& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+
+	const auto hp = owner->GetComp<HP>();
+	hp->CompleteRebirth(5);
+
+	return true;
+}
 
 

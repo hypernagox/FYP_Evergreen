@@ -18,31 +18,44 @@ namespace ServerCore
 		virtual ~Queueabler()noexcept;
 	public:
 		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, ContentsComponent>
-		void EnqueueAsync(Ret(T::* const memFunc)(Args...)noexcept, std::decay_t<Args>... args)noexcept
+		void EnqueueAsync(Ret(T::* const memFunc)(Args...), T* const memFuncInst_, std::decay_t<Args>... args)noexcept
+		{
+			if (!m_taskEvent)return;
+			EnqueueAsyncTask(memFunc, memFuncInst_, std::move(args)...);
+		}
+		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, ContentsComponent>
+		void EnqueueAsyncPushOnly(Ret(T::* const memFunc)(Args...), T* const memFuncInst_, std::decay_t<Args>... args)noexcept
+		{
+			if (!m_taskEvent)return;
+			EnqueueAsyncTaskPushOnly(memFunc, memFuncInst_, std::move(args)...);
+		}
+	public:
+		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, ContentsComponent>
+		void EnqueueAsync(Ret(T::* const memFunc)(Args...), std::decay_t<Args>... args)noexcept
 		{
 			if (!m_taskEvent)return;
 			EnqueueAsyncTask(memFunc, GetOwnerEntity()->GetComp<T>(), std::move(args)...);
 		}
 		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, IocpComponent>
-		void EnqueueAsync(Ret(T::* const memFunc)(Args...)noexcept, std::decay_t<Args>... args)noexcept
+		void EnqueueAsync(Ret(T::* const memFunc)(Args...), std::decay_t<Args>... args)noexcept
 		{
 			if (!m_taskEvent)return;
 			EnqueueAsyncTask(memFunc, GetOwnerEntity()->GetIocpComponent<T>(), std::move(args)...);
 		}
 		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, ContentsComponent>
-		void EnqueueAsyncPushOnly(Ret(T::* const memFunc)(Args...)noexcept, std::decay_t<Args>... args)noexcept
+		void EnqueueAsyncPushOnly(Ret(T::* const memFunc)(Args...), std::decay_t<Args>... args)noexcept
 		{
 			if (!m_taskEvent)return;
 			EnqueueAsyncTaskPushOnly(memFunc, GetOwnerEntity()->GetComp<T>(), std::move(args)...);
 		}
 		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, IocpComponent>
-		void EnqueueAsyncPushOnly(Ret(T::* const memFunc)(Args...)noexcept, std::decay_t<Args>... args)noexcept
+		void EnqueueAsyncPushOnly(Ret(T::* const memFunc)(Args...), std::decay_t<Args>... args)noexcept
 		{
 			if (!m_taskEvent)return;
 			EnqueueAsyncTaskPushOnly(memFunc, GetOwnerEntity()->GetIocpComponent<T>(), std::move(args)...);
 		}
 		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, ContentsComponent>
-		void EnqueueAsyncTimer(c_uint64 tickAfter, Ret(T::* const memFunc)(Args...)noexcept, std::decay_t<Args>... args)noexcept
+		void EnqueueAsyncTimer(c_uint64 tickAfter, Ret(T::* const memFunc)(Args...), std::decay_t<Args>... args)noexcept
 		{
 			if (!m_taskEvent)return;
 			const auto pOwner = GetOwnerEntity();
@@ -52,7 +65,7 @@ namespace ServerCore
 				Task(memFunc, comp, std::move(args)...));
 		}
 		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, IocpComponent>
-		void EnqueueAsyncTimer(c_uint64 tickAfter, Ret(T::* const memFunc)(Args...)noexcept, std::decay_t<Args>... args)noexcept
+		void EnqueueAsyncTimer(c_uint64 tickAfter, Ret(T::* const memFunc)(Args...), std::decay_t<Args>... args)noexcept
 		{
 			if (!m_taskEvent)return;
 			const auto pOwner = GetOwnerEntity();

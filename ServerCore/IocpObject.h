@@ -85,6 +85,8 @@ namespace ServerCore
 		inline const uint32_t GetObjectID()const noexcept { return static_cast<const uint32_t>(ServerCore::GetObjectID(m_objectCombineID)); }
 		inline const uint64_t GetObjectID64()const noexcept { return ServerCore::GetObjectID(m_objectCombineID); }
 		inline const uint8_t GetObjectType()const noexcept { return static_cast<const uint8_t>(ServerCore::GetObjectType(m_objectCombineID)); }
+
+		static inline bool IsNPC(const uint64_t combinedID)noexcept { return 0 != ServerCore::GetObjectType(combinedID); }
 	public:
 		constexpr inline const PacketSession* const GetSession()const noexcept { return m_pSession; }
 		inline const ClientSession* const GetClientSession()const noexcept { return reinterpret_cast<const ClientSession* const>(m_pSession); }

@@ -59,6 +59,18 @@
     <Filter Include="ContentsField">
       <UniqueIdentifier>{eef91570-4ddb-4645-a4d5-8d67f3985817}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BattleComponent">
+      <UniqueIdentifier>{aecd6113-3a51-4c9a-8edf-97c34c1e507f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BattleComponent\HP">
+      <UniqueIdentifier>{ef45a976-de65-46e5-bedb-32f814f549ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BattleComponent\Death">
+      <UniqueIdentifier>{79d6fb6b-4388-43b8-b421-a675915af5a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BattleComponent\Status">
+      <UniqueIdentifier>{8ad7a2e2-28fe-4b56-ade2-0b4a5edf0c6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -99,6 +111,12 @@
     </ClCompile>
     <ClCompile Include="ContentsField.cpp">
       <Filter>ContentsField</Filter>
+    </ClCompile>
+    <ClCompile Include="HP.cpp">
+      <Filter>BattleComponent\HP</Filter>
+    </ClCompile>
+    <ClCompile Include="Death.cpp">
+      <Filter>BattleComponent\Death</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +167,12 @@
     </ClInclude>
     <ClInclude Include="ContentsField.h">
       <Filter>ContentsField</Filter>
+    </ClInclude>
+    <ClInclude Include="HP.h">
+      <Filter>BattleComponent\HP</Filter>
+    </ClInclude>
+    <ClInclude Include="Death.h">
+      <Filter>BattleComponent\Death</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

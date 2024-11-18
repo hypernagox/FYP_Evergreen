@@ -26,7 +26,7 @@ public:
 	ContentsComponent(ServerCore::ContentsEntity* const pOwner_)noexcept :m_pOwnerEntity{ pOwner_ } {}
 	virtual ~ContentsComponent()noexcept = default;
 public:
-	const ServerCore::ContentsEntity* const GetOwnerEntityRaw()const noexcept { return m_pOwnerEntity; }
+	ServerCore::ContentsEntity* const GetOwnerEntityRaw()const noexcept { return m_pOwnerEntity; }
 	inline ServerCore::S_ptr<ServerCore::ContentsEntity> GetOwnerEntity()const noexcept { return ServerCore::S_ptr<ServerCore::ContentsEntity>{m_pOwnerEntity}; }
 	constexpr virtual const uint64_t GetCompType()const noexcept = 0;
 	inline const bool IsValid()const noexcept { return m_pOwnerEntity->IsValid(); }

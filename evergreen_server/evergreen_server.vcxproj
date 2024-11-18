@@ -191,7 +191,9 @@
     <ClCompile Include="Collider_Common.cpp" />
     <ClCompile Include="ContentsBehaviorNode.cpp" />
     <ClCompile Include="ContentsField.cpp" />
+    <ClCompile Include="Death.cpp" />
     <ClCompile Include="EntityFactory.cpp" />
+    <ClCompile Include="HP.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NaviAgent_Common.cpp" />
     <ClCompile Include="PathFinder_Common.cpp" />
@@ -213,7 +215,9 @@
     <ClInclude Include="Collider_Common.h" />
     <ClInclude Include="ContentsBehaviorNode.h" />
     <ClInclude Include="ContentsField.h" />
+    <ClInclude Include="Death.h" />
     <ClInclude Include="EntityFactory.h" />
+    <ClInclude Include="HP.h" />
     <ClInclude Include="NaviAgent_Common.h" />
     <ClInclude Include="PathFinder_Common.h" />
     <ClInclude Include="pch.h" />
