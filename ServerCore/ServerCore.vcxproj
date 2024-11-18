@@ -192,6 +192,7 @@
     <ClInclude Include="AtomicNonTemplate.h" />
     <ClInclude Include="BackOff.h" />
     <ClInclude Include="BehaviorTree.hpp" />
+    <ClInclude Include="Cluster.h" />
     <ClInclude Include="ComponentSystem.h" />
     <ClInclude Include="ContentsComponent.h" />
     <ClInclude Include="DBBindRAII.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="DBMgr.h" />
     <ClInclude Include="DBPacket.h" />
     <ClInclude Include="DBPacketSender.h" />
+    <ClInclude Include="Field.h" />
     <ClInclude Include="Queueabler.h" />
     <ClInclude Include="EBR.hpp" />
     <ClInclude Include="MoveBroadcaster.h" />
@@ -232,9 +234,8 @@
     <ClInclude Include="PacketHeader.h" />
     <ClInclude Include="PacketSession.h" />
     <ClInclude Include="RefCountable.h" />
-    <ClInclude Include="SectorBehavior.h" />
-    <ClInclude Include="SectorInfoHelper.h" />
-    <ClInclude Include="SectorUpdateQueue.h" />
+    <ClInclude Include="ClusterInfoHelper.h" />
+    <ClInclude Include="ClusterUpdateQueue.h" />
     <ClInclude Include="ServerCorePch.h" />
     <ClInclude Include="RecvBuffer.h" />
     <ClInclude Include="SendBuffer.h" />
@@ -242,7 +243,6 @@
     <ClInclude Include="SendBufferChunk.h" />
     <ClInclude Include="Service.h" />
     <ClInclude Include="Session.h" />
-    <ClInclude Include="Sector.h" />
     <ClInclude Include="SimpleLinkedList.hpp" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="SlimLinkedHashMap.hpp" />
@@ -258,17 +258,18 @@
     <ClInclude Include="TypeCast.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="VectorHash.hpp" />
-    <ClInclude Include="World.h" />
-    <ClInclude Include="WorldMgr.h" />
+    <ClInclude Include="FieldMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Allocator.cpp" />
     <ClCompile Include="AtomicNonTemplate.cpp" />
+    <ClCompile Include="Cluster.cpp" />
     <ClCompile Include="ComponentSystem.cpp" />
     <ClCompile Include="DBBindRAII.cpp" />
     <ClCompile Include="DBConnectionHandle.cpp" />
     <ClCompile Include="DBMgr.cpp" />
     <ClCompile Include="DBPacketSender.cpp" />
+    <ClCompile Include="Field.cpp" />
     <ClCompile Include="Queueabler.cpp" />
     <ClCompile Include="MoveBroadcaster.cpp" />
     <ClCompile Include="CoreGlobal.cpp" />
@@ -286,8 +287,8 @@
     <ClCompile Include="NetAddress.cpp" />
     <ClCompile Include="PacketSession.cpp" />
     <ClCompile Include="RefCountable.cpp" />
-    <ClCompile Include="SectorInfoHelper.cpp" />
-    <ClCompile Include="SectorUpdateQueue.cpp" />
+    <ClCompile Include="ClusterInfoHelper.cpp" />
+    <ClCompile Include="ClusterUpdateQueue.cpp" />
     <ClCompile Include="ServerCorePch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -304,7 +305,6 @@
     <ClCompile Include="SendBufferChunk.cpp" />
     <ClCompile Include="Service.cpp" />
     <ClCompile Include="Session.cpp" />
-    <ClCompile Include="Sector.cpp" />
     <ClCompile Include="SocketUtils.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskQueueable.cpp" />
@@ -312,8 +312,7 @@
     <ClCompile Include="ThreadMgr.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TickTimer.cpp" />
-    <ClCompile Include="World.cpp" />
-    <ClCompile Include="WorldMgr.cpp" />
+    <ClCompile Include="FieldMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="delay_loop.asm">

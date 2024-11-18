@@ -6,10 +6,12 @@
 #include "NaviCell.h"
 #include "ComponentSystem.h"
 #include "MoveBroadcaster.h"
-#include "SectorInfoHelper.h"
 #include "NavigationMesh.h"
 #include "NaviAgent_Common.h"
 #include "PathFinder_Common.h"
+#include "Cluster.h"
+#include "ClusterInfoHelper.h"
+#include "HP.h"
 
 using namespace ServerCore;
 
@@ -57,7 +59,8 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
         ContentsEntity* target = nullptr;
         m_bReEvaluate = false;
 
-        const auto session_list = pOwnerEntity->GetCurSector()->GetSessionCopyListIncRef();
+       // const auto session_list = pOwnerEntity->GetCurSector()->GetSessionCopyListIncRef();
+        const auto& session_list = pOwnerEntity->GetCurCluster()->GetEntities(0);
         for (const auto s : session_list)
         {
            const auto pos  = s->GetComp<PositionComponent>()->pos;
@@ -71,7 +74,7 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
                min_dist = dist;
                target = s;
            }
-           s->DecRef();
+          // s->DecRef();
         }
         if (target)
         {
@@ -128,7 +131,8 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     if (0.f >= m_accTime)
     {
         // TODO: 스트레스 테스트 아직 패킷없음
-       //  awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(10));
+        awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(1));
+        awaker->GetComp<HP>()->PostDoDmg(1);
 
         m_accTime = 1.5f;
     }
@@ -160,14 +164,15 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
 
     const auto path = pOwnerEntity->GetComp<PathFinder>()->GetPath(cur_pos, dest_pos);
     {
-    ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
+   // ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     
         const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
        
         Vector3 ppp{ ag->npos[0],ag->npos[1],-ag->npos[2] };
         pOwnerEntity->GetComp<PositionComponent>()->pos = ppp;
-        ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+        pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+        //ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     }
     return NodeStatus::RUNNING;
 
@@ -186,10 +191,10 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
 
     pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(cur_pos,Vector3{ dx2,dy2,dz2 });
     
-    ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
+   // ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
-
-    ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+   // ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     
 
     if (2 * 2 >= (dest_pos - cur_pos).LengthSquared())
@@ -206,10 +211,11 @@ NodeStatus PatrolNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 {
     owner_comp_sys->GetComp<PositionComponent>()->body_angle += 1000.f * bt_root_timer->GetBTTimerDT();
     const auto pOwnerEntity = owner_comp_sys->GetOwnerEntity();
-    ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
+    //ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-    ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+   // ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
 
     //if (SECTOR_STATE::USER_EMPTY & sector_state)
     //    return NodeStatus::FAILURE;

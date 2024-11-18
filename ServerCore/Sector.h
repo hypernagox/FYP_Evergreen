@@ -54,7 +54,7 @@ namespace ServerCore
 		inline const auto& GetSessionList()const noexcept { return m_vectorHashMapForEntity.data()->GetItemListRef(); }
 		inline const auto& GetEntityList(const uint8_t group_type)const noexcept { return (m_vectorHashMapForEntity.data() + group_type)->GetItemListRef(); }
 		inline void EnterEnqueue(const uint8_t group_type, const uint32_t obj_id, ContentsEntity* const pEntity_)noexcept{
-			pEntity_->SetSectorInfo(GetSectorID(), this);
+			// pEntity_->SetSectorInfo(GetSectorID(), this);
 			EnqueueAsync(&Sector::Enter, uint8_t{ group_type }, c_uint32{ obj_id }, static_cast<ContentsEntity* const>(pEntity_));
 		}
 		inline void EnterEnqueue(ContentsEntity* const pEntity_)noexcept { EnterEnqueue(pEntity_->GetObjectType(), pEntity_->GetObjectID(), static_cast<ContentsEntity* const>(pEntity_)); }

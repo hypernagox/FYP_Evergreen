@@ -2,7 +2,6 @@
 #include "TickTimer.h"
 #include "TaskTimerMgr.h"
 #include "Queueabler.h"
-#include "SectorInfoHelper.h"
 
 namespace ServerCore
 {
@@ -12,7 +11,6 @@ namespace ServerCore
 		, m_timerEvent{ xnew<IocpEvent>(EVENT_TYPE::TIMER, SharedFromThis()) }
 	{
 		// TODO: EBR로 바꾸기
-		pOwner_->AddIocpComponent<Queueabler>();
 	}
 	const bool TickTimer::TryExecuteTimer(const ContentsEntity* const awaker)noexcept
 	{
@@ -25,10 +23,10 @@ namespace ServerCore
 		const auto pOwner = GetOwnerEntity();
 		const auto queueabler = pOwner->GetQueueabler();
 		auto& task_count = queueabler->m_taskCount;
-		if (0 == task_count.fetch_add(1, std::memory_order_acquire))
+		if (1 == InterlockedIncrement(&task_count))
 		{
 			Tick();
-			if (1 != task_count.fetch_sub(1, std::memory_order_acq_rel))
+			if (0 != InterlockedDecrement(&task_count))
 			{
 				queueabler->Execute();
 			}
@@ -82,20 +80,23 @@ namespace ServerCore
 	{
 		const auto pOwner = GetOwnerEntity();
 
-		if (false == IsValid() && m_timerEvent)
+		if (false == IsValid())
 		{
-			m_curAwaker.reset();
-			xdelete_sized<IocpEvent>(m_timerEvent, sizeof(IocpEvent));
-			m_timerEvent = nullptr;
+			if (m_timerEvent)
+			{
+				m_curAwaker.reset();
+				xdelete_sized<IocpEvent>(m_timerEvent, sizeof(IocpEvent));
+				m_timerEvent = nullptr;
+			}
 			return;
 		}
 
-		m_curObjInSight = ServerCore::SectorInfoHelper::FillterSessionEntities(pOwner);
+		//m_curObjInSight = ServerCore::SectorInfoHelper::FillterSessionEntities(pOwner);
 
-		const TIMER_STATE eCurState = m_curObjInSight.empty() ? TIMER_STATE::IDLE : TimerUpdate();
-
-		m_timer_state.store(TIMER_STATE::PREPARE, std::memory_order_seq_cst);
-		const TIMER_STATE ePrevState = m_timer_state.exchange(eCurState, std::memory_order_release);
+		//const TIMER_STATE eCurState = m_curObjInSight.empty() ? TIMER_STATE::IDLE : TimerUpdate();
+		const TIMER_STATE eCurState = TimerUpdate();
+		m_timer_state.store(TIMER_STATE::PREPARE);
+		const TIMER_STATE ePrevState = m_timer_state.exchange(eCurState);
 		if (TIMER_STATE::RUN == eCurState && TIMER_STATE::PREPARE == ePrevState)
 		{
 			IncOwnerRef();
@@ -108,11 +109,11 @@ const ServerCore::TIMER_STATE TickTimerBT::TimerUpdate() noexcept
 {
 	// TODO: 섹터 이동
 	const auto pOwnerEntity = GetOwnerEntity();
-	m_curObjInSight = ServerCore::SectorInfoHelper::FillterSessionEntities(pOwnerEntity);
+	//m_curObjInSight = ServerCore::SectorInfoHelper::FillterSessionEntities(pOwnerEntity);
 	NodeStatus cur_status;
 	const uint64_t cur_time = ::GetTickCount64();
-	if (m_curObjInSight.empty())cur_status = NodeStatus::FAILURE;
-	else
+	//if (m_curObjInSight.empty())cur_status = NodeStatus::FAILURE;
+	//else
 	{
 		const auto owner_comp_sys = static_cast<const ComponentSystemNPC* const>(pOwnerEntity->GetComponentSystem());
 	

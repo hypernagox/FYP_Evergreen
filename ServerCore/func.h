@@ -25,19 +25,15 @@ namespace ServerCore
 	constexpr inline T rcast(const T val)noexcept { return val; }
 
 	template <typename T> requires (!std::is_fundamental_v<std::decay_t<T>>)
-	constexpr inline T rcast(T&& val)noexcept { return std::forward<T>(val); }
+	constexpr inline std::decay_t<T> rcast(T&& val)noexcept { return std::forward<T>(val); }
 
 	template <typename T>
-	static inline const bool compareExchange(T* volatile* const ptr, T** const old_ptr, const T* const new_ptr)noexcept
+	constexpr static inline const bool CompareExchangePointer(T* volatile* const ptr, const T* const old_ptr, const T* const new_ptr)noexcept
 	{
-		return std::atomic_compare_exchange_strong_explicit(
-			reinterpret_cast<volatile std::atomic_llong* const>(ptr),
-			reinterpret_cast<long long* const>(old_ptr),
-			reinterpret_cast<const long long>(new_ptr),
-			std::memory_order_relaxed,
-			std::memory_order_relaxed
-		);
+		return InterlockedCompareExchangePointer(reinterpret_cast<volatile PVOID*>(ptr), const_cast<T* const>(new_ptr), const_cast<T* const>(old_ptr))
+			== reinterpret_cast<const PVOID* const>(old_ptr);
 	}
+
 	static inline const uint64_t CombineObjectID(const uint16_t type_id, const uint64_t obj_id)noexcept {
 		return (static_cast<const uint64_t>(type_id) << 48) | obj_id;
 	}

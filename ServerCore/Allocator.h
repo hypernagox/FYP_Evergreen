@@ -14,7 +14,7 @@ namespace ServerCore
 
 	public:
 		static void* Alloc(const size_t size);
-		static void		Release(void* ptr);
+		static void	Release(void* ptr);
 	};
 
 	/*-------------------

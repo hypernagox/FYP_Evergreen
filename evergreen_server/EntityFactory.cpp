@@ -7,6 +7,8 @@
 #include "PathFinder_Common.h"
 #include "Navigator.h"
 #include "Collider_Common.h"
+#include "HP.h"
+#include "Death.h"
 
 namespace ServerCore
 {
@@ -41,6 +43,9 @@ namespace ServerCore
 
 		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
 		monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
+
+		monster_entity->AddComp<HP>();
+		monster_entity->AddComp<MonsterDeath>();
 
 		return monster_entity;
 	}

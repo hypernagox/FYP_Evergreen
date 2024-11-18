@@ -243,34 +243,36 @@ namespace ServerCore
 
 	class TaskInvoker
 	{
+		template<typename T, typename Ret, typename... Args>
+		struct CallBack
+		{
+			Ret(T::* const memFunc)(Args...);
+			const std::tuple<std::decay_t<Args>...> args;
+			constexpr CallBack(Ret(T::* const memFunc_)(Args...), Args&&... args_) noexcept
+				: memFunc{ memFunc_ }, args{ std::forward<Args>(args_)... } {
+			}
+
+			inline constexpr const void Execute(void* const memFuncInstance) const noexcept
+			{
+				Task::invokeMemberFunction(memFunc, static_cast<T* const>(memFuncInstance), args);
+			}
+		};
 	public:
 		~TaskInvoker()noexcept { m_fpTaskDeleter(argPtr); }
 	public:
 		template<typename T, typename Ret, typename... Args>
 		constexpr TaskInvoker(Ret(T::* const memFunc)(Args...), Args&&... args) noexcept
+			: argPtr{ xnew<CallBack<T,Ret,Args...>>(memFunc, std::forward<Args>(args)...) }
+			, m_fpTaskDeleter{ [](void* const callBackPtr_) noexcept {
+			xdelete_sized<CallBack<T,Ret,Args...>>(static_cast<CallBack<T,Ret,Args...>*const>(callBackPtr_), sizeof(CallBack<T,Ret,Args...>));
+			} }
+			, m_fpTask{ [](const void* const callBackPtr_, void* const memFuncInstance) noexcept {
+			static_cast<const CallBack<T,Ret,Args...>* const>(callBackPtr_)->Execute(memFuncInstance);
+			} }
 		{
-			struct CallBack
-			{
-				Ret(T::* const memFunc)(Args...);
-				const std::tuple<std::decay_t<Args>...> args;
-				constexpr CallBack(Ret(T::* const memFunc_)(Args...), Args&&... args_) noexcept
-					: memFunc{ memFunc_ }, args{ std::forward<Args>(args_)... } {}
-
-				inline constexpr const void Execute(void* const memFuncInstance) const noexcept
-				{
-					Task::invokeMemberFunction(memFunc, static_cast<T* const>(memFuncInstance), args);
-				}
-			};
-			argPtr = xnew<CallBack>(memFunc, std::forward<Args>(args)...);
-			m_fpTaskDeleter = [](void* const callBackPtr_) noexcept {
-				xdelete_sized<CallBack>(static_cast<CallBack* const>(callBackPtr_), sizeof(CallBack));
-				};
-			m_fpTask = [](const void* const callBackPtr_, void* const memFuncInstance) noexcept {
-				static_cast<const CallBack* const>(callBackPtr_)->Execute(memFuncInstance);
-				};
 		}
 	public:
-		inline constexpr void ExecuteSectorTask(void* const memFuncInstance)const noexcept { m_fpTask(argPtr, memFuncInstance); }
+		inline constexpr void InvokeTask(void* const memFuncInstance)const noexcept { m_fpTask(argPtr, memFuncInstance); }
 	private:
 		mutable void* argPtr;
 		void (*m_fpTask)(const void* const, void* const) noexcept;

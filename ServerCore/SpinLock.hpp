@@ -9,17 +9,22 @@ namespace ServerCore
         inline SpinLock() noexcept = default;
         inline ~SpinLock() noexcept = default;
         inline void lock()const noexcept {
-            while (lockFlag.test_and_set(std::memory_order_acquire)) {
+            for (;;) {
+                while (TRUE == lockFlag);
+                if (FALSE ==
+                    InterlockedCompareExchange((LONG*)&lockFlag, TRUE, FALSE))
+                    return;
             }
         }
         inline void unlock()const noexcept {
-            lockFlag.clear(std::memory_order_release);
+            InterlockedExchange((LONG*)&lockFlag, FALSE);
         }
         inline const bool try_lock()const noexcept {
-            return !lockFlag.test_and_set(std::memory_order_acquire);
+            return FALSE ==
+                InterlockedCompareExchange((LONG*)&lockFlag, TRUE, FALSE);
         }
     private:
-        mutable std::atomic_flag lockFlag = ATOMIC_FLAG_INIT;
+        alignas(4) mutable volatile BOOL lockFlag = FALSE;
     };
 
     class SpinLockGuard

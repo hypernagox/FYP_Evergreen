@@ -9,12 +9,11 @@ namespace ServerCore
 	class SendBuffer;
 	class PacketSession;
 	class Sector;
-	class World;
 
 	class MoveBroadcaster
 		:public ContentsComponent
 	{
-		friend class SectorInfoHelper;
+		friend class ClusterInfoHelper;
 	public:
 		CONSTRUCTOR_CONTENTS_COMPONENT(MoveBroadcaster)
 		
@@ -23,21 +22,23 @@ namespace ServerCore
 		using PacketFunc = S_ptr<SendBuffer>(*)(const ContentsEntity* const)noexcept;
 	public:
 		void BroadcastMove()noexcept;
-		inline Vector<uint32_t> GetViewListCopy()const noexcept
+		inline Vector<uint64_t> GetViewListCopy()const noexcept
 		{
 			m_srwLock.lock_shared();
-			Vector<uint32_t> viewListForCopy{ m_vecViewListForCopy };
+			Vector<uint64_t> viewListForCopy{ m_vecViewListForCopy };
 			m_srwLock.unlock_shared();
 			return viewListForCopy;
 		}
 		
+		// 자기 자신의 작업을 처리 할 때 만 사용 가능하다.
+		inline const auto& GetMyViewList()const noexcept { return  m_vecViewListForCopy; }
+
 		void ReleaseViewList()noexcept
 		{
 			m_spinLock.lock();
 			const S_ptr<ViewListWrapper> temp{ std::move(m_viewListPtr) };
 			m_spinLock.unlock();
 		}
-
 	public:
 		static void RegisterHuristicFunc2Session(const HuristicFunc fp_)noexcept {
 			if (g_huristic[0])return;
@@ -87,7 +88,7 @@ namespace ServerCore
 		};
 		SpinLock m_spinLock;
 		S_ptr<ViewListWrapper> m_viewListPtr = MakeShared<ViewListWrapper>();
-		Vector<uint32_t> m_vecViewListForCopy;
+		Vector<uint64_t> m_vecViewListForCopy;
 		SRWLock m_srwLock;
 	private:
 		static inline HuristicFunc g_huristic[2] = {};

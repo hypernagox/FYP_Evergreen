@@ -143,3 +143,19 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_MONSTER_AGGRO_END(
 
     return CreateSendBuffer(builder, PKT_ID::s2c_MONSTER_AGGRO_END);
 }
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_PLAYER_DEATH(
+    const uint64_t player_id,
+    const Nagox::Struct::Vec3& rebirth_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto player_id_value = player_id;
+    const auto rebirth_pos_offset = &rebirth_pos;
+    const auto serializeds2c_PLAYER_DEATH = Nagox::Protocol::Creates2c_PLAYER_DEATH(
+        builder
+,        player_id_value,
+        rebirth_pos_offset    );
+    builder.Finish(serializeds2c_PLAYER_DEATH);
+
+    return CreateSendBuffer(builder, PKT_ID::s2c_PLAYER_DEATH);
+}

@@ -8,6 +8,7 @@
 #include "TaskTimerMgr.h"
 #include "Logger.h"
 #include "DBMgr.h"
+#include "FieldMgr.h"
 
 namespace ServerCore
 {
@@ -28,7 +29,7 @@ namespace ServerCore
 		Mgr(DeadLockProfiler)->RegisterDestroy();
 		Mgr(TaskTimerMgr)->RegisterDestroy();
 		Mgr(DBMgr)->RegisterDestroy();
-		Mgr(WorldMgr)->RegisterDestroy();
+		Mgr(FieldMgr)->RegisterDestroy();
 
 		Mgr(Logger)->Init();
 		//Mgr(MemoryMgr)->Init();
@@ -37,6 +38,6 @@ namespace ServerCore
 		Mgr(TaskTimerMgr)->Init();
 		//Mgr(SendBufferMgr)->Init();
 		Mgr(DBMgr)->Init();
-		Mgr(WorldMgr)->Init();
+		Mgr(FieldMgr)->Init();
 	}
 }

@@ -4,14 +4,15 @@
 #include "../evergreen_server/ClientSession.h"
 #include "../evergreen_server/PositionComponent.h"
 #include "Queueabler.h"
-#include "World.h"
 #include "../evergreen_server/EntityFactory.h"
 #include "Navigator.h"
 #include "NaviCell.h"
 #include "MoveBroadcaster.h"
-#include "SectorInfoHelper.h"
 #include "NaviAgent_Common.h"
 #include "Collider_Common.h"
+#include "Field.h"
+#include "HP.h"
+
 
 using namespace ServerCore;
 
@@ -39,8 +40,10 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	entity->AddComp<PositionComponent>()->pos = ToOriginVec3(pkt_.pos());
 	entity->AddComp<Collider>()->SetBox(entity->GetComp<PositionComponent>(), { 1,2,1.5f });
 	//Mgr(WorldMgr)->GetWorld(0) ->GetStartSector()->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER));
-	Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
+	//Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
 	
+	Mgr(FieldMgr)->GetField(0)->EnterField(entity);
+
 	//g_sector->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER)
 	//	, s
 	//	, entity
@@ -85,7 +88,7 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 	pEntity->accel = ToOriginVec3(pkt_.accel());
 	pEntity->body_angle = pkt_.body_angle();
 	pEntity->time_stamp = pkt_.time_stamp();
-	Vector<Sector*> s{ pSession_->GetCurSector() };
+	//Vector<Sector*> s{ pSession_->GetCurCluster() };
 
 	//g_sector->BroadCastEnqueue(Create_s2c_MOVE(GetBuilder(), pEntity->GetObjectID(),
 	//	ToFlatVec3(pEntity->pos),
@@ -96,7 +99,7 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 	//g_sector->MoveBroadCast(pSession_, s);
 	
 	pSession_->GetOwnerEntity()->GetComp<ServerCore::MoveBroadcaster>()->BroadcastMove();
-	pSession_->GetOwnerEntity()->GetComp<ServerCore::SectorInfoHelper>()->ImmigrationSector(0, 0);
+	//pSession_->GetOwnerEntity()->GetComp<ServerCore::SectorInfoHelper>()->ImmigrationSector(0, 0);
 	//const auto en = pSession_->GetOwnerEntity();
 	//g_sector->BroadCastParallel(MoveBroadcaster::CreateMovePacket(en), s, en);
 	//pSession_->GetCurWorld()->GetStartSector()->BroadCastParallel(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()), s, pSession_->GetOwnerEntity(),true);
@@ -116,9 +119,9 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 
 	const auto& box = pOwner->GetComp<Collider>()->GetBox(rotatedForward);
 
-	if (const auto sector = pOwner->GetCurSector())
+	if (const auto sector = pOwner->GetCurCluster())
 	{
-		const auto mon_list = sector->GetEntityCopyListIncRef(1);
+		const auto& mon_list = sector->GetEntities(1);
 		
 		auto b = mon_list.data();
 		const auto e = b + mon_list.size();
@@ -128,15 +131,24 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 			const auto owner = pCol->GetOwnerEntity();
 			if (pCol->IsCollision(box))
 			{
-				NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
-
-				owner->PostEntityTask(&ContentsEntity::TryOnDestroy);
+				//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
+				//
+				//owner->TryOnDestroy();
+				owner->GetComp<HP>()->PostDoDmg(1);
 			}
-			owner->DecRef();
 		}
 	}
 	return true;
 }
 
+const bool Handle_c2s_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_DEATH& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+
+	const auto hp = owner->GetComp<HP>();
+	hp->CompleteRebirth(5);
+
+	return true;
+}
 
 

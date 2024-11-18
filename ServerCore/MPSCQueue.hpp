@@ -46,11 +46,11 @@ namespace ServerCore
 			Node* const value = xnew<Node>(std::forward<Args>(args)...);
 			for (;;)
 			{
-				Node* oldTail = tail;
+				Node* const oldTail = tail;
 				if (oldTail != tail)continue;
-				if(true == compareExchange(&tail, &oldTail, value))
+				if (oldTail == InterlockedCompareExchangePointer(reinterpret_cast<volatile PVOID*>(&tail), value, oldTail))
 				{
-					oldTail->next.store(value, std::memory_order_release);
+					oldTail->next.store(value);
 					return;
 				}
 				bo.delay();

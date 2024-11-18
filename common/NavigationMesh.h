@@ -45,7 +45,7 @@ namespace Common
 	private:
 		dtNavMesh* m_navMesh;
 		dtQueryFilter* m_filter;
-		dtCrowd* m_crowd;
+		dtCrowd* m_crowd = nullptr;
 		static constexpr float m_polyPickExt[3]{ 2,4,2 };
 
 	};

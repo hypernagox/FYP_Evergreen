@@ -7,7 +7,8 @@
 #include "IocpCore.h"
 #include "TaskTimerMgr.h"
 #include "SendBufferMgr.h"
-#include "WorldMgr.h"
+#include "ClusterUpdateQueue.h"
+#include "FieldMgr.h"
 
 /*------------------
 	ThreadMgr
@@ -97,7 +98,7 @@ namespace ServerCore
 					{
 						main_service->CloseService();
 						Mgr(Logger)->m_bStopRequest = true;
-						Mgr(WorldMgr)->ClearWorld();
+						Mgr(FieldMgr)->ClearField();
 						std::this_thread::sleep_for(std::chrono::seconds(5));
 						Join();
 					}
@@ -183,10 +184,12 @@ namespace ServerCore
 			if (bStopRequest) [[unlikely]]
 				break;
 
-			if (false == IocpCore::Dispatch(iocpHandle,INFINITE))
+			if (false == IocpCore::Dispatch(iocpHandle,10))
 			{
-				threadMgr.TryGlobalQueueTask();
+				//threadMgr.TryGlobalQueueTask();
 			}
+			threadMgr.TryGlobalQueueTask();
+			ClusterUpdateQueue::UpdateCluster();
 		}
 		threadMgr.DestroyTLS();
 	}

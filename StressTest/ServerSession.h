@@ -10,7 +10,7 @@ public:
 public:
 	virtual void OnConnected() override;
 	virtual void OnSend(c_int32 len)noexcept override;
-	virtual void OnDisconnected(const ID_Ptr<ServerCore::Sector> curSectorInfo_)noexcept override;
+	virtual void OnDisconnected(const ServerCore::Cluster* const curCluster_)noexcept override;
 public:
 	Vector3 pos;
 	Vector3 vel;

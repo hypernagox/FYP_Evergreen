@@ -22,7 +22,7 @@ void ServerSession::OnSend(c_int32 len)noexcept
 {
 }
 
-void ServerSession::OnDisconnected(const ID_Ptr<ServerCore::Sector> curSectorInfo_)noexcept
+void ServerSession::OnDisconnected(const ServerCore::Cluster* const curCluster_)noexcept
 {
 	IncRef();
 	std::cout << "DisConnect !" << std::endl;

@@ -14,17 +14,18 @@ namespace ServerCore
 	public:
 		friend static inline RefCountable* const IncAndGetPtrExternal(const RefCountable* const ref_ptr)noexcept;
 		friend static inline void DecRefExternal(const RefCountable* const ref_ptr)noexcept;
-		friend static inline std::atomic_int& GetRefCountExternal(const RefCountable* const ref_ptr)noexcept;
+		friend static inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept;
 		virtual ~RefCountable()noexcept = default;
 	public:
 		template<typename T = RefCountable>
 		S_ptr<T> SharedFromThis()const noexcept { return S_ptr<T>{this}; }
-		inline const int32_t UseCount()const noexcept { return m_refCount.load(std::memory_order_relaxed); }
-		inline void IncRef()const noexcept { m_refCount.fetch_add(1, std::memory_order_relaxed); }
+		inline const int32_t UseCount()const noexcept { return m_refCount; }
+		inline void IncRef()const noexcept { InterlockedIncrement(&m_refCount); }
+		inline void IncRef(const uint32_t cnt)const noexcept { InterlockedAdd(&m_refCount, cnt); }
 		template <typename T = RefCountable>
 		constexpr inline void DecRef()const noexcept {
-			const int32_t old_count = m_refCount.fetch_sub(1, std::memory_order_acq_rel);
-			if (1 == old_count) {
+			const int32_t old_count = InterlockedDecrement(&m_refCount);
+			if (0 == old_count) {
 				if constexpr (std::same_as<std::remove_cv_t<T>, ContentsEntity>)
 					aligned_xdelete_sized<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), sizeof(ContentsEntity), alignof(ContentsEntity));
 				else if constexpr (std::derived_from<std::remove_cv_t<T>, Session>)
@@ -32,30 +33,29 @@ namespace ServerCore
 				else
 					xdelete<T>(const_cast<RefCountable* const>(this));
 			}
-			NAGOX_ASSERT(0 < old_count);
+			NAGOX_ASSERT(0 <= old_count);
 		}
-		template <typename T = RefCountable>
-		constexpr inline void DecRef(const int32_t dec_cnt)const noexcept {
-			const int32_t old_count = m_refCount.fetch_sub(dec_cnt, std::memory_order_acq_rel);
-			if (dec_cnt == old_count) {
-				if constexpr (std::same_as<T, ContentsEntity>)
-					aligned_xdelete_sized<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), sizeof(ContentsEntity), alignof(T));
-				else
-					xdelete<T>(const_cast<RefCountable* const>(this));
-			}
-			NAGOX_ASSERT(dec_cnt <= old_count);
-		}
+		//template <typename T = RefCountable>
+		//constexpr inline void DecRef(const int32_t dec_cnt)const noexcept {
+		//	const int32_t old_count = m_refCount.fetch_sub(dec_cnt, std::memory_order_acq_rel);
+		//	if (dec_cnt == old_count) {
+		//		if constexpr (std::same_as<T, ContentsEntity>)
+		//			aligned_xdelete_sized<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), sizeof(ContentsEntity), alignof(T));
+		//		else
+		//			xdelete<T>(const_cast<RefCountable* const>(this));
+		//	}
+		//	NAGOX_ASSERT(dec_cnt <= old_count);
+		//}
 	private:
 		inline const RefCountable* const IncAndGetPtrInternal()const noexcept { IncRef(); return this; }
 		inline RefCountable* const IncAndGetPtr()const noexcept { return const_cast<RefCountable* const>(IncAndGetPtrInternal()); }
 	private:
-		mutable std::atomic_int m_refCount = 1;
+		mutable volatile LONG m_refCount = 1;
 	};
 
 	static inline RefCountable* const IncAndGetPtrExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->IncAndGetPtr(); }
 	static inline void DecRefExternal(const RefCountable* const ref_ptr) noexcept { ref_ptr->DecRef(); }
-	static inline std::atomic_int& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->m_refCount; }
-
+	static inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->m_refCount; }
 	template <typename T>
 	class S_ptr
 	{

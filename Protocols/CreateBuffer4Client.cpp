@@ -86,3 +86,14 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_ATTACK(
 
     return CreateSendBuffer(builder, PKT_ID::c2s_PLAYER_ATTACK);
 }
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_DEATH(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto serializedc2s_PLAYER_DEATH = Nagox::Protocol::Createc2s_PLAYER_DEATH(
+        builder
+    );
+    builder.Finish(serializedc2s_PLAYER_DEATH);
+
+    return CreateSendBuffer(builder, PKT_ID::c2s_PLAYER_DEATH);
+}

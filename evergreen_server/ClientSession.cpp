@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "ClientSession.h"
-#include "Sector.h"
 #include "Queueabler.h"
 #include "TaskTimerMgr.h"
 #include "MoveBroadcaster.h"
+#include "Cluster.h"
+#include "ClusterInfoHelper.h"
+#include "HP.h"
+#include "Death.h"
 
 std::atomic_int cnt = 0;
 
@@ -25,16 +28,20 @@ void ClientSession::OnConnected()
 	const auto pOwner = GetOwnerEntity();
 	pOwner->SetObjectTypeInfo(PLAYER_TYPE_INFO::WARRIOR);
 	pOwner->AddIocpComponent<ServerCore::Queueabler>();
+	pOwner->AddComp<HP>()->InitHP(5);
+	pOwner->AddComp<PlayerDeath>();
 }
 
-void ClientSession::OnDisconnected(const ID_Ptr<ServerCore::Sector> curSectorInfo_)noexcept
+void ClientSession::OnDisconnected(const ServerCore::Cluster* const curCluster_)noexcept
 {
-	if (const auto sector_ptr = curSectorInfo_.GetPtr())
-	{
-		const ServerCore::Vector<ServerCore::Sector*> temp{ sector_ptr };
-		const auto ptr = SharedFromThis<PacketSession>();
-		sector_ptr->BroadCastParallel(Create_s2c_REMOVE_OBJECT(GetSessionID()), temp, GetOwnerEntity());
-	}
+	curCluster_->Broadcast(Create_s2c_REMOVE_OBJECT(GetSessionID()));
+	//if (const auto sector_ptr = curSectorInfo_.GetPtr())
+	//{
+	//	
+	//	const ServerCore::Vector<ServerCore::Sector*> temp{ sector_ptr };
+	//	const auto ptr = SharedFromThis<PacketSession>();
+	//	sector_ptr->BroadCastParallel(Create_s2c_REMOVE_OBJECT(GetSessionID()), temp, GetOwnerEntity());
+	//}
 	std::cout << "DisConnect !" << std::endl;
 	//std::cout << cnt << std::endl;
 	//Mgr(TaskTimerMgr)->ReserveAsyncTask(1000 + ServerCore::my_rand() % 1000, [e = GetOwnerEntity()->SharedFromThis()]() {

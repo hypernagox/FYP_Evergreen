@@ -72,3 +72,13 @@ table c2s_PLAYER_ATTACK
 {
     body_angle: float;
 }
+
+table s2c_PLAYER_DEATH
+{
+    player_id : uint64;
+    rebirth_pos : Nagox.Struct.Vec3;
+}
+
+table c2s_PLAYER_DEATH
+{
+}
