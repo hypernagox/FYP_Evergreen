@@ -38,9 +38,6 @@
     <Filter Include="ContentsComponents\PositionComponent">
       <UniqueIdentifier>{c56a17d5-d4fd-4828-9dde-2cc0e863020b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ContentsWorld">
-      <UniqueIdentifier>{540180f5-2d59-4307-85b1-3c367df4b752}</UniqueIdentifier>
-    </Filter>
     <Filter Include="EntityFactory">
       <UniqueIdentifier>{8f9455ea-949c-4ff6-b81c-db37c85ec045}</UniqueIdentifier>
     </Filter>
@@ -59,6 +56,9 @@
     <Filter Include="CommonComponent\Collider">
       <UniqueIdentifier>{5002fbc6-c24a-4439-b7d0-d0ec85a9b66a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ContentsField">
+      <UniqueIdentifier>{eef91570-4ddb-4645-a4d5-8d67f3985817}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -70,14 +70,11 @@
     <ClCompile Include="pch.cpp">
       <Filter>predefine\pch</Filter>
     </ClCompile>
-    <ClCompile Include="SectorPredicate.cpp">
+    <ClCompile Include="ClusterPredicate.cpp">
       <Filter>SectorPredicate</Filter>
     </ClCompile>
     <ClCompile Include="PositionComponent.cpp">
       <Filter>ContentsComponents\PositionComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="ContentsWorld.cpp">
-      <Filter>ContentsWorld</Filter>
     </ClCompile>
     <ClCompile Include="EntityFactory.cpp">
       <Filter>EntityFactory</Filter>
@@ -100,6 +97,9 @@
     <ClCompile Include="Collider_Common.cpp">
       <Filter>CommonComponent\Collider</Filter>
     </ClCompile>
+    <ClCompile Include="ContentsField.cpp">
+      <Filter>ContentsField</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientSession.h">
@@ -117,14 +117,11 @@
     <ClInclude Include="..\Protocols\struct_generated.h">
       <Filter>Protocols\generated</Filter>
     </ClInclude>
-    <ClInclude Include="SectorPredicate.h">
+    <ClInclude Include="ClusterPredicate.h">
       <Filter>SectorPredicate</Filter>
     </ClInclude>
     <ClInclude Include="PositionComponent.h">
       <Filter>ContentsComponents\PositionComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="ContentsWorld.h">
-      <Filter>ContentsWorld</Filter>
     </ClInclude>
     <ClInclude Include="EntityFactory.h">
       <Filter>EntityFactory</Filter>
@@ -149,6 +146,9 @@
     </ClInclude>
     <ClInclude Include="Collider_Common.h">
       <Filter>CommonComponent\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="ContentsField.h">
+      <Filter>ContentsField</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

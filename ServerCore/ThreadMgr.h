@@ -31,11 +31,11 @@ namespace ServerCore
 	public:
 		static constexpr const uint64 NUM_OF_THREADS = ServerCore::NUM_OF_THREADS;
 		void Launch(const uint64_t num_of_threads, std::function<void(void)> destroyTLSCallBack = nullptr, std::function<void(void)> initTLSCallBack = nullptr);
-		static c_uint32 GetCurThreadID()noexcept { 
+		static inline c_uint32 GetCurThreadID()noexcept { 
 			constinit extern thread_local uint32_t LThreadId;
 			return LThreadId;
 		}
-		static c_uint32 GetCurThreadIdx()noexcept {
+		static inline c_uint32 GetCurThreadIdx()noexcept {
 			constinit extern thread_local uint32_t LThreadId;
 			return LThreadId - 1;
 		}
@@ -97,7 +97,7 @@ namespace ServerCore
 		std::future<std::invoke_result_t<Func, Args...>> EnqueueGlobalTaskFuture(Func&& fp, Args&&... args) noexcept
 		{
 			using return_type = std::invoke_result_t<Func, Args...>;
-			auto task = ::MakeUnique<std::packaged_task<return_type(void)>>(std::bind_front(std::forward<Func>(fp), std::forward<Args>(args)...));
+			auto task = MakeUnique<std::packaged_task<return_type(void)>>(std::bind_front(std::forward<Func>(fp), std::forward<Args>(args)...));
 			std::future<return_type> res_future = task->get_future();
 			EnqueueGlobalTask(Task(([task = std::move(task)]() noexcept {(*task)(); })));
 			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);

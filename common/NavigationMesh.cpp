@@ -35,6 +35,8 @@ namespace Common
 	{
 		// TODO: crowd 悼矫己力绢
 		// crowd 皋葛府包府
+		if (m_crowd)
+			dtFreeCrowd(m_crowd);
 		dtFreeNavMesh(m_navMesh);
 		delete m_filter;
 	}

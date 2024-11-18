@@ -124,9 +124,6 @@
     <Filter Include="EntityManagement">
       <UniqueIdentifier>{390f4dca-66eb-408f-8ba4-b30ee5fdf01a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EntityManagement\Sector">
-      <UniqueIdentifier>{d8a6d64d-66e6-40f4-bdc0-bc7066586ab7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="EntityManagement\MoveBroadcaster">
       <UniqueIdentifier>{9f94fe66-69e2-447b-9f7e-99e1a671b6f1}</UniqueIdentifier>
     </Filter>
@@ -136,26 +133,20 @@
     <Filter Include="EntityManagement\Queueabler">
       <UniqueIdentifier>{f45b39ec-c039-4c1f-8135-4c5be8d584f5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EntityManagement\SectorBehavior">
-      <UniqueIdentifier>{dd3a803d-bea2-4323-b261-5b54cf4cc009}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="EntityManagement\World">
-      <UniqueIdentifier>{c1e810d3-6b1c-4042-8a02-e4d60537fb8d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Manager\WorldMgr">
-      <UniqueIdentifier>{602c92fb-c3bc-435a-86a3-46ad953e0839}</UniqueIdentifier>
-    </Filter>
     <Filter Include="EntityManagement\BehaviorTree">
       <UniqueIdentifier>{8882d5d3-da86-4088-a3af-b7d6cf629302}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EntityManagement\Sector\SectorUpdateQueue">
-      <UniqueIdentifier>{8c5dbcb0-0d8d-4b94-9e0a-53e93cdfe860}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="EntityManagement\Sector\Cluster">
+    <Filter Include="EntityManagement\Cluster">
       <UniqueIdentifier>{c3d31f4f-feb9-417e-878a-0fc587560358}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EntityManagement\World\Field">
+    <Filter Include="EntityManagement\Field">
       <UniqueIdentifier>{45a77ca9-e46b-4019-b176-defc4cb8df41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityManagement\ClusterUpdateQueue">
+      <UniqueIdentifier>{8c5dbcb0-0d8d-4b94-9e0a-53e93cdfe860}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\FieldMgr">
+      <UniqueIdentifier>{4464dc32-1426-4c5b-9376-88955e722099}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -224,9 +215,6 @@
     </ClInclude>
     <ClInclude Include="AtomicNonTemplate.h">
       <Filter>Memory\AtomicNonTemplate</Filter>
-    </ClInclude>
-    <ClInclude Include="Sector.h">
-      <Filter>EntityManagement\Sector</Filter>
     </ClInclude>
     <ClInclude Include="PacketSession.h">
       <Filter>Network\Session</Filter>
@@ -354,15 +342,6 @@
     <ClInclude Include="ContentsComponent.h">
       <Filter>EntityManagement\ContentsComponent</Filter>
     </ClInclude>
-    <ClInclude Include="SectorBehavior.h">
-      <Filter>EntityManagement\SectorBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="World.h">
-      <Filter>EntityManagement\World</Filter>
-    </ClInclude>
-    <ClInclude Include="WorldMgr.h">
-      <Filter>Manager\WorldMgr</Filter>
-    </ClInclude>
     <ClInclude Include="BehaviorTree.hpp">
       <Filter>EntityManagement\BehaviorTree</Filter>
     </ClInclude>
@@ -372,17 +351,20 @@
     <ClInclude Include="SimpleLinkedList.hpp">
       <Filter>Utils\struct\CustomDS</Filter>
     </ClInclude>
-    <ClInclude Include="SectorInfoHelper.h">
+    <ClInclude Include="ClusterInfoHelper.h">
       <Filter>EntityManagement\MoveBroadcaster</Filter>
     </ClInclude>
     <ClInclude Include="ClusterUpdateQueue.h">
-      <Filter>EntityManagement\Sector\SectorUpdateQueue</Filter>
+      <Filter>EntityManagement\ClusterUpdateQueue</Filter>
     </ClInclude>
     <ClInclude Include="Cluster.h">
-      <Filter>EntityManagement\Sector\Cluster</Filter>
+      <Filter>EntityManagement\Cluster</Filter>
     </ClInclude>
     <ClInclude Include="Field.h">
-      <Filter>EntityManagement\World\Field</Filter>
+      <Filter>EntityManagement\Field</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldMgr.h">
+      <Filter>Manager\FieldMgr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -439,9 +421,6 @@
     </ClCompile>
     <ClCompile Include="AtomicNonTemplate.cpp">
       <Filter>Memory\AtomicNonTemplate</Filter>
-    </ClCompile>
-    <ClCompile Include="Sector.cpp">
-      <Filter>EntityManagement\Sector</Filter>
     </ClCompile>
     <ClCompile Include="PacketSession.cpp">
       <Filter>Network\Session</Filter>
@@ -500,26 +479,23 @@
     <ClCompile Include="Queueabler.cpp">
       <Filter>EntityManagement\Queueabler</Filter>
     </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>EntityManagement\World</Filter>
-    </ClCompile>
-    <ClCompile Include="WorldMgr.cpp">
-      <Filter>Manager\WorldMgr</Filter>
-    </ClCompile>
     <ClCompile Include="ComponentSystem.cpp">
       <Filter>Network\IocpCore\IocpObject</Filter>
     </ClCompile>
-    <ClCompile Include="SectorInfoHelper.cpp">
+    <ClCompile Include="ClusterInfoHelper.cpp">
       <Filter>EntityManagement\MoveBroadcaster</Filter>
     </ClCompile>
     <ClCompile Include="ClusterUpdateQueue.cpp">
-      <Filter>EntityManagement\Sector\SectorUpdateQueue</Filter>
+      <Filter>EntityManagement\ClusterUpdateQueue</Filter>
     </ClCompile>
     <ClCompile Include="Cluster.cpp">
-      <Filter>EntityManagement\Sector\Cluster</Filter>
+      <Filter>EntityManagement\Cluster</Filter>
     </ClCompile>
     <ClCompile Include="Field.cpp">
-      <Filter>EntityManagement\World\Field</Filter>
+      <Filter>EntityManagement\Field</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldMgr.cpp">
+      <Filter>Manager\FieldMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

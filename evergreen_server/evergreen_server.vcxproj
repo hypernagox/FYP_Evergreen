@@ -190,7 +190,7 @@
     <ClCompile Include="ClientSession.cpp" />
     <ClCompile Include="Collider_Common.cpp" />
     <ClCompile Include="ContentsBehaviorNode.cpp" />
-    <ClCompile Include="ContentsWorld.cpp" />
+    <ClCompile Include="ContentsField.cpp" />
     <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NaviAgent_Common.cpp" />
@@ -200,7 +200,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PositionComponent.cpp" />
-    <ClCompile Include="SectorPredicate.cpp" />
+    <ClCompile Include="ClusterPredicate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Protocols\c2s_PacketHandler.h" />
@@ -212,13 +212,13 @@
     <ClInclude Include="ClientSession.h" />
     <ClInclude Include="Collider_Common.h" />
     <ClInclude Include="ContentsBehaviorNode.h" />
-    <ClInclude Include="ContentsWorld.h" />
+    <ClInclude Include="ContentsField.h" />
     <ClInclude Include="EntityFactory.h" />
     <ClInclude Include="NaviAgent_Common.h" />
     <ClInclude Include="PathFinder_Common.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PositionComponent.h" />
-    <ClInclude Include="SectorPredicate.h" />
+    <ClInclude Include="ClusterPredicate.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\create_packet_handler.h.j2" />

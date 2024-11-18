@@ -3,9 +3,10 @@
 
 namespace ServerCore
 {
-	static constexpr const uint64_t MAX_TASK = 1024 * 1024 * 16;
-
-	Cluster* GetCluster(const ClusterInfo info)noexcept;
+	Cluster* const GetCluster(const ClusterInfo info)noexcept;
+	inline Cluster* const GetCluster(const uint8_t fieldID, const uint8_t x, const uint8_t y)noexcept {
+		return GetCluster({ fieldID,x,y });
+	}
 
 	class ClusterUpdateTask
 	{
@@ -19,54 +20,49 @@ namespace ServerCore
 	public:
 		bool Execute()noexcept {
 			m_invoker.InvokeTask(GetCluster(m_info));
-			if (1 == m_refCount.fetch_sub(1))
-			{
-				ServerCore::xdelete<ClusterUpdateTask>(this);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return 0 == InterlockedDecrement(&m_refCount);
 		}
 	
 	private:
+		volatile LONG m_refCount = ThreadMgr::NUM_OF_THREADS;
 		const ClusterInfo m_info;
 		const TaskInvoker m_invoker;
-		std::atomic_uint8_t m_refCount = ThreadMgr::NUM_OF_THREADS;
 	};
 
 	class ClusterUpdateQueue
 	{
+		static constexpr const uint64_t MAX_TASK = 1024 * 1024 * 16;
+	public:
+		ClusterUpdateQueue() = delete;
+		~ClusterUpdateQueue() = delete;
 	public:
 		static void PushTask(ClusterUpdateTask* const task)noexcept {
-			const auto cur_idx = m_taskCount.fetch_add(1) & (MAX_TASK - 1);
-			m_arrTask[cur_idx].store(task);
-		}
-		static ClusterUpdateTask* const GetTask(const uint64_t idx)noexcept {
-			if (idx < m_taskCount)
-				return m_arrTask[idx];
-			else
-				return nullptr;
-		}
-		static void PopTask(const uint64_t idx)noexcept {
-			m_arrTask[idx].store(nullptr);
+			const auto cur_idx = (ULONG64)InterlockedIncrement64((LONG64*)&m_taskCount);
+			InterlockedExchangePointer((PVOID*)(m_arrTask + ((cur_idx - 1) & (MAX_TASK - 1)))
+				, task);
 		}
 	public:
 		static void UpdateCluster()noexcept {
 			constinit thread_local uint64_t L_CurIndex = 0;
 			for (;;)
 			{
-				const auto task = GetTask(L_CurIndex);
+				const auto cur_idx = (L_CurIndex) & (MAX_TASK - 1);
+				_Compiler_barrier();
+				const auto task_ptr = m_arrTask + cur_idx;
+				const auto task = *task_ptr;
 				if (!task)return;
-				const bool bIsFinish = task->Execute(); 
-				if (bIsFinish)PopTask(L_CurIndex);
-				L_CurIndex = (L_CurIndex + 1) & (MAX_TASK - 1);
+				if (task->Execute())
+				{
+					InterlockedExchangePointer((PVOID*)(task_ptr)
+						, nullptr);
+					ServerCore::xdelete<ClusterUpdateTask>(task);
+				}
+				++L_CurIndex;
 			}
 		}
 	private:
-		static inline std::atomic<ClusterUpdateTask*> m_arrTask[MAX_TASK] = {};
-		static inline std::atomic_uint64_t m_taskCount = 0;
+		__declspec(align(8)) static inline ClusterUpdateTask* volatile m_arrTask[MAX_TASK] = { nullptr };
+		__declspec(align(8)) static inline volatile uint64_t m_taskCount = 0;
 	};
 }
 

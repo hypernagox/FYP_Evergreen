@@ -1,21 +1,22 @@
 #include "ServerCorePch.h"
-#include "WorldMgr.h"
-#include "World.h"
+#include "FieldMgr.h"
 #include "Field.h"
 
 namespace ServerCore
 {
-	WorldMgr::WorldMgr()
+	FieldMgr::FieldMgr()
 	{
 	}
 
-	WorldMgr::~WorldMgr()
+	FieldMgr::~FieldMgr()
 	{
-		
-		ClearWorld();
+		for (const auto [key, val] : m_mapField)
+		{
+			xdelete<Field>(val);
+		}
 	}
 
-	void WorldMgr::ClearWorld()const noexcept
+	void FieldMgr::ClearField()const noexcept
 	{
 		{
 			auto b = m_arrNPC.data();
@@ -30,17 +31,8 @@ namespace ServerCore
 				}
 			}
 		}
-		{
-			auto b = m_mapWorld.cbegin();
-			const auto e = m_mapWorld.cend();
-			while (e != b) { (*b++).second->EndWorldEnqueue(); }
-		}
-		for (const auto [key, val] : m_mapField)
-		{
-			xdelete<Field>(val);
-		}
 	}
-	void WorldMgr::RegisterNPC(S_ptr<ContentsEntity>& pNPC) noexcept
+	void FieldMgr::RegisterNPC(S_ptr<ContentsEntity>& pNPC) noexcept
 	{
 		const uint32_t obj_id = static_cast<c_uint32>(pNPC->GetObjectID());
 		int32 idx;
@@ -49,15 +41,15 @@ namespace ServerCore
 		m_id2Index.emplace(static_cast<c_uint32>(obj_id), static_cast<c_uint16>(idx));
 		m_arrNPC[idx].ptr.store(std::move(pNPC));
 	}
-	void WorldMgr::ReleaseNPC(const ContentsEntity* const pNPC) noexcept
+	void FieldMgr::ReleaseNPC(const ContentsEntity* const pNPC) noexcept
 	{
-		const uint16_t idx = m_id2Index[pNPC->GetObjectID()];
+		const auto idx = m_id2Index[pNPC->GetObjectID()];
 		if (0 == idx)
 			return;
 		m_arrNPC[idx].ptr.reset();
 		m_idxQueue.emplace(idx);
 	}
-	S_ptr<ContentsEntity> WorldMgr::GetNPC(const uint32_t npc_id) const noexcept
+	S_ptr<ContentsEntity> FieldMgr::GetNPC(const uint32_t npc_id) const noexcept
 	{
 		const uint16_t idx = m_id2Index[static_cast<c_uint32>(npc_id)];
 		auto target = m_arrNPC[idx].ptr.load();

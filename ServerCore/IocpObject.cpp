@@ -1,12 +1,14 @@
 #include "ServerCorePch.h"
 #include "IocpObject.h"
 #include "PacketSession.h"
-#include "World.h"
 #include "Service.h"
 #include "ContentsComponent.h"
-#include "WorldMgr.h"
-#include "SectorInfoHelper.h"
 #include "EBR.hpp"
+#include "ClusterUpdateQueue.h"
+#include "Cluster.h"
+#include "ClusterInfoHelper.h"
+#include "FieldMgr.h"
+#include "Queueabler.h"
 
 namespace ServerCore
 {
@@ -15,7 +17,8 @@ namespace ServerCore
 		, m_objTypeInfo{ obj_type_info }
 		, m_componentSystem{ xnew<ComponentSystemNPC>(m_bIsValid,this) }
 	{
-		AddComp<SectorInfoHelper>();
+		AddComp<ClusterInfoHelper>();
+		AddIocpComponent<Queueabler>();
 	}
 
 	ContentsEntity::ContentsEntity(Session* const session_) noexcept
@@ -24,16 +27,12 @@ namespace ServerCore
 		, m_componentSystem{ xnew<ComponentSystem>(m_bIsValid) }
 	{
 		AddComp<MoveBroadcaster>();
-		AddComp<SectorInfoHelper>();
+		AddComp<ClusterInfoHelper>();
 	}
 	
 	ContentsEntity::~ContentsEntity() noexcept
 	{
 		std::cout << "DESTROY" << std::endl;
-		
-		xdelete<ComponentSystem>(m_componentSystem);
-		if (m_pSession) 
-			m_pSession->DecRef();
 		auto b = m_arrIocpComponents;
 		const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
 		while (e != b)
@@ -41,6 +40,10 @@ namespace ServerCore
 			if (const auto iocp_comp = *b++)
 				iocp_comp->DecRef();
 		}
+		xdelete<ComponentSystem>(m_componentSystem);
+		if (m_pSession) 
+			m_pSession->DecRef();
+		
 	}
 
 	void ContentsEntity::Update(const float dt_) noexcept
@@ -77,28 +80,35 @@ namespace ServerCore
 
 	void ContentsEntity::OnDestroy() noexcept
 	{
-		const auto sector = GetCombinedSectorInfo();
-		const auto sector_ptr = sector.GetPtr();
-		if (m_pSession)
-			m_pSession->OnDisconnected(sector);
-		if (sector_ptr)
-			sector_ptr->LeaveAndDestroyEnqueue(GetObjectType(), GetObjectID());
+		const auto cluster_ptr = GetCurCluster();
+		if (cluster_ptr) 
+			cluster_ptr->LeaveAndDestroyEnqueue(GetObjectType(), GetObjectID());
+		if (const auto queueabler = GetQueueabler())
+			queueabler->EnqueueAsyncTaskPushOnly(&ContentsEntity::Destroy, this);
 		else
 			Destroy();
+		if (nullptr == m_pSession)
+			Mgr(FieldMgr)->ReleaseNPC(this);
+		else
+		{
+			// GetComp<MoveBroadcaster>()->ReleaseViewList();
+			if (cluster_ptr)
+				m_pSession->OnDisconnected(cluster_ptr);
+		}
 	}
 
 	void ContentsEntity::Destroy() noexcept
 	{
 		//if (m_pSession) 
 		//	m_pSession->OnDestroy(); // 나중에, 하트비트 같은거로 튕길 땐 써야할 듯
-		auto b = m_arrIocpComponents;
-		const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
-		while (e != b)
 		{
-			if (const auto iocp_comp = *b++)
-				iocp_comp->OnDestroy();
+			auto b = m_arrIocpComponents;
+			const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
+			while (e != b)
+			{
+				if (const auto iocp_comp = *b++)
+					iocp_comp->OnDestroy();
+			}
 		}
-		if (nullptr == m_pSession)
-			Mgr(WorldMgr)->ReleaseNPC(this);
 	}
 }

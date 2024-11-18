@@ -23,7 +23,9 @@ namespace ServerCore
 		, m_sessionPacketHandler{ sessionPacketHandler_ }
 		, m_sessionSocketForRecv{ m_sessionSocket }
 	{
-		GetRefCountExternal(this).store(2, std::memory_order_release);
+		//IncRef();
+		GetRefCountExternal(this) = 2;
+		//GetRefCountExternal(this).store(2, std::memory_order_release);
 	}
 
 	Session::Session(const PacketHandleFunc* const sessionPacketHandler_, const bool bNeedConnect) noexcept
@@ -37,7 +39,9 @@ namespace ServerCore
 		, m_sessionPacketHandler{ sessionPacketHandler_ }
 		, m_sessionSocketForRecv{ m_sessionSocket }
 	{
-		GetRefCountExternal(this).store(2, std::memory_order_release);
+		//IncRef();
+		GetRefCountExternal(this) = 2;
+	//	GetRefCountExternal(this).store(2, std::memory_order_release);
 	}
 
 	Session::~Session()
@@ -57,10 +61,10 @@ namespace ServerCore
 	bool Session::Disconnect(const std::wstring_view cause)noexcept
 	{
 		//LOG_MSG(std::move(cause));
-		if (false == m_bConnected.exchange(false, std::memory_order_relaxed))
+		if (false == m_bConnected.exchange(false))
 			return false;
 		m_bConnectedNonAtomicForRecv = m_bConnectedNonAtomic = false;
-		m_bIsSendRegistered.store(true, std::memory_order_seq_cst);
+		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true);
 		RegisterDisconnect();
 		return true;
 	}
@@ -140,7 +144,9 @@ namespace ServerCore
 
 		disconnect_event->Init();
 		disconnect_event->SetIocpObject(SharedFromThis<IocpObject>());
-		
+
+		::shutdown(disconnect_socket, SD_BOTH);
+
 		if (false == SocketUtils::DisconnectEx(disconnect_socket, disconnect_event, TF_REUSE_SOCKET, 0))
 		{
 			const int32 errorCode = ::WSAGetLastError();
@@ -151,16 +157,15 @@ namespace ServerCore
 				m_bConnectedNonAtomic = m_bConnectedNonAtomicForRecv = false;
 				m_bConnected.store(false);
 
-				::shutdown(disconnect_socket, SD_BOTH);
-				::CancelIoEx(reinterpret_cast<HANDLE>(disconnect_socket), NULL);
+				//::CancelIoEx(reinterpret_cast<HANDLE>(disconnect_socket), NULL);
 				//SocketUtils::Close(m_sessionSocket);
 
 				ContentsEntity* const pOwner = GetOwnerEntity();
 				pOwner->TryOnDestroy();
 				GetService()->ReleaseSession(this);
-				pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
+				 pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
 				pOwner->DecRef();
-				
+
 				return false;
 			}
 		}
@@ -169,12 +174,12 @@ namespace ServerCore
 
 	void Session::ProcessDisconnect(S_ptr<PacketSession> pThisSessionPtr, c_int32 numofBytes_)noexcept
 	{
-		SocketUtils::Close(m_sessionSocket);
+		//SocketUtils::Close(m_sessionSocket);
 		
 		ContentsEntity* const pOwner = GetOwnerEntity();
 		pOwner->TryOnDestroy();
 		GetService()->ReleaseSession(this);
-		pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
+		 pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
 		pOwner->DecRef();
 	}
 
@@ -244,7 +249,9 @@ namespace ServerCore
 
 		if (false == IsConnected())
 		{
-			Disconnect(L"");
+			// TODO: 이래도 메모리릭 없는지 확인 필요
+			// 디스커넥트 시점을 철저히 Recv때에만 맞추기 위함
+			 Disconnect(L"");
 			return;
 		}
 		
@@ -261,11 +268,20 @@ namespace ServerCore
 
 		if (0 == num)
 		{
-			const S_ptr<Session> temp_session{ send_event->PassIocpObject() };
-			m_bIsSendRegistered.store(false, std::memory_order_seq_cst);
+			S_ptr<Session> temp_session{ send_event->PassIocpObject() };
+			InterlockedExchange8((CHAR*)&m_bIsSendRegistered, false);
 			std::this_thread::yield();
 			if (false == m_sendQueue.empty_single())
-				TrySend();
+			{
+				if (false == m_bIsSendRegistered &&
+					false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
+				{
+					const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
+					const auto register_send_event = m_pSendEvent->m_registerSendEvent;
+					register_send_event->SetIocpObject(std::move(temp_session));
+					::PostQueuedCompletionStatus(iocp_handle, 0, 0, register_send_event);
+				}
+			}
 			return;
 		}
 
@@ -275,7 +291,8 @@ namespace ServerCore
 			if (errorCode != WSA_IO_PENDING)
 			{
 				const S_ptr<Session> temp_session{ send_event->PassIocpObject() };
-				HandleError(errorCode);
+				 HandleError(errorCode);
+				// TODO: Send에서 뷰리스트 정리를 하지 않기 위함
 			}
 		}
 	}
@@ -287,22 +304,26 @@ namespace ServerCore
 		
 		if (0 == numofBytes_)
 		{
+			// TODO: 이래도 메모리릭 없는지 확인 필요
+			// 디스커넥트 시점을 철저히 Recv때에만 맞추기 위함
 			Disconnect(L"Send 0");
 			return;
 		}
 
 		sendBuffer.reserve(temp.size());
 
-		OnSend(numofBytes_);
+		// TODO: Send후 해야할 일이 생겼을 때 다시 하자
+		// OnSend(numofBytes_);
 
-		m_bIsSendRegistered.store(false, std::memory_order_seq_cst);
+		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, false);
 
-		if (!m_sendQueue.empty_single() && false == m_bIsSendRegistered.exchange(true, std::memory_order_seq_cst))
+		if (!m_sendQueue.empty_single() && false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			RegisterSend(std::move(pThisSessionPtr));
 	}
 
 	void Session::HandleError(c_int32 errorCode)noexcept
 	{
+		std::cout << "!";
 		Disconnect(L"HandleError");
 		switch (errorCode)
 		{

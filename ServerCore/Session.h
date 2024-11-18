@@ -48,7 +48,8 @@ namespace ServerCore
 		}
 		inline void TrySend()const noexcept
 		{
-			if (false == m_bIsSendRegistered.exchange(true, std::memory_order_seq_cst))
+			if (false == m_bIsSendRegistered && 
+				false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			{
 				const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
 				const auto register_send_event = m_pSendEvent->m_registerSendEvent;
@@ -70,7 +71,7 @@ namespace ServerCore
 		Service* const GetService()const noexcept { return m_pService; }
 		void SetService(Service* const pService_)noexcept { m_pService = pService_; }
 		bool SetNagle(const bool bTrueIsOff_FalseIsOn)const noexcept;
-		const bool CanRegisterSend()const noexcept { return !m_bIsSendRegistered.load(std::memory_order_relaxed); }
+		//const bool CanRegisterSend()const noexcept { return !m_bIsSendRegistered.load(std::memory_order_relaxed); }
 	public:
 		void SetNetAddress(NetAddress netAddr_)noexcept { m_sessionAddr = netAddr_; }
 		NetAddress GetAddress()const noexcept{ return m_sessionAddr; }
@@ -105,10 +106,10 @@ namespace ServerCore
 		virtual void OnConnected() = 0;
 		virtual const RecvStatus OnRecv(BYTE* const buffer, c_int32 len, const S_ptr<PacketSession>& pThisSessionPtr)noexcept = 0;
 		virtual void OnSend(c_int32 len)noexcept = 0;
-		virtual void OnDisconnected(const ID_Ptr<ServerCore::Sector> curSectorInfo_)noexcept = 0;
+		virtual void OnDisconnected(const ServerCore::Cluster* const curCluster_)noexcept = 0;
 	private:
 		alignas(64) mutable MPSCQueue<S_ptr<SendBuffer>> m_sendQueue;
-		mutable std::atomic_bool m_bIsSendRegistered = false;
+		mutable volatile bool m_bIsSendRegistered = false;
 		SendEvent* const m_pSendEvent;
 		volatile bool m_bConnectedNonAtomic = false;
 		SOCKET m_sessionSocket = INVALID_SOCKET;

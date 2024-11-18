@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "SectorPredicate.h"
+#include "ClusterPredicate.h"
 #include "ClientSession.h"
 #include "func.h"
 #include "PositionComponent.h"
@@ -7,15 +7,15 @@
 
 using namespace ServerCore;
 
-SectorPredicate::SectorPredicate()
+ClusterPredicate::ClusterPredicate()
 {
 }
 
-SectorPredicate::~SectorPredicate()
+ClusterPredicate::~ClusterPredicate()
 {
 }
 
-bool SectorPredicate::SectorHuristicFunc2Session(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
+bool ClusterPredicate::ClusterHuristicFunc2Session(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
 {
 	if (!a->IsValid() || !b->IsValid())return false;
 	const auto a_pos = a->GetComp<PositionComponent>()->pos;
@@ -28,7 +28,7 @@ bool SectorPredicate::SectorHuristicFunc2Session(const ServerCore::ContentsEntit
 	return ((50 * 50) >= (dx * dx + dy * dy + dz * dz));
 }
 
-bool SectorPredicate::SectorHuristicFunc2NPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
+bool ClusterPredicate::ClusterHuristicFunc2NPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
 {
 	if (!a->IsValid() || !b->IsValid())return false;
 	const auto a_pos = a->GetComp<PositionComponent>()->pos;
@@ -52,19 +52,19 @@ bool SectorPredicate::SectorHuristicFunc2NPC(const ServerCore::ContentsEntity* c
 	return bRes;
 }
 
-S_ptr<SendBuffer> SectorPredicate::SectorAddPacketFunc(const ServerCore::ContentsEntity* const p) noexcept
+S_ptr<SendBuffer> ClusterPredicate::ClusterAddPacketFunc(const ServerCore::ContentsEntity* const p) noexcept
 {
 	const auto& pEntity = p->GetComp<PositionComponent>();
 
 	return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)p->GetObjectType(), p->GetObjectTypeInfo(), ToFlatVec3(pEntity->pos));
 }
 
-S_ptr<SendBuffer> SectorPredicate::SectorRemovePacketFunc(const ServerCore::ContentsEntity* const p) noexcept
+S_ptr<SendBuffer> ClusterPredicate::ClusterRemovePacketFunc(const ServerCore::ContentsEntity* const p) noexcept
 {
 	return Create_s2c_REMOVE_OBJECT(p->GetObjectID());
 }
 
-S_ptr<SendBuffer> SectorPredicate::SectorMovePacketFunc(const ServerCore::ContentsEntity* const p) noexcept
+S_ptr<SendBuffer> ClusterPredicate::ClusterMovePacketFunc(const ServerCore::ContentsEntity* const p) noexcept
 {
 	const auto pos_comp = p->GetComp<PositionComponent>();
 	return Create_s2c_MOVE(
@@ -76,7 +76,7 @@ S_ptr<SendBuffer> SectorPredicate::SectorMovePacketFunc(const ServerCore::Conten
 		pos_comp->time_stamp);
 }
 
-void SectorPredicate::TryNotifyNPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
+void ClusterPredicate::TryNotifyNPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
 {
 	b->GetIocpComponent<ServerCore::TickTimer>()->TryExecuteTimer(a);
 }

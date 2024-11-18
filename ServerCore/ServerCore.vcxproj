@@ -234,8 +234,7 @@
     <ClInclude Include="PacketHeader.h" />
     <ClInclude Include="PacketSession.h" />
     <ClInclude Include="RefCountable.h" />
-    <ClInclude Include="SectorBehavior.h" />
-    <ClInclude Include="SectorInfoHelper.h" />
+    <ClInclude Include="ClusterInfoHelper.h" />
     <ClInclude Include="ClusterUpdateQueue.h" />
     <ClInclude Include="ServerCorePch.h" />
     <ClInclude Include="RecvBuffer.h" />
@@ -244,7 +243,6 @@
     <ClInclude Include="SendBufferChunk.h" />
     <ClInclude Include="Service.h" />
     <ClInclude Include="Session.h" />
-    <ClInclude Include="Sector.h" />
     <ClInclude Include="SimpleLinkedList.hpp" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="SlimLinkedHashMap.hpp" />
@@ -260,8 +258,7 @@
     <ClInclude Include="TypeCast.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="VectorHash.hpp" />
-    <ClInclude Include="World.h" />
-    <ClInclude Include="WorldMgr.h" />
+    <ClInclude Include="FieldMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Allocator.cpp" />
@@ -290,7 +287,7 @@
     <ClCompile Include="NetAddress.cpp" />
     <ClCompile Include="PacketSession.cpp" />
     <ClCompile Include="RefCountable.cpp" />
-    <ClCompile Include="SectorInfoHelper.cpp" />
+    <ClCompile Include="ClusterInfoHelper.cpp" />
     <ClCompile Include="ClusterUpdateQueue.cpp" />
     <ClCompile Include="ServerCorePch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -308,7 +305,6 @@
     <ClCompile Include="SendBufferChunk.cpp" />
     <ClCompile Include="Service.cpp" />
     <ClCompile Include="Session.cpp" />
-    <ClCompile Include="Sector.cpp" />
     <ClCompile Include="SocketUtils.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskQueueable.cpp" />
@@ -316,8 +312,7 @@
     <ClCompile Include="ThreadMgr.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TickTimer.cpp" />
-    <ClCompile Include="World.cpp" />
-    <ClCompile Include="WorldMgr.cpp" />
+    <ClCompile Include="FieldMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="delay_loop.asm">

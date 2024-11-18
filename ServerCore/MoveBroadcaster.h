@@ -9,12 +9,11 @@ namespace ServerCore
 	class SendBuffer;
 	class PacketSession;
 	class Sector;
-	class World;
 
 	class MoveBroadcaster
 		:public ContentsComponent
 	{
-		friend class SectorInfoHelper;
+		friend class ClusterInfoHelper;
 	public:
 		CONSTRUCTOR_CONTENTS_COMPONENT(MoveBroadcaster)
 		
@@ -37,7 +36,6 @@ namespace ServerCore
 			const S_ptr<ViewListWrapper> temp{ std::move(m_viewListPtr) };
 			m_spinLock.unlock();
 		}
-
 	public:
 		static void RegisterHuristicFunc2Session(const HuristicFunc fp_)noexcept {
 			if (g_huristic[0])return;

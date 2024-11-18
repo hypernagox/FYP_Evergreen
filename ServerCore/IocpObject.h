@@ -41,18 +41,30 @@ namespace ServerCore
 	class IocpComponent;
 	class Queueabler;
 	class TickTimer;
+	class Cluster;
 
 	struct ClusterInfo
 	{
 		uint8_t fieldID;
 		Point2D clusterID;
+		ClusterInfo()noexcept = default;
+		ClusterInfo(const uint8_t fieldID_,const uint8_t x_,const uint8_t y_)noexcept
+			: fieldID{fieldID_}
+			, clusterID{ x_,y_ }
+		{}
+		ClusterInfo(const uint8_t fieldID_,const Point2D clusterID_)noexcept
+			: fieldID{ fieldID_ }
+			, clusterID{ clusterID_ }
+		{}
+	private:
+		char pad;
 	};
+
+	extern Cluster* const GetCluster(const ClusterInfo info)noexcept;
 
 	class alignas(64) ContentsEntity final
 		:public IocpObject
 	{
-		friend class Cluster;
-		friend class Sector;
 	public:
 		ContentsEntity(const uint16_t type_id, const uint8_t obj_type_info) noexcept;
 		ContentsEntity(Session* const session_) noexcept;
@@ -77,22 +89,13 @@ namespace ServerCore
 		constexpr inline const PacketSession* const GetSession()const noexcept { return m_pSession; }
 		inline const ClientSession* const GetClientSession()const noexcept { return reinterpret_cast<const ClientSession* const>(m_pSession); }
 	public:
-		inline const ID_Ptr<ServerCore::Sector> GetCombinedSectorInfo()const noexcept { return m_CurrentSectorInfo.load(std::memory_order_seq_cst); }
-		inline void SetSectorInfo(const uint16_t prev_sector_id, const ServerCore::Sector* const cur_sector)noexcept { m_CurrentSectorInfo.store(ID_Ptr<ServerCore::Sector>{ prev_sector_id, cur_sector }, std::memory_order_seq_cst); }
-		inline const uint16_t GetPrevSectorID()const noexcept { return GetCombinedSectorInfo().GetID(); }
-		template <typename T = ServerCore::Sector>
-		inline T* const GetCurSector()const noexcept { return static_cast<T* const>(GetCombinedSectorInfo().GetPtr()); }
-		inline const ID_Ptr<ServerCore::Sector> ExchangeSector(const ID_Ptr<ServerCore::Sector> sector)noexcept { return m_CurrentSectorInfo.exchange(sector, std::memory_order_acq_rel); }
-		inline const ID_Ptr<ServerCore::Sector> ResetSector()noexcept { return ExchangeSector(ID_Ptr<ServerCore::Sector>{0, nullptr}); }
-	public:
-		inline const bool IsValid()const noexcept { return m_bIsValid.load(std::memory_order_acquire); }
+		inline const bool IsValid()const noexcept { return m_bIsValid.load(); }
 		const bool TryOnDestroy()noexcept {
-			const bool bRes = m_bIsValid.exchange(false, std::memory_order_acq_rel);
+			const bool bRes = (true == m_bIsValid.load(std::memory_order_relaxed)) && (true == m_bIsValid.exchange(false));
 			if (true == bRes)OnDestroy();
 			return bRes;
 		}
 		inline void DecRef()const noexcept { RefCountable::DecRef<ContentsEntity>(); }
-		inline void DecRef(const int32_t dec_cnt)const noexcept { RefCountable::DecRef<ContentsEntity>(dec_cnt); }
 	public:
 		template <typename T>
 		inline T* const GetIocpComponent()const noexcept {
@@ -131,6 +134,10 @@ namespace ServerCore
 		template <typename T>
 		inline T* const GetComp()const noexcept { return m_componentSystem->GetComp<T>(); }
 		inline const class ComponentSystem* const GetComponentSystem()const noexcept { return m_componentSystem; }
+	public:
+		void SetClusterInfo(const ClusterInfo info)noexcept { m_clusterInfo.store(info); }
+		ClusterInfo GetClusterInfo()const noexcept { return m_clusterInfo; }
+		Cluster* const GetCurCluster()const noexcept { return ServerCore::GetCluster(m_clusterInfo); }
 	private:
 		void PostEntityTask(Task&& task_)const noexcept;
 		void OnDestroy()noexcept;
@@ -142,10 +149,8 @@ namespace ServerCore
 		class ComponentSystem* const m_componentSystem;
 		IocpComponent* m_arrIocpComponents[etoi(IOCP_COMPONENT::END)] = {};
 		alignas(64) std::atomic_bool m_bIsValid = true;
-		std::atomic_int8_t m_curRefCluster = ThreadMgr::NUM_OF_THREADS;
 		std::atomic<ClusterInfo> m_clusterInfo;
 		std::atomic_bool m_bNowUpdateFlag = false;
-		std::atomic<ID_Ptr<ServerCore::Sector>> m_CurrentSectorInfo;
 	};
 
 	template <typename T, typename U> requires std::is_enum_v<T> && std::is_enum_v<U>
@@ -166,7 +171,8 @@ namespace ServerCore
 	public:
 		inline const uint16_t GetOwnerObjectType()const noexcept { return m_pOwnerEntity->GetObjectType(); }
 		inline const uint32_t GetOwnerObjectID()const noexcept { return m_pOwnerEntity->GetObjectID(); }
-		inline const ID_Ptr<Sector> GetOwnerSectorInfo()const noexcept { return m_pOwnerEntity->GetCombinedSectorInfo(); }
+		// inline const ID_Ptr<Sector> GetOwnerSectorInfo()const noexcept { return m_pOwnerEntity->GetCombinedSectorInfo(); }
+		const ClusterInfo GetOwnerClusterInfo()const noexcept { return m_pOwnerEntity->GetClusterInfo(); }
 		virtual void OnDestroy()noexcept = 0;
 	protected:
 		virtual void Dispatch(ServerCore::IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept = 0;

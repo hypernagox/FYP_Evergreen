@@ -12,6 +12,7 @@ namespace ServerCore
 		friend class ThreadMgr;
 		friend class TaskTimerMgr;
 		friend class TickTimer;
+		friend class ContentsEntity;
 	public:
 		Queueabler(ContentsEntity* const pOwner_);
 		virtual ~Queueabler()noexcept;
@@ -71,7 +72,7 @@ namespace ServerCore
 		void Execute()noexcept;
 		void Destroy()noexcept { xdelete_sized<IocpEvent>(m_taskEvent, sizeof(IocpEvent)); m_taskEvent = nullptr; }
 	private:
-		std::atomic<int32> m_taskCount = 0;
+		volatile LONG m_taskCount = 0;
 		MPSCQueue<Task> m_taskQueue;
 		IocpEvent* m_taskEvent = xnew<IocpEvent>(EVENT_TYPE::TASK, SharedFromThis());
 	};
@@ -79,9 +80,9 @@ namespace ServerCore
 	template<typename Func, typename ...Args>
 	inline void Queueabler::EnqueueAsyncTaskPushOnly(Func&& fp, Args && ...args) noexcept
 	{
-		const int32 prevCount = m_taskCount.fetch_add(1, std::memory_order_seq_cst);
+		const int32 prevCount = InterlockedIncrement(&m_taskCount);
 		m_taskQueue.emplace(std::forward<Func>(fp), std::forward<Args>(args)...);
-		if (0 == prevCount)
+		if (1 == prevCount)
 		{
 			IncOwnerRef();
 			if (m_taskEvent)
@@ -99,14 +100,14 @@ namespace ServerCore
 	{
 		constinit extern thread_local class Queueabler* LCurQueueableComponent;
 		// TODO: 그냥 자기가 넣고 일을 한다면 레퍼런스 카운터가 올라가있는 상태여야함
-		const int32 prevCount = m_taskCount.fetch_add(1, std::memory_order_seq_cst);
-		if (0 == prevCount)
+		const int32 prevCount = InterlockedIncrement(&m_taskCount);
+		if (1 == prevCount)
 		{
 			if (nullptr == LCurTaskQueue)
 			{
 				LCurQueueableComponent = this;
 				std::invoke(std::forward<Func>(fp), std::forward<Args>(args)...);
-				if (1 != m_taskCount.fetch_sub(1, std::memory_order_acq_rel))
+				if (0 != InterlockedDecrement(&m_taskCount))
 				{
 					Execute();
 				}

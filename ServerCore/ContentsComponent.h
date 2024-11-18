@@ -33,7 +33,7 @@ public:
 public:
 	const uint16_t GetOwnerObjectType()const noexcept { return m_pOwnerEntity->GetObjectType(); }
 	const uint32_t GetOwnerObjectID()const noexcept { return m_pOwnerEntity->GetObjectID(); }
-	const ID_Ptr<ServerCore::Sector> GetOwnerSectorInfo()const noexcept { return m_pOwnerEntity->GetCombinedSectorInfo(); }
+	ServerCore::ClusterInfo GetOwnerClusterInfo()const noexcept { return m_pOwnerEntity->GetClusterInfo(); }
 private:
 	ServerCore::ContentsEntity* const m_pOwnerEntity;
 };

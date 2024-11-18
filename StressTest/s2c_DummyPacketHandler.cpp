@@ -5,6 +5,7 @@
 #include "struct_generated.h"
 #include "protocol_generated.h"
 #include "ServerSession.h"
+#include "Queueabler.h"
 
 static inline Vector3 O_VEC3(const Nagox::Struct::Vec3* const v) {
 	return Vector3{ v->x(),v->y(),v->z() };

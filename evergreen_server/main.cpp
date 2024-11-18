@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "Service.h"
 #include "ClientSession.h"
-#include "SectorPredicate.h"
-#include "ContentsWorld.h"
+#include "ClusterPredicate.h"
 #include <filesystem>
 #include "Navigator.h"
 #include "EntityFactory.h"
+#include "Field.h"
+#include "Cluster.h"
 
 using namespace ServerCore;
 constexpr const int32_t NUM_OF_NPC = 10240;
@@ -33,16 +34,17 @@ int main()
 	//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->LoadByObj(RESOURCE_PATH(L"navmesh10.obj"));
 	NAVIGATION->RegisterDestroy();
 	//AStar::SaveAStarPath(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
-	Mgr(WorldMgr)->SetNumOfNPC<NUM_OF_NPC>();
-	Mgr(WorldMgr)->RegisterWolrd<ContentsWorld>(0);
+	Mgr(FieldMgr)->SetNumOfNPC<NUM_OF_NPC>();
+	Mgr(FieldMgr)->RegisterField<ContentsField>(0);
+	//Mgr(WorldMgr)->RegisterWolrd<ContentsWorld>(0);
 
-	ServerCore::MoveBroadcaster::RegisterHuristicFunc2Session(SectorPredicate::SectorHuristicFunc2Session);
-	ServerCore::MoveBroadcaster::RegisterHuristicFunc2NPC(SectorPredicate::SectorHuristicFunc2NPC);
+	ServerCore::MoveBroadcaster::RegisterHuristicFunc2Session(ClusterPredicate::ClusterHuristicFunc2Session);
+	ServerCore::MoveBroadcaster::RegisterHuristicFunc2NPC(ClusterPredicate::ClusterHuristicFunc2NPC);
 
 
-	ServerCore::MoveBroadcaster::RegisterAddPacketFunc(SectorPredicate::SectorAddPacketFunc);
-	ServerCore::MoveBroadcaster::RegisterRemovePacketFunc(SectorPredicate::SectorRemovePacketFunc);
-	ServerCore::MoveBroadcaster::RegisterMovePacketFunc(SectorPredicate::SectorMovePacketFunc);
+	ServerCore::MoveBroadcaster::RegisterAddPacketFunc(ClusterPredicate::ClusterAddPacketFunc);
+	ServerCore::MoveBroadcaster::RegisterRemovePacketFunc(ClusterPredicate::ClusterRemovePacketFunc);
+	ServerCore::MoveBroadcaster::RegisterMovePacketFunc(ClusterPredicate::ClusterMovePacketFunc);
 	
 	for(int i=0;i<100;++i)
 	{
@@ -50,7 +52,7 @@ int main()
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = MONSTER_TYPE_INFO::FOX;
 		const auto m = EntityFactory::CreateMonster(b);
-		Mgr(WorldMgr)->GetWorld(0)->EnterWorldNPC(m);
+		Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
 	}
 	const auto pServerService = std::make_unique<ServerCore::ServerService>
 		(
