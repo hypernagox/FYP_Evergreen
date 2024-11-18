@@ -41,9 +41,9 @@ namespace udsdx
 			ReleaseDC(m_hWnd, m_hDC);
 			DestroyWindow(m_hWnd);
 
-			DeletePen(m_hMaskPen);
-			DeletePen(m_hBlackPen);
-			DeletePen(m_hWhitePen);
+			DeleteObject(m_hMaskPen);
+			DeleteObject(m_hBlackPen);
+			DeleteObject(m_hWhitePen);
 		}
 	}
 
@@ -61,7 +61,7 @@ namespace udsdx
 
 		HPEN oldPen = (HPEN)SelectObject(m_hBitmapDC, m_hBlackPen);
 
-		SelectBitmap(m_hMemDC, m_memBitmap);
+		SelectObject(m_hMemDC, m_memBitmap);
 		MoveToEx(m_hBitmapDC, currentFrameX, 0, nullptr);
 		LineTo(m_hBitmapDC, currentFrameX, bottom);
 
@@ -70,7 +70,7 @@ namespace udsdx
 
 		SelectObject(m_hBitmapDC, oldPen);
 
-		SelectBitmap(m_hBitmapDC, m_graphBitmap);
+		SelectObject(m_hBitmapDC, m_graphBitmap);
 		BitBlt(m_hMemDC, 0, 0, WindowWidth, WindowHeight, m_hBitmapDC, 0, 0, SRCCOPY);
 
 		SetBkMode(m_hMemDC, TRANSPARENT);
@@ -81,7 +81,7 @@ namespace udsdx
 		text = std::format(L"{:.1f} ms", time.deltaTime * 1000);
 		TextOutW(m_hMemDC, 0, 16, text.c_str(), (int)text.size());
 
-		SelectBitmap(m_hDC, m_memBitmap);
+		SelectObject(m_hDC, m_memBitmap);
 		BitBlt(m_hDC, 0, 0, WindowWidth, WindowHeight, m_hMemDC, 0, 0, SRCCOPY);
 
 		currentFrameX = (currentFrameX + 1) % WindowWidth;

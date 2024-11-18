@@ -35,7 +35,10 @@ namespace udsdx
 		constants.ViewInverse = viewMat.Invert().Transpose();
 		constants.ProjInverse = projMat.Invert().Transpose();
 		constants.ViewProjInverse = viewProjMat.Invert().Transpose();
+		constants.PrevViewProj = m_prevViewProjMatrix.Transpose();
 		constants.CameraPosition = Vector4::Transform(Vector4::UnitW, worldMat);
+
+		m_prevViewProjMatrix = viewProjMat;
 
 		m_constantBuffers[frameResourceIndex]->CopyData(0, constants);
 		return m_constantBuffers[frameResourceIndex]->Resource()->GetGPUVirtualAddress();
