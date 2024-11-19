@@ -31,7 +31,7 @@ namespace ServerCore
 		}
 		
 		// 자기 자신의 작업을 처리 할 때 만 사용 가능하다.
-		inline const auto& GetMyViewList()const noexcept { return  m_vecViewListForCopy; }
+		inline const auto& GetMyViewList()const noexcept { return m_vecViewListForCopy; }
 
 		void ReleaseViewList()noexcept
 		{

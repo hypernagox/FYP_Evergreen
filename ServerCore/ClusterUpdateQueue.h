@@ -44,11 +44,12 @@ namespace ServerCore
 	public:
 		static void UpdateCluster()noexcept {
 			constinit thread_local uint64_t L_CurIndex = 0;
+			const auto arrTask = m_arrTask;
 			for (;;)
 			{
 				const auto cur_idx = (L_CurIndex) & (MAX_TASK - 1);
 				_Compiler_barrier();
-				const auto task_ptr = m_arrTask + cur_idx;
+				const auto task_ptr = arrTask + cur_idx;
 				const auto task = *task_ptr;
 				if (!task)return;
 				if (task->Execute())
@@ -61,8 +62,8 @@ namespace ServerCore
 			}
 		}
 	private:
-		__declspec(align(8)) static inline ClusterUpdateTask* volatile m_arrTask[MAX_TASK] = { nullptr };
-		__declspec(align(8)) static inline volatile uint64_t m_taskCount = 0;
+		constinit __declspec(align(8)) static inline ClusterUpdateTask* volatile m_arrTask[MAX_TASK] = { nullptr };
+		constinit __declspec(align(8)) static inline volatile uint64_t m_taskCount = 0;
 	};
 }
 
