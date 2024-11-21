@@ -44,14 +44,14 @@ class s2c_PacketHandler {
     constinit static inline PacketHandlerFunc g_fpPacketHandler[UINT16_MAX] = {};
 public:
     static void Init() noexcept {
-        RegisterHandler<PKT_ID::s2c_LOGIN, Nagox::Protocol::s2c_LOGIN>(Handle_s2c_LOGIN);
-        RegisterHandler<PKT_ID::s2c_APPEAR_OBJECT, Nagox::Protocol::s2c_APPEAR_OBJECT>(Handle_s2c_APPEAR_OBJECT);
-        RegisterHandler<PKT_ID::s2c_REMOVE_OBJECT, Nagox::Protocol::s2c_REMOVE_OBJECT>(Handle_s2c_REMOVE_OBJECT);
-        RegisterHandler<PKT_ID::s2c_MOVE, Nagox::Protocol::s2c_MOVE>(Handle_s2c_MOVE);
-        RegisterHandler<PKT_ID::s2c_MONSTER_ATTACK, Nagox::Protocol::s2c_MONSTER_ATTACK>(Handle_s2c_MONSTER_ATTACK);
-        RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_START, Nagox::Protocol::s2c_MONSTER_AGGRO_START>(Handle_s2c_MONSTER_AGGRO_START);
-        RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_END, Nagox::Protocol::s2c_MONSTER_AGGRO_END>(Handle_s2c_MONSTER_AGGRO_END);
-        RegisterHandler<PKT_ID::s2c_PLAYER_DEATH, Nagox::Protocol::s2c_PLAYER_DEATH>(Handle_s2c_PLAYER_DEATH);
+        RegisterHandler<PKT_ID::s2c_LOGIN, Nagox::Protocol::s2c_LOGIN, Handle_s2c_LOGIN>();
+        RegisterHandler<PKT_ID::s2c_APPEAR_OBJECT, Nagox::Protocol::s2c_APPEAR_OBJECT, Handle_s2c_APPEAR_OBJECT>();
+        RegisterHandler<PKT_ID::s2c_REMOVE_OBJECT, Nagox::Protocol::s2c_REMOVE_OBJECT, Handle_s2c_REMOVE_OBJECT>();
+        RegisterHandler<PKT_ID::s2c_MOVE, Nagox::Protocol::s2c_MOVE, Handle_s2c_MOVE>();
+        RegisterHandler<PKT_ID::s2c_MONSTER_ATTACK, Nagox::Protocol::s2c_MONSTER_ATTACK, Handle_s2c_MONSTER_ATTACK>();
+        RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_START, Nagox::Protocol::s2c_MONSTER_AGGRO_START, Handle_s2c_MONSTER_AGGRO_START>();
+        RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_END, Nagox::Protocol::s2c_MONSTER_AGGRO_END, Handle_s2c_MONSTER_AGGRO_END>();
+        RegisterHandler<PKT_ID::s2c_PLAYER_DEATH, Nagox::Protocol::s2c_PLAYER_DEATH, Handle_s2c_PLAYER_DEATH>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;
@@ -73,9 +73,8 @@ public:
     ~s2c_PacketHandler() = delete;
 
 private:
-    template<PKT_ID packetId, typename PacketType>
-    static void RegisterHandler(const bool(*handlerFunc)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const PacketType&)) {
-        static const auto handler = handlerFunc;
+    template<PKT_ID packetId, typename PacketType, const bool(*const handler)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const PacketType&)>
+    constexpr static void RegisterHandler()noexcept {
         g_fpPacketHandler[net_etoi(packetId)] = [](const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) -> const bool {
             const uint8_t* const pkt_ptr = reinterpret_cast<const uint8_t* const>(pBuff_ + sizeof(NetHelper::PacketHeader));
             flatbuffers::Verifier verifier{ pkt_ptr, static_cast<const size_t>(len_ - static_cast<const int32_t>(sizeof(NetHelper::PacketHeader))) };

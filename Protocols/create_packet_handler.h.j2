@@ -34,7 +34,7 @@ class {{ handler_class }} {
 public:
     static void Init() noexcept {
         {% for packet in packets %}
-        RegisterHandler<PKT_ID::{{ packet.name }}, Nagox::Protocol::{{ packet.name }}>(Handle_{{ packet.name }});
+        RegisterHandler<PKT_ID::{{ packet.name }}, Nagox::Protocol::{{ packet.name }}, Handle_{{ packet.name }}>();
         {% endfor %}
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
@@ -57,9 +57,8 @@ public:
     ~{{ handler_class }}() = delete;
 
 private:
-    template<PKT_ID packetId, typename PacketType>
-    static void RegisterHandler(const bool(*handlerFunc)(const {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}PacketSession>&, const PacketType&)) {
-        static const auto handler = handlerFunc;
+    template<PKT_ID packetId, typename PacketType, const bool(*const handler)(const {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}PacketSession>&, const PacketType&)>
+    constexpr static void RegisterHandler()noexcept {
         g_fpPacketHandler[net_etoi(packetId)] = [](const {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) -> const bool {
             const uint8_t* const pkt_ptr = reinterpret_cast<const uint8_t* const>(pBuff_ + sizeof({{ namespace_prefix }}PacketHeader));
             flatbuffers::Verifier verifier{ pkt_ptr, static_cast<const size_t>(len_ - static_cast<const int32_t>(sizeof({{ namespace_prefix }}PacketHeader))) };

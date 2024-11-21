@@ -15,6 +15,12 @@ enum class PKT_ID : uint16_t {
     s2c_REMOVE_OBJECT = 1004,
     c2s_MOVE = 1005,
     s2c_MOVE = 1006,
+    s2c_MONSTER_ATTACK = 1007,
+    s2c_MONSTER_AGGRO_START = 1008,
+    s2c_MONSTER_AGGRO_END = 1009,
+    c2s_PLAYER_ATTACK = 1010,
+    s2c_PLAYER_DEATH = 1011,
+    c2s_PLAYER_DEATH = 1012,
 };
 
 class ServerCore::PacketSession;
@@ -28,16 +34,24 @@ const bool Handle_s2c_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 const bool Handle_s2c_APPEAR_OBJECT(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_APPEAR_OBJECT& pkt_);
 const bool Handle_s2c_REMOVE_OBJECT(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_REMOVE_OBJECT& pkt_);
 const bool Handle_s2c_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MOVE& pkt_);
+const bool Handle_s2c_MONSTER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_);
+const bool Handle_s2c_MONSTER_AGGRO_START(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_START& pkt_);
+const bool Handle_s2c_MONSTER_AGGRO_END(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_END& pkt_);
+const bool Handle_s2c_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_DEATH& pkt_);
 
 class s2c_DummyPacketHandler {
     using PacketHandlerFunc = const bool (*)(const ServerCore::S_ptr<ServerCore::PacketSession>&, const BYTE* const, const int32_t);
-    static inline PacketHandlerFunc g_fpPacketHandler[UINT16_MAX] = {};
+    constinit static inline PacketHandlerFunc g_fpPacketHandler[UINT16_MAX] = {};
 public:
     static void Init() noexcept {
-        RegisterHandler<PKT_ID::s2c_LOGIN, Nagox::Protocol::s2c_LOGIN>(Handle_s2c_LOGIN);
-        RegisterHandler<PKT_ID::s2c_APPEAR_OBJECT, Nagox::Protocol::s2c_APPEAR_OBJECT>(Handle_s2c_APPEAR_OBJECT);
-        RegisterHandler<PKT_ID::s2c_REMOVE_OBJECT, Nagox::Protocol::s2c_REMOVE_OBJECT>(Handle_s2c_REMOVE_OBJECT);
-        RegisterHandler<PKT_ID::s2c_MOVE, Nagox::Protocol::s2c_MOVE>(Handle_s2c_MOVE);
+        RegisterHandler<PKT_ID::s2c_LOGIN, Nagox::Protocol::s2c_LOGIN, Handle_s2c_LOGIN>();
+        RegisterHandler<PKT_ID::s2c_APPEAR_OBJECT, Nagox::Protocol::s2c_APPEAR_OBJECT, Handle_s2c_APPEAR_OBJECT>();
+        RegisterHandler<PKT_ID::s2c_REMOVE_OBJECT, Nagox::Protocol::s2c_REMOVE_OBJECT, Handle_s2c_REMOVE_OBJECT>();
+        RegisterHandler<PKT_ID::s2c_MOVE, Nagox::Protocol::s2c_MOVE, Handle_s2c_MOVE>();
+        RegisterHandler<PKT_ID::s2c_MONSTER_ATTACK, Nagox::Protocol::s2c_MONSTER_ATTACK, Handle_s2c_MONSTER_ATTACK>();
+        RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_START, Nagox::Protocol::s2c_MONSTER_AGGRO_START, Handle_s2c_MONSTER_AGGRO_START>();
+        RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_END, Nagox::Protocol::s2c_MONSTER_AGGRO_END, Handle_s2c_MONSTER_AGGRO_END>();
+        RegisterHandler<PKT_ID::s2c_PLAYER_DEATH, Nagox::Protocol::s2c_PLAYER_DEATH, Handle_s2c_PLAYER_DEATH>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;
@@ -59,9 +73,8 @@ public:
     ~s2c_DummyPacketHandler() = delete;
 
 private:
-    template<PKT_ID packetId, typename PacketType>
-    static void RegisterHandler(const bool(*handlerFunc)(const ServerCore::S_ptr<ServerCore::PacketSession>&, const PacketType&)) {
-        static const auto handler = handlerFunc;
+    template<PKT_ID packetId, typename PacketType, const bool(*const handler)(const ServerCore::S_ptr<ServerCore::PacketSession>&, const PacketType&)>
+    constexpr static void RegisterHandler()noexcept {
         g_fpPacketHandler[net_etoi(packetId)] = [](const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) -> const bool {
             const uint8_t* const pkt_ptr = reinterpret_cast<const uint8_t* const>(pBuff_ + sizeof(ServerCore::PacketHeader));
             flatbuffers::Verifier verifier{ pkt_ptr, static_cast<const size_t>(len_ - static_cast<const int32_t>(sizeof(ServerCore::PacketHeader))) };

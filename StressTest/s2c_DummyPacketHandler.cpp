@@ -75,3 +75,23 @@ const bool Handle_s2c_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 	}
 	return true;
 }
+
+const bool Handle_s2c_MONSTER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_MONSTER_AGGRO_START(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_START& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_MONSTER_AGGRO_END(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_END& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_DEATH& pkt_)
+{
+	return true;
+}

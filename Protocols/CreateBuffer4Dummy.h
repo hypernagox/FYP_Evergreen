@@ -28,3 +28,10 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_MOVE(
     const uint64_t time_stamp,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_ATTACK(
+    const float body_angle,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_DEATH(
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

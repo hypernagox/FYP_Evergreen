@@ -41,11 +41,11 @@ class c2s_PacketHandler {
     constinit static inline PacketHandlerFunc g_fpPacketHandler[UINT16_MAX] = {};
 public:
     static void Init() noexcept {
-        RegisterHandler<PKT_ID::c2s_LOGIN, Nagox::Protocol::c2s_LOGIN>(Handle_c2s_LOGIN);
-        RegisterHandler<PKT_ID::c2s_ENTER, Nagox::Protocol::c2s_ENTER>(Handle_c2s_ENTER);
-        RegisterHandler<PKT_ID::c2s_MOVE, Nagox::Protocol::c2s_MOVE>(Handle_c2s_MOVE);
-        RegisterHandler<PKT_ID::c2s_PLAYER_ATTACK, Nagox::Protocol::c2s_PLAYER_ATTACK>(Handle_c2s_PLAYER_ATTACK);
-        RegisterHandler<PKT_ID::c2s_PLAYER_DEATH, Nagox::Protocol::c2s_PLAYER_DEATH>(Handle_c2s_PLAYER_DEATH);
+        RegisterHandler<PKT_ID::c2s_LOGIN, Nagox::Protocol::c2s_LOGIN, Handle_c2s_LOGIN>();
+        RegisterHandler<PKT_ID::c2s_ENTER, Nagox::Protocol::c2s_ENTER, Handle_c2s_ENTER>();
+        RegisterHandler<PKT_ID::c2s_MOVE, Nagox::Protocol::c2s_MOVE, Handle_c2s_MOVE>();
+        RegisterHandler<PKT_ID::c2s_PLAYER_ATTACK, Nagox::Protocol::c2s_PLAYER_ATTACK, Handle_c2s_PLAYER_ATTACK>();
+        RegisterHandler<PKT_ID::c2s_PLAYER_DEATH, Nagox::Protocol::c2s_PLAYER_DEATH, Handle_c2s_PLAYER_DEATH>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;
@@ -67,9 +67,8 @@ public:
     ~c2s_PacketHandler() = delete;
 
 private:
-    template<PKT_ID packetId, typename PacketType>
-    static void RegisterHandler(const bool(*handlerFunc)(const ServerCore::S_ptr<ServerCore::PacketSession>&, const PacketType&)) {
-        static const auto handler = handlerFunc;
+    template<PKT_ID packetId, typename PacketType, const bool(*const handler)(const ServerCore::S_ptr<ServerCore::PacketSession>&, const PacketType&)>
+    constexpr static void RegisterHandler()noexcept {
         g_fpPacketHandler[net_etoi(packetId)] = [](const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) -> const bool {
             const uint8_t* const pkt_ptr = reinterpret_cast<const uint8_t* const>(pBuff_ + sizeof(ServerCore::PacketHeader));
             flatbuffers::Verifier verifier{ pkt_ptr, static_cast<const size_t>(len_ - static_cast<const int32_t>(sizeof(ServerCore::PacketHeader))) };

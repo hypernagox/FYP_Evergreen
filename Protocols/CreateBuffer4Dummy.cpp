@@ -1,10 +1,11 @@
+#include "pch.h"
 #include <flatbuffers/flatbuffers.h>
-#include "flatbuffers/flatbuffers.h"
 #include "../ServerCore/ServerCorePch.h"
 #include "enum_generated.h"
 #include "struct_generated.h"
 #include "protocol_generated.h"
 #include "s2c_DummyPacketHandler.h"
+
 
 static ServerCore::S_ptr<ServerCore::SendBuffer> CreateSendBuffer(const uint8_t* const flatBufferPtr, const PKT_ID pktId, const uint16_t dataSize) noexcept
 {
@@ -70,4 +71,28 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_MOVE(
     builder.Finish(serializedc2s_MOVE);
 
     return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_MOVE, builder.GetSize());
+}
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_ATTACK(
+    const float body_angle,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto body_angle_value = body_angle;
+    const auto serializedc2s_PLAYER_ATTACK = Nagox::Protocol::Createc2s_PLAYER_ATTACK(
+        builder
+,        body_angle_value    );
+    builder.Finish(serializedc2s_PLAYER_ATTACK);
+
+    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_PLAYER_ATTACK, builder.GetSize());
+}
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_DEATH(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto serializedc2s_PLAYER_DEATH = Nagox::Protocol::Createc2s_PLAYER_DEATH(
+        builder
+    );
+    builder.Finish(serializedc2s_PLAYER_DEATH);
+
+    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_PLAYER_DEATH, builder.GetSize());
 }
