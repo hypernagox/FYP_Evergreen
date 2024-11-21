@@ -14,7 +14,7 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_rendererObj->AddChild(pBody);
 
 	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
-	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"character.glb")));
+	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.glb")));
 	m_renderer->SetShader(shader);
 
 	for (int i = 0; i < m_playerMaterials.size(); ++i)
@@ -44,10 +44,10 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 	float mag = Vector2(velocity.x, velocity.z).LengthSquared();
 	if (mag > 1.0f)
 	{
-		SetAnimation("Bip001|run|BaseLayer");
+		SetAnimation("Bip001|dieZ_1|BaseLayer");
 	}
 	else
 	{
-		SetAnimation("Bip001|idle|BaseLayer");
+		SetAnimation("Bip001|standZ_1|BaseLayer");
 	}
 }
