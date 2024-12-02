@@ -176,7 +176,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	UpdatePlayerCamFpsMode(time.deltaTime);
 	UpdateCameraTransform(m_cameraObj->GetTransform(), time.deltaTime);
 
-	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), m_fovBase * (INSTANCE(Input)->GetKey(Keyboard::LeftControl) ? 1.5f : 1.0f), time.deltaTime * 8.0f));
+	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), m_fovBase * (INSTANCE(Input)->GetKey(Keyboard::W) ? 1.5f : 1.0f), time.deltaTime * 8.0f));
 
 	float rotationFactor = Vector2(velocity.x, velocity.z).Length() * 0.15f * sin(m_fMoveTime * 1.5f) * PIDIV4;
 

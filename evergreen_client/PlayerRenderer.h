@@ -10,6 +10,7 @@ protected:
 	RiggedMeshRenderer* m_renderer;
 	std::shared_ptr<SceneObject> m_rendererObj;
 	std::array<std::shared_ptr<udsdx::Material>, 5> m_playerMaterials;
+	float m_attackTime = 0.0f;
 
 public:
 	Transform* m_transformBody;

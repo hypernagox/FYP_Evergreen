@@ -109,12 +109,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     auto res = INSTANCE(Resource);
     auto shader = res->Load<Shader>(RESOURCE_PATH(L"color.hlsl"));
+    auto shaderTerrain = res->Load<Shader>(RESOURCE_PATH(L"terrain.hlsl"));
 
     playerMaterial = std::make_shared<udsdx::Material>();
     playerMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
     terrainMaterial = std::make_shared<udsdx::Material>();
-   // terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Black_Sand_BaseColor.tif")));
+    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"terrain_diffuse.png")));
 
     scene = std::make_shared<Scene>();
 
@@ -144,16 +145,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 1000, 1000, 1.0f);
     terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
-    constexpr float terrainScale = 100.0f;
-    constexpr float terrainOffset = -1200.0f;
     terrainObj = std::make_shared<SceneObject>();
-    //terrainObj->GetTransform()->SetLocalScale(Vector3::One *0.8f);
-   //terrainObj->GetTransform()->SetLocalPosition(Vector3(terrainOffset, 0.0f, -terrainOffset));
-    //terrainObj->GetTransform()->SetLocalPosition(Vector3(500, 0.0f, 500));
     auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-    //terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"TerrainWithTrees.obj")));
+    terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"terrain.obj")));
     terrainRenderer->SetMaterial(terrainMaterial.get());
-    terrainRenderer->SetShader(shader);
+    terrainRenderer->SetShader(shaderTerrain);
+    scene->AddObject(terrainObj);
+
+    {
+        auto terrainExtraObj = std::make_shared<SceneObject>();
+        auto terrainRenderer = terrainExtraObj->AddComponent<MeshRenderer>();
+        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"terrain_extra.obj")));
+        terrainRenderer->SetMaterial(terrainMaterial.get());
+        terrainRenderer->SetShader(shader);
+        scene->AddObject(terrainExtraObj);
+    }
 
     {
         auto terrainObj = std::make_shared<SceneObject>();
@@ -165,9 +171,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         terrainRenderer->SetMaterial(terrainMaterial.get());
         //terrainRenderer->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
         terrainRenderer->SetShader(shader);
-        scene->AddObject(terrainObj);
+        // scene->AddObject(terrainObj);
     }
-  //  scene->AddObject(terrainObj);
 
     if constexpr (true == g_bUseNetWork)
     {

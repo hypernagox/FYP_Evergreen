@@ -39,15 +39,24 @@ PlayerRenderer::~PlayerRenderer()
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
+	m_attackTime -= time.deltaTime;
+	if (INSTANCE(Input)->GetMouseLeftButtonDown() && m_attackTime < 0.0f)
+	{
+		m_attackTime = 1.0f;
+	}
 	const Vector3 velocity = GetComponent<EntityMovement>()->GetVelocity();
 	// check if xz component of velocity is not zero
 	float mag = Vector2(velocity.x, velocity.z).LengthSquared();
-	if (mag > 1.0f)
+	if (m_attackTime > 0.0f)
 	{
-		SetAnimation("Bip001|dieZ_1|BaseLayer");
+		SetAnimation("Bip001|attack1|BaseLayer");
+	}
+	else if (mag > 10.0f)
+	{
+		SetAnimation("Bip001|run|BaseLayer");
 	}
 	else
 	{
-		SetAnimation("Bip001|standZ_1|BaseLayer");
+		SetAnimation("Bip001|stand|BaseLayer");
 	}
 }
