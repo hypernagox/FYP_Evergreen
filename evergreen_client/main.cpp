@@ -155,7 +155,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         auto terrainExtraObj = std::make_shared<SceneObject>();
         auto terrainRenderer = terrainExtraObj->AddComponent<MeshRenderer>();
-        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"terrain_extra.obj")));
+        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"terrain_extra.glb")));
         terrainRenderer->SetMaterial(terrainMaterial.get());
         terrainRenderer->SetShader(shader);
         scene->AddObject(terrainExtraObj);
