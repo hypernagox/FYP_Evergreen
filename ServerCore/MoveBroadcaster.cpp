@@ -9,6 +9,7 @@
 namespace ServerCore
 {
 	thread_local HashSet<const ContentsEntity*> new_view_list(1024);
+	thread_local Vector<uint64_t> LViewListForCopy;
 
 	void MoveBroadcaster::BroadcastMove() noexcept
 	{
@@ -30,6 +31,7 @@ namespace ServerCore
 		const auto remove_pkt = remove_pkt_func(pOwnerEntity);
 
 		new_view_list.clear();
+		LViewListForCopy.clear();
 
 		const auto huristic_func = g_huristic;
 
@@ -45,15 +47,30 @@ namespace ServerCore
 		for (const auto& cluster : clusters)
 		{
 			const auto& entities = cluster->GetAllEntites();
-			for (const auto& e : entities)
+			auto b = entities.data();
+			const auto e = b + entities.size();
 			{
-				const auto& con = e.GetItemListRef();
-				auto b = con.data();
-				const auto e = b + con.size();
-				while (e != b) 
+				const auto& sessions = (*b++).GetItemListRef();
+				auto b = sessions.data();
+				const auto e = b + sessions.size();
+				while (e != b)
 				{
 					const auto entity_ptr = (*b++);
-					if (huristic_func[!entity_ptr->GetSession()](pOwnerEntity, entity_ptr))
+					if (huristic_func[0](pOwnerEntity, entity_ptr))
+					{
+						new_view_list.emplace(entity_ptr);
+					}
+				}
+			}
+			while (e != b) 
+			{
+				const auto& entities = (*b++).GetItemListRef();
+				auto b = entities.data();
+				const auto e = b + entities.size();
+				while (e != b)
+				{
+					const auto entity_ptr = (*b++);
+					if (huristic_func[1](pOwnerEntity, entity_ptr))
 					{
 						new_view_list.emplace(entity_ptr);
 					}
@@ -69,6 +86,7 @@ namespace ServerCore
 		{
 			const auto entity_ptr = *iter;
 			const auto pSession = entity_ptr->GetSession();
+
 			if (m_viewList.emplace(entity_ptr).second)
 			{
 				thisSession->SendAsync(add_pkt_func(entity_ptr));
@@ -86,9 +104,6 @@ namespace ServerCore
 					pSession->SendAsync(move_pkt);
 			}
 		}
-		
-		Vector<uint64_t> viewListForCopy;
-		viewListForCopy.reserve(new_view_list.size());
 		
 		for (auto iter = m_viewList.cbegin(); iter != m_viewList.cend();)
 		{
@@ -109,13 +124,13 @@ namespace ServerCore
 			}
 			else
 			{
-				viewListForCopy.emplace_back(entity_ptr->GetObjectCombineID());
+				LViewListForCopy.emplace_back(entity_ptr->GetObjectCombineID());
 				++iter;
 			}
 		}
 
 		m_srwLock.lock();
-		m_vecViewListForCopy.swap(viewListForCopy);
+		m_vecViewListForCopy.swap(LViewListForCopy);
 		m_srwLock.unlock();
 	}
 
