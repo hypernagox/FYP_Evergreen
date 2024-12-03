@@ -60,6 +60,8 @@ namespace ServerCore
 	class S_ptr
 	{
 	public:
+		using Type = T;
+
 		constexpr S_ptr()noexcept = default;
 		constexpr S_ptr(std::nullptr_t) noexcept : m_count_ptr{ nullptr } {}
 		constexpr inline ~S_ptr()noexcept { DecRef(); }

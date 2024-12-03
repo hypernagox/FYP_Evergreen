@@ -12,7 +12,8 @@
 #include "Collider_Common.h"
 #include "Field.h"
 #include "HP.h"
-
+#include "QuestSystem.h"
+#include "Quest.h"
 
 using namespace ServerCore;
 
@@ -134,7 +135,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 				//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
 				//
 				//owner->TryOnDestroy();
-				owner->GetComp<HP>()->PostDoDmg(1);
+				owner->GetComp<HP>()->PostDoDmg(1,pOwner->SharedFromThis());
 			}
 		}
 	}
@@ -148,6 +149,21 @@ const bool Handle_c2s_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSes
 	const auto hp = owner->GetComp<HP>();
 	hp->CompleteRebirth(5);
 
+	return true;
+}
+
+const bool Handle_c2s_REQUEST_QUEST(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+	const auto q = ServerCore::xnew<KillFoxQuest>();
+	if (!owner->GetComp<QuestSystem>()->AddQuest(0,q))
+	{
+		xdelete<Quest>(q);
+	}
+	else
+	{
+		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(0));
+	}
 	return true;
 }
 

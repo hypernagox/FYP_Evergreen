@@ -82,3 +82,21 @@ table s2c_PLAYER_DEATH
 table c2s_PLAYER_DEATH
 {
 }
+
+
+table c2s_REQUEST_QUEST
+{
+   quest_id : uint64;
+}
+
+table s2c_REQUEST_QUEST
+{
+   quest_id : uint64;
+}
+
+
+table s2c_CLEAR_QUEST
+{
+   quest_id : uint64;
+   is_clear: ubyte;
+}

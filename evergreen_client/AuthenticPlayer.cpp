@@ -7,6 +7,18 @@
 #include "MovePacketSender.h"
 #include "NaviAgent.h"
 
+
+bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
+	const DirectX::SimpleMath::Vector3& targetPosition,
+	const float distance)
+{
+	const float distanceSquared = (currentPosition - targetPosition).LengthSquared();
+
+	const float maxDistanceSquared = distance * distance;
+
+	return distanceSquared <= maxDistanceSquared;
+}
+
 void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
 {
 	Transform* camTrans = m_cameraAnchor->GetTransform();
@@ -81,6 +93,15 @@ void AuthenticPlayer::DoAttack()
 		);
 }
 
+void AuthenticPlayer::RequestQuest()
+{
+	const auto t = GetSceneObject()->GetTransform();
+	if (IsWithinDistance(t->GetLocalPosition(), { 0,0,0 }, 10.f))
+	{	
+		Send(Create_c2s_REQUEST_QUEST(0));
+	}
+}
+
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
 {
@@ -130,6 +151,7 @@ void AuthenticPlayer::Start()
 	input_handler->AddKeyFunc(Keyboard::D, KEY_STATE::KEY_HOLD, &AuthenticPlayer::MoveByView, this, Vector3(1.0f, 0.0f, 0.0f) * 100.0f);
 
 	input_handler->AddKeyFunc(Keyboard::Space, KEY_STATE::KET_TAP, &AuthenticPlayer::DoAttack, this);
+	input_handler->AddKeyFunc(Keyboard::CapsLock, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuest, this);
 
 	m_pServerObject = GetComponent<ServerObject>();
 	m_entityMovement = AddComponent<EntityMovement>();
@@ -155,10 +177,10 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	}
 	if (INSTANCE(Input)->GetKey(Keyboard::Space))
 	{
-		const Vector3 UP = Vector3::Up * 10.0f;
-		if (m_bGround)
-			m_entityMovement->AddAcceleration(UP);
-		m_vCurState.y += (int)UP.y;
+		//const Vector3 UP = Vector3::Up * 10.0f;
+		//if (m_bGround)
+		//	m_entityMovement->AddAcceleration(UP);
+		//m_vCurState.y += (int)UP.y;
 	}
 	if (INSTANCE(Input)->GetKey(Keyboard::LeftShift))
 	{

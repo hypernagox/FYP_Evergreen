@@ -71,6 +71,12 @@
     <Filter Include="BattleComponent\Status">
       <UniqueIdentifier>{8ad7a2e2-28fe-4b56-ade2-0b4a5edf0c6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="QuestSystem">
+      <UniqueIdentifier>{4bdac21d-30ce-4389-aaca-b796ae6fd612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="QuestSystem\Quest">
+      <UniqueIdentifier>{ee2d6b9f-2fde-4452-b3b7-adef921a9a04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -117,6 +123,12 @@
     </ClCompile>
     <ClCompile Include="Death.cpp">
       <Filter>BattleComponent\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestSystem.cpp">
+      <Filter>QuestSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Quest.cpp">
+      <Filter>QuestSystem\Quest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +185,12 @@
     </ClInclude>
     <ClInclude Include="Death.h">
       <Filter>BattleComponent\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestSystem.h">
+      <Filter>QuestSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Quest.h">
+      <Filter>QuestSystem\Quest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

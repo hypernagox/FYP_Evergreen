@@ -2,6 +2,7 @@
 #include "IocpObject.h"
 #include "RecvBuffer.h"
 #include "ID_Ptr.hpp"
+#include "NagoxAtomic.h"
 
 namespace ServerCore
 {
@@ -77,7 +78,7 @@ namespace ServerCore
 		NetAddress GetAddress()const noexcept{ return m_sessionAddr; }
 		SOCKET GetSocket()const noexcept{ return m_sessionSocket; }
 		const bool IsConnected()const noexcept { return m_bConnectedNonAtomic; }
-		const bool IsConnectedAtomic()const noexcept { return m_bConnected.load(std::memory_order_relaxed); }
+		const bool IsConnectedAtomic()const noexcept { return m_bConnected.load(); }
 		const bool IsHeartBeatAlive()const noexcept { return m_bHeartBeatAlive; }
 		void SetHeartBeat(const bool bHeartBeat_)noexcept { m_bHeartBeatAlive = bHeartBeat_; }
 		void SetLastError(c_int32 errCode_)noexcept { m_iLastErrorCode *= errCode_; }
@@ -124,7 +125,7 @@ namespace ServerCore
 		const Us_ptr<RecvBuffer> m_pRecvBuffer;
 		const PacketHandleFunc* const __restrict m_sessionPacketHandler;
 	private:
-		std::atomic_bool m_bConnected = false;
+		NagoxAtomic::Atomic<bool> m_bConnected{ false };
 		volatile bool m_bHeartBeatAlive = true;
 		volatile int32_t m_serviceIdx = -1;
 		int32 m_iLastErrorCode = 1;

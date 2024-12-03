@@ -58,6 +58,15 @@ struct s2c_PLAYER_DEATHBuilder;
 struct c2s_PLAYER_DEATH;
 struct c2s_PLAYER_DEATHBuilder;
 
+struct c2s_REQUEST_QUEST;
+struct c2s_REQUEST_QUESTBuilder;
+
+struct s2c_REQUEST_QUEST;
+struct s2c_REQUEST_QUESTBuilder;
+
+struct s2c_CLEAR_QUEST;
+struct s2c_CLEAR_QUESTBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -817,6 +826,151 @@ struct c2s_PLAYER_DEATHBuilder {
 inline ::flatbuffers::Offset<c2s_PLAYER_DEATH> Createc2s_PLAYER_DEATH(
     ::flatbuffers::FlatBufferBuilder &_fbb) {
   c2s_PLAYER_DEATHBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct c2s_REQUEST_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_REQUEST_QUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_QUEST_ID = 4
+  };
+  uint64_t quest_id() const {
+    return GetField<uint64_t>(VT_QUEST_ID, 0);
+  }
+  bool mutate_quest_id(uint64_t _quest_id = 0) {
+    return SetField<uint64_t>(VT_QUEST_ID, _quest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_QUEST_ID, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_REQUEST_QUESTBuilder {
+  typedef c2s_REQUEST_QUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_quest_id(uint64_t quest_id) {
+    fbb_.AddElement<uint64_t>(c2s_REQUEST_QUEST::VT_QUEST_ID, quest_id, 0);
+  }
+  explicit c2s_REQUEST_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_REQUEST_QUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_REQUEST_QUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_REQUEST_QUEST> Createc2s_REQUEST_QUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t quest_id = 0) {
+  c2s_REQUEST_QUESTBuilder builder_(_fbb);
+  builder_.add_quest_id(quest_id);
+  return builder_.Finish();
+}
+
+struct s2c_REQUEST_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_REQUEST_QUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_QUEST_ID = 4
+  };
+  uint64_t quest_id() const {
+    return GetField<uint64_t>(VT_QUEST_ID, 0);
+  }
+  bool mutate_quest_id(uint64_t _quest_id = 0) {
+    return SetField<uint64_t>(VT_QUEST_ID, _quest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_QUEST_ID, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_REQUEST_QUESTBuilder {
+  typedef s2c_REQUEST_QUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_quest_id(uint64_t quest_id) {
+    fbb_.AddElement<uint64_t>(s2c_REQUEST_QUEST::VT_QUEST_ID, quest_id, 0);
+  }
+  explicit s2c_REQUEST_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_REQUEST_QUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_REQUEST_QUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_REQUEST_QUEST> Creates2c_REQUEST_QUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t quest_id = 0) {
+  s2c_REQUEST_QUESTBuilder builder_(_fbb);
+  builder_.add_quest_id(quest_id);
+  return builder_.Finish();
+}
+
+struct s2c_CLEAR_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_CLEAR_QUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_QUEST_ID = 4,
+    VT_IS_CLEAR = 6
+  };
+  uint64_t quest_id() const {
+    return GetField<uint64_t>(VT_QUEST_ID, 0);
+  }
+  bool mutate_quest_id(uint64_t _quest_id = 0) {
+    return SetField<uint64_t>(VT_QUEST_ID, _quest_id, 0);
+  }
+  uint8_t is_clear() const {
+    return GetField<uint8_t>(VT_IS_CLEAR, 0);
+  }
+  bool mutate_is_clear(uint8_t _is_clear = 0) {
+    return SetField<uint8_t>(VT_IS_CLEAR, _is_clear, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_QUEST_ID, 8) &&
+           VerifyField<uint8_t>(verifier, VT_IS_CLEAR, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_CLEAR_QUESTBuilder {
+  typedef s2c_CLEAR_QUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_quest_id(uint64_t quest_id) {
+    fbb_.AddElement<uint64_t>(s2c_CLEAR_QUEST::VT_QUEST_ID, quest_id, 0);
+  }
+  void add_is_clear(uint8_t is_clear) {
+    fbb_.AddElement<uint8_t>(s2c_CLEAR_QUEST::VT_IS_CLEAR, is_clear, 0);
+  }
+  explicit s2c_CLEAR_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_CLEAR_QUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_CLEAR_QUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_CLEAR_QUEST> Creates2c_CLEAR_QUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t quest_id = 0,
+    uint8_t is_clear = 0) {
+  s2c_CLEAR_QUESTBuilder builder_(_fbb);
+  builder_.add_quest_id(quest_id);
+  builder_.add_is_clear(is_clear);
   return builder_.Finish();
 }
 

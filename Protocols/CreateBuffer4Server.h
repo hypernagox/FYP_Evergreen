@@ -54,3 +54,12 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_PLAYER_DEATH(
     const Nagox::Struct::Vec3& rebirth_pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_REQUEST_QUEST(
+    const uint64_t quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_CLEAR_QUEST(
+    const uint64_t quest_id,
+    const uint8_t is_clear,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

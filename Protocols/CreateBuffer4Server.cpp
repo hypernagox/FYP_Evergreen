@@ -159,3 +159,32 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_PLAYER_DEATH(
 
     return CreateSendBuffer(builder, PKT_ID::s2c_PLAYER_DEATH);
 }
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_REQUEST_QUEST(
+    const uint64_t quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto quest_id_value = quest_id;
+    const auto serializeds2c_REQUEST_QUEST = Nagox::Protocol::Creates2c_REQUEST_QUEST(
+        builder
+,        quest_id_value    );
+    builder.Finish(serializeds2c_REQUEST_QUEST);
+
+    return CreateSendBuffer(builder, PKT_ID::s2c_REQUEST_QUEST);
+}
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_CLEAR_QUEST(
+    const uint64_t quest_id,
+    const uint8_t is_clear,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto quest_id_value = quest_id;
+    const auto is_clear_value = is_clear;
+    const auto serializeds2c_CLEAR_QUEST = Nagox::Protocol::Creates2c_CLEAR_QUEST(
+        builder
+,        quest_id_value,
+        is_clear_value    );
+    builder.Finish(serializeds2c_CLEAR_QUEST);
+
+    return CreateSendBuffer(builder, PKT_ID::s2c_CLEAR_QUEST);
+}

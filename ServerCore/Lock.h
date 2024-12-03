@@ -31,7 +31,7 @@ namespace ServerCore
         void ReadUnlock(const char* name);
 
     private:
-        Atomic<uint32> _lockFlag = EMPTY_FLAG;
+        std::atomic<uint32> _lockFlag = EMPTY_FLAG;
         uint16 _writeCount = 0;
     };
 

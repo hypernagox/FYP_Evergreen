@@ -2,7 +2,7 @@
 #include "ComponentSystem.h"
 #include "ContentsComponent.h"
 
-ComponentSystem::ComponentSystem(const std::atomic_bool& bValidFlag_) noexcept
+ComponentSystem::ComponentSystem(const NagoxAtomic::Atomic<bool>& bValidFlag_) noexcept
 	:m_bOwnerValidFlag{ bValidFlag_ }
 {}
 

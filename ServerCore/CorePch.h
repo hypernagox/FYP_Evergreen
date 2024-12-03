@@ -81,3 +81,4 @@
 //#include "RefCountable.h"
 #include "func.h"
 #include "FieldMgr.h"
+#include "NagoxAtomic.h"

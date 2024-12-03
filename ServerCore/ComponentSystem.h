@@ -1,5 +1,6 @@
 #pragma once
 #include "ServerCorePch.h"
+#include "NagoxAtomic.h"
 
 class ContentsComponent;
 class ContentsUpdateComponent;
@@ -8,14 +9,14 @@ class ComponentSystem
 {
 	friend class ServerCore::ContentsEntity;
 public:
-	ComponentSystem(const std::atomic_bool& bValidFlag_)noexcept;
+	ComponentSystem(const NagoxAtomic::Atomic<bool>& bValidFlag_)noexcept;
 	~ComponentSystem()noexcept;
 public:
 	template <typename T>
 	constexpr inline T* const GetComp()const noexcept {
 		return static_cast<T* const>(GetCompInternal<T::GetCompTypeNameGlobal()>());
 	}
-	inline const bool IsOwnerValid()const noexcept { return m_bOwnerValidFlag.load(std::memory_order_acquire); }
+	inline const bool IsOwnerValid()const noexcept { return m_bOwnerValidFlag.load(); }
 protected:
 	void Update(const float dt_)const noexcept;
 private:
@@ -41,7 +42,7 @@ private:
 	}
 private:
 	ServerCore::Vector<std::pair<const uint64_t, ContentsComponent* const>> m_contentsComponents;
-	const std::atomic_bool& m_bOwnerValidFlag;
+	const NagoxAtomic::Atomic<bool>& m_bOwnerValidFlag;
 	ServerCore::Vector<ContentsUpdateComponent*> m_vecUpdateComponents;
 };
 
@@ -50,7 +51,7 @@ class ComponentSystemNPC
 {
 	friend class TickTimerBT;
 public:
-	ComponentSystemNPC(const std::atomic_bool& bValidFlag_, ServerCore::ContentsEntity* const pOwner_)noexcept
+	ComponentSystemNPC(const NagoxAtomic::Atomic<bool>& bValidFlag_, ServerCore::ContentsEntity* const pOwner_)noexcept
 		: ComponentSystem{ bValidFlag_ }
 		, m_pOwnerEntity{ pOwner_ }
 	{}

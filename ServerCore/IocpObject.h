@@ -4,6 +4,7 @@
 #include "ID_Ptr.hpp"
 #include "ComponentSystem.h"
 
+
 class ClientSession;
 
 namespace ServerCore
@@ -43,7 +44,7 @@ namespace ServerCore
 	class TickTimer;
 	class Cluster;
 
-	struct ClusterInfo
+	struct alignas(4) ClusterInfo
 	{
 		uint8_t fieldID;
 		Point2D clusterID;
@@ -52,12 +53,10 @@ namespace ServerCore
 			: fieldID{fieldID_}
 			, clusterID{ x_,y_ }
 		{}
-		ClusterInfo(const uint8_t fieldID_,const Point2D clusterID_)noexcept
+		ClusterInfo(const uint8_t fieldID_, const Point2D clusterID_)noexcept
 			: fieldID{ fieldID_ }
 			, clusterID{ clusterID_ }
 		{}
-	private:
-		char pad;
 	};
 
 	extern Cluster* const GetCluster(const ClusterInfo info)noexcept;
@@ -93,7 +92,7 @@ namespace ServerCore
 	public:
 		inline const bool IsValid()const noexcept { return m_bIsValid.load(); }
 		const bool TryOnDestroy()noexcept {
-			const bool bRes = (true == m_bIsValid.load(std::memory_order_relaxed)) && (true == m_bIsValid.exchange(false));
+			const bool bRes = (true == m_bIsValid.load_relaxed()) && (true == m_bIsValid.exchange(false));
 			if (true == bRes)OnDestroy();
 			return bRes;
 		}
@@ -138,7 +137,7 @@ namespace ServerCore
 		inline const class ComponentSystem* const GetComponentSystem()const noexcept { return m_componentSystem; }
 	public:
 		void SetClusterInfo(const ClusterInfo info)noexcept { m_clusterInfo.store(info); }
-		ClusterInfo GetClusterInfo()const noexcept { return m_clusterInfo; }
+		ClusterInfo GetClusterInfo()const noexcept { return m_clusterInfo.load(); }
 		Cluster* const GetCurCluster()const noexcept { return ServerCore::GetCluster(m_clusterInfo); }
 	private:
 		void PostEntityTask(Task&& task_)const noexcept;
@@ -150,8 +149,8 @@ namespace ServerCore
 		uint8_t m_objTypeInfo;
 		class ComponentSystem* const m_componentSystem;
 		IocpComponent* m_arrIocpComponents[etoi(IOCP_COMPONENT::END)] = {};
-		alignas(64) std::atomic_bool m_bIsValid = true;
-		std::atomic<ClusterInfo> m_clusterInfo;
+		alignas(64) NagoxAtomic::Atomic<bool> m_bIsValid{ true };
+		NagoxAtomic::Atomic<ClusterInfo> m_clusterInfo;
 		std::atomic_bool m_bNowUpdateFlag = false;
 	};
 

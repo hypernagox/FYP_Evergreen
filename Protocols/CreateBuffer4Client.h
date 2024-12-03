@@ -34,3 +34,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_ATTACK(
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_DEATH(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_REQUEST_QUEST(
+    const uint64_t quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

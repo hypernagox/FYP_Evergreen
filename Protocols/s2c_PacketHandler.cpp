@@ -97,3 +97,25 @@ const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSessi
 	}
 	return true;
 }
+
+const bool Handle_s2c_REQUEST_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REQUEST_QUEST& pkt_)
+{
+	std::cout << "퀘스트 수락 !" << std::endl;
+	return true;
+}
+
+const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CLEAR_QUEST& pkt_)
+{
+	static int temp_count = 0;
+	if (pkt_.is_clear())
+	{
+		temp_count = 0;
+		std::cout << "퀘스트 클리어 !" << std::endl;
+	}
+	else
+	{
+		std::cout << "잡은 여우 수: " << ++temp_count << std::endl;
+	}
+	return true;
+}
+

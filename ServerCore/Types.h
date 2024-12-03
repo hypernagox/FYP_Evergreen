@@ -23,8 +23,8 @@ using c_uint64 = const unsigned __int64;
 
 namespace ServerCore
 {
-	template<typename T>
-	using Atomic = std::atomic<T>;
+	// template<typename T>
+	// using Atomic = std::atomic<T>;
 	using Mutex = std::mutex;
 	using CondVar = std::condition_variable;
 	using UniqueLock = std::unique_lock<std::mutex>;

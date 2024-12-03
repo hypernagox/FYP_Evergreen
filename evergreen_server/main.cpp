@@ -27,7 +27,7 @@ void DestroyTLSFunc()noexcept
 int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	
+
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
 	NAVIGATION->Init();
@@ -38,11 +38,11 @@ int main()
 	Mgr(FieldMgr)->SetNumOfNPC<NUM_OF_NPC>();
 	Mgr(FieldMgr)->RegisterField<ContentsField>(0);
 	//Mgr(WorldMgr)->RegisterWolrd<ContentsWorld>(0);
-
+	
 	ServerCore::MoveBroadcaster::RegisterHuristicFunc2Session(ClusterPredicate::ClusterHuristicFunc2Session);
 	ServerCore::MoveBroadcaster::RegisterHuristicFunc2NPC(ClusterPredicate::ClusterHuristicFunc2NPC);
-
-
+	
+	
 	ServerCore::MoveBroadcaster::RegisterAddPacketFunc(ClusterPredicate::ClusterAddPacketFunc);
 	ServerCore::MoveBroadcaster::RegisterRemovePacketFunc(ClusterPredicate::ClusterRemovePacketFunc);
 	ServerCore::MoveBroadcaster::RegisterMovePacketFunc(ClusterPredicate::ClusterMovePacketFunc);
@@ -62,9 +62,9 @@ int main()
 			, ServerCore::MakeSharedAligned<ClientSession>
 			, 5001
 		);
-
+	
 	ASSERT_CRASH(pServerService->Start());
-
+	
 	Mgr(ThreadMgr)->Launch(
 		  ThreadMgr::NUM_OF_THREADS
 		, DestroyTLSFunc

@@ -118,22 +118,30 @@ namespace ServerCore
 
 	template<typename T>
 	constexpr inline void xdelete(T* const obj_ptr)noexcept{
-		obj_ptr->~T(); Memory::Free(obj_ptr);
+		if constexpr (!std::is_trivially_destructible_v<T>)
+			obj_ptr->~T(); 
+		Memory::Free(obj_ptr);
 	}
 
 	template<typename T>
 	constexpr inline void aligned_xdelete(T* const obj_ptr, const size_t align_val)noexcept {
-		obj_ptr->~T(); Memory::AlignedFree(obj_ptr, align_val);
+		if constexpr (!std::is_trivially_destructible_v<T>)
+			obj_ptr->~T();
+		Memory::AlignedFree(obj_ptr, align_val);
 	}
 
 	template<typename T>
 	constexpr inline void xdelete_sized(T* const obj_ptr, const uint32_t obj_size)noexcept {
-		obj_ptr->~T(); Memory::Free_Sized(obj_ptr, obj_size);
+		if constexpr (!std::is_trivially_destructible_v<T>)
+			obj_ptr->~T(); 
+		Memory::Free_Sized(obj_ptr, obj_size);
 	}
 
 	template<typename T>
 	constexpr inline void aligned_xdelete_sized(T* const obj_ptr, const uint32_t obj_size, const size_t align_val)noexcept {
-		obj_ptr->~T(); Memory::AlignedFree_Sized(obj_ptr, obj_size, align_val);
+		if constexpr (!std::is_trivially_destructible_v<T>)
+			obj_ptr->~T(); 
+		Memory::AlignedFree_Sized(obj_ptr, obj_size, align_val);
 	}
 
 	template<typename T, typename... Args>

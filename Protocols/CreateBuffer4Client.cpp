@@ -97,3 +97,16 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_DEATH(
 
     return CreateSendBuffer(builder, PKT_ID::c2s_PLAYER_DEATH);
 }
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_REQUEST_QUEST(
+    const uint64_t quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto quest_id_value = quest_id;
+    const auto serializedc2s_REQUEST_QUEST = Nagox::Protocol::Createc2s_REQUEST_QUEST(
+        builder
+,        quest_id_value    );
+    builder.Finish(serializedc2s_REQUEST_QUEST);
+
+    return CreateSendBuffer(builder, PKT_ID::c2s_REQUEST_QUEST);
+}

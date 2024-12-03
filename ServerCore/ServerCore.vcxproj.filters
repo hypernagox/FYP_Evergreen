@@ -366,6 +366,9 @@
     <ClInclude Include="FieldMgr.h">
       <Filter>Manager\FieldMgr</Filter>
     </ClInclude>
+    <ClInclude Include="NagoxAtomic.h">
+      <Filter>Utils\struct\CustomDS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
