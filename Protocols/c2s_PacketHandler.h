@@ -19,11 +19,12 @@ enum class PKT_ID : uint16_t {
     s2c_MONSTER_AGGRO_START = 1008,
     s2c_MONSTER_AGGRO_END = 1009,
     c2s_PLAYER_ATTACK = 1010,
-    s2c_PLAYER_DEATH = 1011,
-    c2s_PLAYER_DEATH = 1012,
-    c2s_REQUEST_QUEST = 1013,
-    s2c_REQUEST_QUEST = 1014,
-    s2c_CLEAR_QUEST = 1015,
+    s2c_PLAYER_ATTACK = 1011,
+    s2c_PLAYER_DEATH = 1012,
+    c2s_PLAYER_DEATH = 1013,
+    c2s_REQUEST_QUEST = 1014,
+    s2c_REQUEST_QUEST = 1015,
+    s2c_CLEAR_QUEST = 1016,
 };
 
 class ServerCore::PacketSession;

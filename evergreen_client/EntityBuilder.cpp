@@ -18,6 +18,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Warrior(EntityBuil
 	instance->AddComponent<EntityMovement>();
 	auto playerComponent = instance->AddComponent<PlayerRenderer>();
 	auto serverComponent = instance->AddComponent<ServerObject>();
+	serverComponent->SetObjID(builder->obj_id);
 
 	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 	moveInterpolator->InitInterpolator(b->obj_pos);
@@ -34,9 +35,15 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 
 	auto monsterComponent = instance->AddComponent<Monster>();
 	auto serverComponent = instance->AddComponent<ServerObject>();
+	serverComponent->SetObjID(builder->obj_id);
 
 	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 	moveInterpolator->InitInterpolator(b->obj_pos);
 
 	return instance;
+}
+
+std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderBase* builder)
+{
+	return Create_Warrior(builder);
 }

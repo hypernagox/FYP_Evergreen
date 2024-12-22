@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "PlayerRenderer.h"
 #include "EntityMovement.h"
+#include "ServerObject.h"
+
+extern std::shared_ptr<SceneObject> g_heroObj;
 
 PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
@@ -39,24 +42,32 @@ PlayerRenderer::~PlayerRenderer()
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
-	m_attackTime -= time.deltaTime;
-	if (INSTANCE(Input)->GetMouseLeftButtonDown() && m_attackTime < 0.0f)
+	const bool flag = g_heroObj->GetComponent<ServerObject>()->GetObjID() == GetSceneObject()->GetComponent<ServerObject>()->GetObjID();
+	if (INSTANCE(Input)->GetMouseLeftButtonDown() && m_attackTime <= 0.0f && flag)
 	{
 		m_attackTime = 1.0f;
 	}
 	const Vector3 velocity = GetComponent<EntityMovement>()->GetVelocity();
 	// check if xz component of velocity is not zero
 	float mag = Vector2(velocity.x, velocity.z).LengthSquared();
-	if (m_attackTime > 0.0f)
+	if ((m_attackTime > 0.0f && flag) || m_attackTime ==1.f)
 	{
 		SetAnimation("Bip001|attack1|BaseLayer");
 	}
-	else if (mag > 10.0f)
+	else if (mag > 10.0f && flag)
 	{
 		SetAnimation("Bip001|run|BaseLayer");
 	}
 	else
 	{
-		SetAnimation("Bip001|stand|BaseLayer");
+		if (!flag && m_attackTime < 0.0f) 
+		{
+			m_attackTime = 1.f;
+			SetAnimation("Bip001|stand|BaseLayer");
+		}
+		else if(flag)
+			SetAnimation("Bip001|stand|BaseLayer");
 	}
+
+	m_attackTime -= time.deltaTime;
 }

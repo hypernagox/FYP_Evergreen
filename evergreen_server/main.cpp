@@ -55,6 +55,12 @@ int main()
 		const auto m = EntityFactory::CreateMonster(b);
 		Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
 	}
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+		b.obj_type = 0;
+		Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(EntityFactory::CreateNPC(b));
+	}
 	const auto pServerService = std::make_unique<ServerCore::ServerService>
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()

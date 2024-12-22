@@ -19,11 +19,12 @@ enum class PKT_ID : uint16_t {
     s2c_MONSTER_AGGRO_START = 1008,
     s2c_MONSTER_AGGRO_END = 1009,
     c2s_PLAYER_ATTACK = 1010,
-    s2c_PLAYER_DEATH = 1011,
-    c2s_PLAYER_DEATH = 1012,
-    c2s_REQUEST_QUEST = 1013,
-    s2c_REQUEST_QUEST = 1014,
-    s2c_CLEAR_QUEST = 1015,
+    s2c_PLAYER_ATTACK = 1011,
+    s2c_PLAYER_DEATH = 1012,
+    c2s_PLAYER_DEATH = 1013,
+    c2s_REQUEST_QUEST = 1014,
+    s2c_REQUEST_QUEST = 1015,
+    s2c_CLEAR_QUEST = 1016,
 };
 
 class NetHelper::PacketSession;
@@ -40,6 +41,7 @@ const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_);
 const bool Handle_s2c_MONSTER_AGGRO_START(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_START& pkt_);
 const bool Handle_s2c_MONSTER_AGGRO_END(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_END& pkt_);
+const bool Handle_s2c_PLAYER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_ATTACK& pkt_);
 const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_DEATH& pkt_);
 const bool Handle_s2c_REQUEST_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REQUEST_QUEST& pkt_);
 const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CLEAR_QUEST& pkt_);
@@ -56,6 +58,7 @@ public:
         RegisterHandler<PKT_ID::s2c_MONSTER_ATTACK, Nagox::Protocol::s2c_MONSTER_ATTACK, Handle_s2c_MONSTER_ATTACK>();
         RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_START, Nagox::Protocol::s2c_MONSTER_AGGRO_START, Handle_s2c_MONSTER_AGGRO_START>();
         RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_END, Nagox::Protocol::s2c_MONSTER_AGGRO_END, Handle_s2c_MONSTER_AGGRO_END>();
+        RegisterHandler<PKT_ID::s2c_PLAYER_ATTACK, Nagox::Protocol::s2c_PLAYER_ATTACK, Handle_s2c_PLAYER_ATTACK>();
         RegisterHandler<PKT_ID::s2c_PLAYER_DEATH, Nagox::Protocol::s2c_PLAYER_DEATH, Handle_s2c_PLAYER_DEATH>();
         RegisterHandler<PKT_ID::s2c_REQUEST_QUEST, Nagox::Protocol::s2c_REQUEST_QUEST, Handle_s2c_REQUEST_QUEST>();
         RegisterHandler<PKT_ID::s2c_CLEAR_QUEST, Nagox::Protocol::s2c_CLEAR_QUEST, Handle_s2c_CLEAR_QUEST>();

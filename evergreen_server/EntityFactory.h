@@ -16,5 +16,7 @@ namespace ServerCore
 	public:
 
 		static S_ptr<ContentsEntity> CreateMonster(const EntityBuilder& b)noexcept;
+
+		static S_ptr<ContentsEntity> CreateNPC(const EntityBuilder& b)noexcept;
 	};
 }

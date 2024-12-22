@@ -49,6 +49,12 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_MONSTER_AGGRO_END(
     const uint8_t obj_type_info,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_PLAYER_ATTACK(
+    const uint64_t atk_player_id,
+    const float body_angle,
+    const Nagox::Struct::Vec3& atk_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_PLAYER_DEATH(
     const uint64_t player_id,
     const Nagox::Struct::Vec3& rebirth_pos,

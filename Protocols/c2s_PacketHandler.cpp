@@ -139,6 +139,9 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 			}
 		}
 	}
+
+	pOwner->GetCurCluster()->Broadcast(Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), *pkt_.atk_pos()));
+
 	return true;
 }
 
@@ -155,8 +158,8 @@ const bool Handle_c2s_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSes
 const bool Handle_c2s_REQUEST_QUEST(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_)
 {
 	const auto owner = pSession_->GetOwnerEntity();
-	const auto q = ServerCore::xnew<KillFoxQuest>();
-	if (!owner->GetComp<QuestSystem>()->AddQuest(0,q))
+	const auto q = ServerCore::xnew<KillFoxQuest>(0);
+	if (!owner->GetComp<QuestSystem>()->AddQuest(q))
 	{
 		xdelete<Quest>(q);
 	}

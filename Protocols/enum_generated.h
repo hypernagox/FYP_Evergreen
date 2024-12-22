@@ -19,29 +19,32 @@ namespace Enum {
 enum GROUP_TYPE : uint8_t {
   GROUP_TYPE_PLAYER = 0,
   GROUP_TYPE_MONSTER = 1,
+  GROUP_TYPE_NPC = 2,
   GROUP_TYPE_MIN = GROUP_TYPE_PLAYER,
-  GROUP_TYPE_MAX = GROUP_TYPE_MONSTER
+  GROUP_TYPE_MAX = GROUP_TYPE_NPC
 };
 
-inline const GROUP_TYPE (&EnumValuesGROUP_TYPE())[2] {
+inline const GROUP_TYPE (&EnumValuesGROUP_TYPE())[3] {
   static const GROUP_TYPE values[] = {
     GROUP_TYPE_PLAYER,
-    GROUP_TYPE_MONSTER
+    GROUP_TYPE_MONSTER,
+    GROUP_TYPE_NPC
   };
   return values;
 }
 
 inline const char * const *EnumNamesGROUP_TYPE() {
-  static const char * const names[3] = {
+  static const char * const names[4] = {
     "PLAYER",
     "MONSTER",
+    "NPC",
     nullptr
   };
   return names;
 }
 
 inline const char *EnumNameGROUP_TYPE(GROUP_TYPE e) {
-  if (::flatbuffers::IsOutRange(e, GROUP_TYPE_PLAYER, GROUP_TYPE_MONSTER)) return "";
+  if (::flatbuffers::IsOutRange(e, GROUP_TYPE_PLAYER, GROUP_TYPE_NPC)) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesGROUP_TYPE()[index];
 }

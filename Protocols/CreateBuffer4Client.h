@@ -29,6 +29,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_MOVE(
 )noexcept;
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_ATTACK(
     const float body_angle,
+    const Nagox::Struct::Vec3& atk_pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_DEATH(

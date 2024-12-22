@@ -49,4 +49,11 @@ namespace ServerCore
 
 		return monster_entity;
 	}
+	S_ptr<ContentsEntity> EntityFactory::CreateNPC(const EntityBuilder& b) noexcept
+	{
+		const auto entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
+		// TODO: NPC에 필요한 부가정보
+		entity->AddComp<PositionComponent>()->pos = {};
+		return entity;
+	}
 }

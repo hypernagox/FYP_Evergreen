@@ -32,6 +32,11 @@ private:
 	static std::shared_ptr<udsdx::SceneObject> Create_Monster(EntityBuilderBase* builder);
 #pragma endregion
 
+#pragma region NPC
+	static std::shared_ptr<udsdx::SceneObject> Create_NPC(EntityBuilderBase* builder);
+	
+#pragma endregion
+
 #pragma endregion
 
 
@@ -55,6 +60,12 @@ private:
 		monster_func_table[MONSTER_TYPE_INFO::FOX] = Create_Monster;
 
 
+#pragma endregion
+
+#pragma region NPC
+		auto& npc_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_NPC];
+
+		npc_func_table[0] = Create_NPC;
 #pragma endregion
 
 #pragma endregion

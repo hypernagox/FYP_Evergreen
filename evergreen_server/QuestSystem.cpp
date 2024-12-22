@@ -1,31 +1,59 @@
 #include "pch.h"
 #include "QuestSystem.h"
 #include "Quest.h"
+#include "Queueabler.h"
 
 QuestSystem::~QuestSystem() noexcept
 {
-	for (const auto [key, quest] : m_mapQuests)
+	for (uint8_t i = 0; i < MAX_NUM_OF_QUESTS; ++i)
 	{
-		ServerCore::xdelete<Quest>(quest);
+		const auto q = m_arrQuests[i];
+		if (q)ServerCore::xdelete<Quest>(q);
 	}
 }
 
-void QuestSystem::CheckQuestAchieve(const uint64_t quest_key, ServerCore::ContentsEntity* const key_entity) noexcept
+void QuestSystem::PostCheckQuestAchieve(ServerCore::S_ptr<ServerCore::ContentsEntity> key_entity) noexcept
 {
-	const auto [b, e] = m_mapQuests.equal_range(quest_key);
-	const auto pOwner = GetOwnerEntityRaw();
-	for (auto it = b; it != e;)
-	{
-		const auto& quest = it->second;
+	GetOwnerEntityRaw()->GetQueueabler()->EnqueueAsyncPushOnly(&QuestSystem::CheckQuestAchieve, this, std::move(key_entity));
+}
 
-		if (quest->OnAchieve(key_entity,pOwner))
+bool QuestSystem::AddQuest(Quest* const quest) noexcept
+{
+	uint8_t temp[MAX_NUM_OF_QUESTS] = { 0 };
+	uint8_t num_of_temp = 0;
+	const auto quest_key = quest->GetQuestKey();
+	for (uint8_t i = 0; i < MAX_NUM_OF_QUESTS; ++i)
+	{
+		const auto q = m_arrQuests[i];
+		if (q)
 		{
-			quest->OnReward(pOwner);
-			it = m_mapQuests.erase(it);
+			if (q->GetQuestKey() == quest_key)
+				return false;
 		}
 		else
+			temp[num_of_temp++] = i + 1;
+	}
+	for (uint8_t i = 0; i < MAX_NUM_OF_QUESTS; ++i)
+	{
+		if (0 == temp[i])break;
+		m_arrQuests[temp[i] - 1] = quest;
+		return true;
+	}
+	return false;
+}
+
+void QuestSystem::CheckQuestAchieve(const ServerCore::S_ptr<ServerCore::ContentsEntity> key_entity) noexcept
+{
+	const auto pOwner = GetOwnerEntityRaw();
+	const auto key_entity_raw = key_entity.get();
+	for (uint8_t i = 0; i < MAX_NUM_OF_QUESTS; ++i)
+	{
+		const auto q = m_arrQuests[i];
+		if (q && q->OnAchieve(key_entity_raw, pOwner))
 		{
-			++it;
+			m_arrQuests[i] = nullptr;
+			q->OnReward(pOwner);
+			ServerCore::xdelete<Quest>(q);
 		}
 	}
 }

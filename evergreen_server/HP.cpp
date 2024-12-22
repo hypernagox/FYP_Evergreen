@@ -31,7 +31,7 @@ void HP::DoDmg(const int dmg_, const ServerCore::S_ptr<ServerCore::ContentsEntit
 	if (const auto q = atkObject->GetComp<QuestSystem>())
 	{
 		// TODO 퀘스트 키값 정하기
-		q->CheckQuestAchieve(0, owner);
+		q->PostCheckQuestAchieve(owner->SharedFromThis());
 	}
 	m_bIsRebirth = true;
 }

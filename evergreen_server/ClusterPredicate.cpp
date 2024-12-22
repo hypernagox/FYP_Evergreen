@@ -43,10 +43,12 @@ bool ClusterPredicate::ClusterHuristicFunc2NPC(const ServerCore::ContentsEntity*
 
 	if (bRes)
 	{
-		const auto npc_timer = b->GetIocpComponent<ServerCore::TickTimer>();
-		const uint32_t awake_dist = npc_timer->GetAwakeDistance();
-		if (awake_dist >= dist)
-			npc_timer->TryExecuteTimer(a);
+		if (const auto npc_timer = b->GetIocpComponent<ServerCore::TickTimer>())
+		{
+			const uint32_t awake_dist = npc_timer->GetAwakeDistance();
+			if (awake_dist >= dist)
+				npc_timer->TryExecuteTimer(a);
+		}
 	}
 
 	return bRes;

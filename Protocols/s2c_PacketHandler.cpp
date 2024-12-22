@@ -6,6 +6,7 @@
 #include "../evergreen_client/MoveInterpolator.h"
 #include "func.h"
 #include "../evergreen_client/EntityBuilder.h"
+#include "PlayerRenderer.h"
 
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 	thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
@@ -77,6 +78,20 @@ const bool Handle_s2c_MONSTER_AGGRO_START(const NetHelper::S_ptr<NetHelper::Pack
 const bool Handle_s2c_MONSTER_AGGRO_END(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_END& pkt_)
 {
 	std::cout << "아무래도 여우는 당신에게 흥미가 없어진 것 같다 ..." << std::endl;
+	return true;
+}
+
+const bool Handle_s2c_PLAYER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_ATTACK& pkt_)
+{
+	if (g_heroObj->GetComponent<ServerObject>()->GetObjID() == pkt_.atk_player_id())return true;
+	const auto atk_player = Mgr(ServerObjectMgr)->GetServerObj(pkt_.atk_player_id());
+	if (!atk_player)return true;
+
+	atk_player->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(pkt_.body_angle() * DEG2RAD + PI, 0.0f, 0.0f));
+	atk_player->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.atk_pos()));
+	atk_player->GetComponent<PlayerRenderer>()->m_attackTime = 1.f;
+	atk_player->GetComponent<PlayerRenderer>()->SetAnimation("Bip001|attack1|BaseLayer");
+
 	return true;
 }
 

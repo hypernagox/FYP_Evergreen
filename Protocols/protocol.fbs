@@ -71,6 +71,14 @@ table s2c_MONSTER_AGGRO_END
 table c2s_PLAYER_ATTACK
 {
     body_angle: float;
+    atk_pos: Nagox.Struct.Vec3;
+}
+
+table s2c_PLAYER_ATTACK
+{
+    atk_player_id : uint64;
+    body_angle: float;
+    atk_pos: Nagox.Struct.Vec3;
 }
 
 table s2c_PLAYER_DEATH

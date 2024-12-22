@@ -89,7 +89,7 @@ void AuthenticPlayer::DoAttack()
 {
 	if constexpr (g_bUseNetWork)
 		Send(
-			Create_c2s_PLAYER_ATTACK(m_rendererBodyAngleY)
+			Create_c2s_PLAYER_ATTACK(m_rendererBodyAngleY,ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
 		);
 }
 
@@ -150,7 +150,7 @@ void AuthenticPlayer::Start()
 	input_handler->AddKeyFunc(Keyboard::S, KEY_STATE::KEY_HOLD, &AuthenticPlayer::MoveByView, this, Vector3(0.0f, 0.0f, -1.0f) * 100.0f);
 	input_handler->AddKeyFunc(Keyboard::D, KEY_STATE::KEY_HOLD, &AuthenticPlayer::MoveByView, this, Vector3(1.0f, 0.0f, 0.0f) * 100.0f);
 
-	input_handler->AddKeyFunc(Keyboard::Space, KEY_STATE::KET_TAP, &AuthenticPlayer::DoAttack, this);
+	//input_handler->AddKeyFunc(Keyboard::Space, KEY_STATE::KET_TAP, &AuthenticPlayer::DoAttack, this);
 	input_handler->AddKeyFunc(Keyboard::CapsLock, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuest, this);
 
 	m_pServerObject = GetComponent<ServerObject>();
@@ -190,6 +190,15 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	{
 		m_curCamMode = (m_curCamMode + 1) % 3;
 		m_fpChangeCamMode[m_curCamMode]();
+	}
+
+	// TODO 하드코딩
+	static float cool_down = 0.f;
+	cool_down -= DT;
+	if (INSTANCE(Input)->GetMouseLeftButtonDown() && 0.f >= cool_down)
+	{
+		cool_down = 1.f;
+		DoAttack();
 	}
 
 	const Vector3 velocity = m_entityMovement->GetVelocity();

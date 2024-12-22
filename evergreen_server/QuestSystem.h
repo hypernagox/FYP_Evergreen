@@ -7,22 +7,18 @@ class QuestSystem
 	:public ContentsComponent
 {
 public:
+	static constexpr const uint8_t MAX_NUM_OF_QUESTS = 10;
+public:
 	CONSTRUCTOR_CONTENTS_COMPONENT(QuestSystem)
 public:
 	virtual ~QuestSystem()noexcept;
 public:
-	void CheckQuestAchieve(const uint64_t quest_key, ServerCore::ContentsEntity* const key_entity)noexcept;
-
-	bool AddQuest(const uint64_t quest_key, Quest* const quest)noexcept { 
-		if (m_mapQuests.contains(quest_key))
-		{
-			return false;
-		}
-		m_mapQuests.emplace(quest_key, quest);
-		return true;
-	}
+	void PostCheckQuestAchieve(ServerCore::S_ptr<ServerCore::ContentsEntity> key_entity)noexcept;
+	bool AddQuest(Quest* const quest)noexcept;
 private:
-	//TODO: 커스텀할당자 멀티맵 쓰기
-	std::multimap<uint64_t, Quest*> m_mapQuests;
+	void CheckQuestAchieve(const ServerCore::S_ptr<ServerCore::ContentsEntity> key_entity)noexcept;
+private:
+	// TODO: 바이트정렬
+	Quest* m_arrQuests[MAX_NUM_OF_QUESTS] = { nullptr };
 };
 
