@@ -1,6 +1,6 @@
 #pragma once
-#include "CoRoutine.hpp"
 #include "ThreadMgr.h"
+#include "NagoxAtomic.h"
 
 namespace ServerCore
 {
@@ -62,6 +62,7 @@ namespace ServerCore
 		void ReserveAsyncTask(c_uint64 tickAfter, IocpEvent* const pTimerEvent_)noexcept;
 		void DistributeTask()noexcept;
 	private:
+		volatile CHAR m_timerTaskFlag = false;
 		tbb::concurrent_priority_queue <TimerTask, TimerCompare, StlAllocator64<TimerTask>> m_timerTaskQueue;
 	};
 }

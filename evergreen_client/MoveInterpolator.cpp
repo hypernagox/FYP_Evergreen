@@ -29,9 +29,9 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	const auto vel = ToOriginVec3(pkt_.vel());
 	const auto accel = ToOriginVec3(pkt_.accel());
 	
-	const auto dt = (NetHelper::GetSystemTimeStampMilliseconds() - pkt_.time_stamp()) / 2000.f;
+	//const auto dt = (NetHelper::GetSystemTimeStampMilliseconds() - pkt_.time_stamp()) / 2000.f;
 
-	//const auto dt = DT;
+	const auto dt = DT;
 
 	const Vector3 vFutureVel = vel + accel * dt;
 

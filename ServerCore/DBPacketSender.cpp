@@ -40,16 +40,16 @@ namespace ServerCore
 			m_bRegisterSend.store(false, std::memory_order_release);
 			return;
 		}
-
-		m_iocpEvent.Init();
-
-		if (SOCKET_ERROR == ::WSASend(m_queryServerSocket, wsaBufs.data(), static_cast<const DWORD>(num), NULL, 0, &m_iocpEvent, nullptr))
-		{
-			const int32 errorCode = ::WSAGetLastError();
-			if (errorCode != WSA_IO_PENDING)
-			{
-				// TODO:: 에러처리
-			}
-		}
+		// TODO: Send Event로 바꿔야함
+		//m_iocpEvent.Init();
+		//
+		//if (SOCKET_ERROR == ::WSASend(m_queryServerSocket, wsaBufs.data(), static_cast<const DWORD>(num), NULL, 0, &m_iocpEvent, nullptr))
+		//{
+		//	const int32 errorCode = ::WSAGetLastError();
+		//	if (errorCode != WSA_IO_PENDING)
+		//	{
+		//		// TODO:: 에러처리
+		//	}
+		//}
     }
 }

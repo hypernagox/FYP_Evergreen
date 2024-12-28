@@ -99,7 +99,7 @@ namespace ServerCore
 			{
 				dbEvent->ExecuteQuery();
 				//m_dbHandle->Unbind();
-				::PostQueuedCompletionStatus(iocpHandle, 0, 0, &dbEvent->m_dbEvent);
+				::PostQueuedCompletionStatus(iocpHandle, 0, 0, dbEvent->m_dbEvent.GetOverlappedAddr());
 			}
 			dbEvents.clear();
 		}

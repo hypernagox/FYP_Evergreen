@@ -14,7 +14,7 @@ namespace ServerCore
 	thread_local Vector<WSABUF> wsaBufs(128);
 
 	Session::Session(const PacketHandleFunc* const sessionPacketHandler_)noexcept
-		: IocpComponent{ aligned_xnew<ContentsEntity>(this) }
+		: m_pOwnerEntity{ aligned_xnew<ContentsEntity>(this) }
 		, m_pRecvEvent{ aligned_xnew<RecvEvent>() }
 		, m_pDisconnectEvent{ MakeUniqueSized<DisconnectEvent>() }
 		, m_pSendEvent{ aligned_xnew<SendEvent>() }
@@ -29,7 +29,7 @@ namespace ServerCore
 	}
 
 	Session::Session(const PacketHandleFunc* const sessionPacketHandler_, const bool bNeedConnect) noexcept
-		: IocpComponent{ aligned_xnew<ContentsEntity>(this) }
+		: m_pOwnerEntity{ aligned_xnew<ContentsEntity>(this) }
 		, m_pRecvEvent{ aligned_xnew<RecvEvent>() }
 		, m_pConnectEvent{ MakeUniqueSized<ConnectEvent>() }
 		, m_pDisconnectEvent{ MakeUniqueSized<DisconnectEvent>() }
@@ -76,7 +76,7 @@ namespace ServerCore
 
 	void Session::Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept
 	{
-		(this->*g_sessionLookupTable[static_cast<const uint8_t>(iocpEvent_->GetEventType())])(iocpEvent_->PassIocpObject(), numOfBytes);
+		(this->*g_sessionLookupTable[static_cast<const uint8_t>(iocpEvent_->GetEventType<EVENT_TYPE>())])(iocpEvent_->PassIocpObject(), numOfBytes);
 	}
 
 	bool Session::RegisterConnect()
@@ -101,7 +101,7 @@ namespace ServerCore
 
 		//DWORD numOfBytes = 0;
 
-		if (false == SocketUtils::ConnectEx(connect_socket, reinterpret_cast<const SOCKADDR* const>(&sockAddr), sizeof(sockAddr), NULL, NULL, NULL, connect_event))
+		if (false == SocketUtils::ConnectEx(connect_socket, reinterpret_cast<const SOCKADDR* const>(&sockAddr), sizeof(sockAddr), NULL, NULL, NULL, connect_event->GetOverlappedAddr()))
 		{
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
@@ -147,7 +147,7 @@ namespace ServerCore
 
 		::shutdown(disconnect_socket, SD_BOTH);
 
-		if (false == SocketUtils::DisconnectEx(disconnect_socket, disconnect_event, TF_REUSE_SOCKET, 0))
+		if (false == SocketUtils::DisconnectEx(disconnect_socket, disconnect_event->GetOverlappedAddr(), TF_REUSE_SOCKET, 0))
 		{
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
@@ -163,7 +163,7 @@ namespace ServerCore
 				ContentsEntity* const pOwner = GetOwnerEntity();
 				pOwner->TryOnDestroy();
 				GetService()->ReleaseSession(this);
-				 pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
+				pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
 				pOwner->DecRef();
 
 				return false;
@@ -179,7 +179,7 @@ namespace ServerCore
 		ContentsEntity* const pOwner = GetOwnerEntity();
 		pOwner->TryOnDestroy();
 		GetService()->ReleaseSession(this);
-		 pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
+		pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
 		pOwner->DecRef();
 	}
 
@@ -200,7 +200,7 @@ namespace ServerCore
 		recv_event->SetIocpObject(std::move(pThisSessionPtr));
 		DWORD flags = 0;
 
-		if (SOCKET_ERROR == ::WSARecv(recv_socket, &wsaBuf, 1, NULL, &flags, recv_event, nullptr))
+		if (SOCKET_ERROR == ::WSARecv(recv_socket, &wsaBuf, 1, NULL, &flags, recv_event->GetOverlappedAddr(), nullptr))
 		{
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
@@ -277,15 +277,15 @@ namespace ServerCore
 					false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 				{
 					const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
-					const auto register_send_event = m_pSendEvent->m_registerSendEvent;
-					register_send_event->SetIocpObject(std::move(temp_session));
-					::PostQueuedCompletionStatus(iocp_handle, 0, 0, register_send_event);
+					auto& register_send_event = m_pSendEvent->m_registerSendEvent;
+					register_send_event.SetIocpObject(std::move(temp_session));
+					::PostQueuedCompletionStatus(iocp_handle, 0, 0, register_send_event.GetOverlappedAddr());
 				}
 			}
 			return;
 		}
 
-		if (SOCKET_ERROR == ::WSASend(send_socket, wsaBufs.data(), num, NULL, 0, send_event, nullptr))
+		if (SOCKET_ERROR == ::WSASend(send_socket, wsaBufs.data(), num, NULL, 0, send_event->GetOverlappedAddr(), nullptr))
 		{
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
@@ -323,7 +323,6 @@ namespace ServerCore
 
 	void Session::HandleError(c_int32 errorCode)noexcept
 	{
-		std::cout << "!";
 		Disconnect(L"HandleError");
 		switch (errorCode)
 		{

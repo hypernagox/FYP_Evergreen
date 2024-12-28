@@ -17,7 +17,7 @@ namespace ServerCore
 		::CloseHandle(m_iocpHandle);
 	}
 
-	const bool IocpCore::Dispatch(const HANDLE iocpHandle_, c_uint32 timeOutMs) noexcept
+	void IocpCore::Dispatch(const HANDLE iocpHandle_, c_uint32 timeOutMs) noexcept
 	{
 		constinit extern thread_local uint64_t LEndTickCount;
 		constinit extern thread_local uint64_t LCurHandleSessionID;
@@ -28,32 +28,37 @@ namespace ServerCore
 
 		const BOOL bResult = ::GetQueuedCompletionStatus(iocpHandle_, OUT & numOfBytes, OUT reinterpret_cast<PULONG_PTR>(&CurHandleSessionID), OUT reinterpret_cast<LPOVERLAPPED*>(&iocpEvent), timeOutMs);
 
+		const int32_t errCode = ::WSAGetLastError();
 		LCurHandleSessionID = CurHandleSessionID;
 		LEndTickCount = ::GetTickCount64() + 64;
 
 		if (iocpEvent)
 		{
-			if (const S_ptr<IocpObject>& iocpObject = iocpEvent->GetIocpObject())
+			iocpEvent -= 1;
+			if (IocpObject* const iocpObject = iocpEvent->GetIocpObject()) [[likely]]
 			{
 				iocpObject->Dispatch(iocpEvent, numOfBytes);
-
-				return true;
 			}
 		}
 		else
 		{
-			const int32 errCode = ::WSAGetLastError();
-			switch (errCode)
+			if (const auto global_task = reinterpret_cast<Task* const>(CurHandleSessionID)) [[likely]]
 			{
-			case WAIT_TIMEOUT:
-				return false;
-			default:
-				// TODO 왜 여기로 왔는지 로그 찍기
-				//iocpObject->Dispatch(iocpEvent, numOfBytes);
-				break;
+				global_task->ExecuteTask();
+				xdelete<Task>(global_task);
 			}
 		}
 
-		return false;
+		if (FALSE == bResult)
+		{
+			switch (errCode)
+			{
+			case WAIT_TIMEOUT:
+				return;
+			default:
+				// TODO 왜 여기로 왔는지 로그 찍기
+				break;
+			}
+		}
 	}
 }

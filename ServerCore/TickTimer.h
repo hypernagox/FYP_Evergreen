@@ -1,5 +1,6 @@
 #pragma once
 #include "BehaviorTree.hpp"
+#include "NagoxAtomic.h"
 
 namespace ServerCore
 {
@@ -25,22 +26,21 @@ namespace ServerCore
 		const uint32_t GetAwakeDistance()const noexcept { return m_npcAwakeDistance; }
 		const auto& GetCurObjInSight()const noexcept { return m_curObjInSight; }
 	protected:
-		void AwakerInformation(const ContentsEntity* const awaker)noexcept { m_curAwaker = awaker->SharedFromThis(); }
+		void AwakerInformation(const ContentsEntity* const awaker)noexcept {
+			if (awaker != m_curAwaker.get())
+				m_curAwaker = awaker->SharedFromThis();
+		}
 		virtual const ServerCore::TIMER_STATE TimerUpdate()noexcept = 0;
 	private:
-		virtual void Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept override;
+		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept override;
 		const bool TryExecuteTimerInternal(const ContentsEntity* const awaker)noexcept;
-		virtual void OnDestroy()noexcept override;
-		void Tick()noexcept;
-		template<typename T = TickTimer>
-		S_ptr<T> SharedFromThis()const noexcept { return S_ptr<T>{this}; }
+		void Tick(S_ptr<ContentsEntity>* const owner_entity)noexcept;
 	protected:
 		const uint16_t m_npcAwakeDistance;
-		std::atomic<TIMER_STATE> m_timer_state = TIMER_STATE::IDLE;
+		NagoxAtomic::Atomic<TIMER_STATE> m_timer_state{ TIMER_STATE::IDLE };
 		uint32_t m_tickInterval = 200;
 		S_ptr<ContentsEntity> m_curAwaker;
 		Vector<uint32_t> m_curObjInSight;
-		IocpEvent* m_timerEvent = xnew<IocpEvent>(EVENT_TYPE::TIMER, SharedFromThis());
 	};
 }
 
@@ -61,8 +61,6 @@ public:
 	void SetBTRevaluateInterval(const uint16_t bt_revaluate_interval)noexcept { m_btRevaluateInterval = bt_revaluate_interval; }
 	template <typename T = CompositeNode>
 	constexpr inline T* const GetRootNode()const noexcept { return static_cast<T* const>(m_rootNode); }
-	template<typename T = TickTimerBT>
-	ServerCore::S_ptr<T> SharedFromThis()const noexcept { return ServerCore::S_ptr<T>{this}; }
 protected:
 	virtual const ServerCore::TIMER_STATE TimerUpdate()noexcept override;
 private:

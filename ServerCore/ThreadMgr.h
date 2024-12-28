@@ -45,53 +45,53 @@ namespace ServerCore
 		template<typename T, typename U, typename Ret, typename... Args> requires std::derived_from<U, T>
 		void EnqueueGlobalTask(Ret(T::* const memFunc)(Args...)noexcept, const S_ptr<U>& memFuncInstance, Args&&... args)noexcept
 		{
-			m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, memFuncInstance, std::forward<Args>(args)...));
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			//m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, memFuncInstance, std::forward<Args>(args)...));
+			PostQueuedCompletionStatus(m_iocpHandle, 0, (ULONG_PTR)xnew<Task>(Task(memFunc, memFuncInstance, std::forward<Args>(args)...)), 0);
 		}
 		template<typename T, typename U, typename Ret, typename... Args> requires std::derived_from<U, T>
 		void EnqueueGlobalTask(Ret(T::* const memFunc)(Args...)noexcept, S_ptr<U>&& memFuncInstance, Args&&... args)noexcept
 		{
-			m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, std::move(memFuncInstance), std::forward<Args>(args)...));
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			//m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, std::move(memFuncInstance), std::forward<Args>(args)...));
+			PostQueuedCompletionStatus(m_iocpHandle, 0, (ULONG_PTR)xnew<Task>(Task(memFunc, std::move(memFuncInstance), std::forward<Args>(args)...)), 0);
 		}
 		template<typename T, typename U, typename Ret, typename... Args> requires EnableSharedFromThis<U> && std::derived_from<U, T>
 		void EnqueueGlobalTask(Ret(T::* const memFunc)(Args...)noexcept, U* const memFuncInstance, Args&&... args)noexcept
 		{
-			m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, memFuncInstance, std::forward<Args>(args)...));
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			//m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, memFuncInstance, std::forward<Args>(args)...));
+			PostQueuedCompletionStatus(m_iocpHandle, 0, (ULONG_PTR)xnew<Task>(Task(memFunc, memFuncInstance, std::forward<Args>(args)...)), 0);
 		}
 		template<typename T, typename U, typename Ret, typename... Args> requires std::derived_from<U, T>
 		void EnqueueGlobalTask(Ret(T::* const memFunc)(Args...), const S_ptr<U>& memFuncInstance, Args&&... args)noexcept
 		{
-			m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, memFuncInstance, std::forward<Args>(args)...));
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			//m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, memFuncInstance, std::forward<Args>(args)...));
+			PostQueuedCompletionStatus(m_iocpHandle, 0, (ULONG_PTR)xnew<Task>(Task(memFunc, memFuncInstance, std::forward<Args>(args)...)), 0);
 		}
 		template<typename T, typename U, typename Ret, typename... Args> requires std::derived_from<U, T>
 		void EnqueueGlobalTask(Ret(T::* const memFunc)(Args...), S_ptr<U>&& memFuncInstance, Args&&... args)noexcept
 		{
-			m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, std::move(memFuncInstance), std::forward<Args>(args)...));
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			//m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, std::move(memFuncInstance), std::forward<Args>(args)...));
+			PostQueuedCompletionStatus(m_iocpHandle, 0, (ULONG_PTR)xnew<Task>(Task(memFunc, std::move(memFuncInstance), std::forward<Args>(args)...)), 0);
 		}
 		template<typename T, typename U, typename Ret, typename... Args> requires EnableSharedFromThis<U> && std::derived_from<U, T>
 		void EnqueueGlobalTask(Ret(T::* const memFunc)(Args...), U* const memFuncInstance, Args&&... args)noexcept
 		{
-			m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, memFuncInstance, std::forward<Args>(args)...));
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			//m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(memFunc, memFuncInstance, std::forward<Args>(args)...));
+			PostQueuedCompletionStatus(m_iocpHandle, 0, (ULONG_PTR)xnew<Task>(Task(memFunc, memFuncInstance, std::forward<Args>(args)...)), 0);
 		}
 		template<typename Func, typename... Args> requires std::invocable<Func, Args...>&& IsNotMemFunc<Func>
 		void EnqueueGlobalTask(Func&& fp, Args&&... args)noexcept
 		{
-			m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(std::forward<Func>(fp), std::forward<Args>(args)...));
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			//m_globalTask.enqueue(*LPro_tokenGlobalTask, Task(std::forward<Func>(fp), std::forward<Args>(args)...));
+			PostQueuedCompletionStatus(m_iocpHandle, 0, (ULONG_PTR)xnew<Task>(Task(std::forward<Func>(fp), std::forward<Args>(args)...)), 0);
 		}
 		void EnqueueGlobalTask(Task&& task_)noexcept {
-			m_globalTask.enqueue(*LPro_tokenGlobalTask, std::move(task_));
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			//m_globalTask.enqueue(*LPro_tokenGlobalTask, std::move(task_));
+			PostQueuedCompletionStatus(m_iocpHandle, 0, (ULONG_PTR)xnew<Task>(std::move(task_)), 0);
 		}
-		void EnqueueGlobalTaskBulk(Task* const taskBulks, const std::size_t num_of_task)noexcept {
-			m_globalTask.enqueue_bulk(*LPro_tokenGlobalTask, taskBulks, num_of_task);
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
-		}
+		//void EnqueueGlobalTaskBulk(Task* const taskBulks, const std::size_t num_of_task)noexcept {
+		//	m_globalTask.enqueue_bulk(*LPro_tokenGlobalTask, taskBulks, num_of_task);
+		//	PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+		//}
 		template<typename Func, typename... Args>
 			requires std::invocable<Func, Args...>
 		std::future<std::invoke_result_t<Func, Args...>> EnqueueGlobalTaskFuture(Func&& fp, Args&&... args) noexcept
@@ -99,8 +99,8 @@ namespace ServerCore
 			using return_type = std::invoke_result_t<Func, Args...>;
 			auto task = MakeUnique<std::packaged_task<return_type(void)>>(std::bind_front(std::forward<Func>(fp), std::forward<Args>(args)...));
 			std::future<return_type> res_future = task->get_future();
-			EnqueueGlobalTask(Task(([task = std::move(task)]() noexcept {(*task)(); })));
-			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
+			//EnqueueGlobalTask(Task(([task = std::move(task)]() noexcept {(*task)(); })));
+			PostQueuedCompletionStatus(m_iocpHandle, 0, (ULONG_PTR)xnew<Task>(Task(([task = std::move(task)]() noexcept {(*task)(); }))), 0);
 			return res_future;
 		}
 		const bool& GetStopFlagRef()const noexcept { return m_bStopRequest; }
@@ -112,11 +112,12 @@ namespace ServerCore
 	private:
 		bool m_bStopRequest = false;
 		HANDLE m_iocpHandle;
-		moodycamel::ConcurrentQueue<Task, LFQueueAllocator> m_globalTask{ 32 };
 		std::vector<std::thread> m_threads;
 		std::thread m_timerThread;
-		
 
+		moodycamel::ConcurrentQueue<Task, LFQueueAllocator> m_globalTask{ 32 };
+	
+		
 		constinit static inline std::atomic<uint32_t> g_threadID = 0;
 		static inline std::function<void(void)> g_initTLSCallBack = {};
 		static inline std::function<void(void)> g_destroyTLSCallBack = {};

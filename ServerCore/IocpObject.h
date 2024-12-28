@@ -142,7 +142,6 @@ namespace ServerCore
 	private:
 		void PostEntityTask(Task&& task_)const noexcept;
 		void OnDestroy()noexcept;
-		void Destroy()noexcept;
 	private:
 		alignas(64) PacketSession* const m_pSession = nullptr;
 		const uint64_t m_objectCombineID;
@@ -158,28 +157,29 @@ namespace ServerCore
 	static constexpr inline S_ptr<ContentsEntity> CreateContentsEntity(const T type_id, const U obj_type_info)noexcept { return MakeSharedAligned<ContentsEntity>(static_cast<const uint16_t>(type_id), static_cast<const uint8_t>(obj_type_info)); }
 
 	class IocpComponent
-		:public IocpObject
 	{
+		friend class ContentsEntity;
 	public:
-		IocpComponent(ContentsEntity* const pOwner_)noexcept :m_pOwnerEntity{ pOwner_ } {}
-		virtual ~IocpComponent()noexcept = default;
+		IocpComponent(ContentsEntity* const pOwner_, const IOCP_COMPONENT compType)noexcept;
+		virtual ~IocpComponent()noexcept;
 	public:
-		template<typename T = IocpComponent>
-		constexpr inline S_ptr<T> SharedFromThis()const noexcept { return S_ptr<T>{this}; }
 		constexpr inline const ContentsEntity* const GetOwnerEntity()const noexcept { return m_pOwnerEntity; }
 		constexpr inline ContentsEntity* const GetOwnerEntity()noexcept { return m_pOwnerEntity; }
+
 		inline const bool IsValid()const noexcept { return m_pOwnerEntity->IsValid(); }
 	public:
 		inline const uint16_t GetOwnerObjectType()const noexcept { return m_pOwnerEntity->GetObjectType(); }
 		inline const uint32_t GetOwnerObjectID()const noexcept { return m_pOwnerEntity->GetObjectID(); }
 		// inline const ID_Ptr<Sector> GetOwnerSectorInfo()const noexcept { return m_pOwnerEntity->GetCombinedSectorInfo(); }
 		const ClusterInfo GetOwnerClusterInfo()const noexcept { return m_pOwnerEntity->GetClusterInfo(); }
-		virtual void OnDestroy()noexcept = 0;
 	protected:
-		virtual void Dispatch(ServerCore::IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept = 0;
-		inline void IncOwnerRef()const noexcept { m_pOwnerEntity->IncRef(); }
-		inline void DecOwnerRef()const noexcept { m_pOwnerEntity->DecRef(); }
+		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept = 0;
+		void PostIocpEvent(S_ptr<ContentsEntity>* const owner_entity = nullptr)noexcept;
+		void ReserveIocpEvent(const uint64_t tickAfterMs_, S_ptr<ContentsEntity>* const owner_entity = nullptr)noexcept;
+
+		class IocpCompEvent& GetIocpCompEvent()const noexcept { return reinterpret_cast<IocpCompEvent&>(const_cast<uint64_t&>(m_iocpCompEvent)); }
 	private:
 		ContentsEntity* const m_pOwnerEntity;
+		const uint64_t m_iocpCompEvent;
 	};
 }

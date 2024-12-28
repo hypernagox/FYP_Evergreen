@@ -28,7 +28,7 @@ class ServerCore::Session;
 class ServerCore::SendBuffer;
 
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept;
-static inline const bool Handle_Invalid(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) noexcept { return false; }
+static inline const bool Handle_Invalid(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) noexcept { return true; }
 
 const bool Handle_s2c_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_);
 const bool Handle_s2c_APPEAR_OBJECT(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_APPEAR_OBJECT& pkt_);

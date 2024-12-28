@@ -62,10 +62,11 @@ namespace ServerCore
 		TASK,
 		DB,
 
-		CONTENTS_ENTITY_TASK,
 		TEMPORARY,
 
-		END
+		END,
+
+		CONTENTS_ENTITY_TASK = 255
 	};
 
 	enum class HEART_BEAT :uint16

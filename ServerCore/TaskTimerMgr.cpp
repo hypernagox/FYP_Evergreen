@@ -33,11 +33,13 @@ namespace ServerCore
 
 	void TaskTimerMgr::ReserveAsyncTask(c_uint64 tickAfter, Queueabler* const memfuncInstance, Task&& task)noexcept
 	{
+		memfuncInstance->GetOwnerEntity()->IncRef();
 		m_timerTaskQueue.emplace(
 			::GetTickCount64() + tickAfter,
 			[memfuncInstance, task = std::move(task)]()mutable noexcept
 			{
 				memfuncInstance->EnqueueAsyncTaskPushOnly(std::move(task));
+				memfuncInstance->GetOwnerEntity()->DecRef();
 			}
 		);
 	}
@@ -48,26 +50,31 @@ namespace ServerCore
 			::GetTickCount64() + tickAfter,
 			[pTimerEvent_]()noexcept
 			{
-				::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, pTimerEvent_);
+				::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, pTimerEvent_->GetOverlappedAddr());
 			}
 		);
 	}
 
 	void TaskTimerMgr::DistributeTask()noexcept
 	{
-		TimerTask task;
-		while (m_timerTaskQueue.try_pop(task))
+		if (false == m_timerTaskFlag && false == InterlockedExchange8(&m_timerTaskFlag, true))
 		{
-			if (::GetTickCount64() < task.executeTime)
+			TimerTask task;
+			while (m_timerTaskQueue.try_pop(task))
 			{
-				m_timerTaskQueue.emplace(std::move(task));
-				return;
+				if (::GetTickCount64() < task.executeTime)
+				{
+					m_timerTaskQueue.emplace(std::move(task));
+					break;
+				}
+				else
+				{
+					task.taskPtr.ExecuteTask();
+					//std::destroy_at<TimerTask>(&task);
+				}
 			}
-			else
-			{
-				task.taskPtr.ExecuteTask();
-				//std::destroy_at<TimerTask>(&task);
-			}
+
+			InterlockedExchange8(&m_timerTaskFlag, false);
 		}
 	}
 }

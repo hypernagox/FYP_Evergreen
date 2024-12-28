@@ -7,8 +7,7 @@ namespace ServerCore
 	constinit extern thread_local class Queueabler* LCurQueueableComponent;
 
 	Queueabler::Queueabler(ContentsEntity* const pOwner_)
-		: IocpComponent{ pOwner_ }
-		, m_taskEvent{ xnew<IocpEvent>(EVENT_TYPE::TASK, SharedFromThis()) }
+		: IocpComponent{ pOwner_ ,IOCP_COMPONENT::Queueabler }
 	{
 	}
 
@@ -17,21 +16,12 @@ namespace ServerCore
 		//std::cout << "È®ÀÎ" << std::endl;
 	}
 
-	void Queueabler::Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes) noexcept
+	void Queueabler::Dispatch(S_ptr<ContentsEntity>* const owner_entity) noexcept
 	{
-		if (EVENT_TYPE::TEMPORARY == iocpEvent_->GetEventType())
-		{
-			Execute();
-			xdelete_sized<IocpEvent>(iocpEvent_, sizeof(IocpEvent));
-		}
-		else
-		{
-			Execute();
-		}
-		DecOwnerRef();
+		Execute(owner_entity);
 	}
 
-	void Queueabler::Execute()noexcept
+	void Queueabler::Execute(S_ptr<ContentsEntity>* const owner_entity)noexcept
 	{
 		constinit extern thread_local uint64 LEndTickCount;
 		constinit extern thread_local class Queueabler* LCurQueueableComponent;
@@ -55,17 +45,8 @@ namespace ServerCore
 			{
 				if (flag)
 				{
-					if (m_taskEvent)
-					{
-						IncOwnerRef();
-						::PostQueuedCompletionStatus(iocp_handle, 0, 0, m_taskEvent);
-						break;
-					}
-					else
-					{
-						std::this_thread::yield();
-						continue;
-					}
+					PostIocpEvent(owner_entity);
+					break;
 				}
 				else
 				{
@@ -84,14 +65,8 @@ namespace ServerCore
 
 			if (::GetTickCount64() >= LEndTickCount)
 			{
-				if (m_taskEvent)
-				{
-					IncOwnerRef();
-					::PostQueuedCompletionStatus(iocp_handle, 0, 0, m_taskEvent);
-					break;
-				}
-				else
-					continue;
+				PostIocpEvent(owner_entity);
+				break;
 			}
 		}
 		LCurQueueableComponent = nullptr;

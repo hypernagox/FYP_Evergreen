@@ -32,13 +32,13 @@ namespace ServerCore
 	
 	ContentsEntity::~ContentsEntity() noexcept
 	{
-		std::cout << "DESTROY" << std::endl;
+		//std::cout << "DESTROY" << std::endl;
 		auto b = m_arrIocpComponents;
 		const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
 		while (e != b)
 		{
 			if (const auto iocp_comp = *b++)
-				iocp_comp->DecRef();
+				xdelete<IocpComponent>(iocp_comp);
 		}
 		xdelete<ComponentSystem>(m_componentSystem);
 		if (m_pSession) 
@@ -64,17 +64,30 @@ namespace ServerCore
 		auto& ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
 		ebr_pool.Start();
 		const auto ebr_node = ebr_pool.PopNode(SharedFromThis(), std::move(task_));
-		::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, &ebr_node->box_object);
+		::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, ebr_node->box_object.GetOverlappedAddr());
 	}
 
 	void ContentsEntity::Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes) noexcept
 	{
-		const S_ptr<ContentsEntity> temp{ iocpEvent_->PassIocpObject() };
-		ContentsEntityTask* const entity_task = static_cast<ContentsEntityTask* const>(iocpEvent_);
-		entity_task->m_contents_entity_task.ExecuteTask();
-		auto& ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
-		ebr_pool.PushNode(EBRBox<ContentsEntityTask>::GetEBRNodeAddress(entity_task));
-		ebr_pool.End();
+		
+		S_ptr<ContentsEntity> temp_entity_ptr{ iocpEvent_->PassIocpObject() };
+
+		const auto type = iocpEvent_->GetEventType<uint8_t>();
+
+		if ((uint8_t)EVENT_TYPE::CONTENTS_ENTITY_TASK == type)
+		{
+
+			ContentsEntityTask* const entity_task = static_cast<ContentsEntityTask* const>(iocpEvent_);
+			entity_task->m_contents_entity_task.ExecuteTask();
+			auto& ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
+			ebr_pool.PushNode(EBRBox<ContentsEntityTask>::GetEBRNodeAddress(entity_task));
+			ebr_pool.End();
+		}
+		else
+		{
+			m_arrIocpComponents[type]->Dispatch(&temp_entity_ptr);
+		}
+		
 		//xdelete_sized<ContentsEntityTask>(entity_task, sizeof(ContentsEntityTask));
 	}
 
@@ -83,10 +96,6 @@ namespace ServerCore
 		const auto cluster_ptr = GetCurCluster();
 		if (cluster_ptr) 
 			cluster_ptr->LeaveAndDestroyEnqueue(GetObjectType(), GetObjectID());
-		if (const auto queueabler = GetQueueabler())
-			queueabler->EnqueueAsyncTaskPushOnly(&ContentsEntity::Destroy, this);
-		else
-			Destroy();
 		if (nullptr == m_pSession)
 			Mgr(FieldMgr)->ReleaseNPC(this);
 		else
@@ -97,18 +106,35 @@ namespace ServerCore
 		}
 	}
 
-	void ContentsEntity::Destroy() noexcept
+	IocpComponent::IocpComponent(ContentsEntity* const pOwner_, const IOCP_COMPONENT compType) noexcept
+		:m_pOwnerEntity{ pOwner_ }, m_iocpCompEvent{ *((uint64_t*)(new ((IocpCompEvent*)&m_iocpCompEvent) IocpCompEvent{compType}))}
 	{
-		//if (m_pSession) 
-		//	m_pSession->OnDestroy(); // 나중에, 하트비트 같은거로 튕길 땐 써야할 듯
-		{
-			auto b = m_arrIocpComponents;
-			const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
-			while (e != b)
-			{
-				if (const auto iocp_comp = *b++)
-					iocp_comp->OnDestroy();
-			}
-		}
+	}
+
+	IocpComponent::~IocpComponent() noexcept
+	{
+		GetIocpCompEvent().ReleaseIocpObject();
+	}
+
+	void IocpComponent::PostIocpEvent(S_ptr<ContentsEntity>* const owner_entity) noexcept
+	{
+		auto& iocp_comp_event = GetIocpCompEvent();
+
+		if(owner_entity)
+			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{std::move(*owner_entity)});
+		else
+			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{ m_pOwnerEntity });
+
+		::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, iocp_comp_event.GetOverlappedAddr());
+	}
+
+	void IocpComponent::ReserveIocpEvent(const uint64_t tickAfterMs_, S_ptr<ContentsEntity>* const owner_entity) noexcept
+	{
+		auto& iocp_comp_event = GetIocpCompEvent();
+		if (owner_entity)
+			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{std::move(*owner_entity)});
+		else
+			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{ m_pOwnerEntity });
+		Mgr(TaskTimerMgr)->ReserveAsyncTask(tickAfterMs_, &iocp_comp_event);
 	}
 }

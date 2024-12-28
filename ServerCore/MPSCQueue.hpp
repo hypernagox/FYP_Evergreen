@@ -2,6 +2,7 @@
 #include "ServerCorePch.h"
 #include "EBR.hpp"
 #include "BackOff.h"
+#include "NagoxAtomic.h"
 
 namespace ServerCore
 {
@@ -12,7 +13,7 @@ namespace ServerCore
 		struct Node
 		{
 			T data;
-			std::atomic<Node*> next = nullptr;
+			NagoxAtomic::Atomic<Node*> next = nullptr;
 			template<typename... Args>
 			constexpr Node(Args&&... args)noexcept :data{ std::forward<Args>(args)... }, next{ nullptr } {}
 		};
@@ -25,7 +26,7 @@ namespace ServerCore
 			while (curTail != curHead)
 			{
 				Node* const delHead = curHead;
-				curHead = curHead->next.load(std::memory_order_acquire);
+				curHead = curHead->next.load();
 				xdelete<Node>(delHead);
 			}
 			head.store(curHead, std::memory_order_release);
@@ -58,7 +59,7 @@ namespace ServerCore
 		}
 		const bool try_pop_single(T& _target)noexcept {
 			Node* const head_temp = head.load(std::memory_order_relaxed);
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
+			if (Node* const __restrict newHead = head_temp->next.load())
 			{
 				Node* const oldHead = head_temp;
 				head.store(newHead, std::memory_order_release);
@@ -73,7 +74,7 @@ namespace ServerCore
 		}
 		const bool try_pop_single(Vector<T>& _targetForPushBack)noexcept {
 			Node* const head_temp = head.load(std::memory_order_relaxed);
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
+			if (Node* const __restrict newHead = head_temp->next.load())
 			{
 				Node* const oldHead = head_temp;
 				head.store(newHead, std::memory_order_release);
@@ -84,7 +85,7 @@ namespace ServerCore
 			return false;
 		}
 		const bool try_pop_single(T& _target, Node*& head_temp)noexcept {
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
+			if (Node* const __restrict newHead = head_temp->next.load())
 			{
 				Node* const oldHead = head_temp;
 				head_temp = newHead;
@@ -98,7 +99,7 @@ namespace ServerCore
 			return false;
 		}
 		const bool try_pop_single(Vector<T>& _targetForPushBack, Node*& head_temp)noexcept {
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
+			if (Node* const __restrict newHead = head_temp->next.load())
 			{
 				Node* const oldHead = head_temp;
 				head_temp = newHead;
@@ -109,7 +110,7 @@ namespace ServerCore
 			return false;
 		}
 		const bool try_pop_single(std::vector<T>& _targetForPushBack, Node*& head_temp)noexcept {
-			if (Node* const __restrict newHead = head_temp->next.load(std::memory_order_seq_cst))
+			if (Node* const __restrict newHead = head_temp->next.load())
 			{
 				Node* const oldHead = head_temp;
 				head_temp = newHead;

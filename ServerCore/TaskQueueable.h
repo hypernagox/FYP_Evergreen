@@ -4,6 +4,7 @@
 #include "ThreadMgr.h"
 #include "IocpObject.h"
 #include "IocpEvent.h"
+#include "NagoxAtomic.h"
 
 namespace ServerCore
 {
@@ -79,40 +80,35 @@ namespace ServerCore
 		{
 			Mgr(ThreadMgr)->EnqueueGlobalTask(memFunc, S_ptr<T>{this}, std::forward<Args>(args)...);
 		}
-		inline const bool TryDestroy()noexcept {
-			const bool bRes = m_bValid.exchange(false, std::memory_order_acq_rel);
-			if (bRes)EnqueueAsyncTask( &TaskQueueable::Destroy,S_ptr<TaskQueueable>{this} );
-			return bRes;
-		}
 	protected:
-		inline const bool IsValid()const noexcept { return m_bValid.load(std::memory_order_acquire); }
+		inline const bool IsValid()const noexcept { return m_bValid.load(); }
 	private:
 		virtual void Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept override;
 		void EnqueueAsyncTaskPushOnly(Task&& task_)noexcept;
 		template <typename Func, typename... Args> requires std::is_member_function_pointer_v<std::decay_t<Func>>
 		void EnqueueAsyncTask(Func&& fp, Args&&... args)noexcept;
-		void Execute()noexcept;
-		void Destroy()noexcept { xdelete_sized<IocpEvent>(m_taskEvent, sizeof(IocpEvent)); m_taskEvent = nullptr; }
+		void Execute(S_ptr<IocpObject>* const cur_ptr = nullptr)noexcept;
+		
 	private:
-		std::atomic<int32> m_taskCount = 0;
+		NagoxAtomic::Atomic<int32> m_taskCount{ 0 };
 		MPSCQueue<Task> m_taskQueue;
-		IocpEvent* m_taskEvent = xnew<IocpEvent>(EVENT_TYPE::TASK, SharedFromThis());
+		IocpEvent m_taskEvent;
 
-		std::atomic_bool m_bValid = true;
+		NagoxAtomic::Atomic<bool> m_bValid{ true };
 	};
 
 	template<typename Func, typename ...Args> requires std::is_member_function_pointer_v<std::decay_t<Func>>
 	inline void TaskQueueable::EnqueueAsyncTask(Func&& fp, Args && ...args) noexcept
 	{
 		constinit extern thread_local class TaskQueueable* LCurTaskQueue;
-		const int32 prevCount = m_taskCount.fetch_add(1, std::memory_order_seq_cst);
+		const int32 prevCount = m_taskCount.fetch_add(1);
 		if (0 == prevCount)
 		{
 			if (nullptr == LCurTaskQueue)
 			{
 				LCurTaskQueue = this;
 				std::invoke(std::forward<Func>(fp), std::forward<Args>(args)...);
-				if (1 != m_taskCount.fetch_sub(1, std::memory_order_acq_rel))
+				if (1 != m_taskCount.fetch_sub(1))
 				{
 					Execute();
 				}
@@ -124,13 +120,8 @@ namespace ServerCore
 			else
 			{
 				m_taskQueue.emplace(std::forward<Func>(fp), std::forward<Args>(args)...);
-				if (m_taskEvent)
-					::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, m_taskEvent);
-				else
-				{
-					::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0
-						, xnew<IocpEvent>(EVENT_TYPE::TEMPORARY, SharedFromThis()));
-				}
+				m_taskEvent.SetIocpObject(S_ptr<IocpObject>{this});
+				::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, m_taskEvent.GetOverlappedAddr());
 			}
 		}
 		else

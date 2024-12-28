@@ -74,8 +74,8 @@ namespace ServerCore
 
 	void Listener::Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept
 	{
-		NAGOX_ASSERT(iocpEvent_->GetEventType() == EVENT_TYPE::ACCEPT);
-		AcceptEvent* const acceptEvent = iocpEvent_->Cast<AcceptEvent>();
+		NAGOX_ASSERT(iocpEvent_->GetEventType<EVENT_TYPE>() == EVENT_TYPE::ACCEPT);
+		AcceptEvent* const acceptEvent = static_cast<AcceptEvent*>(iocpEvent_);
 		ProcessAccept(acceptEvent->PassSession(), acceptEvent);
 	}
 
@@ -90,7 +90,7 @@ namespace ServerCore
 
 		//DWORD bytesReceived;
 		if (false == SocketUtils::AcceptEx(m_socket, session->GetSocket(), session->m_pRecvBuffer->WritePos(), 0,
-			sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, NULL, acceptEvent))
+			sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, NULL, acceptEvent->GetOverlappedAddr()))
 		{
 			const int32 errCode = ::WSAGetLastError();
 			if (errCode != WSA_IO_PENDING)

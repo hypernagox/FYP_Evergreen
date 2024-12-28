@@ -76,22 +76,23 @@ namespace ServerCore
 			:m_count_ptr{ other.IncRef() }
 		{}
 		S_ptr& operator=(const S_ptr& other)noexcept {
-			if (this != &other) {
+			if (m_count_ptr != other.m_count_ptr) {
 				DecRef();
 				m_count_ptr = other.IncRef();
 			}
-			other.m_count_ptr = nullptr;
+			//other.m_count_ptr = nullptr;
 			return *this;
 		}
 		S_ptr(S_ptr&& other)noexcept
 			:m_count_ptr{ std::exchange(other.m_count_ptr,nullptr) }
 		{}
 		S_ptr& operator=(S_ptr&& other)noexcept {
-			if (this != &other) {
+			if (m_count_ptr != other.m_count_ptr) {
 				DecRef();
 				m_count_ptr = other.m_count_ptr;
+				other.m_count_ptr = nullptr;
 			}
-			other.m_count_ptr = nullptr;
+			other.reset();
 			return *this;
 		}
 	public:
@@ -101,11 +102,11 @@ namespace ServerCore
 		{}
 		template <typename U> requires std::derived_from<U, T>
 		S_ptr& operator=(const S_ptr<U>& other)noexcept {
-			if (this != static_cast<const void*const>(&other)) {
+			if (m_count_ptr != other.m_count_ptr) {
 				DecRef();
 				m_count_ptr = other.IncRef();
 			}
-			other.m_count_ptr = nullptr;
+			//other.m_count_ptr = nullptr;
 			return *this;
 		}
 		template <typename U> requires std::derived_from<U, T> || std::derived_from<T, U>
@@ -114,11 +115,12 @@ namespace ServerCore
 		{}
 		template <typename U> requires std::derived_from<U, T>
 		S_ptr& operator=(S_ptr<U>&& other)noexcept {
-			if (this != static_cast<const void* const>(&other)) {
+			if (m_count_ptr != other.m_count_ptr) {
 				DecRef();
 				m_count_ptr = other.m_count_ptr;
+				other.m_count_ptr = nullptr;
 			}
-			other.m_count_ptr = nullptr;
+			other.reset();
 			return *this;
 		}
 		explicit S_ptr(const uint64_t ptr)noexcept

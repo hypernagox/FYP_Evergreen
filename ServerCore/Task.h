@@ -9,6 +9,9 @@ namespace ServerCore
 	};
 
 	template<typename T>
+	concept  EnableSharedFromThis = IsSptr<T>;
+
+	template<typename T>
 	concept IsNotMemFunc = !std::is_member_function_pointer_v<T> && !std::is_member_function_pointer_v<std::decay_t<T>>;
 
 	class Task

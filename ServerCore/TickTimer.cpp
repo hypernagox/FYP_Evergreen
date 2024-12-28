@@ -6,88 +6,61 @@
 namespace ServerCore
 {
 	TickTimer::TickTimer(ContentsEntity* const pOwner_, const uint16_t awakeDist_) noexcept
-		: IocpComponent{ pOwner_ }
+		: IocpComponent{ pOwner_,IOCP_COMPONENT::TickTimer }
 		, m_npcAwakeDistance{ awakeDist_ }
-		, m_timerEvent{ xnew<IocpEvent>(EVENT_TYPE::TIMER, SharedFromThis()) }
 	{
-		// TODO: EBR로 바꾸기
 	}
+
 	const bool TickTimer::TryExecuteTimer(const ContentsEntity* const awaker)noexcept
 	{
 		if (!IsValid())return false;
 		return TryExecuteTimerInternal(awaker);
 	}
 
-	void TickTimer::Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes) noexcept
+	void TickTimer::Dispatch(S_ptr<ContentsEntity>* const owner_entity) noexcept
 	{
 		const auto pOwner = GetOwnerEntity();
 		const auto queueabler = pOwner->GetQueueabler();
 		auto& task_count = queueabler->m_taskCount;
 		if (1 == InterlockedIncrement(&task_count))
 		{
-			Tick();
+			Tick(owner_entity);
 			if (0 != InterlockedDecrement(&task_count))
 			{
-				queueabler->Execute();
+				queueabler->Execute(owner_entity);
 			}
 		}
 		else
 		{
-			queueabler->m_taskQueue.emplace(&TickTimer::Tick, this);
+			queueabler->m_taskQueue.emplace(&TickTimer::Tick, this, (S_ptr<ContentsEntity>*)nullptr);
 		}
-		pOwner->DecRef();
 	}
 
 	const bool TickTimer::TryExecuteTimerInternal(const ContentsEntity* const awaker) noexcept
 	{
-		const TIMER_STATE ePrevState = m_timer_state.exchange(TIMER_STATE::RUN, std::memory_order_relaxed);
+		const TIMER_STATE ePrevState = m_timer_state.exchange(TIMER_STATE::RUN);
 		if (TIMER_STATE::IDLE == ePrevState)
 		{
-			const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
 			AwakerInformation(awaker);
-			IncOwnerRef();
-			::PostQueuedCompletionStatus(iocp_handle, 0, 0, m_timerEvent);
+			PostIocpEvent();
 			return true;
 		}
 		else if (TIMER_STATE::PREPARE == ePrevState)
 		{
 			AwakerInformation(awaker);
-			IncOwnerRef();
-			Mgr(TaskTimerMgr)->ReserveAsyncTask(m_tickInterval, m_timerEvent);
+			ReserveIocpEvent(m_tickInterval);
 			return true;
 		}
 		return false;
 	}
 
-	void TickTimer::OnDestroy() noexcept
-	{
-		const TIMER_STATE ePrevState = m_timer_state.exchange(TIMER_STATE::RUN, std::memory_order_relaxed);
-		if (TIMER_STATE::IDLE == ePrevState)
-		{
-			const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
-			IncOwnerRef();
-			::PostQueuedCompletionStatus(iocp_handle, 0, 0, m_timerEvent);
-			
-		}
-		else if (TIMER_STATE::PREPARE == ePrevState)
-		{
-			IncOwnerRef();
-			Mgr(TaskTimerMgr)->ReserveAsyncTask(m_tickInterval, m_timerEvent);
-		}
-	}
+	
 
-	void TickTimer::Tick() noexcept
+	void TickTimer::Tick(S_ptr<ContentsEntity>* const owner_entity) noexcept
 	{
-		const auto pOwner = GetOwnerEntity();
-
 		if (false == IsValid())
 		{
-			if (m_timerEvent)
-			{
-				m_curAwaker.reset();
-				xdelete_sized<IocpEvent>(m_timerEvent, sizeof(IocpEvent));
-				m_timerEvent = nullptr;
-			}
+			m_curAwaker.reset();
 			return;
 		}
 
@@ -99,8 +72,7 @@ namespace ServerCore
 		const TIMER_STATE ePrevState = m_timer_state.exchange(eCurState);
 		if (TIMER_STATE::RUN == eCurState && TIMER_STATE::PREPARE == ePrevState)
 		{
-			IncOwnerRef();
-			Mgr(TaskTimerMgr)->ReserveAsyncTask(m_tickInterval, m_timerEvent);
+			ReserveIocpEvent(m_tickInterval, owner_entity);
 		}
 	}
 }

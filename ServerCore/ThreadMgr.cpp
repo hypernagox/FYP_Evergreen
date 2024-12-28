@@ -65,22 +65,22 @@ namespace ServerCore
 		while (g_threadID.load(std::memory_order_seq_cst) <= num_of_threads);
 		std::atomic_thread_fence(std::memory_order_seq_cst);
 
-		m_timerThread = std::thread{ []()noexcept
-			{
-				Mgr(ThreadMgr)->InitTLS();
-				const bool& bStopRequest = Mgr(ThreadMgr)->m_bStopRequest;
-				TaskTimerMgr& taskTimer = *Mgr(TaskTimerMgr);
-				for (;;)
-				{
-					if (bStopRequest) [[unlikely]]
-						break;
-
-					taskTimer.DistributeTask();
-
-					std::this_thread::yield();
-				}
-				Mgr(ThreadMgr)->DestroyTLS();
-			} };
+		//m_timerThread = std::thread{ []()noexcept
+		//	{
+		//		Mgr(ThreadMgr)->InitTLS();
+		//		const bool& bStopRequest = Mgr(ThreadMgr)->m_bStopRequest;
+		//		TaskTimerMgr& taskTimer = *Mgr(TaskTimerMgr);
+		//		for (;;)
+		//		{
+		//			if (bStopRequest) [[unlikely]]
+		//				break;
+		//
+		//			taskTimer.DistributeTask();
+		//
+		//			std::this_thread::yield();
+		//		}
+		//		Mgr(ThreadMgr)->DestroyTLS();
+		//	} };
 
 		std::string strFin(32, 0);
 		const auto main_service = const_cast<Service* const>(Service::GetMainService());
@@ -175,22 +175,22 @@ namespace ServerCore
 		constinit extern thread_local uint64_t LEndTickCount;
 		constinit extern thread_local uint64_t LCurHandleSessionID;
 
-		ThreadMgr& threadMgr = *Mgr(ThreadMgr);
-		threadMgr.InitTLS();
-		const bool& bStopRequest = threadMgr.GetStopFlagRef();
+		Mgr(ThreadMgr)->InitTLS();
+
+		TaskTimerMgr& taskTimer = *Mgr(TaskTimerMgr);
+		const bool& bStopRequest = Mgr(ThreadMgr)->GetStopFlagRef();
 		const HANDLE iocpHandle = IocpCore::GetIocpHandleGlobal();
+
 		for (;;)
 		{
 			if (bStopRequest) [[unlikely]]
 				break;
 
-			if (false == IocpCore::Dispatch(iocpHandle,10))
-			{
-				//threadMgr.TryGlobalQueueTask();
-			}
-			threadMgr.TryGlobalQueueTask();
+			IocpCore::Dispatch(iocpHandle, 10);
+			taskTimer.DistributeTask();
 			ClusterUpdateQueue::UpdateCluster();
 		}
-		threadMgr.DestroyTLS();
+
+		Mgr(ThreadMgr)->DestroyTLS();
 	}
 }
