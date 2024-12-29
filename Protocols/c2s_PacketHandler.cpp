@@ -143,15 +143,11 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 		}
 	}
 	{
+		const auto atk_pkt = Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), *pkt_.atk_pos());
 		const auto& session_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListSession();
 		for (const auto session_id : session_list)
 		{
-			const auto entity = GetSession(session_id);
-			if (!entity)continue;
-			if (const auto session = entity->GetSession())
-			{
-				session->SendAsync(Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), *pkt_.atk_pos()));
-			}
+			SendPacket(session_id, atk_pkt);
 		}
 	}
 	

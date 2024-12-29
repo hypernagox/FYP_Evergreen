@@ -23,12 +23,25 @@ namespace ServerCore
 		LocalFree(msg_buf);
 	}
 
-	S_ptr<ContentsEntity> GetSession(const uint64_t sessionID_) noexcept
+	S_ptr<ContentsEntity> GetSessionEntity(const uint64_t sessionID_) noexcept
 	{
 		return Service::GetMainService()->GetSession(sessionID_);
 	}
 
-	void SendPacket(const uint64_t target_session_id, S_ptr<SendBuffer> pSendBuffer) noexcept
+	std::pair<const Session* const, S_ptr<ContentsEntity>> GetSessionAndEntity(const uint64_t sessionID_) noexcept
+	{
+		if (auto session_entity = GetSessionEntity(sessionID_))
+			return { session_entity->GetSession(),session_entity };
+		return {};
+	}
+
+	void SendPacket(const uint64_t target_session_id, const S_ptr<SendBuffer>& pSendBuffer) noexcept
+	{
+		if (const auto pSessionEntity = Service::GetMainService()->GetSession(target_session_id))
+			pSessionEntity->GetSession()->SendAsync(pSendBuffer);
+	}
+
+	void SendPacket(const uint64_t target_session_id, S_ptr<SendBuffer>&& pSendBuffer) noexcept
 	{
 		if (const auto pSessionEntity = Service::GetMainService()->GetSession(target_session_id))
 			pSessionEntity->GetSession()->SendAsync(std::move(pSendBuffer));

@@ -45,9 +45,12 @@ namespace ServerCore
 		return (LRandSeed >> 16) & RAND_MAX;
 	}
 	static inline float my_frand()noexcept { return static_cast<float>(my_rand()); }
-	S_ptr<ContentsEntity> GetSession(const uint64_t sessionID_)noexcept;
 
-	void SendPacket(const uint64_t target_session_id, S_ptr<SendBuffer> pSendBuffer)noexcept;
+	S_ptr<ContentsEntity> GetSessionEntity(const uint64_t sessionID_)noexcept;
+	std::pair<const Session* const, S_ptr<ContentsEntity>> GetSessionAndEntity(const uint64_t sessionID_)noexcept;
+
+	void SendPacket(const uint64_t target_session_id, const S_ptr<SendBuffer>& pSendBuffer)noexcept;
+	void SendPacket(const uint64_t target_session_id, S_ptr<SendBuffer>&& pSendBuffer)noexcept;
 
 	void PrintError(const char* const msg, const int err_no)noexcept;
 	
