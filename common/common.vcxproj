@@ -154,6 +154,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\library\inc\recastnavigation\DebugDraw.h" />
@@ -191,6 +192,9 @@
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="StateMachine.hpp" />
+    <ClInclude Include="StateTransition.hpp" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
