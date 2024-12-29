@@ -11,7 +11,7 @@ VertexOut VS(VertexIn vin)
 PixelOut PS(VertexOut pin)
 {
 	PixelOut pOut;
-    float3 normal = normalize(mul(float4(0.0f, 1.0f, 0.0f, 1.0f), (float3x3)gView));
+    float3 normal = normalize(mul(float3(0.0f, 1.0f, 0.0f), (float3x3)gView));
     float4 texColor = gMainTex.Sample(gSampler, pin.Tex);
     float4 posH = mul(pin.PosW, gViewProj);
     posH /= posH.w;

@@ -119,6 +119,9 @@ namespace udsdx
 		return m_worldSRTMatrix;
 	}
 
+	// Validate the local SRT matrix.
+	// If the local matrix is dirty, the local SRT matrix is recalculated.
+	// The return value is true if the local matrix was dirty; you can use the return value to determine whether the children need to be recalculated.
 	bool Transform::ValidateLocalSRTMatrix()
 	{
 		if (!m_isLocalMatrixDirty)
