@@ -40,7 +40,6 @@ namespace ServerCore
 		static inline const uint32_t GetID(const T& __restrict pSession_)noexcept { return pSession_->GetSessionID(); }
 	public:
 		inline void DecRef()const noexcept { RefCountable::DecRef<Session>(); }
-		//virtual void OnDestroy()noexcept override { Disconnect(L""); }
 		const bool SendQueueEmpty()const noexcept { return m_sendQueue.empty_single(); }
 		template <typename S_ptr_SendBuffer> requires std::same_as<std::decay_t<S_ptr_SendBuffer>,S_ptr<SendBuffer>>
 		constexpr inline void SendAsync(S_ptr_SendBuffer&& pSendBuff_)const noexcept

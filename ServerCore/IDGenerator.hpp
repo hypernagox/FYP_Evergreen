@@ -7,7 +7,7 @@ public:
 	IDGenerator() = delete;
 	~IDGenerator() = delete;
 public:
-	static c_uint64 GenerateID()noexcept { return g_objectID.fetch_add(1, std::memory_order_relaxed); }
+	static c_uint64 GenerateID()noexcept { return InterlockedIncrement64((LONG64*)&g_objectID); }
 private:
-	constinit static inline std::atomic<uint64_t> g_objectID = 1;
+	__declspec(align(8)) constinit static inline volatile ULONG64 g_objectID = 0;
 };

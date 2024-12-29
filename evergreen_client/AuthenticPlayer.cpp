@@ -88,9 +88,12 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 void AuthenticPlayer::DoAttack()
 {
 	if constexpr (g_bUseNetWork)
+	{
+		m_pServerObject->ServerCompUpdate<MovePacketSender>();
 		Send(
-			Create_c2s_PLAYER_ATTACK(m_rendererBodyAngleY,ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
+			Create_c2s_PLAYER_ATTACK(m_rendererBodyAngleY, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
 		);
+	}
 }
 
 void AuthenticPlayer::RequestQuest()

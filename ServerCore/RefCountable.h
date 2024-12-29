@@ -80,7 +80,6 @@ namespace ServerCore
 				DecRef();
 				m_count_ptr = other.IncRef();
 			}
-			//other.m_count_ptr = nullptr;
 			return *this;
 		}
 		S_ptr(S_ptr&& other)noexcept
@@ -92,7 +91,10 @@ namespace ServerCore
 				m_count_ptr = other.m_count_ptr;
 				other.m_count_ptr = nullptr;
 			}
-			other.reset();
+			else if(!other.m_count_ptr){
+				other.m_count_ptr->DecRef();
+				other.m_count_ptr = nullptr;
+			}
 			return *this;
 		}
 	public:
@@ -106,7 +108,6 @@ namespace ServerCore
 				DecRef();
 				m_count_ptr = other.IncRef();
 			}
-			//other.m_count_ptr = nullptr;
 			return *this;
 		}
 		template <typename U> requires std::derived_from<U, T> || std::derived_from<T, U>
@@ -120,7 +121,10 @@ namespace ServerCore
 				m_count_ptr = other.m_count_ptr;
 				other.m_count_ptr = nullptr;
 			}
-			other.reset();
+			else if (!other.m_count_ptr) {
+				other.m_count_ptr->DecRef<U>();
+				other.m_count_ptr = nullptr;
+			}
 			return *this;
 		}
 		explicit S_ptr(const uint64_t ptr)noexcept

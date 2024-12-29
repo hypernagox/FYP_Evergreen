@@ -20,6 +20,7 @@ void HP::PostDoHeal(const int heal_) noexcept
 
 void HP::DoDmg(const int dmg_, const ServerCore::S_ptr<ServerCore::ContentsEntity> atkObject) noexcept
 {
+	// TODO: 퀘스트 관련은 atkObject의 큐로 가야함 이거 문제가있다.
 	const auto owner = GetOwnerEntityRaw();
 	if (0 >= m_hp)return;
 	if (m_bIsRebirth)return;

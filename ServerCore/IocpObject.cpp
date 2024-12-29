@@ -100,7 +100,6 @@ namespace ServerCore
 			Mgr(FieldMgr)->ReleaseNPC(this);
 		else
 		{
-			// GetComp<MoveBroadcaster>()->ReleaseViewList();
 			if (cluster_ptr)
 				m_pSession->OnDisconnected(cluster_ptr);
 		}

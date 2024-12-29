@@ -22,24 +22,8 @@ namespace ServerCore
 		using PacketFunc = S_ptr<SendBuffer>(*)(const ContentsEntity* const)noexcept;
 	public:
 		void BroadcastMove()noexcept;
-		inline const Vector<uint64_t>& GetViewListCopy()const noexcept
-		{
-			extern thread_local Vector<uint64_t> LViewListForCopy;
-			m_srwLock.lock_shared();
-			LViewListForCopy = m_vecViewListForCopy;
-			m_srwLock.unlock_shared();
-			return LViewListForCopy;
-		}
-		
-		// 자기 자신의 작업을 처리 할 때 만 사용 가능하다.
-		inline const auto& GetMyViewList()const noexcept { return m_vecViewListForCopy; }
-
-		void ReleaseViewList()noexcept
-		{
-			m_spinLock.lock();
-			const S_ptr<ViewListWrapper> temp{ std::move(m_viewListPtr) };
-			m_spinLock.unlock();
-		}
+		const auto& GetViewListSession()const noexcept { return m_view_list_session; }
+		const auto GetViewListNPC()const noexcept { return m_view_list_npc; }
 	public:
 		static void RegisterHuristicFunc2Session(const HuristicFunc fp_)noexcept {
 			if (g_huristic[0])return;
@@ -53,7 +37,7 @@ namespace ServerCore
 			if (g_create_add_pkt)return;
 			g_create_add_pkt = fp_;
 		}
-		static void RegisterRemovePacketFunc(const PacketFunc fp_)noexcept {
+		static void RegisterRemovePacketFunc(S_ptr<SendBuffer>(*const fp_)(const uint32_t)noexcept)noexcept {
 			if (g_create_remove_pkt)return;
 			g_create_remove_pkt = fp_;
 		}
@@ -65,36 +49,25 @@ namespace ServerCore
 		static S_ptr<SendBuffer> CreateAddPacket(const ContentsEntity* const pEntity_)noexcept {
 			return g_create_add_pkt(pEntity_);
 		}
-		static S_ptr<SendBuffer> CreateRemovePacket(const ContentsEntity* const pEntity_)noexcept {
-			return g_create_remove_pkt(pEntity_);
-		}
 		static S_ptr<SendBuffer> CreateMovePacket(const ContentsEntity* const pEntity_)noexcept {
 			return g_create_move_pkt(pEntity_);
 		}
 		static S_ptr<SendBuffer> CreateAddPacket(const S_ptr<ContentsEntity>& pEntity_)noexcept {
 			return g_create_add_pkt(pEntity_.get());
 		}
-		static S_ptr<SendBuffer> CreateRemovePacket(const S_ptr<ContentsEntity>& pEntity_)noexcept {
-			return g_create_remove_pkt(pEntity_.get());
-		}
 		static S_ptr<SendBuffer> CreateMovePacket(const S_ptr<ContentsEntity>& pEntity_)noexcept {
 			return g_create_move_pkt(pEntity_.get());
 		}
-
+		static S_ptr<SendBuffer> CreateRemovePacket(const uint32_t obj_id)noexcept {
+			return g_create_remove_pkt(obj_id);
+		}
 	private:
-		struct ViewListWrapper
-			:public RefCountable {
-			HashSet<const ContentsEntity*> view_list;
-			~ViewListWrapper()noexcept;
-		};
-		SpinLock m_spinLock;
-		S_ptr<ViewListWrapper> m_viewListPtr = MakeShared<ViewListWrapper>();
-		Vector<uint64_t> m_vecViewListForCopy;
-		SRWLock m_srwLock;
+		ServerCore::HashSet<uint32_t> m_view_list_session;
+		ServerCore::HashSet<uint32_t> m_view_list_npc;
 	private:
 		static inline HuristicFunc g_huristic[2] = {};
 		static inline PacketFunc g_create_add_pkt = {};
-		static inline PacketFunc g_create_remove_pkt = {};
+		static inline S_ptr<SendBuffer>(*g_create_remove_pkt)(const uint32_t)noexcept;
 		static inline PacketFunc g_create_move_pkt = {};
 	};
 }

@@ -61,9 +61,9 @@ S_ptr<SendBuffer> ClusterPredicate::ClusterAddPacketFunc(const ServerCore::Conte
 	return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)p->GetObjectType(), p->GetObjectTypeInfo(), ToFlatVec3(pEntity->pos));
 }
 
-S_ptr<SendBuffer> ClusterPredicate::ClusterRemovePacketFunc(const ServerCore::ContentsEntity* const p) noexcept
+S_ptr<SendBuffer> ClusterPredicate::ClusterRemovePacketFunc(const uint32_t obj_id) noexcept
 {
-	return Create_s2c_REMOVE_OBJECT(p->GetObjectID());
+	return Create_s2c_REMOVE_OBJECT(obj_id);
 }
 
 S_ptr<SendBuffer> ClusterPredicate::ClusterMovePacketFunc(const ServerCore::ContentsEntity* const p) noexcept

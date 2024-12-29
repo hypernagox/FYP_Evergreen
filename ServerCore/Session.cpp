@@ -163,7 +163,6 @@ namespace ServerCore
 				ContentsEntity* const pOwner = GetOwnerEntity();
 				pOwner->TryOnDestroy();
 				GetService()->ReleaseSession(this);
-				pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
 				pOwner->DecRef();
 
 				return false;
@@ -179,7 +178,6 @@ namespace ServerCore
 		ContentsEntity* const pOwner = GetOwnerEntity();
 		pOwner->TryOnDestroy();
 		GetService()->ReleaseSession(this);
-		pOwner->GetComp<MoveBroadcaster>()->ReleaseViewList();
 		pOwner->DecRef();
 	}
 

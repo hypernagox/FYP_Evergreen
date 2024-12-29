@@ -15,7 +15,7 @@ public:
 	static bool ClusterHuristicFunc2NPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b)noexcept;
 
 	static ServerCore::S_ptr<ServerCore::SendBuffer> ClusterAddPacketFunc(const ServerCore::ContentsEntity* const)noexcept;
-	static ServerCore::S_ptr<ServerCore::SendBuffer> ClusterRemovePacketFunc(const ServerCore::ContentsEntity* const)noexcept;
+	static ServerCore::S_ptr<ServerCore::SendBuffer> ClusterRemovePacketFunc(const uint32_t obj_id)noexcept;
 	static ServerCore::S_ptr<ServerCore::SendBuffer> ClusterMovePacketFunc(const ServerCore::ContentsEntity* const)noexcept;
 public:
 	static void TryNotifyNPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b)noexcept;

@@ -120,28 +120,41 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 
 	const auto& box = pOwner->GetComp<Collider>()->GetBox(rotatedForward);
 
-	if (const auto sector = pOwner->GetCurCluster())
+	//if (const auto sector = pOwner->GetCurCluster())
 	{
-		const auto& mon_list = sector->GetEntities(1);
+		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
 		
-		auto b = mon_list.data();
-		const auto e = b + mon_list.size();
-		while (e != b)
+		for (const auto mon_id : mon_list)
 		{
-			const auto pCol = (*b++)->GetComp<Collider>();
-			const auto owner = pCol->GetOwnerEntity();
-			if (pCol->IsCollision(box))
+			if (const auto pmon = Mgr(FieldMgr)->GetNPC(mon_id))
 			{
-				//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
-				//
-				//owner->TryOnDestroy();
-				owner->GetComp<HP>()->PostDoDmg(1,pOwner->SharedFromThis());
+				if (const auto pCol = pmon->GetComp<Collider>())
+				{
+					const auto owner = pCol->GetOwnerEntity();
+					if (pCol->IsCollision(box))
+					{
+						//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
+						//
+						//owner->TryOnDestroy();
+						owner->GetComp<HP>()->PostDoDmg(1, pOwner->SharedFromThis());
+					}
+				}
 			}
 		}
 	}
-
-	pOwner->GetCurCluster()->Broadcast(Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), *pkt_.atk_pos()));
-
+	{
+		const auto& session_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListSession();
+		for (const auto session_id : session_list)
+		{
+			const auto entity = GetSession(session_id);
+			if (!entity)continue;
+			if (const auto session = entity->GetSession())
+			{
+				session->SendAsync(Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), *pkt_.atk_pos()));
+			}
+		}
+	}
+	
 	return true;
 }
 

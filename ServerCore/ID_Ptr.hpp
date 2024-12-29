@@ -17,7 +17,7 @@ private:
     uint64_t combine = 0;
 };
 
-struct Point2D
+struct alignas(2) Point2D
 {
     uint8_t x, y;
     Point2D()noexcept :x{ 0 }, y{ 0 } {}
