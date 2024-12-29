@@ -102,6 +102,15 @@
     <ClInclude Include="Collider.h">
       <Filter>Collider</Filter>
     </ClInclude>
+    <ClInclude Include="StateMachine.hpp">
+      <Filter>StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="StateTransition.hpp">
+      <Filter>StateMachine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />
@@ -220,6 +229,9 @@
     <ClCompile Include="Collider.cpp">
       <Filter>Collider</Filter>
     </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Transform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Navigation">
@@ -251,6 +263,12 @@
     </Filter>
     <Filter Include="Collider">
       <UniqueIdentifier>{be3d3258-9b56-4957-a9b9-2e9270bd0ee9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Transform">
+      <UniqueIdentifier>{28f38bba-5ba8-406f-8aca-3afa1f2e57fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StateMachine">
+      <UniqueIdentifier>{48e505b3-4a32-40f3-a8ca-7cc4be43f364}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
