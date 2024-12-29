@@ -397,4 +397,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
 evergreen_client/AssimpLog.txt
