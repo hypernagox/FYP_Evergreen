@@ -54,7 +54,7 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 	{
 		SetAnimation("Bip001|attack1|BaseLayer");
 	}
-	else if (mag > 10.0f && flag)
+	else if (mag > 10.0f)
 	{
 		SetAnimation("Bip001|run|BaseLayer");
 	}
