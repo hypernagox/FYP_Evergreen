@@ -80,7 +80,7 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 		break;
 	}
 	}
-	float tParam = m_fMoveTime;
+	float tParam = m_fMoveTime * 0.5f;
 	float mParam = 0.04f;
 	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, pCameraTransfrom->GetLocalPosition().z));
 }

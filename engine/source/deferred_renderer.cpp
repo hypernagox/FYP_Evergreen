@@ -156,13 +156,13 @@ namespace udsdx
 
 			float2 motionVector = gBuffer3.Sample(gsamPointClamp, pin.TexC).xy;
 		    const int sampleCount = 8;
-			float4 gBuffer1Color = float4(0.0f, 0.0f, 0.0f, 0.0f);
-			for (int i = 0; i < sampleCount; ++i)
-			{
-				float2 offset = -motionVector * ((float)i / (sampleCount - 1));
-				gBuffer1Color += gBuffer1.Sample(gsamPointClamp, pin.TexC + offset);
-			}
-			gBuffer1Color /= sampleCount;
+			float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
+			//for (int i = 0; i < sampleCount; ++i)
+			//{
+			//	float2 offset = -motionVector * ((float)i / (sampleCount - 1));
+			//	gBuffer1Color += gBuffer1.Sample(gsamPointClamp, pin.TexC + offset);
+			//}
+			//gBuffer1Color /= sampleCount;
 
 			float3 normalV;
 			normalV.xy = gBuffer2.Sample(gsamPointClamp, pin.TexC).xy;

@@ -45,5 +45,22 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 
 std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderBase* builder)
 {
-	return Create_Warrior(builder);
+	const auto b = static_cast<DefaultEntityBuilder*>(builder);
+
+	auto instance = std::make_shared<udsdx::SceneObject>();
+	instance->GetTransform()->SetLocalPosition(b->obj_pos);
+	instance->GetTransform()->SetLocalScale(Vector3::One * 1.4f);
+
+	instance->AddComponent<EntityMovement>();
+	auto serverComponent = instance->AddComponent<ServerObject>();
+	serverComponent->SetObjID(builder->obj_id);
+
+	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+	moveInterpolator->InitInterpolator(b->obj_pos);
+
+	auto renderer = instance->AddComponent<MeshRenderer>();
+	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"char_sample.obj")));
+	renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+
+	return instance;
 }
