@@ -37,6 +37,7 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_MOVE(
 )noexcept;
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_MONSTER_ATTACK(
     const uint64_t obj_id,
+    const uint64_t player_id,
     const uint32_t dmg,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;

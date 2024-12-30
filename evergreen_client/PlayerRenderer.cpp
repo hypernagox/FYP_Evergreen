@@ -34,6 +34,17 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	sceneObject->AddChild(m_rendererObj);
 
 	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 32);
+
+	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
+	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(to); });
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Run, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
+	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 0.365f);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
+	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Idle, 0.365f);
+	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater_equal<float>>>(AnimationState::Idle, AnimationState::Run, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 10.0f);
+	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less<float>>>(AnimationState::Run, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 10.0f);
+	OnAnimationStateChange(AnimationState::Idle);
 }
 
 PlayerRenderer::~PlayerRenderer()
@@ -42,32 +53,39 @@ PlayerRenderer::~PlayerRenderer()
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
+	m_stateMachine->Update(time.deltaTime);
+
 	const bool flag = g_heroObj->GetComponent<ServerObject>()->GetObjID() == GetSceneObject()->GetComponent<ServerObject>()->GetObjID();
-	if (INSTANCE(Input)->GetMouseLeftButtonDown() && m_attackTime <= 0.0f && flag)
+	if (INSTANCE(Input)->GetMouseLeftButtonDown() && flag)
 	{
-		m_attackTime = 1.0f;
+		Attack();
 	}
 	const Vector3 velocity = GetComponent<EntityMovement>()->GetVelocity();
-	// check if xz component of velocity is not zero
 	float mag = Vector2(velocity.x, velocity.z).LengthSquared();
-	if ((m_attackTime > 0.0f && flag) || m_attackTime ==1.f)
-	{
-		SetAnimation("Bip001|attack1|BaseLayer");
-	}
-	else if (mag > 10.0f)
-	{
-		SetAnimation("Bip001|run|BaseLayer");
-	}
-	else
-	{
-		if (!flag && m_attackTime < 0.0f) 
-		{
-			m_attackTime = 1.f;
-			SetAnimation("Bip001|stand|BaseLayer");
-		}
-		else if(flag)
-			SetAnimation("Bip001|stand|BaseLayer");
-	}
+	*m_stateMachine->GetConditionRefFloat("MoveSpeed") = mag;
+}
 
-	m_attackTime -= time.deltaTime;
+void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
+{
+	switch (state)
+	{
+	case AnimationState::Idle:
+		m_renderer->SetAnimation("Bip001|stand|BaseLayer");
+		break;
+	case AnimationState::Run:
+		m_renderer->SetAnimation("Bip001|run|BaseLayer");
+		break;
+	case AnimationState::Attack:
+		m_renderer->SetAnimation("Bip001|attack1|BaseLayer");
+		*m_stateMachine->GetConditionRefBool("Attack") = false;
+		break;
+	case AnimationState::Hit:
+		m_renderer->SetAnimation("Bip001|hit|BaseLayer");
+		*m_stateMachine->GetConditionRefBool("Hit") = false;
+		break;
+	case AnimationState::Death:
+		m_renderer->SetAnimation("Bip001|die|BaseLayer");
+		*m_stateMachine->GetConditionRefBool("Death") = false;
+		break;
+	}
 }

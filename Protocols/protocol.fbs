@@ -54,6 +54,7 @@ table s2c_MOVE
 table s2c_MONSTER_ATTACK
 {
     obj_id : uint64;
+    player_id : uint64;
     dmg : uint32;
 }
 

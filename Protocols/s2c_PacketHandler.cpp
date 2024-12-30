@@ -73,6 +73,13 @@ const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSes
 		monsterComp->OnAttackToPlayer();
 	}
 
+	const auto player = Mgr(ServerObjectMgr)->GetServerObj(pkt_.player_id());
+	if (player)
+	{
+		player->GetComponent<PlayerRenderer>()->Hit();
+	}
+
+
 	std::cout << "여우가 당신에게 " << pkt_.dmg() << "데미지를 주었다 !" << std::endl;
 	return true;
 }
@@ -97,8 +104,7 @@ const bool Handle_s2c_PLAYER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSess
 
 	atk_player->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(pkt_.body_angle() * DEG2RAD + PI, 0.0f, 0.0f));
 	atk_player->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.atk_pos()));
-	atk_player->GetComponent<PlayerRenderer>()->m_attackTime = 1.f;
-	atk_player->GetComponent<PlayerRenderer>()->SetAnimation("Bip001|attack1|BaseLayer");
+	atk_player->GetComponent<PlayerRenderer>()->Attack();
 
 	return true;
 }
