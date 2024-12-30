@@ -99,14 +99,17 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_MOVE(
     return CreateSendBuffer(builder, PKT_ID::s2c_MOVE);
 }
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_MONSTER_ATTACK(
+    const uint64_t obj_id,
     const uint32_t dmg,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    const auto obj_id_value = obj_id;
     const auto dmg_value = dmg;
     const auto serializeds2c_MONSTER_ATTACK = Nagox::Protocol::Creates2c_MONSTER_ATTACK(
         builder
-,        dmg_value    );
+,        obj_id_value,
+        dmg_value    );
     builder.Finish(serializeds2c_MONSTER_ATTACK);
 
     return CreateSendBuffer(builder, PKT_ID::s2c_MONSTER_ATTACK);

@@ -7,6 +7,7 @@
 #include "func.h"
 #include "../evergreen_client/EntityBuilder.h"
 #include "PlayerRenderer.h"
+#include "Monster.h"
 
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 	thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
@@ -65,6 +66,13 @@ const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 
 const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_)
 {
+	const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id());
+	Monster* monsterComp = obj->GetComponent<Monster>();
+	if (monsterComp)
+	{
+		monsterComp->OnAttackToPlayer();
+	}
+
 	std::cout << "여우가 당신에게 " << pkt_.dmg() << "데미지를 주었다 !" << std::endl;
 	return true;
 }

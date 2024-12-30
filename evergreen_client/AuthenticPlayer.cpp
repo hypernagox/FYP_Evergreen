@@ -58,7 +58,7 @@ void AuthenticPlayer::InitCamDirection()
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
 	Vector3 wv = GetSceneObject()->GetTransform()->GetLocalPosition() + m_cameraAnchor->GetTransform()->GetLocalPosition();
-	const float fMaxDist = 4.0f;
+	const float fMaxDist = 6.0f;
 	switch (m_curCamMode)
 	{
 	case 0:

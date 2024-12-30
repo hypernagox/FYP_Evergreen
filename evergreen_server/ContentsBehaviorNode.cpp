@@ -131,7 +131,7 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     if (0.f >= m_accTime)
     {
         // TODO: 스트레스 테스트 아직 패킷없음
-        awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(1));
+        awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), 1));
         awaker->GetComp<HP>()->PostDoDmg(1,owner_comp_sys->GetOwnerEntity()->SharedFromThis());
 
         m_accTime = 1.5f;
@@ -170,7 +170,9 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
         const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
        
         Vector3 ppp{ ag->npos[0],ag->npos[1],-ag->npos[2] };
+        Vector3 vpp{ ag->vel[0],ag->vel[1],-ag->vel[2] };
         pOwnerEntity->GetComp<PositionComponent>()->pos = ppp;
+        pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(vpp.x, vpp.z) * 180.f / 3.141592f;
         pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
         //ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     }
@@ -209,7 +211,7 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
 
 NodeStatus PatrolNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
-    owner_comp_sys->GetComp<PositionComponent>()->body_angle += 1000.f * bt_root_timer->GetBTTimerDT();
+    // owner_comp_sys->GetComp<PositionComponent>()->body_angle += 1000.f * bt_root_timer->GetBTTimerDT();
     const auto pOwnerEntity = owner_comp_sys->GetOwnerEntity();
     //ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 

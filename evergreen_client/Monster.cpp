@@ -16,16 +16,23 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	m_rendererObj->AddChild(pBody);
 	m_rendererObj->GetTransform()->SetLocalPosition(Vector3::Up * -0.05f);
 
-	auto pBodyMesh = pBody->AddComponent<MeshRenderer>();
-	pBodyMesh->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"fox\\fox_low.fbx")));
-	pBodyMesh->SetShader(shader);
-	pBodyMesh->SetMaterial(m_monsterMaterial.get());
+	m_riggedMeshRenderer = pBody->AddComponent<RiggedMeshRenderer>();
+	m_riggedMeshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"fox\\fox_animation.glb")));
+	m_riggedMeshRenderer->SetShader(shader);
+	m_riggedMeshRenderer->SetMaterial(m_monsterMaterial.get());
 
-	m_transformBody->SetLocalScale(Vector3::One * 0.025f);
+	m_transformBody->SetLocalScale(Vector3::One * 2.5f);
 
 	m_entityMovement = object->AddComponent<EntityMovement>();
 
 	GetSceneObject()->AddChild(m_rendererObj);
+
+	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
+	m_riggedMeshRenderer->SetAnimation("idle");
+
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
+	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 0.365f);
+	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(from, to); });
 }
 
 Monster::~Monster()
@@ -34,4 +41,24 @@ Monster::~Monster()
 
 void Monster::Update(const Time& time, Scene& scene)
 {
+	m_stateMachine->Update(time.deltaTime);
+}
+
+void Monster::OnAttackToPlayer()
+{
+	*m_stateMachine->GetConditionRefBool("Attack") = true;
+}
+
+void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
+{
+	switch (to)
+	{
+	case AnimationState::Idle:
+		m_riggedMeshRenderer->SetAnimation("idle");
+		break;
+	case AnimationState::Attack:
+		m_riggedMeshRenderer->SetAnimation("attack");
+		*m_stateMachine->GetConditionRefBool("Attack") = false;
+		break;
+	}
 }

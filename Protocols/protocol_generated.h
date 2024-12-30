@@ -547,8 +547,15 @@ inline ::flatbuffers::Offset<s2c_MOVE> Creates2c_MOVE(
 struct s2c_MONSTER_ATTACK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_MONSTER_ATTACKBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_DMG = 4
+    VT_OBJ_ID = 4,
+    VT_DMG = 6
   };
+  uint64_t obj_id() const {
+    return GetField<uint64_t>(VT_OBJ_ID, 0);
+  }
+  bool mutate_obj_id(uint64_t _obj_id = 0) {
+    return SetField<uint64_t>(VT_OBJ_ID, _obj_id, 0);
+  }
   uint32_t dmg() const {
     return GetField<uint32_t>(VT_DMG, 0);
   }
@@ -557,6 +564,7 @@ struct s2c_MONSTER_ATTACK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_OBJ_ID, 8) &&
            VerifyField<uint32_t>(verifier, VT_DMG, 4) &&
            verifier.EndTable();
   }
@@ -566,6 +574,9 @@ struct s2c_MONSTER_ATTACKBuilder {
   typedef s2c_MONSTER_ATTACK Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_obj_id(uint64_t obj_id) {
+    fbb_.AddElement<uint64_t>(s2c_MONSTER_ATTACK::VT_OBJ_ID, obj_id, 0);
+  }
   void add_dmg(uint32_t dmg) {
     fbb_.AddElement<uint32_t>(s2c_MONSTER_ATTACK::VT_DMG, dmg, 0);
   }
@@ -582,8 +593,10 @@ struct s2c_MONSTER_ATTACKBuilder {
 
 inline ::flatbuffers::Offset<s2c_MONSTER_ATTACK> Creates2c_MONSTER_ATTACK(
     ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t obj_id = 0,
     uint32_t dmg = 0) {
   s2c_MONSTER_ATTACKBuilder builder_(_fbb);
+  builder_.add_obj_id(obj_id);
   builder_.add_dmg(dmg);
   return builder_.Finish();
 }

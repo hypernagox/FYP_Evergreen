@@ -12,6 +12,9 @@
 #include <CreateBuffer4Client.h>
 #include <protocol_define.h>
 
+#include <StateMachine.hpp>
+#include <StateTransition.hpp>
+
 #include <ClientNetworkPch.h>
 
 #include <PathManager.h>
