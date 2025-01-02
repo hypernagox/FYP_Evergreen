@@ -5,6 +5,24 @@
 
 namespace ServerCore
 {
+	void ClusterInfoHelper::FillterSessionEntities(Vector<const ContentsEntity*>& vec_, const ContentsEntity* const pEntity_) noexcept
+	{
+		vec_.clear();
+		const auto clusters = ClusterInfoHelper::GetAdjClusters(pEntity_);
+		const auto huristic = MoveBroadcaster::g_huristic[0];
+
+		for (const auto cluster : clusters)
+		{
+			const auto& sessions = cluster->GetSessions();
+			auto b = sessions.data();
+			const auto e = b + sessions.size();
+			while (e != b) {
+				const auto s = *b++;
+				if (huristic(pEntity_, s))vec_.emplace_back(s);
+			}
+		}
+	}
+
 	void ClusterInfoHelper::BroadcastWithID(const Vector<uint32_t>& id, const S_ptr<SendBuffer>& pkt_) noexcept
 	{
 		const auto service = Service::GetMainService();

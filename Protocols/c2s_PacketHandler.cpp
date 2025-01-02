@@ -124,9 +124,9 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
 		
-		for (const auto mon_id : mon_list)
+		for (const auto[mon_id,ptr] : mon_list)
 		{
-			if (const auto pmon = Mgr(FieldMgr)->GetNPC(mon_id))
+			if (const auto pmon = ptr)
 			{
 				if (const auto pCol = pmon->GetComp<Collider>())
 				{
@@ -145,9 +145,9 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 	{
 		const auto atk_pkt = Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), *pkt_.atk_pos());
 		const auto& session_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListSession();
-		for (const auto session_id : session_list)
+		for (const auto [session_id,ptr] : session_list)
 		{
-			SendPacket(session_id, atk_pkt);
+			ptr->GetSession()->SendAsync(atk_pkt);
 		}
 	}
 	

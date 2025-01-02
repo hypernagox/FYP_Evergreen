@@ -60,6 +60,7 @@ int main()
 		b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
 		b.obj_type = 0;
 		b.x = -10.0f;
+		b.y = 0.f;
 		b.z = -10.0f;
 		Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(EntityFactory::CreateNPC(b));
 	}
@@ -73,6 +74,8 @@ int main()
 	
 	ASSERT_CRASH(pServerService->Start());
 	
+	std::atomic_thread_fence(std::memory_order_seq_cst);
+
 	Mgr(ThreadMgr)->Launch(
 		  ThreadMgr::NUM_OF_THREADS
 		, DestroyTLSFunc

@@ -61,9 +61,9 @@ namespace ServerCore
 
 	void ContentsEntity::PostEntityTask(Task&& task_) const noexcept
 	{
-		auto& ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
-		ebr_pool.Start();
-		const auto ebr_node = ebr_pool.PopNode(SharedFromThis(), std::move(task_));
+		const auto ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
+		ebr_pool->Start();
+		const auto ebr_node = ebr_pool->PopNode(SharedFromThis(), std::move(task_));
 		::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, ebr_node->box_object.GetOverlappedAddr());
 	}
 
@@ -79,9 +79,9 @@ namespace ServerCore
 
 			ContentsEntityTask* const entity_task = static_cast<ContentsEntityTask* const>(iocpEvent_);
 			entity_task->m_contents_entity_task.ExecuteTask();
-			auto& ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
-			ebr_pool.PushNode(EBRBox<ContentsEntityTask>::GetEBRNodeAddress(entity_task));
-			ebr_pool.End();
+			const auto ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
+			ebr_pool->PushNode(EBRBox<ContentsEntityTask>::GetEBRNodeAddress(entity_task));
+			ebr_pool->End();
 		}
 		else
 		{
@@ -117,23 +117,27 @@ namespace ServerCore
 
 	void IocpComponent::PostIocpEvent(S_ptr<ContentsEntity>* const owner_entity) noexcept
 	{
+		const auto iocp_handle = IocpCore::GetIocpHandleGlobal();
 		auto& iocp_comp_event = GetIocpCompEvent();
-
+		const auto over_addr = iocp_comp_event.GetOverlappedAddr();
+		
 		if(owner_entity)
 			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{std::move(*owner_entity)});
 		else
 			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{ m_pOwnerEntity });
 
-		::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, iocp_comp_event.GetOverlappedAddr());
+		::PostQueuedCompletionStatus(iocp_handle, 0, 0, over_addr);
 	}
 
 	void IocpComponent::ReserveIocpEvent(const uint64_t tickAfterMs_, S_ptr<ContentsEntity>* const owner_entity) noexcept
 	{
 		auto& iocp_comp_event = GetIocpCompEvent();
+
 		if (owner_entity)
 			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{std::move(*owner_entity)});
 		else
 			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{ m_pOwnerEntity });
+
 		Mgr(TaskTimerMgr)->ReserveAsyncTask(tickAfterMs_, &iocp_comp_event);
 	}
 }

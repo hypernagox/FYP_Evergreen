@@ -458,7 +458,6 @@ namespace ServerCore
     public:
         constexpr  VectorHashMap4IDUnsafe(const std::size_t size_ = DEFAULT_ATOMIC_ALLOCATOR_SIZE)noexcept
         {
-            m_ID2idx.reserve(size_);
             m_listItem.reserve(size_);
         }
     public:
@@ -517,6 +516,28 @@ namespace ServerCore
             }
         }
 
+        const bool TryEraseItem(const Key& key)noexcept
+        {
+            if (const auto iter = m_ID2idx.extract(key))
+            {
+                const int32_t last_idx = GetLastIndex();
+                const int32_t target_idx = iter.mapped();
+                const auto item_cache = m_listItem.data();
+                if (last_idx != target_idx)
+                {
+                    m_ID2idx[item_cache[last_idx]->GetObjectID()] = target_idx;
+                    std::swap(item_cache[last_idx], item_cache[target_idx]);
+                    m_listItem.pop_back();
+                }
+                else
+                {
+                    m_listItem.pop_back();
+                }
+                return true;
+            }
+            return false;
+        }
+
         Value FindItem(const Key& key)const noexcept
         {
             const auto iter = m_ID2idx.find(key);
@@ -563,6 +584,7 @@ namespace ServerCore
             std::swap(x, y);
             std::swap(m_listItem[x], m_listItem[y]);
         }
+
         template <typename Func, typename... Args> requires std::invocable<Func, Value&, Args...> || std::invocable<Func, Value*, Args...>
         void IterateItem(Func&& fp, Args&&... args)const noexcept
         {
@@ -598,6 +620,133 @@ namespace ServerCore
         inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
         Vector<Value> m_listItem;
-        HashMap<Key, int32_t> m_ID2idx;
+        Map<Key, int32_t> m_ID2idx;
+    };
+
+
+    template<typename Value>
+    class VectorSetUnsafe
+    {
+    public:
+        constexpr VectorSetUnsafe(const std::size_t size_ = DEFAULT_ATOMIC_ALLOCATOR_SIZE)noexcept
+        {
+            m_listItem.reserve(size_);
+        }
+    public:
+        template <typename V>
+        const bool AddItem(V&& value)noexcept
+        {
+            const int32_t cur_idx = static_cast<const int32_t>(m_listItem.size());
+            if (false == m_ID2idx.try_emplace(value, cur_idx).second)
+                return false;
+            m_listItem.emplace_back(std::forward<V>(value));
+            return true;
+        }
+
+        const auto EraseItemAndGetIter(const Value& value)noexcept
+        {
+            if (const auto iter = m_ID2idx.extract(value))
+            {
+                const int32_t last_idx = GetLastIndex();
+                const int32_t target_idx = iter.mapped();
+                const auto item_cache = m_listItem.data();
+                if (last_idx != target_idx)
+                {
+                    m_ID2idx[item_cache[last_idx]] = target_idx;
+                    std::swap(item_cache[last_idx], item_cache[target_idx]);
+                    m_listItem.pop_back();
+                    return m_listItem.begin() + target_idx;
+                }
+                else
+                {
+                    m_listItem.pop_back();
+                    return m_listItem.end();
+                }
+            }
+            else
+            {
+                return m_listItem.end();
+            }
+        }
+
+        void EraseItem(const Value& value)noexcept
+        {
+            if (const auto iter = m_ID2idx.extract(value))
+            {
+                const int32_t last_idx = GetLastIndex();
+                const int32_t target_idx = iter.mapped();
+                const auto item_cache = m_listItem.data();
+                if (last_idx != target_idx)
+                {
+                    m_ID2idx[item_cache[last_idx]] = target_idx;
+                    std::swap(item_cache[last_idx], item_cache[target_idx]);
+                    m_listItem.pop_back();
+                }
+                else
+                {
+                    m_listItem.pop_back();
+                }
+            }
+        }
+
+        const bool TryEraseItem(const Value& value)noexcept
+        {
+            if (const auto iter = m_ID2idx.extract(value))
+            {
+                const int32_t last_idx = GetLastIndex();
+                const int32_t target_idx = iter.mapped();
+                const auto item_cache = m_listItem.data();
+                if (last_idx != target_idx)
+                {
+                    m_ID2idx[item_cache[last_idx]] = target_idx;
+                    std::swap(item_cache[last_idx], item_cache[target_idx]);
+                    m_listItem.pop_back();
+                }
+                else
+                {
+                    m_listItem.pop_back();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        template <typename Func, typename... Args> requires std::invocable<Func, Value&, Args...> || std::invocable<Func, Value*, Args...>
+        void IterateItem(Func&& fp, Args&&... args)const noexcept
+        {
+            for (const auto items : m_listItem)
+            {
+                std::invoke(fp, items, args...);
+            }
+        }
+
+        void clear_unsafe()noexcept
+        {
+            m_ID2idx.clear();
+            m_listItem.clear();
+        }
+
+        const bool HasItem(const Value& val)const noexcept { return m_ID2idx.contains(val); }
+
+        constexpr const auto begin()const noexcept { return m_listItem.begin(); }
+        constexpr const auto end()const noexcept { return m_listItem.end(); }
+        constexpr const auto begin()noexcept { return m_listItem.begin(); }
+        constexpr const auto end()noexcept { return m_listItem.end(); }
+
+        constexpr const auto cbegin()const noexcept { return m_listItem.cbegin(); }
+        constexpr const auto cend()const noexcept { return m_listItem.cend(); }
+        constexpr const auto cbegin()noexcept { return m_listItem.cbegin(); }
+        constexpr const auto cend()noexcept { return m_listItem.cend(); }
+
+        constexpr const auto size()const noexcept { return m_listItem.size(); }
+
+        const auto& GetItemListRef()const noexcept { return m_listItem; }
+        auto& GetItemListRef()noexcept { return m_listItem; }
+
+    private:
+        inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
+    private:
+        Vector<Value> m_listItem;
+        Map<Value, int32_t> m_ID2idx;
     };
 }

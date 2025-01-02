@@ -21,7 +21,7 @@ namespace ServerCore
 		~SendBufferMgr()noexcept = default;
 	public:
 		static S_ptr<SendBuffer> Open(c_uint32 size_)noexcept;
-		static S_ptr<SendBufferChunk> Pop()noexcept;
+		static SendBufferChunk* const Pop()noexcept;
 	private:
 		//std::byte m_pSendBufferPool[ThreadMgr::NUM_OF_THREADS][sizeof(AtomicNonTemplate)];
 		//AtomicNonTemplate m_pSendBufferPool[ThreadMgr::NUM_OF_THREADS];

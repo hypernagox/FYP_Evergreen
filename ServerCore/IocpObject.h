@@ -137,6 +137,8 @@ namespace ServerCore
 		inline const class ComponentSystem* const GetComponentSystem()const noexcept { return m_componentSystem; }
 	public:
 		void SetClusterInfo(const ClusterInfo info)noexcept { m_clusterInfo.store(info); }
+		void SetClusterInfoUnsafe(const ClusterInfo info)noexcept { m_clusterInfo.store_relaxed(info); }
+
 		ClusterInfo GetClusterInfo()const noexcept { return m_clusterInfo.load(); }
 		Cluster* const GetCurCluster()const noexcept { return ServerCore::GetCluster(m_clusterInfo); }
 	private:

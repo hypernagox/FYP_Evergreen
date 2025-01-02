@@ -24,7 +24,7 @@ const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pS
 	NetMgr(NetworkMgr)->SetSessionID(pkt_.obj_id());
 	return true;
 }
-
+static uint32_t g_npcid = 0;
 const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_APPEAR_OBJECT& pkt_)
 {
 	// TODO: 빌더패턴 / 팩토리 패턴 처럼
@@ -34,7 +34,12 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	
 	if (Mgr(ServerObjectMgr)->GetServerObj(obj_id))
 		return true;
-
+	if (pkt_.group_type() == 0)return true;
+	if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_NPC)
+	{
+		g_npcid = pkt_.obj_id();
+		std::cout << "NPC 등장\n";
+	}
 	DefaultEntityBuilder b;
 	b.obj_id = pkt_.obj_id();
 	b.obj_type = pkt_.obj_type_info();
@@ -47,6 +52,10 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 
 const bool Handle_s2c_REMOVE_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REMOVE_OBJECT& pkt_)
 {
+	if (pkt_.obj_id() == g_npcid)
+	{
+		std::cout << "NPC 퇴장\n";
+	}
 	Mgr(ServerObjectMgr)->RemoveObject(pkt_.obj_id());
 	return true;
 }
@@ -67,6 +76,7 @@ const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_)
 {
 	const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id());
+	if (!obj)return true;
 	Monster* monsterComp = obj->GetComponent<Monster>();
 	if (monsterComp)
 	{
@@ -80,7 +90,7 @@ const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSes
 	}
 
 
-	std::cout << "여우가 당신에게 " << pkt_.dmg() << "데미지를 주었다 !" << std::endl;
+	//std::cout << "여우가 당신에게 " << pkt_.dmg() << "데미지를 주었다 !" << std::endl;
 	return true;
 }
 

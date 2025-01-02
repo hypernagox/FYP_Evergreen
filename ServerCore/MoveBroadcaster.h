@@ -22,8 +22,8 @@ namespace ServerCore
 		using PacketFunc = S_ptr<SendBuffer>(*)(const ContentsEntity* const)noexcept;
 	public:
 		void BroadcastMove()noexcept;
-		const auto& GetViewListSession()const noexcept { return m_view_list_session; }
-		const auto GetViewListNPC()const noexcept { return m_view_list_npc; }
+		const auto& GetViewListSession()const noexcept { return m_view_list_session.GetItemListRef(); }
+		const auto GetViewListNPC()const noexcept { return m_view_list_npc.GetItemListRef(); }
 	public:
 		static void RegisterHuristicFunc2Session(const HuristicFunc fp_)noexcept {
 			if (g_huristic[0])return;
@@ -62,8 +62,8 @@ namespace ServerCore
 			return g_create_remove_pkt(obj_id);
 		}
 	private:
-		ServerCore::HashSet<uint32_t> m_view_list_session;
-		ServerCore::HashSet<uint32_t> m_view_list_npc;
+		ServerCore::VectorSetUnsafe<std::pair<uint32_t,const ContentsEntity*>> m_view_list_session;
+		ServerCore::VectorSetUnsafe<std::pair<uint32_t,const ContentsEntity*>> m_view_list_npc;
 	private:
 		static inline HuristicFunc g_huristic[2] = {};
 		static inline PacketFunc g_create_add_pkt = {};

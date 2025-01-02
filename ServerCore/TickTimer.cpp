@@ -2,6 +2,7 @@
 #include "TickTimer.h"
 #include "TaskTimerMgr.h"
 #include "Queueabler.h"
+#include "ClusterInfoHelper.h"
 
 namespace ServerCore
 {
@@ -15,6 +16,13 @@ namespace ServerCore
 	{
 		if (!IsValid())return false;
 		return TryExecuteTimerInternal(awaker);
+	}
+
+	void TickTimer::BroadcastObjInSight(const S_ptr<SendBuffer>& send_buff) noexcept
+	{
+		auto b = m_curObjInSight.data();
+		const auto e = b + m_curObjInSight.size();
+		while (e != b) { (*b++)->GetSession()->SendAsync(send_buff); }
 	}
 
 	void TickTimer::Dispatch(S_ptr<ContentsEntity>* const owner_entity) noexcept
@@ -38,6 +46,8 @@ namespace ServerCore
 
 	const bool TickTimer::TryExecuteTimerInternal(const ContentsEntity* const awaker) noexcept
 	{
+		const auto eCurState = m_timer_state.load_relaxed();
+		if (TIMER_STATE::RUN == eCurState || TIMER_STATE::PREPARE == eCurState)return false;
 		const TIMER_STATE ePrevState = m_timer_state.exchange(TIMER_STATE::RUN);
 		if (TIMER_STATE::IDLE == ePrevState)
 		{
@@ -64,7 +74,7 @@ namespace ServerCore
 			return;
 		}
 
-		//m_curObjInSight = ServerCore::SectorInfoHelper::FillterSessionEntities(pOwner);
+		//ServerCore::ClusterInfoHelper::FillterSessionEntities(m_curObjInSight, GetOwnerEntity());
 
 		//const TIMER_STATE eCurState = m_curObjInSight.empty() ? TIMER_STATE::IDLE : TimerUpdate();
 		const TIMER_STATE eCurState = TimerUpdate();
@@ -82,10 +92,11 @@ const ServerCore::TIMER_STATE TickTimerBT::TimerUpdate() noexcept
 	// TODO: 섹터 이동
 	const auto pOwnerEntity = GetOwnerEntity();
 	//m_curObjInSight = ServerCore::SectorInfoHelper::FillterSessionEntities(pOwnerEntity);
+	ServerCore::ClusterInfoHelper::FillterSessionEntities(m_curObjInSight, GetOwnerEntity());
 	NodeStatus cur_status;
 	const uint64_t cur_time = ::GetTickCount64();
-	//if (m_curObjInSight.empty())cur_status = NodeStatus::FAILURE;
-	//else
+	if (m_curObjInSight.empty())cur_status = NodeStatus::FAILURE;
+	else
 	{
 		const auto owner_comp_sys = static_cast<const ComponentSystemNPC* const>(pOwnerEntity->GetComponentSystem());
 	

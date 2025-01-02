@@ -12,8 +12,8 @@ namespace ServerCore
 		:public RefCountable
 	{
 	public:
-		SendBuffer(const S_ptr<SendBufferChunk>& owner, BYTE* const buffer, c_uint32 allocSize_)noexcept
-			: m_pOwnerChunk{ owner }
+		SendBuffer(S_ptr<SendBufferChunk>&& owner, BYTE* const buffer, c_uint32 allocSize_)noexcept
+			: m_pOwnerChunk{ std::move(owner) }
 			, m_buffer{ buffer }
 			, m_allocSize{ allocSize_ }
 			, m_writeSize{ 0 }

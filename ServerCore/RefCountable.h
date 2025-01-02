@@ -46,6 +46,7 @@ namespace ServerCore
 		//	}
 		//	NAGOX_ASSERT(dec_cnt <= old_count);
 		//}
+		inline void IncRefEnterCluster()const noexcept { m_refCount += ServerCore::NUM_OF_THREADS; }
 	private:
 		inline const RefCountable* const IncAndGetPtrInternal()const noexcept { IncRef(); return this; }
 		inline RefCountable* const IncAndGetPtr()const noexcept { return const_cast<RefCountable* const>(IncAndGetPtrInternal()); }

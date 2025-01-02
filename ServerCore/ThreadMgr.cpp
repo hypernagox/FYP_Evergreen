@@ -9,6 +9,7 @@
 #include "SendBufferMgr.h"
 #include "ClusterUpdateQueue.h"
 #include "FieldMgr.h"
+#include "SendBufferChunk.h"
 
 /*------------------
 	ThreadMgr
@@ -159,7 +160,8 @@ namespace ServerCore
 				g_destroyTLSCallBack();
 			}
 		}
-		LSendBufferChunk.reset();
+		if (LSendBufferChunk)
+			LSendBufferChunk->DecRef();
 	}
 
 	void ThreadMgr::TryGlobalQueueTask()noexcept

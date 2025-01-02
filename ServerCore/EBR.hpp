@@ -39,26 +39,23 @@ namespace ServerCore
 		inline void Start()const noexcept
 		{
 			const int32 thIdx =ThreadMgr::GetCurThreadIdx();
-			m_thCounter[thIdx].data.store(
-				m_eCounter.fetch_add(1, std::memory_order_seq_cst),
-				std::memory_order_seq_cst
-			);
+			InterlockedExchange64((LONG64*)(m_thCounter + thIdx), InterlockedIncrement64((LONG64*)&m_eCounter));
 		}
 		inline void End()const noexcept
 		{
 			const int32 thIdx = ThreadMgr::GetCurThreadIdx();
-			m_thCounter[thIdx].data.store(0, std::memory_order_seq_cst);
+			InterlockedExchange64((LONG64*)(m_thCounter + thIdx), 0);
 		}
-		inline void SetRemovePoint(std::atomic<uint64_t>& remove_point)const noexcept { remove_point.store(GetMaxEpoch(), std::memory_order_seq_cst); }
-		inline void SetRemovePoint(uint64_t& remove_point)const noexcept { remove_point = GetMaxEpoch(); std::atomic_thread_fence(std::memory_order_release); }
-		inline const bool NowUsing(const uint64_t remove_point)const noexcept { return remove_point >= GetMinEpoch(); }
 	private:
 		inline const uint64_t GetMaxEpoch()const noexcept {
 			uint64_t max_epoch = std::numeric_limits<uint64_t>::min();
 			auto b = m_thCounter;
 			const auto e = b + ThreadMgr::NUM_OF_THREADS;
-			while (e != b)
-				max_epoch = std::max(max_epoch, (b++)->data.load(std::memory_order_seq_cst));
+			while (e != b) {
+				_Compiler_barrier();
+				const auto val = (b++)->data;
+				max_epoch = std::max(max_epoch, val);
+			}
 			return max_epoch;
 		}
 		inline const uint64_t GetMinEpoch()const noexcept {
@@ -67,7 +64,8 @@ namespace ServerCore
 			const auto e = b + ThreadMgr::NUM_OF_THREADS;
 			while (e != b)
 			{
-				const uint64_t e = (b++)->data.load(std::memory_order_seq_cst);
+				_Compiler_barrier();
+				const uint64_t e = (b++)->data;
 				if (0 != e)min_epoch = std::min(min_epoch, e);
 			}
 			return min_epoch;
@@ -80,9 +78,12 @@ namespace ServerCore
 			else
 				return xnew<T>(std::forward<Args>(args)...);
 		}
+		inline void SetRemovePoint(uint64_t& remove_point)const noexcept { remove_point = GetMaxEpoch(); }
+		inline const bool NowUsing(const uint64_t remove_point)const noexcept { return remove_point >= GetMinEpoch(); }
+		constexpr EBR()noexcept = default;
 	private:
-		mutable std::atomic<uint64_t> m_eCounter = 0;
-		mutable CacheLineSeperator<std::atomic<uint64_t>> m_thCounter[ThreadMgr::NUM_OF_THREADS] = {};
+		alignas(64) mutable volatile ULONG64 m_eCounter = 0;
+		mutable CacheLineSeperator<volatile ULONG64> m_thCounter[ThreadMgr::NUM_OF_THREADS] = {};
 	};
 
 	
@@ -100,15 +101,17 @@ namespace ServerCore
 		:public EBR
 	{
 	public:
-		static auto& GetEBRPool()noexcept
+		static const auto GetEBRPool()noexcept
 		{
-			static EBRPool ebr_pool;
-			return ebr_pool;
+			constinit thread_local EBRPool* L_ebr_ptr = nullptr;
+			if (nullptr == L_ebr_ptr)[[unlikely]]
+				L_ebr_ptr = &GetEBRPoolRef();
+			return L_ebr_ptr;
 		}
 		template <typename... Args>
-		static T* const GetNewNode(Args&&... args)noexcept { return EBRPool<T>::GetEBRPool().PopNode(std::forward<Args>(args)...); }
-		static void RemoveNode(EBRNode* const node)noexcept { return  EBRPool<T>::GetEBRPool().PushNode(node); }
-		static const EBR_RAII StartEBRScope()noexcept { return EBR_RAII{ GetEBRPool() }; }
+		static T* const GetNewNode(Args&&... args)noexcept { return EBRPool<T>::GetEBRPool()->PopNode(std::forward<Args>(args)...); }
+		static void RemoveNode(EBRNode* const node)noexcept { return  EBRPool<T>::GetEBRPool()->PushNode(node); }
+		[[nodiscard]] static const EBR_RAII StartEBRScope()noexcept { return EBR_RAII{ *GetEBRPool() }; }
 	public:
 		EBRPool(const EBRPool&) = delete;
 		EBRPool(EBRPool&&)noexcept = delete;
@@ -133,6 +136,11 @@ namespace ServerCore
 			{
 				Clear(i);
 			}
+		}
+		static auto& GetEBRPoolRef()noexcept
+		{
+			static EBRPool ebr_pool;
+			return ebr_pool;
 		}
 	public:
 		template <typename... Args>

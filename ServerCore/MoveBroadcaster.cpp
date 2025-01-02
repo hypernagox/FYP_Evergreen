@@ -9,14 +9,14 @@
 
 namespace ServerCore
 {
-	thread_local HashMap<uint32_t, const ContentsEntity* const> new_view_list_session(512);
-	thread_local HashMap<uint32_t, const ContentsEntity* const> new_view_list_npc(512);
+	thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_session(512);
+	thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_npc(512);
 
 	void MoveBroadcaster::BroadcastMove() noexcept
 	{
-		extern thread_local HashMap<uint32_t, const ContentsEntity* const> new_view_list_session;
-		extern thread_local HashMap<uint32_t, const ContentsEntity* const> new_view_list_npc;
-
+		extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_session;
+		extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_npc;
+		
 		const auto pOwnerEntity = GetOwnerEntityRaw();
 
 		const auto clusters = ClusterInfoHelper::GetAdjClusters(pOwnerEntity);
@@ -50,7 +50,7 @@ namespace ServerCore
 					const auto entity_ptr = (*b++);
 					if (huristic_func[0](pOwnerEntity, entity_ptr))
 					{
-						new_view_list_session.emplace(entity_ptr->GetObjectID(), entity_ptr);
+						new_view_list_session.AddItem(entity_ptr);
 					}
 				}
 			}
@@ -64,24 +64,24 @@ namespace ServerCore
 					const auto entity_ptr = (*b++);
 					if (huristic_func[1](pOwnerEntity, entity_ptr))
 					{
-						new_view_list_npc.emplace(entity_ptr->GetObjectID(), entity_ptr);
+						new_view_list_npc.AddItem(entity_ptr);
 					}
 				}
 			}
 		}
 
-		const auto it = new_view_list_session.find(obj_id);
-		if (new_view_list_session.cend() != it)new_view_list_session.erase(it);
+		new_view_list_session.EraseItem(pOwnerEntity);
 
-
-		const auto e_iter = new_view_list_session.cend();
 		{
-			for (auto iter = new_view_list_session.cbegin(); iter != e_iter; ++iter)
+			const auto& new_session_list = new_view_list_session.GetItemListRef();
+			auto b = new_session_list.data();
+			const auto e = b + new_session_list.size();
+			while (e != b)
 			{
-				const auto [id, entity_ptr] = *iter;
+				const auto entity_ptr = (*b++);
+				const auto id = entity_ptr->GetObjectID();
 				const auto pSession = entity_ptr->GetSession();
-
-				if (m_view_list_session.emplace(id).second)
+				if (m_view_list_session.AddItem(std::make_pair(id, entity_ptr)))
 				{
 					thisSession->SendAsync(add_pkt_func(entity_ptr));
 
@@ -93,17 +93,20 @@ namespace ServerCore
 				}
 			}
 		}
+
 		{
-			for (auto iter = m_view_list_session.cbegin(); iter != m_view_list_session.cend();)
+			auto& view_list_session = m_view_list_session.GetItemListRef();
+			for (auto iter = view_list_session.begin(); iter != view_list_session.end();)
 			{
-				const auto entity_session_id = *iter;
-				if (!new_view_list_session.erase(entity_session_id))
+				const auto id_ptr = *iter;
+
+				if (!new_view_list_session.TryEraseItem(id_ptr.second))
 				{
-					iter = m_view_list_session.erase(iter);
+					iter = m_view_list_session.EraseItemAndGetIter(id_ptr);
 
-					thisSession->SendAsync(remove_pkt_func(entity_session_id));
+					thisSession->SendAsync(remove_pkt_func(id_ptr.first));
 
-					if (const auto entity_ptr = service->GetSession(entity_session_id))
+					if (const auto entity_ptr = service->GetSession(id_ptr.first))
 						entity_ptr->GetSession()->SendAsync(remove_pkt);
 				}
 				else
@@ -112,29 +115,33 @@ namespace ServerCore
 				}
 			}
 		}
-
-		const auto e_iter2 = new_view_list_npc.cend();
+	
 		{
-			for (auto iter = new_view_list_npc.cbegin(); iter != e_iter2; ++iter)
+			const auto& new_npc_list = new_view_list_npc.GetItemListRef();
+			auto b = new_npc_list.data();
+			const auto e = b + new_npc_list.size();
+			while (e != b)
 			{
-				const auto [id, entity_ptr_npc] = *iter;
-
-				if (m_view_list_npc.emplace(id).second)
+				const auto entity_ptr = (*b++);
+				const auto id = entity_ptr->GetObjectID();
+				if (m_view_list_npc.AddItem(std::make_pair(id, entity_ptr)))
 				{
-					thisSession->SendAsync(add_pkt_func(entity_ptr_npc));
+					thisSession->SendAsync(add_pkt_func(entity_ptr));
 				}
 			}
 		}
-	
-		{
-			for (auto iter = m_view_list_npc.cbegin(); iter != m_view_list_npc.cend();)
-			{
-				const auto entity_npc_id = *iter;
-				if (!new_view_list_npc.erase(entity_npc_id))
-				{
-					iter = m_view_list_npc.erase(iter);
 
-					thisSession->SendAsync(remove_pkt_func(entity_npc_id));
+		{
+			auto& view_list_npc = m_view_list_npc.GetItemListRef();
+			for (auto iter = view_list_npc.begin(); iter != view_list_npc.end();)
+			{
+				const auto id_ptr = *iter;
+
+				if (!new_view_list_npc.TryEraseItem(id_ptr.second))
+				{
+					iter = m_view_list_npc.EraseItemAndGetIter(id_ptr);
+
+					thisSession->SendAsync(remove_pkt_func(id_ptr.first));
 				}
 				else
 				{

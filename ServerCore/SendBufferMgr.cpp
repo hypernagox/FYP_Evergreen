@@ -5,7 +5,7 @@
 
 namespace ServerCore
 {
-	extern thread_local S_ptr<class SendBufferChunk> LSendBufferChunk;
+	constinit extern thread_local class SendBufferChunk* LSendBufferChunk;
 	
 
 	//template<typename T>
@@ -32,19 +32,20 @@ namespace ServerCore
 
 	S_ptr<SendBuffer> SendBufferMgr::Open(c_uint32 size_)noexcept
 	{
-		extern thread_local S_ptr<class SendBufferChunk> LSendBufferChunk;
+		constinit extern thread_local class SendBufferChunk* LSendBufferChunk;
 
 		NAGOX_ASSERT(false == LSendBufferChunk->IsOpen());
 
 		// 다쓰면 교체
 		if (size_ > LSendBufferChunk->FreeSize())
 		{
+			LSendBufferChunk->DecRef();
 			LSendBufferChunk = Pop();
-			LSendBufferChunk->Reset();
+			// LSendBufferChunk->Reset();
 		}
 
 		return LSendBufferChunk->Open(size_);
 	}
 
-	S_ptr<SendBufferChunk> SendBufferMgr::Pop()noexcept { return MakeShared<SendBufferChunk>(); }
+	SendBufferChunk* const SendBufferMgr::Pop()noexcept { return xnew<SendBufferChunk>(); }
 }

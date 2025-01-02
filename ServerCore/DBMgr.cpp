@@ -103,5 +103,6 @@ namespace ServerCore
 			}
 			dbEvents.clear();
 		}
+		Mgr(ThreadMgr)->DestroyTLS();
 	}
 }

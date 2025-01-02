@@ -25,14 +25,16 @@ namespace ServerCore
 		}
 		void EnterField(ContentsEntity* const pEntity_)noexcept {
 			const auto cluster = GetCluster(m_start_x, m_start_y);
-			pEntity_->IncRef(ThreadMgr::NUM_OF_THREADS);
-			pEntity_->SetClusterInfo(cluster->GetClusterInfo());
+			pEntity_->IncRefEnterCluster();
+			pEntity_->SetClusterInfoUnsafe(cluster->GetClusterInfo());
+			std::atomic_thread_fence(std::memory_order_release);
 			cluster->EnterEnqueue(pEntity_);
 		}
 		void EnterFieldWithXY(const uint8_t start_x, const uint8_t start_y, ContentsEntity* const pEntity_)noexcept {
 			const auto cluster = GetCluster(start_x, start_y);
-			pEntity_->IncRef(ThreadMgr::NUM_OF_THREADS);
-			pEntity_->SetClusterInfo(cluster->GetClusterInfo());
+			pEntity_->IncRefEnterCluster();
+			pEntity_->SetClusterInfoUnsafe(cluster->GetClusterInfo());
+			std::atomic_thread_fence(std::memory_order_release);
 			cluster->EnterEnqueue(pEntity_);
 		}
 	public:

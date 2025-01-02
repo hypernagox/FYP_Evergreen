@@ -399,3 +399,4 @@ FodyWeavers.xsd
 *.sln.iml
 
 evergreen_client/AssimpLog.txt
+evergreen_client/UnitiyBuild/Release-Usenet

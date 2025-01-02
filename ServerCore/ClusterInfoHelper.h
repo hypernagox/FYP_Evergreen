@@ -14,8 +14,7 @@ namespace ServerCore
 		void SetClusterXY(const uint8_t x, const uint8_t y)noexcept { m_cur_sectorXY = { x,y }; }
 		const Point2D GetCurXY()const noexcept { return m_cur_sectorXY; }
 	public:
-		static Vector<uint32_t> FillterSessionEntities(const ContentsEntity* const pEntity_)noexcept;
-
+		static void FillterSessionEntities(Vector<const ContentsEntity*>& vec_, const ContentsEntity* const pEntity_)noexcept;
 		static void BroadcastWithID(const Vector<uint32_t>& id, const S_ptr<SendBuffer>& pkt_)noexcept;
 		void BroadcastCluster(const S_ptr<SendBuffer>& pkt_)noexcept;
 		// TODO: 적당히 검색할 섹터만 잘 고르는 휴리스틱 만들기

@@ -56,11 +56,11 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
     {
         const auto pOwnerEntity = owner_comp_sys->GetOwnerEntity();
         const auto prev_awaker = awaker_.get();
-        ContentsEntity* target = nullptr;
+        const ContentsEntity* target = nullptr;
         m_bReEvaluate = false;
 
        // const auto session_list = pOwnerEntity->GetCurSector()->GetSessionCopyListIncRef();
-        const auto& session_list = pOwnerEntity->GetCurCluster()->GetEntities(0);
+        const auto& session_list = bt_root_timer->GetCurObjInSight();
         for (const auto s : session_list)
         {
            const auto pos  = s->GetComp<PositionComponent>()->pos;
@@ -132,7 +132,8 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     {
         // TODO: 스트레스 테스트 아직 패킷없음
         //awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), 1));
-        awaker->GetCurCluster()->Broadcast(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), awaker->GetObjectID(), 1));
+        bt_root_timer->BroadcastObjInSight(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), awaker->GetObjectID(), 1));
+       // awaker->GetCurCluster()->Broadcast(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), awaker->GetObjectID(), 1));
         awaker->GetComp<HP>()->PostDoDmg(1,owner_comp_sys->GetOwnerEntity()->SharedFromThis());
 
         m_accTime = 1.5f;
@@ -174,7 +175,9 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
         Vector3 vpp{ ag->vel[0],ag->vel[1],-ag->vel[2] };
         pOwnerEntity->GetComp<PositionComponent>()->pos = ppp;
         pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(vpp.x, vpp.z) * 180.f / 3.141592f;
-        pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+
+        bt_root_timer->BroadcastObjInSight(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+        //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
         //ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     }
     return NodeStatus::RUNNING;
@@ -195,8 +198,8 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
     pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(cur_pos,Vector3{ dx2,dy2,dz2 });
     
    // ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
-
-    pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    bt_root_timer->BroadcastObjInSight(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
    // ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     
 
@@ -217,7 +220,8 @@ NodeStatus PatrolNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     //ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-    pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    bt_root_timer->BroadcastObjInSight(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
    // ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
 
     //if (SECTOR_STATE::USER_EMPTY & sector_state)

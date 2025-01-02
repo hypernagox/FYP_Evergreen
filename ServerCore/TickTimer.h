@@ -25,6 +25,7 @@ namespace ServerCore
 		const S_ptr<ContentsEntity>& GetAwaker()const noexcept { return m_curAwaker; }
 		const uint32_t GetAwakeDistance()const noexcept { return m_npcAwakeDistance; }
 		const auto& GetCurObjInSight()const noexcept { return m_curObjInSight; }
+		void BroadcastObjInSight(const S_ptr<SendBuffer>& send_buff)noexcept;
 	protected:
 		void AwakerInformation(const ContentsEntity* const awaker)noexcept {
 			if (awaker != m_curAwaker.get())
@@ -40,7 +41,7 @@ namespace ServerCore
 		NagoxAtomic::Atomic<TIMER_STATE> m_timer_state{ TIMER_STATE::IDLE };
 		uint32_t m_tickInterval = 200;
 		S_ptr<ContentsEntity> m_curAwaker;
-		Vector<uint32_t> m_curObjInSight;
+		Vector<const ContentsEntity*> m_curObjInSight;
 	};
 }
 

@@ -5,8 +5,6 @@
 
 namespace ServerCore
 {
-	extern thread_local S_ptr<class SendBufferChunk> LSendBufferChunk;
-
 	S_ptr<SendBuffer> SendBufferChunk::Open(c_uint32 allocSize)noexcept
 	{
 		NAGOX_ASSERT(allocSize <= SEND_BUFFER_CHUNK_SIZE);
@@ -14,6 +12,6 @@ namespace ServerCore
 
 		m_bOpen = true;
 
-		return MakeShared<SendBuffer>(LSendBufferChunk, Buffer(), allocSize);
+		return MakeShared<SendBuffer>(S_ptr<SendBufferChunk>{this}, Buffer(), allocSize);
 	}
 }
