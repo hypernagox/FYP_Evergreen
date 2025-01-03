@@ -81,6 +81,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 
 const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_)
 {
+	DO_BENCH_GLOBAL("MOVE");
 	//if(pSession_->GetObjectID()!=1)
 	//std::cout << "move" << std::endl;
 	const auto& pEntity = pSession_->GetOwnerEntity()->GetComp<PositionComponent>();
@@ -109,6 +110,8 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 
 const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_)
 {
+	DO_BENCH_GLOBAL("ATK");
+
 	const auto pOwner = pSession_->GetOwnerEntity();
 
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
@@ -119,11 +122,11 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
 
 	const auto& box = pOwner->GetComp<Collider>()->GetBox(rotatedForward);
-
+	bool isHit = false;
 	//if (const auto sector = pOwner->GetCurCluster())
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
-		
+		std::cout << std::format("Session ID: {}, Num Of Mon in Viewlist: {}\n", pOwner->GetObjectID(), mon_list.size());
 		for (const auto[mon_id,ptr] : mon_list)
 		{
 			if (const auto pmon = ptr)
@@ -137,6 +140,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 						//
 						//owner->TryOnDestroy();
 						owner->GetComp<HP>()->PostDoDmg(1, pOwner->SharedFromThis());
+						isHit = true;
 					}
 				}
 			}
@@ -150,7 +154,10 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 			ptr->GetSession()->SendAsync(atk_pkt);
 		}
 	}
-	
+	if (isHit)
+	{
+		std::cout << "Hit!\n";
+	}
 	return true;
 }
 

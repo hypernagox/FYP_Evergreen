@@ -148,6 +148,12 @@
     <Filter Include="Manager\FieldMgr">
       <UniqueIdentifier>{4464dc32-1426-4c5b-9376-88955e722099}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager\TimeMgr">
+      <UniqueIdentifier>{9eae18e2-b850-4700-95af-1bd45baa06a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Benchmarker">
+      <UniqueIdentifier>{27404f53-4c98-45e9-9995-01ba85374175}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -369,6 +375,12 @@
     <ClInclude Include="NagoxAtomic.h">
       <Filter>Utils\struct\CustomDS</Filter>
     </ClInclude>
+    <ClInclude Include="TimeMgr.h">
+      <Filter>Manager\TimeMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Benchmarker.h">
+      <Filter>Manager\Benchmarker</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -499,6 +511,12 @@
     </ClCompile>
     <ClCompile Include="FieldMgr.cpp">
       <Filter>Manager\FieldMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeMgr.cpp">
+      <Filter>Manager\TimeMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Benchmarker.cpp">
+      <Filter>Manager\Benchmarker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

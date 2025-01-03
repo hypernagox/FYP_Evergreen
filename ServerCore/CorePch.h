@@ -82,3 +82,5 @@
 #include "func.h"
 #include "FieldMgr.h"
 #include "NagoxAtomic.h"
+#include "TimeMgr.h"
+#include "Benchmarker.h"

@@ -192,6 +192,7 @@
     <ClInclude Include="AtomicNonTemplate.h" />
     <ClInclude Include="BackOff.h" />
     <ClInclude Include="BehaviorTree.hpp" />
+    <ClInclude Include="Benchmarker.h" />
     <ClInclude Include="Cluster.h" />
     <ClInclude Include="ComponentSystem.h" />
     <ClInclude Include="ContentsComponent.h" />
@@ -254,6 +255,7 @@
     <ClInclude Include="TaskQueueable.h" />
     <ClInclude Include="TaskTimerMgr.h" />
     <ClInclude Include="ThreadMgr.h" />
+    <ClInclude Include="TimeMgr.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TickTimer.h" />
     <ClInclude Include="TypeCast.h" />
@@ -264,6 +266,7 @@
   <ItemGroup>
     <ClCompile Include="Allocator.cpp" />
     <ClCompile Include="AtomicNonTemplate.cpp" />
+    <ClCompile Include="Benchmarker.cpp" />
     <ClCompile Include="Cluster.cpp" />
     <ClCompile Include="ComponentSystem.cpp" />
     <ClCompile Include="DBBindRAII.cpp" />
@@ -311,6 +314,7 @@
     <ClCompile Include="TaskQueueable.cpp" />
     <ClCompile Include="TaskTimerMgr.cpp" />
     <ClCompile Include="ThreadMgr.cpp" />
+    <ClCompile Include="TimeMgr.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TickTimer.cpp" />
     <ClCompile Include="FieldMgr.cpp" />

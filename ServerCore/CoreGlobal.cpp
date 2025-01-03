@@ -9,6 +9,8 @@
 #include "Logger.h"
 #include "DBMgr.h"
 #include "FieldMgr.h"
+#include "TimeMgr.h"
+#include "Benchmarker.h"
 
 namespace ServerCore
 {
@@ -23,7 +25,11 @@ namespace ServerCore
 	}
 	void CoreGlobal::Init() noexcept
 	{
+		Mgr(BenchmarkMgr)->RegisterDestroy();
+
+
 		Mgr(CoreGlobal)->RegisterDestroy();
+		Mgr(TimeMgr)->RegisterDestroy();
 		Mgr(Logger)->RegisterDestroy();
 		Mgr(ThreadMgr)->RegisterDestroy();
 		Mgr(DeadLockProfiler)->RegisterDestroy();
@@ -31,6 +37,9 @@ namespace ServerCore
 		Mgr(DBMgr)->RegisterDestroy();
 		Mgr(FieldMgr)->RegisterDestroy();
 
+
+		Mgr(BenchmarkMgr)->Init();
+		Mgr(TimeMgr)->Init();
 		Mgr(Logger)->Init();
 		//Mgr(MemoryMgr)->Init();
 		Mgr(ThreadMgr)->Init();
