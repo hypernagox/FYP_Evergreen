@@ -14,7 +14,7 @@ namespace ServerCore
 			uint64_t accTime = 0;
 			uint64_t callCount = 0;
 		};
-		void ClearAndGetBenchmarkResult(const uint64_t id_, std::map<std::string, BenchData>* const global_result = nullptr)const noexcept;
+		void ClearAndGetBenchmarkResult(const uint64_t id_, const class ContentsEntity* const entity = nullptr, std::map<std::string, BenchData>* const global_result = nullptr)const noexcept;
 	private:
 		void RecordBenchmark(const std::string_view func_name, const uint64_t dt_)noexcept;
 	private:

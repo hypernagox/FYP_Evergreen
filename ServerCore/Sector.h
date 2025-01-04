@@ -57,19 +57,19 @@ namespace ServerCore
 			// pEntity_->SetSectorInfo(GetSectorID(), this);
 			EnqueueAsync(&Sector::Enter, uint8_t{ group_type }, c_uint32{ obj_id }, static_cast<ContentsEntity* const>(pEntity_));
 		}
-		inline void EnterEnqueue(ContentsEntity* const pEntity_)noexcept { EnterEnqueue(pEntity_->GetObjectType(), pEntity_->GetObjectID(), static_cast<ContentsEntity* const>(pEntity_)); }
+		inline void EnterEnqueue(ContentsEntity* const pEntity_)noexcept { EnterEnqueue(pEntity_->GetPrimaryGroupType(), pEntity_->GetObjectID(), static_cast<ContentsEntity* const>(pEntity_)); }
 		inline void LeaveAndDestroyEnqueue(const uint8_t group_type, const uint32_t obj_id)noexcept { EnqueueAsync(&Sector::LeaveAndDestroy, uint8_t{ group_type }, c_uint32{ obj_id }); }
 		inline void LeaveEnqueue(const uint8_t group_type, const uint32_t obj_id)noexcept { EnqueueAsync(&Sector::Leave, uint8_t{ group_type }, c_uint32{ obj_id }); }
 		inline void BroadCastEnqueue(S_ptr<SendBuffer> pSendBuffer)noexcept{ EnqueueAsync(&Sector::BroadCast, std::move(pSendBuffer)); }
 		inline void BroadCastEnqueue(S_ptr<SendBuffer> pSendBuffer, c_uint32 exceptSessionNumber)noexcept { EnqueueAsync(&Sector::BroadCastExceptOne, std::move(pSendBuffer), c_uint32{ exceptSessionNumber }); }
 		inline void MigrationEnqueue(S_ptr<Sector> pOtherSector, const uint8_t group_type, c_uint32 obj_id)noexcept { EnqueueAsync(&Sector::Migration, std::move(pOtherSector), uint8_t{ group_type }, c_uint32{ obj_id }); }
-		inline void MigrationEnqueue(S_ptr<Sector> pOtherSector, const ContentsEntity* const pEntity_)noexcept { MigrationEnqueue(std::move(pOtherSector), pEntity_->GetObjectType(), pEntity_->GetObjectID()); }
+		inline void MigrationEnqueue(S_ptr<Sector> pOtherSector, const ContentsEntity* const pEntity_)noexcept { MigrationEnqueue(std::move(pOtherSector), pEntity_->GetPrimaryGroupType(), pEntity_->GetObjectID()); }
 		inline void MigrationAllEnqueue(S_ptr<Sector> pOtherSector)noexcept { EnqueueAsync(&Sector::MigrationAll, std::move(pOtherSector)); }
 		inline void MigrationWorldEnqueue(S_ptr<World> curWorld, S_ptr<World> destWorld, ContentsEntity* const pEntity)noexcept {
-			EnqueueAsync(&Sector::MigrationWorld, std::move(curWorld), std::move(destWorld), pEntity->GetObjectType(), pEntity->GetObjectID());
+			EnqueueAsync(&Sector::MigrationWorld, std::move(curWorld), std::move(destWorld), pEntity->GetPrimaryGroupType(), pEntity->GetObjectID());
 		}
 		inline void MigrationWorldWithXYEnqueue(S_ptr<World> curWorld, S_ptr<World> destWorld, ContentsEntity* const pEntity, const uint8_t start_x, const uint8_t start_y)noexcept {
-			EnqueueAsync(&Sector::MigrationWorldWithXY, std::move(curWorld), std::move(destWorld), pEntity->GetObjectType(), pEntity->GetObjectID(), uint8_t{ start_x }, uint8_t{ start_y });
+			EnqueueAsync(&Sector::MigrationWorldWithXY, std::move(curWorld), std::move(destWorld), pEntity->GetPrimaryGroupType(), pEntity->GetObjectID(), uint8_t{ start_x }, uint8_t{ start_y });
 		}
 	protected:
 		static const Vector<ContentsEntity*>& GetSessionCopyListIncRef(const std::span<Sector* const> sectors)noexcept;

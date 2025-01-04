@@ -27,7 +27,7 @@ void ClientSession::OnConnected()
 {
 	//std::cout << "Connect !" << std::endl;
 	const auto pOwner = GetOwnerEntity();
-	pOwner->SetObjectTypeInfo(PLAYER_TYPE_INFO::WARRIOR);
+	pOwner->SetDetailType(PLAYER_TYPE_INFO::WARRIOR);
 	pOwner->AddIocpComponent<ServerCore::Queueabler>();
 	pOwner->AddComp<HP>()->InitHP(5);
 	pOwner->AddComp<PlayerDeath>();

@@ -22,7 +22,6 @@ namespace ServerCore
 		const auto clusters = ClusterInfoHelper::GetAdjClusters(pOwnerEntity);
 
 		const auto thisSession = pOwnerEntity->GetSession();
-		const auto obj_type = pOwnerEntity->GetObjectType();
 		const auto obj_id = pOwnerEntity->GetObjectID();
 
 		const auto add_pkt_func = g_create_add_pkt;
@@ -149,5 +148,32 @@ namespace ServerCore
 				}
 			}
 		}
+	}
+	void MoveBroadcaster::BroadcastPacket(const S_ptr<SendBuffer>& pSendBuff_) const noexcept
+	{
+		const auto& session_list = m_view_list_session.GetItemListRef();
+		auto b = session_list.data();
+		const auto e = b + session_list.size();
+		while (e != b) { (*b++).second->GetSession()->SendAsync(pSendBuff_); }
+	}
+	Vector<S_ptr<ContentsEntity>> MoveBroadcaster::GetSptrSession() const noexcept
+	{
+		const auto& session_list = m_view_list_session.GetItemListRef();
+		auto b = session_list.data();
+		const auto e = b + session_list.size();
+		Vector<S_ptr<ContentsEntity>> temp;
+		temp.reserve(e - b);
+		while (e != b) { temp.emplace_back((*b++).second); }
+		return temp;
+	}
+	Vector<S_ptr<ContentsEntity>> MoveBroadcaster::GetSptrNPC() const noexcept
+	{
+		const auto& npc_list = m_view_list_npc.GetItemListRef();
+		auto b = npc_list.data();
+		const auto e = b + npc_list.size();
+		Vector<S_ptr<ContentsEntity>> temp;
+		temp.reserve(e - b);
+		while (e != b) { temp.emplace_back((*b++).second); }
+		return temp;
 	}
 }

@@ -31,8 +31,9 @@ public:
 	constexpr virtual const uint64_t GetCompType()const noexcept = 0;
 	inline const bool IsValid()const noexcept { return m_pOwnerEntity->IsValid(); }
 public:
-	const uint16_t GetOwnerObjectType()const noexcept { return m_pOwnerEntity->GetObjectType(); }
-	const uint32_t GetOwnerObjectID()const noexcept { return m_pOwnerEntity->GetObjectID(); }
+	template<typename T = uint8_t> requires (std::is_enum_v<T> || std::same_as<T, uint8_t>) && (sizeof(T) == sizeof(uint8_t))
+	constexpr inline const T GetOwnerPrimaryGroup()const noexcept { return m_pOwnerEntity->GetPrimaryGroupType<T>(); }
+	constexpr inline const uint32_t GetOwnerObjectID()const noexcept { return m_pOwnerEntity->GetObjectID(); }
 	ServerCore::ClusterInfo GetOwnerClusterInfo()const noexcept { return m_pOwnerEntity->GetClusterInfo(); }
 private:
 	ServerCore::ContentsEntity* const m_pOwnerEntity;

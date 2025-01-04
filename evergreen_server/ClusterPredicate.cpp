@@ -58,7 +58,7 @@ S_ptr<SendBuffer> ClusterPredicate::ClusterAddPacketFunc(const ServerCore::Conte
 {
 	const auto& pEntity = p->GetComp<PositionComponent>();
 
-	return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)p->GetObjectType(), p->GetObjectTypeInfo(), ToFlatVec3(pEntity->pos));
+	return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)p->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), p->GetDetailType(), ToFlatVec3(pEntity->pos));
 }
 
 S_ptr<SendBuffer> ClusterPredicate::ClusterRemovePacketFunc(const uint32_t obj_id) noexcept

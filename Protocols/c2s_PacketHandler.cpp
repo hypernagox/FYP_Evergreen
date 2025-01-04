@@ -126,7 +126,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 	//if (const auto sector = pOwner->GetCurCluster())
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
-		std::cout << std::format("Session ID: {}, Num Of Mon in Viewlist: {}\n", pOwner->GetObjectID(), mon_list.size());
+		//std::cout << std::format("Session ID: {}, Num Of Mon in Viewlist: {}\n", pOwner->GetObjectID(), mon_list.size());
 		for (const auto[mon_id,ptr] : mon_list)
 		{
 			if (const auto pmon = ptr)
@@ -147,16 +147,11 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 		}
 	}
 	{
-		const auto atk_pkt = Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), *pkt_.atk_pos());
-		const auto& session_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListSession();
-		for (const auto [session_id,ptr] : session_list)
-		{
-			ptr->GetSession()->SendAsync(atk_pkt);
-		}
+		pOwner->GetComp<MoveBroadcaster>()->BroadcastPacket(Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), *pkt_.atk_pos()));
 	}
 	if (isHit)
 	{
-		std::cout << "Hit!\n";
+		//std::cout << "Hit!\n";
 	}
 	return true;
 }

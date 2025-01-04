@@ -19,13 +19,13 @@ namespace ServerCore
 		~Cluster()noexcept;
 	public:
 		void EnterEnqueue(ContentsEntity* const pEntity_)noexcept {
-			PostClusterTask(&Cluster::Enter, pEntity_->GetObjectType(), pEntity_->GetObjectID(), static_cast<ContentsEntity* const>(pEntity_));
+			PostClusterTask(&Cluster::Enter, pEntity_->GetPrimaryGroupType(), pEntity_->GetObjectID(), static_cast<ContentsEntity* const>(pEntity_));
 		}
 		void LeaveAndDestroyEnqueue(const uint8_t group_type, const uint32_t obj_id)noexcept {
 			PostClusterTask(&Cluster::LeaveAndDestroy, uint8_t{ group_type }, c_uint32{ obj_id });
 		}
 		void MigrationEnqueue(const ClusterInfo other_info, const ContentsEntity* const pEntity_)noexcept {
-			PostClusterTask(&Cluster::Migration,rcast(other_info), pEntity_->GetObjectType(), pEntity_->GetObjectID());
+			PostClusterTask(&Cluster::Migration,rcast(other_info), pEntity_->GetPrimaryGroupType(), pEntity_->GetObjectID());
 		}
 	public:
 		void Broadcast(const S_ptr<SendBuffer>& pkt_)const noexcept;

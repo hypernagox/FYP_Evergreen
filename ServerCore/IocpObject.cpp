@@ -12,9 +12,9 @@
 
 namespace ServerCore
 {
-	ContentsEntity::ContentsEntity(const uint16_t type_id, const uint8_t obj_type_info) noexcept
-		: m_objectCombineID{ CombineObjectID(type_id,IDGenerator::GenerateID()) }
-		, m_objTypeInfo{ obj_type_info }
+	ContentsEntity::ContentsEntity(const uint8_t primary_group_type, const uint8_t detail_type) noexcept
+		: m_entity_info{ primary_group_type,detail_type ,IDGenerator::GenerateID() }
+
 		, m_componentSystem{ xnew<ComponentSystemNPC>(m_bIsValid,this) }
 	{
 		AddComp<ClusterInfoHelper>();
@@ -22,7 +22,7 @@ namespace ServerCore
 	}
 
 	ContentsEntity::ContentsEntity(Session* const session_) noexcept
-		: m_objectCombineID{ CombineObjectID(0,IDGenerator::GenerateID()) }
+		: m_entity_info{ 0,IDGenerator::GenerateID() }
 		, m_pSession{ reinterpret_cast<PacketSession* const>(session_) }
 		, m_componentSystem{ xnew<ComponentSystem>(m_bIsValid) }
 	{
@@ -95,7 +95,7 @@ namespace ServerCore
 	{
 		const auto cluster_ptr = GetCurCluster();
 		if (cluster_ptr) 
-			cluster_ptr->LeaveAndDestroyEnqueue(GetObjectType(), GetObjectID());
+			cluster_ptr->LeaveAndDestroyEnqueue(GetPrimaryGroupType(), GetObjectID());
 		if (nullptr == m_pSession)
 			Mgr(FieldMgr)->ReleaseNPC(this);
 		else

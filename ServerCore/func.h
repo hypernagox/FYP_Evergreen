@@ -34,11 +34,11 @@ namespace ServerCore
 			== reinterpret_cast<const PVOID* const>(old_ptr);
 	}
 
-	static inline const uint64_t CombineObjectID(const uint16_t type_id, const uint64_t obj_id)noexcept {
-		return (static_cast<const uint64_t>(type_id) << 48) | obj_id;
-	}
-	static inline const uint64_t GetObjectID(const uint64_t combine_id)noexcept { return combine_id & 0xFFFFFFFFFFFF; }
-	static inline const uint16_t GetObjectType(const uint64_t combine_id)noexcept { return static_cast<const uint16_t>(combine_id >> 48); }
+	//static inline const uint64_t CombineObjectID(const uint16_t type_id, const uint64_t obj_id)noexcept {
+	//	return (static_cast<const uint64_t>(type_id) << 48) | obj_id;
+	//}
+	// static inline const uint64_t GetObjectID(const uint64_t combine_id)noexcept { return combine_id & 0xFFFFFFFFFFFF; }
+	// static inline const uint16_t GetObjectType(const uint64_t combine_id)noexcept { return static_cast<const uint16_t>(combine_id >> 48); }
 	static inline const uint32_t my_rand()noexcept {
 		constinit extern thread_local uint32_t LRandSeed;
 		LRandSeed = LRandSeed * 1103515245 + 12345;

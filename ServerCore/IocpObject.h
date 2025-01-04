@@ -59,13 +59,38 @@ namespace ServerCore
 		{}
 	};
 
+	class alignas(8) EntityInfo
+	{
+	public:
+		constexpr inline EntityInfo(const uint8_t primary_group_type, const uint64_t id_)noexcept
+			:m_obj_id{ id_ }, m_obj_primary_group_type{ primary_group_type } {}
+
+		constexpr inline EntityInfo(const uint8_t primary_group_type, const uint8_t detail_type, const uint64_t id_)noexcept
+			:m_obj_id{ id_ }, m_obj_primary_group_type{ primary_group_type }, m_obj_detail_type{ detail_type } {}
+	public:
+		constexpr inline const uint64_t GetObjectID()const noexcept { return m_obj_id; }
+
+		template<typename T = uint8_t> requires (std::is_enum_v<T> || std::same_as<T, uint8_t>) && (sizeof(T) == sizeof(uint8_t))
+		constexpr inline const T GetPrimaryGroupType()const noexcept { return static_cast<const T>(m_obj_primary_group_type); }
+
+		template<typename T = uint8_t> requires (std::is_enum_v<T> || std::same_as<T, uint8_t>) && (sizeof(T) == sizeof(uint8_t))
+		constexpr inline const T GetObjectDetailType()const noexcept { return static_cast<const T>(m_obj_detail_type); }
+
+		template<typename T> requires std::is_enum_v<T>
+		constexpr inline void SetObjectDetailType(const T eDetailType_)const noexcept { m_obj_detail_type = static_cast<const uint8_t>(eDetailType_); }
+	private:
+		const uint64_t m_obj_id : 48;
+		const uint64_t m_obj_primary_group_type : 8;
+		mutable uint64_t m_obj_detail_type : 8;
+	};
+
 	extern Cluster* const GetCluster(const ClusterInfo info)noexcept;
 
 	class alignas(64) ContentsEntity final
 		:public IocpObject
 	{
 	public:
-		ContentsEntity(const uint16_t type_id, const uint8_t obj_type_info) noexcept;
+		ContentsEntity(const uint8_t primary_group_type, const uint8_t detail_type) noexcept;
 		ContentsEntity(Session* const session_) noexcept;
 		~ContentsEntity()noexcept;
 	public:
@@ -80,12 +105,16 @@ namespace ServerCore
 		virtual void Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept override final;
 	public:
 		inline S_ptr<ContentsEntity> SharedFromThis()const noexcept { return S_ptr<ContentsEntity>{this}; }
-		inline const uint64_t GetObjectCombineID()const noexcept { return m_objectCombineID; }
-		inline const uint32_t GetObjectID()const noexcept { return static_cast<const uint32_t>(ServerCore::GetObjectID(m_objectCombineID)); }
-		inline const uint64_t GetObjectID64()const noexcept { return ServerCore::GetObjectID(m_objectCombineID); }
-		inline const uint8_t GetObjectType()const noexcept { return static_cast<const uint8_t>(ServerCore::GetObjectType(m_objectCombineID)); }
 
-		static inline bool IsNPC(const uint64_t combinedID)noexcept { return 0 != ServerCore::GetObjectType(combinedID); }
+		constexpr inline const EntityInfo GetEntityInfo()const noexcept { return m_entity_info; }
+		constexpr inline const uint32_t GetObjectID()const noexcept { return static_cast<const uint32_t>(m_entity_info.GetObjectID()); }
+
+		constexpr inline const uint64_t GetObjectID64()const noexcept { return m_entity_info.GetObjectID(); }
+
+		template<typename T = uint8_t> requires (std::is_enum_v<T> || std::same_as<T, uint8_t>) && (sizeof(T) == sizeof(uint8_t))
+		constexpr inline const T GetPrimaryGroupType()const noexcept { return static_cast<const T>(m_entity_info.GetPrimaryGroupType<T>()); }
+
+		inline bool IsNPC()noexcept { return 0 != m_entity_info.GetPrimaryGroupType(); }
 	public:
 		constexpr inline const PacketSession* const GetSession()const noexcept { return m_pSession; }
 		inline const ClientSession* const GetClientSession()const noexcept { return reinterpret_cast<const ClientSession* const>(m_pSession); }
@@ -125,15 +154,18 @@ namespace ServerCore
 		template <typename T = Queueabler>
 		constexpr inline Queueabler* const GetQueueabler()const noexcept { return GetIocpComponent<T>(); }
 	public:
-		template <typename T> requires std::is_enum_v<T>
-		void SetObjectTypeInfo(const T obj_type_info)noexcept { m_objTypeInfo = static_cast<const uint8_t>(obj_type_info); }
-		const uint8_t GetObjectTypeInfo()const noexcept { return m_objTypeInfo; }
+		template <typename T> requires std::is_enum_v<T> && (sizeof(T) == sizeof(uint8_t))
+		constexpr inline void SetDetailType(const T obj_detail_type)noexcept { m_entity_info.SetObjectDetailType<T>(obj_detail_type); }
+
+		template<typename T = uint8_t> requires (std::is_enum_v<T> || std::same_as<T, uint8_t>) && (sizeof(T) == sizeof(uint8_t))
+		constexpr inline const T GetDetailType()const noexcept { return m_entity_info.GetObjectDetailType<T>(); }
+
 		void Update(const float dt_)noexcept;
 		void UpdateNonCheck(const float dt_)const noexcept;
 		template <typename T, typename... Args>
 		T* const AddComp(Args&&... args)noexcept { return m_componentSystem->AddComp<T>(this, std::forward<Args>(args)...); }
 		template <typename T>
-		inline T* const GetComp()const noexcept { return m_componentSystem->GetComp<T>(); }
+		constexpr inline T* const GetComp()const noexcept { return m_componentSystem->GetComp<T>(); }
 		inline const class ComponentSystem* const GetComponentSystem()const noexcept { return m_componentSystem; }
 	public:
 		void SetClusterInfo(const ClusterInfo info)noexcept { m_clusterInfo.store(info); }
@@ -146,8 +178,7 @@ namespace ServerCore
 		void OnDestroy()noexcept;
 	private:
 		alignas(64) PacketSession* const m_pSession = nullptr;
-		const uint64_t m_objectCombineID;
-		uint8_t m_objTypeInfo;
+		const EntityInfo m_entity_info;
 		class ComponentSystem* const m_componentSystem;
 		IocpComponent* m_arrIocpComponents[etoi(IOCP_COMPONENT::END)] = {};
 		alignas(64) NagoxAtomic::Atomic<bool> m_bIsValid{ true };
@@ -155,8 +186,8 @@ namespace ServerCore
 		std::atomic_bool m_bNowUpdateFlag = false;
 	};
 
-	template <typename T, typename U> requires std::is_enum_v<T> && std::is_enum_v<U>
-	static constexpr inline S_ptr<ContentsEntity> CreateContentsEntity(const T type_id, const U obj_type_info)noexcept { return MakeSharedAligned<ContentsEntity>(static_cast<const uint16_t>(type_id), static_cast<const uint8_t>(obj_type_info)); }
+	template <typename T, typename U> requires std::is_enum_v<T> && std::is_enum_v<U> && (sizeof(uint8_t) == sizeof(T)) && (sizeof(uint8_t) == sizeof(U))
+	static constexpr inline S_ptr<ContentsEntity> CreateContentsEntity(const T primary_group_type, const U detail_type)noexcept { return MakeSharedAligned<ContentsEntity>(static_cast<const uint8_t>(primary_group_type), static_cast<const uint8_t>(detail_type)); }
 
 	class IocpComponent
 	{
@@ -170,9 +201,9 @@ namespace ServerCore
 
 		inline const bool IsValid()const noexcept { return m_pOwnerEntity->IsValid(); }
 	public:
-		inline const uint16_t GetOwnerObjectType()const noexcept { return m_pOwnerEntity->GetObjectType(); }
-		inline const uint32_t GetOwnerObjectID()const noexcept { return m_pOwnerEntity->GetObjectID(); }
-		// inline const ID_Ptr<Sector> GetOwnerSectorInfo()const noexcept { return m_pOwnerEntity->GetCombinedSectorInfo(); }
+		template<typename T = uint8_t> requires (std::is_enum_v<T> || std::same_as<T, uint8_t>) && (sizeof(T) == sizeof(uint8_t))
+		constexpr inline const T GetOwnerPrimaryGroup()const noexcept { return m_pOwnerEntity->GetPrimaryGroupType<T>(); }
+		constexpr inline const uint32_t GetOwnerObjectID()const noexcept { return m_pOwnerEntity->GetObjectID(); }
 		const ClusterInfo GetOwnerClusterInfo()const noexcept { return m_pOwnerEntity->GetClusterInfo(); }
 	protected:
 		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept = 0;

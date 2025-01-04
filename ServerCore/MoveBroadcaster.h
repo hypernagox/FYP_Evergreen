@@ -22,8 +22,11 @@ namespace ServerCore
 		using PacketFunc = S_ptr<SendBuffer>(*)(const ContentsEntity* const)noexcept;
 	public:
 		void BroadcastMove()noexcept;
+		void BroadcastPacket(const S_ptr<SendBuffer>& pSendBuff_)const noexcept;
+		Vector<S_ptr<ContentsEntity>> GetSptrSession()const noexcept;
+		Vector<S_ptr<ContentsEntity>> GetSptrNPC()const noexcept;
 		const auto& GetViewListSession()const noexcept { return m_view_list_session.GetItemListRef(); }
-		const auto GetViewListNPC()const noexcept { return m_view_list_npc.GetItemListRef(); }
+		const auto& GetViewListNPC()const noexcept { return m_view_list_npc.GetItemListRef(); }
 	public:
 		static void RegisterHuristicFunc2Session(const HuristicFunc fp_)noexcept {
 			if (g_huristic[0])return;

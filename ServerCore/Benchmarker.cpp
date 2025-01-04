@@ -15,7 +15,7 @@ namespace ServerCore
 		++data.callCount;
 	}
 
-	void Benchmarker::ClearAndGetBenchmarkResult(const uint64_t id_, std::map<std::string, BenchData>* const global_result) const noexcept
+	void Benchmarker::ClearAndGetBenchmarkResult(const uint64_t id_, const class ContentsEntity* const entity, std::map<std::string, BenchData>* const global_result) const noexcept
 	{
 		if (global_result)
 		{
@@ -24,7 +24,8 @@ namespace ServerCore
 		else
 		{
 			if (m_mapForBenchmark.empty())return;
-			std::cout << std::format("Entitiy ID {} Func Log: \n", id_);
+			if (entity)std::cout << std::format("Entitiy ID {}, Group {}, Type {} Func Log: \n", id_, entity->GetPrimaryGroupType(), entity->GetDetailType());
+			else std::cout << std::format("Entitiy ID {} Func Log: \n", id_);
 		}
 		for (const auto& [funcName, record] : m_mapForBenchmark)
 		{
@@ -51,7 +52,7 @@ namespace ServerCore
 
 		for (int i = 0; i < NUM_OF_THREADS; ++i)
 		{
-			m_bench_marker[i].ClearAndGetBenchmarkResult(i + 1, &global_bench_data);
+			m_bench_marker[i].ClearAndGetBenchmarkResult(i + 1, nullptr, &global_bench_data);
 			m_bench_marker[i].m_mapForBenchmark.clear();
 		}
 
