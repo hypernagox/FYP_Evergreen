@@ -32,13 +32,7 @@ namespace Common
 			{
 				if (transition->IsTriggered(m_timeInCurrentState))
 				{
-					State previousState = m_currentState;
-					m_currentState = transition->GetToState();
-					m_timeInCurrentState = 0.0f;
-					for (const auto& callback : m_onStateChangeCallbacks)
-					{
-						callback(previousState, m_currentState);
-					}
+					SetState(transition->GetToState());
 					break;
 				}
 			}
@@ -83,6 +77,17 @@ namespace Common
 				condition = std::make_unique<bool>();
 			}
 			return condition.get();
+		}
+
+		void SetState(State state)
+		{
+			State previousState = m_currentState;
+			m_currentState = state;
+			m_timeInCurrentState = 0.0f;
+			for (const auto& callback : m_onStateChangeCallbacks)
+			{
+				callback(previousState, state);
+			}
 		}
 
 		// 현재 상태와 진행 시간을 가져오는 함수들
