@@ -28,7 +28,14 @@ static inline Vector3 ToOriginVec3(const Nagox::Struct::Vec3* const v)noexcept {
 
 const bool Handle_c2s_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
 {
-	pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID());
+	pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp());
+	return true;
+}
+
+const bool Handle_c2s_PING_PONG(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PING_PONG& pkt_)
+{
+	//std::cout << Mgr(TimeMgr)->GetServerTimeStamp() << std::endl;
+	pSession_ << Create_s2c_PING_PONG(Mgr(TimeMgr)->GetServerTimeStamp());
 	return true;
 }
 
@@ -99,7 +106,7 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 	//	pEntity->body_angle,
 	//	pEntity->time_stamp));
 	//g_sector->MoveBroadCast(pSession_, s);
-	
+	pSession_->SendAsync(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()));
 	pSession_->GetOwnerEntity()->GetComp<ServerCore::MoveBroadcaster>()->BroadcastMove();
 	//pSession_->GetOwnerEntity()->GetComp<ServerCore::SectorInfoHelper>()->ImmigrationSector(0, 0);
 	//const auto en = pSession_->GetOwnerEntity();

@@ -31,25 +31,25 @@ namespace ServerCore
 
 	class ClusterUpdateQueue
 	{
+		friend class ThreadMgr;
 		static constexpr const uint64_t MAX_TASK = 1024 * 1024 * 16;
 	public:
 		ClusterUpdateQueue() = delete;
 		~ClusterUpdateQueue() = delete;
 	public:
-		static void PushTask(ClusterUpdateTask* const task)noexcept {
-			const auto cur_idx = (ULONG64)InterlockedIncrement64((LONG64*)&m_taskCount);
-			InterlockedExchangePointer((PVOID*)(m_arrTask + ((cur_idx - 1) & (MAX_TASK - 1)))
+		static inline void PushTask(ClusterUpdateTask* const task)noexcept {
+			const auto cur_idx = (ULONG64)InterlockedIncrement64((LONG64*)&m_taskCount) - 1;
+			InterlockedExchangePointer((PVOID*)(m_arrTask + ((cur_idx) & (MAX_TASK - 1)))
 				, task);
 		}
-	public:
-		static void UpdateCluster()noexcept {
+	private:
+		static inline void UpdateCluster()noexcept {
 			constinit thread_local uint64_t L_CurIndex = 0;
 			const auto arrTask = m_arrTask;
 			for (;;)
 			{
-				const auto cur_idx = (L_CurIndex) & (MAX_TASK - 1);
+				const auto task_ptr = arrTask + ((L_CurIndex) & (MAX_TASK - 1));
 				_Compiler_barrier();
-				const auto task_ptr = arrTask + cur_idx;
 				const auto task = *task_ptr;
 				if (!task)return;
 				if (task->Execute())

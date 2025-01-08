@@ -9,7 +9,7 @@ namespace ServerCore
 {
 	TaskTimerMgr::TaskTimerMgr()
 	{
-		for (int i = 0; i < 1024; ++i)
+		for (int i = 0; i < 1024 * 1024 * 2; ++i)
 		{
 			m_timerTaskQueue.emplace(TimerTask{});
 		}

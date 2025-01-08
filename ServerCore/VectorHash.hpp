@@ -464,7 +464,7 @@ namespace ServerCore
         template <typename V>
         const bool AddItem(const Key& key, V&& value)noexcept
         {
-            if (false == m_ID2idx.try_emplace(key, static_cast<const int32_t>(m_listItem.size())).second)
+            if (false == m_ID2idx.try_emplace(key, static_cast<const int32_t>(m_listItem.size())).second) [[unlikely]]
                 return false;
             m_listItem.emplace_back(std::forward<V>(value));
             return true;
@@ -472,7 +472,7 @@ namespace ServerCore
 
         const auto EraseItemAndGetIter(const Key& key)noexcept
         {
-            if (const auto iter = m_ID2idx.extract(key))
+            if (const auto iter = m_ID2idx.extract(key)) [[likely]]
             {
                 const int32_t last_idx = GetLastIndex();
                 const int32_t target_idx = iter.mapped();
@@ -490,7 +490,7 @@ namespace ServerCore
                     return m_listItem.end();
                 }
             }
-            else
+            else [[unlikely]]
             {
                 return m_listItem.end();
             }
@@ -498,7 +498,7 @@ namespace ServerCore
 
         void EraseItem(const Key& key)noexcept
         {
-            if (const auto iter = m_ID2idx.extract(key))
+            if (const auto iter = m_ID2idx.extract(key)) [[likely]]
             {
                 const int32_t last_idx = GetLastIndex();
                 const int32_t target_idx = iter.mapped();
@@ -553,7 +553,7 @@ namespace ServerCore
 
         Value ExtractItem(const Key& key)noexcept
         {
-            if (const auto iter = m_ID2idx.extract(key))
+            if (const auto iter = m_ID2idx.extract(key)) [[likely]]
             {
                 const int32_t last_idx = GetLastIndex();
                 const int32_t target_idx = iter.mapped();
@@ -571,7 +571,7 @@ namespace ServerCore
                 }
                 return temp;
             }
-            else
+            else [[unlikely]]
             {
                 return {};
             }
@@ -636,8 +636,7 @@ namespace ServerCore
         template <typename V>
         const bool AddItem(V&& value)noexcept
         {
-            const int32_t cur_idx = static_cast<const int32_t>(m_listItem.size());
-            if (false == m_ID2idx.try_emplace(value, cur_idx).second)
+            if (false == m_ID2idx.try_emplace(value, static_cast<const int32_t>(m_listItem.size())).second) [[unlikely]]
                 return false;
             m_listItem.emplace_back(std::forward<V>(value));
             return true;
@@ -645,7 +644,7 @@ namespace ServerCore
 
         const auto EraseItemAndGetIter(const Value& value)noexcept
         {
-            if (const auto iter = m_ID2idx.extract(value))
+            if (const auto iter = m_ID2idx.extract(value)) [[likely]]
             {
                 const int32_t last_idx = GetLastIndex();
                 const int32_t target_idx = iter.mapped();
@@ -663,7 +662,7 @@ namespace ServerCore
                     return m_listItem.end();
                 }
             }
-            else
+            else [[unlikely]]
             {
                 return m_listItem.end();
             }
@@ -671,7 +670,7 @@ namespace ServerCore
 
         void EraseItem(const Value& value)noexcept
         {
-            if (const auto iter = m_ID2idx.extract(value))
+            if (const auto iter = m_ID2idx.extract(value)) [[likely]]
             {
                 const int32_t last_idx = GetLastIndex();
                 const int32_t target_idx = iter.mapped();

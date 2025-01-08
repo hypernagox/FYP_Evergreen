@@ -130,12 +130,11 @@ namespace ServerCore
 			Node* head_temp = head.load(std::memory_order_seq_cst);
 			if constexpr (std::same_as<std::decay_t<T>, S_ptr<SendBuffer>>){
 				extern thread_local Vector<WSABUF> wsaBufs;
-				wsaBufs.clear();
 				int32_t pkt_count = 0;
 				while (try_pop_single(vec_, head_temp)){
 					const auto& sb = vec_.back();
 					wsaBufs.emplace_back(static_cast<const ULONG>(sb->WriteSize()), reinterpret_cast<char* const>(sb->Buffer()));
-					if (PKT_LIMIT_COUNT <= ++pkt_count) {
+					if (PKT_LIMIT_COUNT <= ++pkt_count) [[unlikely]]{
 						std::cout << "Send Limit\n";
 						break;
 					}

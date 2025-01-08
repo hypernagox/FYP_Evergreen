@@ -13,8 +13,9 @@ namespace NetHelper
         T GetInterPolatedData()noexcept { return static_cast<T* const>(this)->GetInterPolatedData(); }
         void UpdateInterpolationParam()noexcept
         {
-            m_fCurInterpolationParam = GetInterpolationParam();
+            m_fCurInterpolationParam = std::min(GetInterpolationParam(), m_fPrevInterpolationParam + 0.016f);
             m_fCurSmoothInterpolationParam = SmoothStep(0.f, 1.f, m_fCurInterpolationParam);
+            m_fPrevInterpolationParam = m_fCurInterpolationParam;
         }
         void UpdateNewData(const T& newData_, const uint64 arrivedNewTimeStamp = GetTimeStampMilliseconds())noexcept
         {
@@ -23,16 +24,15 @@ namespace NetHelper
             m_curData = m_newData;
             m_newData = newData_;
             m_iLastDataArrivedTime = GetTimeStampMilliseconds();
+            m_fPrevInterpolationParam = 0.f;
         }
         void UpdateOnlyTimeStamp(const uint64 arrivedNewTimeStamp)noexcept
         {
             m_iOldTimeStamp = m_iNewTimeStamp;
             m_iNewTimeStamp = arrivedNewTimeStamp;
             m_iLastDataArrivedTime = GetTimeStampMilliseconds();
+            m_fPrevInterpolationParam = 0.f;
         }
-        void SetCurrentTimeStampRTT()noexcept { m_iStartTimeStamp = GetTimeStampMilliseconds(); }
-        
-        const float GetPredictRTT()const noexcept { return static_cast<const float>(m_iLastDataArrivedTime - m_iStartTimeStamp) / 1000.f; }
         auto& GetCurData()noexcept { return m_curData; }
         auto& GetNewData()noexcept { return m_newData; }
         const auto& GetCurData()const noexcept { return m_curData; }
@@ -53,7 +53,7 @@ namespace NetHelper
                 newEnd -= 360;
 			else if (diff < -180)
                 newEnd += 360;
-            return LinearInterpolation(start, newEnd, m_fCurInterpolationParam);
+            return SmoothLinearInterpolation(start, newEnd, m_fCurInterpolationParam);
 		}
         template <typename U>
         constexpr U SmoothLinearInterpolation(const U& start, const U& end)const noexcept {
@@ -81,11 +81,12 @@ namespace NetHelper
     private:
         float m_fCurInterpolationParam = 1.f;
         float m_fCurSmoothInterpolationParam = 1.f;
+        float m_fPrevInterpolationParam = 0.f;
+
         uint64 m_iLastDataArrivedTime = GetTimeStampMilliseconds();
         uint64 m_iOldTimeStamp = GetTimeStampMilliseconds();
         uint64 m_iNewTimeStamp = GetTimeStampMilliseconds();
 
-        uint64 m_iStartTimeStamp = GetTimeStampMilliseconds();
-        static inline constinit const float MIN_UPDATE_INTERVAL = 0.1f;
+        static inline constinit const float MIN_UPDATE_INTERVAL = 100.f;
     };
 }

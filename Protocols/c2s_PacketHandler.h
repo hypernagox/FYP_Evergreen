@@ -10,21 +10,23 @@ static inline constexpr const uint16_t net_etoi(const T eType_) noexcept { retur
 enum class PKT_ID : uint16_t {
     c2s_LOGIN = 1000,
     s2c_LOGIN = 1001,
-    c2s_ENTER = 1002,
-    s2c_APPEAR_OBJECT = 1003,
-    s2c_REMOVE_OBJECT = 1004,
-    c2s_MOVE = 1005,
-    s2c_MOVE = 1006,
-    s2c_MONSTER_ATTACK = 1007,
-    s2c_MONSTER_AGGRO_START = 1008,
-    s2c_MONSTER_AGGRO_END = 1009,
-    c2s_PLAYER_ATTACK = 1010,
-    s2c_PLAYER_ATTACK = 1011,
-    s2c_PLAYER_DEATH = 1012,
-    c2s_PLAYER_DEATH = 1013,
-    c2s_REQUEST_QUEST = 1014,
-    s2c_REQUEST_QUEST = 1015,
-    s2c_CLEAR_QUEST = 1016,
+    c2s_PING_PONG = 1002,
+    s2c_PING_PONG = 1003,
+    c2s_ENTER = 1004,
+    s2c_APPEAR_OBJECT = 1005,
+    s2c_REMOVE_OBJECT = 1006,
+    c2s_MOVE = 1007,
+    s2c_MOVE = 1008,
+    s2c_MONSTER_ATTACK = 1009,
+    s2c_MONSTER_AGGRO_START = 1010,
+    s2c_MONSTER_AGGRO_END = 1011,
+    c2s_PLAYER_ATTACK = 1012,
+    s2c_PLAYER_ATTACK = 1013,
+    s2c_PLAYER_DEATH = 1014,
+    c2s_PLAYER_DEATH = 1015,
+    c2s_REQUEST_QUEST = 1016,
+    s2c_REQUEST_QUEST = 1017,
+    s2c_CLEAR_QUEST = 1018,
 };
 
 class ServerCore::PacketSession;
@@ -35,6 +37,7 @@ flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept;
 static inline const bool Handle_Invalid(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) noexcept { return false; }
 
 const bool Handle_c2s_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_);
+const bool Handle_c2s_PING_PONG(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PING_PONG& pkt_);
 const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_ENTER& pkt_);
 const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_);
 const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_);
@@ -47,6 +50,7 @@ class c2s_PacketHandler {
 public:
     static void Init() noexcept {
         RegisterHandler<PKT_ID::c2s_LOGIN, Nagox::Protocol::c2s_LOGIN, Handle_c2s_LOGIN>();
+        RegisterHandler<PKT_ID::c2s_PING_PONG, Nagox::Protocol::c2s_PING_PONG, Handle_c2s_PING_PONG>();
         RegisterHandler<PKT_ID::c2s_ENTER, Nagox::Protocol::c2s_ENTER, Handle_c2s_ENTER>();
         RegisterHandler<PKT_ID::c2s_MOVE, Nagox::Protocol::c2s_MOVE, Handle_c2s_MOVE>();
         RegisterHandler<PKT_ID::c2s_PLAYER_ATTACK, Nagox::Protocol::c2s_PLAYER_ATTACK, Handle_c2s_PLAYER_ATTACK>();

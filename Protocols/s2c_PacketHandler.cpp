@@ -8,6 +8,7 @@
 #include "../evergreen_client/EntityBuilder.h"
 #include "PlayerRenderer.h"
 #include "Monster.h"
+#include "ServerTimeMgr.h"
 
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 	thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
@@ -22,8 +23,17 @@ extern std::shared_ptr<SceneObject> g_heroObj;
 const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_)
 {
 	NetMgr(NetworkMgr)->SetSessionID(pkt_.obj_id());
+	NetMgr(ServerTimeMgr)->UpdateServerTimeStamp(pkt_.server_time_stamp());
 	return true;
 }
+
+const bool Handle_s2c_PING_PONG(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PING_PONG& pkt_)
+{
+	//std::cout <<"RECV::::::"<< pkt_.server_time_stamp() << std::endl;
+	NetMgr(ServerTimeMgr)->UpdateServerTimeStamp(pkt_.server_time_stamp());
+	return true;
+}
+
 static uint32_t g_npcid = 0;
 const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_APPEAR_OBJECT& pkt_)
 {
@@ -64,6 +74,15 @@ const bool Handle_s2c_REMOVE_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 
 const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MOVE& pkt_)
 {
+	if (pSession_->GetSessionID() == pkt_.obj_id()) 
+	{
+		constinit static uint64_t e_cnt = 0;
+		++e_cnt;
+		const auto et = NetMgr(ServerTimeMgr)->GetElapsedTime("MOVE_PKT");
+		if (e_cnt % 10 == 0)
+			std::cout << std::format("Delay: {}ms\n", et);
+		return true;
+	}
 	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id()))
 	{
 		if (const auto comp = obj->GetComp<MoveInterpolator>())

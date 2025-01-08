@@ -60,7 +60,7 @@ public:
 
 	Vector3 GetPlayerLook() const noexcept;
 	void InitCamDirection();
-	const bool GetSendFlag()const noexcept { return m_bSendFlag; }
+	bool& GetSendFlag()noexcept { return m_bSendFlag; }
 	const float GetYAngle()const noexcept { return m_rendererBodyAngleY; }
 };
 

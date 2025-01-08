@@ -46,6 +46,9 @@
     <Filter Include="Session\PacketSession">
       <UniqueIdentifier>{8f077bdb-6ae2-43fe-bf94-481490195a98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager\ServerTimeMgr">
+      <UniqueIdentifier>{a7e6a292-a767-4671-9b6b-cea0665fb65e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SocketUtils.h">
@@ -108,6 +111,9 @@
     <ClInclude Include="PacketArray.hpp">
       <Filter>Session</Filter>
     </ClInclude>
+    <ClInclude Include="ServerTimeMgr.h">
+      <Filter>Manager\ServerTimeMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SocketUtils.cpp">
@@ -145,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="PacketSession.cpp">
       <Filter>Session\PacketSession</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerTimeMgr.cpp">
+      <Filter>Manager\ServerTimeMgr</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

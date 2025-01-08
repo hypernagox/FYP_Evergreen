@@ -1,6 +1,7 @@
 #include "ClientNetworkPch.h"
 #include "func.h"
 #include "SendBuffer.h"
+#include "ServerTimeMgr.h"
 
 namespace NetHelper
 {
@@ -24,6 +25,11 @@ namespace NetHelper
 
 		free(symbol);
 		SymCleanup(GetCurrentProcess());
+	}
+
+	const uint64_t GetServerTimeStamp() noexcept
+	{
+		return NetMgr(ServerTimeMgr)->GetServerTimeStamp();
 	}
 
 	S_ptr<SendBuffer> CreateHeartBeatSendBuffer(const HEART_BEAT eHeartBeatType_) noexcept

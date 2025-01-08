@@ -293,6 +293,8 @@ namespace ServerCore
 				// TODO: Send에서 뷰리스트 정리를 하지 않기 위함
 			}
 		}
+
+		wsaBufs.clear();
 	}
 
 	void Session::ProcessSend(S_ptr<PacketSession> pThisSessionPtr, c_int32 numofBytes_)noexcept

@@ -41,8 +41,13 @@ void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 	m_vCurState.y += (int)temp.y;
 	m_vCurState.z += (int)temp.z;
 
+
 	Vector3 vWorldDelta = Vector3::Transform(vDelta, Quaternion::CreateFromYawPitchRoll(Vector3(0.0f, m_cameraAngleAxis.y * DEG2RAD, 0.0f)));
-	m_entityMovement->AddAcceleration(vWorldDelta);
+	
+	if (m_entityMovement->GetVelocity().LengthSquared() == 0.f && 0.f == m_entityMovement->GetAcceleration().LengthSquared())
+		m_entityMovement->AddVelocity(vWorldDelta *= .1f);
+	else
+		m_entityMovement->AddAcceleration(vWorldDelta);
 	m_rendererBodyAngleY = std::lerp(m_rendererBodyAngleY, m_cameraAngleAxis.y, deltaTime * 8.0f);
 }
 
@@ -89,7 +94,7 @@ void AuthenticPlayer::DoAttack()
 {
 	if constexpr (g_bUseNetWork)
 	{
-		m_pServerObject->ServerCompUpdate<MovePacketSender>();
+		m_bSendFlag = true;
 		Send(
 			Create_c2s_PLAYER_ATTACK(m_rendererBodyAngleY, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
 		);
@@ -165,7 +170,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 {
 	Transform* transform = GetSceneObject()->GetTransform();
 
-	 m_entityMovement->SetAcceleration(Vector3::Zero);
+	m_entityMovement->SetAcceleration(Vector3::Zero);
 
 	const Vector3Int vPrevState = m_vCurState;
 	m_vCurState = {};
@@ -229,12 +234,18 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	navi->SetCellPos(prev_pos, transform->GetLocalPosition(), temp);
 	transform->SetLocalPosition(temp);
 	GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
-	//m_bSendFlag = false;
+
 	//
 	//// 무브패킷 센드 업데이트
+
+	m_bSendFlag |=
+		INSTANCE(Input)->GetKeyDown(Keyboard::W)
+		|| INSTANCE(Input)->GetKeyDown(Keyboard::A)
+		|| INSTANCE(Input)->GetKeyDown(Keyboard::S)
+		|| INSTANCE(Input)->GetKeyDown(Keyboard::D);
+
+
 	m_pServerObject->ServerCompUpdate<MovePacketSender>();
-	////
-	m_bSendFlag = false;
 }
 
 Vector3 AuthenticPlayer::GetPlayerLook() const noexcept

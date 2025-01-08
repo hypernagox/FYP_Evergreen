@@ -35,6 +35,17 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_LOGIN(
 
     return CreateSendBuffer(builder, PKT_ID::c2s_LOGIN);
 }
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PING_PONG(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto serializedc2s_PING_PONG = Nagox::Protocol::Createc2s_PING_PONG(
+        builder
+    );
+    builder.Finish(serializedc2s_PING_PONG);
+
+    return CreateSendBuffer(builder, PKT_ID::c2s_PING_PONG);
+}
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_ENTER(
     const Nagox::Struct::Vec3& pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr

@@ -21,6 +21,7 @@
 #include "ServerObject.h"
 #include "NaviCell.h"
 #include "Navigator.h"
+#include "ServerTimeMgr.h"
 
 using namespace udsdx;
 
@@ -70,7 +71,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     NAVIGATION->Init();
     NAVIGATION->RegisterDestroy();
     s2c_PacketHandler::Init();
-   
+    
    // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)-> Load(RESOURCE_PATH(L"NAVIMESH.bin"));
    //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->LoadByObj(RESOURCE_PATH(L"navmesh1000.obj"));
     if constexpr (true == g_bUseNetWork)
@@ -105,6 +106,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if constexpr (true == g_bUseNetWork)
     {
         Send(Create_c2s_LOGIN("Hello"));
+        NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
     }
 
     auto res = INSTANCE(Resource);

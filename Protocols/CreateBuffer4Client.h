@@ -15,6 +15,9 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_LOGIN(
     const std::string_view& name,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PING_PONG(
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_ENTER(
     const Nagox::Struct::Vec3& pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()

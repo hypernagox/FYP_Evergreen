@@ -34,7 +34,7 @@ namespace ServerCore
 		Mgr(ThreadMgr)->RegisterDestroy();
 		Mgr(DeadLockProfiler)->RegisterDestroy();
 		Mgr(TaskTimerMgr)->RegisterDestroy();
-		Mgr(DBMgr)->RegisterDestroy();
+		//Mgr(DBMgr)->RegisterDestroy();
 		Mgr(FieldMgr)->RegisterDestroy();
 
 
@@ -46,7 +46,7 @@ namespace ServerCore
 		Mgr(DeadLockProfiler)->Init();
 		Mgr(TaskTimerMgr)->Init();
 		//Mgr(SendBufferMgr)->Init();
-		Mgr(DBMgr)->Init();
+		//Mgr(DBMgr)->Init();
 		Mgr(FieldMgr)->Init();
 	}
 }

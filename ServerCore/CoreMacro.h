@@ -34,8 +34,8 @@
 }
 
 
-#define TRACK_FUNC_LOG
-#define TRACK_LOG
+// #define TRACK_FUNC_LOG
+// #define TRACK_LOG
 #define USE_NAGOX_ASSERT
 #define USE_PRINT_ERROR
 

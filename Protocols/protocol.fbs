@@ -5,12 +5,22 @@ namespace Nagox.Protocol;
 
 table c2s_LOGIN
 {
-    name:string;
+    name: string;
 }
 
 table s2c_LOGIN
 {
-    obj_id:uint32;
+    obj_id: uint32;
+    server_time_stamp: uint64;
+}
+
+table c2s_PING_PONG
+{
+}
+
+table s2c_PING_PONG
+{
+    server_time_stamp: uint64;
 }
 
 table c2s_ENTER

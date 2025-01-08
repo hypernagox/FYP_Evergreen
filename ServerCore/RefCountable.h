@@ -77,9 +77,10 @@ namespace ServerCore
 			:m_count_ptr{ other.IncRef() }
 		{}
 		S_ptr& operator=(const S_ptr& other)noexcept {
-			if (m_count_ptr != other.m_count_ptr) {
+			if (m_count_ptr != other.m_count_ptr) [[likely]] {
 				DecRef();
 				m_count_ptr = other.IncRef();
+				return *this;
 			}
 			return *this;
 		}
@@ -87,12 +88,13 @@ namespace ServerCore
 			:m_count_ptr{ std::exchange(other.m_count_ptr,nullptr) }
 		{}
 		S_ptr& operator=(S_ptr&& other)noexcept {
-			if (m_count_ptr != other.m_count_ptr) {
+			if (m_count_ptr != other.m_count_ptr) [[likely]] {
 				DecRef();
 				m_count_ptr = other.m_count_ptr;
 				other.m_count_ptr = nullptr;
+				return *this;
 			}
-			else if(!other.m_count_ptr){
+			else if(!other.m_count_ptr) [[unlikely]] {
 				other.m_count_ptr->DecRef();
 				other.m_count_ptr = nullptr;
 			}
@@ -105,9 +107,10 @@ namespace ServerCore
 		{}
 		template <typename U> requires std::derived_from<U, T>
 		S_ptr& operator=(const S_ptr<U>& other)noexcept {
-			if (m_count_ptr != other.m_count_ptr) {
+			if (m_count_ptr != other.m_count_ptr) [[likely]] {
 				DecRef();
 				m_count_ptr = other.IncRef();
+				return *this;
 			}
 			return *this;
 		}
@@ -117,12 +120,13 @@ namespace ServerCore
 		{}
 		template <typename U> requires std::derived_from<U, T>
 		S_ptr& operator=(S_ptr<U>&& other)noexcept {
-			if (m_count_ptr != other.m_count_ptr) {
+			if (m_count_ptr != other.m_count_ptr) [[likely]] {
 				DecRef();
 				m_count_ptr = other.m_count_ptr;
 				other.m_count_ptr = nullptr;
+				return *this;
 			}
-			else if (!other.m_count_ptr) {
+			else if (!other.m_count_ptr) [[unlikely]] {
 				other.m_count_ptr->DecRef<U>();
 				other.m_count_ptr = nullptr;
 			}
@@ -161,16 +165,12 @@ namespace ServerCore
 	
 	template<typename T, typename... Args> requires std::derived_from<T, RefCountable>
 	constexpr inline S_ptr<T> MakeShared(Args&&... args)noexcept { 
-		S_ptr<T> temp;
-		temp.m_count_ptr = xnew<T>(std::forward<Args>(args)...);
-		return temp;
+		return S_ptr<T>{reinterpret_cast<const uint64_t>(xnew<T>(std::forward<Args>(args)...))};
 	}
 
 	template<typename T, typename... Args> requires std::derived_from<T, RefCountable>
 	constexpr inline S_ptr<T> MakeSharedAligned(Args&&... args)noexcept {
-		S_ptr<T> temp;
-		temp.m_count_ptr = aligned_xnew<T>(std::forward<Args>(args)...);
-		return temp;
+		return S_ptr<T>{reinterpret_cast<const uint64_t>(aligned_xnew<T>(std::forward<Args>(args)...))};
 	}
 
 	template <typename U, typename T> requires std::derived_from<U, T>
@@ -191,8 +191,12 @@ namespace ServerCore
 		template <typename U>
 		void store(S_ptr<U>&& p)noexcept {
 			m_srwLock.lock();
-			m_ptr = std::move(p);
+			m_ptr.swap(p);
 			m_srwLock.unlock();
+			if (p.m_count_ptr) {
+				p.m_count_ptr->DecRef();
+				p.m_count_ptr = nullptr;
+			}
 		}
 		S_ptr<T> load()const noexcept {
 			m_srwLock.lock_shared();

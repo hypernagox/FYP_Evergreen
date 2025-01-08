@@ -23,11 +23,15 @@ namespace NetHelper
 	public:
 		constexpr static inline T* const GetInst() noexcept
 		{
-			static const auto mgrPtr = InitInstance();
+			constinit static T* mgrPtr = nullptr;
+			if (nullptr == mgrPtr) [[unlikely]]
+			{
+				mgrPtr = InitInstance();
+			}
 			return mgrPtr;
 		}
 		std::shared_ptr<T> shared_from_this()noexcept { return std::shared_ptr<T>{this->std::enable_shared_from_this<Singleton<T>>::shared_from_this(), static_cast<T* const>(this)}; }
 		std::shared_ptr<const T> shared_from_this()const noexcept { return std::shared_ptr<const T>{this->std::enable_shared_from_this<Singleton<T>>::shared_from_this(), static_cast<const T* const>(this)}; }
-		virtual void Init()noexcept {}
+		void Init()noexcept {}
 	};
 }

@@ -25,9 +25,12 @@ namespace ServerCore
 	constinit thread_local moodycamel::ProducerToken* LPro_tokenGlobalTask;
 	constinit thread_local moodycamel::ConsumerToken* LCon_tokenGlobalTask;
 
+	extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_session;
+	extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_npc;
+	extern thread_local Vector<WSABUF> wsaBufs;
+
 	ThreadMgr::ThreadMgr()
 	{
-		// Main Thread
 		InitTLS();
 		LThreadId = 1;
 	}
@@ -141,7 +144,14 @@ namespace ServerCore
 
 		if (NUM_OF_THREADS >= LThreadId && 0 < LThreadId) 
 		{
+			{
+				new_view_list_session.clear_unsafe();
+				new_view_list_npc.clear_unsafe();
+				wsaBufs.clear();
+			}
+
 			LSendBufferChunk = SendBufferMgr::Pop();
+
 			if (g_initTLSCallBack)
 			{
 				g_initTLSCallBack();

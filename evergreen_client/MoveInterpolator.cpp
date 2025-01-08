@@ -29,17 +29,28 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	const auto vel = ToOriginVec3(pkt_.vel());
 	const auto accel = ToOriginVec3(pkt_.accel());
 	
-	//const auto dt = (NetHelper::GetSystemTimeStampMilliseconds() - pkt_.time_stamp()) / 2000.f;
-
-	const auto dt = DT;
-
+	const int64_t DTT = ((int64_t)NetHelper::GetServerTimeStamp() - (int64_t)(pkt_.time_stamp()));
+	const auto dt = std::max((DTT / 1000.f), DT);
+	
+	
 	const Vector3 vFutureVel = vel + accel * dt;
+	//std::cout << dt << std::endl;
 
 	const Vector3 vFuturePos = pos + vFutureVel * dt + accel * dt * dt * 0.5f;
 	auto move_data = m_interpolator.GetInterPolatedData();
-
-	m_interpolator.UpdateNewData(MoveData{ vFuturePos ,pkt_.body_angle(),vFutureVel,accel });
+	const auto time_stamp = pkt_.time_stamp() ? pkt_.time_stamp() : NetHelper::GetTimeStampMilliseconds();
+	
+	m_interpolator.UpdateNewData(MoveData{ vFuturePos ,pkt_.body_angle(),vFutureVel,accel }, time_stamp);
 	m_interpolator.GetCurData().pos = move_data.pos;
+	//m_interpolator.GetCurData().pos = owner_player->GetTransform()->GetWorldPosition();
+	//if (owner_player->GetVelocity().LengthSquared() == 0.f)
+	//{
+	//	m_interpolator.GetCurData().vel = vel*2;
+	//	m_interpolator.GetCurData().accel = accel*2;
+	//	
+	//}
+	//m_interpolator.GetCurData().accel = owner_player->GetAcceleration();
+
 	const auto& root_obj = owner_player->GetSceneObject();
 	// TOOD: 지형보정 방식은 앞으로 바뀔 듯 해요
 	// auto move_data = m_interpolator.GetInterPolatedData();

@@ -17,7 +17,7 @@ public:
 	Vector3 vel;
 	Vector3 accel;
 	float body_angle;
-	uint64 time_stamp;
+	uint64 time_stamp = 0;
 public:
 	
 private:

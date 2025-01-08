@@ -24,16 +24,32 @@ static ServerCore::S_ptr<ServerCore::SendBuffer> CreateSendBuffer(flatbuffers::F
 
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_LOGIN(
     const uint32_t obj_id,
+    const uint64_t server_time_stamp,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     const auto obj_id_value = obj_id;
+    const auto server_time_stamp_value = server_time_stamp;
     const auto serializeds2c_LOGIN = Nagox::Protocol::Creates2c_LOGIN(
         builder
-,        obj_id_value    );
+,        obj_id_value,
+        server_time_stamp_value    );
     builder.Finish(serializeds2c_LOGIN);
 
     return CreateSendBuffer(builder, PKT_ID::s2c_LOGIN);
+}
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_PING_PONG(
+    const uint64_t server_time_stamp,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto server_time_stamp_value = server_time_stamp;
+    const auto serializeds2c_PING_PONG = Nagox::Protocol::Creates2c_PING_PONG(
+        builder
+,        server_time_stamp_value    );
+    builder.Finish(serializeds2c_PING_PONG);
+
+    return CreateSendBuffer(builder, PKT_ID::s2c_PING_PONG);
 }
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_APPEAR_OBJECT(
     const uint32_t obj_id,

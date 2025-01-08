@@ -23,7 +23,8 @@ private:
 	template <typename T, typename... Args>
 	T* const AddComp(Args&&... args)noexcept {
 		const auto comp_ptr = ServerCore::xnew<T>(std::forward<Args>(args)...);
-		NAGOX_ASSERT(!GetComp<T>());
+		NAGOX_ASSERT(m_contentsComponents.end() == std::ranges::find_if(m_contentsComponents, [](const auto& ele)noexcept {
+			return ele.first == T::GetCompTypeNameGlobal(); }));
 		m_contentsComponents.emplace_back(T::GetCompTypeNameGlobal(), comp_ptr);
 		if constexpr (std::derived_from<T, ContentsUpdateComponent>)
 			m_vecUpdateComponents.emplace_back(comp_ptr);
@@ -34,10 +35,9 @@ private:
 	constexpr inline ContentsComponent* const GetCompInternal()const noexcept {
 		auto b = m_contentsComponents.data();
 		const auto e = b + m_contentsComponents.size();
-		while (e != b) {
+		do {
 			if (COMP_ID == b->first)return b->second;
-			++b;
-		}
+		} while (e != ++b);
 		return nullptr;
 	}
 private:

@@ -34,6 +34,17 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_LOGIN(
 
     return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_LOGIN, builder.GetSize());
 }
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PING_PONG(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto serializedc2s_PING_PONG = Nagox::Protocol::Createc2s_PING_PONG(
+        builder
+    );
+    builder.Finish(serializedc2s_PING_PONG);
+
+    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_PING_PONG, builder.GetSize());
+}
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_ENTER(
     const Nagox::Struct::Vec3& pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr
@@ -74,13 +85,16 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_MOVE(
 }
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_ATTACK(
     const float body_angle,
+    const Nagox::Struct::Vec3& atk_pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     const auto body_angle_value = body_angle;
+    const auto atk_pos_offset = &atk_pos;
     const auto serializedc2s_PLAYER_ATTACK = Nagox::Protocol::Createc2s_PLAYER_ATTACK(
         builder
-,        body_angle_value    );
+,        body_angle_value,
+        atk_pos_offset    );
     builder.Finish(serializedc2s_PLAYER_ATTACK);
 
     return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_PLAYER_ATTACK, builder.GetSize());
@@ -95,4 +109,17 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_DEATH(
     builder.Finish(serializedc2s_PLAYER_DEATH);
 
     return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_PLAYER_DEATH, builder.GetSize());
+}
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_REQUEST_QUEST(
+    const uint64_t quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto quest_id_value = quest_id;
+    const auto serializedc2s_REQUEST_QUEST = Nagox::Protocol::Createc2s_REQUEST_QUEST(
+        builder
+,        quest_id_value    );
+    builder.Finish(serializedc2s_REQUEST_QUEST);
+
+    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_REQUEST_QUEST, builder.GetSize());
 }

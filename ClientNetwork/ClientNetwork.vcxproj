@@ -192,6 +192,7 @@
     <ClInclude Include="SendBuffer.h" />
     <ClInclude Include="SendBufferChunk.h" />
     <ClInclude Include="SendBufferMgr.h" />
+    <ClInclude Include="ServerTimeMgr.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="SocketUtils.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="SendBuffer.cpp" />
     <ClCompile Include="SendBufferChunk.cpp" />
     <ClCompile Include="SendBufferMgr.cpp" />
+    <ClCompile Include="ServerTimeMgr.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SocketUtils.cpp" />
   </ItemGroup>

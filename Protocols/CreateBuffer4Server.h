@@ -13,6 +13,11 @@ static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept {
 
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_LOGIN(
     const uint32_t obj_id,
+    const uint64_t server_time_stamp,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_PING_PONG(
+    const uint64_t server_time_stamp,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_APPEAR_OBJECT(

@@ -25,7 +25,7 @@ namespace ServerCore
 		}
 		void operator=(const Task& other)noexcept
 		{
-			if (this != &other)
+			if (this != &other) [[likely]]
 			{
 				argPtr = other.argPtr;
 				m_fpTask = other.m_fpTask;
@@ -39,7 +39,7 @@ namespace ServerCore
 		}
 		void operator=(Task&& other)noexcept
 		{
-			if (this != &other)
+			if (this != &other) [[likely]]
 			{
 				argPtr = other.argPtr;
 				m_fpTask = other.m_fpTask;
@@ -53,7 +53,9 @@ namespace ServerCore
 				argPtr = nullptr;
 			}
 		}
-		void swap(Task& other)noexcept { std::swap(*this, other); }
+		void swap(Task& other)noexcept { 
+			std::swap(argPtr, other.argPtr); std::swap(m_fpTask, other.m_fpTask);
+		}
 
 		template<typename T, typename U, typename Ret, typename... Args>
 			requires std::derived_from<std::remove_pointer_t<std::decay_t<U>>, T> || (IsSptr<U> && std::derived_from<typename U::Type, T>)

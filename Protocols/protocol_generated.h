@@ -25,6 +25,12 @@ struct c2s_LOGINBuilder;
 struct s2c_LOGIN;
 struct s2c_LOGINBuilder;
 
+struct c2s_PING_PONG;
+struct c2s_PING_PONGBuilder;
+
+struct s2c_PING_PONG;
+struct s2c_PING_PONGBuilder;
+
 struct c2s_ENTER;
 struct c2s_ENTERBuilder;
 
@@ -127,7 +133,8 @@ inline ::flatbuffers::Offset<c2s_LOGIN> Createc2s_LOGINDirect(
 struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_OBJ_ID = 4
+    VT_OBJ_ID = 4,
+    VT_SERVER_TIME_STAMP = 6
   };
   uint32_t obj_id() const {
     return GetField<uint32_t>(VT_OBJ_ID, 0);
@@ -135,9 +142,16 @@ struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_obj_id(uint32_t _obj_id = 0) {
     return SetField<uint32_t>(VT_OBJ_ID, _obj_id, 0);
   }
+  uint64_t server_time_stamp() const {
+    return GetField<uint64_t>(VT_SERVER_TIME_STAMP, 0);
+  }
+  bool mutate_server_time_stamp(uint64_t _server_time_stamp = 0) {
+    return SetField<uint64_t>(VT_SERVER_TIME_STAMP, _server_time_stamp, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_OBJ_ID, 4) &&
+           VerifyField<uint64_t>(verifier, VT_SERVER_TIME_STAMP, 8) &&
            verifier.EndTable();
   }
 };
@@ -148,6 +162,9 @@ struct s2c_LOGINBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_obj_id(uint32_t obj_id) {
     fbb_.AddElement<uint32_t>(s2c_LOGIN::VT_OBJ_ID, obj_id, 0);
+  }
+  void add_server_time_stamp(uint64_t server_time_stamp) {
+    fbb_.AddElement<uint64_t>(s2c_LOGIN::VT_SERVER_TIME_STAMP, server_time_stamp, 0);
   }
   explicit s2c_LOGINBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -162,9 +179,84 @@ struct s2c_LOGINBuilder {
 
 inline ::flatbuffers::Offset<s2c_LOGIN> Creates2c_LOGIN(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint32_t obj_id = 0) {
+    uint32_t obj_id = 0,
+    uint64_t server_time_stamp = 0) {
   s2c_LOGINBuilder builder_(_fbb);
+  builder_.add_server_time_stamp(server_time_stamp);
   builder_.add_obj_id(obj_id);
+  return builder_.Finish();
+}
+
+struct c2s_PING_PONG FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_PING_PONGBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_PING_PONGBuilder {
+  typedef c2s_PING_PONG Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit c2s_PING_PONGBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_PING_PONG> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_PING_PONG>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_PING_PONG> Createc2s_PING_PONG(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  c2s_PING_PONGBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct s2c_PING_PONG FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PING_PONGBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_SERVER_TIME_STAMP = 4
+  };
+  uint64_t server_time_stamp() const {
+    return GetField<uint64_t>(VT_SERVER_TIME_STAMP, 0);
+  }
+  bool mutate_server_time_stamp(uint64_t _server_time_stamp = 0) {
+    return SetField<uint64_t>(VT_SERVER_TIME_STAMP, _server_time_stamp, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_SERVER_TIME_STAMP, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PING_PONGBuilder {
+  typedef s2c_PING_PONG Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_server_time_stamp(uint64_t server_time_stamp) {
+    fbb_.AddElement<uint64_t>(s2c_PING_PONG::VT_SERVER_TIME_STAMP, server_time_stamp, 0);
+  }
+  explicit s2c_PING_PONGBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PING_PONG> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PING_PONG>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PING_PONG> Creates2c_PING_PONG(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t server_time_stamp = 0) {
+  s2c_PING_PONGBuilder builder_(_fbb);
+  builder_.add_server_time_stamp(server_time_stamp);
   return builder_.Finish();
 }
 

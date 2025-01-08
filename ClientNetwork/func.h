@@ -13,6 +13,8 @@ namespace NetHelper
 
 	void LogStackTrace()noexcept;
 
+	const uint64_t GetServerTimeStamp()noexcept;
+
 	constexpr static inline const uint64_t GetTimeStampMilliseconds() noexcept {
 		return std::chrono::duration_cast<std::chrono::duration<uint64_t, std::milli>>(
 			std::chrono::steady_clock::now().time_since_epoch()

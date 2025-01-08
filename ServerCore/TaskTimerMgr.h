@@ -18,7 +18,7 @@ namespace ServerCore
 		TimerTask(TimerTask&& other)noexcept :executeTime{ other.executeTime }, taskPtr{ std::move(other.taskPtr) } {}
 		constexpr void operator=(const TimerTask& other)noexcept
 		{
-			if (&other != this)
+			if (&other != this) [[likely]]
 			{
 				executeTime = other.executeTime;
 				taskPtr = std::move(other.taskPtr);
@@ -26,7 +26,7 @@ namespace ServerCore
 		}
 		constexpr void operator=(TimerTask&& other)noexcept
 		{
-			if (&other != this)
+			if (&other != this) [[likely]]
 			{
 				executeTime = other.executeTime;
 				taskPtr = std::move(other.taskPtr);

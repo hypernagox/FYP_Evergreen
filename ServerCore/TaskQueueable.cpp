@@ -58,7 +58,7 @@ namespace ServerCore
 				break;
 			}
 
-			origin_head.store(head_temp, std::memory_order_release);
+			origin_head.store(head_temp, std::memory_order_relaxed);
 			
 			if (m_taskCount.fetch_sub(taskCount) == taskCount)
 			{

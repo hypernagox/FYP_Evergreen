@@ -42,7 +42,9 @@ namespace ServerCore
 		static Log CreateFuncLog(std::wstring_view logMsg_)noexcept { return Log{ std::format(L"FUNC_LOG: {}",logMsg_) }; }
 		void Init()noexcept;
 	private:
+#if defined(TRACK_FUNC_LOG) || defined(TRACK_LOG)
 		MPSCQueue<std::wstring> m_msgQueue;
+#endif
 		std::condition_variable m_msgCv;
 		std::thread m_msgThread;
 		std::mutex m_mt;

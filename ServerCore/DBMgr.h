@@ -24,30 +24,33 @@ namespace ServerCore
 
 		void Clear();
 
-		const DBConnectionHandle* const GetDBHandle()const noexcept { return m_dbHandle; }
+		const DBConnectionHandle* const GetDBHandle()const noexcept { 
+			return nullptr;
+			//return m_dbHandle;
+		}
 		
 		void EnqueueDBEvent(S_ptr<DBEvent>&& dbEvent)noexcept
 		{
-			m_dbEventQueue.emplace(std::move(dbEvent));
-			m_cv.notify_one();
+			//m_dbEventQueue.emplace(std::move(dbEvent));
+			//m_cv.notify_one();
 		}
 
 		void SendDBPacket(S_ptr<SendBuffer>&& pSendBuffer)noexcept
 		{
-			m_packetSender->SendDBPacket(std::move(pSendBuffer));
+			//m_packetSender->SendDBPacket(std::move(pSendBuffer));
 		}
 	private:
 		void ExecuteQuery()noexcept;
 	private:
-		DBConnectionHandle* const m_dbHandle;
-		const S_ptr<DBPacketSender> m_packetSender;
-		MPSCQueue<S_ptr<DBEvent>> m_dbEventQueue;
-		std::mutex m_mt;
-		std::condition_variable m_cv;
-		SQLHENV	m_environment = SQL_NULL_HANDLE;
-		SOCKET m_queryServerSocket = INVALID_SOCKET;
-		std::jthread m_queryThread;
-		NetAddress m_netAddr;
+		//DBConnectionHandle* const m_dbHandle;
+		//const S_ptr<DBPacketSender> m_packetSender;
+		//MPSCQueue<S_ptr<DBEvent>> m_dbEventQueue;
+		//std::mutex m_mt;
+		//std::condition_variable m_cv;
+		//SQLHENV	m_environment = SQL_NULL_HANDLE;
+		//SOCKET m_queryServerSocket = INVALID_SOCKET;
+		//std::jthread m_queryThread;
+		//NetAddress m_netAddr;
 	};
 }
 

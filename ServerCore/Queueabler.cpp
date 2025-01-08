@@ -56,7 +56,7 @@ namespace ServerCore
 				}
 			}
 
-			origin_head.store(head_temp, std::memory_order_release);
+			origin_head.store(head_temp, std::memory_order_relaxed);
 			
 			if (0 == InterlockedAdd(&m_taskCount, -taskCount))
 			{
