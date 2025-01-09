@@ -198,7 +198,7 @@ namespace ServerCore
 			if (bStopRequest) [[unlikely]]
 				break;
 
-			IocpCore::Dispatch(iocpHandle, 10);
+			IocpCore::Dispatch(iocpHandle);
 			taskTimer.DistributeTask();
 			ClusterUpdateQueue::UpdateCluster();
 		}

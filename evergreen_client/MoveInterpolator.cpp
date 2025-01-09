@@ -29,18 +29,15 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	const auto vel = ToOriginVec3(pkt_.vel());
 	const auto accel = ToOriginVec3(pkt_.accel());
 	
-	const int64_t DTT = ((int64_t)NetHelper::GetServerTimeStamp() - (int64_t)(pkt_.time_stamp()));
-	const auto dt = std::max((DTT / 1000.f), DT);
-	
+	const auto dt = NetMgr(ServerTimeMgr)->GetDtForDeadReckoningSeconds(pkt_.time_stamp());
 	
 	const Vector3 vFutureVel = vel + accel * dt;
 	//std::cout << dt << std::endl;
 
 	const Vector3 vFuturePos = pos + vFutureVel * dt + accel * dt * dt * 0.5f;
 	auto move_data = m_interpolator.GetInterPolatedData();
-	const auto time_stamp = pkt_.time_stamp() ? pkt_.time_stamp() : NetHelper::GetTimeStampMilliseconds();
 	
-	m_interpolator.UpdateNewData(MoveData{ vFuturePos ,pkt_.body_angle(),vFutureVel,accel }, time_stamp);
+	m_interpolator.UpdateNewData(MoveData{ vFuturePos ,pkt_.body_angle(),vFutureVel,accel });
 	m_interpolator.GetCurData().pos = move_data.pos;
 	//m_interpolator.GetCurData().pos = owner_player->GetTransform()->GetWorldPosition();
 	//if (owner_player->GetVelocity().LengthSquared() == 0.f)

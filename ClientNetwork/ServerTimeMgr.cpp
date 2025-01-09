@@ -7,7 +7,7 @@ namespace NetHelper
 	{
 		std::cout << "PING PONG\n";
 		const auto& [func_key, func_ptr] = *((std::pair<std::string, std::function<void(void)>>*)(lpArg));
-		NetMgr(ServerTimeMgr)->m_func_called_time_stamp[func_key] = ::GetTickCount64();
+		NetMgr(ServerTimeMgr)->m_func_called_time_stamp[func_key] = NetHelper::GetTimeStampMilliseconds();
 		func_ptr();
 	}
 

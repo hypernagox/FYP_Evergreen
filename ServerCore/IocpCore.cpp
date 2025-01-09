@@ -17,7 +17,7 @@ namespace ServerCore
 		::CloseHandle(m_iocpHandle);
 	}
 
-	void IocpCore::Dispatch(const HANDLE iocpHandle_, c_uint32 timeOutMs) noexcept
+	void IocpCore::Dispatch(const HANDLE iocpHandle_) noexcept
 	{
 		constinit extern thread_local uint64_t LEndTickCount;
 		constinit extern thread_local uint64_t LCurHandleSessionID;
@@ -26,7 +26,7 @@ namespace ServerCore
 		IocpEvent* iocpEvent = nullptr;
 		uint64_t CurHandleSessionID = 0;
 
-		const BOOL bResult = ::GetQueuedCompletionStatus(iocpHandle_, OUT & numOfBytes, OUT reinterpret_cast<PULONG_PTR>(&CurHandleSessionID), OUT reinterpret_cast<LPOVERLAPPED*>(&iocpEvent), timeOutMs);
+		const BOOL bResult = ::GetQueuedCompletionStatus(iocpHandle_, OUT & numOfBytes, OUT reinterpret_cast<PULONG_PTR>(&CurHandleSessionID), OUT reinterpret_cast<LPOVERLAPPED*>(&iocpEvent), IocpCore::IOCP_POOL_TIME_OUT_MS);
 
 		const int32_t errCode = ::WSAGetLastError();
 		LCurHandleSessionID = CurHandleSessionID;

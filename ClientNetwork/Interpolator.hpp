@@ -19,18 +19,16 @@ namespace NetHelper
         }
         void UpdateNewData(const T& newData_, const uint64 arrivedNewTimeStamp = GetTimeStampMilliseconds())noexcept
         {
-            m_iOldTimeStamp = m_iNewTimeStamp;
-            m_iNewTimeStamp = arrivedNewTimeStamp;
+            m_iOldTimeStamp = m_iLastDataArrivedTime;
+            m_iLastDataArrivedTime = arrivedNewTimeStamp;
             m_curData = m_newData;
             m_newData = newData_;
-            m_iLastDataArrivedTime = GetTimeStampMilliseconds();
             m_fPrevInterpolationParam = 0.f;
         }
         void UpdateOnlyTimeStamp(const uint64 arrivedNewTimeStamp)noexcept
         {
-            m_iOldTimeStamp = m_iNewTimeStamp;
-            m_iNewTimeStamp = arrivedNewTimeStamp;
-            m_iLastDataArrivedTime = GetTimeStampMilliseconds();
+            m_iOldTimeStamp = m_iLastDataArrivedTime;
+            m_iLastDataArrivedTime = arrivedNewTimeStamp;
             m_fPrevInterpolationParam = 0.f;
         }
         auto& GetCurData()noexcept { return m_curData; }
@@ -60,7 +58,7 @@ namespace NetHelper
             return LinearInterpolation(start, end, m_fCurSmoothInterpolationParam);
         }
         constexpr const float GetInterpolationParam()const noexcept {
-            return std::clamp(static_cast<const float>(GetTimeStampMilliseconds() - m_iLastDataArrivedTime) / std::max(static_cast<const float>(m_iNewTimeStamp - m_iOldTimeStamp), MIN_UPDATE_INTERVAL), 0.f, 1.f);
+            return std::clamp(static_cast<const float>(GetTimeStampMilliseconds() - m_iLastDataArrivedTime) / (float)std::max((m_iLastDataArrivedTime - m_iOldTimeStamp), MIN_UPDATE_INTERVAL), 0.f, 1.f);
         }
         constexpr const float GetSmoothInterpolationParam()const noexcept {
             return  SmoothStep(0.f, 1.f, GetInterpolationParam());
@@ -85,8 +83,7 @@ namespace NetHelper
 
         uint64 m_iLastDataArrivedTime = GetTimeStampMilliseconds();
         uint64 m_iOldTimeStamp = GetTimeStampMilliseconds();
-        uint64 m_iNewTimeStamp = GetTimeStampMilliseconds();
-
-        static inline constinit const float MIN_UPDATE_INTERVAL = 100.f;
+       
+        static inline constexpr const uint64_t MIN_UPDATE_INTERVAL = 100;
     };
 }

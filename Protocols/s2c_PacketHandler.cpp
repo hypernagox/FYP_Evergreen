@@ -45,7 +45,7 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	if (Mgr(ServerObjectMgr)->GetServerObj(obj_id))
 		return true;
 
-	 if (pkt_.group_type() == 0)return true; // 스트레스 테스트용 주석 (너무 많으면 렌더링 바틀넥 감당불가)
+	// if (pkt_.group_type() == 0)return true; // 스트레스 테스트용 주석 (너무 많으면 렌더링 바틀넥 감당불가)
 
 	if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_NPC)
 	{

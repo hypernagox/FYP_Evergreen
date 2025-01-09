@@ -177,13 +177,13 @@ namespace ServerCore
 		void PostEntityTask(Task&& task_)const noexcept;
 		void OnDestroy()noexcept;
 	private:
-		alignas(64) PacketSession* const m_pSession = nullptr;
+		PacketSession* const m_pSession = nullptr;
 		const EntityInfo m_entity_info;
 		class ComponentSystem* const m_componentSystem;
 		IocpComponent* m_arrIocpComponents[etoi(IOCP_COMPONENT::END)] = {};
-		alignas(64) NagoxAtomic::Atomic<bool> m_bIsValid{ true };
+		NagoxAtomic::Atomic<bool> m_bIsValid{ true };
 		NagoxAtomic::Atomic<ClusterInfo> m_clusterInfo;
-		std::atomic_bool m_bNowUpdateFlag = false;
+		//std::atomic_bool m_bNowUpdateFlag = false;
 	};
 
 	template <typename T, typename U> requires std::is_enum_v<T> && std::is_enum_v<U> && (sizeof(uint8_t) == sizeof(T)) && (sizeof(uint8_t) == sizeof(U))

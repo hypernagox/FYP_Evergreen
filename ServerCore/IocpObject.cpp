@@ -48,10 +48,10 @@ namespace ServerCore
 
 	void ContentsEntity::Update(const float dt_) noexcept
 	{
-		if (true == m_bNowUpdateFlag.exchange(true, std::memory_order_relaxed))
-			return;
+		//if (true == m_bNowUpdateFlag.exchange(true, std::memory_order_relaxed))
+		//	return;
 		m_componentSystem->Update(dt_);
-		m_bNowUpdateFlag.store(false, std::memory_order_release);
+		//m_bNowUpdateFlag.store(false, std::memory_order_release);
 	}
 
 	void ContentsEntity::UpdateNonCheck(const float dt_) const noexcept

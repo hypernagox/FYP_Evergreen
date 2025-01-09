@@ -33,6 +33,11 @@ namespace NetHelper
 		const uint64_t GetElapsedTime(const std::string_view key_name)noexcept {
 			return NetHelper::GetTimeStampMilliseconds() - GetTimeStampByName(key_name);
 		}
+	public:
+		const int64_t GetDtForDeadReckoningMs(const uint64_t other_move_time_stamp)const noexcept {
+			return  std::max((int64_t)GetServerTimeStamp() - (int64_t)other_move_time_stamp, 16LL);
+		}
+		const float GetDtForDeadReckoningSeconds(const uint64_t other_move_time_stamp)const noexcept { return (float)GetDtForDeadReckoningMs(other_move_time_stamp) / 1000.f; }
 	private:
 		uint64_t m_server_time_stamp_updated;
 		uint64_t m_server_time_stamp = 0;

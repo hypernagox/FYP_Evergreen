@@ -1,5 +1,6 @@
 #include "ServerCorePch.h"
 #include "Benchmarker.h"
+#include "TimeMgr.h"
 
 namespace ServerCore
 {
@@ -58,10 +59,28 @@ namespace ServerCore
 
 		std::cout << "Total Result \n\n";
 
+		uint64_t total_func_time = 0;
+
 		for (const auto& [funcName, record] : global_bench_data)
 		{
+			total_func_time += record.accTime;
 			std::cout << std::format("FuncName: {}, CallCount: {}, TotalCallTime: {}ms, Avg: {:.6f} ms\n"
 				, funcName, record.callCount, record.accTime, static_cast<double>(record.accTime) / static_cast<double>(record.callCount));
+		}
+
+		std::cout << std::format("\n\nServer Running Time: {:.2f} seconds, Total Func Acc Time: {:.2f} seconds / {} ms\n\n", Mgr(TimeMgr)->GetServerTimeStamp() / 1000., total_func_time / 1000., total_func_time);
+
+		std::cout << "\n\nTotal Percentage\n\n";
+		
+		if (0 == total_func_time) {
+			std::cout << "Total Func Time is Zero\n";
+			return;
+		}
+
+		for (const auto& [funcName, record] : global_bench_data)
+		{
+			std::cout << std::format("FuncName: {}, {:.2f}% \n"
+				, funcName, ((float)record.accTime / total_func_time) * 100.f);
 		}
 	}
 

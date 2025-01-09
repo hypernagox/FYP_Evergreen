@@ -44,6 +44,7 @@ void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 
 	Vector3 vWorldDelta = Vector3::Transform(vDelta, Quaternion::CreateFromYawPitchRoll(Vector3(0.0f, m_cameraAngleAxis.y * DEG2RAD, 0.0f)));
 	
+	//TODO: 매직넘버
 	if (m_entityMovement->GetVelocity().LengthSquared() == 0.f && 0.f == m_entityMovement->GetAcceleration().LengthSquared())
 		m_entityMovement->AddVelocity(vWorldDelta *= .1f);
 	else
