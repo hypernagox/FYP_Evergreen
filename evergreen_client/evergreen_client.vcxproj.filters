@@ -79,6 +79,9 @@
     <Filter Include="NetEntity\ServerObject\ServerComponent\ObjectIdentifier">
       <UniqueIdentifier>{6e0ef11e-072d-491e-bf80-15bee75703ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GizmoRenderer">
+      <UniqueIdentifier>{6e3d7ae2-c78a-484a-b7d6-0f31027d2b52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -140,6 +143,9 @@
     </ClCompile>
     <ClCompile Include="..\Protocols\s2c_PacketHandler.cpp">
       <Filter>Protocols\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="GizmoBoxRenderer.cpp">
+      <Filter>GizmoRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="..\Protocols\protocol_define.h">
       <Filter>Protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="GizmoBoxRenderer.h">
+      <Filter>GizmoRenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -35,7 +35,10 @@ namespace udsdx
 	{
 		m_renderCameraQueue.clear();
 		m_renderLightQueue.clear();
-		m_renderObjectQueue.clear();
+		for (auto& queue : m_renderObjectQueues)
+		{
+			queue.clear();
+		}
 		m_renderShadowObjectQueue.clear();
 
 		m_rootObject->PostUpdate(time, *this, false);
@@ -70,9 +73,9 @@ namespace udsdx
 		m_renderLightQueue.emplace_back(light);
 	}
 
-	void Scene::EnqueueRenderObject(RendererBase* object)
+	void Scene::EnqueueRenderObject(RendererBase* object, RenderGroup group)
 	{
-		m_renderObjectQueue.emplace_back(object);
+		m_renderObjectQueues[group].emplace_back(object);
 	}
 
 	void Scene::EnqueueRenderShadowObject(RendererBase* object)
@@ -117,27 +120,29 @@ namespace udsdx
 		D3D12_GPU_VIRTUAL_ADDRESS cbvGpu = camera->UpdateConstantBuffer(param.FrameResourceIndex, param.AspectRatio);
 		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cbvGpu);
 
-		RenderSceneObjects(param, 1);
+		RenderSceneObjects(param, RenderGroup::Deferred, 1);
 
 		param.Renderer->PassBufferPostProcess(param);
 
 		PassRenderSSAO(param, camera);
 
 		param.Renderer->PassRender(param, cbvGpu);
+
+		RenderSceneObjects(param, RenderGroup::Forward, 1);
 	}
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)
 	{
-		for (const auto& object : m_renderObjectQueue)
+		for (const auto& object : m_renderShadowObjectQueue)
 		{
 			param.CommandList->SetPipelineState(object->GetShadowPipelineState());
 			object->Render(param, instances);
 		}
 	}
-
-	void Scene::RenderSceneObjects(RenderParam& param, int instances)
+	
+	void Scene::RenderSceneObjects(RenderParam& param, RenderGroup group, int instances)
 	{
-		for (const auto& object : m_renderObjectQueue)
+		for (const auto& object : m_renderObjectQueues[group])
 		{
 			param.CommandList->SetPipelineState(object->GetPipelineState());
 			object->Render(param, instances);

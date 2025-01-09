@@ -43,5 +43,6 @@ namespace udsdx
 		D3D_PRIMITIVE_TOPOLOGY m_topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		bool m_castShadow = true;
 		bool m_receiveShadow = true;
+		RenderGroup m_renderGroup = RenderGroup::Deferred;
 	};
 }

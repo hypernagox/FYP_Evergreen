@@ -169,7 +169,7 @@ namespace udsdx
 			float3 v = cross(n, u);
 			float3x3 tbn = float3x3(u, v, n);
 
-			float pz = gDepthMap.SampleLevel(gsamDepthMap, pin.TexC, 0.0f).r;
+			float pz = gDepthMap.Sample(gsamDepthMap, pin.TexC).r;
 			pz = NdcDepthToViewDepth(pz);
 
 			float3 p = (pz / pin.PosV.z) * pin.PosV;
@@ -183,7 +183,7 @@ namespace udsdx
 				float4 projQ = mul(float4(sample, 1.0f), gProjTex);
 				projQ /= projQ.w;
 
-				float rz = gDepthMap.SampleLevel(gsamDepthMap, projQ.xy, 0.0f).r;
+				float rz = gDepthMap.Sample(gsamDepthMap, projQ.xy).r;
 				rz = NdcDepthToViewDepth(rz);
 
 				float3 r = (rz / sample.z) * sample;
@@ -251,6 +251,8 @@ namespace udsdx
 
 		float4 PS(VertexOut pin) : SV_Target
 		{
+			return gSrcTex.Sample(gsamPointClamp, pin.TexC);
+			
 			float2 texOffset;
 
 			uint width, height, numMips;
@@ -389,7 +391,7 @@ namespace udsdx
 
 		param.CommandList->SetGraphicsRoot32BitConstants(1, sizeof(CameraConstants) / 4, &cameraConstants, 0);
 		pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		target->RenderSceneObjects(param);
+		target->RenderSceneObjects(param, RenderGroup::Deferred);
 
 		// Transition the normal map to generic read state
 		pCommandList->ResourceBarrier(1,
