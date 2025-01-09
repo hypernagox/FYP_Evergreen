@@ -25,11 +25,11 @@ namespace udsdx
 	public:
 		void EnqueueRenderCamera(Camera* camera);
 		void EnqueueRenderLight(LightDirectional* light);
-		void EnqueueRenderObject(RendererBase* object);
+		void EnqueueRenderObject(RendererBase* object, RenderGroup group);
 		void EnqueueRenderShadowObject(RendererBase* object);
 
 		void RenderShadowSceneObjects(RenderParam& param, int instances = 1);
-		void RenderSceneObjects(RenderParam& param, int instances = 1);
+		void RenderSceneObjects(RenderParam& param, RenderGroup group, int instances = 1);
 
 	private:
 		void PassRenderShadow(RenderParam& param, Camera* camera, LightDirectional* light);
@@ -42,7 +42,7 @@ namespace udsdx
 
 		std::vector<Camera*> m_renderCameraQueue;
 		std::vector<LightDirectional*> m_renderLightQueue;
-		std::vector<RendererBase*> m_renderObjectQueue;
+		std::array<std::vector<RendererBase*>, 2> m_renderObjectQueues;
 		std::vector<RendererBase*> m_renderShadowObjectQueue;
 	};
 }

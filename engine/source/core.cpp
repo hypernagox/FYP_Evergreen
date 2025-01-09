@@ -154,7 +154,7 @@ namespace udsdx
 		m_shadowMap = std::make_unique<ShadowMap>(8192u, 8192u, m_d3dDevice.Get());
 
 		// Create Screen Space Ambient Occlusion
-		m_screenSpaceAO = std::make_unique<ScreenSpaceAO>(m_d3dDevice.Get(), m_commandList.Get(), 0.5f);
+		m_screenSpaceAO = std::make_unique<ScreenSpaceAO>(m_d3dDevice.Get(), m_commandList.Get(), 1.0f);
 		m_screenSpaceAO->BuildPipelineState(m_d3dDevice.Get(), m_rootSignature.Get());
 
 		if (m_tearingSupport)
@@ -916,6 +916,11 @@ namespace udsdx
 	DeferredRenderer* Core::GetRenderer() const
 	{
 		return m_deferredRenderer.get();
+	}
+
+	ID3D12RootSignature* Core::GetRootSignature() const
+	{
+		return m_rootSignature.Get();
 	}
 
 	ID3D12Resource* Core::CurrentBackBuffer() const

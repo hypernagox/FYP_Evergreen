@@ -51,6 +51,7 @@ namespace udsdx
 		ID3D12CommandQueue* GetCommandQueue() const;
 		ID3D12CommandAllocator* GetCommandAllocator() const;
 		ID3D12GraphicsCommandList* GetCommandList() const;
+		ID3D12RootSignature* GetRootSignature() const;
 		DeferredRenderer* GetRenderer() const;
 
 		FrameResource* CurrentFrameResource() const;

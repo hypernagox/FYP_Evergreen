@@ -174,7 +174,78 @@ namespace udsdx
 			float shadowValue = ShadowValue(PosW, normalW, distanceH);
 			float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
 			gBuffer1Color.rgb = (gBuffer1Color.rgb - (1.0f - min(shadowValue, diffuse)) * 0.75f) * AOFactor;
-			return gBuffer1Color;
+			return float4(gBuffer1Color.xyz, 1.0f);
+		}
+	)";
+
+	constexpr char g_psoDebugResource[] = R"(
+		Texture2D gBuffer1    : register(t0);
+		Texture2D gBuffer2    : register(t1);
+		Texture2D gBuffer3    : register(t2);
+		Texture2D gShadowMap  : register(t3);
+		Texture2D gSSAOMap	  : register(t4);
+		Texture2D gBufferDSV  : register(t5);
+		Texture2D gEnvironmentMap : register(t6);
+
+		SamplerState gsamPointClamp : register(s0);
+
+		static const float4x4 gTex = {
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f
+		};
+ 
+		static const float2 gTexCoords[6] =
+		{
+			float2(0.0f, 1.0f),
+			float2(0.0f, 0.0f),
+			float2(1.0f, 0.0f),
+			float2(0.0f, 1.0f),
+			float2(1.0f, 0.0f),
+			float2(1.0f, 1.0f)
+		};
+ 
+		struct VertexOut
+		{
+			float4 PosH : SV_POSITION;
+			float2 TexC : TEXCOORD;
+			uint InstanceID : SV_InstanceID;
+		};
+
+		VertexOut VS(uint vid : SV_VertexID, uint iid : SV_InstanceID)
+		{
+			VertexOut vout;
+
+			vout.TexC = gTexCoords[vid];
+
+			// Quad covering screen in NDC space.
+			vout.PosH = float4(vout.TexC.x * 0.5f - 1.0f, 1.0f - vout.TexC.y * 0.5f - (iid * 0.5f), 0.0f, 1.0f);
+			vout.InstanceID = iid;
+
+			return vout;
+		}
+
+		float4 PS(VertexOut pin) : SV_Target
+		{
+			float4 col = 1.0f;
+			switch (pin.InstanceID)
+			{
+			case 0:
+				col = gBuffer1.Sample(gsamPointClamp, pin.TexC);
+				break;
+			case 1:
+				col = float4(gBuffer2.Sample(gsamPointClamp, pin.TexC).rg, 0.0f, 1.0f);
+				col.b = sqrt(1.0f - dot(col.rg, col.rg));
+				break;
+			case 2:
+				col = float4(gBuffer3.Sample(gsamPointClamp, pin.TexC).rrr, 1.0f);
+				break;
+			case 3:
+				col = float4(gShadowMap.Sample(gsamPointClamp, pin.TexC).rrr, 1.0f);
+				break;
+			}
+			return col;
 		}
 	)";
 
@@ -414,26 +485,12 @@ namespace udsdx
 
 	void DeferredRenderer::BuildPipelineStateObjects()
 	{
-		// Build the normal PSO
-		auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "VS", "vs_5_0");
-		auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "PS", "ps_5_0");
-
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
 		psoDesc.InputLayout.pInputElementDescs = Vertex::DescriptionTable;
 		psoDesc.InputLayout.NumElements = Vertex::DescriptionTableSize;
 		psoDesc.pRootSignature = m_renderRootSignature.Get();
-		psoDesc.VS =
-		{
-			reinterpret_cast<BYTE*>(vsByteCode->GetBufferPointer()),
-			vsByteCode->GetBufferSize()
-		};
-		psoDesc.PS =
-		{
-			reinterpret_cast<BYTE*>(psByteCode->GetBufferPointer()),
-			psByteCode->GetBufferSize()
-		};
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
@@ -443,12 +500,57 @@ namespace udsdx
 		psoDesc.SampleDesc.Count = 1;
 		psoDesc.SampleDesc.Quality = 0;
 		psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
+		psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		psoDesc.DepthStencilState.DepthEnable = false;
+		psoDesc.DepthStencilState.StencilEnable = true;
+		psoDesc.DepthStencilState.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+		psoDesc.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+		psoDesc.DepthStencilState.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
 
-		ThrowIfFailed(m_device->CreateGraphicsPipelineState(
-			&psoDesc,
-			IID_PPV_ARGS(m_renderPipelineState.GetAddressOf())
-		));
+
+		{
+			// Build the normal PSO
+			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "VS", "vs_5_0");
+			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "PS", "ps_5_0");
+
+			psoDesc.VS =
+			{
+				reinterpret_cast<BYTE*>(vsByteCode->GetBufferPointer()),
+				vsByteCode->GetBufferSize()
+			};
+			psoDesc.PS =
+			{
+				reinterpret_cast<BYTE*>(psByteCode->GetBufferPointer()),
+				psByteCode->GetBufferSize()
+			};
+
+			ThrowIfFailed(m_device->CreateGraphicsPipelineState(
+				&psoDesc,
+				IID_PPV_ARGS(m_renderPipelineState.GetAddressOf())
+			));
+		}
+
+		{
+			// Build the normal PSO
+			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "VS", "vs_5_0");
+			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "PS", "ps_5_0");
+
+			psoDesc.VS =
+			{
+				reinterpret_cast<BYTE*>(vsByteCode->GetBufferPointer()),
+				vsByteCode->GetBufferSize()
+			};
+			psoDesc.PS =
+			{
+				reinterpret_cast<BYTE*>(psByteCode->GetBufferPointer()),
+				psByteCode->GetBufferSize()
+			};
+
+			ThrowIfFailed(m_device->CreateGraphicsPipelineState(
+				&psoDesc,
+				IID_PPV_ARGS(m_debugPipelineState.GetAddressOf())
+			));
+		}
 	}
 
 	void DeferredRenderer::ClearRenderTargets(ID3D12GraphicsCommandList* commandList)
@@ -527,5 +629,8 @@ namespace udsdx
 			pCommandList->SetGraphicsRootDescriptorTable(6, m_environmentMap->GetSrvGpu());
 
 		pCommandList->DrawInstanced(6, 1, 0, 0);
+
+		pCommandList->SetPipelineState(m_debugPipelineState.Get());
+		pCommandList->DrawInstanced(6, 4, 0, 0);
 	}
 }

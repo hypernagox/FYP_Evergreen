@@ -54,6 +54,7 @@ namespace udsdx
 
 		ComPtr<ID3D12RootSignature> m_renderRootSignature;
 		ComPtr<ID3D12PipelineState> m_renderPipelineState;
+		ComPtr<ID3D12PipelineState> m_debugPipelineState;
 
 		// Multiple Render Target (MRT) for deferred rendering
 		std::array<ComPtr<ID3D12Resource>, NUM_GBUFFERS> m_gBuffers;

@@ -22,6 +22,7 @@
 #include "NaviCell.h"
 #include "Navigator.h"
 #include "ServerTimeMgr.h"
+#include "GizmoBoxRenderer.h"
 
 using namespace udsdx;
 
@@ -128,6 +129,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   
     heroServerComponent->AddComp<MovePacketSender>();
     g_heroComponent = g_heroObj->AddComponent<AuthenticPlayer>();
+
+    // Gizmo Renderer for debugging
+    auto gizmoRenderer = g_heroObj->AddComponent<GizmoBoxRenderer>();
+    gizmoRenderer->SetSize(Vector3(1.5f, 3.5f, 1.5f));
+    gizmoRenderer->SetOffset(Vector3(0.0f, 1.75f, 0.0f));
   
     Vector3 temp = {};
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
