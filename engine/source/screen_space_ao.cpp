@@ -156,19 +156,21 @@ namespace udsdx
 			float viewZ = gProj[3][2] / (z_ndc - gProj[2][2]);
 			return viewZ;
 		}
+
+		float3 ReconstructNormal(float2 np)
+		{
+			float3 n;
+			n.z = length(np) * 2.0f - 1.0f;
+			n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
+			return n;
+		}
  
 		float4 PS(VertexOut pin) : SV_Target
 		{
 			// Extract random vector and map from [0,1] --> [-1, +1].
 			float3 randVec = 2.0f * rand3(float3(pin.TexC, 0.0f));
 
-			float3 n;
-			n.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC).xy;
-			n.z = -sqrt(1.0f - saturate(dot(n.xy, n.xy)));
-			float3 u = normalize(randVec - n * dot(randVec, n));
-			float3 v = cross(n, u);
-			float3x3 tbn = float3x3(u, v, n);
-
+			float3 n = ReconstructNormal(gNormalMap.Sample(gsamPointClamp, pin.TexC).xy);
 			float pz = gDepthMap.Sample(gsamDepthMap, pin.TexC).r;
 			pz = NdcDepthToViewDepth(pz);
 
@@ -177,16 +179,17 @@ namespace udsdx
 			float occlusionSum = 0.0f;
 			for (int i = 0; i < KERNEL_SIZE; ++i)
 			{
-				float3 offset = mul(gOffsetVectors[i].xyz, tbn);
-                float3 sample = p + gOcclusionRadius * offset;
+				float3 offset = reflect(gOffsetVectors[i].xyz, randVec);
+				float flip = sign(dot(offset, n));
 
-				float4 projQ = mul(float4(sample, 1.0f), gProjTex);
+                float3 q = p + gOcclusionRadius * offset * flip;
+				float4 projQ = mul(float4(q, 1.0f), gProjTex);
 				projQ /= projQ.w;
 
 				float rz = gDepthMap.Sample(gsamDepthMap, projQ.xy).r;
 				rz = NdcDepthToViewDepth(rz);
 
-				float3 r = (rz / sample.z) * sample;
+				float3 r = (rz / q.z) * q;
 		
 				float distZ = p.z - r.z;
 				float dp = max(dot(n, normalize(r - p)), 0.0f);
@@ -237,6 +240,14 @@ namespace udsdx
 			float2 TexC : TEXCOORD;
 		};
 
+		float3 ReconstructNormal(float2 np)
+		{
+			float3 n;
+			n.z = length(np) * 2.0f - 1.0f;
+			n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
+			return n;
+		}
+
 		VertexOut VS(uint vid : SV_VertexID)
 		{
 			VertexOut vout;
@@ -251,8 +262,6 @@ namespace udsdx
 
 		float4 PS(VertexOut pin) : SV_Target
 		{
-			return gSrcTex.Sample(gsamPointClamp, pin.TexC);
-			
 			float2 texOffset;
 
 			uint width, height, numMips;
@@ -270,9 +279,7 @@ namespace udsdx
 			float4 color = 0.0f;
 			float weightSum = 0.0f;
 
-			float3 n;
-			n.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC).xy;
-			n.z = -sqrt(1.0f - saturate(dot(n.xy, n.xy)));
+			float3 n = ReconstructNormal(gNormalMap.Sample(gsamPointClamp, pin.TexC).xy);
 			float p = gDepthMap.Sample(gsamPointClamp, pin.TexC).x;
 
 			for (uint i = 0; i < BLUR_SAMPLE; ++i)
@@ -280,9 +287,7 @@ namespace udsdx
 				float2 offset = (i - (BLUR_SAMPLE - 1) / 2.0f).xx * texOffset;
 				float4 sample = gSrcTex.Sample(gsamPointClamp, pin.TexC + offset);
 
-				float3 np;
-				np.xy = gNormalMap.Sample(gsamPointClamp, pin.TexC + offset).xy;
-				np.z = -sqrt(1.0f - saturate(dot(np.xy, np.xy)));
+				float3 np = ReconstructNormal(gNormalMap.Sample(gsamPointClamp, pin.TexC + offset).xy);
 				float pp = gDepthMap.Sample(gsamPointClamp, pin.TexC + offset).x;
 
                 if (dot(n, np) > 0.8f && abs(p - pp) < 0.05f)

@@ -137,6 +137,14 @@ namespace udsdx
 			float p = asin(dir.y);
 			return float2(t / PI * -0.5f + 0.5f, -p / PI + 0.5f);
 		}
+
+		float3 ReconstructNormal(float2 np)
+		{
+			float3 n;
+			n.z = dot(np, np) * 2.0f - 1.0f;
+			n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
+			return n;
+		}
  
 		float4 PS(VertexOut pin) : SV_Target
 		{
@@ -164,9 +172,7 @@ namespace udsdx
 			//}
 			//gBuffer1Color /= sampleCount;
 
-			float3 normalV;
-			normalV.xy = gBuffer2.Sample(gsamPointClamp, pin.TexC).xy;
-			normalV.z = -sqrt(1.0f - saturate(dot(normalV.xy, normalV.xy)));
+			float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
 			float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
 			float distanceH = length(PosW.xyz - gEyePosW.xyz);
 

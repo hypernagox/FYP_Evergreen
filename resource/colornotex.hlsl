@@ -21,7 +21,7 @@ PixelOut PS(VertexOut pin)
     clip(texColor.a - 0.1f);
      
     pOut.Buffer1 = texColor;
-    pOut.Buffer2 = normal.xy;
+    pOut.Buffer2 = PackNormal(normal);
     pOut.Buffer3 = posDelta.xy;
     return pOut;
 }
