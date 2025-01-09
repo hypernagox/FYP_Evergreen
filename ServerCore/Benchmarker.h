@@ -52,7 +52,10 @@ namespace ServerCore
 	[[nodiscard]] BenchmarkRAII StartBenchmarkGlobal(const char* const func_name)noexcept;
 	[[nodiscard]] inline BenchmarkRAII StartBenchmark(const char* const func_name, Benchmarker* const bench_ptr)noexcept { return BenchmarkRAII{ func_name,bench_ptr }; }
 
-	#define DO_BENCH_GLOBAL(funcName) const auto BENCH_RAII_GLOBAL_TEMP = ServerCore::StartBenchmarkGlobal(funcName)
-	#define DO_BENCH(funcName, bench_ptr) const auto BENCH_RAII_TEMP = ServerCore::StartBenchmark(funcName, bench_ptr)
+	#define DO_BENCH_GLOBAL(funcName)		const auto BENCH_RAII_GLOBAL_TEMP = ServerCore::StartBenchmarkGlobal(funcName)
+	#define DO_BENCH(funcName, bench_ptr)	const auto BENCH_RAII_TEMP = ServerCore::StartBenchmark(funcName, bench_ptr)
+	#define DO_BENCH_GLOBAL_THIS_FUNC		DO_BENCH_GLOBAL(__FUNCTION__)
+	#define DO_BENCH_THIS_FUNC(bench_ptr)	DO_BENCH(__FUNCTION__, bench_ptr)
+	#define DO_BENCH_THIS_FUNC_NOW			DO_BENCH(__FUNCTION__, nullptr)
 }
 

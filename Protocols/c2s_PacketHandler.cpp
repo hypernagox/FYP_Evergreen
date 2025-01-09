@@ -88,7 +88,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 
 const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_)
 {
-	DO_BENCH_GLOBAL("MOVE");
+	DO_BENCH_GLOBAL_THIS_FUNC;
 	//if(pSession_->GetObjectID()!=1)
 	//std::cout << "move" << std::endl;
 	const auto& pEntity = pSession_->GetOwnerEntity()->GetComp<PositionComponent>();
@@ -117,8 +117,8 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 
 const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_)
 {
-	DO_BENCH_GLOBAL("ATK");
-
+	DO_BENCH_GLOBAL_THIS_FUNC;
+	
 	const auto pOwner = pSession_->GetOwnerEntity();
 
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
