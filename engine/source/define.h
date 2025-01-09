@@ -81,6 +81,12 @@ namespace udsdx
 		SSAOMapSRV = 8
 	};
 
+	enum RenderGroup : UINT
+	{
+		Forward = 0,
+		Deferred = 1
+	};
+
 	static constexpr int FrameResourceCount = 2;
 	static constexpr int SwapChainBufferCount = 2;
 }

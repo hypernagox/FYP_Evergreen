@@ -253,6 +253,7 @@
     <ClCompile Include="EntityMovement.cpp" />
     <ClCompile Include="EventTimer.cpp" />
     <ClCompile Include="func.cpp" />
+    <ClCompile Include="GizmoBoxRenderer.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monster.cpp" />
@@ -295,6 +296,7 @@
     <ClInclude Include="EntityMovement.h" />
     <ClInclude Include="EventTimer.h" />
     <ClInclude Include="func.h" />
+    <ClInclude Include="GizmoBoxRenderer.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MoveInterpolator.h" />
