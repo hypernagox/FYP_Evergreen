@@ -20,7 +20,9 @@ public:
 	void RemoveObject(const uint64_t id);
 	ServerObject* const GetServerObj(const uint64_t id) const {
 		const auto iter = m_mapServerObj.find(id);
-		return m_mapServerObj.cend() != iter ? iter->second : nullptr;
+		if (m_mapServerObj.cend() != iter)
+			return iter->second->GetComponent<ServerObject>();
+		return nullptr;
 	}
 	Component* const GetServerObjComp(const uint64_t id) const noexcept;
 	SceneObject* const GetServerObjRoot(const uint64_t id) const noexcept;
@@ -29,6 +31,6 @@ public:
 	void Clear()noexcept { m_mapServerObj.clear(); }
 private:
 	std::shared_ptr<Scene> targetScene;
-	std::unordered_map<uint64_t, ServerObject*> m_mapServerObj;
+	std::unordered_map<uint64_t, std::shared_ptr<udsdx::SceneObject>> m_mapServerObj;
 };
 

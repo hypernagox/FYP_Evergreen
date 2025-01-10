@@ -31,7 +31,7 @@ void ServerObjectMgr::AddObject(EntityBuilderBase* b)
 		auto instance = EntityBuilderBase::CreateObject(b); // 등록된 함수가 알아서 생성해서 뱉는다.
 
 		// 빌더에서 만들어진 씬 오브젝트는 '무조건' ServerObject Component를 추가한 상태이어야 한다.
-		m_mapServerObj.emplace(b->obj_id, instance->GetComponent<ServerObject>()); // 서버 오브젝트를 추가한다.
+		m_mapServerObj.emplace(b->obj_id, instance); // 서버 오브젝트를 추가한다.
 		targetScene->AddObject(instance);
 	}
 }
@@ -47,7 +47,7 @@ void ServerObjectMgr::RemoveObject(const uint64_t id)
 	const auto iter = m_mapServerObj.find(id);
 	if (m_mapServerObj.cend() != iter)
 	{
-		iter->second->GetSceneObject()->RemoveFromParent();
+		iter->second->RemoveFromParent();
 		m_mapServerObj.erase(iter);
 	}
 
