@@ -137,6 +137,14 @@ namespace udsdx
 			float p = asin(dir.y);
 			return float2(t / PI * -0.5f + 0.5f, -p / PI + 0.5f);
 		}
+
+		float3 ReconstructNormal(float2 np)
+		{
+			float3 n;
+			n.z = dot(np, np) * 2.0f - 1.0f;
+			n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
+			return n;
+		}
  
 		float4 PS(VertexOut pin) : SV_Target
 		{
@@ -154,19 +162,8 @@ namespace udsdx
 				return color;
 			}
 
-			float2 motionVector = gBuffer3.Sample(gsamPointClamp, pin.TexC).xy;
-		    const int sampleCount = 8;
 			float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
-			//for (int i = 0; i < sampleCount; ++i)
-			//{
-			//	float2 offset = -motionVector * ((float)i / (sampleCount - 1));
-			//	gBuffer1Color += gBuffer1.Sample(gsamPointClamp, pin.TexC + offset);
-			//}
-			//gBuffer1Color /= sampleCount;
-
-			float3 normalV;
-			normalV.xy = gBuffer2.Sample(gsamPointClamp, pin.TexC).xy;
-			normalV.z = -sqrt(1.0f - saturate(dot(normalV.xy, normalV.xy)));
+			float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
 			float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
 			float distanceH = length(PosW.xyz - gEyePosW.xyz);
 
@@ -174,7 +171,7 @@ namespace udsdx
 			float shadowValue = ShadowValue(PosW, normalW, distanceH);
 			float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
 			gBuffer1Color.rgb = (gBuffer1Color.rgb - (1.0f - min(shadowValue, diffuse)) * 0.75f) * AOFactor;
-			return float4(gBuffer1Color.xyz, 1.0f);
+			return float4(gBuffer1Color.rgb, 1.0f);
 		}
 	)";
 
@@ -236,10 +233,9 @@ namespace udsdx
 				break;
 			case 1:
 				col = float4(gBuffer2.Sample(gsamPointClamp, pin.TexC).rg, 0.0f, 1.0f);
-				col.b = sqrt(1.0f - dot(col.rg, col.rg));
 				break;
 			case 2:
-				col = float4(gBuffer3.Sample(gsamPointClamp, pin.TexC).rrr, 1.0f);
+				col = float4(gBuffer3.Sample(gsamPointClamp, pin.TexC).rg, 0.0f, 1.0f);
 				break;
 			case 3:
 				col = float4(gShadowMap.Sample(gsamPointClamp, pin.TexC).rrr, 1.0f);
@@ -425,7 +421,6 @@ namespace udsdx
     void DeferredRenderer::BuildResources()
     {
 		D3D12_RESOURCE_DESC texDesc = {};
-		float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 		texDesc.Alignment = 0;
 		texDesc.Width = m_width;
@@ -442,7 +437,7 @@ namespace udsdx
             m_gBuffers[i].Reset();
 
 			texDesc.Format = GBUFFER_FORMATS[i];
-			CD3DX12_CLEAR_VALUE clearValue(GBUFFER_FORMATS[i], clearColor);
+			CD3DX12_CLEAR_VALUE clearValue(GBUFFER_FORMATS[i], GBUFFER_CLEAR_VALUES[i]);
 
             ThrowIfFailed(m_device->CreateCommittedResource(
 				&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
@@ -494,19 +489,14 @@ namespace udsdx
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		psoDesc.DepthStencilState.DepthEnable = false;
 		psoDesc.SampleMask = UINT_MAX;
 		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		psoDesc.NumRenderTargets = 1;
 		psoDesc.SampleDesc.Count = 1;
 		psoDesc.SampleDesc.Quality = 0;
 		psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		psoDesc.DepthStencilState.DepthEnable = false;
-		psoDesc.DepthStencilState.StencilEnable = true;
-		psoDesc.DepthStencilState.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-		psoDesc.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-		psoDesc.DepthStencilState.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
-
+		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 		{
 			// Build the normal PSO
@@ -555,10 +545,9 @@ namespace udsdx
 
 	void DeferredRenderer::ClearRenderTargets(ID3D12GraphicsCommandList* commandList)
 	{
-		const float clearValue[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		for (UINT i = 0; i < NUM_GBUFFERS; ++i)
 		{
-			commandList->ClearRenderTargetView(m_gBuffersCpuRtv[i], clearValue, 0, nullptr);
+			commandList->ClearRenderTargetView(m_gBuffersCpuRtv[i], GBUFFER_CLEAR_VALUES[i], 0, nullptr);
 		}
 		commandList->ClearDepthStencilView(m_depthBufferCpuDsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 	}

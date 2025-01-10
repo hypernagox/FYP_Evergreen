@@ -173,3 +173,8 @@ float3 NormalSampleToWorldSpace(float3 normalSample, float3 normalW, float3 tang
     float3x3 TBN = float3x3(T, B, N);
     return mul(normalSample * 2.0f - 1.0f, TBN);
 }
+
+float2 PackNormal(float3 n)
+{
+	return normalize(n.xy) * sqrt(n.z * 0.5f + 0.5f);
+}

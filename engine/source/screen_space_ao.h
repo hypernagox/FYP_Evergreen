@@ -11,7 +11,7 @@ namespace udsdx
 	{
 	public:
 		static constexpr int KERNEL_SIZE = 32;
-		static constexpr int BLUR_SMAPLE = 32; // should be a multiple of 4
+		static constexpr int BLUR_SMAPLE = 16; // should be a multiple of 4
 
 		static constexpr DXGI_FORMAT AO_FORMAT = DXGI_FORMAT_R8_UNORM;
 		static constexpr DXGI_FORMAT NORMAL_FORMAT = DXGI_FORMAT_R16G16B16A16_FLOAT;
@@ -80,10 +80,11 @@ namespace udsdx
 		ComPtr<ID3D12Resource> m_ssaomap;
 		ComPtr<ID3D12Resource> m_blurMap;
 		ComPtr<ID3D12Resource> m_normalMap;
-		
+
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_ambientMapCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_ambientMapGpuSrv;
-		CD3DX12_CPU_DESCRIPTOR_HANDLE m_ambientMapCpuRtv;
+		CD3DX12_CPU_DESCRIPTOR_HANDLE m_ambientMapCpuUav;
+		CD3DX12_GPU_DESCRIPTOR_HANDLE m_ambientMapGpuUav;
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_ssaomapCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_ssaomapGpuSrv;
@@ -91,7 +92,8 @@ namespace udsdx
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_blurMapCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_blurMapGpuSrv;
-		CD3DX12_CPU_DESCRIPTOR_HANDLE m_blurMapCpuRtv;
+		CD3DX12_CPU_DESCRIPTOR_HANDLE m_blurMapCpuUav;
+		CD3DX12_GPU_DESCRIPTOR_HANDLE m_blurMapGpuUav;
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_normalMapCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_normalMapGpuSrv;
