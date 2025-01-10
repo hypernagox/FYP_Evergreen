@@ -160,7 +160,7 @@ namespace udsdx
 		float3 ReconstructNormal(float2 np)
 		{
 			float3 n;
-			n.z = length(np) * 2.0f - 1.0f;
+			n.z = dot(np, np) * 2.0f - 1.0f;
 			n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
 			return n;
 		}
@@ -206,12 +206,26 @@ namespace udsdx
 	)";
 
 	constexpr char g_psoBlurResource[] = R"(
-		cbuffer cbBlurState : register(b0)
+		cbuffer cbSsao : register(b0)
+		{
+			float4x4 gProj;
+			float4x4 gInvProj;
+			float4x4 gProjTex;
+			float4   gOffsetVectors[KERNEL_SIZE];
+
+			// Coordinates given in view space.
+			float    gOcclusionRadius;
+			float    gOcclusionFadeStart;
+			float    gOcclusionFadeEnd;
+			float    gSurfaceEpsilon;
+		};
+
+		cbuffer cbBlurState : register(b1)
 		{
 			bool gOrientation;
 		};
 
-		cbuffer cbBlur : register(b1)
+		cbuffer cbBlur : register(b2)
 		{
 			float4 gBlurWeights[BLUR_SAMPLE / 4];
 		};
@@ -219,86 +233,70 @@ namespace udsdx
 		Texture2D gSrcTex : register(t0);
 		Texture2D gNormalMap : register(t1);
 		Texture2D gDepthMap : register(t2);
+		RWTexture2D<float> gDstTex : register(u0);
 
 		SamplerState gsamPointClamp : register(s0);
 		SamplerState gsamLinearClamp : register(s1);
 		SamplerState gsamDepthMap : register(s2);
 		SamplerState gsamLinearWrap : register(s3);
- 
-		static const float2 gTexCoords[6] = {
-			float2(0.0f, 1.0f),
-			float2(0.0f, 0.0f),
-			float2(1.0f, 0.0f),
-			float2(0.0f, 1.0f),
-			float2(1.0f, 0.0f),
-			float2(1.0f, 1.0f)
-		};
 
-		struct VertexOut
+		float NdcDepthToViewDepth(float z_ndc)
 		{
-			float4 PosH : SV_POSITION;
-			float2 TexC : TEXCOORD;
-		};
+			float viewZ = gProj[3][2] / (z_ndc - gProj[2][2]);
+			return viewZ;
+		}
 
 		float3 ReconstructNormal(float2 np)
 		{
 			float3 n;
-			n.z = length(np) * 2.0f - 1.0f;
+			n.z = dot(np, np) * 2.0f - 1.0f;
 			n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
 			return n;
 		}
-
-		VertexOut VS(uint vid : SV_VertexID)
+		
+		[numthreads(128, 1, 1)]
+		void CS(int3 id : SV_DispatchThreadID)
 		{
-			VertexOut vout;
+            uint width, height, srcWidth, srcHeight;
+			gSrcTex.GetDimensions(srcWidth, srcHeight);
+			gDstTex.GetDimensions(width, height);
 
-			vout.TexC = gTexCoords[vid];
-
-			// Quad covering screen in NDC space.
-			vout.PosH = float4(2.0f*vout.TexC.x - 1.0f, 1.0f - 2.0f*vout.TexC.y, 0.0f, 1.0f);
-
-			return vout;
-		}
-
-		float4 PS(VertexOut pin) : SV_Target
-		{
-			float2 texOffset;
-
-			uint width, height, numMips;
-			gSrcTex.GetDimensions(0, width, height, numMips);
-
+			int2 dstID = id.xy;
+			float2 texOffset = float2(1.0f, 0.0f) / float(srcWidth);
 			if (gOrientation)
 			{
-				texOffset = float2(0.0f, 1.0f) / float(height);
-			}
-			else
-			{
-				texOffset = float2(1.0f, 0.0f) / float(width);
+				dstID = id.yx;
+				texOffset = float2(0.0f, 1.0f) / float(srcHeight);
 			}
 
-			float4 color = 0.0f;
-			float weightSum = 0.0f;
+			float2 uv = (float2(dstID) + 0.5f) / float2(width, height);
+			float4 color = gSrcTex.SampleLevel(gsamPointClamp, uv, 0) * gBlurWeights[0][0];
+			float weightSum = gBlurWeights[0][0];
 
-			float3 n = ReconstructNormal(gNormalMap.Sample(gsamPointClamp, pin.TexC).xy);
-			float p = gDepthMap.Sample(gsamPointClamp, pin.TexC).x;
-
-			for (uint i = 0; i < BLUR_SAMPLE; ++i)
+			float3 n = ReconstructNormal(gNormalMap.SampleLevel(gsamPointClamp, uv, 0).xy);
+			float p = NdcDepthToViewDepth(gDepthMap.SampleLevel(gsamPointClamp, uv, 0).x);
+			
+			[unroll]
+			for (int i = 1 - BLUR_SAMPLE; i < BLUR_SAMPLE; ++i)
 			{
-				float2 offset = (i - (BLUR_SAMPLE - 1) / 2.0f).xx * texOffset;
-				float4 sample = gSrcTex.Sample(gsamPointClamp, pin.TexC + offset);
+				if (i == 0)
+					continue;
 
-				float3 np = ReconstructNormal(gNormalMap.Sample(gsamPointClamp, pin.TexC + offset).xy);
-				float pp = gDepthMap.Sample(gsamPointClamp, pin.TexC + offset).x;
+				float2 offset = texOffset * float(i);
+				float4 sample = gSrcTex.SampleLevel(gsamPointClamp, uv + offset, 0);
 
-                if (dot(n, np) > 0.8f && abs(p - pp) < 0.05f)
+				float3 np = ReconstructNormal(gNormalMap.SampleLevel(gsamPointClamp, uv + offset, 0).xy);
+				float pp = NdcDepthToViewDepth(gDepthMap.SampleLevel(gsamPointClamp, uv + offset, 0).x);
+
+                if (dot(n, np) > 0.8f && abs(p - pp) < 0.2f)
 				{
-                    float weight = gBlurWeights[i / 4][i % 4];
+					int wi = abs(i);
+                    float weight = gBlurWeights[wi / 4][wi % 4];
 					color += sample * weight;
 					weightSum += weight;
 				}
 			}
-
-			return color / weightSum;
+			gDstTex[dstID.xy] = color / weightSum;
 		}
 	)";
 
@@ -451,7 +449,7 @@ namespace udsdx
 		pCommandList->RSSetViewports(1, &param.Viewport);
 		pCommandList->RSSetScissorRects(1, &param.ScissorRect);
 
-		pCommandList->SetGraphicsRootSignature(m_blurRootSignature.Get());
+		pCommandList->SetComputeRootSignature(m_blurRootSignature.Get());
 		pCommandList->SetPipelineState(m_blurPSO.Get());
 
 		pCommandList->IASetVertexBuffers(0, 0, nullptr);
@@ -461,44 +459,45 @@ namespace udsdx
 			&CD3DX12_RESOURCE_BARRIER::Transition(
 				m_blurMap.Get(),
 				D3D12_RESOURCE_STATE_GENERIC_READ,
-				D3D12_RESOURCE_STATE_RENDER_TARGET));
+				D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
 
-		pCommandList->OMSetRenderTargets(1, &m_blurMapCpuRtv, true, nullptr);
+		pCommandList->OMSetRenderTargets(0, nullptr, true, nullptr);
 
-		pCommandList->SetGraphicsRoot32BitConstant(0, 0, 0);
-		pCommandList->SetGraphicsRootConstantBufferView(1, m_blurConstantBuffer->Resource()->GetGPUVirtualAddress());
-		pCommandList->SetGraphicsRootDescriptorTable(2, m_ssaomapGpuSrv);
-		pCommandList->SetGraphicsRootDescriptorTable(3, param.Renderer->GetGBufferSrv(1));
-		pCommandList->SetGraphicsRootDescriptorTable(4, param.Renderer->GetDepthBufferSrv());
+		pCommandList->SetGraphicsRootConstantBufferView(0, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
+		pCommandList->SetComputeRoot32BitConstant(1, 0, 0);
+		pCommandList->SetComputeRootConstantBufferView(2, m_blurConstantBuffer->Resource()->GetGPUVirtualAddress());
+		pCommandList->SetComputeRootDescriptorTable(3, m_ssaomapGpuSrv);
+		pCommandList->SetComputeRootDescriptorTable(4, param.Renderer->GetGBufferSrv(1));
+		pCommandList->SetComputeRootDescriptorTable(5, param.Renderer->GetDepthBufferSrv());
+		pCommandList->SetComputeRootDescriptorTable(6, m_blurMapGpuUav);
 
-		pCommandList->DrawInstanced(6, 1, 0, 0);
+		pCommandList->Dispatch((m_width + 127) / 128, m_height, 1);
 
 		pCommandList->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(
 				m_blurMap.Get(),
-				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
 				D3D12_RESOURCE_STATE_GENERIC_READ));
 
 		pCommandList->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(
 				m_ambientMap.Get(),
 				D3D12_RESOURCE_STATE_GENERIC_READ,
-				D3D12_RESOURCE_STATE_RENDER_TARGET));
+				D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
 
-		pCommandList->OMSetRenderTargets(1, &m_ambientMapCpuRtv, true, nullptr);
+		pCommandList->SetComputeRoot32BitConstant(1, 1, 0);
+		pCommandList->SetComputeRootConstantBufferView(2, m_blurConstantBuffer->Resource()->GetGPUVirtualAddress());
+		pCommandList->SetComputeRootDescriptorTable(3, m_blurMapGpuSrv);
+		pCommandList->SetComputeRootDescriptorTable(4, param.Renderer->GetGBufferSrv(1));
+		pCommandList->SetComputeRootDescriptorTable(5, param.Renderer->GetDepthBufferSrv());
+		pCommandList->SetComputeRootDescriptorTable(6, m_ambientMapGpuUav);
 
-		pCommandList->SetGraphicsRoot32BitConstant(0, 1, 0);
-		pCommandList->SetGraphicsRootConstantBufferView(1, m_blurConstantBuffer->Resource()->GetGPUVirtualAddress());
-		pCommandList->SetGraphicsRootDescriptorTable(2, m_blurMapGpuSrv);
-		pCommandList->SetGraphicsRootDescriptorTable(3, param.Renderer->GetGBufferSrv(1));
-		pCommandList->SetGraphicsRootDescriptorTable(4, param.Renderer->GetDepthBufferSrv());
-
-		pCommandList->DrawInstanced(6, 1, 0, 0);
+		pCommandList->Dispatch((m_height + 127) / 128, m_width, 1);
 
 		pCommandList->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(
 				m_ambientMap.Get(),
-				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
 				D3D12_RESOURCE_STATE_GENERIC_READ));
 	}
 
@@ -560,12 +559,14 @@ namespace udsdx
 		float aoClearColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		clearValue = CD3DX12_CLEAR_VALUE(AO_FORMAT, aoClearColor);
 
+		texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
 		ThrowIfFailed(m_device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 			D3D12_HEAP_FLAG_NONE,
 			&texDesc,
 			D3D12_RESOURCE_STATE_GENERIC_READ,
-			&clearValue,
+			nullptr,
 			IID_PPV_ARGS(m_ambientMap.GetAddressOf())));
 
 		ThrowIfFailed(m_device->CreateCommittedResource(
@@ -573,8 +574,10 @@ namespace udsdx
 			D3D12_HEAP_FLAG_NONE,
 			&texDesc,
 			D3D12_RESOURCE_STATE_GENERIC_READ,
-			&clearValue,
+			nullptr,
 			IID_PPV_ARGS(m_blurMap.GetAddressOf())));
+
+		texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 
 		// SSAO map
 		texDesc.Width = static_cast<UINT>(m_width * m_ssaoMapScale);
@@ -603,9 +606,13 @@ namespace udsdx
 		m_normalMapGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_depthMapGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
-		m_ambientMapCpuRtv = descriptorParam.RtvCpuHandle;
+		m_ambientMapCpuUav = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		m_blurMapCpuUav = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+
+		m_ambientMapGpuUav = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		m_blurMapGpuUav = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+
 		m_ssaomapCpuRtv = descriptorParam.RtvCpuHandle.Offset(1, descriptorParam.RtvDescriptorSize);
-		m_blurMapCpuRtv = descriptorParam.RtvCpuHandle.Offset(1, descriptorParam.RtvDescriptorSize);
 		m_normalMapCpuRtv = descriptorParam.RtvCpuHandle.Offset(1, descriptorParam.RtvDescriptorSize);
 
 		descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
@@ -625,7 +632,7 @@ namespace udsdx
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
 		m_device->CreateShaderResourceView(m_normalMap.Get(), &srvDesc, m_normalMapCpuSrv);
-		
+
 		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		m_device->CreateShaderResourceView(depthStencilBuffer, &srvDesc, m_depthMapCpuSrv);
 
@@ -633,6 +640,12 @@ namespace udsdx
 		m_device->CreateShaderResourceView(m_ambientMap.Get(), &srvDesc, m_ambientMapCpuSrv);
 		m_device->CreateShaderResourceView(m_ssaomap.Get(), &srvDesc, m_ssaomapCpuSrv);
 		m_device->CreateShaderResourceView(m_blurMap.Get(), &srvDesc, m_blurMapCpuSrv);
+
+		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+		uavDesc.Format = AO_FORMAT;
+		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+		m_device->CreateUnorderedAccessView(m_ambientMap.Get(), nullptr, &uavDesc, m_ambientMapCpuUav);
+		m_device->CreateUnorderedAccessView(m_blurMap.Get(), nullptr, &uavDesc, m_blurMapCpuUav);
 
 		// Create the render target view
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
@@ -643,9 +656,7 @@ namespace udsdx
 		m_device->CreateRenderTargetView(m_normalMap.Get(), &rtvDesc, m_normalMapCpuRtv);
 
 		rtvDesc.Format = AO_FORMAT;
-		m_device->CreateRenderTargetView(m_ambientMap.Get(), &rtvDesc, m_ambientMapCpuRtv);
 		m_device->CreateRenderTargetView(m_ssaomap.Get(), &rtvDesc, m_ssaomapCpuRtv);
-		m_device->CreateRenderTargetView(m_blurMap.Get(), &rtvDesc, m_blurMapCpuRtv);
 	}
 
 	void ScreenSpaceAO::BuildRootSignature(ID3D12Device* pDevice)
@@ -666,7 +677,7 @@ namespace udsdx
 
 		const CD3DX12_STATIC_SAMPLER_DESC depthMapSam(
 			2, // shaderRegister
-			D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
+			D3D12_FILTER_MIN_MAG_MIP_LINEAR, // filter
 			D3D12_TEXTURE_ADDRESS_MODE_BORDER,  // addressU
 			D3D12_TEXTURE_ADDRESS_MODE_BORDER,  // addressV
 			D3D12_TEXTURE_ADDRESS_MODE_BORDER,  // addressW
@@ -736,16 +747,21 @@ namespace udsdx
 			CD3DX12_DESCRIPTOR_RANGE texTable3;
 			texTable3.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
 
-			CD3DX12_ROOT_PARAMETER slotRootParameter[5];
+			CD3DX12_DESCRIPTOR_RANGE texTable4;
+			texTable4.Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
 
-			slotRootParameter[0].InitAsConstants(1, 0);
-			slotRootParameter[1].InitAsConstantBufferView(1);
-			slotRootParameter[2].InitAsDescriptorTable(1, &texTable1, D3D12_SHADER_VISIBILITY_PIXEL);
-			slotRootParameter[3].InitAsDescriptorTable(1, &texTable2, D3D12_SHADER_VISIBILITY_PIXEL);
-			slotRootParameter[4].InitAsDescriptorTable(1, &texTable3, D3D12_SHADER_VISIBILITY_PIXEL);
+			CD3DX12_ROOT_PARAMETER slotRootParameter[7];
+
+			slotRootParameter[0].InitAsConstantBufferView(0);
+			slotRootParameter[1].InitAsConstants(1, 1);
+			slotRootParameter[2].InitAsConstantBufferView(2);
+			slotRootParameter[3].InitAsDescriptorTable(1, &texTable1);
+			slotRootParameter[4].InitAsDescriptorTable(1, &texTable2);
+			slotRootParameter[5].InitAsDescriptorTable(1, &texTable3);
+			slotRootParameter[6].InitAsDescriptorTable(1, &texTable4);
 
 			// A root signature is an array of root parameters.
-			CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(5, slotRootParameter,
+			CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(_countof(slotRootParameter), slotRootParameter,
 				(UINT)staticSamplers.size(), staticSamplers.data(),
 				D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
@@ -850,6 +866,7 @@ namespace udsdx
 			psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 			psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 			psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+			psoDesc.DepthStencilState.DepthEnable = false;
 			psoDesc.SampleMask = UINT_MAX;
 			psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 			psoDesc.NumRenderTargets = 1;
@@ -866,38 +883,20 @@ namespace udsdx
 
 		{
 			// Build the blur PSO
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoBlurResource, defines, "VS", "vs_5_0");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoBlurResource, defines, "PS", "ps_5_0");
+			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoBlurResource, defines, "CS", "cs_5_0");
 
-			D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
-			ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
+			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
 
 			// There's no vertex input in this case
-			psoDesc.InputLayout.pInputElementDescs = nullptr;
-			psoDesc.InputLayout.NumElements = 0;
 			psoDesc.pRootSignature = m_blurRootSignature.Get();
-			psoDesc.VS =
+			psoDesc.CS =
 			{
-				reinterpret_cast<BYTE*>(vsByteCode->GetBufferPointer()),
-				vsByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(csByteCode->GetBufferPointer()),
+				csByteCode->GetBufferSize()
 			};
-			psoDesc.PS =
-			{
-				reinterpret_cast<BYTE*>(psByteCode->GetBufferPointer()),
-				psByteCode->GetBufferSize()
-			};
-			psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-			psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-			psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-			psoDesc.SampleMask = UINT_MAX;
-			psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-			psoDesc.NumRenderTargets = 1;
-			psoDesc.SampleDesc.Count = 1;
-			psoDesc.SampleDesc.Quality = 0;
-			psoDesc.RTVFormats[0] = AO_FORMAT;
-			psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
-			ThrowIfFailed(pDevice->CreateGraphicsPipelineState(
+			ThrowIfFailed(pDevice->CreateComputePipelineState(
 				&psoDesc,
 				IID_PPV_ARGS(m_blurPSO.GetAddressOf())
 			));
@@ -922,10 +921,9 @@ namespace udsdx
 	void ScreenSpaceAO::BuildBlurWeights()
 	{
 		// Blur weights with a Gaussian distribution
-		const float sigma = BLUR_SMAPLE / 4.0f;
-		const float mean = (BLUR_SMAPLE - 1) / 2.0f;
+		const float sigma = BLUR_SMAPLE / 2.0f;
 
 		for (int x = 0; x < BLUR_SMAPLE; ++x)
-			m_blurWeights[x] = std::expf(-0.5f * (std::powf((x - mean) / sigma, 2.0f))) / (sigma * std::sqrtf(2.0f * XM_PI));
+			m_blurWeights[x] = std::expf(-0.5f * (std::powf(x / sigma, 2.0f))) / (sigma * std::sqrtf(2.0f * XM_PI));
 	}
 }

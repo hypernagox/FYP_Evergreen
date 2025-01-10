@@ -111,6 +111,9 @@ namespace udsdx
 		ZoneScopedN("Main Pass");
 		TracyD3D12Zone(*param.TracyQueueContext, param.CommandList, "Main Pass");
 
+		auto pCommandList = param.CommandList;
+
+		// Deferred rendering pass
 		param.Renderer->PassBufferPreparation(param);
 
 		Matrix4x4 viewMat = camera->GetViewMatrix();
@@ -118,7 +121,7 @@ namespace udsdx
 		param.ViewFrustumWorld = camera->GetViewFrustumWorld(param.AspectRatio);
 
 		D3D12_GPU_VIRTUAL_ADDRESS cbvGpu = camera->UpdateConstantBuffer(param.FrameResourceIndex, param.AspectRatio);
-		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cbvGpu);
+		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cbvGpu);
 
 		RenderSceneObjects(param, RenderGroup::Deferred, 1);
 
@@ -128,7 +131,18 @@ namespace udsdx
 
 		param.Renderer->PassRender(param, cbvGpu);
 
+		// Forward rendering pass
+		param.Renderer->PassBufferPreparation(param);
+
+		pCommandList->SetGraphicsRootSignature(param.RootSignature);
+		pCommandList->OMSetRenderTargets(1, &param.RenderTargetView, true, &param.Renderer->GetDepthBufferDsv());
+
+		pCommandList->RSSetViewports(1, &param.Viewport);
+		pCommandList->RSSetScissorRects(1, &param.ScissorRect);
+
 		RenderSceneObjects(param, RenderGroup::Forward, 1);
+
+		param.Renderer->PassBufferPostProcess(param);
 	}
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)

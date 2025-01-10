@@ -34,6 +34,7 @@ namespace udsdx
 	public:
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetGBufferSrv(UINT index) const { return m_gBuffersGpuSrv[index]; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetDepthBufferSrv() const { return m_depthBufferGpuSrv; }
+		CD3DX12_CPU_DESCRIPTOR_HANDLE GetDepthBufferDsv() const { return m_depthBufferCpuDsv; }
 
 	public:
 		static constexpr UINT NUM_GBUFFERS = 3;
@@ -42,6 +43,12 @@ namespace udsdx
 			DXGI_FORMAT_R8G8B8A8_UNORM,
 			DXGI_FORMAT_R16G16_SNORM,
 			DXGI_FORMAT_R16G16_SNORM,
+		};
+
+		static constexpr float GBUFFER_CLEAR_VALUES[NUM_GBUFFERS][4] = {
+			{ 0.0f, 0.0f, 0.0f, 0.0f },
+			{ 0.0f, 1.0f, 0.0f, 0.0f },
+			{ 0.0f, 0.0f, 0.0f, 0.0f },
 		};
 
 		static constexpr DXGI_FORMAT DEPTH_FORMAT = DXGI_FORMAT_D24_UNORM_S8_UINT;
