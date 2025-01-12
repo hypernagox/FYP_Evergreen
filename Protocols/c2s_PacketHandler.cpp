@@ -119,6 +119,8 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 {
 	DO_BENCH_GLOBAL_THIS_FUNC;
 	
+	// TODO: 생포인터로 개기지 말자
+	// 정수값 아이디만 쓰거나 쉐어드를 쓰자
 	const auto pOwner = pSession_->GetOwnerEntity();
 
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
@@ -136,7 +138,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 		//std::cout << std::format("Session ID: {}, Num Of Mon in Viewlist: {}\n", pOwner->GetObjectID(), mon_list.size());
 		for (const auto[mon_id,ptr] : mon_list)
 		{
-			if (const auto pmon = ptr)
+			if (const auto pmon = Mgr(FieldMgr)->GetNPC(mon_id))
 			{
 				if (const auto pCol = pmon->GetComp<Collider>())
 				{
