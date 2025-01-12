@@ -16,7 +16,11 @@ public:
 	virtual void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	void SetObjID(const uint32_t id) { m_objID = id; }
-	const uint32_t GetObjID()const noexcept { return m_objID; }
+	const uint32_t GetObjID()const noexcept {
+		// TODO: 유효성체크 반드시
+		//NET_NAGOX_ASSERT_LOG(0 != m_objID, "Obj ID must be Bigger than Zero");
+		return m_objID;
+	}
 
 	template <typename T> 
 	T* const AddComp()noexcept {
@@ -49,7 +53,7 @@ public:
 	Common::NaviAgent* m_pNaviAgent = nullptr;
 private:
 	
-	uint32_t m_objID;
+	uint32_t m_objID = 0;
 	std::unordered_map<uint64_t, std::unique_ptr<ServerComponent>> m_mapServerComp;
 };
 

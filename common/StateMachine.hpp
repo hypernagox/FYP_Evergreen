@@ -51,32 +51,32 @@ namespace Common
 		// 값의 포인터를 가져와 캐싱하여 사용함으로써, 매 프레임마다 키를 찾는 데 발생하는 오버헤드를 줄인다.
 		int* GetConditionRefInt(std::string_view key)
 		{
-			auto& condition = m_intConditions[key.data()];
+			auto& condition = m_conditions[key.data()];
 			if (!condition)
 			{
-				condition = std::make_unique<int>();
+				//condition = std::make_unique<int>();
 			}
-			return condition.get();
+			return reinterpret_cast<int*>(&condition);
 		}
 
 		float* GetConditionRefFloat(std::string_view key)
 		{
-			auto& condition = m_floatConditions[key.data()];
+			auto& condition = m_conditions[key.data()];
 			if (!condition)
 			{
-				condition = std::make_unique<float>();
+				//condition = std::make_unique<float>();
 			}
-			return condition.get();
+			return reinterpret_cast<float*>(&condition);
 		}
 
 		bool* GetConditionRefBool(std::string_view key)
 		{
-			auto& condition = m_boolConditions[key.data()];
+			auto& condition = m_conditions[key.data()];
 			if (!condition)
 			{
-				condition = std::make_unique<bool>();
+				//condition = std::make_unique<bool>();
 			}
-			return condition.get();
+			return reinterpret_cast<bool*>(&condition);
 		}
 
 		void SetState(State state)
@@ -100,6 +100,15 @@ namespace Common
 			m_onStateChangeCallbacks.emplace_back(callback);
 		}
 
+		bool TrySetState(State state)
+		{
+			if (m_transitions[(int)m_currentState].end() != std::ranges::find(m_transitions[(int)m_currentState], state, &StateTransitionBase<State>::GetToState))
+			{
+				SetState(state);
+				return true;
+			}
+			return false;
+		}
 	private:
 		static constexpr const size_t StateCount = static_cast<size_t>(State::Size);
 
@@ -111,9 +120,8 @@ namespace Common
 		std::array<std::vector<std::unique_ptr<StateTransitionBase<State>>>, StateCount> m_transitions;
 
 		// 상태 전이 조건 매개변수를 캐싱하는 컨테이너들
-		std::unordered_map<std::string, std::unique_ptr<int>> m_intConditions;
-		std::unordered_map<std::string, std::unique_ptr<float>> m_floatConditions;
-		std::unordered_map<std::string, std::unique_ptr<bool>> m_boolConditions;
+		std::map<std::string,int64_t> m_conditions;
+		
 
 		// 상태 전이 시 콜백 함수들
 		// 매개변수: 이전 상태, 현재 상태

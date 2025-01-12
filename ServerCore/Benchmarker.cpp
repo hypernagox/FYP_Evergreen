@@ -1,9 +1,19 @@
 #include "ServerCorePch.h"
 #include "Benchmarker.h"
 #include "TimeMgr.h"
+#include "ThreadMgr.h"
 
 namespace ServerCore
 {
+	constinit static std::ofstream* log_stream = nullptr;
+
+	static void RecordLogToStream(const std::string_view log_str)noexcept
+	{
+		std::cout << log_str;
+		if (log_stream)
+			*log_stream << log_str;
+	}
+
 	Benchmarker::~Benchmarker() noexcept
 	{
 		ClearAndGetBenchmarkResult(0);
@@ -18,9 +28,10 @@ namespace ServerCore
 
 	void Benchmarker::ClearAndGetBenchmarkResult(const uint64_t id_, const class ContentsEntity* const entity, std::map<std::string, BenchData>* const global_result) const noexcept
 	{
+		
 		if (global_result)
 		{
-			std::cout << std::format("Thread {} Func Log: \n", id_);
+			RecordLogToStream(std::format("Thread {} Func Log: \n", id_));
 		}
 		else
 		{
@@ -37,17 +48,19 @@ namespace ServerCore
 				global_data.callCount += record.callCount;
 			}
 
-			std::cout << std::format("FuncName: {}, CallCount: {}, TotalCallTime: {}ms, Avg: {:.6f} ms\n"
-				, funcName, record.callCount, record.accTime, static_cast<double>(record.accTime) / static_cast<double>(record.callCount));
+			RecordLogToStream(std::format("FuncName: {}, CallCount: {}, TotalCallTime: {}ms, Avg: {:.6f} ms\n"
+				, funcName, record.callCount, record.accTime, static_cast<double>(record.accTime) / static_cast<double>(record.callCount)));
 		}
-		std::cout << std::format("\n -----ID {} Func Log End----- \n\n\n", id_);
+		RecordLogToStream(std::format("\n -----ID {} Func Log End----- \n\n\n", id_));
 	}
 
 	BenchmarkMgr::~BenchmarkMgr() noexcept
 	{
 		std::atomic_thread_fence(std::memory_order_seq_cst);
 
-		std::cout << std::endl;
+		log_stream = new std::ofstream{ "..\\Func_Time_Benchmark.txt" };
+
+		RecordLogToStream("\n");
 
 		std::map<std::string, Benchmarker::BenchData> global_bench_data;
 
@@ -57,31 +70,33 @@ namespace ServerCore
 			m_bench_marker[i].m_mapForBenchmark.clear();
 		}
 
-		std::cout << "Total Result \n\n";
-
+		RecordLogToStream("Total Result \n\n");
+		
 		uint64_t total_func_time = 0;
 
 		for (const auto& [funcName, record] : global_bench_data)
 		{
 			total_func_time += record.accTime;
-			std::cout << std::format("FuncName: {}, CallCount: {}, TotalCallTime: {}ms, Avg: {:.6f} ms\n"
-				, funcName, record.callCount, record.accTime, static_cast<double>(record.accTime) / static_cast<double>(record.callCount));
+			RecordLogToStream(std::format("FuncName: {}, CallCount: {}, TotalCallTime: {}ms, Avg: {:.6f} ms\n"
+				, funcName, record.callCount, record.accTime, static_cast<double>(record.accTime) / static_cast<double>(record.callCount)));
 		}
 
-		std::cout << std::format("\n\nServer Running Time: {:.2f} seconds, Total Func Acc Time: {:.2f} seconds / {} ms\n\n", Mgr(TimeMgr)->GetServerTimeStamp() / 1000., total_func_time / 1000., total_func_time);
+		RecordLogToStream(std::format("\n\nServer Running Time: {:.2f} seconds, Total Func Acc Time: {:.2f} seconds / {} ms\n\n", Mgr(TimeMgr)->GetServerTimeStamp() / 1000., total_func_time / 1000., total_func_time));
 
-		std::cout << "\n\nTotal Percentage\n\n";
+		RecordLogToStream("\n\nTotal Percentage\n\n");
 		
 		if (0 == total_func_time) {
-			std::cout << "Total Func Time is Zero\n";
+			RecordLogToStream("Total Func Time is Zero\n");
 			return;
 		}
 
 		for (const auto& [funcName, record] : global_bench_data)
 		{
-			std::cout << std::format("FuncName: {}, {:.2f}% \n"
-				, funcName, ((float)record.accTime / total_func_time) * 100.f);
+			RecordLogToStream(std::format("FuncName: {}, {:.2f}% \n"
+				, funcName, ((float)record.accTime / total_func_time) * 100.f));
 		}
+
+		delete log_stream;
 	}
 
 	BenchmarkRAII::~BenchmarkRAII() noexcept

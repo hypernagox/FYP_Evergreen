@@ -39,7 +39,7 @@ namespace ServerCore
 		// 다쓰면 교체
 		if (size_ > LSendBufferChunk->FreeSize())
 		{
-			LSendBufferChunk->DecRef();
+			LSendBufferChunk->DecRef<SendBufferChunk>();
 			LSendBufferChunk = Pop();
 			// LSendBufferChunk->Reset();
 		}

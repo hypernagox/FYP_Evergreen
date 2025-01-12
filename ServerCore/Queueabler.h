@@ -18,21 +18,22 @@ namespace ServerCore
 		virtual ~Queueabler()noexcept;
 	public:
 		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, ContentsComponent>
-		void EnqueueAsync(Ret(T::* const memFunc)(Args...), T* const memFuncInst_, std::decay_t<Args>... args)noexcept
+		void EnqueueAsync(Ret(T::* const memFunc)(Args...), ContentsComponent* const memFuncInst_, std::decay_t<Args>... args)noexcept
 		{
-			EnqueueAsyncTask(memFunc, memFuncInst_, std::move(args)...);
+			EnqueueAsyncTask(memFunc, static_cast<T* const>(memFuncInst_), std::move(args)...);
 		}
 		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, ContentsComponent>
-		void EnqueueAsyncPushOnly(Ret(T::* const memFunc)(Args...), T* const memFuncInst_, std::decay_t<Args>... args)noexcept
+		void EnqueueAsyncPushOnly(Ret(T::* const memFunc)(Args...), ContentsComponent* const memFuncInst_, std::decay_t<Args>... args)noexcept
 		{
-			EnqueueAsyncTaskPushOnly(memFunc, memFuncInst_, std::move(args)...);
+			EnqueueAsyncTaskPushOnly(memFunc, static_cast<T* const>(memFuncInst_), std::move(args)...);
 		}
 	public:
-		template<typename T, typename Ret, typename... Args> requires std::derived_from<T, ContentsComponent> || std::derived_from<T, IocpComponent>
-		void EnqueueAsyncTimer(c_uint64 tickAfter, Ret(T::* const memFunc)(Args...), T* const memFuncInst_, std::decay_t<Args>... args)noexcept
+		template<typename T, typename U, typename Ret, typename... Args> 
+			requires (std::derived_from<T, ContentsComponent> || std::derived_from<T, IocpComponent>) && std::derived_from<T, U>
+		void EnqueueAsyncTimer(c_uint64 tickAfter, Ret(T::* const memFunc)(Args...), U* const memFuncInst_, std::decay_t<Args>... args)noexcept
 		{
 			Mgr(TaskTimerMgr)->ReserveAsyncTask(tickAfter, this,
-				Task(memFunc, memFuncInst_, std::move(args)...));
+				Task(memFunc, static_cast<T* const>(memFuncInst_), std::move(args)...));
 		}
 	protected:
 		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept override;

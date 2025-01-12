@@ -36,4 +36,5 @@ public:
 	void Attack() { *m_stateMachine->GetConditionRefBool("Attack") = true; }
 	void Hit() { *m_stateMachine->GetConditionRefBool("Hit") = true; }
 	void Death() { *m_stateMachine->GetConditionRefBool("Death") = true; }
+	bool TrySetState(AnimationState state) { return m_stateMachine->TrySetState(state); }
 };

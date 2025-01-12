@@ -23,6 +23,7 @@ extern std::shared_ptr<SceneObject> g_heroObj;
 const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_)
 {
 	NetMgr(NetworkMgr)->SetSessionID(pkt_.obj_id());
+	//g_heroObj->GetComponent<ServerObject>()->SetObjID(pkt_.obj_id());
 	NetMgr(ServerTimeMgr)->UpdateServerTimeStamp(pkt_.server_time_stamp());
 	return true;
 }
@@ -107,9 +108,16 @@ const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSes
 	const auto player = Mgr(ServerObjectMgr)->GetServerObj(pkt_.player_id());
 	if (player)
 	{
-		player->GetComponent<PlayerRenderer>()->Hit();
+		if(player->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Hit))
+			player->GetComponent<PlayerRenderer>()->Hit();
 	}
 
+	else if (NetMgr(NetworkMgr)->GetSessionID() == pkt_.player_id())
+	{
+
+		if (g_heroObj->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Hit))
+			g_heroObj->GetComponent<PlayerRenderer>()->Hit();
+	}
 
 	//std::cout << "여우가 당신에게 " << pkt_.dmg() << "데미지를 주었다 !" << std::endl;
 	return true;
@@ -129,14 +137,14 @@ const bool Handle_s2c_MONSTER_AGGRO_END(const NetHelper::S_ptr<NetHelper::Packet
 
 const bool Handle_s2c_PLAYER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_ATTACK& pkt_)
 {
-	if (g_heroObj->GetComponent<ServerObject>()->GetObjID() == pkt_.atk_player_id())return true;
+	//if (g_heroObj->GetComponent<ServerObject>()->GetObjID() == pkt_.atk_player_id())return true;
 	const auto atk_player = Mgr(ServerObjectMgr)->GetServerObj(pkt_.atk_player_id());
 	if (!atk_player)return true;
 
 	atk_player->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(pkt_.body_angle() * DEG2RAD + PI, 0.0f, 0.0f));
 	atk_player->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.atk_pos()));
-	atk_player->GetComponent<PlayerRenderer>()->Attack();
-
+	//atk_player->GetComponent<PlayerRenderer>()->Attack();
+	atk_player->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Attack);
 	return true;
 }
 
@@ -146,12 +154,14 @@ const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSessi
 	{
 		std::cout << "사망\n";
 		g_heroObj->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
+		g_heroObj->GetComponent<PlayerRenderer>()->Death();
 		NetMgr(NetworkMgr)->Send(Create_c2s_PLAYER_DEATH());
 	}
 	else
 	{
 		if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.player_id()))
 		{
+			obj->GetComponent<PlayerRenderer>()->Death();
 			obj->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
 		}
 	}

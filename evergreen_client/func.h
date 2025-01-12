@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "../ClientNetwork/ClientNetworkPch.h"
 
 using udsdx::Vector3;
 

@@ -9,13 +9,13 @@
 void HP::PostDoDmg(const int dmg_, ServerCore::S_ptr<ServerCore::ContentsEntity> atkObject) noexcept
 {
 	if (m_bIsRebirth)return;
-	GetOwnerEntityRaw()->GetQueueabler()->EnqueueAsyncPushOnly(&HP::DoDmg, this, dmg_, std::move(atkObject));
+	EnqueueCompTaskPushOnly(&HP::DoDmg, dmg_, std::move(atkObject));
 }
 
 void HP::PostDoHeal(const int heal_) noexcept
 {
 	if (m_bIsRebirth)return;
-	GetOwnerEntityRaw()->GetQueueabler()->EnqueueAsyncPushOnly(&HP::DoHeal, this, heal_);
+	EnqueueCompTaskPushOnly(&HP::DoHeal, heal_);
 }
 
 void HP::DoDmg(const int dmg_, const ServerCore::S_ptr<ServerCore::ContentsEntity> atkObject) noexcept

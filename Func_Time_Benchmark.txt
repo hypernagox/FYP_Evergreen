@@ -1,0 +1,72 @@
+
+Thread 1 Func Log: 
+
+ -----ID 1 Func Log End----- 
+
+
+Thread 2 Func Log: 
+
+ -----ID 2 Func Log End----- 
+
+
+Thread 3 Func Log: 
+
+ -----ID 3 Func Log End----- 
+
+
+Thread 4 Func Log: 
+
+ -----ID 4 Func Log End----- 
+
+
+Thread 5 Func Log: 
+
+ -----ID 5 Func Log End----- 
+
+
+Thread 6 Func Log: 
+
+ -----ID 6 Func Log End----- 
+
+
+Thread 7 Func Log: 
+
+ -----ID 7 Func Log End----- 
+
+
+Thread 8 Func Log: 
+
+ -----ID 8 Func Log End----- 
+
+
+Thread 9 Func Log: 
+
+ -----ID 9 Func Log End----- 
+
+
+Thread 10 Func Log: 
+
+ -----ID 10 Func Log End----- 
+
+
+Thread 11 Func Log: 
+
+ -----ID 11 Func Log End----- 
+
+
+Thread 12 Func Log: 
+
+ -----ID 12 Func Log End----- 
+
+
+Total Result 
+
+
+
+Server Running Time: 11.00 seconds, Total Func Acc Time: 0.00 seconds / 0 ms
+
+
+
+Total Percentage
+
+Total Func Time is Zero

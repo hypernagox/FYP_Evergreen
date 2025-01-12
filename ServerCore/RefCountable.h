@@ -15,15 +15,17 @@ namespace ServerCore
 		friend static inline RefCountable* const IncAndGetPtrExternal(const RefCountable* const ref_ptr)noexcept;
 		friend static inline void DecRefExternal(const RefCountable* const ref_ptr)noexcept;
 		friend static inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept;
-		virtual ~RefCountable()noexcept = default;
+	protected:
+		~RefCountable()noexcept = default;
 	public:
-		template<typename T = RefCountable>
-		S_ptr<T> SharedFromThis()const noexcept { return S_ptr<T>{this}; }
+		template<typename T> requires (false == std::same_as<std::decay_t<T>, RefCountable>)
+		S_ptr<T> SharedFromThis()const noexcept { static_assert(false == std::same_as<std::decay_t<T>, RefCountable>); return S_ptr<T>{this}; }
 		inline const int32_t UseCount()const noexcept { return m_refCount; }
 		inline void IncRef()const noexcept { InterlockedIncrement(&m_refCount); }
 		inline void IncRef(const uint32_t cnt)const noexcept { InterlockedAdd(&m_refCount, cnt); }
-		template <typename T = RefCountable>
+		template <typename T> requires (false == std::same_as<std::decay_t<T>, RefCountable>)
 		constexpr inline void DecRef()const noexcept {
+			static_assert(false == std::same_as<std::decay_t<T>, RefCountable>);
 			const int32_t old_count = InterlockedDecrement(&m_refCount);
 			if (0 == old_count) {
 				if constexpr (std::same_as<std::remove_cv_t<T>, ContentsEntity>)
@@ -31,7 +33,7 @@ namespace ServerCore
 				else if constexpr (std::derived_from<std::remove_cv_t<T>, Session>)
 					aligned_xdelete<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), alignof(T));
 				else
-					xdelete<T>(const_cast<RefCountable* const>(this));
+					xdelete<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)));
 			}
 			NAGOX_ASSERT(0 <= old_count);
 		}
@@ -55,7 +57,9 @@ namespace ServerCore
 	};
 
 	static inline RefCountable* const IncAndGetPtrExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->IncAndGetPtr(); }
-	static inline void DecRefExternal(const RefCountable* const ref_ptr) noexcept { ref_ptr->DecRef(); }
+	
+	template<typename T> requires (false == std::same_as<std::decay_t<T>, RefCountable>)
+	static inline void DecRefExternal(const RefCountable* const ref_ptr) noexcept { ref_ptr->DecRef<T>(); }
 	static inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->m_refCount; }
 	template <typename T>
 	class S_ptr
@@ -65,7 +69,7 @@ namespace ServerCore
 
 		constexpr S_ptr()noexcept = default;
 		constexpr S_ptr(std::nullptr_t) noexcept : m_count_ptr{ nullptr } {}
-		constexpr inline ~S_ptr()noexcept { DecRef(); }
+		constexpr inline ~S_ptr()noexcept { static_assert(false == std::same_as<std::decay_t<T>, RefCountable>); DecRef(); }
 		constexpr inline explicit S_ptr(const RefCountable* const ptr)noexcept
 			:m_count_ptr{ IncAndGetPtrExternal(ptr)}
 		{}
@@ -95,7 +99,7 @@ namespace ServerCore
 				return *this;
 			}
 			else if(!other.m_count_ptr) [[unlikely]] {
-				other.m_count_ptr->DecRef();
+				other.m_count_ptr->DecRef<T>();
 				other.m_count_ptr = nullptr;
 			}
 			return *this;
@@ -133,8 +137,10 @@ namespace ServerCore
 			return *this;
 		}
 		explicit S_ptr(const uint64_t ptr)noexcept
-			:m_count_ptr{ reinterpret_cast<RefCountable* const>(ptr) }
-		{}
+			:m_count_ptr{ reinterpret_cast<T* const>(ptr) }
+		{
+			static_assert(false == std::same_as<std::decay_t<T>, RefCountable>);
+		}
 	public:
 		inline const int32_t UseCount()const noexcept { return m_count_ptr ? m_count_ptr->UseCount() : 0; }
 		inline void reset()noexcept { DecRef(); release(); }
@@ -149,14 +155,17 @@ namespace ServerCore
 		constexpr inline operator bool()const noexcept { return m_count_ptr; }
 	public:
 		inline void DecRef()const noexcept { 
+			static_assert(false == std::same_as<std::decay_t<T>, RefCountable>);
 			if (m_count_ptr) {
-				if constexpr (std::same_as<std::remove_cv_t<T>, ContentsEntity> || std::derived_from<std::remove_cv_t<T>, Session>)
-					m_count_ptr->DecRef<T>();
-				else
-					m_count_ptr->DecRef();
+				m_count_ptr->DecRef<T>();
+				//if constexpr (std::same_as<std::remove_cv_t<T>, ContentsEntity> || std::derived_from<std::remove_cv_t<T>, Session>)
+				//	m_count_ptr->DecRef<T>();
+				//else
+				//	m_count_ptr->DecRef();
 			}
 		}
 		inline RefCountable* const IncRef()const noexcept {
+			static_assert(false == std::same_as<std::decay_t<T>, RefCountable>);
 			return m_count_ptr ? IncAndGetPtrExternal(m_count_ptr) : nullptr;
 		}
 	public:
@@ -194,7 +203,7 @@ namespace ServerCore
 			m_ptr.swap(p);
 			m_srwLock.unlock();
 			if (p.m_count_ptr) {
-				p.m_count_ptr->DecRef();
+				p.m_count_ptr->DecRef<T>();
 				p.m_count_ptr = nullptr;
 			}
 		}

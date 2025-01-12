@@ -2,6 +2,7 @@
 #include "ClusterInfoHelper.h"
 #include "Service.h"
 #include "Cluster.h"
+#include "MoveBroadcaster.h"
 
 namespace ServerCore
 {

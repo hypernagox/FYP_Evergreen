@@ -1,7 +1,7 @@
 #include "ServerCorePch.h"
 #include "MoveBroadcaster.h"
 #include "PacketSession.h"
-#include "Sector.h"
+//#include "Sector.h"
 #include "Queueabler.h"
 #include "Cluster.h"
 #include "ClusterInfoHelper.h"
@@ -35,7 +35,7 @@ namespace ServerCore
 		
 		const auto huristic_func = g_huristic;
 		
-		for (const auto& cluster : clusters)
+		for (const Cluster* const cluster : clusters)
 		{
 			const auto& entities = cluster->GetAllEntites();
 			auto b = entities.data();
@@ -46,7 +46,7 @@ namespace ServerCore
 				const auto e = b + sessions.size();
 				while (e != b)
 				{
-					const auto entity_ptr = (*b++);
+					const ContentsEntity* const entity_ptr = (*b++);
 					if (huristic_func[0](pOwnerEntity, entity_ptr))
 					{
 						new_view_list_session.AddItem(entity_ptr);
@@ -60,7 +60,7 @@ namespace ServerCore
 				const auto e = b + entities.size();
 				while (e != b)
 				{
-					const auto entity_ptr = (*b++);
+					const ContentsEntity* const entity_ptr = (*b++);
 					if (huristic_func[1](pOwnerEntity, entity_ptr))
 					{
 						new_view_list_npc.AddItem(entity_ptr);
@@ -77,7 +77,7 @@ namespace ServerCore
 			const auto e = b + new_session_list.size();
 			while (e != b)
 			{
-				const auto entity_ptr = (*b++);
+				const ContentsEntity* const entity_ptr = (*b++);
 				const auto id = entity_ptr->GetObjectID();
 				const auto pSession = entity_ptr->GetSession();
 				if (m_view_list_session.AddItem(std::make_pair(id, entity_ptr)))
@@ -121,7 +121,7 @@ namespace ServerCore
 			const auto e = b + new_npc_list.size();
 			while (e != b)
 			{
-				const auto entity_ptr = (*b++);
+				const ContentsEntity* const entity_ptr = (*b++);
 				const auto id = entity_ptr->GetObjectID();
 				if (m_view_list_npc.AddItem(std::make_pair(id, entity_ptr)))
 				{

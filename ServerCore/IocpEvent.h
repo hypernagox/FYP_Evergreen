@@ -49,7 +49,7 @@ namespace ServerCore
 			return S_ptr<IocpObject>{reinterpret_cast<const uint64_t>(temp_ptr)};
 		}
 
-		template<typename T = RefCountable>
+		template<typename T = IocpObject>
 		void ReleaseIocpObject()noexcept {
 			if (const auto ptr = GetPtr())
 			{

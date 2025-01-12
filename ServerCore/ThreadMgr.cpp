@@ -171,7 +171,7 @@ namespace ServerCore
 			}
 		}
 		if (LSendBufferChunk)
-			LSendBufferChunk->DecRef();
+			LSendBufferChunk->DecRef<SendBufferChunk>();
 	}
 
 	void ThreadMgr::TryGlobalQueueTask()noexcept

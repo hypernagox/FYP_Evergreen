@@ -202,13 +202,13 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	}
 
 	// TODO 하드코딩
-	static float cool_down = 0.f;
-	cool_down -= DT;
-	if (INSTANCE(Input)->GetMouseLeftButtonDown() && 0.f >= cool_down)
-	{
-		cool_down = 1.f;
-		DoAttack();
-	}
+	//static float cool_down = 0.f;
+	//cool_down -= DT;
+	//if (INSTANCE(Input)->GetMouseLeftButtonDown() && 0.f >= cool_down)
+	//{
+	//	cool_down = 1.f;
+	//	DoAttack();
+	//}
 
 	const Vector3 velocity = m_entityMovement->GetVelocity();
 	m_fMoveTime += Vector2(velocity.x, velocity.z).Length() * time.deltaTime;

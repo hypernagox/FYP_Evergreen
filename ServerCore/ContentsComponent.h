@@ -26,6 +26,19 @@ public:
 	ContentsComponent(ServerCore::ContentsEntity* const pOwner_)noexcept :m_pOwnerEntity{ pOwner_ } {}
 	virtual ~ContentsComponent()noexcept = default;
 public:
+	template<typename ComponentFunc, typename... Args> requires std::is_member_function_pointer_v<ComponentFunc>
+	constexpr inline void EnqueueCompTaskPushOnly(ComponentFunc&& comp_func,Args&&... args)noexcept{
+		m_pOwnerEntity->GetQueueabler<class Queueabler>()->EnqueueAsyncPushOnly(std::forward<ComponentFunc>(comp_func), this, std::forward<Args>(args)...);
+	}
+	template<typename ComponentFunc, typename... Args> requires std::is_member_function_pointer_v<ComponentFunc>
+	constexpr inline void EnqueueCompTask(ComponentFunc&& comp_func, Args&&... args)noexcept {
+		m_pOwnerEntity->GetQueueabler<class Queueabler>()->EnqueueAsync(std::forward<ComponentFunc>(comp_func), this, std::forward<Args>(args)...);
+	}
+	template<typename ComponentFunc, typename... Args> requires std::is_member_function_pointer_v<ComponentFunc>
+	constexpr inline void EnqueueCompTaskTimer(const uint64_t tickAfter, ComponentFunc&& comp_func, Args&&... args)noexcept {
+		m_pOwnerEntity->GetQueueabler<class Queueabler>()->EnqueueAsyncTimer(tickAfter, std::forward<ComponentFunc>(comp_func), this, std::forward<Args>(args)...);
+	}
+public:
 	ServerCore::ContentsEntity* const GetOwnerEntityRaw()const noexcept { return m_pOwnerEntity; }
 	inline ServerCore::S_ptr<ServerCore::ContentsEntity> GetOwnerEntity()const noexcept { return ServerCore::S_ptr<ServerCore::ContentsEntity>{m_pOwnerEntity}; }
 	constexpr virtual const uint64_t GetCompType()const noexcept = 0;

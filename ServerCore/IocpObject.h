@@ -23,6 +23,7 @@ namespace ServerCore
 	{
 	protected:
 		IocpObject()noexcept = default;
+	public:
 		virtual ~IocpObject()noexcept = default;
 	public:
 		virtual void Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept = 0;

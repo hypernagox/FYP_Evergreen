@@ -2,6 +2,7 @@
 #include "PlayerRenderer.h"
 #include "EntityMovement.h"
 #include "ServerObject.h"
+#include "AuthenticPlayer.h"
 
 extern std::shared_ptr<SceneObject> g_heroObj;
 
@@ -39,11 +40,22 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(to); });
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Run, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
-	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 0.365f);
+	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 1.f);
+	
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
+
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Idle, 0.365f);
+	
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Death, m_stateMachine->GetConditionRefBool("Death"), true);
+
+
 	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater_equal<float>>>(AnimationState::Idle, AnimationState::Run, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 10.0f);
 	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less<float>>>(AnimationState::Run, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 10.0f);
+
+
+	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Death, AnimationState::Idle, 2.f);
+	
 	OnAnimationStateChange(AnimationState::Idle);
 }
 
@@ -58,7 +70,13 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 	const bool flag = g_heroObj->GetComponent<ServerObject>()->GetObjID() == GetSceneObject()->GetComponent<ServerObject>()->GetObjID();
 	if (INSTANCE(Input)->GetMouseLeftButtonDown() && flag)
 	{
-		Attack();
+		const auto state = m_stateMachine->GetCurrentState();
+		if (AnimationState::Idle == state || AnimationState::Run == state)
+		{
+			Attack();
+			g_heroObj->GetComponent<AuthenticPlayer>()->DoAttack();
+			//std::cout << "공격 시도\n";
+		}
 	}
 	const Vector3 velocity = GetComponent<EntityMovement>()->GetVelocity();
 	float mag = Vector2(velocity.x, velocity.z).LengthSquared();

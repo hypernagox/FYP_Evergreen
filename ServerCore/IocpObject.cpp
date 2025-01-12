@@ -9,6 +9,7 @@
 #include "ClusterInfoHelper.h"
 #include "FieldMgr.h"
 #include "Queueabler.h"
+#include "MoveBroadcaster.h"
 
 namespace ServerCore
 {

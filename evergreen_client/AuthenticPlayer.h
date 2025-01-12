@@ -49,12 +49,13 @@ private:
 	void UpdatePlayerCamFpsMode(float deltaTime);
 	void MoveByView(const Vector3& vDelta);
 	void UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime);
-	void DoAttack();
+	
 	void RequestQuest();
 public:
 	AuthenticPlayer(const std::shared_ptr<SceneObject>& object);
 	~AuthenticPlayer();
 
+	void DoAttack();
 	void Start();
 	void Update(const Time& time, Scene& scene) override;
 
