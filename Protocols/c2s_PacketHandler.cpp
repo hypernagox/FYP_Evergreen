@@ -136,9 +136,9 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
 		//std::cout << std::format("Session ID: {}, Num Of Mon in Viewlist: {}\n", pOwner->GetObjectID(), mon_list.size());
-		for (const auto[mon_id,ptr] : mon_list)
+		for (const auto pmon : mon_list)
 		{
-			if (const auto pmon = Mgr(FieldMgr)->GetNPC(mon_id))
+			//if (const auto pmon = Mgr(FieldMgr)->GetNPC(mon_id))
 			{
 				if (const auto pCol = pmon->GetComp<Collider>())
 				{

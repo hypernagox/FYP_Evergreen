@@ -47,7 +47,7 @@ bool ClusterPredicate::ClusterHuristicFunc2NPC(const ServerCore::ContentsEntity*
 		{
 			const uint32_t awake_dist = npc_timer->GetAwakeDistance();
 			if (awake_dist >= dist)
-				npc_timer->TryExecuteTimer(a);
+				npc_timer->TryExecuteTimer(a->GetObjectID());
 		}
 	}
 
@@ -78,7 +78,3 @@ S_ptr<SendBuffer> ClusterPredicate::ClusterMovePacketFunc(const ServerCore::Cont
 		pos_comp->time_stamp);
 }
 
-void ClusterPredicate::TryNotifyNPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
-{
-	b->GetIocpComponent<ServerCore::TickTimer>()->TryExecuteTimer(a);
-}

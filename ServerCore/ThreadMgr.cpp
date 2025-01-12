@@ -29,6 +29,8 @@ namespace ServerCore
 	extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_npc;
 	extern thread_local Vector<WSABUF> wsaBufs;
 
+	constinit extern thread_local Vector<const ContentsEntity*>* LVectorForTempCopy;
+
 	ThreadMgr::ThreadMgr()
 	{
 		InitTLS();
@@ -141,6 +143,10 @@ namespace ServerCore
 		//LCon_token = xnew <moodycamel::ConsumerToken>(m_globalTaskQueue);
 		thread_local moodycamel::ConsumerToken con_token{ m_globalTask };
 		LCon_tokenGlobalTask = &con_token;
+
+		thread_local ServerCore::Vector<const ContentsEntity*> copy_vec;
+		
+		LVectorForTempCopy = &copy_vec;
 
 		if (NUM_OF_THREADS >= LThreadId && 0 < LThreadId) 
 		{

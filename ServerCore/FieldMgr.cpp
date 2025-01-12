@@ -27,7 +27,6 @@ namespace ServerCore
 				if (const auto target = atomic_ptr.load())
 				{
 					target->TryOnDestroy();
-					atomic_ptr.reset();
 				}
 			}
 		}

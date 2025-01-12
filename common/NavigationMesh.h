@@ -33,8 +33,12 @@ namespace Common
 		void FreeNavMeshQuery()const noexcept { dtFreeNavMeshQuery(const_cast<dtNavMeshQuery*>(GetNavMeshQuery())); }
 		const dtNavMeshQuery* const GetNavMeshQuery()const noexcept
 		{
-			thread_local const auto p = InitNavMeshQuery();
-			return p;
+			constinit thread_local const dtNavMeshQuery* nav_q = nullptr;
+			if (nullptr == nav_q) [[unlikely]]
+			{
+				nav_q = InitNavMeshQuery();
+			}
+			return nav_q;
 		}
 		dtQueryFilter* const GetNavFilter()const noexcept { return const_cast<NavigationMesh*>(this)->m_filter; }
 		NaviCell GetNaviCell(Vector3& pos)const noexcept { return NaviCell{ pos,this }; }

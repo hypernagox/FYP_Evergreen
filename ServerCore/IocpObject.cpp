@@ -32,7 +32,7 @@ namespace ServerCore
 	
 	ContentsEntity::~ContentsEntity() noexcept
 	{
-		//std::cout << "DESTROY" << std::endl;
+		std::cout << "DESTROY" << std::endl;
 		auto b = m_arrIocpComponents;
 		const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
 		while (e != b)

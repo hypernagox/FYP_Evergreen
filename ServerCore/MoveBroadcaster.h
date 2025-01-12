@@ -17,7 +17,9 @@ namespace ServerCore
 	public:
 		CONSTRUCTOR_CONTENTS_COMPONENT(MoveBroadcaster)
 		
-		~MoveBroadcaster()noexcept = default;
+		~MoveBroadcaster()noexcept { 
+			for (const auto npc_ptr : m_view_list_npc.GetItemListRef())npc_ptr->DecRef();
+		}
 		using HuristicFunc = bool(*)(const ContentsEntity* const, const ContentsEntity* const)noexcept;
 		using PacketFunc = S_ptr<SendBuffer>(*)(const ContentsEntity* const)noexcept;
 	public:
@@ -66,7 +68,7 @@ namespace ServerCore
 		}
 	private:
 		ServerCore::VectorSetUnsafe<std::pair<uint32_t,const ContentsEntity*>> m_view_list_session;
-		ServerCore::VectorSetUnsafe<std::pair<uint32_t,const ContentsEntity*>> m_view_list_npc;
+		ServerCore::VectorSetUnsafe<const ContentsEntity*> m_view_list_npc;
 	private:
 		static inline HuristicFunc g_huristic[2] = {};
 		static inline PacketFunc g_create_add_pkt = {};

@@ -5,8 +5,8 @@
 
 namespace ServerCore
 {
-	constinit static std::ofstream* log_stream = nullptr;
-
+	constinit static std::unique_ptr<std::ofstream> log_stream = nullptr;
+	
 	static void RecordLogToStream(const std::string_view log_str)noexcept
 	{
 		std::cout << log_str;
@@ -58,7 +58,7 @@ namespace ServerCore
 	{
 		std::atomic_thread_fence(std::memory_order_seq_cst);
 
-		log_stream = new std::ofstream{ "..\\Func_Time_Benchmark.txt" };
+		log_stream = std::make_unique<std::ofstream>("..\\Func_Time_Benchmark.txt");
 
 		RecordLogToStream("\n");
 
@@ -95,8 +95,6 @@ namespace ServerCore
 			RecordLogToStream(std::format("FuncName: {}, {:.2f}% \n"
 				, funcName, ((float)record.accTime / total_func_time) * 100.f));
 		}
-
-		delete log_stream;
 	}
 
 	BenchmarkRAII::~BenchmarkRAII() noexcept

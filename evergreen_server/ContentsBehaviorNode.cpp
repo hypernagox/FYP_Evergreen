@@ -49,18 +49,17 @@ NodeStatus MoveNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTi
 NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
     const auto cur_pos = owner_comp_sys->GetComp<PositionComponent>()->pos;
-    auto& awaker_ = bt_root_timer->GetMutableAwaker();
     uint32_t min_dist = 999999;
    
     if (m_bReEvaluate)
     {
         const auto pOwnerEntity = owner_comp_sys->GetOwnerEntity();
-        const auto prev_awaker = awaker_.get();
+        const auto prev_awaker = awaker.get();
         const ContentsEntity* target = nullptr;
         m_bReEvaluate = false;
 
        // const auto session_list = pOwnerEntity->GetCurSector()->GetSessionCopyListIncRef();
-        const auto& session_list = bt_root_timer->GetCurObjInSight();
+        const auto& session_list = bt_root_timer->GetTempVecForInsightObj();
         for (const auto s : session_list)
         {
            const auto pos  = s->GetComp<PositionComponent>()->pos;
@@ -78,7 +77,7 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
         }
         if (target)
         {
-            awaker_ = target->SharedFromThis();
+            bt_root_timer->SetCurAwakerID(target->GetObjectID());
             // TODO: 스트레스 테스트 아직 패킷없음
             //if(m_range * m_range > min_dist && prev_awaker != awaker_.get())
             //    awaker_->GetSession()->SendAsync(Create_s2c_MONSTER_AGGRO_START((Nagox::Enum::GROUP_TYPE)pOwnerEntity->GetObjectType(), pOwnerEntity->GetObjectTypeInfo()));
@@ -87,9 +86,9 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
     
 
     
-    if (!awaker_->IsValid())return NodeStatus::FAILURE;
+    if (!awaker)return NodeStatus::FAILURE;
     
-    const auto dest_pos = awaker_->GetComp<PositionComponent>()->pos;
+    const auto dest_pos = awaker->GetComp<PositionComponent>()->pos;
 
     const auto dx = dest_pos.x - cur_pos.x;
     const auto dy = dest_pos.y - cur_pos.y;
@@ -132,7 +131,7 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     {
         // TODO: 스트레스 테스트 아직 패킷없음
         //awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), 1));
-        bt_root_timer->BroadcastObjInSight(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), awaker->GetObjectID(), 1));
+        bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), awaker->GetObjectID(), 1));
        // awaker->GetCurCluster()->Broadcast(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), awaker->GetObjectID(), 1));
         awaker->GetComp<HP>()->PostDoDmg(1,owner_comp_sys->GetOwnerEntity()->SharedFromThis());
 
@@ -176,7 +175,7 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
         pOwnerEntity->GetComp<PositionComponent>()->pos = ppp;
         pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(vpp.x, vpp.z) * 180.f / 3.141592f;
 
-        bt_root_timer->BroadcastObjInSight(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+        bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
         //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
         //ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     }
@@ -198,7 +197,7 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
     pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(cur_pos,Vector3{ dx2,dy2,dz2 });
     
    // ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
-    bt_root_timer->BroadcastObjInSight(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
    // ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     
@@ -220,7 +219,7 @@ NodeStatus PatrolNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     //ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-    bt_root_timer->BroadcastObjInSight(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
    // ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
 

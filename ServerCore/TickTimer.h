@@ -13,6 +13,8 @@ namespace ServerCore
 		END,
 	};
 
+	constinit extern thread_local Vector<const class ContentsEntity*>* LVectorForTempCopy;
+
 	class TickTimer
 		:public IocpComponent
 	{
@@ -20,28 +22,29 @@ namespace ServerCore
 		TickTimer(ContentsEntity* const pOwner_, const uint16_t awakeDist_ = UINT16_MAX) noexcept;
 		virtual ~TickTimer()noexcept = default;
 	public:
-		const bool TryExecuteTimer(const ContentsEntity* const awaker)noexcept;
+		const bool TryExecuteTimer(const uint32_t awaker_id)noexcept;
 		void SetTickInterval(const uint32_t tick_ms)noexcept { m_tickInterval = tick_ms; }
-		const S_ptr<ContentsEntity>& GetAwaker()const noexcept { return m_curAwaker; }
 		const uint32_t GetAwakeDistance()const noexcept { return m_npcAwakeDistance; }
-		const auto& GetCurObjInSight()const noexcept { return m_curObjInSight; }
-		void BroadcastObjInSight(const S_ptr<SendBuffer>& send_buff)noexcept;
-	protected:
-		void AwakerInformation(const ContentsEntity* const awaker)noexcept {
-			if (awaker != m_curAwaker.get())
-				m_curAwaker = awaker->SharedFromThis();
+	public:
+		const uint32_t GetAwakerID()const noexcept { return m_curAwakerID; }
+		void SetCurAwakerID(const uint32_t awaker_id)noexcept { m_curAwakerID = awaker_id; }
+	public:
+		static void BroadcastObjInSight(const Vector<const ContentsEntity*>& temp_vec,const S_ptr<SendBuffer>& send_buff)noexcept;
+		static auto& GetTempVecForInsightObj()noexcept { 
+			constinit extern thread_local Vector<const class ContentsEntity*>* LVectorForTempCopy;
+			return *LVectorForTempCopy;
 		}
+	protected:
 		virtual const ServerCore::TIMER_STATE TimerUpdate()noexcept = 0;
 	private:
 		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept override;
-		const bool TryExecuteTimerInternal(const ContentsEntity* const awaker)noexcept;
+		const bool TryExecuteTimerInternal(const uint32_t awaker_id)noexcept;
 		void Tick(S_ptr<ContentsEntity>* const owner_entity)noexcept;
 	protected:
 		const uint16_t m_npcAwakeDistance;
 		NagoxAtomic::Atomic<TIMER_STATE> m_timer_state{ TIMER_STATE::IDLE };
 		uint32_t m_tickInterval = 200;
-		S_ptr<ContentsEntity> m_curAwaker;
-		Vector<const ContentsEntity*> m_curObjInSight;
+		uint32_t m_curAwakerID;
 	};
 }
 
@@ -55,9 +58,6 @@ public:
 	{}
 	~TickTimerBT()noexcept { ServerCore::xdelete<CompositeNode>(m_rootNode); }
 public:
-	auto& GetMutableAwaker()noexcept { return m_curAwaker; }
-	template <typename T> requires std::same_as<std::decay_t<T>, ServerCore::S_ptr<ServerCore::ContentsEntity>>
-	constexpr inline void SetNewAwaker(T&& new_awaker)noexcept { m_curAwaker = std::forward<T>(new_awaker); }
 	inline const float GetBTTimerDT()const noexcept { return  m_curBTTimerDT; }
 	void SetBTRevaluateInterval(const uint16_t bt_revaluate_interval)noexcept { m_btRevaluateInterval = bt_revaluate_interval; }
 	template <typename T = CompositeNode>

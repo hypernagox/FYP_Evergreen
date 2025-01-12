@@ -122,9 +122,9 @@ namespace ServerCore
 			while (e != b)
 			{
 				const ContentsEntity* const entity_ptr = (*b++);
-				const auto id = entity_ptr->GetObjectID();
-				if (m_view_list_npc.AddItem(std::make_pair(id, entity_ptr)))
+				if (m_view_list_npc.AddItem(entity_ptr))
 				{
+					entity_ptr->IncRef();
 					thisSession->SendAsync(add_pkt_func(entity_ptr));
 				}
 			}
@@ -134,13 +134,15 @@ namespace ServerCore
 			auto& view_list_npc = m_view_list_npc.GetItemListRef();
 			for (auto iter = view_list_npc.begin(); iter != view_list_npc.end();)
 			{
-				const auto id_ptr = *iter;
+				const ContentsEntity* const entity_ptr = *iter;
 
-				if (!new_view_list_npc.TryEraseItem(id_ptr.second))
+				if (!new_view_list_npc.TryEraseItem(entity_ptr))
 				{
-					iter = m_view_list_npc.EraseItemAndGetIter(id_ptr);
+					const auto id = entity_ptr->GetObjectID();
+					iter = m_view_list_npc.EraseItemAndGetIter(entity_ptr);
 
-					thisSession->SendAsync(remove_pkt_func(id_ptr.first));
+					entity_ptr->DecRef();
+					thisSession->SendAsync(remove_pkt_func(id));
 				}
 				else
 				{
@@ -173,7 +175,7 @@ namespace ServerCore
 		const auto e = b + npc_list.size();
 		Vector<S_ptr<ContentsEntity>> temp;
 		temp.reserve(e - b);
-		while (e != b) { temp.emplace_back((*b++).second); }
+		while (e != b) { temp.emplace_back((*b++)); }
 		return temp;
 	}
 }
