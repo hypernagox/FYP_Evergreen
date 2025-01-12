@@ -15,7 +15,6 @@ namespace ServerCore
 {
 	ContentsEntity::ContentsEntity(const uint8_t primary_group_type, const uint8_t detail_type) noexcept
 		: m_entity_info{ primary_group_type,detail_type ,IDGenerator::GenerateID() }
-
 		, m_componentSystem{ xnew<ComponentSystemNPC>(m_bIsValid,this) }
 	{
 		AddComp<ClusterInfoHelper>();
