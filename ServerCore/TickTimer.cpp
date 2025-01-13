@@ -49,8 +49,9 @@ namespace ServerCore
 
 	const bool TickTimer::TryExecuteTimerInternal(const uint32_t awaker_id) noexcept
 	{
+		std::atomic_thread_fence(std::memory_order_acquire);
 		const auto eCurState = m_timer_state.load_relaxed();
-		if (TIMER_STATE::RUN == eCurState || TIMER_STATE::PREPARE == eCurState)return false;
+		if (TIMER_STATE::IDLE != eCurState)return false;
 		const TIMER_STATE ePrevState = m_timer_state.exchange(TIMER_STATE::RUN);
 		if (TIMER_STATE::IDLE == ePrevState)
 		{
@@ -80,7 +81,8 @@ namespace ServerCore
 
 		//const TIMER_STATE eCurState = m_curObjInSight.empty() ? TIMER_STATE::IDLE : TimerUpdate();
 		const TIMER_STATE eCurState = TimerUpdate();
-		m_timer_state.store(TIMER_STATE::PREPARE);
+		m_timer_state.store_relaxed(TIMER_STATE::PREPARE);
+		std::atomic_thread_fence(std::memory_order_release);
 		const TIMER_STATE ePrevState = m_timer_state.exchange(eCurState);
 		if (TIMER_STATE::RUN == eCurState && TIMER_STATE::PREPARE == ePrevState)
 		{

@@ -1,88 +1,81 @@
 
 Thread 1 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 2929, TotalCallTime: 930ms, Avg: 0.317515 ms
 
  -----ID 1 Func Log End----- 
 
 
 Thread 2 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 3662, TotalCallTime: 974ms, Avg: 0.265975 ms
+FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 2 Func Log End----- 
 
 
 Thread 3 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 2991, TotalCallTime: 811ms, Avg: 0.271147 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 3 Func Log End----- 
 
 
 Thread 4 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 3484, TotalCallTime: 866ms, Avg: 0.248565 ms
 
  -----ID 4 Func Log End----- 
 
 
 Thread 5 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 3093, TotalCallTime: 979ms, Avg: 0.316521 ms
+FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 5 Func Log End----- 
 
 
 Thread 6 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 2805, TotalCallTime: 776ms, Avg: 0.276649 ms
+FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 6 Func Log End----- 
 
 
 Thread 7 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 3492, TotalCallTime: 976ms, Avg: 0.279496 ms
+FuncName: Handle_c2s_MOVE, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 7 Func Log End----- 
 
 
 Thread 8 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 2969, TotalCallTime: 821ms, Avg: 0.276524 ms
+FuncName: Handle_c2s_MOVE, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 8 Func Log End----- 
 
 
 Thread 9 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 2878, TotalCallTime: 836ms, Avg: 0.290479 ms
+FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 9 Func Log End----- 
 
 
 Thread 10 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 3534, TotalCallTime: 837ms, Avg: 0.236842 ms
 
  -----ID 10 Func Log End----- 
 
 
 Thread 11 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 3120, TotalCallTime: 990ms, Avg: 0.317308 ms
 
  -----ID 11 Func Log End----- 
 
 
 Thread 12 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 2922, TotalCallTime: 835ms, Avg: 0.285763 ms
+FuncName: Handle_c2s_MOVE, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 12 Func Log End----- 
 
 
 Total Result 
 
-FuncName: Handle_c2s_MOVE, CallCount: 37879, TotalCallTime: 10631ms, Avg: 0.280657 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 12, TotalCallTime: 0ms, Avg: 0.000000 ms
 
 
-Server Running Time: 53.61 seconds, Total Func Acc Time: 10.63 seconds / 10631 ms
+Server Running Time: 34.83 seconds, Total Func Acc Time: 0.00 seconds / 0 ms
 
 
 
 Total Percentage
 
-FuncName: Handle_c2s_MOVE, 100.00% 
-FuncName: Handle_c2s_PLAYER_ATTACK, 0.00% 
+Total Func Time is Zero
