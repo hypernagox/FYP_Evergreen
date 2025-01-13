@@ -13,9 +13,13 @@ namespace NetHelper
         T GetInterPolatedData()noexcept { return static_cast<T* const>(this)->GetInterPolatedData(); }
         void UpdateInterpolationParam()noexcept
         {
-            m_fCurInterpolationParam = std::min(GetInterpolationParam(), m_fPrevInterpolationParam + 0.016f);
+            // TODO: 값조절 (렌더링바틀넥인지 서버레이턴시인지 판단)
+            const auto cur_time = GetTimeStampMilliseconds();
+            const auto cur_param = GetInterpolationParam(cur_time);
+            m_fCurInterpolationParam = (16 <= cur_time - m_prevUpdatedTimeForDT) ? std::min(cur_param, m_fPrevInterpolationParam + 0.032f) : std::min(cur_param, m_fPrevInterpolationParam + 0.016f);
             m_fCurSmoothInterpolationParam = SmoothStep(0.f, 1.f, m_fCurInterpolationParam);
             m_fPrevInterpolationParam = m_fCurInterpolationParam;
+            m_prevUpdatedTimeForDT = cur_time;
         }
         void UpdateNewData(const T& newData_, const uint64 arrivedNewTimeStamp = GetTimeStampMilliseconds())noexcept
         {
@@ -57,8 +61,8 @@ namespace NetHelper
         constexpr U SmoothLinearInterpolation(const U& start, const U& end)const noexcept {
             return LinearInterpolation(start, end, m_fCurSmoothInterpolationParam);
         }
-        constexpr const float GetInterpolationParam()const noexcept {
-            return std::clamp(static_cast<const float>(GetTimeStampMilliseconds() - m_iLastDataArrivedTime) / (float)std::max((m_iLastDataArrivedTime - m_iOldTimeStamp), MIN_UPDATE_INTERVAL), 0.f, 1.f);
+        constexpr const float GetInterpolationParam(const uint64_t cur_time)const noexcept {
+            return std::clamp(static_cast<const float>(cur_time - m_iLastDataArrivedTime) / (float)std::max((m_iLastDataArrivedTime - m_iOldTimeStamp), MIN_UPDATE_INTERVAL), 0.f, 1.f);
         }
         constexpr const float GetSmoothInterpolationParam()const noexcept {
             return  SmoothStep(0.f, 1.f, GetInterpolationParam());
@@ -84,6 +88,7 @@ namespace NetHelper
         uint64 m_iLastDataArrivedTime = GetTimeStampMilliseconds();
         uint64 m_iOldTimeStamp = GetTimeStampMilliseconds();
        
+        uint64_t m_prevUpdatedTimeForDT = GetTimeStampMilliseconds();
         static inline constexpr const uint64_t MIN_UPDATE_INTERVAL = 100;
     };
 }
