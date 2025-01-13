@@ -133,12 +133,7 @@ inline float3 LocalToWorldNormal(float3 normalL)
 #else
 #define ConstructPosP(vin, vout)
 #define ConstructSSAOPosH(vin, vout) vout.SSAOPosH = mul(vout.PosH, gTex)
-
-#ifdef RIGGED
-#define ConstructPrevPosH(vin, vout) vout.PrevPosH = vout.PosH
-#else
-#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(float4(vin.PosL, 1.0f), gPrevWorld), gPrevViewProj)
-#endif
+#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(LocalToObjectPos(vin), gPrevWorld), gPrevViewProj)
 
 #endif
 

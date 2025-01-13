@@ -1,6 +1,7 @@
 cbuffer cbPerObject : register(b0)
 {
     float4x4 gWorld;
+    float4x4 gPrevWorld;
 };
 
 cbuffer cbPerCamera : register(b1)
@@ -132,7 +133,7 @@ inline float3 LocalToWorldNormal(float3 normalL)
 #else
 #define ConstructPosP(vin, vout)
 #define ConstructSSAOPosH(vin, vout) vout.SSAOPosH = mul(vout.PosH, gTex)
-#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(vout.PosW, gPrevViewProj)
+#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(LocalToObjectPos(vin), gPrevWorld), gPrevViewProj)
 
 #endif
 
