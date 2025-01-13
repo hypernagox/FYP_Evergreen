@@ -36,6 +36,8 @@ namespace udsdx
 		virtual ID3D12PipelineState* GetPipelineState() const = 0;
 		virtual ID3D12PipelineState* GetShadowPipelineState() const = 0;
 
+		void UpdateTransformCache();
+
 	protected:
 		Shader* m_shader = nullptr;
 		std::vector<Material*> m_materials;
@@ -44,5 +46,8 @@ namespace udsdx
 		bool m_castShadow = true;
 		bool m_receiveShadow = true;
 		RenderGroup m_renderGroup = RenderGroup::Deferred;
+
+		Matrix4x4 m_transformCache = Matrix4x4::Identity;
+		Matrix4x4 m_prevTransformCache = Matrix4x4::Identity;
 	};
 }

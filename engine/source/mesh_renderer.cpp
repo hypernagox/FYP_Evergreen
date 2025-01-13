@@ -17,14 +17,11 @@ namespace udsdx
 
 	void MeshRenderer::Render(RenderParam& param, int instances)
 	{
-		Transform* transform = GetSceneObject()->GetTransform();
-		Matrix4x4 worldMat = transform->GetWorldSRTMatrix();
-
 		if (param.UseFrustumCulling)
 		{
 			// Perform frustum culling
 			BoundingBox boundsWorld;
-			m_mesh->GetBounds().Transform(boundsWorld, worldMat);
+			m_mesh->GetBounds().Transform(boundsWorld, m_transformCache);
 			if (param.ViewFrustumWorld.Contains(boundsWorld) == ContainmentType::DISJOINT)
 			{
 				return;
@@ -32,7 +29,8 @@ namespace udsdx
 		}
 
 		ObjectConstants objectConstants;
-		objectConstants.World = worldMat.Transpose();
+		objectConstants.World = m_transformCache.Transpose();
+		objectConstants.PrevWorld = m_prevTransformCache.Transpose();
 
 		param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerObjectCBV, sizeof(ObjectConstants) / 4, &objectConstants, 0);
 

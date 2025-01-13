@@ -101,6 +101,9 @@
     <ClCompile Include="source\resource_load.cpp">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="source\motion_blur.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -234,6 +237,9 @@
     </ClInclude>
     <ClInclude Include="source\resource_load.h">
       <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\motion_blur.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

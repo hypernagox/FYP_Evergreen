@@ -16,6 +16,7 @@ namespace udsdx
 
 	void RendererBase::PostUpdate(const Time& time, Scene& scene)
 	{
+		UpdateTransformCache();
 		scene.EnqueueRenderObject(this, m_renderGroup);
 		if (m_castShadow)
 		{
@@ -75,5 +76,11 @@ namespace udsdx
 	bool RendererBase::GetReceiveShadow() const
 	{
 		return m_receiveShadow;
+	}
+
+	void RendererBase::UpdateTransformCache()
+	{
+		m_prevTransformCache = std::move(m_transformCache);
+		m_transformCache = GetSceneObject()->GetTransform()->GetWorldSRTMatrix();
 	}
 }

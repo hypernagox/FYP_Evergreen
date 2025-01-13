@@ -33,7 +33,6 @@ namespace udsdx
 
 	private:
 		void PassRenderShadow(RenderParam& param, Camera* camera, LightDirectional* light);
-		void PassRenderNormal(RenderParam& param, Camera* camera);
 		void PassRenderSSAO(RenderParam& param, Camera* camera);
 		void PassRenderMain(RenderParam& param, Camera* camera);
 

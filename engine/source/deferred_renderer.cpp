@@ -8,7 +8,6 @@
 namespace udsdx
 {
 	constexpr char g_psoRenderResource[] = R"(
-
 		cbuffer cbPerCamera : register(b0)
 		{
 			float4x4 gView;
@@ -235,7 +234,7 @@ namespace udsdx
 				col = float4(gBuffer2.Sample(gsamPointClamp, pin.TexC).rg, 0.0f, 1.0f);
 				break;
 			case 2:
-				col = float4(gBuffer3.Sample(gsamPointClamp, pin.TexC).rg, 0.0f, 1.0f);
+				col = float4(saturate(sqrt(abs(gBuffer3.Sample(gsamPointClamp, pin.TexC).rg))), 0.0f, 1.0f);
 				break;
 			case 3:
 				col = float4(gShadowMap.Sample(gsamPointClamp, pin.TexC).rrr, 1.0f);
@@ -570,8 +569,6 @@ namespace udsdx
 			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
 
 		pCommandList->SetGraphicsRootSignature(renderParam.RootSignature);
-
-		ClearRenderTargets(pCommandList);
 		pCommandList->OMSetRenderTargets(NUM_GBUFFERS, m_gBuffersCpuRtv.data(), true, &m_depthBufferCpuDsv);
 
 		pCommandList->RSSetViewports(1, &renderParam.Viewport);

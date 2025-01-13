@@ -62,11 +62,9 @@ GizmoBoxRenderer::GizmoBoxRenderer(const std::shared_ptr<SceneObject>& object) :
 
 void GizmoBoxRenderer::Render(RenderParam& param, int instances)
 {
-	Transform* transform = GetSceneObject()->GetTransform();
-	Matrix4x4 worldMat = Matrix4x4::CreateScale(m_size) * Matrix4x4::CreateTranslation(m_offset) * transform->GetWorldSRTMatrix();
-
 	ObjectConstants objectConstants;
-	objectConstants.World = worldMat.Transpose();
+	objectConstants.World = m_transformCache.Transpose();
+	objectConstants.PrevWorld = m_prevTransformCache.Transpose();
 
 	param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerObjectCBV, sizeof(ObjectConstants) / 4, &objectConstants, 0);
 	param.CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);

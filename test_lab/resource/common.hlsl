@@ -1,6 +1,7 @@
 cbuffer cbPerObject : register(b0)
 {
     float4x4 gWorld;
+    float4x4 gPrevWorld;
 };
 
 cbuffer cbPerCamera : register(b1)
@@ -113,7 +114,7 @@ inline float4 RigTransform(float4 posL, uint indices, float4 weights)
 #define WorldToClipPos(pos, vin) mul(pos, gLightViewProjClip[vin.InstanceID]);
 
 #else
-#define WorldToClipPos(pos, vin) mul(mul(pos, gView), gProj)
+#define WorldToClipPos(pos, vin) mul(pos, gViewProj)
 
 #endif
 
@@ -132,7 +133,12 @@ inline float3 LocalToWorldNormal(float3 normalL)
 #else
 #define ConstructPosP(vin, vout)
 #define ConstructSSAOPosH(vin, vout) vout.SSAOPosH = mul(vout.PosH, gTex)
-#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(vout.PosW, gPrevViewProj)
+
+#ifdef RIGGED
+#define ConstructPrevPosH(vin, vout) vout.PrevPosH = vout.PosH
+#else
+#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(float4(vin.PosL, 1.0f), gPrevWorld), gPrevViewProj)
+#endif
 
 #endif
 

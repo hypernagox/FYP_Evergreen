@@ -24,6 +24,7 @@ namespace udsdx
 	class ShadowMap;
 	class ScreenSpaceAO;
 	class DeferredRenderer;
+	class MotionBlur;
 
 	struct RenderParam
 	{
@@ -36,6 +37,7 @@ namespace udsdx
 
 		float AspectRatio;
 		int FrameResourceIndex;
+		const Time& Time;
 
 		const D3D12_VIEWPORT& Viewport;
 		const D3D12_RECT& ScissorRect;
@@ -46,9 +48,11 @@ namespace udsdx
 		const D3D12_GPU_VIRTUAL_ADDRESS& ConstantBufferView;
 		const D3D12_CPU_DESCRIPTOR_HANDLE& DepthStencilView;
 		const D3D12_CPU_DESCRIPTOR_HANDLE& RenderTargetView;
+		ID3D12Resource* RenderTargetResource;
 
 		ShadowMap* RenderShadowMap;
 		ScreenSpaceAO* RenderScreenSpaceAO;
+		MotionBlur* RenderMotionBlur;
 
 		TracyD3D12Ctx* TracyQueueContext;
 	};

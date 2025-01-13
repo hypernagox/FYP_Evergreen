@@ -11,6 +11,7 @@ namespace udsdx
 	class ShadowMap;
 	class ScreenSpaceAO;
 	class DeferredRenderer;
+	class MotionBlur;
 
 	class Core
 	{
@@ -211,6 +212,7 @@ namespace udsdx
 
 		std::unique_ptr<ShadowMap> m_shadowMap;
 		std::unique_ptr<ScreenSpaceAO> m_screenSpaceAO;
+		std::unique_ptr<MotionBlur> m_motionBlur;
 	};
 }
 

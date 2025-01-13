@@ -7,6 +7,7 @@ namespace udsdx
 	struct ObjectConstants
 	{
 		Matrix4x4 World = Matrix4x4::Identity;
+		Matrix4x4 PrevWorld = Matrix4x4::Identity;
 	};
 
 	struct CameraConstants

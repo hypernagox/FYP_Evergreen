@@ -242,6 +242,7 @@
     <ClCompile Include="source\mesh.cpp" />
     <ClCompile Include="source\mesh_base.cpp" />
     <ClCompile Include="source\mesh_renderer.cpp" />
+    <ClCompile Include="source\motion_blur.cpp" />
     <ClCompile Include="source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -288,6 +289,7 @@
     <ClInclude Include="source\mesh.h" />
     <ClInclude Include="source\mesh_base.h" />
     <ClInclude Include="source\mesh_renderer.h" />
+    <ClInclude Include="source\motion_blur.h" />
     <ClInclude Include="source\pch.h" />
     <ClInclude Include="source\renderer_base.h" />
     <ClInclude Include="source\resource_load.h" />

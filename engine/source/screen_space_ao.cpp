@@ -9,65 +9,6 @@
 
 namespace udsdx
 {
-	constexpr char g_psoNormalResource[] = R"(
-		cbuffer cbPerObject : register(b0)
-		{
-			float4x4 gWorld;
-		};
-
-		cbuffer cbPerCamera : register(b1)
-		{
-			float4x4 gView;
-			float4x4 gProj;
-			float4x4 gViewProj;
-			float4x4 gViewInverse;
-			float4x4 gProjInverse;
-			float4x4 gViewProjInverse;
-			float4 gEyePosW;
-		};
-
-		Texture2D gMainTex : register(t0);
-		SamplerState gSampler : register(s0);
-
-		struct VertexIn
-		{
-			float3 PosL		: POSITION;
-			float2 Tex		: TEXCOORD;
-			float3 Normal	: NORMAL;
-		};
-
-		struct VertexOut
-		{
-			float4 PosH		: SV_POSITION;
-			float2 TexC		: TEXCOORD;
-			float3 Normal	: NORMAL;
-		};
-
-		VertexOut VS(VertexIn vin)
-		{
-			VertexOut vout;
-
-			float4 posW = mul(float4(vin.PosL, 1.0f), gWorld);
-			vout.PosH = mul(mul(posW, gView), gProj);
-			vout.TexC = vin.Tex;
-			vout.Normal = mul(vin.Normal, (float3x3)gWorld);
-
-			return vout;
-		}
-
-		float4 PS(VertexOut pin) : SV_Target
-		{
-			float alpha = gMainTex.Sample(gSampler, pin.TexC).a;
-			clip(alpha - 0.1f);
-
-			pin.Normal = normalize(pin.Normal);
-			float3 N = mul(pin.Normal, (float3x3)gView);
-			N = normalize(N);
-
-			return float4(N, 1.0f);
-		}
-	)";
-
 	constexpr char g_psoSSAOResource[] = R"(
 		cbuffer cbSsao : register(b0)
 		{
@@ -356,54 +297,6 @@ namespace udsdx
 		m_blurConstantBuffer->CopyData(0, blurCB);
 	}
 
-	void ScreenSpaceAO::PassNormal(RenderParam& param, Scene* target, Camera* camera)
-	{
-		auto pCommandList = param.CommandList;
-
-		pCommandList->RSSetViewports(1, &param.Viewport);
-		pCommandList->RSSetScissorRects(1, &param.ScissorRect);
-
-		// Transition the normal map to render target state
-		pCommandList->ResourceBarrier(1,
-			&CD3DX12_RESOURCE_BARRIER::Transition(
-				m_normalMap.Get(),
-				D3D12_RESOURCE_STATE_GENERIC_READ,
-				D3D12_RESOURCE_STATE_RENDER_TARGET));
-
-		const float clearValue[] = { 0.0f, 0.0f, 1.0f, 0.0f };
-		pCommandList->ClearRenderTargetView(m_normalMapCpuRtv, clearValue, 0, nullptr);
-		pCommandList->ClearDepthStencilView(param.DepthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-		pCommandList->OMSetRenderTargets(1, &m_normalMapCpuRtv, true, &param.DepthStencilView);
-
-		pCommandList->SetGraphicsRootSignature(param.RootSignature);
-		pCommandList->SetPipelineState(m_normalPSO.Get());
-
-		// Set the constant buffer
-		Matrix4x4 viewMat = camera->GetViewMatrix();
-		Matrix4x4 projMat = camera->GetProjMatrix(param.AspectRatio);
-		Matrix4x4 viewProjMat = viewMat * projMat;
-
-		param.ViewFrustumWorld = camera->GetViewFrustumWorld(param.AspectRatio);
-
-		CameraConstants cameraConstants;
-		cameraConstants.View = viewMat.Transpose();
-		cameraConstants.Proj = projMat.Transpose();
-
-		Matrix4x4 worldMat = camera->GetSceneObject()->GetTransform()->GetWorldSRTMatrix();
-		cameraConstants.CameraPosition = Vector4::Transform(Vector4::UnitW, worldMat);
-
-		param.CommandList->SetGraphicsRoot32BitConstants(1, sizeof(CameraConstants) / 4, &cameraConstants, 0);
-		pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		target->RenderSceneObjects(param, RenderGroup::Deferred);
-
-		// Transition the normal map to generic read state
-		pCommandList->ResourceBarrier(1,
-			&CD3DX12_RESOURCE_BARRIER::Transition(
-				m_normalMap.Get(),
-				D3D12_RESOURCE_STATE_RENDER_TARGET,
-				D3D12_RESOURCE_STATE_GENERIC_READ));
-	}
-
 	void ScreenSpaceAO::PassSSAO(RenderParam& param)
 	{
 		auto pCommandList = param.CommandList;
@@ -526,9 +419,7 @@ namespace udsdx
 		m_ambientMap.Reset();
 		m_ssaomap.Reset();
 		m_blurMap.Reset();
-		m_normalMap.Reset();
 
-		// Normal map
 		D3D12_RESOURCE_DESC texDesc;
 		ZeroMemory(&texDesc, sizeof(D3D12_RESOURCE_DESC));
 		texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -537,27 +428,15 @@ namespace udsdx
 		texDesc.Height = m_height;
 		texDesc.DepthOrArraySize = 1;
 		texDesc.MipLevels = 1;
-		texDesc.Format = NORMAL_FORMAT;
+		texDesc.Format = AO_FORMAT;
 		texDesc.SampleDesc.Count = 1;
 		texDesc.SampleDesc.Quality = 0;
 		texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 		texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 
-		float normalClearColor[] = { 0.0f, 0.0f, 1.0f, 0.0f };
-		CD3DX12_CLEAR_VALUE clearValue(NORMAL_FORMAT, normalClearColor);
-		ThrowIfFailed(m_device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-			D3D12_HEAP_FLAG_NONE,
-			&texDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ,
-			&clearValue,
-			IID_PPV_ARGS(m_normalMap.GetAddressOf())));
-
 		// Ambient map and blur map
-		texDesc.Format = AO_FORMAT;
-
 		float aoClearColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		clearValue = CD3DX12_CLEAR_VALUE(AO_FORMAT, aoClearColor);
+		CD3DX12_CLEAR_VALUE clearValue(AO_FORMAT, aoClearColor);
 
 		texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
@@ -597,13 +476,11 @@ namespace udsdx
 		m_ambientMapCpuSrv = descriptorParam.SrvCpuHandle;
 		m_ssaomapCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_blurMapCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
-		m_normalMapCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_depthMapCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
 		m_ambientMapGpuSrv = descriptorParam.SrvGpuHandle;
 		m_ssaomapGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_blurMapGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
-		m_normalMapGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_depthMapGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
 		m_ambientMapCpuUav = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
@@ -613,7 +490,6 @@ namespace udsdx
 		m_blurMapGpuUav = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
 		m_ssaomapCpuRtv = descriptorParam.RtvCpuHandle.Offset(1, descriptorParam.RtvDescriptorSize);
-		m_normalMapCpuRtv = descriptorParam.RtvCpuHandle.Offset(1, descriptorParam.RtvDescriptorSize);
 
 		descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
@@ -628,12 +504,9 @@ namespace udsdx
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Format = NORMAL_FORMAT;
+		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
-		m_device->CreateShaderResourceView(m_normalMap.Get(), &srvDesc, m_normalMapCpuSrv);
-
-		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		m_device->CreateShaderResourceView(depthStencilBuffer, &srvDesc, m_depthMapCpuSrv);
 
 		srvDesc.Format = AO_FORMAT;
@@ -653,8 +526,6 @@ namespace udsdx
 		rtvDesc.Format = NORMAL_FORMAT;
 		rtvDesc.Texture2D.MipSlice = 0;
 		rtvDesc.Texture2D.PlaneSlice = 0;
-		m_device->CreateRenderTargetView(m_normalMap.Get(), &rtvDesc, m_normalMapCpuRtv);
-
 		rtvDesc.Format = AO_FORMAT;
 		m_device->CreateRenderTargetView(m_ssaomap.Get(), &rtvDesc, m_ssaomapCpuRtv);
 	}
@@ -802,44 +673,6 @@ namespace udsdx
 			"BLUR_SAMPLE", sBLUR_SMAPLE.c_str(),
 			nullptr, nullptr
 		};
-
-		{
-			// Build the normal PSO
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoNormalResource, nullptr, "VS", "vs_5_0");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoNormalResource, nullptr, "PS", "ps_5_0");
-
-			D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
-			ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-
-			psoDesc.InputLayout.pInputElementDescs = Vertex::DescriptionTable;
-			psoDesc.InputLayout.NumElements = Vertex::DescriptionTableSize;
-			psoDesc.pRootSignature = pRootSignature;
-			psoDesc.VS =
-			{
-				reinterpret_cast<BYTE*>(vsByteCode->GetBufferPointer()),
-				vsByteCode->GetBufferSize()
-			};
-			psoDesc.PS =
-			{
-				reinterpret_cast<BYTE*>(psByteCode->GetBufferPointer()),
-				psByteCode->GetBufferSize()
-			};
-			psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-			psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-			psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-			psoDesc.SampleMask = UINT_MAX;
-			psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-			psoDesc.NumRenderTargets = 1;
-			psoDesc.SampleDesc.Count = 1;
-			psoDesc.SampleDesc.Quality = 0;
-			psoDesc.RTVFormats[0] = NORMAL_FORMAT;
-			psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
-			ThrowIfFailed(pDevice->CreateGraphicsPipelineState(
-				&psoDesc,
-				IID_PPV_ARGS(m_normalPSO.GetAddressOf())
-			));
-		}
 
 		{
 			// Build the SSAO PSO

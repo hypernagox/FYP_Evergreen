@@ -47,7 +47,7 @@ namespace udsdx
 
 		static constexpr float GBUFFER_CLEAR_VALUES[NUM_GBUFFERS][4] = {
 			{ 0.0f, 0.0f, 0.0f, 0.0f },
-			{ 0.0f, 1.0f, 0.0f, 0.0f },
+			{ 0.0f, 0.0f, 0.0f, 0.0f },
 			{ 0.0f, 0.0f, 0.0f, 0.0f },
 		};
 

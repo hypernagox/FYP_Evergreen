@@ -16,6 +16,7 @@
 #include "shadow_map.h"
 #include "screen_space_ao.h"
 #include "deferred_renderer.h"
+#include "motion_blur.h"
 
 #include <assimp/DefaultLogger.hpp>
 
@@ -156,6 +157,10 @@ namespace udsdx
 		// Create Screen Space Ambient Occlusion
 		m_screenSpaceAO = std::make_unique<ScreenSpaceAO>(m_d3dDevice.Get(), m_commandList.Get(), 1.0f);
 		m_screenSpaceAO->BuildPipelineState(m_d3dDevice.Get(), m_rootSignature.Get());
+
+		// Create Motion Blur
+		m_motionBlur = std::make_unique<MotionBlur>(m_d3dDevice.Get(), m_commandList.Get());
+		m_motionBlur->BuildPipelineState();
 
 		if (m_tearingSupport)
 		{
@@ -312,6 +317,7 @@ namespace udsdx
 		m_deferredRenderer->BuildDescriptors(descriptorParam);
 		m_shadowMap->BuildDescriptors(descriptorParam, m_d3dDevice.Get());
 		m_screenSpaceAO->BuildDescriptors(descriptorParam, m_depthStencilBuffer.Get());
+		m_motionBlur->BuildDescriptors(descriptorParam);
 
 		for (auto texture : textures)
 		{
@@ -576,6 +582,7 @@ namespace udsdx
 
 			.AspectRatio = static_cast<float>(m_clientWidth) / m_clientHeight,
 			.FrameResourceIndex = m_currFrameResourceIndex,
+			.Time = m_timeMeasure->GetTime(),
 
 			.Viewport = m_screenViewport,
 			.ScissorRect = m_scissorRect,
@@ -585,9 +592,11 @@ namespace udsdx
 			.ConstantBufferView = objectCB->Resource()->GetGPUVirtualAddress(),
 			.DepthStencilView = DepthStencilView(),
 			.RenderTargetView = CurrentBackBufferView(),
+			.RenderTargetResource = CurrentBackBuffer(),
 
 			.RenderShadowMap = m_shadowMap.get(),
 			.RenderScreenSpaceAO = m_screenSpaceAO.get(),
+			.RenderMotionBlur = m_motionBlur.get(),
 
 			.TracyQueueContext = &m_tracyQueueCtx
 		};
@@ -874,6 +883,8 @@ namespace udsdx
 		m_deferredRenderer->RebuildDescriptors();
 		m_screenSpaceAO->OnResize(width, height, m_d3dDevice.Get());
 		m_screenSpaceAO->RebuildDescriptors(m_depthStencilBuffer.Get());
+		m_motionBlur->OnResize(width, height);
+		m_motionBlur->RebuildDescriptors();
 
 		// Execute the resize commands.
 		ExecuteCommandList();

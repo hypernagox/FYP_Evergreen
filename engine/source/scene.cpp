@@ -13,6 +13,7 @@
 #include "core.h"
 #include "input.h"
 #include "deferred_renderer.h"
+#include "motion_blur.h"
 
 namespace udsdx
 {
@@ -90,13 +91,6 @@ namespace udsdx
 		param.RenderShadowMap->Pass(param, this, camera, light);
 	}
 
-	void Scene::PassRenderNormal(RenderParam& param, Camera* camera)
-	{
-		ZoneScopedN("Normal / Depth Render Pass");
-		TracyD3D12Zone(*param.TracyQueueContext, param.CommandList, "Normal / Depth Render Pass");
-		param.RenderScreenSpaceAO->PassNormal(param, this, camera);
-	}
-
 	void Scene::PassRenderSSAO(RenderParam& param, Camera* camera)
 	{
 		ZoneScopedN("SSAO Render Pass");
@@ -115,6 +109,7 @@ namespace udsdx
 
 		// Deferred rendering pass
 		param.Renderer->PassBufferPreparation(param);
+		param.Renderer->ClearRenderTargets(pCommandList);
 
 		Matrix4x4 viewMat = camera->GetViewMatrix();
 		Matrix4x4 projMat = camera->GetProjMatrix(param.AspectRatio);
@@ -143,6 +138,9 @@ namespace udsdx
 		RenderSceneObjects(param, RenderGroup::Forward, 1);
 
 		param.Renderer->PassBufferPostProcess(param);
+
+		// Motion blur pass
+		param.RenderMotionBlur->Pass(param, camera);
 	}
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)
