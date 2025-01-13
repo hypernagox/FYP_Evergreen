@@ -104,6 +104,9 @@
     <ClCompile Include="source\motion_blur.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="source\inline_mesh_renderer.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -240,6 +243,9 @@
     </ClInclude>
     <ClInclude Include="source\motion_blur.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\inline_mesh_renderer.h">
+      <Filter>Engine\Runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

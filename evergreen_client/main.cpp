@@ -182,6 +182,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         // scene->AddObject(terrainObj);
     }
 
+    {
+        auto skyboxObj = std::make_shared<SceneObject>();
+        auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
+        skyboxRenderer->SetShader(res->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")));
+        skyboxRenderer->SetVertexCount(6);
+        skyboxRenderer->SetCastShadow(false);
+
+        auto skyboxTexture = res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"));
+        g_skyboxMaterial = std::make_shared<udsdx::Material>();
+        g_skyboxMaterial->SetMainTexture(skyboxTexture);
+        skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
+
+        scene->AddObject(skyboxObj);
+    }
+
     if constexpr (true == g_bUseNetWork)
     {
         ServerObjectMgr::GetInst()->SetTargetScene(scene);
@@ -201,8 +216,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             NetMgr(NetworkMgr)->DoNetworkIO();
             });
     }
-
-    INSTANCE(Core)->GetRenderer()->SetEnvironmentMap(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg")));
 
     return UpdownStudio::Run(scene, nCmdShow);
 }

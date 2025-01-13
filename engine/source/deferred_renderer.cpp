@@ -36,7 +36,7 @@ namespace udsdx
 		Texture2D gShadowMap  : register(t3);
 		Texture2D gSSAOMap	  : register(t4);
 		Texture2D gBufferDSV  : register(t5);
-		Texture2D gEnvironmentMap : register(t6);
+
 
 		SamplerState gsamPointClamp : register(s0);
 		SamplerState gsamLinearClamp : register(s1);
@@ -129,14 +129,6 @@ namespace udsdx
 			return percentLit / 9.0f;
 		}
 
-		float2 DirectionToEnvironmentUV(float3 dir)
-		{
-			const float PI = 3.14159265359f;
-			float t = atan2(dir.z, dir.x);
-			float p = asin(dir.y);
-			return float2(t / PI * -0.5f + 0.5f, -p / PI + 0.5f);
-		}
-
 		float3 ReconstructNormal(float2 np)
 		{
 			float3 n;
@@ -152,14 +144,6 @@ namespace udsdx
 			float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
             float4 PosW = mul(PosNDC, gViewProjInverse);
 			PosW /= PosW.w;
-
-			if (depth == 1.0f)
-			{
-				float3 delta = normalize(PosW.xyz - gEyePosW.xyz);
-				float2 uv = DirectionToEnvironmentUV(delta);
-				float4 color = gEnvironmentMap.Sample(gsamLinearClamp, uv);
-				return color;
-			}
 
 			float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
 			float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
@@ -350,7 +334,7 @@ namespace udsdx
 		CD3DX12_DESCRIPTOR_RANGE texTable5;
 		texTable5.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 6);
 
-		CD3DX12_ROOT_PARAMETER slotRootParameter[7];
+		CD3DX12_ROOT_PARAMETER slotRootParameter[6];
 
 		// Perfomance TIP: Order from most frequent to least frequent.
 		slotRootParameter[0].InitAsConstantBufferView(0);
@@ -359,7 +343,6 @@ namespace udsdx
 		slotRootParameter[3].InitAsDescriptorTable(1, &texTable2, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[4].InitAsDescriptorTable(1, &texTable3, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[5].InitAsDescriptorTable(1, &texTable4, D3D12_SHADER_VISIBILITY_PIXEL);
-		slotRootParameter[6].InitAsDescriptorTable(1, &texTable5, D3D12_SHADER_VISIBILITY_PIXEL);
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(_countof(slotRootParameter), slotRootParameter,
 			static_cast<UINT>(staticSamplers.size()), staticSamplers.data(),
@@ -498,7 +481,6 @@ namespace udsdx
 		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 		{
-			// Build the normal PSO
 			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "VS", "vs_5_0");
 			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "PS", "ps_5_0");
 
@@ -520,7 +502,6 @@ namespace udsdx
 		}
 
 		{
-			// Build the normal PSO
 			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "VS", "vs_5_0");
 			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "PS", "ps_5_0");
 
@@ -611,8 +592,6 @@ namespace udsdx
 		pCommandList->SetGraphicsRootDescriptorTable(3, renderParam.RenderShadowMap->GetSrvGpu());
 		pCommandList->SetGraphicsRootDescriptorTable(4, renderParam.RenderScreenSpaceAO->GetAmbientMapGpuSrv());
 		pCommandList->SetGraphicsRootDescriptorTable(5, m_depthBufferGpuSrv);
-		if (m_environmentMap)
-			pCommandList->SetGraphicsRootDescriptorTable(6, m_environmentMap->GetSrvGpu());
 
 		pCommandList->DrawInstanced(6, 1, 0, 0);
 

@@ -29,6 +29,7 @@ namespace udsdx
 		
 		static const uint gSampleCount = 16;
 		static const float gBlurThreshold = 0.0001f;
+		static const float gBlurTime = 0.01f;
 
 		static const float2x2 gTex = { 0.5f, 0.0f, 0.0f, -0.5f, };
  
@@ -77,7 +78,7 @@ namespace udsdx
 		float4 PS(VertexOut pin) : SV_Target
 		{
 			float2 mv = mul(gMotion.Sample(gsamPointClamp, pin.TexC).rg, gTex);
-			mv *= 0.01f / gDeltaTime;
+			mv *= gBlurTime / gDeltaTime;
 
 			if (length(mv) < gBlurThreshold)
 			{

@@ -133,8 +133,11 @@ namespace udsdx
 		{
 			return;
 		}
-		m_prevAnimationName = m_animationName;
-		m_prevAnimationTime = m_animationTime;
+		if (m_transitionFactor > 1.0f)
+		{
+			m_prevAnimationName = m_animationName;
+			m_prevAnimationTime = m_animationTime;
+		}
 		m_animationTime = 0.0f;
 		m_transitionFactor = 0.0f;
 		m_animationName = animationName;

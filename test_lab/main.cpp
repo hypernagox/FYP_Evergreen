@@ -15,6 +15,7 @@ std::shared_ptr<SceneObject> g_lightObject;
 std::shared_ptr<SceneObject> g_object[3];
 std::shared_ptr<SceneObject> g_floorObject;
 std::shared_ptr<udsdx::Material> g_material;
+std::shared_ptr<udsdx::Material> g_skyboxMaterial;
 
 void Update(const Time& time);
 
@@ -72,7 +73,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     floorRenderer->SetShader(res->Load<udsdx::Shader>(L"resource\\colornotex.hlsl"));
     g_scene->AddObject(g_floorObject);
 
-    INSTANCE(Core)->GetRenderer()->SetEnvironmentMap(res->Load<udsdx::Texture>(L"resource\\Interior.jpg"));
+    {
+        auto skyboxObj = std::make_shared<SceneObject>();
+        auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
+        skyboxRenderer->SetShader(res->Load<Shader>(L"resource\\skybox.hlsl"));
+        skyboxRenderer->SetVertexCount(6);
+        skyboxRenderer->SetCastShadow(false);
+
+        auto skyboxTexture = res->Load<udsdx::Texture>(L"resource\\Interior.jpg");
+        g_skyboxMaterial = std::make_shared<udsdx::Material>();
+        g_skyboxMaterial->SetMainTexture(skyboxTexture);
+        skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
+
+        g_scene->AddObject(skyboxObj);
+    }
 
     return UpdownStudio::Run(g_scene, nCmdShow);
 }

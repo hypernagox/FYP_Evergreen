@@ -72,7 +72,6 @@ struct VertexOut
     float2 Tex          : TEXCOORD;
     float4 NormalW      : NORMAL;
     float4 TangentW : TANGENT;
-    float4 SSAOPosH : POSITION1;
     float4 PrevPosH : POSITION2;
 #ifdef GENERATE_SHADOWS
     float4 PosP         : POSITION3;
@@ -132,20 +131,18 @@ inline float3 LocalToWorldNormal(float3 normalL)
 
 #else
 #define ConstructPosP(vin, vout)
-#define ConstructSSAOPosH(vin, vout) vout.SSAOPosH = mul(vout.PosH, gTex)
 #define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(LocalToObjectPos(vin), gPrevWorld), gPrevViewProj)
 
 #endif
 
-#define ConstructVSOutput(vin, vout)                                \
-	vout.PosW = ObjectToWorldPos(LocalToObjectPos(vin));            \
-	vout.PosH = WorldToClipPos(vout.PosW, vin);                     \
-	vout.Tex = vin.Tex;                                             \
+#define ConstructVSOutput(vin, vout)                                                \
+	vout.PosW = ObjectToWorldPos(LocalToObjectPos(vin));                            \
+	vout.PosH = WorldToClipPos(vout.PosW, vin);                                     \
+	vout.Tex = vin.Tex;                                                             \
 	vout.NormalW = ObjectToWorldNormal(LocalToObjectNormal(vin, vin.Normal));       \
     vout.TangentW = ObjectToWorldNormal(LocalToObjectNormal(vin, vin.Tangent));     \
-    ConstructPosP(vin, vout);                                       \
-    ConstructSSAOPosH(vin, vout);                                   \
-    ConstructPrevPosH(vin, vout);                                   \
+    ConstructPosP(vin, vout);                                                       \
+    ConstructPrevPosH(vin, vout);                                                   \
 
 #ifdef GENERATE_SHADOWS
 

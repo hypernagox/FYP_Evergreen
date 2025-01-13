@@ -29,9 +29,6 @@ namespace udsdx
 		void PassRender(RenderParam& renderParam, D3D12_GPU_VIRTUAL_ADDRESS cbvGpu);
 
 	public:
-		void SetEnvironmentMap(Texture* environmentMap) { m_environmentMap = environmentMap; }
-
-	public:
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetGBufferSrv(UINT index) const { return m_gBuffersGpuSrv[index]; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetDepthBufferSrv() const { return m_depthBufferGpuSrv; }
 		CD3DX12_CPU_DESCRIPTOR_HANDLE GetDepthBufferDsv() const { return m_depthBufferCpuDsv; }
@@ -74,8 +71,5 @@ namespace udsdx
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_depthBufferCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_depthBufferGpuSrv;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_depthBufferCpuDsv;
-
-		// Environment map
-		Texture* m_environmentMap = nullptr;
 	};
 }
