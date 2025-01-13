@@ -15,20 +15,14 @@ namespace udsdx
 {
 	RiggedMeshRenderer::RiggedMeshRenderer(const std::shared_ptr<SceneObject>& object) : RendererBase(object)
 	{
-		for (auto& buffer : m_constantBuffers)
-		{
-			// TODO: 10 is a magic number; it needs to resize optimally by the number of submeshes
-			buffer.resize(10);
-			for (auto& subBuffer : buffer)
-			{
-				subBuffer = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
-			}
-		}
+
 	}
 
 	void RiggedMeshRenderer::Update(const Time& time, Scene& scene)
 	{
 		m_animationTime += time.deltaTime;
+		m_prevAnimationTime += time.deltaTime;
+		m_transitionFactor += time.deltaTime / 0.2f;
 		m_isMatrixDirty = true;
 
 		RendererBase::Update(time, scene);
@@ -58,6 +52,18 @@ namespace udsdx
 			if (!m_animationName.empty())
 			{
 				m_riggedMesh->PopulateTransforms(m_animationName, m_animationTime, boneTransforms);
+				if (m_transitionFactor < 1.0f && !m_prevAnimationName.empty())
+				{
+					std::vector<std::vector<Matrix4x4>> prevBoneTransforms;
+					m_riggedMesh->PopulateTransforms(m_prevAnimationName, m_prevAnimationTime, prevBoneTransforms);
+					for (size_t s = 0; s < submeshes.size(); ++s)
+					{
+						for (size_t i = 0; i < boneTransforms[s].size(); ++i)
+						{
+							boneTransforms[s][i] = Matrix4x4::Lerp(prevBoneTransforms[s][i], boneTransforms[s][i], m_transitionFactor);
+						}
+					}
+				}
 			}
 			else
 			{
@@ -110,6 +116,15 @@ namespace udsdx
 	{
 		m_riggedMesh = mesh;
 		m_isMatrixDirty = true;
+
+		for (auto& buffer : m_constantBuffers)
+		{
+			buffer.resize(mesh->GetSubmeshes().size());
+			for (auto& subBuffer : buffer)
+			{
+				subBuffer = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
+			}
+		}
 	}
 
 	void RiggedMeshRenderer::SetAnimation(std::string_view animationName)
@@ -118,7 +133,10 @@ namespace udsdx
 		{
 			return;
 		}
+		m_prevAnimationName = m_animationName;
+		m_prevAnimationTime = m_animationTime;
 		m_animationTime = 0.0f;
+		m_transitionFactor = 0.0f;
 		m_animationName = animationName;
 		m_isMatrixDirty = true;
 	}

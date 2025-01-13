@@ -616,7 +616,9 @@ namespace udsdx
 
 		pCommandList->DrawInstanced(6, 1, 0, 0);
 
+#if defined(DEBUG) || defined(_DEBUG)
 		pCommandList->SetPipelineState(m_debugPipelineState.Get());
 		pCommandList->DrawInstanced(6, 4, 0, 0);
+#endif
 	}
 }

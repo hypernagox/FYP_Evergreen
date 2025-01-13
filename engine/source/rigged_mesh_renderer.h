@@ -34,7 +34,10 @@ namespace udsdx
 		RiggedMesh* m_riggedMesh = nullptr;
 
 		std::string m_animationName{};
+		std::string m_prevAnimationName{};
 		float m_animationTime = 0.0f;
+		float m_prevAnimationTime = 0.0f;
+		float m_transitionFactor = 0.0f;
 		bool m_isMatrixDirty = true;
 
 		std::array<std::vector<std::unique_ptr<UploadBuffer<BoneConstants>>>, FrameResourceCount> m_constantBuffers;
