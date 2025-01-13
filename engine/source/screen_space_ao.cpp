@@ -356,7 +356,7 @@ namespace udsdx
 
 		pCommandList->OMSetRenderTargets(0, nullptr, true, nullptr);
 
-		pCommandList->SetGraphicsRootConstantBufferView(0, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
+		pCommandList->SetComputeRootConstantBufferView(0, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
 		pCommandList->SetComputeRoot32BitConstant(1, 0, 0);
 		pCommandList->SetComputeRootConstantBufferView(2, m_blurConstantBuffer->Resource()->GetGPUVirtualAddress());
 		pCommandList->SetComputeRootDescriptorTable(3, m_ssaomapGpuSrv);
@@ -378,6 +378,7 @@ namespace udsdx
 				D3D12_RESOURCE_STATE_GENERIC_READ,
 				D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
 
+		pCommandList->SetComputeRootConstantBufferView(0, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
 		pCommandList->SetComputeRoot32BitConstant(1, 1, 0);
 		pCommandList->SetComputeRootConstantBufferView(2, m_blurConstantBuffer->Resource()->GetGPUVirtualAddress());
 		pCommandList->SetComputeRootDescriptorTable(3, m_blurMapGpuSrv);
