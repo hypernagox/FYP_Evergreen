@@ -19,11 +19,11 @@ namespace ServerCore
 		_sockAddr.sin_port = ::htons(port);
 	}
 
-	std::wstring NetAddress::GetIpAddress()const noexcept
+	const std::wstring_view NetAddress::GetIpAddress()const noexcept
 	{
-		WCHAR buffer[64];
-		::InetNtopW(AF_INET, &_sockAddr.sin_addr, buffer, len32(buffer));
-		return std::wstring{ buffer };
+		constinit thread_local WCHAR buffer[64] = {};
+		::InetNtopW(AF_INET, &_sockAddr.sin_addr, (WCHAR*)::memset(buffer, 0, sizeof(buffer)), len32(buffer));
+		return buffer;
 	}
 
 	IN_ADDR NetAddress::Ip2Address(const WCHAR* const ip)noexcept
