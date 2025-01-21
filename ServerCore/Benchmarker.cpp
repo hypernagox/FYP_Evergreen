@@ -87,6 +87,7 @@ namespace ServerCore
 		
 		if (0 == total_func_time) {
 			RecordLogToStream("Total Func Time is Zero\n");
+			ServerCore::PrintKoreaRealTime("\nBenchmark End !");
 			return;
 		}
 
@@ -95,6 +96,8 @@ namespace ServerCore
 			RecordLogToStream(std::format("FuncName: {}, {:.2f}% \n"
 				, funcName, ((float)record.accTime / total_func_time) * 100.f));
 		}
+
+		ServerCore::PrintKoreaRealTime("\nBenchmark End !");
 	}
 
 	BenchmarkRAII::~BenchmarkRAII() noexcept

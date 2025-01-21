@@ -1,5 +1,6 @@
 #pragma once
 #include "NetAddress.h"
+#include "MPSCQueue.hpp"
 
 namespace ServerCore
 {
@@ -19,7 +20,7 @@ namespace ServerCore
 		Service
 	-------------------*/
 
-	using SessionFactory = std::function<S_ptr<Session>(void)>;
+	using SessionFactory = std::function<Session*(void)>;
 
 	class Service
 	{
@@ -31,14 +32,18 @@ namespace ServerCore
 	public:
 		static inline constexpr const Service* const GetMainService()noexcept { return g_mainService; }
 	public:
-		Service(const IocpCore& iocpCore_, SERVICE_TYPE eServiceType_, NetAddress addr_, SessionFactory factory_, c_int32 maxSessionCount_ = 1);
+		Service(
+			  const IocpCore& iocpCore_
+			, SERVICE_TYPE eServiceType_
+			, NetAddress addr_
+			, SessionFactory factory_
+			, const Session::PacketHandleFunc* const global_packet_func,
+			  c_int32 maxSessionCount_ = 1);
 		virtual ~Service();
-
 	public:
 		virtual bool Start() = 0;
 		virtual void CloseService();
 		bool CanStart()const { return nullptr != m_sessionFactory; }
-		S_ptr<Session> CreateSession()noexcept;
 		const bool AddSession(const S_ptr<PacketSession>& pSession_)noexcept;
 		void ReleaseSession(const Session* const pSession_)noexcept;
 		int32 GetMaxSessionCount()const noexcept { return m_maxSessionCount; }
@@ -47,18 +52,33 @@ namespace ServerCore
 		const IocpCore& GetIocpCore()const noexcept { return m_iocpCore; }
 		S_ptr<ContentsEntity> GetSession(const uint64_t sessionID_)const noexcept;
 	public:
+		S_ptr<Session> PopSession()noexcept{
+			Session* pSession;
+			if (m_sessionPool.try_pop_single(pSession) ){
+				return S_ptr<Session>{reinterpret_cast<const uint64_t>(pSession)};
+			}
+			else {
+				return S_ptr<Session>{};
+			}
+		}
+		const bool IsSessionPoolEmpty()const noexcept { return m_sessionPool.empty_single(); }
+		void ReturnSession(Session* const pSession)noexcept;
+	public:
 		void IterateSession(std::function<void(Session* const)> fpIterate_)noexcept;
 	protected:
+		Session* const CreateSession()noexcept;
+	protected:
+		MPSCStack<Session*> m_sessionPool;
 		mutable tbb::concurrent_unordered_map<uint32_t, uint16_t> m_id2Index;
 		const std::span<AtomicSessionPtr> m_arrSession;
-		tbb::concurrent_bounded_queue<int32> m_idxQueue;
+		//MPSCStack<int32_t> m_idxStack;
 		//tbb::concurrent_bounded_queue<int32,StlAllocator64<int32>> m_idxQueue;
-		const IocpCore& m_iocpCore;
 		const SERVICE_TYPE m_eServiceType;
 		const NetAddress m_netAddr;
+		const int32_t m_maxSessionCount;
+		int32_t m_curNumOfSessions = 0;
 		const SessionFactory m_sessionFactory;
-		const int32 m_maxSessionCount;
-
+		const IocpCore& m_iocpCore;
 		template<typename T>
 		static const std::span<T> CreateDynamicSpan(const size_t size_)noexcept {
 			const auto arr_ptr = static_cast<T* const>(::_aligned_malloc(sizeof(T) * size_, alignof(T)));
@@ -85,7 +105,12 @@ namespace ServerCore
 		:public Service
 	{
 	public:
-		ClientService(const IocpCore& iocpCore_, NetAddress targetServerAddr_, SessionFactory factory_, c_int32 maxSessionCount_ = 1);
+		ClientService(
+			  const IocpCore& iocpCore_
+			, NetAddress targetServerAddr_
+			, SessionFactory factory_
+			, const Session::PacketHandleFunc* const global_packet_func
+			, c_int32 maxSessionCount_ = 1);
 		virtual ~ClientService();
 	public:
 		virtual bool Start()override;
@@ -103,11 +128,18 @@ namespace ServerCore
 		:public Service
 	{
 	public:
-		ServerService(const IocpCore& iocpCore_, NetAddress addr_, SessionFactory factory_, c_int32 maxSessionCount_ = 1);
+		ServerService(
+			  const IocpCore& iocpCore_
+			, NetAddress addr_
+			, SessionFactory factory_
+			, const Session::PacketHandleFunc* const global_packet_func
+			, c_int32 maxSessionCount_ = 1);
 		virtual ~ServerService();
 	public:
 		virtual bool Start()override;
 		virtual void CloseService()override;
+	public:
+		const auto& GetListener()const noexcept { return m_pListener; }
 	private:
 		const S_ptr<Listener> m_pListener;
 	};

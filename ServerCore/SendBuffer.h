@@ -8,7 +8,7 @@ namespace ServerCore
 {
 	class SendBufferChunk;
 
-	class SendBuffer
+	class SendBuffer final
 		:public RefCountable
 	{
 	public:

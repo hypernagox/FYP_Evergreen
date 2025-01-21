@@ -78,6 +78,4 @@ namespace ServerCore
 	static constexpr const size_t DEFAULT_MEM_POOL_SIZE = 128;
 
 	static constexpr const int32 NUM_OF_THREADS = 12;
-
-	static constexpr const int32_t PKT_LIMIT_COUNT = 3000;
 }

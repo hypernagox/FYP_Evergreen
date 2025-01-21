@@ -57,6 +57,7 @@ namespace ServerCore
 				return;
 			default:
 				// TODO 왜 여기로 왔는지 로그 찍기
+				PrintLogEndl(std::format("IOCP Error: {}", errCode));
 				break;
 			}
 		}

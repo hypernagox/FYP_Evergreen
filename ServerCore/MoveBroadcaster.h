@@ -70,10 +70,10 @@ namespace ServerCore
 		ServerCore::VectorSetUnsafe<std::pair<uint32_t,const ContentsEntity*>> m_view_list_session;
 		ServerCore::VectorSetUnsafe<const ContentsEntity*> m_view_list_npc;
 	private:
-		static inline HuristicFunc g_huristic[2] = {};
-		static inline PacketFunc g_create_add_pkt = {};
-		static inline S_ptr<SendBuffer>(*g_create_remove_pkt)(const uint32_t)noexcept;
-		static inline PacketFunc g_create_move_pkt = {};
+		constinit static inline HuristicFunc g_huristic[2] = {};
+		constinit static inline PacketFunc g_create_add_pkt = {};
+		constinit static inline S_ptr<SendBuffer>(*g_create_remove_pkt)(const uint32_t)noexcept;
+		constinit static inline PacketFunc g_create_move_pkt = {};
 	};
 }
 

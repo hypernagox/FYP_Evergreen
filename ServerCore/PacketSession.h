@@ -7,8 +7,8 @@ namespace ServerCore
 		:public Session
 	{
 	public:
-		PacketSession(const PacketHandleFunc* const sessionPacketHandler_)noexcept;
-		PacketSession(const PacketHandleFunc* const sessionPacketHandler_, const bool bNeedConnect)noexcept;
+		PacketSession()noexcept = default;
+		PacketSession(const bool bNeedConnect)noexcept;
 		virtual ~PacketSession()noexcept = default;
 		virtual const RecvStatus OnRecv(BYTE* const buffer, c_int32 len, const S_ptr<PacketSession>& pThisSessionPtr)noexcept override final;
 		template<typename T = PacketSession>

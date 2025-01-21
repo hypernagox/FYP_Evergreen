@@ -30,7 +30,7 @@ namespace ServerCore
 	public:
 		void Broadcast(const S_ptr<SendBuffer>& pkt_)const noexcept;
 	public:
-		const auto GetAllEntites()const noexcept { return m_vectorHashMapForEntity; }
+		const auto& GetAllEntites()const noexcept { return m_vectorHashMapForEntity; }
 		const auto& GetSessions()const noexcept { return m_vectorHashMapForEntity.data()->GetItemListRef(); }
 		std::span<VectorHashMap4IDUnsafe<uint32_t, ContentsEntity*>> GetEntitesExceptSession()const noexcept {
 			const auto b = m_vectorHashMapForEntity.data();

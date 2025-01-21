@@ -10,17 +10,17 @@
 #include "QuestSystem.h"
 
 std::atomic_int cnt = 0;
+static NagoxAtomic::Atomic<int> g_connect_count{ 0 };
 
 ClientSession::ClientSession() noexcept
-	:PacketSession{ ::c2s_PacketHandler::GetPacketHandlerList() }
 {
-	std::cout << ++cnt << std::endl;
+	std::cout << ++cnt << '\n';
 }
 
 ClientSession::~ClientSession()
 {
-	std::cout << "BYE" << std::endl;
-	std::cout << --cnt << std::endl;
+	ServerCore::PrintLogEndl("BYE");
+	std::cout << --cnt << '\n';
 }
 
 void ClientSession::OnConnected()
@@ -32,6 +32,9 @@ void ClientSession::OnConnected()
 	pOwner->AddComp<HP>()->InitHP(5);
 	pOwner->AddComp<PlayerDeath>();
 	pOwner->AddComp<QuestSystem>();
+
+	std::cout << ++g_connect_count << '\n';
+	ServerCore::PrintKoreaRealTime("Connect !", GetAddress().GetIpAddress());
 }
 
 void ClientSession::OnDisconnected(const ServerCore::Cluster* const curCluster_)noexcept
@@ -44,7 +47,8 @@ void ClientSession::OnDisconnected(const ServerCore::Cluster* const curCluster_)
 	//	const auto ptr = SharedFromThis<PacketSession>();
 	//	sector_ptr->BroadCastParallel(Create_s2c_REMOVE_OBJECT(GetSessionID()), temp, GetOwnerEntity());
 	//}
-	std::cout << "DisConnect !" << std::endl;
+	std::cout << --g_connect_count << '\n';
+	ServerCore::PrintKoreaRealTime("DisConnect !", GetAddress().GetIpAddress());
 	//std::cout << cnt << std::endl;
 	//Mgr(TaskTimerMgr)->ReserveAsyncTask(1000 + ServerCore::my_rand() % 1000, [e = GetOwnerEntity()->SharedFromThis()]() {
 	//	const auto ee = e->UseCount();

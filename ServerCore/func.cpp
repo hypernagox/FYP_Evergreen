@@ -23,6 +23,22 @@ namespace ServerCore
 		LocalFree(msg_buf);
 	}
 
+	void PrintKoreaRealTime(
+		  const std::string_view log_msg
+		, const std::wstring_view wlog_msg
+		, std::ostream* const stream)noexcept
+	{
+		if (!wlog_msg.empty()) PrintLogEndl(wlog_msg);
+		const auto now_time_t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		std::tm local_time{};
+		localtime_s(&local_time, &now_time_t);
+		char buffer[64];
+		const size_t offset = std::strftime(buffer, sizeof(buffer), "  %Y-%m-%d %H:%M:%S [LOG]: ", &local_time);
+		std::snprintf(buffer + offset, sizeof(buffer) - offset, "%.*s", static_cast<int>(log_msg.size()), log_msg.data());
+		if (stream)*stream << buffer << '\n';
+		else PrintLogEndl(buffer);
+	}
+
 	S_ptr<ContentsEntity> GetSessionEntity(const uint64_t sessionID_) noexcept
 	{
 		return Service::GetMainService()->GetSession(sessionID_);
@@ -49,30 +65,41 @@ namespace ServerCore
 
 	void LogStackTrace() noexcept
 	{
-		const int MaxFrames = 64;
+		std::ofstream os{ "..\\Crash_Dump.txt" };
+
+		constexpr const int MaxFrames = 64;
 		void* stack[MaxFrames];
-		USHORT frames = CaptureStackBackTrace(0, MaxFrames, stack, NULL);
+		const USHORT frames = CaptureStackBackTrace(0, MaxFrames, stack, NULL);
+		const auto cur_process = GetCurrentProcess();
 
-		SymInitialize(GetCurrentProcess(), NULL, TRUE);
+		SymInitialize(cur_process, NULL, TRUE);
 
-		SYMBOL_INFO* symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
+		SYMBOL_INFO* const symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
 		symbol->MaxNameLen = 255;
 		symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 
-		for (USHORT i = 0; i < frames; i++)
+		for (USHORT i = 0; i < frames; ++i)
 		{
-			::SymFromAddr(GetCurrentProcess(), (DWORD64)(stack[i]), 0, symbol);
+			::SymFromAddr(cur_process, (DWORD64)(stack[i]), 0, symbol);
 			std::cout << i << ": " << symbol->Name << " - 0x" << std::hex << symbol->Address << std::dec << std::endl;
+			os << i << ": " << symbol->Name << " - 0x" << std::hex << symbol->Address << std::dec << std::endl;
 		}
 
+		PrintKoreaRealTime({}, {}, &os);
+
 		free(symbol);
-		SymCleanup(GetCurrentProcess());
+		SymCleanup(cur_process);
 	}
 
 	const uint32 GetCurThreadIdx() noexcept
 	{
 		constinit extern thread_local uint32_t LThreadId;
 		return LThreadId - 1;
+	}
+
+	void ReturnSession(Session* const pSession) noexcept
+	{
+		const_cast<Service* const>(Service::GetMainService())->ReturnSession(pSession);
 	}
 
 	S_ptr<SendBuffer> CreateHeartBeatSendBuffer(const HEART_BEAT eHeartBeatType_) noexcept

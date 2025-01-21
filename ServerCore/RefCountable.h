@@ -28,11 +28,11 @@ namespace ServerCore
 			static_assert(false == std::same_as<std::decay_t<T>, RefCountable>);
 			const int32_t old_count = InterlockedDecrement(&m_refCount);
 			if (0 == old_count) {
-				if constexpr (std::same_as<std::remove_cv_t<T>, ContentsEntity>)
-					aligned_xdelete_sized<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), sizeof(ContentsEntity), alignof(ContentsEntity));
-				else if constexpr (std::derived_from<std::remove_cv_t<T>, Session>)
-					aligned_xdelete<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), alignof(T));
-				else
+				//if constexpr (std::same_as<std::remove_cv_t<T>, ContentsEntity>)
+				//	aligned_xdelete_sized<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), sizeof(ContentsEntity), alignof(ContentsEntity));
+				//else if constexpr (std::derived_from<std::remove_cv_t<T>, Session>)
+				//	aligned_xdelete<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), alignof(T));
+				//else
 					xdelete<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)));
 			}
 			NAGOX_ASSERT(0 <= old_count);
@@ -179,6 +179,8 @@ namespace ServerCore
 
 	template<typename T, typename... Args> requires std::derived_from<T, RefCountable>
 	constexpr inline S_ptr<T> MakeSharedAligned(Args&&... args)noexcept {
+		static_assert(false == std::derived_from<std::decay_t<T>, Session>);
+		static_assert(false == std::derived_from<std::decay_t<T>, ContentsEntity>);
 		return S_ptr<T>{reinterpret_cast<const uint64_t>(aligned_xnew<T>(std::forward<Args>(args)...))};
 	}
 
@@ -191,39 +193,50 @@ namespace ServerCore
 	class AtomicS_ptr
 	{
 	public:
+		constexpr ~AtomicS_ptr()noexcept { if (m_ptr)m_ptr->RefCountable::DecRef<T>(); }
+	public:
 		template <typename U>
 		void store(const S_ptr<U>& p)noexcept {
+			const auto other_ptr = static_cast<U* const>(p.m_count_ptr);
+			if (other_ptr)other_ptr->IncRef();
 			m_srwLock.lock();
-			m_ptr = p;
+			const auto prev_ptr = m_ptr;
+			m_ptr = other_ptr;
 			m_srwLock.unlock();
+			if (prev_ptr)prev_ptr->RefCountable::DecRef<T>();
 		}
 		template <typename U>
 		void store(S_ptr<U>&& p)noexcept {
+			const auto other_ptr = static_cast<U* const>(p.m_count_ptr);
 			m_srwLock.lock();
-			m_ptr.swap(p);
+			const auto prev_ptr = m_ptr;
+			m_ptr = other_ptr;
 			m_srwLock.unlock();
-			if (p.m_count_ptr) {
-				p.m_count_ptr->DecRef<T>();
-				p.m_count_ptr = nullptr;
-			}
+			if (prev_ptr && prev_ptr != other_ptr)prev_ptr->RefCountable::DecRef<T>();
+			p.m_count_ptr = nullptr;
 		}
 		S_ptr<T> load()const noexcept {
 			m_srwLock.lock_shared();
-			S_ptr<T> temp{ m_ptr };
+			const uint64_t temp = reinterpret_cast<const uint64_t>(m_ptr);
+			if (temp)reinterpret_cast<T* const>(temp)->IncRef();
 			m_srwLock.unlock_shared();
-			return temp;
+			return S_ptr<T>{temp};
 		}
 		void reset()noexcept {
 			m_srwLock.lock();
-			m_ptr.reset();
+			const auto prev_ptr = m_ptr;
+			m_ptr = nullptr;
 			m_srwLock.unlock();
+			prev_ptr->RefCountable::DecRef<T>(); // 현재는 nullptr이 아님을 확신하고있음
 		}
 		void store(std::nullptr_t)noexcept { reset(); }
 		operator S_ptr<T>()const noexcept { return load(); }
 	private:
 		mutable SRWLock m_srwLock;
-		S_ptr<T> m_ptr;
+		T* m_ptr = nullptr;
 	};
+
+	class alignas(8) PadByte { alignas(8) int64_t pad[7]; };
 }
 
 namespace std {

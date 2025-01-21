@@ -37,7 +37,7 @@ namespace ServerCore
 	protected:
 		virtual const ServerCore::TIMER_STATE TimerUpdate()noexcept = 0;
 	private:
-		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept override;
+		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept override final;
 		const bool TryExecuteTimerInternal(const uint32_t awaker_id)noexcept;
 		void Tick(S_ptr<ContentsEntity>* const owner_entity)noexcept;
 	protected:

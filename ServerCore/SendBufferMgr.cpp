@@ -47,5 +47,5 @@ namespace ServerCore
 		return LSendBufferChunk->Open(size_);
 	}
 
-	SendBufferChunk* const SendBufferMgr::Pop()noexcept { return xnew<SendBufferChunk>(); }
+	SendBufferChunk* const SendBufferMgr::Pop()noexcept { return aligned_xnew<SendBufferChunk>(); }
 }

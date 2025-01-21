@@ -65,47 +65,4 @@ namespace ServerCore
 	private:
 		Node* volatile m_top = nullptr;
 	};
-
-	template<typename T>
-	class MPSCBoundedStack
-	{
-
-	public:
-		MPSCBoundedStack(const LONG size_)noexcept
-			: m_arrStack{ (T*)Memory::AlignedAlloc(sizeof(T) * size_,64) }
-			, m_maxSize{ size_ }
-			, m_curTop{ -1 }
-		{
-			std::ranges::fill(m_arrStack, m_arrStack + m_maxSize, T{});
-		}
-		~MPSCBoundedStack()noexcept {
-			std::ranges::destroy(m_arrStack, m_arrStack + m_maxSize);
-			Memory::AlignedFree(m_arrStack, 64);
-		}
-	public:
-		template <typename... Args>
-		void emplace(Args&&... args) noexcept {
-			T value{ std::forward<Args>(args)... };
-			m_arrStack[InterlockedIncrement(&m_curTop)] = std::move(value);
-		}
-		const bool try_pop_single(T& target)noexcept {
-			for (;;)
-			{
-				const auto curTop = m_curTop;
-				if (-1 == curTop)return false;
-				auto temp = m_arrStack[curTop];
-				if (curTop != m_curTop)continue;
-				if (curTop == InterlockedCompareExchange(&m_curTop, curTop - 1, curTop))
-				{
-					target = std::move(temp);
-					return true;
-				}
-			}
-		}
-		const bool empty_single()const noexcept { return -1 == m_curTop; }
-	private:
-		alignas(8) const LONG m_maxSize;
-		alignas(8) volatile LONG m_curTop = -1;
-		alignas(8) T* const m_arrStack;
-	};
 }

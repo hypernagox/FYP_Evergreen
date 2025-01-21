@@ -154,6 +154,9 @@
     <Filter Include="Manager\Benchmarker">
       <UniqueIdentifier>{27404f53-4c98-45e9-9995-01ba85374175}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\struct\LockFreeDS">
+      <UniqueIdentifier>{a11c09b3-db0d-4a48-ab98-41a4e751d9e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -330,9 +333,6 @@
     <ClInclude Include="LinkedHashMap.hpp">
       <Filter>Utils\struct\CustomDS</Filter>
     </ClInclude>
-    <ClInclude Include="MPSCQueue.hpp">
-      <Filter>Utils\struct\CustomDS</Filter>
-    </ClInclude>
     <ClInclude Include="SlimLinkedHashMap.hpp">
       <Filter>Utils\struct\CustomDS</Filter>
     </ClInclude>
@@ -380,6 +380,12 @@
     </ClInclude>
     <ClInclude Include="Benchmarker.h">
       <Filter>Manager\Benchmarker</Filter>
+    </ClInclude>
+    <ClInclude Include="MPSCQueue.hpp">
+      <Filter>Utils\struct\LockFreeDS</Filter>
+    </ClInclude>
+    <ClInclude Include="MPSCStack.hpp">
+      <Filter>Utils\struct\LockFreeDS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

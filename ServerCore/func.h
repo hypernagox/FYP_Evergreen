@@ -46,6 +46,11 @@ namespace ServerCore
 	}
 	static inline float my_frand()noexcept { return static_cast<float>(my_rand()); }
 
+	void PrintKoreaRealTime(
+		  const std::string_view log_msg = {}
+		, const std::wstring_view wlog_msg = {}
+		, std::ostream* const stream = nullptr)noexcept;
+		
 	S_ptr<ContentsEntity> GetSessionEntity(const uint64_t sessionID_)noexcept;
 	std::pair<const Session* const, S_ptr<ContentsEntity>> GetSessionAndEntity(const uint64_t sessionID_)noexcept;
 
@@ -54,9 +59,14 @@ namespace ServerCore
 
 	void PrintError(const char* const msg, const int err_no)noexcept;
 	
+	inline void PrintLogEndl(const std::string_view log_msg)noexcept { printf("%s\n", log_msg.data()); }
+	inline void PrintLogEndl(const std::wstring_view log_msg)noexcept { wprintf(L"%s\n", log_msg.data()); }
+	
 	void LogStackTrace()noexcept;
 
 	const uint32 GetCurThreadIdx()noexcept;
+
+	void ReturnSession(Session* const pSession)noexcept;
 
 	template<typename T>
 	class AllocateSharedSizeTrait

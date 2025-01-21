@@ -3,7 +3,7 @@
 
 namespace ServerCore
 {
-	extern thread_local Vector<WSABUF> wsaBufs;
+	//extern thread_local Vector<WSABUF> wsaBufs;
 
     void DBPacketSender::Init() noexcept
     {
@@ -29,9 +29,9 @@ namespace ServerCore
 
     void DBPacketSender::RegisterDBPacket() noexcept
     {
-		extern thread_local Vector<WSABUF> wsaBufs;
-
-		m_sendQueue.try_flush_single(m_sendVec);
+		//extern thread_local Vector<WSABUF> wsaBufs;
+		//
+		//m_sendQueue.try_flush_single(m_sendVec);
 
 		const auto num = m_sendVec.size();
 

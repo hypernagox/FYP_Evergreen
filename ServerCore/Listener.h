@@ -15,6 +15,7 @@ namespace ServerCore
 	class Listener
 		:public IocpObject
 	{
+		friend class Service;
 	public:
 		Listener();
 		~Listener();
@@ -31,7 +32,7 @@ namespace ServerCore
 		void ProcessAccept(S_ptr<class PacketSession> pSession, AcceptEvent* const acceptEvent)noexcept;
 	protected:
 		SOCKET m_socket = INVALID_SOCKET; // 辑滚率 府郊家南
-		std::vector<std::shared_ptr<AcceptEvent>> m_vecAcceptEvent;
+		std::shared_ptr<AcceptEvent> m_acceptEvent;
 		ServerService* m_pServerService = nullptr;
 
 		std::atomic_bool m_bCanAccept = true;

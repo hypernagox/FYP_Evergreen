@@ -203,6 +203,7 @@
     <ClInclude Include="DBPacket.h" />
     <ClInclude Include="DBPacketSender.h" />
     <ClInclude Include="Field.h" />
+    <ClInclude Include="MPSCStack.hpp" />
     <ClInclude Include="NagoxAtomic.h" />
     <ClInclude Include="Queueabler.h" />
     <ClInclude Include="EBR.hpp" />

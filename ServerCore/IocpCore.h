@@ -19,9 +19,13 @@ namespace ServerCore
 
 		HANDLE GetIocpHandle()const noexcept { return m_iocpHandle; }
 
-		template <typename T> // 클라 입장시 iocp에 등록
+		template <typename T> requires std::derived_from<std::decay_t<T>,IocpObject>
 		const bool RegisterIOCP(const T* const handleObject_, const uint64 iocpKey_ = 0)const noexcept{
-			return ::CreateIoCompletionPort(handleObject_->GetHandle(), m_iocpHandle, (ULONG_PTR)(iocpKey_), 0);
+			if constexpr (std::derived_from<std::decay_t<T>, Session>)
+				return ::CreateIoCompletionPort((HANDLE)handleObject_->GetSocket(), m_iocpHandle, (ULONG_PTR)(iocpKey_), 0);
+
+			else
+				return ::CreateIoCompletionPort(handleObject_->GetHandle(), m_iocpHandle, (ULONG_PTR)(iocpKey_), 0);
 		}
 		static void Dispatch(const HANDLE iocpHandle_)noexcept; // gqcs로 일감을 빼내서 일을 처리하는 스레드함수
 	private:

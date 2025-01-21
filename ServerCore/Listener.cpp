@@ -43,14 +43,14 @@ namespace ServerCore
 		if (false == SocketUtils::Listen(m_socket))
 			return false;
 
+		// Accept하는 스레드는 반드시 하나로 보장해야함
 		constexpr const int32 acceptCount = 1;
 
 		for (int i = 0; i < acceptCount; ++i)
 		{
-			auto acceptEvent = MakeSharedSTD<AcceptEvent>();
-			acceptEvent->SetIocpObject(SharedFromThis<IocpObject>());
-			RegisterAccept(acceptEvent.get());
-			m_vecAcceptEvent.emplace_back(std::move(acceptEvent));
+			m_acceptEvent = MakeSharedSTD<AcceptEvent>();
+			m_acceptEvent->SetIocpObject(SharedFromThis<IocpObject>());
+			RegisterAccept(m_acceptEvent.get());
 		}
 
 		return true;
@@ -65,10 +65,17 @@ namespace ServerCore
 
 	void Listener::FinishServer() noexcept
 	{
-		for (auto& accepts : m_vecAcceptEvent)
+		//for (auto& accepts : m_vecAcceptEvent)
+		//{
+		//	const auto session = accepts->ReleaseSession();
+		//	//::closesocket(session->GetSocket());
+		//	aligned_xdelete_sized<ContentsEntity>(session->GetOwnerEntity(), sizeof(ContentsEntity), alignof(ContentsEntity));
+		//	accepts->ReleaseIocpObject();
+		//}
+		if (const auto session = m_acceptEvent->ReleaseSession())
 		{
-			aligned_xdelete_sized<ContentsEntity>(accepts->ReleaseSession()->GetOwnerEntity(), sizeof(ContentsEntity), alignof(ContentsEntity));
-			accepts->ReleaseIocpObject();
+			session->GetOwnerEntity()->DecRef();
+			m_acceptEvent->ReleaseIocpObject();
 		}
 	}
 
@@ -86,9 +93,28 @@ namespace ServerCore
 			return;
 
 		acceptEvent->Init();
-		const S_ptr<Session>& session = acceptEvent->RegisterSession(m_pServerService->CreateSession());
+
+		const S_ptr<Session>& session = acceptEvent->RegisterSession(m_pServerService->PopSession());
+
+		if (!session)
+		{
+			m_bCanAccept.store(false);
+			if (false == m_pServerService->IsSessionPoolEmpty() && false == m_bCanAccept.exchange(true))
+			{
+				if (Mgr(ThreadMgr)->GetStopFlagRef())
+					return;
+				else
+					goto RETRY_ACCEPT;
+			}
+			else
+			{
+				std::cout << "Server Is Full or Fail to CreateSession\n";
+				return;
+			}
+		}
 
 		//DWORD bytesReceived;
+
 		if (false == SocketUtils::AcceptEx(m_socket, session->GetSocket(), session->m_pRecvBuffer->WritePos(), 0,
 			sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, NULL, acceptEvent->GetOverlappedAddr()))
 		{
@@ -96,8 +122,13 @@ namespace ServerCore
 			if (errCode != WSA_IO_PENDING)
 			{
 				// 일단 다시 Accept (입질이 왔는데 뭔가 문제가있음)
-				aligned_xdelete_sized<ContentsEntity>(acceptEvent->ReleaseSession()->GetOwnerEntity(), sizeof(ContentsEntity), alignof(ContentsEntity));
-				goto RETRY_ACCEPT;
+				PrintLogEndl(std::format("Accept Error: {}", errCode));
+				xdelete<ContentsEntity>(acceptEvent->ReleaseSession()->GetOwnerEntity());
+				Sleep(5000);
+				if (Mgr(ThreadMgr)->GetStopFlagRef())
+					return;
+				else
+					goto RETRY_ACCEPT;
 			}
 		}
 	}
@@ -115,14 +146,14 @@ namespace ServerCore
 
 		if (false == SocketUtils::SetUpdateAcceptSocket(sessionSocket, m_socket))
 		{
-			aligned_xdelete_sized<ContentsEntity>(session_ptr->GetOwnerEntity(), sizeof(ContentsEntity), alignof(ContentsEntity));
+			xdelete<ContentsEntity>(session_ptr->GetOwnerEntity());
 			RegisterAccept(acceptEvent);
 			return;
 		}
 
 		if (false == SocketUtils::SetTcpNoDelay(sessionSocket, true))
 		{
-			aligned_xdelete_sized<ContentsEntity>(session_ptr->GetOwnerEntity(), sizeof(ContentsEntity), alignof(ContentsEntity));
+			xdelete<ContentsEntity>(session_ptr->GetOwnerEntity());
 			RegisterAccept(acceptEvent);
 			return;
 		}
@@ -131,7 +162,7 @@ namespace ServerCore
 		int32 sizeOfSockAddr = sizeof(sockAddress);
 		if (SOCKET_ERROR == ::getpeername(sessionSocket, reinterpret_cast<SOCKADDR* const>(&sockAddress), &sizeOfSockAddr))
 		{
-			aligned_xdelete_sized<ContentsEntity>(session_ptr->GetOwnerEntity(), sizeof(ContentsEntity), alignof(ContentsEntity));
+			xdelete<ContentsEntity>(session_ptr->GetOwnerEntity());
 			RegisterAccept(acceptEvent);
 			return;
 		}

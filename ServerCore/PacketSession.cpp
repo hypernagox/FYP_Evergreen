@@ -3,19 +3,15 @@
 
 namespace ServerCore
 {
-	PacketSession::PacketSession(const PacketHandleFunc* const sessionPacketHandler_)noexcept
-		:Session{ sessionPacketHandler_ }
-	{
-	}
-
-	PacketSession::PacketSession(const PacketHandleFunc* const sessionPacketHandler_, const bool bNeedConnect) noexcept
-		:Session{ sessionPacketHandler_ ,bNeedConnect }
+	PacketSession::PacketSession(const bool bNeedConnect) noexcept
+		:Session{ bNeedConnect }
 	{
 	}
 
 	const RecvStatus PacketSession::OnRecv(BYTE* const buffer, c_int32 len, const S_ptr<PacketSession>& pThisSessionPtr)noexcept
 	{
-		const PacketHandleFunc* const __restrict packet_handler = m_sessionPacketHandler;
+		const PacketHandleFunc* const __restrict packet_handler = g_sessionPacketHandler;
+
 		int32 processLen = 0;
 		bool bIsOk = true;
 		for (;;)

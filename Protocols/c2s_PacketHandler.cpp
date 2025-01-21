@@ -17,8 +17,10 @@
 
 using namespace ServerCore;
 
+thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
+
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
-	thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
+	extern thread_local flatbuffers::FlatBufferBuilder buillder;
 	return &buillder;
 }
 
@@ -56,7 +58,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	//	, s
 	//	, entity
 	//);
-	std::cout << "enter" << std::endl;
+	ServerCore::PrintLogEndl("enter");
 	//auto pbuff = Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER);
 	//Mgr(WorldMgr)->GetWorld(0)->GetSector({ 0,0 })->BroadCastEnqueue(std::move(pbuff));
 	//

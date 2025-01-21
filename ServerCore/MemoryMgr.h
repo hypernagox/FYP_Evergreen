@@ -106,56 +106,69 @@ namespace ServerCore
 		}
 	};
 
-	template<typename T, typename... Args>
+	template<typename T, typename... Args> requires (alignof(T) <= 8)
 	constexpr inline T* const xnew(Args&&... args)noexcept{
+		static_assert(alignof(T) <= 8);
 		return new (Memory::Alloc(sizeof(T))) T(std::forward<Args>(args)...);
 	}
 
-	template<typename T, typename... Args>
+	template<typename T, typename... Args> requires (alignof(T) > 8)
 	constexpr inline T* const aligned_xnew(Args&&... args)noexcept {
+		static_assert(alignof(T) > 8);
 		return new (Memory::AlignedAlloc(sizeof(T), alignof(T))) T(std::forward<Args>(args)...);
 	}
 
 	template<typename T>
 	constexpr inline void xdelete(T* const obj_ptr)noexcept{
-		if constexpr (!std::is_trivially_destructible_v<T>)
+		static_assert(std::same_as<std::decay_t<T>, SendBufferChunk> || alignof(T) <= 8);
+		static_assert(alignof(SendBufferChunk) > 8);
+		if constexpr (std::derived_from<std::decay_t<T>, Session>)
+			return ReturnSession(obj_ptr);
+		else if constexpr (std::same_as<std::decay_t<T>, SendBufferChunk>)
+			return Memory::AlignedFree(obj_ptr, alignof(SendBufferChunk));
+		else if constexpr (!std::is_trivially_destructible_v<T>)
 			obj_ptr->~T(); 
 		Memory::Free(obj_ptr);
 	}
 
-	template<typename T>
+	template<typename T> requires (alignof(T) > 8)
 	constexpr inline void aligned_xdelete(T* const obj_ptr, const size_t align_val)noexcept {
+		static_assert(alignof(T) > 8);
 		if constexpr (!std::is_trivially_destructible_v<T>)
 			obj_ptr->~T();
 		Memory::AlignedFree(obj_ptr, align_val);
 	}
 
-	template<typename T>
+	template<typename T> requires (alignof(T) <= 8)
 	constexpr inline void xdelete_sized(T* const obj_ptr, const uint32_t obj_size)noexcept {
-		if constexpr (!std::is_trivially_destructible_v<T>)
+		static_assert(alignof(T) <= 8);
+		if constexpr (std::derived_from<std::decay_t<T>, Session>)
+			return ReturnSession(obj_ptr);
+		else if constexpr (!std::is_trivially_destructible_v<T>)
 			obj_ptr->~T(); 
 		Memory::Free_Sized(obj_ptr, obj_size);
 	}
 
-	template<typename T>
+	template<typename T> requires (alignof(T) > 8)
 	constexpr inline void aligned_xdelete_sized(T* const obj_ptr, const uint32_t obj_size, const size_t align_val)noexcept {
+		static_assert(alignof(T) > 8);
 		if constexpr (!std::is_trivially_destructible_v<T>)
 			obj_ptr->~T(); 
 		Memory::AlignedFree_Sized(obj_ptr, obj_size, align_val);
 	}
 
-	template<typename T, typename... Args>
+	template<typename T, typename... Args> requires (false == std::derived_from<std::decay_t<T>,RefCountable>)
 	constexpr inline std::shared_ptr<T> MakeSharedSTD(Args&&... args)noexcept{
 		return std::allocate_shared<T>(StlAllocator<T>{}, std::forward<Args>(args)...);
 	}
 
-	template <typename T, typename... Args>
+	template <typename T, typename... Args> requires (false == std::derived_from<std::decay_t<T>, RefCountable>)
 	constexpr inline U_ptr<T> MakeUnique(Args&&... args)noexcept
 	{
 		return std::unique_ptr<T, UDeleter<T>>{xnew<T>(std::forward<Args>(args)...), UDeleter<T>{}};
 	}
 
-	template <typename T, typename... Args>
+	template <typename T, typename... Args> requires (false == std::derived_from<std::decay_t<T>, RefCountable>)
 	constexpr inline Us_ptr<T> MakeUniqueSized(Args&&... args)noexcept
 	{
 		return std::unique_ptr<T, USDeleter<T>>{xnew<T>(std::forward<Args>(args)...), USDeleter<T>{}};

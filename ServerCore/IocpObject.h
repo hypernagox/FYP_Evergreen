@@ -87,7 +87,7 @@ namespace ServerCore
 
 	extern Cluster* const GetCluster(const ClusterInfo info)noexcept;
 
-	class alignas(64) ContentsEntity final
+	class ContentsEntity final
 		:public IocpObject
 	{
 	public:
@@ -178,6 +178,7 @@ namespace ServerCore
 		void PostEntityTask(Task&& task_)const noexcept;
 		void OnDestroy()noexcept;
 	private:
+		PadByte pad;
 		PacketSession* const m_pSession = nullptr;
 		const EntityInfo m_entity_info;
 		class ComponentSystem* const m_componentSystem;
@@ -188,7 +189,7 @@ namespace ServerCore
 	};
 
 	template <typename T, typename U> requires std::is_enum_v<T> && std::is_enum_v<U> && (sizeof(uint8_t) == sizeof(T)) && (sizeof(uint8_t) == sizeof(U))
-	static constexpr inline S_ptr<ContentsEntity> CreateContentsEntity(const T primary_group_type, const U detail_type)noexcept { return MakeSharedAligned<ContentsEntity>(static_cast<const uint8_t>(primary_group_type), static_cast<const uint8_t>(detail_type)); }
+	static constexpr inline S_ptr<ContentsEntity> CreateContentsEntity(const T primary_group_type, const U detail_type)noexcept { return MakeShared<ContentsEntity>(static_cast<const uint8_t>(primary_group_type), static_cast<const uint8_t>(detail_type)); }
 
 	class IocpComponent
 	{

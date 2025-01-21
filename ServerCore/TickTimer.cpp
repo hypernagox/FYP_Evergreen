@@ -93,6 +93,7 @@ namespace ServerCore
 
 const ServerCore::TIMER_STATE TickTimerBT::TimerUpdate() noexcept
 {
+	DO_BENCH_GLOBAL_THIS_FUNC;
 	const auto awaker_ptr = ServerCore::Service::GetMainService()->GetSession(m_curAwakerID);
 	// TODO: 섹터 이동
 	const auto pOwnerEntity = GetOwnerEntity();

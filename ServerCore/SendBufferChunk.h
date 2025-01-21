@@ -8,7 +8,7 @@ namespace ServerCore
 {
 	class SendBuffer;
 
-	class SendBufferChunk
+	class alignas(64) SendBufferChunk final
 		:public RefCountable
 	{
 		friend class SendBufferMgr;

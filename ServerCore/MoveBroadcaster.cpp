@@ -9,12 +9,12 @@
 
 namespace ServerCore
 {
-	thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_session(512);
+	thread_local VectorSetUnsafe<std::pair<uint32_t,const ContentsEntity*>> new_view_list_session(512);
 	thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_npc(512);
 
 	void MoveBroadcaster::BroadcastMove() noexcept
 	{
-		extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_session;
+		extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
 		extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_npc;
 		
 		const auto pOwnerEntity = GetOwnerEntityRaw();
@@ -35,6 +35,9 @@ namespace ServerCore
 		
 		const auto huristic_func = g_huristic;
 		
+		auto& new_session_list = new_view_list_session.GetItemListRef();
+		auto& new_npc_list = new_view_list_npc.GetItemListRef();
+
 		for (const Cluster* const cluster : clusters)
 		{
 			const auto& entities = cluster->GetAllEntites();
@@ -44,15 +47,17 @@ namespace ServerCore
 				const auto& sessions = (*b++).GetItemListRef();
 				auto b = sessions.data();
 				const auto e = b + sessions.size();
+				new_session_list.clear();
 				while (e != b)
 				{
 					const ContentsEntity* const entity_ptr = (*b++);
-					if (huristic_func[0](pOwnerEntity, entity_ptr))
+					if ((*huristic_func)(pOwnerEntity, entity_ptr))
 					{
-						new_view_list_session.AddItem(entity_ptr);
+						new_view_list_session.AddItem(std::make_pair(entity_ptr->GetObjectID(), entity_ptr));
 					}
 				}
 			}
+			new_npc_list.clear();
 			while (e != b)
 			{
 				const auto& entities = (*b++).GetItemListRef();
@@ -69,20 +74,18 @@ namespace ServerCore
 			}
 		}
 
-		new_view_list_session.EraseItem(pOwnerEntity);
+		new_view_list_session.EraseItem(std::make_pair(obj_id, pOwnerEntity));
 
 		{
-			const auto& new_session_list = new_view_list_session.GetItemListRef();
 			auto b = new_session_list.data();
 			const auto e = b + new_session_list.size();
 			while (e != b)
 			{
-				const ContentsEntity* const entity_ptr = (*b++);
-				const auto id = entity_ptr->GetObjectID();
-				const auto pSession = entity_ptr->GetSession();
-				if (m_view_list_session.AddItem(std::make_pair(id, entity_ptr)))
+				const auto& id_ptr = (*b++);
+				const auto pSession = id_ptr.second->GetSession();
+				if (m_view_list_session.AddItem(id_ptr))
 				{
-					thisSession->SendAsync(add_pkt_func(entity_ptr));
+					thisSession->SendAsync(add_pkt_func(id_ptr.second));
 
 					pSession->SendAsync(add_pkt);
 				}
@@ -97,9 +100,9 @@ namespace ServerCore
 			auto& view_list_session = m_view_list_session.GetItemListRef();
 			for (auto iter = view_list_session.begin(); iter != view_list_session.end();)
 			{
-				const auto id_ptr = *iter;
+				const auto& id_ptr = *iter;
 
-				if (!new_view_list_session.TryEraseItem(id_ptr.second))
+				if (!new_view_list_session.TryEraseItem(id_ptr))
 				{
 					iter = m_view_list_session.EraseItemAndGetIter(id_ptr);
 
@@ -116,7 +119,6 @@ namespace ServerCore
 		}
 	
 		{
-			const auto& new_npc_list = new_view_list_npc.GetItemListRef();
 			auto b = new_npc_list.data();
 			const auto e = b + new_npc_list.size();
 			while (e != b)
@@ -153,10 +155,14 @@ namespace ServerCore
 	}
 	void MoveBroadcaster::BroadcastPacket(const S_ptr<SendBuffer>& pSendBuff_) const noexcept
 	{
+		const auto g_main_server = ServerService::GetMainService();
 		const auto& session_list = m_view_list_session.GetItemListRef();
 		auto b = session_list.data();
 		const auto e = b + session_list.size();
-		while (e != b) { (*b++).second->GetSession()->SendAsync(pSendBuff_); }
+		while (e != b) { 
+			if (const auto entity = g_main_server->GetSession((*b++).first))
+				entity->GetSession()->SendAsync(pSendBuff_);
+		}
 	}
 	Vector<S_ptr<ContentsEntity>> MoveBroadcaster::GetSptrSession() const noexcept
 	{

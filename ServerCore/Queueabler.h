@@ -36,7 +36,7 @@ namespace ServerCore
 				Task(memFunc, static_cast<T* const>(memFuncInst_), std::move(args)...));
 		}
 	protected:
-		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept override;
+		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept override final;
 	private:
 		template <typename Func, typename... Args>
 		void EnqueueAsyncTaskPushOnly(Func&& fp, Args&&... args)noexcept;

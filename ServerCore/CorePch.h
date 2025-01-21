@@ -63,6 +63,7 @@
 #include "SpinLock.hpp"
 #include "SRWLock.hpp"
 #include "MPSCQueue.hpp"
+#include "MPSCStack.hpp"
 #include "ConcurrentHash.hpp"
 #include "PacketHeader.h"
 #include "TaskQueueable.h"

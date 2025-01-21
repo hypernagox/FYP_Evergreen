@@ -27,7 +27,7 @@ namespace ServerCore
 	public:
 		using value_type = T;
 
-		constexpr StlAllocator()noexcept {}
+		constexpr StlAllocator()noexcept = default;
 
 		template<typename Other>
 		StlAllocator(const StlAllocator<Other>&) {}
@@ -47,7 +47,7 @@ namespace ServerCore
 	public:
 		using value_type = T;
 
-		constexpr StlAllocator64()noexcept {}
+		constexpr StlAllocator64()noexcept = default;
 
 		template<typename Other>
 		StlAllocator64(const StlAllocator64<Other>&) {}

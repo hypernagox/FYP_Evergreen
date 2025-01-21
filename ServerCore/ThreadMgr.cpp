@@ -25,9 +25,8 @@ namespace ServerCore
 	constinit thread_local moodycamel::ProducerToken* LPro_tokenGlobalTask;
 	constinit thread_local moodycamel::ConsumerToken* LCon_tokenGlobalTask;
 
-	extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_session;
+	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
 	extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_npc;
-	extern thread_local Vector<WSABUF> wsaBufs;
 
 	constinit extern thread_local Vector<const ContentsEntity*>* LVectorForTempCopy;
 
@@ -63,6 +62,8 @@ namespace ServerCore
 		g_destroyTLSCallBack.swap(destroyTLSCallBack);
 		m_threads.reserve(num_of_threads);
 
+		NAGOX_ASSERT_LOG(nullptr != Session::GetGlobalSessionPacketHandleFunc(), "Session PacketHandle Func Not Init");
+
 		for (int i = 0; i < num_of_threads; ++i)
 		{
 			m_threads.emplace_back(&ThreadMgr::WorkerThreadFunc);
@@ -93,7 +94,7 @@ namespace ServerCore
 		if (SERVICE_TYPE::SERVER == main_service->GetServiceType())
 		{
 			NAGOX_ASSERT(ThreadMgr::NUM_OF_THREADS == num_of_threads);
-			static std::atomic_bool registerFinish = false;
+			constinit static std::atomic_bool registerFinish = false;
 			while (!m_bStopRequest)
 			{
 				std::cin >> strFin;
@@ -144,16 +145,17 @@ namespace ServerCore
 		thread_local moodycamel::ConsumerToken con_token{ m_globalTask };
 		LCon_tokenGlobalTask = &con_token;
 
-		thread_local ServerCore::Vector<const ContentsEntity*> copy_vec;
-		
-		LVectorForTempCopy = &copy_vec;
+		LVectorForTempCopy = &new_view_list_npc.GetItemListRef();
 
 		if (NUM_OF_THREADS >= LThreadId && 0 < LThreadId) 
 		{
 			{
+				NAGOX_ASSERT_LOG(nullptr != Session::GetGlobalSessionPacketHandleFunc(), "Session PacketHandle Func Not Init");
+			}
+
+			{
 				new_view_list_session.clear_unsafe();
 				new_view_list_npc.clear_unsafe();
-				wsaBufs.clear();
 			}
 
 			LSendBufferChunk = SendBufferMgr::Pop();

@@ -7,7 +7,7 @@ extern Vector3 O_VEC3(const Nagox::Struct::Vec3* const v);
 extern Nagox::Struct::Vec3 F_VEC3(const Vector3& v);
 
 ServerSession::ServerSession()
-	:ServerCore::PacketSession{ s2c_DummyPacketHandler::GetPacketHandlerList(),true }
+	:ServerCore::PacketSession{ true }
 {
 }
 

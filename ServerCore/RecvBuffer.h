@@ -6,7 +6,7 @@
 
 namespace ServerCore
 {
-	class RecvBuffer
+	class alignas(64) RecvBuffer
 	{
 		enum { BUFFER_COUNT = 8 };
 	public:
@@ -19,6 +19,7 @@ namespace ServerCore
 		};
 
 		void Clear()noexcept;
+		void ResetBufferCursor()noexcept { m_readPos = m_writePos = 0; }
 		bool OnRead(c_int32 numOfBytes)noexcept
 		{
 			if (numOfBytes > DataSize()) [[unlikely]]

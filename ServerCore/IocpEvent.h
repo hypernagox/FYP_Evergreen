@@ -154,7 +154,7 @@ namespace ServerCore
 		RecvEvent
 	---------------*/
 
-	class alignas(64) RecvEvent
+	class RecvEvent
 		:public IOEvent
 	{
 	public:
@@ -166,14 +166,14 @@ namespace ServerCore
 		SendEvent
 	---------------*/
 
-	class alignas(64) SendEvent
+	class SendEvent
 		:public IOEvent
 	{
 	public:
 		SendEvent()noexcept :IOEvent{ EVENT_TYPE::SEND }, m_registerSendEvent{ EVENT_TYPE::REGISTER_SEND } {}
 		//~SendEvent()noexcept { xdelete_sized<IocpEvent>(m_registerSendEvent, sizeof(IocpEvent)); }
+		IocpEvent m_registerSendEvent;
 		Vector<S_ptr<SendBuffer>> m_sendBuffer;
-		alignas(64) IocpEvent m_registerSendEvent;
 	};
 
 	class ContentsEntityTask

@@ -12,6 +12,8 @@
 
 using namespace ServerCore;
 constexpr const int32_t NUM_OF_NPC = 10240;
+constexpr const int32_t NUM_OF_MAX_USER = 2002;
+
 extern std::vector<DirectX::BoundingBox> boxes;
 
 void InitTLSFunc()noexcept
@@ -28,7 +30,9 @@ void DestroyTLSFunc()noexcept
 int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
+	
+	ServerCore::PrintKoreaRealTime("Server Start !");
+	
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
 	NAVIGATION->Init();
@@ -42,7 +46,6 @@ int main()
 	
 	ServerCore::MoveBroadcaster::RegisterHuristicFunc2Session(ClusterPredicate::ClusterHuristicFunc2Session);
 	ServerCore::MoveBroadcaster::RegisterHuristicFunc2NPC(ClusterPredicate::ClusterHuristicFunc2NPC);
-	
 	
 	ServerCore::MoveBroadcaster::RegisterAddPacketFunc(ClusterPredicate::ClusterAddPacketFunc);
 	ServerCore::MoveBroadcaster::RegisterRemovePacketFunc(ClusterPredicate::ClusterRemovePacketFunc);
@@ -65,12 +68,13 @@ int main()
 		b.z = -10.0f;
 		Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(EntityFactory::CreateNPC(b));
 	}
-	const auto pServerService = std::make_unique<ServerCore::ServerService>
+	const auto pServerService = new ServerCore::ServerService
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
 			, ServerCore::NetAddress{ L"0.0.0.0",7777 }
-			, ServerCore::MakeSharedAligned<ClientSession>
-			, 5001
+			, ServerCore::xnew<ClientSession>
+			, c2s_PacketHandler::GetPacketHandlerList()
+			, NUM_OF_MAX_USER
 		);
 	
 	ASSERT_CRASH(pServerService->Start());

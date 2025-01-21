@@ -11,6 +11,7 @@
 #include "FieldMgr.h"
 #include "TimeMgr.h"
 #include "Benchmarker.h"
+#include "Service.h"
 
 namespace ServerCore
 {
@@ -27,6 +28,7 @@ namespace ServerCore
 	{
 		Mgr(BenchmarkMgr)->RegisterDestroy();
 
+		std::atexit([]() {delete Service::GetMainService(); });
 
 		Mgr(CoreGlobal)->RegisterDestroy();
 		Mgr(TimeMgr)->RegisterDestroy();
