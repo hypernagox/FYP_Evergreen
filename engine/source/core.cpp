@@ -939,24 +939,14 @@ namespace udsdx
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-		ImGui_ImplDX12_InitInfo initInfo = {};
-		initInfo.Device = m_d3dDevice.Get();
-		initInfo.CommandQueue = m_commandQueue.Get();
-		initInfo.NumFramesInFlight = FrameResourceCount;
-		initInfo.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-		initInfo.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
-		initInfo.SrvDescriptorHeap = m_srvHeap.Get();
-		initInfo.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) {
-			*out_cpu_handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetCPUDescriptorHandleForHeapStart()).Offset(*g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
-			*out_gpu_handle = CD3DX12_GPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetGPUDescriptorHandleForHeapStart()).Offset(*g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
-			*g_pSrvHeapSize += 1;
-			};
-		initInfo.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle) {
-			*g_pSrvHeapSize -= 1;
-			};
-
-		ImGui_ImplDX12_Init(&initInfo);
+		ImGui_ImplDX12_Init(
+			m_d3dDevice.Get(),
+			FrameResourceCount,
+			DXGI_FORMAT_R8G8B8A8_UNORM,
+			m_srvHeap.Get(),
+			CD3DX12_CPU_DESCRIPTOR_HANDLE(m_srvHeap->GetCPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize),
+			CD3DX12_GPU_DESCRIPTOR_HANDLE(m_srvHeap->GetGPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize)
+		);
 		ImGui_ImplWin32_Init(m_hMainWnd);
 	}
 
