@@ -47,6 +47,11 @@ namespace udsdx
 		bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		virtual bool OnResizeWindow(int width, int height);
 
+		void InitImGui();
+		void ImGuiNewFrame();
+		void ImGuiRender();
+		void ReleaseImGui();
+
 	public:
 		ID3D12Device* GetDevice() const;
 		ID3D12CommandQueue* GetCommandQueue() const;
@@ -206,6 +211,8 @@ namespace udsdx
 		UINT m_rtvDescriptorSize = 0;
 		UINT m_dsvDescriptorSize = 0;
 		UINT m_cbvSrvUavDescriptorSize = 0;
+
+		UINT m_srvHeapSize = 0;
 
 		std::unique_ptr<FrameDebug> m_frameDebug;
 		TracyD3D12Ctx m_tracyQueueCtx;

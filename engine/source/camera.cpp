@@ -21,8 +21,10 @@ namespace udsdx
 		scene.EnqueueRenderCamera(this);
 	}
 
-	D3D12_GPU_VIRTUAL_ADDRESS Camera::UpdateConstantBuffer(int frameResourceIndex, float aspect)
+	D3D12_GPU_VIRTUAL_ADDRESS Camera::UpdateConstantBuffer(int frameResourceIndex, float width, float height)
 	{
+		float aspect = width / height;
+
 		CameraConstants constants;
 		Matrix4x4 worldMat = GetTransform()->GetWorldSRTMatrix();
 		Matrix4x4 viewMat = GetViewMatrix();
@@ -37,6 +39,7 @@ namespace udsdx
 		constants.ViewProjInverse = viewProjMat.Invert().Transpose();
 		constants.PrevViewProj = m_prevViewProjMatrix.Transpose();
 		constants.CameraPosition = Vector4::Transform(Vector4::UnitW, worldMat);
+		constants.RenderTargetSize = Vector2(width, height);
 
 		m_prevViewProjMatrix = viewProjMat;
 

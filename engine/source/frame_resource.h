@@ -20,6 +20,7 @@ namespace udsdx
 		Matrix4x4 ViewProjInverse = Matrix4x4::Identity;
 		Matrix4x4 PrevViewProj = Matrix4x4::Identity;
 		Vector4 CameraPosition = Vector4::Zero;
+		Vector2 RenderTargetSize = Vector2::Zero;
 	};
 
 	struct ShadowConstants
@@ -34,6 +35,9 @@ namespace udsdx
 	struct PassConstants
 	{
 		float TotalTime = 0.0f;
+		float DeltaTime = 0.0f;
+		float MotionBlurFactor = 0.0f;
+		float MotionBlurRadius = 0.0f;
 	};
 
 	class FrameResource

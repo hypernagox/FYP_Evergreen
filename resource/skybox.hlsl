@@ -47,6 +47,7 @@ PixelOut PS(VertexOut pin)
 
     pOut.Buffer1 = texColor;
     pOut.Buffer2 = PackNormal(normal);
-    pOut.Buffer3 = posDelta.xy;
+    pOut.Buffer3 = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
+	pOut.Buffer3 /= max(length(pOut.Buffer3), 1.0f);
     return pOut;
 }

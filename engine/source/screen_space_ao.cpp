@@ -339,22 +339,14 @@ namespace udsdx
 	{
 		auto pCommandList = param.CommandList;
 
-		pCommandList->RSSetViewports(1, &param.Viewport);
-		pCommandList->RSSetScissorRects(1, &param.ScissorRect);
-
 		pCommandList->SetComputeRootSignature(m_blurRootSignature.Get());
 		pCommandList->SetPipelineState(m_blurPSO.Get());
-
-		pCommandList->IASetVertexBuffers(0, 0, nullptr);
-		pCommandList->IASetIndexBuffer(nullptr);
 
 		pCommandList->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(
 				m_blurMap.Get(),
 				D3D12_RESOURCE_STATE_GENERIC_READ,
 				D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
-
-		pCommandList->OMSetRenderTargets(0, nullptr, true, nullptr);
 
 		pCommandList->SetComputeRootConstantBufferView(0, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
 		pCommandList->SetComputeRoot32BitConstant(1, 0, 0);

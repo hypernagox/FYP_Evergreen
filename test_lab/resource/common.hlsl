@@ -14,6 +14,7 @@ cbuffer cbPerCamera : register(b1)
     float4x4 gViewProjInverse;
 	float4x4 gPrevViewProj;
     float4 gEyePosW;
+    float2 gRenderTargetSize;
 }
 
 cbuffer cbBones : register(b2)
@@ -33,6 +34,9 @@ cbuffer cbPerShadow : register(b3)
 cbuffer cbPerFrame : register(b4)
 {
     float gTime;
+    float gDeltaTime;
+    float gMotionBlurFactor;
+    float gMotionBlurRadius;
 };
 
 static const float4x4 gTex =
@@ -71,8 +75,8 @@ struct VertexOut
     float4 PosW         : POSITION0;
     float2 Tex          : TEXCOORD;
     float4 NormalW      : NORMAL;
-    float4 TangentW : TANGENT;
-    float4 PrevPosH : POSITION2;
+    float4 TangentW     : TANGENT;
+    float4 PrevPosH     : POSITION2;
 #ifdef GENERATE_SHADOWS
     float4 PosP         : POSITION3;
 #endif
