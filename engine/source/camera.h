@@ -15,7 +15,7 @@ namespace udsdx
 
 	public:
 		virtual void PostUpdate(const Time& time, Scene& scene) override;
-		D3D12_GPU_VIRTUAL_ADDRESS UpdateConstantBuffer(int frameResourceIndex, float aspect);
+		D3D12_GPU_VIRTUAL_ADDRESS UpdateConstantBuffer(int frameResourceIndex, float width, float height);
 
 	public:
 		virtual Matrix4x4 GetViewMatrix() const;

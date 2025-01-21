@@ -400,3 +400,5 @@ FodyWeavers.xsd
 
 evergreen_client/AssimpLog.txt
 evergreen_client/UnitiyBuild/Release-Usenet
+test_lab/imgui.ini
+test_lab/AssimpLog.txt

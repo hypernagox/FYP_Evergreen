@@ -115,7 +115,7 @@ namespace udsdx
 		Matrix4x4 projMat = camera->GetProjMatrix(param.AspectRatio);
 		param.ViewFrustumWorld = camera->GetViewFrustumWorld(param.AspectRatio);
 
-		D3D12_GPU_VIRTUAL_ADDRESS cbvGpu = camera->UpdateConstantBuffer(param.FrameResourceIndex, param.AspectRatio);
+		D3D12_GPU_VIRTUAL_ADDRESS cbvGpu = camera->UpdateConstantBuffer(param.FrameResourceIndex, param.Viewport.Width, param.Viewport.Height);
 		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cbvGpu);
 
 		RenderSceneObjects(param, RenderGroup::Deferred, 1);
@@ -140,7 +140,7 @@ namespace udsdx
 		param.Renderer->PassBufferPostProcess(param);
 
 		// Motion blur pass
-		param.RenderMotionBlur->Pass(param, camera);
+		param.RenderMotionBlur->Pass(param, cbvGpu);
 	}
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)

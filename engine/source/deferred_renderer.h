@@ -71,5 +71,8 @@ namespace udsdx
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_depthBufferCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_depthBufferGpuSrv;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_depthBufferCpuDsv;
+
+		std::array<D3D12_RESOURCE_BARRIER, NUM_GBUFFERS + 1> m_gBufferBeginRenderTransitions;
+		std::array<D3D12_RESOURCE_BARRIER, NUM_GBUFFERS + 1> m_gBufferEndRenderTransitions;
 	};
 }
