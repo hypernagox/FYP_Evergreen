@@ -19,7 +19,7 @@ namespace ServerCore
 	void Cluster::Enter(const uint8_t group_type, const uint32_t obj_id, ContentsEntity* const pEntity_) noexcept
 	{
 		auto& target_vecHash = *(m_vectorHashMapForEntity.data() + group_type);
-
+		
 		if (false == pEntity_->IsValid())
 		{
 			pEntity_->DecRef();
@@ -32,6 +32,8 @@ namespace ServerCore
 			std::cout << "Alread Exist in Space\n";
 			return;
 		}
+
+		pEntity_->RegisterEnterCount();
 	}
 	void Cluster::LeaveAndDestroy(const uint8_t group_type, const uint32_t obj_id) noexcept
 	{

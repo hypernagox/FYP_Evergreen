@@ -18,6 +18,8 @@ ClusterPredicate::~ClusterPredicate()
 bool ClusterPredicate::ClusterHuristicFunc2Session(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
 {
 	if (!a->IsValid() || !b->IsValid())return false;
+	// if (a->IsPendingClusterEntry() || b->IsPendingClusterEntry())return false;// 이거는 상황보고 다시 해야할수도있음 일단 패킷핸들러에서만 체크해봄
+
 	const auto a_pos = a->GetComp<PositionComponent>()->pos;
 	const auto b_pos = b->GetComp<PositionComponent>()->pos;
 
@@ -31,6 +33,8 @@ bool ClusterPredicate::ClusterHuristicFunc2Session(const ServerCore::ContentsEnt
 bool ClusterPredicate::ClusterHuristicFunc2NPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
 {
 	if (!a->IsValid() || !b->IsValid())return false;
+	if (a->IsPendingClusterEntry() || b->IsPendingClusterEntry())return false;
+
 	const auto a_pos = a->GetComp<PositionComponent>()->pos;
 	const auto b_pos = b->GetComp<PositionComponent>()->pos;
 

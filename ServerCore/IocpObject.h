@@ -174,6 +174,10 @@ namespace ServerCore
 
 		ClusterInfo GetClusterInfo()const noexcept { return m_clusterInfo.load(); }
 		Cluster* const GetCurCluster()const noexcept { return ServerCore::GetCluster(m_clusterInfo); }
+
+		const bool IsPendingClusterEntry()const noexcept { return 0 != m_clusterEnterCount; }
+		const bool RegisterEnterCount()noexcept { return 0 == InterlockedDecrement16(&m_clusterEnterCount); }
+		void ResetClusterCount()noexcept { InterlockedExchange16(&m_clusterEnterCount, static_cast<SHORT>(ThreadMgr::NUM_OF_THREADS)); }
 	private:
 		void PostEntityTask(Task&& task_)const noexcept;
 		void OnDestroy()noexcept;
@@ -184,6 +188,7 @@ namespace ServerCore
 		class ComponentSystem* const m_componentSystem;
 		IocpComponent* m_arrIocpComponents[etoi(IOCP_COMPONENT::END)] = {};
 		NagoxAtomic::Atomic<bool> m_bIsValid{ true };
+		volatile SHORT m_clusterEnterCount = static_cast<SHORT>(ThreadMgr::NUM_OF_THREADS);
 		NagoxAtomic::Atomic<ClusterInfo> m_clusterInfo;
 		//std::atomic_bool m_bNowUpdateFlag = false;
 	};

@@ -1,28 +1,17 @@
-0: ServerCore::LogStackTrace - 0x7ff6707c0180
-1: ServerCore::RefCountable::DecRef<ServerCore::Session> - 0x7ff67081eec0
-2: ServerCore::Session::DecRef - 0x7ff6707bf140
-3: ServerCore::ContentsEntity::~ContentsEntity - 0x7ff6707be690
-4: ServerCore::ContentsEntity::`scalar deleting destructor' - 0x7ff6706b5360
-5: ServerCore::xdelete<ServerCore::ContentsEntity> - 0x7ff6706b05e0
-6: ServerCore::RefCountable::DecRef<ServerCore::ContentsEntity> - 0x7ff6706a9560
-7: ServerCore::ContentsEntity::DecRef - 0x7ff670773430
-8: ServerCore::Service::~Service - 0x7ff6707a0d70
-9: ServerCore::ServerService::~ServerService - 0x7ff670718750
-10: ServerCore::ServerService::`scalar deleting destructor' - 0x7ff6706fe090
-11: `ServerCore::CoreGlobal::Init'::`2'::<lambda_1>::operator() - 0x7ff67080b440
-12: `ServerCore::CoreGlobal::Init'::`2'::<lambda_1>::<lambda_invoker_cdecl> - 0x7ff6707fbfd0
-13: initterm_e - 0x7ff9012622c0
-14: initterm_e - 0x7ff9012622c0
-15: initterm_e - 0x7ff9012622c0
-16: execute_onexit_table - 0x7ff901262e00
-17: wassert - 0x7ff901261880
-18: wassert - 0x7ff901261880
-19: wassert - 0x7ff901261880
-20: wassert - 0x7ff901261880
-21: exit - 0x7ff9012621e0
-22: __scrt_common_main_seh - 0x7ff67088acd0
-23: __scrt_common_main - 0x7ff67088acb0
-24: mainCRTStartup - 0x7ff67088afa0
-25: BaseThreadInitThunk - 0x7ff94fbe7360
-26: RtlUserThreadStart - 0x7ff9509dcc70
-  2025-01-20 20:52:40 [LOG]: 
+0: ServerCore::LogStackTrace - 0x7ff62ae10120
+1: ComponentSystem::AddComp<PositionComponent,ServerCore::ContentsEntity *> - 0x7ff62acf7ea0
+2: ServerCore::ContentsEntity::AddComp<PositionComponent> - 0x7ff62acf7e20
+3: Handle_c2s_ENTER - 0x7ff62ad09c30
+4: `c2s_PacketHandler::RegisterHandler<1004,Nagox::Protocol::c2s_ENTER,&Handle_c2s_ENTER>'::`2'::<lambda_1>::operator() - 0x7ff62ad396d0
+5: `c2s_PacketHandler::RegisterHandler<1004,Nagox::Protocol::c2s_ENTER,&Handle_c2s_ENTER>'::`2'::<lambda_1>::<lambda_invoker_cdecl> - 0x7ff62ad31340
+6: ServerCore::PacketSession::OnRecv - 0x7ff62ae6aa30
+7: ServerCore::Session::ProcessRecv - 0x7ff62ae8cba0
+8: ServerCore::Session::Dispatch - 0x7ff62ae8bb00
+9: ServerCore::IocpCore::Dispatch - 0x7ff62ae0f300
+10: ServerCore::ThreadMgr::WorkerThreadFunc - 0x7ff62adc54b0
+11: std::invoke<void (__cdecl*)(void) noexcept> - 0x7ff62adbc450
+12: std::thread::_Invoke<std::tuple<void (__cdecl*)(void) noexcept>,0> - 0x7ff62adb96b0
+13: register_onexit_function - 0x7ff882652ee0
+14: BaseThreadInitThunk - 0x7ff94fbe7360
+15: RtlUserThreadStart - 0x7ff9509dcc70
+  2025-01-21 14:35:59 [LOG]: 

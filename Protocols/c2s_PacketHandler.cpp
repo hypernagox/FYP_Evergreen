@@ -90,6 +90,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 
 const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_)
 {
+	if (pSession_->GetOwnerEntity()->IsPendingClusterEntry())return true;
 	DO_BENCH_GLOBAL_THIS_FUNC;
 	//if(pSession_->GetObjectID()!=1)
 	//std::cout << "move" << std::endl;
