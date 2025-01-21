@@ -1,17 +1,12 @@
-0: ServerCore::LogStackTrace - 0x7ff62ae10120
-1: ComponentSystem::AddComp<PositionComponent,ServerCore::ContentsEntity *> - 0x7ff62acf7ea0
-2: ServerCore::ContentsEntity::AddComp<PositionComponent> - 0x7ff62acf7e20
-3: Handle_c2s_ENTER - 0x7ff62ad09c30
-4: `c2s_PacketHandler::RegisterHandler<1004,Nagox::Protocol::c2s_ENTER,&Handle_c2s_ENTER>'::`2'::<lambda_1>::operator() - 0x7ff62ad396d0
-5: `c2s_PacketHandler::RegisterHandler<1004,Nagox::Protocol::c2s_ENTER,&Handle_c2s_ENTER>'::`2'::<lambda_1>::<lambda_invoker_cdecl> - 0x7ff62ad31340
-6: ServerCore::PacketSession::OnRecv - 0x7ff62ae6aa30
-7: ServerCore::Session::ProcessRecv - 0x7ff62ae8cba0
-8: ServerCore::Session::Dispatch - 0x7ff62ae8bb00
-9: ServerCore::IocpCore::Dispatch - 0x7ff62ae0f300
-10: ServerCore::ThreadMgr::WorkerThreadFunc - 0x7ff62adc54b0
-11: std::invoke<void (__cdecl*)(void) noexcept> - 0x7ff62adbc450
-12: std::thread::_Invoke<std::tuple<void (__cdecl*)(void) noexcept>,0> - 0x7ff62adb96b0
-13: register_onexit_function - 0x7ff882652ee0
-14: BaseThreadInitThunk - 0x7ff94fbe7360
-15: RtlUserThreadStart - 0x7ff9509dcc70
-  2025-01-21 14:35:59 [LOG]: 
+0: ServerCore::LogStackTrace - 0x7ff6396f18c0
+1: ServerCore::ThreadMgr::InitTLS - 0x7ff63973da10
+2: ServerCore::ThreadMgr::ThreadMgr - 0x7ff6396aa620
+3: ServerCore::Singleton<ServerCore::ThreadMgr>::SingletonBlock::SingletonBlock - 0x7ff639615220
+4: `dynamic initializer for 'ServerCore::Singleton<ServerCore::ThreadMgr>::g_singleton_block'' - 0x7ff63960d200
+5: initterm - 0x7ff8a4cf2240
+6: __scrt_common_main_seh - 0x7ff6397fa750
+7: __scrt_common_main - 0x7ff6397fa730
+8: mainCRTStartup - 0x7ff6397faa20
+9: BaseThreadInitThunk - 0x7ff94fbe7360
+10: RtlUserThreadStart - 0x7ff9509dcc70
+  2025-01-21 20:41:07 [LOG]: 

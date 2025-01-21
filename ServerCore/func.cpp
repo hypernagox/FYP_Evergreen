@@ -91,12 +91,6 @@ namespace ServerCore
 		SymCleanup(cur_process);
 	}
 
-	const uint32 GetCurThreadIdx() noexcept
-	{
-		constinit extern thread_local uint32_t LThreadId;
-		return LThreadId - 1;
-	}
-
 	void ReturnSession(Session* const pSession) noexcept
 	{
 		const_cast<Service* const>(Service::GetMainService())->ReturnSession(pSession);

@@ -165,7 +165,7 @@
     <ClInclude Include="ServerCorePch.h">
       <Filter>Utils\predefine</Filter>
     </ClInclude>
-    <ClInclude Include="Types.h">
+    <ClInclude Include="PreDefinition.h">
       <Filter>Utils\predefine</Filter>
     </ClInclude>
     <ClInclude Include="CoreMacro.h">

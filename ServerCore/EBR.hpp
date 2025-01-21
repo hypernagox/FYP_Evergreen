@@ -22,12 +22,6 @@ namespace ServerCore
 		}
 	};
 
-	template <typename T>
-	struct alignas(64) CacheLineSeperator
-	{
-		T data;
-	};
-
 	struct EBRCompare
 	{
 		const bool operator () (const EBRNode* const a, const EBRNode* const b) const noexcept { return a->remove_point > b->remove_point; }

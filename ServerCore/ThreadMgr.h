@@ -15,6 +15,7 @@ namespace ServerCore
 	//extern thread_local moodycamel::ConsumerToken* LCon_token;
 	constinit extern thread_local moodycamel::ProducerToken* LPro_tokenGlobalTask;
 	constinit extern thread_local moodycamel::ConsumerToken* LCon_tokenGlobalTask;
+	constinit extern thread_local int8_t LThreadContainerIndex;
 
 	class ThreadMgr
 		:public Singleton<ThreadMgr>
@@ -31,13 +32,13 @@ namespace ServerCore
 	public:
 		static constexpr const uint64 NUM_OF_THREADS = ServerCore::NUM_OF_THREADS;
 		void Launch(const uint64_t num_of_threads, std::function<void(void)> destroyTLSCallBack = nullptr, std::function<void(void)> initTLSCallBack = nullptr);
-		static inline c_uint32 GetCurThreadID()noexcept { 
-			constinit extern thread_local uint32_t LThreadId;
-			return LThreadId;
+		static inline const int32_t GetCurThreadNumber()noexcept { 
+			constinit extern thread_local int8_t LThreadContainerIndex;
+			return LThreadContainerIndex + 1;
 		}
-		static inline c_uint32 GetCurThreadIdx()noexcept {
-			constinit extern thread_local uint32_t LThreadId;
-			return LThreadId - 1;
+		static inline const int8_t GetCurThreadIdx()noexcept {
+			constinit extern thread_local int8_t LThreadContainerIndex;
+			return LThreadContainerIndex;
 		}
 		const bool IsServerFinish()const noexcept { return m_bStopRequest; }
 		void NotifyThread()const noexcept { PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0); }
@@ -118,7 +119,7 @@ namespace ServerCore
 		moodycamel::ConcurrentQueue<Task, LFQueueAllocator> m_globalTask{ 32 };
 	
 		
-		constinit static inline std::atomic<uint32_t> g_threadID = 0;
+		constinit static inline std::atomic<int32_t> g_threadID = -1;
 		static inline std::function<void(void)> g_initTLSCallBack = {};
 		static inline std::function<void(void)> g_destroyTLSCallBack = {};
 		enum { WORKER_TICK = 64 };

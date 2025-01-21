@@ -29,6 +29,9 @@ namespace ServerCore
 	using CondVar = std::condition_variable;
 	using UniqueLock = std::unique_lock<std::mutex>;
 	using LockGuard = std::lock_guard<std::mutex>;
+
+	template <typename T>
+	struct alignas(64) CacheLineSeperator { alignas(64) T data; };
 }
 
 #define size16(val)		(static_cast<int16>(sizeof(val)))

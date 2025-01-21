@@ -13,7 +13,7 @@ namespace ServerCore
 
 		// 동일한 쓰레드가 소유하고 있다면 무조건 성공.
 		const uint32 lockThreadId = (_lockFlag.load() & WRITE_THREAD_MASK) >> 16;
-		if (LThreadId == lockThreadId)
+		if (GetCurThreadNumber() == lockThreadId)
 		{
 			_writeCount++;
 			return;
@@ -21,7 +21,7 @@ namespace ServerCore
 
 		// 아무도 소유 및 공유하고 있지 않을 때, 경합해서 소유권을 얻는다.
 		const int64 beginTick = ::GetTickCount64();
-		const uint32 desired = ((LThreadId << 16) & WRITE_THREAD_MASK);
+		const uint32 desired = ((GetCurThreadNumber() << 16) & WRITE_THREAD_MASK);
 		uint32 expected = EMPTY_FLAG;
 		while (true)
 		{
@@ -66,7 +66,7 @@ namespace ServerCore
 		// 동일한 쓰레드가 소유하고 있다면 무조건 성공.
 		const uint32 initFlagValue = _lockFlag.load();
 
-		if ((initFlagValue & WRITE_THREAD_MASK) >> 16 == LThreadId)
+		if ((initFlagValue & WRITE_THREAD_MASK) >> 16 == GetCurThreadNumber())
 		{
 			_lockFlag.fetch_add(1);
 			return;

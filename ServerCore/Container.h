@@ -1,6 +1,6 @@
 #pragma once
 #include "ServerCorePch.h"
-#include "Types.h"
+#include "PreDefinition.h"
 #include "Allocator.h"
 
 namespace ServerCore

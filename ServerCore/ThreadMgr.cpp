@@ -17,6 +17,7 @@
 
 namespace ServerCore
 {
+	constinit extern thread_local int8_t LThreadContainerIndex;
 	constinit extern thread_local uint64 LEndTickCount;
 	constinit extern thread_local class TaskQueueable* LCurTaskQueue;
 
@@ -33,7 +34,7 @@ namespace ServerCore
 	ThreadMgr::ThreadMgr()
 	{
 		InitTLS();
-		LThreadId = 1;
+		LThreadContainerIndex = 0;
 	}
 
 	ThreadMgr::~ThreadMgr()
@@ -69,7 +70,7 @@ namespace ServerCore
 			m_threads.emplace_back(&ThreadMgr::WorkerThreadFunc);
 		}
 
-		while (g_threadID.load(std::memory_order_seq_cst) <= num_of_threads);
+		while (g_threadID.load(std::memory_order_seq_cst) + 1 <= num_of_threads);
 		std::atomic_thread_fence(std::memory_order_seq_cst);
 
 		//m_timerThread = std::thread{ []()noexcept
@@ -135,7 +136,8 @@ namespace ServerCore
 
 	void ThreadMgr::InitTLS()
 	{
-		LThreadId = g_threadID.fetch_add(1);
+		constinit extern thread_local int8_t LThreadContainerIndex;
+		LThreadContainerIndex = g_threadID.fetch_add(1);
 
 		//LPro_token = xnew<moodycamel::ProducerToken>(m_globalTaskQueue);
 		thread_local moodycamel::ProducerToken pro_token{ m_globalTask };
@@ -147,7 +149,7 @@ namespace ServerCore
 
 		LXVectorForTempCopy = &new_view_list_npc.GetItemListRef();
 
-		if (NUM_OF_THREADS >= LThreadId && 0 < LThreadId) 
+		if (NUM_OF_THREADS >= GetCurThreadNumber() && 0 < GetCurThreadNumber())
 		{
 			{
 				NAGOX_ASSERT_LOG(nullptr != Session::GetGlobalSessionPacketHandleFunc(), "Session PacketHandle Func Not Init");
@@ -171,7 +173,7 @@ namespace ServerCore
 
 	void ThreadMgr::DestroyTLS()
 	{
-		if (NUM_OF_THREADS >= LThreadId && 0 < LThreadId)
+		if (NUM_OF_THREADS >= GetCurThreadNumber() && 0 < GetCurThreadNumber())
 		{
 			if (g_destroyTLSCallBack)
 			{
@@ -192,6 +194,7 @@ namespace ServerCore
 	}
 	void ThreadMgr::WorkerThreadFunc() noexcept
 	{
+		constinit extern thread_local int8_t LThreadContainerIndex;
 		constinit extern thread_local uint64_t LEndTickCount;
 		constinit extern thread_local uint64_t LCurHandleSessionID;
 

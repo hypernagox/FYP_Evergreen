@@ -6,9 +6,9 @@
 namespace ServerCore
 {
 	extern thread_local std::stack<int32> LLockStack;
-	constinit extern thread_local class SendBufferChunk* LSendBufferChunk;
 
-	constinit extern thread_local uint32_t LThreadId;
+	constinit extern thread_local int8_t LThreadContainerIndex;
+	constinit extern thread_local class SendBufferChunk* LSendBufferChunk;
 	constinit extern thread_local uint64_t LEndTickCount;
 	constinit extern thread_local class TaskQueueable* LCurTaskQueue;
 	constinit extern thread_local class Queueabler* LCurQueueableComponent;

@@ -4,6 +4,7 @@
 namespace ServerCore
 {
 	constinit extern thread_local uint32_t LRandSeed;
+	constinit extern thread_local int8_t LThreadContainerIndex;
 
 	class ContentsEntity;
 	class SendBuffer;
@@ -64,7 +65,15 @@ namespace ServerCore
 	
 	void LogStackTrace()noexcept;
 
-	const uint32 GetCurThreadIdx()noexcept;
+	inline const int32_t GetCurThreadNumber()noexcept {
+		constinit extern thread_local int8_t LThreadContainerIndex;
+		return LThreadContainerIndex + 1;
+	}
+
+	inline const int8_t GetCurThreadIdx()noexcept {
+		constinit extern thread_local int8_t LThreadContainerIndex;
+		return LThreadContainerIndex;
+	}
 
 	void ReturnSession(Session* const pSession)noexcept;
 

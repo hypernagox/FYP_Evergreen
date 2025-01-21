@@ -260,7 +260,7 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TickTimer.h" />
     <ClInclude Include="TypeCast.h" />
-    <ClInclude Include="Types.h" />
+    <ClInclude Include="PreDefinition.h" />
     <ClInclude Include="VectorHash.hpp" />
     <ClInclude Include="FieldMgr.h" />
   </ItemGroup>
