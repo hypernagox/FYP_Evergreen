@@ -239,6 +239,8 @@ namespace ServerCore
 	class alignas(8) PadByte { alignas(8) int64_t pad[7]; };
 }
 
+using ServerCore::S_ptr;
+
 namespace std {
 	template <typename T>
 	struct hash<ServerCore::S_ptr<T>> {

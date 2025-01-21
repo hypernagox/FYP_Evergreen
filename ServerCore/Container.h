@@ -54,3 +54,21 @@ namespace ServerCore
 	template <typename T>
 	using W_ptr = std::weak_ptr<T>;
 }
+
+using ServerCore::XVector;
+using ServerCore::XList;
+using ServerCore::XMap;
+using ServerCore::XSet;
+using ServerCore::XDeque;
+using ServerCore::XQueue;
+using ServerCore::XStack;
+using ServerCore::XPriorityQueue;
+using ServerCore::XString;
+using ServerCore::XWString;
+using ServerCore::XHashMap;
+using ServerCore::XHashSet;
+using ServerCore::U_ptr;
+using ServerCore::Us_ptr;
+
+// using ServerCore::S_ptr;
+// using ServerCore::W_ptr;
