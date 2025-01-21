@@ -201,7 +201,7 @@ namespace ServerCore
         constexpr inline auto& GetSRWLock()noexcept { return m_srwLock; }
     private:
         std::list<Value*, AtomicAllocator<Value*>> m_listItem;
-        alignas(64) HashMap<Key, decltype(m_listItem.begin())> m_mapForFindItem;
+        alignas(64) XHashMap<Key, decltype(m_listItem.begin())> m_mapForFindItem;
         ConcurrentHashMap<Key, S_ptr<Value>> m_mapForGetItem;
         mutable SRWLock m_srwLock;
     };

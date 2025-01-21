@@ -164,8 +164,8 @@ namespace ServerCore
        inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
         XVector<Value> m_listItem;
-        alignas(64) HashMap<Key, int32_t> m_ID2idx;
-        HashMap<int32_t, Key> m_idx2ID;
+        alignas(64) XHashMap<Key, int32_t> m_ID2idx;
+        XHashMap<int32_t, Key> m_idx2ID;
         mutable SRWLock m_srwLock;
     };
 
@@ -332,7 +332,7 @@ namespace ServerCore
         inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
         XVector<Value> m_listItem;
-        alignas(64) HashMap<Key, int32_t> m_ID2idx;
+        alignas(64) XHashMap<Key, int32_t> m_ID2idx;
         mutable SRWLock m_srwLock;
     };
 
@@ -448,8 +448,8 @@ namespace ServerCore
         inline const std::size_t GetHashVal(const Value& val)const noexcept { return std::hash<Value>{}(val); }
     private:
         XVector<Value> m_listItem;
-        alignas(64) HashMap<std::size_t, int32_t> m_ID2idx;
-        HashMap<int32_t, std::size_t> m_idx2ID;
+        alignas(64) XHashMap<std::size_t, int32_t> m_ID2idx;
+        XHashMap<int32_t, std::size_t> m_idx2ID;
     };
 
     template<typename Key, typename Value>
@@ -620,7 +620,7 @@ namespace ServerCore
         inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
         XVector<Value> m_listItem;
-        Map<Key, int32_t> m_ID2idx;
+        XMap<Key, int32_t> m_ID2idx;
     };
 
 
@@ -746,6 +746,6 @@ namespace ServerCore
         inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
         XVector<Value> m_listItem;
-        Map<Value, int32_t> m_ID2idx;
+        XMap<Value, int32_t> m_ID2idx;
     };
 }

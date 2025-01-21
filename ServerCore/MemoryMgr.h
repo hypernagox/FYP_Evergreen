@@ -178,7 +178,7 @@ namespace ServerCore
 	inline auto& GetTLXVectorForCopy()noexcept { thread_local XVector<T> th_vec(1024); th_vec.clear(); return th_vec; }
 
 	template <typename T>
-	inline auto& GetTLSetForUnique()noexcept { thread_local HashSet<T> th_set(1024); th_set.clear(); return th_set; }
+	inline auto& GetTLSetForUnique()noexcept { thread_local XHashSet<T> th_set(1024); th_set.clear(); return th_set; }
 
 	template<typename T, typename... Args>
 	static constexpr inline const std::span<T> CreateJEMallocArray(const size_t num_of_elements, Args&&... args)noexcept

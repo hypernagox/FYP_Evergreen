@@ -160,7 +160,7 @@ namespace ServerCore
         void unlock_shared()const noexcept { m_srwLock.unlock_shared(); }
     private:
         std::list<Value, AtomicAllocator<Value>> m_listItem;
-        alignas(64) HashMap<Key, decltype(m_listItem.begin())> m_mapForFindItem;
+        alignas(64) XHashMap<Key, decltype(m_listItem.begin())> m_mapForFindItem;
         mutable SRWLock m_srwLock;
     };
 }

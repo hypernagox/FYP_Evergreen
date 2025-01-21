@@ -162,7 +162,7 @@ namespace ServerCore
 			m_freeList[thIdx].data.emplace(static_cast<T* const>(node));
 		}
 	private:
-		CacheLineSeperator<Queue<T*>> m_freeList[ThreadMgr::NUM_OF_THREADS];
+		CacheLineSeperator<XQueue<T*>> m_freeList[ThreadMgr::NUM_OF_THREADS];
 	};
 
 	template <typename T> requires std::derived_from<T, EBRNode>

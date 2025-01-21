@@ -12,35 +12,35 @@ namespace ServerCore
 	using XVector = std::vector<Type, StlAllocator<Type>>;
 
 	template<typename Type>
-	using List = std::list<Type, StlAllocator<Type>>;
+	using XList = std::list<Type, StlAllocator<Type>>;
 
 	template<typename Key, typename Type, typename Pred = std::less<Key>>
-	using Map = std::map<Key, Type, Pred, StlAllocator<std::pair<const Key, Type>>>;
+	using XMap = std::map<Key, Type, Pred, StlAllocator<std::pair<const Key, Type>>>;
 
 	template<typename Key, typename Pred = std::less<Key>>
-	using Set = std::set<Key, Pred, StlAllocator<Key>>;
+	using XSet = std::set<Key, Pred, StlAllocator<Key>>;
 
 	template<typename Type>
-	using Deque = std::deque<Type, StlAllocator<Type>>;
+	using XDeque = std::deque<Type, StlAllocator<Type>>;
 
-	template<typename Type, typename Container = Deque<Type>>
-	using Queue = std::queue<Type, Container>;
+	template<typename Type, typename Container = XDeque<Type>>
+	using XQueue = std::queue<Type, Container>;
 
-	template<typename Type, typename Container = Deque<Type>>
-	using Stack = std::stack<Type, Container>;
+	template<typename Type, typename Container = XDeque<Type>>
+	using XStack = std::stack<Type, Container>;
 
 	template<typename Type, typename Container = XVector<Type>, typename Pred = std::less<typename Container::value_type>>
-	using PriorityQueue = std::priority_queue<Type, Container, Pred>;
+	using XPriorityQueue = std::priority_queue<Type, Container, Pred>;
 
-	using String = std::basic_string<char, std::char_traits<char>, StlAllocator<char>>;
+	using XString = std::basic_string<char, std::char_traits<char>, StlAllocator<char>>;
 
-	using WString = std::basic_string<wchar_t, std::char_traits<wchar_t>, StlAllocator<wchar_t>>;
+	using XWString = std::basic_string<wchar_t, std::char_traits<wchar_t>, StlAllocator<wchar_t>>;
 
 	template<typename Key, typename Type, typename Hasher = std::hash<Key>, typename KeyEq = std::equal_to<Key>>
-	using HashMap = std::unordered_map<Key, Type, Hasher, KeyEq, StlAllocator<std::pair<const Key, Type>>>;
+	using XHashMap = std::unordered_map<Key, Type, Hasher, KeyEq, StlAllocator<std::pair<const Key, Type>>>;
 
 	template<typename Key, typename Hasher = std::hash<Key>, typename KeyEq = std::equal_to<Key>>
-	using HashSet = std::unordered_set<Key, Hasher, KeyEq, StlAllocator<Key>>;
+	using XHashSet = std::unordered_set<Key, Hasher, KeyEq, StlAllocator<Key>>;
 
 	template<typename T>
 	using U_ptr = std::unique_ptr<T, UDeleter<T>>;

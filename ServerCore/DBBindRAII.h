@@ -145,7 +145,7 @@ namespace ServerCore
 
 	private:
 		const DBConnectionHandle* m_dbConnection;
-		WString m_query;
+		XWString m_query;
 		SQLLEN m_paramIndex[ParamCount > 0 ? ParamCount : 1];
 		SQLLEN m_columnIndex[ColumnCount > 0 ? ColumnCount : 1];
 		uint64 m_paramFlag;
