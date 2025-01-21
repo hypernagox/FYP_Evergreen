@@ -175,7 +175,7 @@ namespace ServerCore
 	}
 
 	template <typename T>
-	inline auto& GetTLVectorForCopy()noexcept { thread_local Vector<T> th_vec(1024); th_vec.clear(); return th_vec; }
+	inline auto& GetTLXVectorForCopy()noexcept { thread_local XVector<T> th_vec(1024); th_vec.clear(); return th_vec; }
 
 	template <typename T>
 	inline auto& GetTLSetForUnique()noexcept { thread_local HashSet<T> th_set(1024); th_set.clear(); return th_set; }
@@ -205,7 +205,7 @@ namespace ServerCore
 	//public:
 	//	template<typename... Args>
 	//	static T* const PopObject(Args&&... args)noexcept {
-	//		auto& pool_vec = ObjectPool<T>::GetPoolVector();
+	//		auto& pool_vec = ObjectPool<T>::GetPoolXVector();
 	//		if (pool_vec.empty())return xnew<T>(std::forward<Args>(args)...);
 	//		const auto node = pool_vec.back().release();
 	//		pool_vec.pop_back();
@@ -213,7 +213,7 @@ namespace ServerCore
 	//	}
 	//	static void PushObject(T* const ptr)noexcept {
 	//		std::destroy_at<T>(ptr);
-	//		GetPoolVector().emplace_back(ptr);
+	//		GetPoolXVector().emplace_back(ptr);
 	//	}
 	//public:
 	//	ObjectPool() = delete;
@@ -223,6 +223,6 @@ namespace ServerCore
 	//	ObjectPool& operator=(ObjectPool&&)noexcept = delete;
 	//	~ObjectPool() = delete;
 	//private:
-	//	static auto& GetPoolVector()noexcept { thread_local Vector<U_ptr<T>> pool_vec; return pool_vec; }
+	//	static auto& GetPoolXVector()noexcept { thread_local XVector<U_ptr<T>> pool_vec; return pool_vec; }
 	//};
 }

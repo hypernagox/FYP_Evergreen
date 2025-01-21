@@ -268,7 +268,7 @@ namespace ServerCore
 	class ConcurrentHashMap
 	{
 	private:
-		Vector<ConcurrentListForMap<const Key, Value>> buckets;
+		XVector<ConcurrentListForMap<const Key, Value>> buckets;
 		std::hash<Key> hasher;
 	public:
 		ConcurrentHashMap(const std::size_t size_ = DEFAULT_MEM_POOL_SIZE) noexcept :buckets(size_) {}
@@ -657,7 +657,7 @@ namespace ServerCore
 	class ConcurrentHashSet
 	{
 	private:
-		Vector<ConcurrentList<Key>> buckets;
+		XVector<ConcurrentList<Key>> buckets;
 		std::hash<Key> hasher;
 	public:
 		ConcurrentHashSet(const std::size_t size_ = DEFAULT_MEM_POOL_SIZE) noexcept :buckets(size_) {}

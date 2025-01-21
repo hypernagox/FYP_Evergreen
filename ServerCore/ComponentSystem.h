@@ -41,9 +41,9 @@ private:
 		return nullptr;
 	}
 private:
-	ServerCore::Vector<std::pair<const uint64_t, ContentsComponent* const>> m_contentsComponents;
+	ServerCore::XVector<std::pair<const uint64_t, ContentsComponent* const>> m_contentsComponents;
 	const NagoxAtomic::Atomic<bool>& m_bOwnerValidFlag;
-	ServerCore::Vector<ContentsUpdateComponent*> m_vecUpdateComponents;
+	ServerCore::XVector<ContentsUpdateComponent*> m_vecUpdateComponents;
 };
 
 class ComponentSystemNPC

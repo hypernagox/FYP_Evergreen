@@ -163,7 +163,7 @@ namespace ServerCore
     private:
        inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
-        Vector<Value> m_listItem;
+        XVector<Value> m_listItem;
         alignas(64) HashMap<Key, int32_t> m_ID2idx;
         HashMap<int32_t, Key> m_idx2ID;
         mutable SRWLock m_srwLock;
@@ -331,7 +331,7 @@ namespace ServerCore
     private:
         inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
-        Vector<Value> m_listItem;
+        XVector<Value> m_listItem;
         alignas(64) HashMap<Key, int32_t> m_ID2idx;
         mutable SRWLock m_srwLock;
     };
@@ -447,7 +447,7 @@ namespace ServerCore
         inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
         inline const std::size_t GetHashVal(const Value& val)const noexcept { return std::hash<Value>{}(val); }
     private:
-        Vector<Value> m_listItem;
+        XVector<Value> m_listItem;
         alignas(64) HashMap<std::size_t, int32_t> m_ID2idx;
         HashMap<int32_t, std::size_t> m_idx2ID;
     };
@@ -619,7 +619,7 @@ namespace ServerCore
     private:
         inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
-        Vector<Value> m_listItem;
+        XVector<Value> m_listItem;
         Map<Key, int32_t> m_ID2idx;
     };
 
@@ -745,7 +745,7 @@ namespace ServerCore
     private:
         inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
-        Vector<Value> m_listItem;
+        XVector<Value> m_listItem;
         Map<Value, int32_t> m_ID2idx;
     };
 }

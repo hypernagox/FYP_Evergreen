@@ -12,7 +12,7 @@
 namespace ServerCore
 {
 	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
-	thread_local Vector<S_ptr<SendBuffer>> clear_vec = {};
+	thread_local XVector<S_ptr<SendBuffer>> clear_vec = {};
 
 	Session::Session()noexcept
 		: m_pOwnerEntity{ xnew<ContentsEntity>(this) }
@@ -297,10 +297,10 @@ namespace ServerCore
 
 	void Session::ProcessSend(S_ptr<PacketSession> pThisSessionPtr, c_int32 numofBytes_)noexcept
 	{
-		extern thread_local Vector<S_ptr<SendBuffer>> clear_vec;
+		extern thread_local XVector<S_ptr<SendBuffer>> clear_vec;
 
 		auto& sendBuffer = m_pSendEvent->m_sendBuffer;
-		//const Vector<S_ptr<SendBuffer>> temp{ std::move(sendBuffer) };
+		//const XVector<S_ptr<SendBuffer>> temp{ std::move(sendBuffer) };
 		
 		clear_vec.swap(sendBuffer);
 

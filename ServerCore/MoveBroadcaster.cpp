@@ -164,22 +164,22 @@ namespace ServerCore
 				entity->GetSession()->SendAsync(pSendBuff_);
 		}
 	}
-	Vector<S_ptr<ContentsEntity>> MoveBroadcaster::GetSptrSession() const noexcept
+	XVector<S_ptr<ContentsEntity>> MoveBroadcaster::GetSptrSession() const noexcept
 	{
 		const auto& session_list = m_view_list_session.GetItemListRef();
 		auto b = session_list.data();
 		const auto e = b + session_list.size();
-		Vector<S_ptr<ContentsEntity>> temp;
+		XVector<S_ptr<ContentsEntity>> temp;
 		temp.reserve(e - b);
 		while (e != b) { temp.emplace_back((*b++).second); }
 		return temp;
 	}
-	Vector<S_ptr<ContentsEntity>> MoveBroadcaster::GetSptrNPC() const noexcept
+	XVector<S_ptr<ContentsEntity>> MoveBroadcaster::GetSptrNPC() const noexcept
 	{
 		const auto& npc_list = m_view_list_npc.GetItemListRef();
 		auto b = npc_list.data();
 		const auto e = b + npc_list.size();
-		Vector<S_ptr<ContentsEntity>> temp;
+		XVector<S_ptr<ContentsEntity>> temp;
 		temp.reserve(e - b);
 		while (e != b) { temp.emplace_back((*b++)); }
 		return temp;

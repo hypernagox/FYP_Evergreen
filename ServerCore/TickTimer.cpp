@@ -7,7 +7,7 @@
 
 namespace ServerCore
 {
-	constinit thread_local Vector<const class ContentsEntity*>* LVectorForTempCopy = nullptr;
+	constinit thread_local XVector<const class ContentsEntity*>* LXVectorForTempCopy = nullptr;
 
 	TickTimer::TickTimer(ContentsEntity* const pOwner_, const uint16_t awakeDist_) noexcept
 		: IocpComponent{ pOwner_,IOCP_COMPONENT::TickTimer }
@@ -21,7 +21,7 @@ namespace ServerCore
 		return TryExecuteTimerInternal(awaker_id);
 	}
 
-	void TickTimer::BroadcastObjInSight(const Vector<const ContentsEntity*>& temp_vec, const S_ptr<SendBuffer>& send_buff) noexcept
+	void TickTimer::BroadcastObjInSight(const XVector<const ContentsEntity*>& temp_vec, const S_ptr<SendBuffer>& send_buff) noexcept
 	{
 		auto b = temp_vec.data();
 		const auto e = b + temp_vec.size();

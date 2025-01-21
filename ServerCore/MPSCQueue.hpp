@@ -83,7 +83,7 @@ namespace ServerCore
 			}
 			return false;
 		}
-		const bool try_pop_single(Vector<T>& _targetForPushBack)noexcept {
+		const bool try_pop_single(XVector<T>& _targetForPushBack)noexcept {
 			Node* const head_temp = head.load(std::memory_order_relaxed);
 			if (Node* const __restrict newHead = head_temp->next.load())
 			{
@@ -109,7 +109,7 @@ namespace ServerCore
 			}
 			return false;
 		}
-		const bool try_pop_single(Vector<T>& _targetForPushBack, Node*& head_temp)noexcept {
+		const bool try_pop_single(XVector<T>& _targetForPushBack, Node*& head_temp)noexcept {
 			if (Node* const __restrict newHead = head_temp->next.load())
 			{
 				Node* const oldHead = head_temp;
@@ -131,13 +131,13 @@ namespace ServerCore
 			}
 			return false;
 		}
-		Vector<T> try_flush_single()noexcept {
+		XVector<T> try_flush_single()noexcept {
 			Node* head_temp = head.load(std::memory_order_seq_cst);
-			Vector<T> vec; vec.reserve(32); while (try_pop_single(vec, head_temp));
+			XVector<T> vec; vec.reserve(32); while (try_pop_single(vec, head_temp));
 			head.store(head_temp, std::memory_order_release);
 			return vec;
 		}
-		void try_flush_single(Vector<T>& vec_)noexcept {
+		void try_flush_single(XVector<T>& vec_)noexcept {
 			Node* head_temp = head.load(std::memory_order_seq_cst);
 			if constexpr (std::same_as<std::decay_t<T>, S_ptr<SendBuffer>>){
 				extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
@@ -162,7 +162,7 @@ namespace ServerCore
 		//void try_flush_single(std::vector<T>& vec_)noexcept {
 		//	Node* head_temp = head.load(std::memory_order_seq_cst);
 		//	if constexpr (std::same_as<std::decay_t<T>, S_ptr<SendBuffer>>) {
-		//		extern thread_local Vector<WSABUF> wsaBufs;
+		//		extern thread_local XVector<WSABUF> wsaBufs;
 		//		wsaBufs.clear();
 		//		while (try_pop_single(vec_, head_temp)) {
 		//			const auto& sb = vec_.back();

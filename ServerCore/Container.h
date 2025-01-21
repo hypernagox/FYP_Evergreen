@@ -9,7 +9,7 @@ namespace ServerCore
 	using Array = std::array <Type, Size>;
 
 	template<typename Type>
-	using Vector = std::vector<Type, StlAllocator<Type>>;
+	using XVector = std::vector<Type, StlAllocator<Type>>;
 
 	template<typename Type>
 	using List = std::list<Type, StlAllocator<Type>>;
@@ -29,7 +29,7 @@ namespace ServerCore
 	template<typename Type, typename Container = Deque<Type>>
 	using Stack = std::stack<Type, Container>;
 
-	template<typename Type, typename Container = Vector<Type>, typename Pred = std::less<typename Container::value_type>>
+	template<typename Type, typename Container = XVector<Type>, typename Pred = std::less<typename Container::value_type>>
 	using PriorityQueue = std::priority_queue<Type, Container, Pred>;
 
 	using String = std::basic_string<char, std::char_traits<char>, StlAllocator<char>>;

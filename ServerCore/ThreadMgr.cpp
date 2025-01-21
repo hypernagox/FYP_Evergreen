@@ -28,7 +28,7 @@ namespace ServerCore
 	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
 	extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_npc;
 
-	constinit extern thread_local Vector<const ContentsEntity*>* LVectorForTempCopy;
+	constinit extern thread_local XVector<const ContentsEntity*>* LXVectorForTempCopy;
 
 	ThreadMgr::ThreadMgr()
 	{
@@ -145,7 +145,7 @@ namespace ServerCore
 		thread_local moodycamel::ConsumerToken con_token{ m_globalTask };
 		LCon_tokenGlobalTask = &con_token;
 
-		LVectorForTempCopy = &new_view_list_npc.GetItemListRef();
+		LXVectorForTempCopy = &new_view_list_npc.GetItemListRef();
 
 		if (NUM_OF_THREADS >= LThreadId && 0 < LThreadId) 
 		{

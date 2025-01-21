@@ -51,7 +51,7 @@ namespace ServerCore
 				, static_cast<const uint8_t>(static_cast<const int32_t>(y) / cluster_y) };
 		}
 	protected:
-		Vector<Vector<Cluster*>> m_vecClusters[ThreadMgr::NUM_OF_THREADS];
+		XVector<XVector<Cluster*>> m_vecClusters[ThreadMgr::NUM_OF_THREADS];
 		const uint8_t m_start_x = 0;
 		const uint8_t m_start_y = 0;
 		int field_x = 1;

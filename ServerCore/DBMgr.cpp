@@ -83,7 +83,7 @@ namespace ServerCore
 		//LSendBufferChunk = SendBufferMgr::Pop();
 		//const bool& bStopFlag = Mgr(ThreadMgr)->GetStopFlagRef();
 		//const auto iocpHandle = IocpCore::GetIocpHandleGlobal();
-		//Vector<S_ptr<DBEvent>> dbEvents;
+		//XVector<S_ptr<DBEvent>> dbEvents;
 		//for (;;)
 		//{
 		//	{

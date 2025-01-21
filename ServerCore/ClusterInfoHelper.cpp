@@ -6,7 +6,7 @@
 
 namespace ServerCore
 {
-	void ClusterInfoHelper::FillterSessionEntities(Vector<const ContentsEntity*>& vec_, const ContentsEntity* const pEntity_) noexcept
+	void ClusterInfoHelper::FillterSessionEntities(XVector<const ContentsEntity*>& vec_, const ContentsEntity* const pEntity_) noexcept
 	{
 		vec_.clear();
 		const auto clusters = ClusterInfoHelper::GetAdjClusters(pEntity_);
@@ -24,7 +24,7 @@ namespace ServerCore
 		}
 	}
 
-	void ClusterInfoHelper::BroadcastWithID(const Vector<uint32_t>& id, const S_ptr<SendBuffer>& pkt_) noexcept
+	void ClusterInfoHelper::BroadcastWithID(const XVector<uint32_t>& id, const S_ptr<SendBuffer>& pkt_) noexcept
 	{
 		const auto service = Service::GetMainService();
 		auto b = id.data();
@@ -43,8 +43,8 @@ namespace ServerCore
 			cluster->Broadcast(pkt_);
 		}
 	}
-	const Vector<Cluster*> ClusterInfoHelper::GetAdjClusters(const ContentsEntity* const pEntity_) noexcept
+	const XVector<Cluster*> ClusterInfoHelper::GetAdjClusters(const ContentsEntity* const pEntity_) noexcept
 	{
-		return Vector<Cluster*>{pEntity_->GetCurCluster()};
+		return XVector<Cluster*>{pEntity_->GetCurCluster()};
 	}
 }

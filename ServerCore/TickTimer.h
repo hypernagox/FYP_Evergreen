@@ -13,7 +13,7 @@ namespace ServerCore
 		END,
 	};
 
-	constinit extern thread_local Vector<const class ContentsEntity*>* LVectorForTempCopy;
+	constinit extern thread_local XVector<const class ContentsEntity*>* LXVectorForTempCopy;
 
 	class TickTimer
 		:public IocpComponent
@@ -29,10 +29,10 @@ namespace ServerCore
 		const uint32_t GetAwakerID()const noexcept { return m_curAwakerID; }
 		void SetCurAwakerID(const uint32_t awaker_id)noexcept { m_curAwakerID = awaker_id; }
 	public:
-		static void BroadcastObjInSight(const Vector<const ContentsEntity*>& temp_vec,const S_ptr<SendBuffer>& send_buff)noexcept;
+		static void BroadcastObjInSight(const XVector<const ContentsEntity*>& temp_vec,const S_ptr<SendBuffer>& send_buff)noexcept;
 		static auto& GetTempVecForInsightObj()noexcept { 
-			constinit extern thread_local Vector<const class ContentsEntity*>* LVectorForTempCopy;
-			return *LVectorForTempCopy;
+			constinit extern thread_local XVector<const class ContentsEntity*>* LXVectorForTempCopy;
+			return *LXVectorForTempCopy;
 		}
 	protected:
 		virtual const ServerCore::TIMER_STATE TimerUpdate()noexcept = 0;

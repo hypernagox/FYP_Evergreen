@@ -173,7 +173,7 @@ namespace ServerCore
 		SendEvent()noexcept :IOEvent{ EVENT_TYPE::SEND }, m_registerSendEvent{ EVENT_TYPE::REGISTER_SEND } {}
 		//~SendEvent()noexcept { xdelete_sized<IocpEvent>(m_registerSendEvent, sizeof(IocpEvent)); }
 		IocpEvent m_registerSendEvent;
-		Vector<S_ptr<SendBuffer>> m_sendBuffer;
+		XVector<S_ptr<SendBuffer>> m_sendBuffer;
 	};
 
 	class ContentsEntityTask

@@ -94,7 +94,7 @@ public:
         while (e != b) { (*b++)->Reset(owner_comp_sys, bt_root_timer); }
     }
 protected:
-    ServerCore::Vector<BehaviorNode*> m_vecChildren;
+    ServerCore::XVector<BehaviorNode*> m_vecChildren;
     uint8_t m_runningChildIndex = 0;
 };
 
