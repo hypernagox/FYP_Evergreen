@@ -145,9 +145,9 @@ namespace udsdx
 				for (UINT i = 0; i < mesh->mNumBones; ++i)
 				{
 					auto boneSrc = mesh->mBones[i];
-					auto boneIndex = i;
+					auto boneIndex = GetBoneIndex(boneSrc->mName.C_Str());
 
-					submesh.BoneNodeIDs.emplace_back(GetBoneIndex(boneSrc->mName.C_Str()));
+					submesh.BoneNodeIDs.emplace_back(boneIndex);
 					submesh.BoneOffsets.emplace_back(ToMatrix4x4(boneSrc->mOffsetMatrix));
 
 					for (UINT j = 0; j < boneSrc->mNumWeights; ++j)
@@ -347,5 +347,145 @@ namespace udsdx
 		if (iter == m_boneIndexMap.end())
 			return -1;
 		return iter->second;
+	}
+
+	void RiggedMesh::CreateBoneBuffer()
+	{
+		std::vector<Matrix4x4> bufferData;
+		bufferData.resize(m_submeshes.size() * m_bones.size(), Matrix4x4::Identity);
+
+		for (UINT submeshIndex = 0; submeshIndex < m_submeshes.size(); ++submeshIndex)
+		{
+			const Submesh& subMesh = m_submeshes[submeshIndex];
+			for (UINT i = 0; i < subMesh.BoneNodeIDs.size(); ++i)
+			{
+				UINT boneID = subMesh.BoneNodeIDs[i];
+				if (boneID < 0)
+					continue;
+
+				// Store the bone offset matrix in the buffer
+				bufferData[submeshIndex * m_bones.size() + boneID] = subMesh.BoneOffsets[i];
+			}
+		}
+
+		for (const auto& [key, animation] : m_animations)
+		{
+			// Number of frames are reduced as 30 frames per second for each animation
+			// Because, what the hell is over 1000 frames per second exists?
+			UINT numFrames = static_cast<UINT>(animation.Duration * AnimationFrameRate / animation.TicksPerSecond);
+			UINT frameBase = static_cast<UINT>(bufferData.size());
+			m_animationFrameBaseMap[key] = frameBase / m_bones.size();
+			m_animationFrameNumMap[key] = numFrames;
+			bufferData.resize(bufferData.size() + numFrames * m_bones.size(), Matrix4x4::Identity);
+
+			for (UINT frameIndex = 0; frameIndex < numFrames; ++frameIndex)
+			{
+				Matrix4x4* frameBuffer = &bufferData[frameBase + frameIndex * m_bones.size()];
+				float frameTime = frameIndex * animation.TicksPerSecond / AnimationFrameRate;
+
+				// Evaluate each frame of the animation
+				for (UINT boneIndex = 0; boneIndex < m_bones.size(); ++boneIndex)
+				{
+					const Bone& bone = m_bones[boneIndex];
+					const Animation::Channel& channel = animation.Channels[boneIndex];
+
+					XMMATRIX tParent = XMMatrixIdentity();
+					if (m_boneParents[boneIndex] != -1)
+					{
+						tParent = XMLoadFloat4x4(&frameBuffer[m_boneParents[boneIndex]]);
+					}
+
+					XMMATRIX tLocal;
+					if (channel.Name.empty())
+						tLocal = XMLoadFloat4x4(&bone.Transform);
+					else
+					{
+						auto [ps1, ps2, pf] = ToTimeFraction(channel.PositionTimestamps, frameTime);
+						auto [rs1, rs2, rf] = ToTimeFraction(channel.RotationTimestamps, frameTime);
+						auto [ss1, ss2, sf] = ToTimeFraction(channel.ScaleTimestamps, frameTime);
+
+						XMVECTOR p0 = XMLoadFloat3(&channel.Positions[ps1]);
+						XMVECTOR p1 = XMLoadFloat3(&channel.Positions[ps2]);
+						XMVECTOR p = XMVectorLerp(p0, p1, pf);
+
+						XMVECTOR q0 = XMLoadFloat4(&channel.Rotations[rs1]);
+						XMVECTOR q1 = XMLoadFloat4(&channel.Rotations[rs2]);
+						XMVECTOR q = XMQuaternionSlerp(q0, q1, rf);
+
+						XMVECTOR s0 = XMLoadFloat3(&channel.Scales[ss1]);
+						XMVECTOR s1 = XMLoadFloat3(&channel.Scales[ss2]);
+						XMVECTOR s = XMVectorLerp(s0, s1, sf);
+
+						tLocal = XMMatrixAffineTransformation(s, XMVectorZero(), q, p);
+					}
+
+					XMStoreFloat4x4(&frameBuffer[boneIndex], tLocal * tParent);
+				}
+			}
+		}
+
+		// Transpose the matrices for HLSL compatibility
+		for (int i = 0; i < bufferData.size(); ++i)
+		{
+			bufferData[i] = bufferData[i].Transpose();
+		}
+
+		const UINT bufferByteSize = static_cast<UINT>(bufferData.size()) * sizeof(Matrix4x4);
+
+		ThrowIfFailed(D3DCreateBlob(bufferByteSize, &m_boneBufferCPU));
+		CopyMemory(m_boneBufferCPU->GetBufferPointer(), bufferData.data(), bufferByteSize);
+	}
+
+	void RiggedMesh::UploadBoneBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
+	{
+		// Make sure buffers are uploaded to the CPU.
+		assert(m_boneBufferCPU != nullptr);
+
+		m_boneBufferGpu = d3dUtil::CreateDefaultBuffer(
+			device,
+			commandList,
+			m_boneBufferCPU->GetBufferPointer(),
+			m_boneBufferCPU->GetBufferSize(),
+			m_boneBufferUpload
+		);
+	}
+
+	void RiggedMesh::BuildBoneDescriptors(ID3D12Device* device, DescriptorParam& descriptorParam)
+	{
+		m_boneCpuSrv = descriptorParam.SrvCpuHandle;
+		m_boneGpuSrv = descriptorParam.SrvGpuHandle;
+
+		descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+		srvDesc.Buffer.FirstElement = 0;
+		srvDesc.Buffer.NumElements = m_boneBufferCPU->GetBufferSize() / sizeof(Matrix4x4);
+		srvDesc.Buffer.StructureByteStride = sizeof(Matrix4x4);
+		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+
+		device->CreateShaderResourceView(m_boneBufferGpu.Get(), &srvDesc, m_boneCpuSrv);
+	}
+
+	std::pair<int, float> RiggedMesh::GetAnimationFrameTime(std::string_view animation, float time)
+	{
+		const Animation& target = m_animations[animation.data()];
+		int base = m_animationFrameBaseMap[animation.data()];
+		int num = m_animationFrameNumMap[animation.data()] - 1;
+		float frameTime = fmod(time * AnimationFrameRate, static_cast<float>(num));
+		return std::make_pair(base + static_cast<int>(frameTime), fmod(frameTime, 1.0f));
+	}
+
+	UINT RiggedMesh::GetBoneCount() const
+	{
+		return static_cast<UINT>(m_bones.size());
+	}
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE RiggedMesh::GetBoneGpuSrv() const
+	{
+		return m_boneGpuSrv;
 	}
 }

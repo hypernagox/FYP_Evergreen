@@ -19,7 +19,13 @@ cbuffer cbPerCamera : register(b1)
 
 cbuffer cbBones : register(b2)
 {
-	float4x4 gBones[128];
+    uint gFrameStride;
+    uint gSubmeshIndex;
+    uint gFrameIndex;
+    float gFrameFrac;
+    uint gTransitionFrameIndex;
+    float gTransitionFrameFrac;
+    float gTransitionFactor;
 };
 
 cbuffer cbPerShadow : register(b3)
@@ -49,8 +55,9 @@ static const float4x4 gTex =
 
 Texture2D gMainTex : register(t0);
 Texture2D gNormalMap : register(t1);
-Texture2D gShadowMap : register(t2);
-Texture2D gSSAOMap : register(t3);
+StructuredBuffer<float4x4> gBoneMatrices : register(t2);
+Texture2D gShadowMap : register(t3);
+Texture2D gSSAOMap : register(t4);
 
 SamplerState gSampler : register(s0);
 
@@ -94,13 +101,20 @@ struct PixelOut
 #define LocalToObjectPos(vin) RigTransform(float4(vin.PosL, 1.0f), vin.BoneIndices, vin.BoneWeights)
 #define LocalToObjectNormal(vin, normal) RigTransform(float4(normal, 0.0f), vin.BoneIndices, vin.BoneWeights)
 
+inline float4x4 BoneTransform(uint boneIndex)
+{
+    float4x4 boneOffset = gBoneMatrices[gSubmeshIndex * gFrameStride + boneIndex];
+    float4x4 currFrame = lerp(gBoneMatrices[gFrameIndex * gFrameStride + boneIndex], gBoneMatrices[(gFrameIndex + 1) * gFrameStride + boneIndex], gFrameFrac);
+    float4x4 prevFrame = lerp(gBoneMatrices[gTransitionFrameIndex * gFrameStride + boneIndex], gBoneMatrices[(gTransitionFrameIndex + 1) * gFrameStride + boneIndex], gTransitionFrameFrac);
+    return mul(boneOffset, lerp(prevFrame, currFrame, gTransitionFactor));
+}
 
 inline float4 RigTransform(float4 posL, uint indices, float4 weights)
 {
-	float4 posW =  mul(posL, gBones[indices & 0xFF])         * weights.x;
-	       posW += mul(posL, gBones[indices >> 8 & 0xFF])    * weights.y;
-	       posW += mul(posL, gBones[indices >> 16 & 0xFF])   * weights.z;
-	       posW += mul(posL, gBones[indices >> 24 & 0xFF])   * weights.w;
+	float4 posW =  mul(posL, BoneTransform(indices & 0xFF))         * weights.x;
+	       posW += mul(posL, BoneTransform(indices >> 8 & 0xFF))    * weights.y;
+	       posW += mul(posL, BoneTransform(indices >> 16 & 0xFF))   * weights.z;
+	       posW += mul(posL, BoneTransform(indices >> 24 & 0xFF))   * weights.w;
 	return posW;
 }
 
