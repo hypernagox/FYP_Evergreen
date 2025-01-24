@@ -23,6 +23,7 @@ namespace udsdx
 		m_animationTime += time.deltaTime;
 		m_prevAnimationTime += time.deltaTime;
 		m_transitionFactor += time.deltaTime / 0.2f;
+		m_constantBuffersDirty = true;
 
 		RendererBase::Update(time, scene);
 	}
@@ -53,33 +54,49 @@ namespace udsdx
 
 		auto& uploaders = m_constantBuffers[param.FrameResourceIndex];
 
-		// Update bone constants
-		BoneConstants boneConstants{};
-		auto [frameIndex, frameFrac] = m_riggedMesh->GetAnimationFrameTime(m_animationName, m_animationTime);
-		boneConstants.FrameStride = m_riggedMesh->GetBoneCount();
-		boneConstants.FrameIndex = frameIndex;
-		boneConstants.FrameFrac = frameFrac;
+		if (m_constantBuffersDirty)
+		{
+			// Update bone constants
+			BoneConstants boneConstants{};
+			auto [frameIndex, frameFrac] = m_riggedMesh->GetAnimationFrameTime(m_animationName, m_animationTime);
 
-		if (m_transitionFactor < 1.0f && !m_prevAnimationName.empty())
-		{
-			auto [transitionFrameIndex, transitionFrameFrac] = m_riggedMesh->GetAnimationFrameTime(m_prevAnimationName, m_prevAnimationTime);
-			boneConstants.TransitionFrameIndex = transitionFrameIndex;
-			boneConstants.TransitionFrameFrac = transitionFrameFrac;
-			boneConstants.TransitionFactor = m_transitionFactor;
-		}
-		else
-		{
-			boneConstants.TransitionFrameIndex = frameIndex;
-			boneConstants.TransitionFrameFrac = frameFrac;
-			boneConstants.TransitionFactor = 0.0f;
+			boneConstants.FrameStride = m_riggedMesh->GetBoneCount();
+			boneConstants.FrameIndex = frameIndex;
+			boneConstants.FrameFrac = frameFrac;
+
+			if (m_transitionFactor < 1.0f && !m_prevAnimationName.empty())
+			{
+				auto [transitionFrameIndex, transitionFrameFrac] = m_riggedMesh->GetAnimationFrameTime(m_prevAnimationName, m_prevAnimationTime);
+				boneConstants.TransitionFrameIndex = transitionFrameIndex;
+				boneConstants.TransitionFrameFrac = transitionFrameFrac;
+				boneConstants.TransitionFactor = m_transitionFactor;
+			}
+			else
+			{
+				boneConstants.TransitionFrameIndex = frameIndex;
+				boneConstants.TransitionFrameFrac = frameFrac;
+				boneConstants.TransitionFactor = 0.0f;
+			}
+
+			boneConstants.PrevFrameIndex = m_boneConstantCache.FrameIndex;
+			boneConstants.PrevFrameFrac = m_boneConstantCache.FrameFrac;
+			boneConstants.PrevTransitionFrameIndex = m_boneConstantCache.TransitionFrameIndex;
+			boneConstants.PrevTransitionFrameFrac = m_boneConstantCache.TransitionFrameFrac;
+			boneConstants.PrevTransitionFactor = m_boneConstantCache.TransitionFactor;
+
+			for (size_t index = 0; index < submeshes.size(); ++index)
+			{
+				boneConstants.SubmeshIndex = index;
+				uploaders[index]->CopyData(0, boneConstants);
+			}
+
+			memcpy(&m_boneConstantCache, &boneConstants, sizeof(BoneConstants));
+			m_constantBuffersDirty = false;
 		}
 
 		for (size_t index = 0; index < submeshes.size(); ++index)
 		{
 			const auto& submesh = submeshes[index];
-
-			boneConstants.SubmeshIndex = index;
-			uploaders[index]->CopyData(0, boneConstants);
 
 			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::BonesCBV, uploaders[index]->Resource()->GetGPUVirtualAddress());
 			param.CommandList->SetGraphicsRootDescriptorTable(RootParam::BonesSRV, m_riggedMesh->GetBoneGpuSrv());

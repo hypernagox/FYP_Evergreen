@@ -21,11 +21,11 @@ cbuffer cbBones : register(b2)
 {
     uint gFrameStride;
     uint gSubmeshIndex;
-    uint gFrameIndex;
-    float gFrameFrac;
-    uint gTransitionFrameIndex;
-    float gTransitionFrameFrac;
-    float gTransitionFactor;
+    uint2 gFrameIndex;
+    float2 gFrameFrac;
+    uint2 gTransitionFrameIndex;
+    float2 gTransitionFrameFrac;
+    float2 gTransitionFactor;
 };
 
 cbuffer cbPerShadow : register(b3)
@@ -98,23 +98,23 @@ struct PixelOut
 
 #ifdef RIGGED
 
-#define LocalToObjectPos(vin) RigTransform(float4(vin.PosL, 1.0f), vin.BoneIndices, vin.BoneWeights)
-#define LocalToObjectNormal(vin, normal) RigTransform(float4(normal, 0.0f), vin.BoneIndices, vin.BoneWeights)
+#define LocalToObjectPos(vin) RigTransform(float4(vin.PosL, 1.0f), 0, vin.BoneIndices, vin.BoneWeights)
+#define LocalToObjectNormal(vin, normal) RigTransform(float4(normal, 0.0f), 0, vin.BoneIndices, vin.BoneWeights)
 
-inline float4x4 BoneTransform(uint boneIndex)
+inline float4x4 BoneTransform(uint i, uint boneIndex)
 {
     float4x4 boneOffset = gBoneMatrices[gSubmeshIndex * gFrameStride + boneIndex];
-    float4x4 currFrame = lerp(gBoneMatrices[gFrameIndex * gFrameStride + boneIndex], gBoneMatrices[(gFrameIndex + 1) * gFrameStride + boneIndex], gFrameFrac);
-    float4x4 prevFrame = lerp(gBoneMatrices[gTransitionFrameIndex * gFrameStride + boneIndex], gBoneMatrices[(gTransitionFrameIndex + 1) * gFrameStride + boneIndex], gTransitionFrameFrac);
-    return mul(boneOffset, lerp(prevFrame, currFrame, gTransitionFactor));
+    float4x4 currFrame = lerp(gBoneMatrices[gFrameIndex[i] * gFrameStride + boneIndex], gBoneMatrices[(gFrameIndex[i] + 1) * gFrameStride + boneIndex], gFrameFrac[i]);
+    float4x4 prevFrame = lerp(gBoneMatrices[gTransitionFrameIndex[i] * gFrameStride + boneIndex], gBoneMatrices[(gTransitionFrameIndex[i] + 1) * gFrameStride + boneIndex], gTransitionFrameFrac[i]);
+    return mul(boneOffset, lerp(prevFrame, currFrame, gTransitionFactor[i]));
 }
 
-inline float4 RigTransform(float4 posL, uint indices, float4 weights)
+inline float4 RigTransform(float4 posL, uint i, uint indices, float4 weights)
 {
-	float4 posW =  mul(posL, BoneTransform(indices & 0xFF))         * weights.x;
-	       posW += mul(posL, BoneTransform(indices >> 8 & 0xFF))    * weights.y;
-	       posW += mul(posL, BoneTransform(indices >> 16 & 0xFF))   * weights.z;
-	       posW += mul(posL, BoneTransform(indices >> 24 & 0xFF))   * weights.w;
+	float4 posW =  mul(posL, BoneTransform(i, indices & 0xFF))         * weights.x;
+	       posW += mul(posL, BoneTransform(i, indices >> 8 & 0xFF))    * weights.y;
+	       posW += mul(posL, BoneTransform(i, indices >> 16 & 0xFF))   * weights.z;
+	       posW += mul(posL, BoneTransform(i, indices >> 24 & 0xFF))   * weights.w;
 	return posW;
 }
 
@@ -149,7 +149,11 @@ inline float3 LocalToWorldNormal(float3 normalL)
 
 #else
 #define ConstructPosP(vin, vout)
-#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(LocalToObjectPos(vin), gPrevWorld), gPrevViewProj)
+#ifdef RIGGED
+#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(RigTransform(float4(vin.PosL, 1.0f), 1, vin.BoneIndices, vin.BoneWeights), gPrevWorld), gPrevViewProj)
+#else
+#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(float4(vin.PosL, 1.0f), gPrevWorld), gPrevViewProj)
+#endif
 
 #endif
 
