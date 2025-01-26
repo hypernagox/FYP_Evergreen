@@ -23,7 +23,7 @@ namespace udsdx
 		m_animationTime += time.deltaTime;
 		m_prevAnimationTime += time.deltaTime;
 		m_transitionFactor += time.deltaTime / 0.2f;
-		m_isMatrixDirty = true;
+		m_constantBuffersDirty = true;
 
 		RendererBase::Update(time, scene);
 	}
@@ -43,44 +43,6 @@ namespace udsdx
 			}
 		}
 
-		// Update bone constants
-		auto& uploader = m_constantBuffers[param.FrameResourceIndex];
-		if (m_isMatrixDirty)
-		{
-			BoneConstants boneConstants{};
-			std::vector<std::vector<Matrix4x4>> boneTransforms;
-			if (!m_animationName.empty())
-			{
-				m_riggedMesh->PopulateTransforms(m_animationName, m_animationTime, boneTransforms);
-				if (m_transitionFactor < 1.0f && !m_prevAnimationName.empty())
-				{
-					std::vector<std::vector<Matrix4x4>> prevBoneTransforms;
-					m_riggedMesh->PopulateTransforms(m_prevAnimationName, m_prevAnimationTime, prevBoneTransforms);
-					for (size_t s = 0; s < submeshes.size(); ++s)
-					{
-						for (size_t i = 0; i < boneTransforms[s].size(); ++i)
-						{
-							boneTransforms[s][i] = Matrix4x4::Lerp(prevBoneTransforms[s][i], boneTransforms[s][i], m_transitionFactor);
-						}
-					}
-				}
-			}
-			else
-			{
-				m_riggedMesh->PopulateTransforms(boneTransforms);
-			}
-			for (size_t s = 0; s < submeshes.size(); ++s)
-			{
-				for (size_t i = 0; i < boneTransforms[s].size(); ++i)
-				{
-					boneConstants.BoneTransforms[i] = boneTransforms[s][i].Transpose();
-				}
-				uploader[s]->CopyData(0, boneConstants);
-			}
-
-			m_isMatrixDirty = false;
-		}
-
 		ObjectConstants objectConstants;
 		objectConstants.World = m_transformCache.Transpose();
 		objectConstants.PrevWorld = m_prevTransformCache.Transpose();
@@ -90,10 +52,54 @@ namespace udsdx
 		param.CommandList->IASetIndexBuffer(&m_riggedMesh->IndexBufferView());
 		param.CommandList->IASetPrimitiveTopology(m_topology);
 
+		auto& uploaders = m_constantBuffers[param.FrameResourceIndex];
+
+		if (m_constantBuffersDirty)
+		{
+			// Update bone constants
+			BoneConstants boneConstants{};
+			auto [frameIndex, frameFrac] = m_riggedMesh->GetAnimationFrameTime(m_animationName, m_animationTime);
+
+			boneConstants.FrameStride = m_riggedMesh->GetBoneCount();
+			boneConstants.FrameIndex = frameIndex;
+			boneConstants.FrameFrac = frameFrac;
+
+			if (m_transitionFactor < 1.0f && !m_prevAnimationName.empty())
+			{
+				auto [transitionFrameIndex, transitionFrameFrac] = m_riggedMesh->GetAnimationFrameTime(m_prevAnimationName, m_prevAnimationTime);
+				boneConstants.TransitionFrameIndex = transitionFrameIndex;
+				boneConstants.TransitionFrameFrac = transitionFrameFrac;
+				boneConstants.TransitionFactor = m_transitionFactor;
+			}
+			else
+			{
+				boneConstants.TransitionFrameIndex = frameIndex;
+				boneConstants.TransitionFrameFrac = frameFrac;
+				boneConstants.TransitionFactor = 0.0f;
+			}
+
+			boneConstants.PrevFrameIndex = m_boneConstantCache.FrameIndex;
+			boneConstants.PrevFrameFrac = m_boneConstantCache.FrameFrac;
+			boneConstants.PrevTransitionFrameIndex = m_boneConstantCache.TransitionFrameIndex;
+			boneConstants.PrevTransitionFrameFrac = m_boneConstantCache.TransitionFrameFrac;
+			boneConstants.PrevTransitionFactor = m_boneConstantCache.TransitionFactor;
+
+			for (size_t index = 0; index < submeshes.size(); ++index)
+			{
+				boneConstants.SubmeshIndex = index;
+				uploaders[index]->CopyData(0, boneConstants);
+			}
+
+			memcpy(&m_boneConstantCache, &boneConstants, sizeof(BoneConstants));
+			m_constantBuffersDirty = false;
+		}
+
 		for (size_t index = 0; index < submeshes.size(); ++index)
 		{
 			const auto& submesh = submeshes[index];
-			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::BonesCBV, uploader[index]->Resource()->GetGPUVirtualAddress());
+
+			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::BonesCBV, uploaders[index]->Resource()->GetGPUVirtualAddress());
+			param.CommandList->SetGraphicsRootDescriptorTable(RootParam::BonesSRV, m_riggedMesh->GetBoneGpuSrv());
 
 			if (index < m_materials.size() && m_materials[index] != nullptr)
 			{
@@ -108,6 +114,7 @@ namespace udsdx
 					param.CommandList->SetGraphicsRootDescriptorTable(RootParam::NormalSRV, normalTex->GetSrvGpu());
 				}
 			}
+
 			param.CommandList->DrawIndexedInstanced(submesh.IndexCount, instances, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 		}
 	}
@@ -115,7 +122,6 @@ namespace udsdx
 	void RiggedMeshRenderer::SetMesh(RiggedMesh* mesh)
 	{
 		m_riggedMesh = mesh;
-		m_isMatrixDirty = true;
 
 		for (auto& buffer : m_constantBuffers)
 		{
@@ -141,7 +147,6 @@ namespace udsdx
 		m_animationTime = 0.0f;
 		m_transitionFactor = 0.0f;
 		m_animationName = animationName;
-		m_isMatrixDirty = true;
 	}
 
 	ID3D12PipelineState* RiggedMeshRenderer::GetPipelineState() const

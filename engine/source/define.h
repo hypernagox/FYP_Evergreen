@@ -81,8 +81,9 @@ namespace udsdx
 		PerFrameCBV = 4,
 		MainTexSRV = 5,
 		NormalSRV = 6,
-		ShadowMapSRV = 7,
-		SSAOMapSRV = 8
+		BonesSRV = 7,
+		ShadowMapSRV = 8,
+		SSAOMapSRV = 9
 	};
 
 	enum RenderGroup : UINT
