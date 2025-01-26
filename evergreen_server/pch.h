@@ -18,3 +18,6 @@
 #include <directxtk12/SimpleMath.h>
 
 using Vector3 = DirectX::SimpleMath::Vector3;
+using ServerCore::ContentsEntity;
+using ServerCore::SendBuffer;
+using ServerCore::rcast;

@@ -22,10 +22,10 @@ namespace ServerCore
 	template <typename T> requires std::is_enum_v<T>
 	constexpr inline const uint8_t etoi_u8(const T eType_)noexcept { return static_cast<const uint8_t>(eType_); }
 
-	template <typename T> requires std::is_fundamental_v<T> || std::is_pointer_v<T>
-	constexpr inline T rcast(const T val)noexcept { return val; }
+	//template <typename T> requires std::is_fundamental_v<T> || std::is_pointer_v<T>
+	//constexpr inline T rcast(const T val)noexcept { return val; }
 
-	template <typename T> requires (!std::is_fundamental_v<std::decay_t<T>>)
+	template <typename T> //requires (!std::is_fundamental_v<std::decay_t<T>>)
 	constexpr inline std::decay_t<T> rcast(T&& val)noexcept { return std::forward<T>(val); }
 
 	template <typename T>

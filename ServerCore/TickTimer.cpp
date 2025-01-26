@@ -132,3 +132,15 @@ const ServerCore::TIMER_STATE TickTimerBT::TimerUpdate() noexcept
 	m_prevStatus = cur_status;
 	return ServerCore::TIMER_STATE::RUN;
 }
+
+void TickTimerBT::ProcessCleanUp() noexcept
+{
+	m_lastTickTime = 0;
+	m_accBTRevaluateTime = 0;
+	m_prevStatus = NodeStatus::SUCCESS;
+	m_timer_state.store_relaxed(ServerCore::TIMER_STATE::IDLE);
+	m_curAwakerID = 0;
+	m_rootNode->Reset(
+		(ComponentSystemNPC*)(GetOwnerEntity()->GetComponentSystem())
+		, this);
+}

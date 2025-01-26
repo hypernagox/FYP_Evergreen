@@ -20,7 +20,7 @@ namespace ServerCore
 		, m_netAddr{ addr_ }
 		, m_sessionFactory{ std::move(factory_) }
 		, m_maxSessionCount{ maxSessionCount_ }
-		, m_arrSession{ CreateDynamicSpan<AtomicSessionPtr>(maxSessionCount_ + 1) }
+		, m_arrSession{ CreateDynamicSpan<AtomicSessionPtr>(maxSessionCount_ + 1).data()}
 		, m_curNumOfSessions{ 0 }
 	{
 		NAGOX_ASSERT(0 < m_maxSessionCount);
@@ -40,7 +40,8 @@ namespace ServerCore
 
 	Service::~Service()
 	{
-		DestroyDynamicSpan(m_arrSession);
+		const std::span<AtomicSessionPtr> arr{ m_arrSession,(size_t)m_maxSessionCount + 1 };
+		DestroyDynamicSpan(arr);
 		Session* pSession;
 		std::vector<ContentsEntity*> temp;
 		while (m_sessionPool.try_pop_single(pSession)) { temp.emplace_back(pSession->GetOwnerEntity()); }
@@ -67,13 +68,14 @@ namespace ServerCore
 
 	const bool Service::AddSession(const S_ptr<PacketSession>& pSession_)noexcept
 	{
+		const auto arr = m_arrSession;
 		const ContentsEntity* const pOwnerEntity = pSession_->GetOwnerEntity();
 		const uint32_t obj_id = static_cast<c_uint32>(pOwnerEntity->GetObjectID());
 		const uint16_t idx = pSession_->m_serviceIdx;
 		if (m_maxSessionCount <= m_curNumOfSessions)return false;
 		m_id2Index.emplace(static_cast<c_uint32>(obj_id), static_cast<c_uint16>(idx));
 		InterlockedIncrement((LONG*)&m_curNumOfSessions);
-		m_arrSession[idx].ptr.store(pOwnerEntity->SharedFromThis());
+		(arr + idx)->ptr.store(pOwnerEntity->SharedFromThis());
 		return true;
 	}
 
@@ -84,8 +86,9 @@ namespace ServerCore
 
 	S_ptr<ContentsEntity> Service::GetSession(const uint64_t sessionID_)const noexcept
 	{
+		const auto arr = m_arrSession;
 		const int32 idx = m_id2Index[static_cast<c_uint32>(sessionID_)];
-		auto target = m_arrSession[idx].ptr.load();
+		auto target = (arr + idx)->ptr.load();
 		if (target && target->GetObjectID() == sessionID_)
 			return target;
 		else

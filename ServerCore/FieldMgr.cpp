@@ -26,6 +26,7 @@ namespace ServerCore
 				auto& atomic_ptr = (*b++).ptr;
 				if (const auto target = atomic_ptr.load())
 				{
+					target->ResetDeleter();
 					target->TryOnDestroy();
 				}
 			}
@@ -45,8 +46,29 @@ namespace ServerCore
 		const auto idx = m_id2Index[pNPC->GetObjectID()];
 		if (0 == idx)
 			return;
+		
 		m_arrNPC[idx].ptr.reset();
 		m_idxQueue.emplace(idx);
+	}
+	void FieldMgr::InitTLSinField()
+	{
+		//NAGOX_ASSERT_LOG(false == m_mapField.empty(), "Cluster Empty");
+		for (const auto field : m_mapField | std::views::values)
+		{
+			NAGOX_ASSERT_LOG(0 != field->GetNumOfClustersInField(), "Num of Clusters cannot be Zero");
+			field->InitFieldTLS();
+		}
+	}
+	void FieldMgr::DestroyTLSinField()
+	{
+		for (const auto field : m_mapField | std::views::values)field->DestroyFieldTLS();
+	}
+	void FieldMgr::ShrinkToFitBeforeStart() noexcept
+	{
+		for (const auto& entity : m_arrNPC) {
+			if (const auto entity_ptr = entity.ptr.load())
+				const_cast<ComponentSystem*>(entity_ptr->GetComponentSystem())->ShrinkToFit();
+		}
 	}
 	S_ptr<ContentsEntity> FieldMgr::GetNPC(const uint32_t npc_id) const noexcept
 	{

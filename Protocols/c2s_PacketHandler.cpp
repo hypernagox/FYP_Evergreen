@@ -14,6 +14,7 @@
 #include "HP.h"
 #include "QuestSystem.h"
 #include "Quest.h"
+#include "ClusterPredicate.h"
 
 using namespace ServerCore;
 
@@ -58,7 +59,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	//	, s
 	//	, entity
 	//);
-	ServerCore::PrintLogEndl("enter");
+	//ServerCore::PrintLogEndl("enter");
 	//auto pbuff = Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER);
 	//Mgr(WorldMgr)->GetWorld(0)->GetSector({ 0,0 })->BroadCastEnqueue(std::move(pbuff));
 	//
@@ -109,8 +110,10 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 	//	pEntity->body_angle,
 	//	pEntity->time_stamp));
 	//g_sector->MoveBroadCast(pSession_, s);
-	pSession_->SendAsync(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()));
-	pSession_->GetOwnerEntity()->GetComp<ServerCore::MoveBroadcaster>()->BroadcastMove();
+	ClusterPredicate helper;
+	//pSession_->SendAsync(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()));
+	pSession_->SendAsync(helper.CreateMovePacket(pSession_->GetOwnerEntity()));
+	pSession_->GetOwnerEntity()->GetComp<ServerCore::MoveBroadcaster>()->BroadcastMove(helper);
 	//pSession_->GetOwnerEntity()->GetComp<ServerCore::SectorInfoHelper>()->ImmigrationSector(0, 0);
 	//const auto en = pSession_->GetOwnerEntity();
 	//g_sector->BroadCastParallel(MoveBroadcaster::CreateMovePacket(en), s, en);

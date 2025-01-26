@@ -61,6 +61,7 @@ namespace ServerCore
 	template<typename T> requires (false == std::same_as<std::decay_t<T>, RefCountable>)
 	static inline void DecRefExternal(const RefCountable* const ref_ptr) noexcept { ref_ptr->DecRef<T>(); }
 	static inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->m_refCount; }
+
 	template <typename T>
 	class S_ptr
 	{
@@ -69,12 +70,15 @@ namespace ServerCore
 
 		constexpr S_ptr()noexcept = default;
 		constexpr S_ptr(std::nullptr_t) noexcept : m_count_ptr{ nullptr } {}
-		constexpr inline ~S_ptr()noexcept { static_assert(false == std::same_as<std::decay_t<T>, RefCountable>); DecRef(); }
+		constexpr inline ~S_ptr()noexcept { 
+			static_assert((false == std::same_as<std::decay_t<T>, RefCountable>) && std::derived_from<std::decay_t<T>, RefCountable>);
+			DecRef();
+		}
 		constexpr inline explicit S_ptr(const RefCountable* const ptr)noexcept
-			:m_count_ptr{ IncAndGetPtrExternal(ptr)}
+			:m_count_ptr{ (T*)IncAndGetPtrExternal(ptr)}
 		{}
 		constexpr inline explicit S_ptr(RefCountable* const ptr)noexcept
-			:m_count_ptr{ IncAndGetPtrExternal(ptr) }
+			:m_count_ptr{ (T*)IncAndGetPtrExternal(ptr) }
 		{}
 	public:
 		S_ptr(const S_ptr& other)noexcept
@@ -120,7 +124,7 @@ namespace ServerCore
 		}
 		template <typename U> requires std::derived_from<U, T> || std::derived_from<T, U>
 		S_ptr(S_ptr<U>&& other)noexcept
-			:m_count_ptr{ std::exchange(other.m_count_ptr,nullptr) }
+			:m_count_ptr{ (T*)std::exchange(other.m_count_ptr,nullptr) }
 		{}
 		template <typename U> requires std::derived_from<U, T>
 		S_ptr& operator=(S_ptr<U>&& other)noexcept {
@@ -157,19 +161,19 @@ namespace ServerCore
 		inline void DecRef()const noexcept { 
 			static_assert(false == std::same_as<std::decay_t<T>, RefCountable>);
 			if (m_count_ptr) {
-				m_count_ptr->DecRef<T>();
+				m_count_ptr->RefCountable::DecRef<T>();
 				//if constexpr (std::same_as<std::remove_cv_t<T>, ContentsEntity> || std::derived_from<std::remove_cv_t<T>, Session>)
 				//	m_count_ptr->DecRef<T>();
 				//else
 				//	m_count_ptr->DecRef();
 			}
 		}
-		inline RefCountable* const IncRef()const noexcept {
+		inline T* const IncRef()const noexcept {
 			static_assert(false == std::same_as<std::decay_t<T>, RefCountable>);
-			return m_count_ptr ? IncAndGetPtrExternal(m_count_ptr) : nullptr;
+			return m_count_ptr ? (T*)IncAndGetPtrExternal(m_count_ptr) : nullptr;
 		}
 	public:
-		RefCountable* m_count_ptr = nullptr;
+		T* m_count_ptr = nullptr;
 	};
 	
 	template<typename T, typename... Args> requires std::derived_from<T, RefCountable>
@@ -246,6 +250,12 @@ namespace std {
 	struct hash<ServerCore::S_ptr<T>> {
 		constexpr inline const std::size_t operator()(const ServerCore::S_ptr<T>& ptr) const noexcept {
 			return std::hash<T*>{}(static_cast<T* const>(ptr.m_count_ptr));
+		}
+	};
+	template <typename T>
+	struct hash<std::pair<uint32_t, T*>> {
+		constexpr inline const std::size_t operator()(const std::pair<uint32_t, T*>& pair) const noexcept {
+			return std::hash<std::size_t>{}(static_cast<std::size_t>(pair.first));
 		}
 	};
 }

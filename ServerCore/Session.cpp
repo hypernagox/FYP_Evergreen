@@ -11,7 +11,7 @@
 
 namespace ServerCore
 {
-	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
+	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
 	thread_local XVector<S_ptr<SendBuffer>> clear_vec = {};
 
 	Session::Session()noexcept
@@ -120,7 +120,7 @@ namespace ServerCore
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
 			{
-				const S_ptr<Session> temp_session{ connect_event->PassIocpObject() };
+				HandleError(errorCode, connect_event->PassIocpObject());
 				return false;
 			}
 		}
@@ -172,6 +172,7 @@ namespace ServerCore
 				::CancelIoEx(reinterpret_cast<HANDLE>(disconnect_socket), NULL);
 				SocketUtils::Close(m_sessionSocket);
 				m_sessionSocket = m_sessionSocketForRecv = SocketUtils::CreateSocket();
+				::CreateIoCompletionPort((HANDLE)m_sessionSocket, IocpCore::GetIocpHandleGlobal(), 0, 0);
 
 				ContentsEntity* const pOwner = GetOwnerEntity();
 				pOwner->TryOnDestroy();
@@ -258,7 +259,7 @@ namespace ServerCore
 	
 	void Session::RegisterSend(S_ptr<PacketSession>&& pThisSessionPtr)noexcept
 	{
-		extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
+		extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
 		
 		auto& wsabuf_storage = new_view_list_session.GetItemListRef();
 
@@ -273,23 +274,18 @@ namespace ServerCore
 
 		send_event->Init();
 		send_event->SetIocpObject(std::move(pThisSessionPtr));
+		const auto ov_ptr = send_event->GetOverlappedAddr();
 
 		auto& sendBuffer = send_event->m_sendBuffer;
 		m_sendQueue.try_flush_single(sendBuffer);
 
 		const auto num = static_cast<const DWORD>(sendBuffer.size());
 
-		if (0 == num)
-		{
-			return RetrySendAsError(send_event);
-		}
-
-		if (SOCKET_ERROR == ::WSASend(send_socket, reinterpret_cast<WSABUF*>(wsabuf_storage.data()), num, NULL, 0, send_event->GetOverlappedAddr(), nullptr))
+		if (SOCKET_ERROR == ::WSASend(send_socket, reinterpret_cast<WSABUF*>(wsabuf_storage.data()), num, NULL, 0, ov_ptr, nullptr))
 		{
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
 			{
-				// HandleError(errorCode);
 				return RetrySendAsError(send_event);
 			}
 		}
@@ -324,22 +320,39 @@ namespace ServerCore
 		clear_vec.clear();
 	}
 
-	void Session::RetrySendAsError(SendEvent* const pSendEvent_) noexcept
+	void Session::RetrySendAsError(SendEvent* const pSendEvent_)noexcept
 	{
 		S_ptr<Session> temp_session{ pSendEvent_->PassIocpObject() };
+		auto& register_send_event = pSendEvent_->m_registerSendEvent;
+		const auto ov_ptr = register_send_event.GetOverlappedAddr();
+		const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
+		PrintLogEndl(std::format(L"Send Error: {}", ::WSAGetLastError()));
 		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, false);
-		PrintLogEndl("Yield Send!");
-		//std::this_thread::yield();
 		if (false == m_sendQueue.empty_single())
 		{
 			if (false == m_bIsSendRegistered &&
 				false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			{
-				const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
-				auto& register_send_event = pSendEvent_->m_registerSendEvent;
-				register_send_event.SetIocpObject(std::move(temp_session));
-				::PostQueuedCompletionStatus(iocp_handle, 0, 0, register_send_event.GetOverlappedAddr());
-				PrintLogEndl("Retry Send!");
+				RegisterSend(std::move(temp_session));
+				PrintLogEndl("Retry RegisterSend!");
+			}
+		}
+	}
+
+	void Session::RetrySend() const noexcept
+	{
+		auto& register_send_event = m_pSendEvent->m_registerSendEvent;
+		const auto ov_ptr = register_send_event.GetOverlappedAddr();
+		const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
+		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, false);
+		if (false == m_sendQueue.empty_single())
+		{
+			if (false == m_bIsSendRegistered &&
+				false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
+			{
+				register_send_event.SetIocpObject(SharedFromThis<IocpObject>());
+				::PostQueuedCompletionStatus(iocp_handle, 0, 0, ov_ptr);
+				// PrintLogEndl("Retry Send!");
 			}
 		}
 	}

@@ -10,6 +10,7 @@
 #include "ClusterUpdateQueue.h"
 #include "FieldMgr.h"
 #include "SendBufferChunk.h"
+#include "MoveBroadcaster.h"
 
 /*------------------
 	ThreadMgr
@@ -26,15 +27,14 @@ namespace ServerCore
 	constinit thread_local moodycamel::ProducerToken* LPro_tokenGlobalTask;
 	constinit thread_local moodycamel::ConsumerToken* LCon_tokenGlobalTask;
 
-	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
-	extern thread_local VectorSetUnsafe<const ContentsEntity*> new_view_list_npc;
+	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
+	extern thread_local VectorSetUnsafe<const ContentsEntity*, XHashMap> new_view_list_npc;
 
 	constinit extern thread_local XVector<const ContentsEntity*>* LXVectorForTempCopy;
 
 	ThreadMgr::ThreadMgr()
 	{
-		InitTLS();
-		LThreadContainerIndex = 0;
+		g_mainThreadID = std::this_thread::get_id();
 	}
 
 	ThreadMgr::~ThreadMgr()
@@ -45,9 +45,9 @@ namespace ServerCore
 			Join();
 		}
 		Task task;
-		while (m_globalTask.try_dequeue(*LCon_tokenGlobalTask, task)) { std::destroy_at<Task>(&task); }
+		//while (m_globalTask.try_dequeue(*LCon_tokenGlobalTask, task)) { std::destroy_at<Task>(&task); }
 
-		DestroyTLS();
+		//DestroyTLS();
 
 		//xdelete<moodycamel::ProducerToken>(LPro_token);
 		//xdelete<moodycamel::ConsumerToken>(LCon_token);
@@ -56,26 +56,27 @@ namespace ServerCore
 		//xdelete<moodycamel::ConsumerToken>(LCon_tokenGlobalTask);
 	}
 
-	void ThreadMgr::Launch(const uint64_t num_of_threads, std::function<void(void)> destroyTLSCallBack, std::function<void(void)> initTLSCallBack)
+	void ThreadMgr::Launch(const uint64_t num_of_threads, Initiator* const initiator)
 	{
 		m_iocpHandle = IocpCore::GetIocpHandleGlobal();
-		g_initTLSCallBack.swap(initTLSCallBack);
-		g_destroyTLSCallBack.swap(destroyTLSCallBack);
-		m_threads.reserve(num_of_threads);
+		g_initiator = initiator;
 
-		NAGOX_ASSERT_LOG(nullptr != Session::GetGlobalSessionPacketHandleFunc(), "Session PacketHandle Func Not Init");
-
-		for (int i = 0; i < num_of_threads; ++i)
-		{
-			m_threads.emplace_back(&ThreadMgr::WorkerThreadFunc);
+		if (Service::GetMainService()->GetServiceType() == SERVICE_TYPE::SERVER) {
+			NAGOX_ASSERT(ThreadMgr::NUM_OF_THREADS == num_of_threads);
+			NAGOX_ASSERT(nullptr != MoveBroadcaster::GetGlobalBroadcastHelper());
 		}
+		NAGOX_ASSERT(nullptr != initiator && nullptr != Session::GetGlobalSessionPacketHandleFunc());
+		
+		m_threads[0] = std::thread{ &ThreadMgr::LaunchInternal,(int8_t)num_of_threads };
 
-		while (g_threadID.load(std::memory_order_seq_cst) + 1 <= num_of_threads);
-		std::atomic_thread_fence(std::memory_order_seq_cst);
+		ThreadControlFunc();
 
+		Join();
+
+		// TODO: 타이머 스레드를 빼는게 나을지는 나중에 몹 많아지면 판단.
 		//m_timerThread = std::thread{ []()noexcept
 		//	{
-		//		Mgr(ThreadMgr)->InitTLS();
+		//		//Mgr(ThreadMgr)->InitTLS();
 		//		const bool& bStopRequest = Mgr(ThreadMgr)->m_bStopRequest;
 		//		TaskTimerMgr& taskTimer = *Mgr(TaskTimerMgr);
 		//		for (;;)
@@ -87,34 +88,10 @@ namespace ServerCore
 		//
 		//			std::this_thread::yield();
 		//		}
-		//		Mgr(ThreadMgr)->DestroyTLS();
+		//		//Mgr(ThreadMgr)->DestroyTLS();
 		//	} };
 
-		std::string strFin(32, 0);
-		const auto main_service = const_cast<Service* const>(Service::GetMainService());
-		if (SERVICE_TYPE::SERVER == main_service->GetServiceType())
-		{
-			NAGOX_ASSERT(ThreadMgr::NUM_OF_THREADS == num_of_threads);
-			constinit static std::atomic_bool registerFinish = false;
-			while (!m_bStopRequest)
-			{
-				std::cin >> strFin;
-
-				if ("EXIT" == strFin)
-				{
-					if (false == registerFinish.exchange(true))
-					{
-						main_service->CloseService();
-						Mgr(Logger)->m_bStopRequest = true;
-						Mgr(FieldMgr)->ClearField();
-						std::this_thread::sleep_for(std::chrono::seconds(5));
-						Join();
-					}
-				}
-
-				std::this_thread::sleep_for(std::chrono::seconds(5));
-			}
-		}
+		
 	}
 
 	void ThreadMgr::Join()
@@ -128,33 +105,34 @@ namespace ServerCore
 		for (auto& t : m_threads)
 		{
 			PostQueuedCompletionStatus(m_iocpHandle, 0, 0, 0);
-			t.join();
+			if (t.joinable())
+				t.join();
 		}
-		if (m_timerThread.joinable())
-			m_timerThread.join();
+		//if (m_timerThread.joinable())
+		//	m_timerThread.join();
 	}
 
-	void ThreadMgr::InitTLS()
+	void ThreadMgr::InitTLS()noexcept
 	{
+		NAGOX_ASSERT(g_mainThreadID != std::this_thread::get_id());
+		NAGOX_ASSERT_LOG(nullptr != Session::GetGlobalSessionPacketHandleFunc(), "Session PacketHandle Func Not Init");
+
 		constinit extern thread_local int8_t LThreadContainerIndex;
-		LThreadContainerIndex = g_threadID.fetch_add(1);
+		LThreadContainerIndex = (int8_t)(g_threadID.fetch_add(1));
 
 		//LPro_token = xnew<moodycamel::ProducerToken>(m_globalTaskQueue);
-		thread_local moodycamel::ProducerToken pro_token{ m_globalTask };
+		thread_local moodycamel::ProducerToken pro_token{ Mgr(ThreadMgr)->m_globalTask };
 		LPro_tokenGlobalTask = &pro_token;
 
 		//LCon_token = xnew <moodycamel::ConsumerToken>(m_globalTaskQueue);
-		thread_local moodycamel::ConsumerToken con_token{ m_globalTask };
+		thread_local moodycamel::ConsumerToken con_token{ Mgr(ThreadMgr)->m_globalTask };
 		LCon_tokenGlobalTask = &con_token;
 
 		LXVectorForTempCopy = &new_view_list_npc.GetItemListRef();
 
-		if (NUM_OF_THREADS >= GetCurThreadNumber() && 0 < GetCurThreadNumber())
+		
 		{
-			{
-				NAGOX_ASSERT_LOG(nullptr != Session::GetGlobalSessionPacketHandleFunc(), "Session PacketHandle Func Not Init");
-			}
-
+			
 			{
 				new_view_list_session.clear_unsafe();
 				new_view_list_npc.clear_unsafe();
@@ -162,24 +140,22 @@ namespace ServerCore
 
 			LSendBufferChunk = SendBufferMgr::Pop();
 
-			if (g_initTLSCallBack)
-			{
-				g_initTLSCallBack();
-			}
+			Mgr(FieldMgr)->InitTLSinField();
+
+			g_initiator->TLSInitialize();
 		}
 
 		LRandSeed = std::uniform_int_distribution<uint32_t>{ 0, UINT32_MAX }(g_RandEngine);
 	}
 
-	void ThreadMgr::DestroyTLS()
+	void ThreadMgr::DestroyTLS()noexcept
 	{
-		if (NUM_OF_THREADS >= GetCurThreadNumber() && 0 < GetCurThreadNumber())
-		{
-			if (g_destroyTLSCallBack)
-			{
-				g_destroyTLSCallBack();
-			}
-		}
+		NAGOX_ASSERT(g_mainThreadID != std::this_thread::get_id());
+
+		Mgr(FieldMgr)->DestroyTLSinField();
+
+		g_initiator->TLSDestroy();
+
 		if (LSendBufferChunk)
 			LSendBufferChunk->DecRef<SendBufferChunk>();
 	}
@@ -192,28 +168,60 @@ namespace ServerCore
 			//std::destroy_at<Task>(&task);
 		}
 	}
+
+	void ThreadMgr::LaunchInternal(const int8_t num_of_threads) noexcept
+	{
+		InitTLS();
+
+		g_initiator->GlobalInitialize();
+
+		Mgr(FieldMgr)->ShrinkToFitBeforeStart();
+
+		for (int i = 1; i < num_of_threads; ++i)Mgr(ThreadMgr)->m_threads[i] = std::thread{ &ThreadMgr::WorkerThreadFunc };
+		
+		IocpRoutine();
+
+		DestroyTLS();
+	}
+
 	void ThreadMgr::WorkerThreadFunc() noexcept
+	{
+		InitTLS();
+
+		IocpRoutine();
+
+		DestroyTLS();
+	}
+
+	void ThreadMgr::IocpRoutine() noexcept
 	{
 		constinit extern thread_local int8_t LThreadContainerIndex;
 		constinit extern thread_local uint64_t LEndTickCount;
 		constinit extern thread_local uint64_t LCurHandleSessionID;
 
-		Mgr(ThreadMgr)->InitTLS();
-
 		TaskTimerMgr& taskTimer = *Mgr(TaskTimerMgr);
-		const bool& bStopRequest = Mgr(ThreadMgr)->GetStopFlagRef();
 		const HANDLE iocpHandle = IocpCore::GetIocpHandleGlobal();
 
-		for (;;)
+		for(;;) [[likely]]
 		{
-			if (bStopRequest) [[unlikely]]
-				break;
-
-			IocpCore::Dispatch(iocpHandle);
-			taskTimer.DistributeTask();
-			ClusterUpdateQueue::UpdateCluster();
+			if (IocpCore::Dispatch(iocpHandle)) [[likely]]{
+				taskTimer.DistributeTask();
+				ClusterUpdateQueue::UpdateCluster();
+			}
+			else [[unlikely]] break;
 		}
+	}
 
-		Mgr(ThreadMgr)->DestroyTLS();
+	void ThreadMgr::ThreadControlFunc() noexcept
+	{
+		g_initiator->ControlThreadFunc();
+		EnqueueGlobalTask([]()
+			{
+			g_initiator->GlobalDestroy();
+			Mgr(FieldMgr)->ClearField();
+			const_cast<Service* const>(Service::GetMainService())->CloseService();
+			Mgr(Logger)->m_bStopRequest = true;
+			});
+		std::this_thread::sleep_for(std::chrono::seconds(5));
 	}
 }

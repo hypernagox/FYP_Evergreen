@@ -20,3 +20,6 @@ namespace ServerCore
 		static S_ptr<ContentsEntity> CreateNPC(const EntityBuilder& b)noexcept;
 	};
 }
+
+using ServerCore::EntityBuilder;
+using ServerCore::EntityFactory;

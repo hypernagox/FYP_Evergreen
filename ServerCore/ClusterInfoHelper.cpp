@@ -10,8 +10,7 @@ namespace ServerCore
 	{
 		vec_.clear();
 		const auto clusters = ClusterInfoHelper::GetAdjClusters(pEntity_);
-		const auto huristic = MoveBroadcaster::g_huristic[0];
-
+		
 		for (const auto cluster : clusters)
 		{
 			const auto& sessions = cluster->GetSessions();
@@ -19,7 +18,7 @@ namespace ServerCore
 			const auto e = b + sessions.size();
 			while (e != b) {
 				const auto s = *b++;
-				if (huristic(pEntity_, s))vec_.emplace_back(s);
+				if (MoveBroadcaster::GlobalFilter4Session(pEntity_, s))vec_.emplace_back(s);
 			}
 		}
 	}

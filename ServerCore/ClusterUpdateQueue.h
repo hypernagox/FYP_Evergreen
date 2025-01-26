@@ -54,9 +54,9 @@ namespace ServerCore
 				if (!task)return;
 				if (task->Execute())
 				{
+					ServerCore::xdelete<ClusterUpdateTask>(task);
 					InterlockedExchangePointer((PVOID*)(task_ptr)
 						, nullptr);
-					ServerCore::xdelete<ClusterUpdateTask>(task);
 				}
 				++L_CurIndex;
 			}

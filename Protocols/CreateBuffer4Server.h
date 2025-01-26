@@ -6,10 +6,7 @@
 
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 
-static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept {
-    thread_local flatbuffers::FlatBufferBuilder* const builder = CreateBuilder();
-    return builder;
-}
+static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { return CreateBuilder(); }
 
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_LOGIN(
     const uint32_t obj_id,

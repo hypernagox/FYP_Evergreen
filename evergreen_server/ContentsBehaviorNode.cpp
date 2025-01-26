@@ -94,18 +94,18 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
     const auto dy = dest_pos.y - cur_pos.y;
     const auto dz = dest_pos.z - cur_pos.z;
 
-    const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+   // const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
   
     if (m_range * m_range <= dx * dx + dy * dy + dz * dz) 
     {
-        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+        //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
         float temp[3]{};
-        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
+       // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
         
-        ag->active = false;
+       // ag->active = false;
         return NodeStatus::FAILURE;
     }
-    ag->active = true;
+    //ag->active = true;
     return NodeStatus::SUCCESS;
 }
 
@@ -153,12 +153,12 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
    //     return NodeStatus::FAILURE;
     if (2 * 2 >= (dest_pos - cur_pos).LengthSquared())
     {
-        const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
-        ag->active = false;
-        //std::cout << "추격 성공" << std::endl;
-        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
-        float temp[3]{};
-        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
+       //const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+       //ag->active = false;
+       ////std::cout << "추격 성공" << std::endl;
+       //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+       //float temp[3]{};
+       //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
         return NodeStatus::SUCCESS;
     }
 
@@ -168,18 +168,18 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
    // ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     
-        const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+        //const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
        
-        Vector3 ppp{ ag->npos[0],ag->npos[1],-ag->npos[2] };
-        Vector3 vpp{ ag->vel[0],ag->vel[1],-ag->vel[2] };
-        pOwnerEntity->GetComp<PositionComponent>()->pos = ppp;
-        pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(vpp.x, vpp.z) * 180.f / 3.141592f;
-
-        bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+        //Vector3 ppp{ ag->npos[0],ag->npos[1],-ag->npos[2] };
+        //Vector3 vpp{ ag->vel[0],ag->vel[1],-ag->vel[2] };
+        //pOwnerEntity->GetComp<PositionComponent>()->pos = ppp;
+        //pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(vpp.x, vpp.z) * 180.f / 3.141592f;
+        //
+        //bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
         //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
         //ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     }
-    return NodeStatus::RUNNING;
+   // return NodeStatus::RUNNING;
 
     if(path.empty()) return NodeStatus::FAILURE;
 
@@ -195,7 +195,9 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
     const auto dz2 = cur_pos.z + dir.z * 10.2f * dt_;
 
     pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(cur_pos,Vector3{ dx2,dy2,dz2 });
-    
+   
+    pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
+    // 
    // ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
     bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));

@@ -10,8 +10,10 @@
 #include "Monster.h"
 #include "ServerTimeMgr.h"
 
+thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
+
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
-	thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
+	extern thread_local flatbuffers::FlatBufferBuilder buillder;
 	return &buillder;
 }
 

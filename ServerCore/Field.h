@@ -8,8 +8,11 @@ namespace ServerCore
 	class Field
 	{
 	public:
-		virtual void InitField()noexcept = 0;
 		virtual ~Field() = default;
+	public:
+		virtual void InitFieldGlobal()noexcept = 0;
+		virtual void InitFieldTLS()noexcept = 0;
+		virtual void DestroyFieldTLS()noexcept = 0;
 	public:
 		void EnterFieldNPC(const S_ptr<ContentsEntity>& pEntity_)noexcept {
 			const auto entity_ptr = pEntity_.get();
@@ -40,18 +43,21 @@ namespace ServerCore
 	public:
 		template <typename T = Cluster>
 		T* const GetCluster(const Point2D sectorXY)const noexcept { 
-			return static_cast<T* const>(m_vecClusters[ThreadMgr::GetCurThreadIdx()][sectorXY.y][sectorXY.x]);
+			return static_cast<T* const>(tl_vecClusters[sectorXY.y][sectorXY.x]);
 		}
 		template <typename T = Cluster>
 		T* const GetCluster(const uint8_t x, const uint8_t y)const noexcept { 
-			return static_cast<T* const>(m_vecClusters[ThreadMgr::GetCurThreadIdx()][y][x]);
+			return static_cast<T* const>(tl_vecClusters[y][x]);
 		}
 		inline const Point2D CalculateClusterXY(const float x, const float y)const noexcept {
 			return Point2D{ static_cast<const uint8_t>(static_cast<const int32_t>(x) / cluster_x)
 				, static_cast<const uint8_t>(static_cast<const int32_t>(y) / cluster_y) };
 		}
+		const auto GetNumOfClustersInField()const noexcept { return m_numOfClusters; }
 	protected:
-		XVector<XVector<Cluster*>> m_vecClusters[ThreadMgr::NUM_OF_THREADS];
+		constinit static inline thread_local XVector<Cluster*>* tl_vecClusters = nullptr;
+		uint32_t m_numOfClusters = 0;
+		
 		const uint8_t m_start_x = 0;
 		const uint8_t m_start_y = 0;
 		int field_x = 1;

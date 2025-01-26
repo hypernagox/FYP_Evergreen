@@ -7,6 +7,16 @@
 
 namespace ServerCore
 {
+	class Initiator
+	{
+	public:
+		virtual void GlobalInitialize()noexcept = 0;
+		virtual void TLSInitialize()noexcept = 0;
+		virtual void TLSDestroy()noexcept = 0;
+		virtual void GlobalDestroy()noexcept = 0;
+		virtual void ControlThreadFunc()noexcept = 0;
+	};
+
 	class TaskQueueable;
 	class Service;
 	class Task;
@@ -31,7 +41,7 @@ namespace ServerCore
 		};
 	public:
 		static constexpr const uint64 NUM_OF_THREADS = ServerCore::NUM_OF_THREADS;
-		void Launch(const uint64_t num_of_threads, std::function<void(void)> destroyTLSCallBack = nullptr, std::function<void(void)> initTLSCallBack = nullptr);
+		void Launch(const uint64_t num_of_threads, Initiator* const initiator);
 		static inline const int32_t GetCurThreadNumber()noexcept { 
 			constinit extern thread_local int8_t LThreadContainerIndex;
 			return LThreadContainerIndex + 1;
@@ -105,27 +115,28 @@ namespace ServerCore
 			return res_future;
 		}
 		const bool& GetStopFlagRef()const noexcept { return m_bStopRequest; }
-	public:
-		void InitTLS();
-		void DestroyTLS();
+	private:
+		static void InitTLS()noexcept;
+		static void DestroyTLS()noexcept;
 		void Join();
 		void TryGlobalQueueTask()noexcept;
 	private:
-		bool m_bStopRequest = false;
 		HANDLE m_iocpHandle;
-		std::vector<std::thread> m_threads;
-		std::thread m_timerThread;
+		bool m_bStopRequest = false;
+		
+		//std::thread m_timerThread;
 
 		moodycamel::ConcurrentQueue<Task, LFQueueAllocator> m_globalTask{ 32 };
-	
-		
-		constinit static inline std::atomic<int32_t> g_threadID = -1;
-		static inline std::function<void(void)> g_initTLSCallBack = {};
-		static inline std::function<void(void)> g_destroyTLSCallBack = {};
-		enum { WORKER_TICK = 64 };
 
+		static inline std::thread m_threads[ThreadMgr::NUM_OF_THREADS];
+		constinit static inline std::thread::id g_mainThreadID;
+		constinit static inline std::atomic<int32_t> g_threadID = 0;
+		constinit static inline Initiator* g_initiator = nullptr;
 	private:
+		static void LaunchInternal(const int8_t num_of_threads)noexcept;
 		static void WorkerThreadFunc()noexcept;
+		static void IocpRoutine()noexcept;
+		void ThreadControlFunc()noexcept;
 	};
 }
 

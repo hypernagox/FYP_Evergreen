@@ -55,10 +55,14 @@ namespace ServerCore
 			if (false == m_bIsSendRegistered && 
 				false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			{
+				if (m_sendQueue.empty_single())
+					return RetrySend();
+				
 				const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
 				auto& register_send_event = m_pSendEvent->m_registerSendEvent;
+				const auto ov_ptr = register_send_event.GetOverlappedAddr();
 				register_send_event.SetIocpObject(SharedFromThis<IocpObject>());
-				::PostQueuedCompletionStatus(iocp_handle, 0, 0, register_send_event.GetOverlappedAddr());
+				::PostQueuedCompletionStatus(iocp_handle, 0, 0, ov_ptr);
 			}
 		}
 		template <typename S_ptr_SendBuffer> requires std::same_as<std::decay_t<S_ptr_SendBuffer>, S_ptr<SendBuffer>>
@@ -106,6 +110,7 @@ namespace ServerCore
 		void RegisterSend(S_ptr<PacketSession>&& pThisSessionPtr)noexcept;
 		void ProcessSend(S_ptr<PacketSession> pThisSessionPtr, c_int32 numofBytes_)noexcept;
 		void RetrySendAsError(SendEvent* const pSendEvent_)noexcept;
+		void RetrySend()const noexcept;
 
 		void HandleError(c_int32 errorCode, S_ptr<PacketSession>&& move_session)noexcept;
 

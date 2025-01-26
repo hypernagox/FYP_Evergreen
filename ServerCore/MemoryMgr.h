@@ -122,7 +122,9 @@ namespace ServerCore
 	constexpr inline void xdelete(T* const obj_ptr)noexcept{
 		static_assert(std::same_as<std::decay_t<T>, SendBufferChunk> || alignof(T) <= 8);
 		static_assert(alignof(SendBufferChunk) > 8);
-		if constexpr (std::derived_from<std::decay_t<T>, Session>)
+		if constexpr (std::same_as<std::decay_t<T>, ContentsEntity>)
+			return obj_ptr->ProcessCleanUp();
+		else if constexpr (std::derived_from<std::decay_t<T>, Session>)
 			return ReturnSession(obj_ptr);
 		else if constexpr (std::same_as<std::decay_t<T>, SendBufferChunk>)
 			return Memory::AlignedFree(obj_ptr, alignof(SendBufferChunk));

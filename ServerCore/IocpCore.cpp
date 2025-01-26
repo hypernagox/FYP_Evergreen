@@ -17,7 +17,7 @@ namespace ServerCore
 		::CloseHandle(m_iocpHandle);
 	}
 
-	void IocpCore::Dispatch(const HANDLE iocpHandle_) noexcept
+	const bool IocpCore::Dispatch(const HANDLE iocpHandle_) noexcept
 	{
 		constinit extern thread_local uint64_t LEndTickCount;
 		constinit extern thread_local uint64_t LCurHandleSessionID;
@@ -26,11 +26,11 @@ namespace ServerCore
 		IocpEvent* iocpEvent = nullptr;
 		uint64_t CurHandleSessionID = 0;
 
-		const BOOL bResult = ::GetQueuedCompletionStatus(iocpHandle_, OUT & numOfBytes, OUT reinterpret_cast<PULONG_PTR>(&CurHandleSessionID), OUT reinterpret_cast<LPOVERLAPPED*>(&iocpEvent), IocpCore::IOCP_POOL_TIME_OUT_MS);
+		const BOOL bResult =
+			::GetQueuedCompletionStatus(iocpHandle_, OUT & numOfBytes, OUT reinterpret_cast<PULONG_PTR>(&CurHandleSessionID), OUT reinterpret_cast<LPOVERLAPPED*>(&iocpEvent), IocpCore::IOCP_POOL_TIME_OUT_MS);
 
-		const int32_t errCode = ::WSAGetLastError();
 		LCurHandleSessionID = CurHandleSessionID;
-		LEndTickCount = ::GetTickCount64() + 64;
+		LEndTickCount = ::GetTickCount64() + IocpCore::WORKER_TICK;
 
 		if (iocpEvent)
 		{
@@ -39,27 +39,30 @@ namespace ServerCore
 			{
 				iocpObject->Dispatch(iocpEvent, numOfBytes);
 			}
+			if (!bResult)
+			{
+				PrintLogEndl(std::format("IOCP Error: {}", ::WSAGetLastError()));
+			}
+			return true;
 		}
-		else
+		else if(bResult)
 		{
 			if (const auto global_task = reinterpret_cast<Task* const>(CurHandleSessionID)) [[likely]]
 			{
 				global_task->ExecuteTask();
 				xdelete<Task>(global_task);
+				return true;
 			}
+			else [[unlikely]]
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return true;
 		}
 
-		if (FALSE == bResult)
-		{
-			switch (errCode)
-			{
-			case WAIT_TIMEOUT:
-				return;
-			default:
-				// TODO 왜 여기로 왔는지 로그 찍기
-				PrintLogEndl(std::format("IOCP Error: {}", errCode));
-				break;
-			}
-		}
+		return true;
 	}
 }

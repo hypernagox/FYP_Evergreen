@@ -26,6 +26,8 @@ public:
 	ContentsComponent(ServerCore::ContentsEntity* const pOwner_)noexcept :m_pOwnerEntity{ pOwner_ } {}
 	virtual ~ContentsComponent()noexcept = default;
 public:
+	virtual void ProcessCleanUp()noexcept {}
+public:
 	template<typename ComponentFunc, typename... Args> requires std::is_member_function_pointer_v<ComponentFunc>
 	constexpr inline void EnqueueCompTaskPushOnly(ComponentFunc&& comp_func,Args&&... args)noexcept{
 		m_pOwnerEntity->GetQueueabler<class Queueabler>()->EnqueueAsyncPushOnly(std::forward<ComponentFunc>(comp_func), this, std::forward<Args>(args)...);

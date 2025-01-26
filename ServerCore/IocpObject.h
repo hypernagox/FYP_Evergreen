@@ -3,7 +3,7 @@
 #include "RefCountable.h"
 #include "ID_Ptr.hpp"
 #include "ComponentSystem.h"
-
+#include "NagoxDeleter.h"
 
 class ClientSession;
 
@@ -79,8 +79,10 @@ namespace ServerCore
 
 		template<typename T> requires std::is_enum_v<T>
 		constexpr inline void SetObjectDetailType(const T eDetailType_)const noexcept { m_obj_detail_type = static_cast<const uint8_t>(eDetailType_); }
+	public:
+		void SetObjectID4Reuse()const noexcept { m_obj_id = IDGenerator::GenerateID(); }
 	private:
-		const uint64_t m_obj_id : 48;
+		mutable uint64_t m_obj_id : 48;
 		const uint64_t m_obj_primary_group_type : 8;
 		mutable uint64_t m_obj_detail_type : 8;
 	};
@@ -93,6 +95,7 @@ namespace ServerCore
 	public:
 		ContentsEntity(const uint8_t primary_group_type, const uint8_t detail_type) noexcept;
 		ContentsEntity(Session* const session_) noexcept;
+	private:
 		~ContentsEntity()noexcept;
 	public:
 		template<typename T, typename U, typename Ret, typename... Args> requires std::derived_from<U, T>
@@ -127,6 +130,7 @@ namespace ServerCore
 			return bRes;
 		}
 		inline void DecRef()const noexcept { RefCountable::DecRef<ContentsEntity>(); }
+		void SetActive()noexcept { m_bIsValid.store(true); }
 	public:
 		template <typename T>
 		inline T* const GetIocpComponent()const noexcept {
@@ -181,8 +185,22 @@ namespace ServerCore
 	private:
 		void PostEntityTask(Task&& task_)const noexcept;
 		void OnDestroy()noexcept;
+	public:
+		template<typename T, typename... Args> requires std::derived_from<T,NagoxDeleter>
+		void SetDeleter(Args&&... args)noexcept {
+			NAGOX_ASSERT(nullptr == m_deleter);
+			m_deleter = xnew<T>(std::forward<Args>(args)...);
+		}
+		const auto GetDeleter()const noexcept { return m_deleter; }
+		void ResetDeleter()noexcept {
+			if (m_deleter)
+				xdelete<NagoxDeleter>(m_deleter);
+			m_deleter = nullptr; 
+		}
+		void ProcessCleanUp()noexcept;
 	private:
 		PadByte pad;
+		NagoxDeleter* m_deleter = nullptr;
 		PacketSession* const m_pSession = nullptr;
 		const EntityInfo m_entity_info;
 		class ComponentSystem* const m_componentSystem;
@@ -207,6 +225,7 @@ namespace ServerCore
 		constexpr inline ContentsEntity* const GetOwnerEntity()noexcept { return m_pOwnerEntity; }
 
 		inline const bool IsValid()const noexcept { return m_pOwnerEntity->IsValid(); }
+		virtual void ProcessCleanUp()noexcept {}
 	public:
 		template<typename T = uint8_t> requires (std::is_enum_v<T> || std::same_as<T, uint8_t>) && (sizeof(T) == sizeof(uint8_t))
 		constexpr inline const T GetOwnerPrimaryGroup()const noexcept { return m_pOwnerEntity->GetPrimaryGroupType<T>(); }

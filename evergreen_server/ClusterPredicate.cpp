@@ -15,7 +15,7 @@ ClusterPredicate::~ClusterPredicate()
 {
 }
 
-bool ClusterPredicate::ClusterHuristicFunc2Session(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
+bool ClusterPredicate::Filter4Session(const ContentsEntity* const a, const ContentsEntity* const b) const noexcept
 {
 	if (!a->IsValid() || !b->IsValid())return false;
 	// if (a->IsPendingClusterEntry() || b->IsPendingClusterEntry())return false;// 이거는 상황보고 다시 해야할수도있음 일단 패킷핸들러에서만 체크해봄
@@ -30,7 +30,7 @@ bool ClusterPredicate::ClusterHuristicFunc2Session(const ServerCore::ContentsEnt
 	return ((50 * 50) >= (dx * dx + dy * dy + dz * dz));
 }
 
-bool ClusterPredicate::ClusterHuristicFunc2NPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b) noexcept
+bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsEntity* const b) const noexcept
 {
 	if (!a->IsValid() || !b->IsValid())return false;
 	if (a->IsPendingClusterEntry() || b->IsPendingClusterEntry())return false;
@@ -58,21 +58,21 @@ bool ClusterPredicate::ClusterHuristicFunc2NPC(const ServerCore::ContentsEntity*
 	return bRes;
 }
 
-S_ptr<SendBuffer> ClusterPredicate::ClusterAddPacketFunc(const ServerCore::ContentsEntity* const p) noexcept
+S_ptr<SendBuffer> ClusterPredicate::CreateAddPacket(const ContentsEntity* const entity_ptr) const noexcept
 {
-	const auto& pEntity = p->GetComp<PositionComponent>();
+	const auto& pEntity = entity_ptr->GetComp<PositionComponent>();
 
-	return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)p->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), p->GetDetailType(), ToFlatVec3(pEntity->pos));
+	return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), ToFlatVec3(pEntity->pos));
 }
 
-S_ptr<SendBuffer> ClusterPredicate::ClusterRemovePacketFunc(const uint32_t obj_id) noexcept
+S_ptr<SendBuffer> ClusterPredicate::CreateRemovePacket(const uint32_t obj_id) const noexcept
 {
 	return Create_s2c_REMOVE_OBJECT(obj_id);
 }
 
-S_ptr<SendBuffer> ClusterPredicate::ClusterMovePacketFunc(const ServerCore::ContentsEntity* const p) noexcept
+S_ptr<SendBuffer> ClusterPredicate::CreateMovePacket(const ContentsEntity* const entity_ptr) const noexcept
 {
-	const auto pos_comp = p->GetComp<PositionComponent>();
+	const auto pos_comp = entity_ptr->GetComp<PositionComponent>();
 	return Create_s2c_MOVE(
 		pos_comp->GetOwnerObjectID(),
 		ToFlatVec3(pos_comp->pos),

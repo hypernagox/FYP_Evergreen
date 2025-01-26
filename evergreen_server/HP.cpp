@@ -8,13 +8,13 @@
 
 void HP::PostDoDmg(const int dmg_, ServerCore::S_ptr<ServerCore::ContentsEntity> atkObject) noexcept
 {
-	if (m_bIsRebirth)return;
+	//if (m_bIsRebirth)return;
 	EnqueueCompTaskPushOnly(&HP::DoDmg, dmg_, std::move(atkObject));
 }
 
 void HP::PostDoHeal(const int heal_) noexcept
 {
-	if (m_bIsRebirth)return;
+	//if (m_bIsRebirth)return;
 	EnqueueCompTaskPushOnly(&HP::DoHeal, heal_);
 }
 
@@ -33,7 +33,7 @@ void HP::DoDmg(const int dmg_, const ServerCore::S_ptr<ServerCore::ContentsEntit
 		// TODO 퀘스트 키값 정하기
 		q->PostCheckQuestAchieve(owner->SharedFromThis());
 	}
-	m_bIsRebirth = true;
+	//m_bIsRebirth = true;
 }
 
 void HP::DoHeal(const int heal_) noexcept

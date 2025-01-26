@@ -10,10 +10,7 @@
 
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 
-static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept {
-    thread_local flatbuffers::FlatBufferBuilder* const builder = CreateBuilder();
-    return builder;
-}
+static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { return CreateBuilder(); }
 
 {% for table in tables %}
 {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> Create_{{ table.name }}(

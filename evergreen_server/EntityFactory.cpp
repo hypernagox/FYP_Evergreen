@@ -9,6 +9,7 @@
 #include "Collider_Common.h"
 #include "HP.h"
 #include "Death.h"
+#include "Regenerator.h"
 
 namespace ServerCore
 {
@@ -46,6 +47,8 @@ namespace ServerCore
 
 		monster_entity->AddComp<HP>();
 		monster_entity->AddComp<MonsterDeath>();
+
+		monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
 
 		return monster_entity;
 	}

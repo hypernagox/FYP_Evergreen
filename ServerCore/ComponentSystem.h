@@ -17,6 +17,11 @@ public:
 		return static_cast<T* const>(GetCompInternal<T::GetCompTypeNameGlobal()>());
 	}
 	inline const bool IsOwnerValid()const noexcept { return m_bOwnerValidFlag.load(); }
+	void ProcessCleanUp()const noexcept;
+	void ShrinkToFit()noexcept {
+		m_contentsComponents.shrink_to_fit();
+		m_vecUpdateComponents.shrink_to_fit();
+	}
 protected:
 	void Update(const float dt_)const noexcept;
 private:
@@ -28,7 +33,6 @@ private:
 		m_contentsComponents.emplace_back(T::GetCompTypeNameGlobal(), comp_ptr);
 		if constexpr (std::derived_from<T, ContentsUpdateComponent>)
 			m_vecUpdateComponents.emplace_back(comp_ptr);
-		// TODO: shrink to fit
 		return comp_ptr;
 	}
 	template <const uint64_t COMP_ID>

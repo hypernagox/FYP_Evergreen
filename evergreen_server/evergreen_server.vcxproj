@@ -205,6 +205,7 @@
     <ClCompile Include="ClusterPredicate.cpp" />
     <ClCompile Include="Quest.cpp" />
     <ClCompile Include="QuestSystem.cpp" />
+    <ClCompile Include="Regenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Protocols\c2s_PacketHandler.h" />
@@ -227,6 +228,7 @@
     <ClInclude Include="ClusterPredicate.h" />
     <ClInclude Include="Quest.h" />
     <ClInclude Include="QuestSystem.h" />
+    <ClInclude Include="Regenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\create_packet_handler.h.j2" />

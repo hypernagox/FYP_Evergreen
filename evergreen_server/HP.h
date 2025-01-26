@@ -14,6 +14,11 @@ public:
 public:
 	void PostDoDmg(const int dmg_, ServerCore::S_ptr<ServerCore::ContentsEntity> atkObject)noexcept;
 	void PostDoHeal(const int heal_)noexcept;
+public:
+	void ProcessCleanUp()noexcept override {
+		m_hp = 3;
+		m_bIsRebirth = false;
+	}
 private:
 	void DoDmg(const int dmg_, const ServerCore::S_ptr<ServerCore::ContentsEntity> atkObject)noexcept;
 	void DoHeal(const int heal_)noexcept;

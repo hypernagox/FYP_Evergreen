@@ -6,10 +6,7 @@
 
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 
-static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept {
-    thread_local flatbuffers::FlatBufferBuilder* const builder = CreateBuilder();
-    return builder;
-}
+static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { return CreateBuilder(); }
 
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_LOGIN(
     const std::string_view& name,

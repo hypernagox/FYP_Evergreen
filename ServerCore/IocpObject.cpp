@@ -35,8 +35,9 @@ namespace ServerCore
 		PrintLogEndl("DESTROY");
 		auto b = m_arrIocpComponents;
 		const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
-		while (e != b)
-		{
+		if (m_deleter)
+			xdelete<NagoxDeleter>(m_deleter);
+		while (e != b) {
 			if (const auto iocp_comp = *b++)
 				xdelete<IocpComponent>(iocp_comp);
 		}
@@ -87,21 +88,44 @@ namespace ServerCore
 		{
 			m_arrIocpComponents[type]->Dispatch(&temp_entity_ptr);
 		}
-		
-		//xdelete_sized<ContentsEntityTask>(entity_task, sizeof(ContentsEntityTask));
 	}
 
 	void ContentsEntity::OnDestroy() noexcept
 	{
 		const auto cluster_ptr = GetCurCluster();
-		if (cluster_ptr) 
+		if (cluster_ptr)
 			cluster_ptr->LeaveAndDestroyEnqueue(GetPrimaryGroupType(), GetObjectID());
+
 		if (nullptr == m_pSession)
 			Mgr(FieldMgr)->ReleaseNPC(this);
 		else
 		{
 			if (cluster_ptr)
 				m_pSession->OnDisconnected(cluster_ptr);
+		}
+	}
+
+	void ContentsEntity::ProcessCleanUp() noexcept
+	{
+		if (m_deleter)
+		{
+			m_clusterEnterCount = ThreadMgr::NUM_OF_THREADS;
+			GetRefCountExternal(this) = 1;
+			m_componentSystem->ProcessCleanUp();
+			auto b = m_arrIocpComponents;
+			const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
+			while (e != b) {
+				if (const auto iocp_comp = *b++)
+					iocp_comp->ProcessCleanUp();
+			}
+			m_entity_info.SetObjectID4Reuse();
+
+			m_deleter->ProcessDestroy(S_ptr<ContentsEntity>{reinterpret_cast<uint64_t>(this)});
+		}
+		else
+		{
+			this->~ContentsEntity();
+			Memory::Free(this);
 		}
 	}
 

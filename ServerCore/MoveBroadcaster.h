@@ -1,6 +1,7 @@
 #pragma once
 #include "ServerCorePch.h"
 #include "ContentsComponent.h"
+#include "BroadcastHelper.h"
 
 namespace ServerCore
 {
@@ -20,60 +21,61 @@ namespace ServerCore
 		~MoveBroadcaster()noexcept { 
 			for (const auto npc_ptr : m_view_list_npc.GetItemListRef())npc_ptr->DecRef();
 		}
-		using HuristicFunc = bool(*)(const ContentsEntity* const, const ContentsEntity* const)noexcept;
-		using PacketFunc = S_ptr<SendBuffer>(*)(const ContentsEntity* const)noexcept;
 	public:
-		void BroadcastMove()noexcept;
+		void BroadcastMove(const BroadcastHelper& helper)noexcept;
+		void RequestHandler(const BroadcastHandler& handler)noexcept { handler.HandleBroadcast(this); }
 		void BroadcastPacket(const S_ptr<SendBuffer>& pSendBuff_)const noexcept;
 		XVector<S_ptr<ContentsEntity>> GetSptrSession()const noexcept;
 		XVector<S_ptr<ContentsEntity>> GetSptrNPC()const noexcept;
 		const auto& GetViewListSession()const noexcept { return m_view_list_session.GetItemListRef(); }
 		const auto& GetViewListNPC()const noexcept { return m_view_list_npc.GetItemListRef(); }
 	public:
-		static void RegisterHuristicFunc2Session(const HuristicFunc fp_)noexcept {
-			if (g_huristic[0])return;
-			g_huristic[0] = fp_;
-		}
-		static void RegisterHuristicFunc2NPC(const HuristicFunc fp_)noexcept {
-			if (g_huristic[1])return;
-			g_huristic[1] = fp_;
-		}
-		static void RegisterAddPacketFunc(const PacketFunc fp_)noexcept {
-			if (g_create_add_pkt)return;
-			g_create_add_pkt = fp_;
-		}
-		static void RegisterRemovePacketFunc(S_ptr<SendBuffer>(*const fp_)(const uint32_t)noexcept)noexcept {
-			if (g_create_remove_pkt)return;
-			g_create_remove_pkt = fp_;
-		}
-		static void RegisterMovePacketFunc(const PacketFunc fp_)noexcept {
-			if (g_create_move_pkt)return;
-			g_create_move_pkt = fp_;
+		static void RegisterGlobalHelper(BroadcastHelper* const helper)noexcept { 
+			NAGOX_ASSERT(nullptr == g_global_helper);
+			g_global_helper = helper;
 		}
 	public:
 		static S_ptr<SendBuffer> CreateAddPacket(const ContentsEntity* const pEntity_)noexcept {
-			return g_create_add_pkt(pEntity_);
+			return g_global_helper->CreateAddPacket(pEntity_);
 		}
 		static S_ptr<SendBuffer> CreateMovePacket(const ContentsEntity* const pEntity_)noexcept {
-			return g_create_move_pkt(pEntity_);
+			return g_global_helper->CreateMovePacket(pEntity_);
 		}
 		static S_ptr<SendBuffer> CreateAddPacket(const S_ptr<ContentsEntity>& pEntity_)noexcept {
-			return g_create_add_pkt(pEntity_.get());
+			return g_global_helper->CreateAddPacket(pEntity_.get());
 		}
 		static S_ptr<SendBuffer> CreateMovePacket(const S_ptr<ContentsEntity>& pEntity_)noexcept {
-			return g_create_move_pkt(pEntity_.get());
+			return g_global_helper->CreateAddPacket(pEntity_.get());
 		}
 		static S_ptr<SendBuffer> CreateRemovePacket(const uint32_t obj_id)noexcept {
-			return g_create_remove_pkt(obj_id);
+			return g_global_helper->CreateRemovePacket(obj_id);
 		}
+		static bool GlobalFilter4Session(const ContentsEntity* const a, const ContentsEntity* const b)noexcept{
+			return g_global_helper->Filter4Session(a, b);
+		}
+		static bool GlobalFilter4NPC(const ContentsEntity* const a, const ContentsEntity* const b)noexcept {
+			return g_global_helper->Filter4NPC(a, b);
+		}
+		static const auto GetGlobalBroadcastHelper()noexcept { return g_global_helper; }
+	private:
+		void TryInsertSession(
+			  const BroadcastHelper& helper
+			, const S_ptr<SendBuffer>& add_pkt
+			, const S_ptr<SendBuffer>& move_pkt
+			, const std::pair<uint32_t, const ContentsEntity*>&& id_ptr
+			, const PacketSession* const thisSession)noexcept;
+		void TryInsertNPC(
+			  const BroadcastHelper& helper
+			, const ContentsEntity* const entity_ptr
+			, const PacketSession* const thisSession)noexcept;
+	private:
+		void ProcessTryEraseSession(const BroadcastHelper& helper, const PacketSession* const thisSession)noexcept;
+		void ProcessTryEraseNPC(const BroadcastHelper& helper, const PacketSession* const thisSession)noexcept;
 	private:
 		ServerCore::VectorSetUnsafe<std::pair<uint32_t,const ContentsEntity*>> m_view_list_session;
 		ServerCore::VectorSetUnsafe<const ContentsEntity*> m_view_list_npc;
 	private:
-		constinit static inline HuristicFunc g_huristic[2] = {};
-		constinit static inline PacketFunc g_create_add_pkt = {};
-		constinit static inline S_ptr<SendBuffer>(*g_create_remove_pkt)(const uint32_t)noexcept;
-		constinit static inline PacketFunc g_create_move_pkt = {};
+		constinit static inline BroadcastHelper* g_global_helper = nullptr;
 	};
 }
 

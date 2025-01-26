@@ -21,3 +21,10 @@ void ComponentSystem::Update(const float dt_) const noexcept
 	const auto e = b + m_vecUpdateComponents.size();
 	while (e != b) { (*b++)->Update(this, dt_); }
 }
+
+void ComponentSystem::ProcessCleanUp()const noexcept
+{
+	auto b = m_contentsComponents.data();
+	const auto e = b + m_contentsComponents.size();
+	while (e != b) { (*b++).second->ProcessCleanUp(); }
+}

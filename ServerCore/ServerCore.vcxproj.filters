@@ -387,6 +387,12 @@
     <ClInclude Include="MPSCStack.hpp">
       <Filter>Utils\struct\LockFreeDS</Filter>
     </ClInclude>
+    <ClInclude Include="BroadcastHelper.h">
+      <Filter>EntityManagement\MoveBroadcaster</Filter>
+    </ClInclude>
+    <ClInclude Include="NagoxDeleter.h">
+      <Filter>Network\IocpCore\IocpObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">

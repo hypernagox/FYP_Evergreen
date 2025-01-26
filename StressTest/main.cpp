@@ -12,8 +12,38 @@ bool isValidIPAddress(std::wstring_view ipAddress) {
 }
 extern Vector3 SetTerrainPos(const Vector3& v);
 
+class ContentsInitiator
+	: public ServerCore::Initiator
+{
+public:
+	virtual void GlobalInitialize()noexcept override
+	{
+		
+		
+	}
+
+	virtual void TLSInitialize()noexcept override
+	{
+		const volatile auto init_builder = GetBuilder();
+	}
+
+	virtual void TLSDestroy()noexcept override
+	{
+		
+	}
+
+	virtual void GlobalDestroy()noexcept override
+	{
+	}
+
+	virtual void ControlThreadFunc()noexcept override
+	{
+	}
+};
+
 int main()
 {
+	ContentsInitiator con_init;
 	g_heightMap = std::make_shared<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 4096, 4096);
 	Mgr(CoreGlobal)->Init();
 	s2c_DummyPacketHandler::Init();
@@ -24,14 +54,14 @@ int main()
 			, ServerCore::NetAddress{ L"127.0.0.1",7777 }
 			, ServerCore::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 50
+			, 2000
 		);
 	
 	ASSERT_CRASH(pClientService->Start());
 	
 	Mgr(ThreadMgr)->Launch(
 		  2
-		, []() noexcept {const volatile auto init_builder = GetBuilder(); }
+		, &con_init
 	);
 
 	//std::wstring inputIP;
@@ -66,8 +96,6 @@ int main()
 
 	int n;
 	std::cin >> n;
-
-	Mgr(ThreadMgr)->Join();
 }
 
 

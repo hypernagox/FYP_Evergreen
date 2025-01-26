@@ -7,7 +7,7 @@
 
 namespace ServerCore
 {
-	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
+	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
 
 	template <typename T>
 	class MPSCQueue
@@ -140,18 +140,13 @@ namespace ServerCore
 		void try_flush_single(XVector<T>& vec_)noexcept {
 			Node* head_temp = head.load(std::memory_order_seq_cst);
 			if constexpr (std::same_as<std::decay_t<T>, S_ptr<SendBuffer>>){
-				extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> new_view_list_session;
+				extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
 				auto& wsa_bufs_vec = new_view_list_session.GetItemListRef();
 				wsa_bufs_vec.clear();
-				constexpr const size_t PKT_LIMIT_COUNT = 3072;
 				while (try_pop_single(vec_, head_temp)){
 					const auto& sb = vec_.back();
 					wsa_bufs_vec.push_back(reinterpret_cast<std::pair<uint32_t, const ContentsEntity*>&&>
 						(WSABUF{ sb->WriteSize(),reinterpret_cast<char* const>(sb->Buffer() )}));
-					if (PKT_LIMIT_COUNT == vec_.size()) [[unlikely]] {
-						//std::cout << "Send Limit\n";
-						break;
-					}
 				}
 			}
 			else {
@@ -175,7 +170,7 @@ namespace ServerCore
 		//	head.store(head_temp, std::memory_order_release);
 		//}
 		const bool empty_single()const noexcept {
-			return tail == head.load(std::memory_order_relaxed);
+			return nullptr == head.load(std::memory_order_relaxed)->next.load();
 		}
 		void clear_single()noexcept { reset(); }
 

@@ -70,12 +70,12 @@ namespace ServerCore
 	protected:
 		MPSCStack<Session*> m_sessionPool;
 		mutable tbb::concurrent_unordered_map<uint32_t, uint16_t> m_id2Index;
-		const std::span<AtomicSessionPtr> m_arrSession;
+		AtomicSessionPtr* const m_arrSession;
+		const int32_t m_maxSessionCount;
 		//MPSCStack<int32_t> m_idxStack;
 		//tbb::concurrent_bounded_queue<int32,StlAllocator64<int32>> m_idxQueue;
 		const SERVICE_TYPE m_eServiceType;
 		const NetAddress m_netAddr;
-		const int32_t m_maxSessionCount;
 		int32_t m_curNumOfSessions = 0;
 		const SessionFactory m_sessionFactory;
 		const IocpCore& m_iocpCore;

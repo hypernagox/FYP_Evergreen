@@ -193,6 +193,7 @@
     <ClInclude Include="BackOff.h" />
     <ClInclude Include="BehaviorTree.hpp" />
     <ClInclude Include="Benchmarker.h" />
+    <ClInclude Include="BroadcastHelper.h" />
     <ClInclude Include="Cluster.h" />
     <ClInclude Include="ComponentSystem.h" />
     <ClInclude Include="ContentsComponent.h" />
@@ -263,6 +264,7 @@
     <ClInclude Include="PreDefinition.h" />
     <ClInclude Include="VectorHash.hpp" />
     <ClInclude Include="FieldMgr.h" />
+    <ClInclude Include="NagoxDeleter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Allocator.cpp" />

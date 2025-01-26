@@ -624,12 +624,16 @@ namespace ServerCore
     };
 
 
-    template<typename Value>
+    template<typename Value, template<typename, typename> class TableBase = XMap>
     class VectorSetUnsafe
     {
+        using IndexType = uint32_t;
+        using TableContainer = TableBase<Value, IndexType>;
     public:
         constexpr VectorSetUnsafe(const std::size_t size_ = DEFAULT_ATOMIC_ALLOCATOR_SIZE)noexcept
         {
+            if constexpr (std::same_as<TableContainer, XHashMap<Value, IndexType>>)
+                m_ID2idx.reserve(size_);
             m_listItem.reserve(size_);
         }
     public:
@@ -746,6 +750,6 @@ namespace ServerCore
         inline const int32_t GetLastIndex()const noexcept { return static_cast<const int32_t>(m_listItem.size() - 1); }
     private:
         XVector<Value> m_listItem;
-        XMap<Value, int32_t> m_ID2idx;
+        TableContainer m_ID2idx;
     };
 }

@@ -44,7 +44,7 @@ namespace ServerCore
 		const uint16_t m_npcAwakeDistance;
 		NagoxAtomic::Atomic<TIMER_STATE> m_timer_state{ TIMER_STATE::IDLE };
 		uint32_t m_tickInterval = 200;
-		uint32_t m_curAwakerID;
+		uint32_t m_curAwakerID = 0;
 	};
 }
 
@@ -62,6 +62,7 @@ public:
 	void SetBTRevaluateInterval(const uint16_t bt_revaluate_interval)noexcept { m_btRevaluateInterval = bt_revaluate_interval; }
 	template <typename T = CompositeNode>
 	constexpr inline T* const GetRootNode()const noexcept { return static_cast<T* const>(m_rootNode); }
+	virtual void ProcessCleanUp()noexcept override;
 protected:
 	virtual const ServerCore::TIMER_STATE TimerUpdate()noexcept override;
 private:

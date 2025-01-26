@@ -12,7 +12,7 @@ namespace ServerCore
 	{
 		friend class ContentsEntity;
 		friend class Field;
-
+		friend class ThreadMgr;
 		struct alignas(64) AtomicNPCPtr
 		{
 			AtomicS_ptr<ContentsEntity> ptr;
@@ -24,7 +24,7 @@ namespace ServerCore
 		template <typename T, typename... Args>
 		T* RegisterField(const uint8_t fieldID, Args&&... args)noexcept {
 			const auto temp = xnew<T>(std::forward<Args>(args)...);
-			temp->InitField();
+			temp->InitFieldGlobal();
 			m_mapField.emplace(fieldID, temp);
 			return temp;
 		}
@@ -47,7 +47,7 @@ namespace ServerCore
 		constexpr void SetNumOfNPC()noexcept
 		{
 			if (!m_arrNPC.empty())return;
-			static AtomicNPCPtr arr_npc[num_of_npc];
+			static AtomicNPCPtr arr_npc[num_of_npc + 1];
 			m_arrNPC = arr_npc;
 			m_idxQueue.set_capacity(num_of_npc + 1);
 			m_id2Index.reserve(num_of_npc * 2);
@@ -56,10 +56,15 @@ namespace ServerCore
 				m_idxQueue.push(i);
 			}
 		}
-	private:
+	public:
 		void RegisterNPC(S_ptr<ContentsEntity>& pNPC)noexcept;
+		void RegisterNPC(S_ptr<ContentsEntity>&& pNPC)noexcept { RegisterNPC(pNPC); }
 		void ReleaseNPC(const ContentsEntity* const pNPC)noexcept;
+	private:
+		void InitTLSinField();
+		void DestroyTLSinField();
 
+		void ShrinkToFitBeforeStart()noexcept;
 	private:
 		std::unordered_map<uint8_t, Field*> m_mapField;
 

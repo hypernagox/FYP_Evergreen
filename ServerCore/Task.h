@@ -96,7 +96,7 @@ namespace ServerCore
 			mutable Func fp;
 			mutable std::tuple<std::decay_t<Args>...> args;
 			constexpr CallBackGeneric(Func&& fp_, Args&&... args_)noexcept
-				: fp{ std::forward<Func>(fp_) }, args{ std::forward<Args>(args)... } {
+				: fp{ std::forward<Func>(fp_) }, args{ std::forward<Args>(args_)... } {
 			}
 			inline constexpr void operator()()const noexcept
 			{
