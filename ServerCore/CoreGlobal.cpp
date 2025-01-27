@@ -24,11 +24,16 @@ namespace ServerCore
 	{
 		SocketUtils::Clear();
 	}
-	void CoreGlobal::Init() noexcept
+
+	void CoreGlobal::Init()const noexcept
 	{
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+		_CrtMemDumpStatistics(&mem_start);
+
 		Mgr(BenchmarkMgr)->RegisterDestroy();
 
-		std::atexit([]() {delete Service::GetMainService(); });
+		std::atexit([]() {Mgr(CoreGlobal)->ExitRoutine(); });
 
 		Mgr(CoreGlobal)->RegisterDestroy();
 		Mgr(TimeMgr)->RegisterDestroy();
@@ -50,5 +55,16 @@ namespace ServerCore
 		//Mgr(SendBufferMgr)->Init();
 		//Mgr(DBMgr)->Init();
 		Mgr(FieldMgr)->Init();
+	}
+	void CoreGlobal::ExitRoutine() noexcept
+	{
+		delete Service::GetMainService();
+		SendBufferMgr::DestroyTLSChunkPool();
+
+		_CrtMemState mem_check;
+		_CrtMemDumpStatistics(&mem_end);
+
+		if (_CrtMemDifference(&mem_check, &mem_start, &mem_end))
+			_CrtMemDumpStatistics(&mem_check);
 	}
 }

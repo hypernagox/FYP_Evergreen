@@ -70,7 +70,7 @@ namespace ServerCore
 		m_threads[0] = std::thread{ &ThreadMgr::LaunchInternal,(int8_t)num_of_threads };
 
 		ThreadControlFunc();
-
+		
 		Join();
 
 		// TODO: 타이머 스레드를 빼는게 나을지는 나중에 몹 많아지면 판단.
@@ -116,7 +116,7 @@ namespace ServerCore
 	{
 		NAGOX_ASSERT(g_mainThreadID != std::this_thread::get_id());
 		NAGOX_ASSERT_LOG(nullptr != Session::GetGlobalSessionPacketHandleFunc(), "Session PacketHandle Func Not Init");
-
+		SendBufferMgr::InitTLSChunkPool();
 		constinit extern thread_local int8_t LThreadContainerIndex;
 		LThreadContainerIndex = (int8_t)(g_threadID.fetch_add(1));
 
@@ -158,6 +158,8 @@ namespace ServerCore
 
 		if (LSendBufferChunk)
 			LSendBufferChunk->DecRef<SendBufferChunk>();
+
+		SendBufferMgr::DestroyTLSChunkPool();
 	}
 
 	void ThreadMgr::TryGlobalQueueTask()noexcept

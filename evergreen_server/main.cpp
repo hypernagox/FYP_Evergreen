@@ -72,8 +72,6 @@ int main()
 	ContentsInitiator con_init;
 	ClusterPredicate broad_helper;
 
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	
 	ServerCore::PrintKoreaRealTime("Server Start !");
 	
 	Mgr(CoreGlobal)->Init();
@@ -97,7 +95,7 @@ int main()
 	ASSERT_CRASH(pServerService->Start());
 	
 	std::atomic_thread_fence(std::memory_order_seq_cst);
-
+	
 	Mgr(ThreadMgr)->Launch(
 		  ThreadMgr::NUM_OF_THREADS
 		, &con_init

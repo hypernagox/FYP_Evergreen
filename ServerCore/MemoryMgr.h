@@ -127,7 +127,7 @@ namespace ServerCore
 		else if constexpr (std::derived_from<std::decay_t<T>, Session>)
 			return ReturnSession(obj_ptr);
 		else if constexpr (std::same_as<std::decay_t<T>, SendBufferChunk>)
-			return Memory::AlignedFree(obj_ptr, alignof(SendBufferChunk));
+			return SendBufferMgr::ReturnChunk(obj_ptr);
 		else if constexpr (!std::is_trivially_destructible_v<T>)
 			obj_ptr->~T(); 
 		Memory::Free(obj_ptr);

@@ -10,27 +10,21 @@ namespace ServerCore
 		SendBufferMgr
 	---------------*/
 
-	//namespace SendBufferMgrHelper {
-	//	static inline AtomicNonTemplate* const GetSendBufferMgrPool()noexcept;
-	//};
-
 	class SendBufferMgr
 	{
-		//friend static inline AtomicNonTemplate* const SendBufferMgrHelper::GetSendBufferMgrPool()noexcept;
+		friend class CoreGlobal;
+		friend class ThreadMgr;
 		SendBufferMgr()noexcept = default;
 		~SendBufferMgr()noexcept = default;
 	public:
 		static S_ptr<SendBuffer> Open(c_uint32 size_)noexcept;
 		static SendBufferChunk* const Pop()noexcept;
+		static void ReturnChunk(SendBufferChunk* const chunk)noexcept;
 	private:
-		//std::byte m_pSendBufferPool[ThreadMgr::NUM_OF_THREADS][sizeof(AtomicNonTemplate)];
-		//AtomicNonTemplate m_pSendBufferPool[ThreadMgr::NUM_OF_THREADS];
+		static void InitTLSChunkPool()noexcept;
+		static void DestroyTLSChunkPool()noexcept;
+	private:
+		static constexpr const int32_t NUM_OF_CHUNK_BUFFER = 4;
 	};
 
-	//namespace SendBufferMgrHelper {
-	//	static inline AtomicNonTemplate* const GetSendBufferMgrPool()noexcept { 
-	//		thread_local AtomicNonTemplate* const th_send_pool = reinterpret_cast<AtomicNonTemplate* const>(Mgr(SendBufferMgr)->m_pSendBufferPool[GetCurThreadIdx() % NUM_OF_THREADS]);
-	//		return th_send_pool;
-	//	}
-	//};
 }
