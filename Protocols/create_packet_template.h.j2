@@ -8,6 +8,14 @@
 #include "struct_generated.h"
 #include "protocol_generated.h"
 
+{% if namespace_prefix == 'ServerCore::' %}
+template<typename T>
+using Vector = ServerCore::XVector<T>;
+{% else %}
+template<typename T>
+using Vector = std::vector<T>;
+{% endif %}
+
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 
 static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { return CreateBuilder(); }

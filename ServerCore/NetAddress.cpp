@@ -7,22 +7,22 @@
 
 namespace ServerCore
 {
-	NetAddress::NetAddress(SOCKADDR_IN sockAddr)noexcept : _sockAddr(sockAddr)
+	NetAddress::NetAddress(SOCKADDR_IN sockAddr)noexcept : m_sockAddr{ sockAddr }
 	{
 	}
 
 	NetAddress::NetAddress(std::wstring_view ip, c_uint16 port)noexcept
 	{
-		::memset(&_sockAddr, NULL, sizeof(_sockAddr));
-		_sockAddr.sin_family = AF_INET;
-		_sockAddr.sin_addr = Ip2Address(ip.data());
-		_sockAddr.sin_port = ::htons(port);
+		::memset(&m_sockAddr, NULL, sizeof(m_sockAddr));
+		m_sockAddr.sin_family = AF_INET;
+		m_sockAddr.sin_addr = Ip2Address(ip.data());
+		m_sockAddr.sin_port = ::htons(port);
 	}
 
 	const std::wstring_view NetAddress::GetIpAddress()const noexcept
 	{
 		constinit thread_local WCHAR buffer[64] = {};
-		::InetNtopW(AF_INET, &_sockAddr.sin_addr, (WCHAR*)::memset(buffer, 0, sizeof(buffer)), len32(buffer));
+		::InetNtopW(AF_INET, &m_sockAddr.sin_addr, (WCHAR*)::memset(buffer, 0, sizeof(buffer)), len32(buffer));
 		return buffer;
 	}
 

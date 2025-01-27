@@ -4,13 +4,12 @@
 #include "struct_generated.h"
 #include "protocol_generated.h"
 
+template<typename T>
+using Vector = ServerCore::XVector<T>;
+
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 
-static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept {
-    thread_local flatbuffers::FlatBufferBuilder* const builder = CreateBuilder();
-    builder->Clear();
-    return builder;
-}
+static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { return CreateBuilder(); }
 
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_LOGIN(
     const std::string_view& name,

@@ -4,6 +4,9 @@
 #include "struct_generated.h"
 #include "protocol_generated.h"
 
+template<typename T>
+using Vector = std::vector<T>;
+
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 
 static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { return CreateBuilder(); }

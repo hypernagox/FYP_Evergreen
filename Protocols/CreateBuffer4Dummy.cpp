@@ -6,18 +6,19 @@
 #include "protocol_generated.h"
 #include "s2c_DummyPacketHandler.h"
 
-
-static ServerCore::S_ptr<ServerCore::SendBuffer> CreateSendBuffer(const uint8_t* const flatBufferPtr, const PKT_ID pktId, const uint16_t dataSize) noexcept
+static ServerCore::S_ptr<ServerCore::SendBuffer> CreateSendBuffer(flatbuffers::FlatBufferBuilder& builder, const CREATE_PKT_ID pktId) noexcept
 {
+    const uint16_t dataSize = builder.GetSize();
     const uint16_t packetSize = dataSize + static_cast<c_uint16>(sizeof(ServerCore::PacketHeader));
     ServerCore::S_ptr<ServerCore::SendBuffer> sendBuffer = ServerCore::SendBufferMgr::Open(packetSize);
     ServerCore::PacketHeader* const __restrict header =
         reinterpret_cast<ServerCore::PacketHeader* const>(
-            ::memcpy(sendBuffer->Buffer() + sizeof(ServerCore::PacketHeader), flatBufferPtr, dataSize)
+            ::memcpy(sendBuffer->Buffer() + sizeof(ServerCore::PacketHeader), builder.GetBufferPointer(), dataSize)
             ) - 1;
     header->pkt_size = packetSize;
     header->pkt_id = static_cast<c_uint16>(pktId);
     sendBuffer->Close(packetSize);
+    builder.Clear();
     return sendBuffer;
 }
 
@@ -32,7 +33,7 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_LOGIN(
 ,        name_offset    );
     builder.Finish(serializedc2s_LOGIN);
 
-    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_LOGIN, builder.GetSize());
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_LOGIN);
 }
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PING_PONG(
     flatbuffers::FlatBufferBuilder* const builder_ptr
@@ -43,7 +44,7 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PING_PONG(
     );
     builder.Finish(serializedc2s_PING_PONG);
 
-    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_PING_PONG, builder.GetSize());
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PING_PONG);
 }
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_ENTER(
     const Nagox::Struct::Vec3& pos,
@@ -56,7 +57,7 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_ENTER(
 ,        pos_offset    );
     builder.Finish(serializedc2s_ENTER);
 
-    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_ENTER, builder.GetSize());
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ENTER);
 }
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_MOVE(
     const Nagox::Struct::Vec3& pos,
@@ -81,7 +82,7 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_MOVE(
         time_stamp_value    );
     builder.Finish(serializedc2s_MOVE);
 
-    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_MOVE, builder.GetSize());
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_MOVE);
 }
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_ATTACK(
     const float body_angle,
@@ -97,7 +98,7 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_ATTACK(
         atk_pos_offset    );
     builder.Finish(serializedc2s_PLAYER_ATTACK);
 
-    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_PLAYER_ATTACK, builder.GetSize());
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PLAYER_ATTACK);
 }
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_DEATH(
     flatbuffers::FlatBufferBuilder* const builder_ptr
@@ -108,7 +109,7 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_PLAYER_DEATH(
     );
     builder.Finish(serializedc2s_PLAYER_DEATH);
 
-    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_PLAYER_DEATH, builder.GetSize());
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PLAYER_DEATH);
 }
 ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_REQUEST_QUEST(
     const uint64_t quest_id,
@@ -121,5 +122,5 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_REQUEST_QUEST(
 ,        quest_id_value    );
     builder.Finish(serializedc2s_REQUEST_QUEST);
 
-    return CreateSendBuffer(builder.GetBufferPointer(), PKT_ID::c2s_REQUEST_QUEST, builder.GetSize());
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REQUEST_QUEST);
 }

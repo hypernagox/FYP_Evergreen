@@ -14,9 +14,9 @@ namespace ServerCore
 		~SocketUtils() = delete;
 
 	public:
-		static LPFN_CONNECTEX		ConnectEx;
-		static LPFN_DISCONNECTEX	DisconnectEx;
-		static LPFN_ACCEPTEX		AcceptEx;
+		constinit static inline LPFN_CONNECTEX		ConnectEx;
+		constinit static inline LPFN_DISCONNECTEX	DisconnectEx;
+		constinit static inline LPFN_ACCEPTEX		AcceptEx;
 
 	public:
 		static const HANDLE Init()noexcept;

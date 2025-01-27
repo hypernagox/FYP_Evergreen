@@ -6,7 +6,7 @@
 #include "protocol_generated.h"
 #include "s2c_PacketHandler.h"
 
-static NetHelper::S_ptr<NetHelper::SendBuffer> CreateSendBuffer(flatbuffers::FlatBufferBuilder& builder, const PKT_ID pktId) noexcept
+static NetHelper::S_ptr<NetHelper::SendBuffer> CreateSendBuffer(flatbuffers::FlatBufferBuilder& builder, const CREATE_PKT_ID pktId) noexcept
 {
     const uint16_t dataSize = builder.GetSize();
     const uint16_t packetSize = dataSize + static_cast<c_uint16>(sizeof(NetHelper::PacketHeader));
@@ -33,7 +33,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_LOGIN(
 ,        name_offset    );
     builder.Finish(serializedc2s_LOGIN);
 
-    return CreateSendBuffer(builder, PKT_ID::c2s_LOGIN);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_LOGIN);
 }
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PING_PONG(
     flatbuffers::FlatBufferBuilder* const builder_ptr
@@ -44,7 +44,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PING_PONG(
     );
     builder.Finish(serializedc2s_PING_PONG);
 
-    return CreateSendBuffer(builder, PKT_ID::c2s_PING_PONG);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PING_PONG);
 }
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_ENTER(
     const Nagox::Struct::Vec3& pos,
@@ -57,7 +57,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_ENTER(
 ,        pos_offset    );
     builder.Finish(serializedc2s_ENTER);
 
-    return CreateSendBuffer(builder, PKT_ID::c2s_ENTER);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ENTER);
 }
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_MOVE(
     const Nagox::Struct::Vec3& pos,
@@ -82,7 +82,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_MOVE(
         time_stamp_value    );
     builder.Finish(serializedc2s_MOVE);
 
-    return CreateSendBuffer(builder, PKT_ID::c2s_MOVE);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_MOVE);
 }
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_ATTACK(
     const float body_angle,
@@ -98,7 +98,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_ATTACK(
         atk_pos_offset    );
     builder.Finish(serializedc2s_PLAYER_ATTACK);
 
-    return CreateSendBuffer(builder, PKT_ID::c2s_PLAYER_ATTACK);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PLAYER_ATTACK);
 }
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_DEATH(
     flatbuffers::FlatBufferBuilder* const builder_ptr
@@ -109,7 +109,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_DEATH(
     );
     builder.Finish(serializedc2s_PLAYER_DEATH);
 
-    return CreateSendBuffer(builder, PKT_ID::c2s_PLAYER_DEATH);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PLAYER_DEATH);
 }
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_REQUEST_QUEST(
     const uint64_t quest_id,
@@ -122,5 +122,5 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_REQUEST_QUEST(
 ,        quest_id_value    );
     builder.Finish(serializedc2s_REQUEST_QUEST);
 
-    return CreateSendBuffer(builder, PKT_ID::c2s_REQUEST_QUEST);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REQUEST_QUEST);
 }

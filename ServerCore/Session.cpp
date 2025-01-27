@@ -9,6 +9,8 @@
 #include "Queueabler.h"
 #include "MoveBroadcaster.h"
 
+_Post_ _Notnull_ OVERLAPPED* GetOverlappedAddr();
+
 namespace ServerCore
 {
 	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
@@ -114,7 +116,7 @@ namespace ServerCore
 		const SOCKADDR_IN& sockAddr = GetService()->GetNetAddress().GetSockAddr(); // 내가 붙어야 할 서버쪽 주소임
 
 		//DWORD numOfBytes = 0;
-
+		
 		if (false == SocketUtils::ConnectEx(connect_socket, reinterpret_cast<const SOCKADDR* const>(&sockAddr), sizeof(sockAddr), NULL, NULL, NULL, connect_event->GetOverlappedAddr()))
 		{
 			const int32 errorCode = ::WSAGetLastError();

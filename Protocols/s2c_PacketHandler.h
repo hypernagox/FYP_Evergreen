@@ -5,28 +5,31 @@
 #include "protocol_generated.h"
 
 template<typename T> requires std::is_enum_v<T>
-static inline constexpr const uint16_t net_etoi(const T eType_) noexcept { return static_cast<const uint16_t>(eType_); }
+static inline consteval const uint16_t net_etoi(const T eType_) noexcept { return static_cast<const uint16_t>(eType_); }
 
-enum class PKT_ID : uint16_t {
+enum class HANDLE_PKT_ID : uint16_t {
+    s2c_LOGIN = 1000,
+    s2c_PING_PONG = 1001,
+    s2c_APPEAR_OBJECT = 1002,
+    s2c_REMOVE_OBJECT = 1003,
+    s2c_MOVE = 1004,
+    s2c_MONSTER_ATTACK = 1005,
+    s2c_MONSTER_AGGRO_START = 1006,
+    s2c_MONSTER_AGGRO_END = 1007,
+    s2c_PLAYER_ATTACK = 1008,
+    s2c_PLAYER_DEATH = 1009,
+    s2c_REQUEST_QUEST = 1010,
+    s2c_CLEAR_QUEST = 1011,
+};
+
+enum class CREATE_PKT_ID : uint16_t {
     c2s_LOGIN = 1000,
-    s2c_LOGIN = 1001,
-    c2s_PING_PONG = 1002,
-    s2c_PING_PONG = 1003,
-    c2s_ENTER = 1004,
-    s2c_APPEAR_OBJECT = 1005,
-    s2c_REMOVE_OBJECT = 1006,
-    c2s_MOVE = 1007,
-    s2c_MOVE = 1008,
-    s2c_MONSTER_ATTACK = 1009,
-    s2c_MONSTER_AGGRO_START = 1010,
-    s2c_MONSTER_AGGRO_END = 1011,
-    c2s_PLAYER_ATTACK = 1012,
-    s2c_PLAYER_ATTACK = 1013,
-    s2c_PLAYER_DEATH = 1014,
-    c2s_PLAYER_DEATH = 1015,
-    c2s_REQUEST_QUEST = 1016,
-    s2c_REQUEST_QUEST = 1017,
-    s2c_CLEAR_QUEST = 1018,
+    c2s_PING_PONG = 1001,
+    c2s_ENTER = 1002,
+    c2s_MOVE = 1003,
+    c2s_PLAYER_ATTACK = 1004,
+    c2s_PLAYER_DEATH = 1005,
+    c2s_REQUEST_QUEST = 1006,
 };
 
 class NetHelper::PacketSession;
@@ -54,18 +57,18 @@ class s2c_PacketHandler {
     constinit static inline PacketHandlerFunc g_fpPacketHandler[UINT16_MAX] = {};
 public:
     static void Init() noexcept {
-        RegisterHandler<PKT_ID::s2c_LOGIN, Nagox::Protocol::s2c_LOGIN, Handle_s2c_LOGIN>();
-        RegisterHandler<PKT_ID::s2c_PING_PONG, Nagox::Protocol::s2c_PING_PONG, Handle_s2c_PING_PONG>();
-        RegisterHandler<PKT_ID::s2c_APPEAR_OBJECT, Nagox::Protocol::s2c_APPEAR_OBJECT, Handle_s2c_APPEAR_OBJECT>();
-        RegisterHandler<PKT_ID::s2c_REMOVE_OBJECT, Nagox::Protocol::s2c_REMOVE_OBJECT, Handle_s2c_REMOVE_OBJECT>();
-        RegisterHandler<PKT_ID::s2c_MOVE, Nagox::Protocol::s2c_MOVE, Handle_s2c_MOVE>();
-        RegisterHandler<PKT_ID::s2c_MONSTER_ATTACK, Nagox::Protocol::s2c_MONSTER_ATTACK, Handle_s2c_MONSTER_ATTACK>();
-        RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_START, Nagox::Protocol::s2c_MONSTER_AGGRO_START, Handle_s2c_MONSTER_AGGRO_START>();
-        RegisterHandler<PKT_ID::s2c_MONSTER_AGGRO_END, Nagox::Protocol::s2c_MONSTER_AGGRO_END, Handle_s2c_MONSTER_AGGRO_END>();
-        RegisterHandler<PKT_ID::s2c_PLAYER_ATTACK, Nagox::Protocol::s2c_PLAYER_ATTACK, Handle_s2c_PLAYER_ATTACK>();
-        RegisterHandler<PKT_ID::s2c_PLAYER_DEATH, Nagox::Protocol::s2c_PLAYER_DEATH, Handle_s2c_PLAYER_DEATH>();
-        RegisterHandler<PKT_ID::s2c_REQUEST_QUEST, Nagox::Protocol::s2c_REQUEST_QUEST, Handle_s2c_REQUEST_QUEST>();
-        RegisterHandler<PKT_ID::s2c_CLEAR_QUEST, Nagox::Protocol::s2c_CLEAR_QUEST, Handle_s2c_CLEAR_QUEST>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_LOGIN, Nagox::Protocol::s2c_LOGIN, Handle_s2c_LOGIN>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_PING_PONG, Nagox::Protocol::s2c_PING_PONG, Handle_s2c_PING_PONG>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_APPEAR_OBJECT, Nagox::Protocol::s2c_APPEAR_OBJECT, Handle_s2c_APPEAR_OBJECT>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_REMOVE_OBJECT, Nagox::Protocol::s2c_REMOVE_OBJECT, Handle_s2c_REMOVE_OBJECT>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_MOVE, Nagox::Protocol::s2c_MOVE, Handle_s2c_MOVE>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_MONSTER_ATTACK, Nagox::Protocol::s2c_MONSTER_ATTACK, Handle_s2c_MONSTER_ATTACK>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_MONSTER_AGGRO_START, Nagox::Protocol::s2c_MONSTER_AGGRO_START, Handle_s2c_MONSTER_AGGRO_START>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_MONSTER_AGGRO_END, Nagox::Protocol::s2c_MONSTER_AGGRO_END, Handle_s2c_MONSTER_AGGRO_END>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_PLAYER_ATTACK, Nagox::Protocol::s2c_PLAYER_ATTACK, Handle_s2c_PLAYER_ATTACK>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_PLAYER_DEATH, Nagox::Protocol::s2c_PLAYER_DEATH, Handle_s2c_PLAYER_DEATH>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_REQUEST_QUEST, Nagox::Protocol::s2c_REQUEST_QUEST, Handle_s2c_REQUEST_QUEST>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_CLEAR_QUEST, Nagox::Protocol::s2c_CLEAR_QUEST, Handle_s2c_CLEAR_QUEST>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;
@@ -87,7 +90,7 @@ public:
     ~s2c_PacketHandler() = delete;
 
 private:
-    template<PKT_ID packetId, typename PacketType, const bool(*const handler)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const PacketType&)>
+    template<HANDLE_PKT_ID packetId, typename PacketType, const bool(*const handler)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const PacketType&)>
     constexpr static void RegisterHandler()noexcept {
         g_fpPacketHandler[net_etoi(packetId)] = [](const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) -> const bool {
             const uint8_t* const pkt_ptr = reinterpret_cast<const uint8_t* const>(pBuff_ + sizeof(NetHelper::PacketHeader));

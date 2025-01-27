@@ -10,18 +10,15 @@ namespace ServerCore
         inline ~SpinLock() noexcept = default;
         inline void lock()const noexcept {
             for (;;) {
-                while (TRUE == lockFlag);
-                if (FALSE ==
-                    InterlockedCompareExchange((LONG*)&lockFlag, TRUE, FALSE))
-                    return;
+                while (lockFlag);
+                if (!InterlockedCompareExchange((LONG*)&lockFlag, TRUE, FALSE))return;
             }
         }
         inline void unlock()const noexcept {
             InterlockedExchange((LONG*)&lockFlag, FALSE);
         }
         inline const bool try_lock()const noexcept {
-            return FALSE ==
-                InterlockedCompareExchange((LONG*)&lockFlag, TRUE, FALSE);
+            return !InterlockedCompareExchange((LONG*)&lockFlag, TRUE, FALSE);
         }
     private:
         alignas(4) mutable volatile BOOL lockFlag = FALSE;

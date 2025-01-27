@@ -30,11 +30,11 @@ namespace ServerCore
 
 			// 일단 오긴다옴, 조립성공
 
-			if (static_cast<c_uint16>(HEART_BEAT::c2s_HEART_BEAT) == packetId)
-			{
-				SetHeartBeat(true);
-			}
-			else
+			//if (static_cast<c_uint16>(HEART_BEAT::c2s_HEART_BEAT) == packetId)
+			//{
+			//	SetHeartBeat(true);
+			//}
+			//else
 			{
 				bIsOk &= packet_handler[packetId](pThisSessionPtr, reinterpret_cast<const BYTE* const>(header), packetSize);
 			}

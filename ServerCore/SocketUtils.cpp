@@ -7,10 +7,6 @@
 
 namespace ServerCore
 {
-	LPFN_CONNECTEX		SocketUtils::ConnectEx = nullptr;
-	LPFN_DISCONNECTEX	SocketUtils::DisconnectEx = nullptr;
-	LPFN_ACCEPTEX		SocketUtils::AcceptEx = nullptr;
-
 	const HANDLE SocketUtils::Init()noexcept
 	{
 		WSADATA wsaData;
