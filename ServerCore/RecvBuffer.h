@@ -11,11 +11,11 @@ namespace ServerCore
 		enum { BUFFER_COUNT = 8 };
 	public:
 		RecvBuffer(c_int32 bufferSize_)noexcept;
-		~RecvBuffer();
+		~RecvBuffer()noexcept = default;
 	public:
 		enum RECV_BUFFER_SIZE
 		{
-			BUFFER_SIZE = 0x2000 - (24 / BUFFER_COUNT), // 64KB
+			BUFFER_SIZE = 0x2000 - (16 / BUFFER_COUNT), // 64KB
 		};
 
 		void Clear()noexcept;
@@ -44,10 +44,10 @@ namespace ServerCore
 		inline c_int32 DataSize()const noexcept { return m_writePos - m_readPos; }
 		inline c_int32 FreeSize()const noexcept { return m_capacity - m_writePos; }
 	private:
-		const int32 m_bufferSize;
-		const int32 m_capacity;
-		int32 m_readPos = 0;
-		int32 m_writePos = 0;
+		uint16_t m_readPos = 0;
+		uint16_t m_writePos = 0;
+		const uint16_t m_bufferSize;
+		const uint16_t m_capacity;
 		BYTE m_buffer[BUFFER_SIZE * BUFFER_COUNT];
 	};
 }

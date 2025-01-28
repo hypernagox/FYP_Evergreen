@@ -14,7 +14,7 @@ namespace ServerCore
 		virtual void TLSInitialize()noexcept = 0;
 		virtual void TLSDestroy()noexcept = 0;
 		virtual void GlobalDestroy()noexcept = 0;
-		virtual void ControlThreadFunc()noexcept = 0;
+		virtual void ControlThreadFunc()noexcept { system("pause"); char c; std::cin >> c; }
 	};
 
 	class TaskQueueable;

@@ -51,10 +51,10 @@ namespace ServerCore
 
 		NAGOX_ASSERT(false == LSendBufferChunk->IsOpen());
 
-		// 다쓰면 교체
 		if (size_ > LSendBufferChunk->FreeSize())
 		{
 			const auto new_chunk = Pop();
+			GetRefCountExternal(new_chunk) = 1;
 			new_chunk->Reset();
 			LSendBufferChunk->DecRef<SendBufferChunk>();
 			LSendBufferChunk = new_chunk;
@@ -63,7 +63,8 @@ namespace ServerCore
 		return LSendBufferChunk->Open(size_);
 	}
 
-	SendBufferChunk* const SendBufferMgr::Pop()noexcept { 
+	SendBufferChunk* const SendBufferMgr::Pop()noexcept
+	{ 
 		extern thread_local ChunkStack tl_chunkBufferPool;
 		if (const auto chunk = tl_chunkBufferPool.Pop())
 			return chunk;
@@ -73,7 +74,6 @@ namespace ServerCore
 	void SendBufferMgr::ReturnChunk(SendBufferChunk* const chunk) noexcept
 	{
 		extern thread_local ChunkStack tl_chunkBufferPool;
-		GetRefCountExternal(chunk) = 1;
 		tl_chunkBufferPool.push(chunk);
 	}
 	void SendBufferMgr::InitTLSChunkPool() noexcept

@@ -38,6 +38,13 @@ public:
 
 	virtual void ControlThreadFunc()noexcept override
 	{
+		for (;;)
+		{
+			system("pause");
+			char buf[32]{};
+			std::cin >> buf;
+			if ("EXIT" == std::string_view{ buf })break;
+		}
 	}
 };
 
@@ -54,7 +61,7 @@ int main()
 			, ServerCore::NetAddress{ L"127.0.0.1",7777 }
 			, ServerCore::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 2000
+			, 1000
 		);
 	
 	ASSERT_CRASH(pClientService->Start());
@@ -91,11 +98,8 @@ int main()
 	//
 	//Mgr(ThreadMgr)->Launch(
 	//	num_th
-	//	, []() noexcept {const volatile auto init_builder = GetBuilder(); }
+	//  , &con_init
 	//);
-
-	int n;
-	std::cin >> n;
 }
 
 

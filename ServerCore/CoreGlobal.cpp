@@ -61,10 +61,12 @@ namespace ServerCore
 		delete Service::GetMainService();
 		SendBufferMgr::DestroyTLSChunkPool();
 
+#ifdef _DEBUG
 		_CrtMemState mem_check;
 		_CrtMemDumpStatistics(&mem_end);
 
 		if (_CrtMemDifference(&mem_check, &mem_start, &mem_end))
 			_CrtMemDumpStatistics(&mem_check);
+#endif
 	}
 }

@@ -7,6 +7,8 @@ namespace ServerCore
 {
 	S_ptr<SendBuffer> SendBufferChunk::Open(c_uint32 allocSize)noexcept
 	{
+		static_assert(UINT16_MAX > sizeof(m_buffer));
+		static_assert((UINT16_MAX + 1) == sizeof(SendBufferChunk));
 		NAGOX_ASSERT(allocSize <= SEND_BUFFER_CHUNK_SIZE);
 		NAGOX_ASSERT(false == m_bOpen);
 
