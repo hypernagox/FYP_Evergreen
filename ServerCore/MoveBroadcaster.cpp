@@ -9,8 +9,8 @@
 
 namespace ServerCore
 {
-	thread_local VectorSetUnsafe<std::pair<uint32_t,const ContentsEntity*>, XHashMap> new_view_list_session(512);
-	thread_local VectorSetUnsafe<const ContentsEntity*, XHashMap> new_view_list_npc(512);
+	thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
+	thread_local VectorSetUnsafe<const ContentsEntity*, XHashMap> new_view_list_npc;
 
 	void MoveBroadcaster::BroadcastMove(const BroadcastHelper& helper) noexcept
 	{

@@ -120,3 +120,16 @@ table s2c_CLEAR_QUEST
    quest_id : uint64;
    is_clear: ubyte;
 }
+
+table c2s_FIRE_PROJ
+{
+   pos: Nagox.Struct.Vec3;
+   body_angle : float;
+}
+
+table s2c_FIRE_PROJ
+{
+   proj_id : uint64;
+   pos: Nagox.Struct.Vec3;
+   vel: Nagox.Struct.Vec3;
+}

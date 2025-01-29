@@ -82,6 +82,9 @@
     <Filter Include="GizmoRenderer">
       <UniqueIdentifier>{6e3d7ae2-c78a-484a-b7d6-0f31027d2b52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Projectile">
+      <UniqueIdentifier>{1e9b632f-91d6-4901-acff-c573e854db4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -146,6 +149,9 @@
     </ClCompile>
     <ClCompile Include="GizmoBoxRenderer.cpp">
       <Filter>GizmoRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>Projectile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="GizmoBoxRenderer.h">
       <Filter>GizmoRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>Projectile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

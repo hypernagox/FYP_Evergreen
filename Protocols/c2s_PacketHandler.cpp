@@ -15,6 +15,7 @@
 #include "QuestSystem.h"
 #include "Quest.h"
 #include "ClusterPredicate.h"
+#include "Projectile.h"
 
 using namespace ServerCore;
 
@@ -23,10 +24,6 @@ thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 	extern thread_local flatbuffers::FlatBufferBuilder buillder;
 	return &buillder;
-}
-
-static inline Vector3 ToOriginVec3(const Nagox::Struct::Vec3* const v)noexcept {
-	return Vector3{ v->x(),v->y(),v->z() };
 }
 
 const bool Handle_c2s_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
@@ -193,6 +190,27 @@ const bool Handle_c2s_REQUEST_QUEST(const ServerCore::S_ptr<ServerCore::PacketSe
 	{
 		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(0));
 	}
+	return true;
+}
+
+const bool Handle_c2s_FIRE_PROJ(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_FIRE_PROJ& pkt_)
+{
+	const auto pOwner = pSession_->GetOwnerEntity();
+
+	const auto pos_comp = pOwner->GetComp<PositionComponent>();
+	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
+
+	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pkt_.body_angle());
+
+	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
+
+
+	const auto proj = TimerHandler::CreateTimerWithoutHandle<Projectile>(100);
+	proj.timer->m_pos = (pos_comp->pos);
+	proj.timer->m_speed = rotatedForward * 40.f;
+	proj.timer->m_mon_list = CreateArrWithPosComp(pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC());
+	proj.timer->m_owner = pOwner->SharedFromThis();
+
 	return true;
 }
 

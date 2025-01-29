@@ -76,6 +76,12 @@ struct s2c_REQUEST_QUESTBuilder;
 struct s2c_CLEAR_QUEST;
 struct s2c_CLEAR_QUESTBuilder;
 
+struct c2s_FIRE_PROJ;
+struct c2s_FIRE_PROJBuilder;
+
+struct s2c_FIRE_PROJ;
+struct s2c_FIRE_PROJBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -1175,6 +1181,133 @@ inline ::flatbuffers::Offset<s2c_CLEAR_QUEST> Creates2c_CLEAR_QUEST(
   s2c_CLEAR_QUESTBuilder builder_(_fbb);
   builder_.add_quest_id(quest_id);
   builder_.add_is_clear(is_clear);
+  return builder_.Finish();
+}
+
+struct c2s_FIRE_PROJ FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_FIRE_PROJBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_POS = 4,
+    VT_BODY_ANGLE = 6
+  };
+  const Nagox::Struct::Vec3 *pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_POS);
+  }
+  float body_angle() const {
+    return GetField<float>(VT_BODY_ANGLE, 0.0f);
+  }
+  bool mutate_body_angle(float _body_angle = 0.0f) {
+    return SetField<float>(VT_BODY_ANGLE, _body_angle, 0.0f);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_POS, 4) &&
+           VerifyField<float>(verifier, VT_BODY_ANGLE, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_FIRE_PROJBuilder {
+  typedef c2s_FIRE_PROJ Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_pos(const Nagox::Struct::Vec3 *pos) {
+    fbb_.AddStruct(c2s_FIRE_PROJ::VT_POS, pos);
+  }
+  void add_body_angle(float body_angle) {
+    fbb_.AddElement<float>(c2s_FIRE_PROJ::VT_BODY_ANGLE, body_angle, 0.0f);
+  }
+  explicit c2s_FIRE_PROJBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_FIRE_PROJ> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_FIRE_PROJ>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_FIRE_PROJ> Createc2s_FIRE_PROJ(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const Nagox::Struct::Vec3 *pos = nullptr,
+    float body_angle = 0.0f) {
+  c2s_FIRE_PROJBuilder builder_(_fbb);
+  builder_.add_body_angle(body_angle);
+  builder_.add_pos(pos);
+  return builder_.Finish();
+}
+
+struct s2c_FIRE_PROJ FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_FIRE_PROJBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_PROJ_ID = 4,
+    VT_POS = 6,
+    VT_VEL = 8
+  };
+  uint64_t proj_id() const {
+    return GetField<uint64_t>(VT_PROJ_ID, 0);
+  }
+  bool mutate_proj_id(uint64_t _proj_id = 0) {
+    return SetField<uint64_t>(VT_PROJ_ID, _proj_id, 0);
+  }
+  const Nagox::Struct::Vec3 *pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_POS);
+  }
+  const Nagox::Struct::Vec3 *vel() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_VEL);
+  }
+  Nagox::Struct::Vec3 *mutable_vel() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_VEL);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_PROJ_ID, 8) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_POS, 4) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_VEL, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_FIRE_PROJBuilder {
+  typedef s2c_FIRE_PROJ Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_proj_id(uint64_t proj_id) {
+    fbb_.AddElement<uint64_t>(s2c_FIRE_PROJ::VT_PROJ_ID, proj_id, 0);
+  }
+  void add_pos(const Nagox::Struct::Vec3 *pos) {
+    fbb_.AddStruct(s2c_FIRE_PROJ::VT_POS, pos);
+  }
+  void add_vel(const Nagox::Struct::Vec3 *vel) {
+    fbb_.AddStruct(s2c_FIRE_PROJ::VT_VEL, vel);
+  }
+  explicit s2c_FIRE_PROJBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_FIRE_PROJ> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_FIRE_PROJ>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_FIRE_PROJ> Creates2c_FIRE_PROJ(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t proj_id = 0,
+    const Nagox::Struct::Vec3 *pos = nullptr,
+    const Nagox::Struct::Vec3 *vel = nullptr) {
+  s2c_FIRE_PROJBuilder builder_(_fbb);
+  builder_.add_proj_id(proj_id);
+  builder_.add_vel(vel);
+  builder_.add_pos(pos);
   return builder_.Finish();
 }
 

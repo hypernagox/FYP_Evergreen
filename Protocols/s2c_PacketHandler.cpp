@@ -9,6 +9,8 @@
 #include "PlayerRenderer.h"
 #include "Monster.h"
 #include "ServerTimeMgr.h"
+#include "GizmoBoxRenderer.h"
+#include "Projectile.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -188,6 +190,25 @@ const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSessio
 	{
 		std::cout << "잡은 여우 수: " << ++temp_count << std::endl;
 	}
+	return true;
+}
+
+const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_FIRE_PROJ& pkt_)
+{
+	// TODO: 개 쌉 하드코딩 + 매넘
+	auto s = std::make_shared<SceneObject>();
+	s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
+
+	auto gizmoRenderer = s->AddComponent<GizmoBoxRenderer>();
+	gizmoRenderer->SetSize(Vector3(1.5f, 3.5f, 1.5f));
+	gizmoRenderer->SetOffset(Vector3());
+
+	auto so = s->AddComponent<ServerObject>();
+	const auto proj = so->AddComp<Projectile>();
+	proj->m_speed = ::ToOriginVec3(pkt_.vel());
+	so->SetObjID((uint32_t)pkt_.proj_id());
+	Mgr(ServerObjectMgr)->AddObject(s);
+
 	return true;
 }
 

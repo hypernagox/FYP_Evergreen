@@ -15,6 +15,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     c2s_PLAYER_ATTACK = 1004,
     c2s_PLAYER_DEATH = 1005,
     c2s_REQUEST_QUEST = 1006,
+    c2s_FIRE_PROJ = 1007,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -30,6 +31,7 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_PLAYER_DEATH = 1009,
     s2c_REQUEST_QUEST = 1010,
     s2c_CLEAR_QUEST = 1011,
+    s2c_FIRE_PROJ = 1012,
 };
 
 class ServerCore::PacketSession;
@@ -46,6 +48,7 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_);
 const bool Handle_c2s_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_DEATH& pkt_);
 const bool Handle_c2s_REQUEST_QUEST(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_);
+const bool Handle_c2s_FIRE_PROJ(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_FIRE_PROJ& pkt_);
 
 class c2s_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const ServerCore::S_ptr<ServerCore::PacketSession>&, const BYTE* const, const int32_t);
@@ -59,6 +62,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::c2s_PLAYER_ATTACK, Nagox::Protocol::c2s_PLAYER_ATTACK, Handle_c2s_PLAYER_ATTACK>();
         RegisterHandler<HANDLE_PKT_ID::c2s_PLAYER_DEATH, Nagox::Protocol::c2s_PLAYER_DEATH, Handle_c2s_PLAYER_DEATH>();
         RegisterHandler<HANDLE_PKT_ID::c2s_REQUEST_QUEST, Nagox::Protocol::c2s_REQUEST_QUEST, Handle_c2s_REQUEST_QUEST>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_FIRE_PROJ, Nagox::Protocol::c2s_FIRE_PROJ, Handle_c2s_FIRE_PROJ>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

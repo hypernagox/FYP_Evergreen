@@ -69,6 +69,7 @@ namespace ServerCore
 
 		END,
 
+		TIMER_ROUTINE = 254,
 		CONTENTS_ENTITY_TASK = 255
 	};
 

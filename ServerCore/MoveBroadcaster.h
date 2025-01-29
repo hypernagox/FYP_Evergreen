@@ -72,8 +72,8 @@ namespace ServerCore
 		void ProcessTryEraseSession(const BroadcastHelper& helper, const PacketSession* const thisSession)noexcept;
 		void ProcessTryEraseNPC(const BroadcastHelper& helper, const PacketSession* const thisSession)noexcept;
 	private:
-		ServerCore::VectorSetUnsafe<std::pair<uint32_t,const ContentsEntity*>> m_view_list_session;
-		ServerCore::VectorSetUnsafe<const ContentsEntity*> m_view_list_npc;
+		ServerCore::VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>> m_view_list_session{ DEFAULT_MEM_POOL_SIZE };
+		ServerCore::VectorSetUnsafe<const ContentsEntity*> m_view_list_npc{ DEFAULT_MEM_POOL_SIZE };
 	private:
 		constinit static inline BroadcastHelper* g_global_helper = nullptr;
 	};

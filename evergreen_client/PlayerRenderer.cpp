@@ -66,7 +66,7 @@ PlayerRenderer::~PlayerRenderer()
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
 	m_stateMachine->Update(time.deltaTime);
-
+	// TODO: 복붙 하드코딩
 	const bool flag = g_heroObj->GetComponent<ServerObject>()->GetObjID() == GetSceneObject()->GetComponent<ServerObject>()->GetObjID();
 	if (INSTANCE(Input)->GetMouseLeftButtonDown() && flag)
 	{
@@ -75,6 +75,16 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 		{
 			Attack();
 			g_heroObj->GetComponent<AuthenticPlayer>()->DoAttack();
+			//std::cout << "공격 시도\n";
+		}
+	}
+	if (INSTANCE(Input)->GetMouseRightButtonDown() && flag)
+	{
+		const auto state = m_stateMachine->GetCurrentState();
+		if (AnimationState::Idle == state || AnimationState::Run == state)
+		{
+			Attack();
+			g_heroObj->GetComponent<AuthenticPlayer>()->FireProj();
 			//std::cout << "공격 시도\n";
 		}
 	}

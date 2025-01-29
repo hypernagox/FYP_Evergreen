@@ -193,13 +193,14 @@ namespace ServerCore
 		}
 		const auto GetDeleter()const noexcept { return m_deleter; }
 		void ResetDeleter()noexcept {
-			if (m_deleter)
+			if (m_deleter) {
 				xdelete<NagoxDeleter>(m_deleter);
-			m_deleter = nullptr; 
+				m_deleter = nullptr;
+			}
 		}
 		void ProcessCleanUp()noexcept;
 	private:
-		PadByte pad;
+		const PadByte<6> pad;
 		NagoxDeleter* m_deleter = nullptr;
 		PacketSession* const m_pSession = nullptr;
 		const EntityInfo m_entity_info;

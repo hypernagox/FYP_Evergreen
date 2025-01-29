@@ -42,3 +42,8 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_REQUEST_QUEST(
     const uint64_t quest_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_FIRE_PROJ(
+    const Nagox::Struct::Vec3& pos,
+    const float body_angle,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

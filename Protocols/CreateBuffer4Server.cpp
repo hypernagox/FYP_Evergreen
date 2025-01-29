@@ -229,3 +229,22 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_CLEAR_QUEST(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_CLEAR_QUEST);
 }
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_FIRE_PROJ(
+    const uint64_t proj_id,
+    const Nagox::Struct::Vec3& pos,
+    const Nagox::Struct::Vec3& vel,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto proj_id_value = proj_id;
+    const auto pos_offset = &pos;
+    const auto vel_offset = &vel;
+    const auto serializeds2c_FIRE_PROJ = Nagox::Protocol::Creates2c_FIRE_PROJ(
+        builder
+,        proj_id_value,
+        pos_offset,
+        vel_offset    );
+    builder.Finish(serializeds2c_FIRE_PROJ);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_FIRE_PROJ);
+}

@@ -91,13 +91,23 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, pCameraTransfrom->GetLocalPosition().z));
 }
 
+void AuthenticPlayer::FireProj()
+{
+	const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
+	m_bSendFlag = true;
+	Send(
+		Create_c2s_FIRE_PROJ(ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()), rad)
+	);
+}
+
 void AuthenticPlayer::DoAttack()
 {
 	if constexpr (g_bUseNetWork)
 	{
+		const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
 		m_bSendFlag = true;
 		Send(
-			Create_c2s_PLAYER_ATTACK(m_rendererBodyAngleY, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
+			Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
 		);
 	}
 }

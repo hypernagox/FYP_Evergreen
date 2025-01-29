@@ -12,7 +12,7 @@
 
 using namespace ServerCore;
 constexpr const int32_t NUM_OF_NPC = 101;
-constexpr const int32_t NUM_OF_MAX_USER = 201;
+constexpr const int32_t NUM_OF_MAX_USER = 502;
 
 extern std::vector<DirectX::BoundingBox> boxes;
 
@@ -59,7 +59,7 @@ public:
 	{
 		for (;;)
 		{
-			//system("pause");
+			system("pause");
 			char buf[32]{};
 			std::cin >> buf;
 			if ("EXIT" == std::string_view{ buf })break;

@@ -260,6 +260,7 @@
     <ClInclude Include="TimeMgr.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TickTimer.h" />
+    <ClInclude Include="TimerRoutine.h" />
     <ClInclude Include="TypeCast.h" />
     <ClInclude Include="PreDefinition.h" />
     <ClInclude Include="VectorHash.hpp" />
@@ -321,6 +322,7 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TickTimer.cpp" />
     <ClCompile Include="FieldMgr.cpp" />
+    <ClCompile Include="TimerRoutine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="delay_loop.asm">

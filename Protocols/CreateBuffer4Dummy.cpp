@@ -124,3 +124,19 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_REQUEST_QUEST(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REQUEST_QUEST);
 }
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_c2s_FIRE_PROJ(
+    const Nagox::Struct::Vec3& pos,
+    const float body_angle,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    const auto pos_offset = &pos;
+    const auto body_angle_value = body_angle;
+    const auto serializedc2s_FIRE_PROJ = Nagox::Protocol::Createc2s_FIRE_PROJ(
+        builder
+,        pos_offset,
+        body_angle_value    );
+    builder.Finish(serializedc2s_FIRE_PROJ);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_FIRE_PROJ);
+}

@@ -132,6 +132,7 @@ namespace ServerCore
 	IocpComponent::IocpComponent(ContentsEntity* const pOwner_, const IOCP_COMPONENT compType) noexcept
 		:m_pOwnerEntity{ pOwner_ }, m_iocpCompEvent{ *((uint64_t*)(new ((IocpCompEvent*)&m_iocpCompEvent) IocpCompEvent{compType}))}
 	{
+		static_assert(sizeof(IocpCompEvent) == sizeof(m_iocpCompEvent));
 	}
 
 	IocpComponent::~IocpComponent() noexcept

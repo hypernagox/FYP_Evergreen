@@ -77,6 +77,15 @@ namespace ServerCore
 
 	void ReturnSession(Session* const pSession)noexcept;
 
+	constexpr inline const float GetDistPow(const float a[3], const float b[3]) noexcept {
+		return (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1]) + (a[2] - b[2]) * (a[2] - b[2]);
+	}
+
+
+	constexpr inline const bool IsInDistance(const float a[3], const float b[3], const float th_hold)noexcept {
+		return GetDistPow(a, b) <= (th_hold * th_hold);
+	}
+
 	template<typename T>
 	class AllocateSharedSizeTrait
 	{

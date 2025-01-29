@@ -35,13 +35,10 @@ namespace ServerCore
 		if (iocpEvent)
 		{
 			iocpEvent -= 1;
+			if (!bResult)PrintLogEndl(std::format("IOCP Error: {}", ::WSAGetLastError()));
 			if (IocpObject* const iocpObject = iocpEvent->GetIocpObject()) [[likely]]
 			{
 				iocpObject->Dispatch(iocpEvent, numOfBytes);
-			}
-			if (!bResult)
-			{
-				PrintLogEndl(std::format("IOCP Error: {}", ::WSAGetLastError()));
 			}
 			return true;
 		}

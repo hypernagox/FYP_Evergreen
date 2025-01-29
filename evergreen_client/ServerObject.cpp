@@ -18,7 +18,7 @@ ServerObject::~ServerObject()
 
 void ServerObject::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	ServerCompUpdate<MoveInterpolator>();
+	ServerCompUpdateALL();
 }
 
 ServerComponent* const ServerObject::AddComp(const uint64_t comp_id, ServerComponent* const pComp) noexcept

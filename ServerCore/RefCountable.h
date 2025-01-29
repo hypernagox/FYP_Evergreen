@@ -103,7 +103,7 @@ namespace ServerCore
 				return *this;
 			}
 			else if(!other.m_count_ptr) [[unlikely]] {
-				other.m_count_ptr->DecRef<T>();
+				other.m_count_ptr->RefCountable::DecRef<T>();
 				other.m_count_ptr = nullptr;
 			}
 			return *this;
@@ -135,7 +135,7 @@ namespace ServerCore
 				return *this;
 			}
 			else if (!other.m_count_ptr) [[unlikely]] {
-				other.m_count_ptr->DecRef<U>();
+				other.m_count_ptr->RefCountable::DecRef<U>();
 				other.m_count_ptr = nullptr;
 			}
 			return *this;
@@ -240,7 +240,26 @@ namespace ServerCore
 		T* m_ptr = nullptr;
 	};
 
-	class alignas(8) PadByte { alignas(8) int64_t pad[7]; };
+#define CHECK_CORRUPTION
+	template<const uint32_t NUM_OF_PAD> requires (8 > NUM_OF_PAD)
+	class alignas(8) PadByte 
+	{
+	public:
+#ifdef CHECK_CORRUPTION
+		PadByte()noexcept :pad{ 0 } {}
+		~PadByte()noexcept {
+			for (const auto data : pad) {
+				if (!data)continue;
+				PrintLogEndl("CORRUPTION DETECTED");
+				break;
+			}
+		}
+#else
+		PadByte()noexcept = default;
+#endif
+	private:
+		alignas(8) int64_t pad[NUM_OF_PAD];
+	};
 }
 
 using ServerCore::S_ptr;

@@ -267,6 +267,7 @@
     </ClCompile>
     <ClCompile Include="PlayerRenderer.cpp" />
     <ClCompile Include="PositionSetter.cpp" />
+    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ServerComponent.cpp" />
     <ClCompile Include="ServerObject.cpp" />
     <ClCompile Include="ServerObjectMgr.cpp" />
@@ -305,6 +306,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerRenderer.h" />
     <ClInclude Include="PositionSetter.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="ServerComponent.h" />
     <ClInclude Include="ServerObject.h" />
     <ClInclude Include="ServerObjectMgr.h" />

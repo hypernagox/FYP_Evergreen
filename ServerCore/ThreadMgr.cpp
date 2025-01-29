@@ -29,9 +29,10 @@ namespace ServerCore
 
 	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
 	extern thread_local VectorSetUnsafe<const ContentsEntity*, XHashMap> new_view_list_npc;
+	extern thread_local XVector<S_ptr<SendBuffer>> clear_vec;
 
 	constinit extern thread_local XVector<const ContentsEntity*>* LXVectorForTempCopy;
-
+	
 	ThreadMgr::ThreadMgr()
 	{
 		g_mainThreadID = std::this_thread::get_id();
@@ -134,8 +135,9 @@ namespace ServerCore
 		{
 			
 			{
-				new_view_list_session.clear_unsafe();
-				new_view_list_npc.clear_unsafe();
+				new_view_list_session.reserve(DEFAULT_MEM_POOL_SIZE);
+				new_view_list_npc.reserve(DEFAULT_MEM_POOL_SIZE);
+				clear_vec.reserve(DEFAULT_MEM_POOL_SIZE);
 			}
 
 			LSendBufferChunk = SendBufferMgr::Pop();

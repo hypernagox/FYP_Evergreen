@@ -9,8 +9,6 @@
 #include "Queueabler.h"
 #include "MoveBroadcaster.h"
 
-_Post_ _Notnull_ OVERLAPPED* GetOverlappedAddr();
-
 namespace ServerCore
 {
 	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
@@ -18,39 +16,31 @@ namespace ServerCore
 
 	Session::Session()noexcept
 		: m_pOwnerEntity{ xnew<ContentsEntity>(this) }
-		, m_pRecvEvent{ xnew<RecvEvent>() }
 		, m_pDisconnectEvent{ MakeUniqueSized<DisconnectEvent>() }
-		, m_pSendEvent{ xnew<SendEvent>() }
+		, m_pSendEvent{ xnew<SendEvent>(SocketUtils::CreateSocket()) }
+		, m_pRecvEvent{ xnew<RecvEvent>() }
 		, m_pRecvBuffer{ aligned_xnew<RecvBuffer>(RecvBuffer::BUFFER_SIZE) }
-		, m_sessionSocket{ SocketUtils::CreateSocket() }
-		, m_sessionSocketForRecv{ m_sessionSocket }
+		, m_sessionSocket{ m_pSendEvent->m_sendSocket }
 	{
-		//IncRef();
 		GetRefCountExternal(this) = 2;
-		//GetRefCountExternal(this).store(2, std::memory_order_release);
 	}
 
 	Session::Session(const bool bNeedConnect) noexcept
 		: m_pOwnerEntity{ xnew<ContentsEntity>(this) }
-		, m_pRecvEvent{ xnew<RecvEvent>() }
 		, m_pConnectEvent{ MakeUniqueSized<ConnectEvent>() }
 		, m_pDisconnectEvent{ MakeUniqueSized<DisconnectEvent>() }
-		, m_pSendEvent{ xnew<SendEvent>() }
+		, m_pSendEvent{ xnew<SendEvent>(SocketUtils::CreateSocket()) }
+		, m_pRecvEvent{ xnew<RecvEvent>() }
 		, m_pRecvBuffer{ aligned_xnew<RecvBuffer>(RecvBuffer::BUFFER_SIZE) }
-		, m_sessionSocket{ SocketUtils::CreateSocket() }
-		, m_sessionSocketForRecv{ m_sessionSocket }
+		, m_sessionSocket{ m_pSendEvent->m_sendSocket }
 	{
-		//IncRef();
 		GetRefCountExternal(this) = 2;
-	//	GetRefCountExternal(this).store(2, std::memory_order_release);
 	}
 
 	Session::~Session()
 	{
-		//aligned_xdelete_sized<RecvEvent>(m_pRecvEvent, sizeof(RecvEvent), alignof(RecvEvent));
-		//aligned_xdelete_sized<SendEvent>(m_pSendEvent, sizeof(SendEvent), alignof(SendEvent));
-		xdelete<RecvEvent>(m_pRecvEvent);
 		xdelete<SendEvent>(m_pSendEvent);
+		xdelete<RecvEvent>(m_pRecvEvent);
 		aligned_xdelete<RecvBuffer>(m_pRecvBuffer, alignof(RecvBuffer));
 		SocketUtils::Close(m_sessionSocket);
 		NAGOX_ASSERT_LOG(0 != m_serviceIdx, "Session Double Free !");
@@ -69,8 +59,8 @@ namespace ServerCore
 			return false;
 		m_bConnectedNonAtomicForRecv = m_bConnectedNonAtomic = false;
 		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true);
-		PrintLogEndl(std::format(L"Err: {}, Cd: {}", cause, ::WSAGetLastError()));
 		RegisterDisconnect(std::move(move_session));
+		PrintLogEndl(std::format(L"Err: {}, Cd: {}", cause, ::WSAGetLastError()));
 		return true;
 	}
 
@@ -106,18 +96,18 @@ namespace ServerCore
 		if (false == SocketUtils::BindAnyAddress(m_sessionSocket, 0))
 			return false;
 
-		const SOCKET connect_socket = m_sessionSocketForRecv;
+		const SOCKET connect_socket = m_sessionSocket;
 		ConnectEvent* const connect_event = m_pConnectEvent.get();
 
 		connect_event->Init();
+		const auto ov_ptr = connect_event->GetOverlappedAddr();
 		connect_event->SetIocpObject(SharedFromThis<IocpObject>());
-		
 
-		const SOCKADDR_IN& sockAddr = GetService()->GetNetAddress().GetSockAddr(); // 내가 붙어야 할 서버쪽 주소임
+		_Post_ _Notnull_ ov_ptr;
 
-		//DWORD numOfBytes = 0;
-		
-		if (false == SocketUtils::ConnectEx(connect_socket, reinterpret_cast<const SOCKADDR* const>(&sockAddr), sizeof(sockAddr), NULL, NULL, NULL, connect_event->GetOverlappedAddr()))
+		const SOCKADDR_IN& sockAddr = GetService()->GetNetAddress().GetSockAddr();
+
+		if (false == SocketUtils::ConnectEx(connect_socket, reinterpret_cast<const SOCKADDR* const>(&sockAddr), sizeof(sockAddr), NULL, NULL, NULL, ov_ptr))
 		{
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
@@ -132,17 +122,14 @@ namespace ServerCore
 
 	void Session::ProcessConnect(S_ptr<PacketSession> pThisSessionPtr, c_int32 numofBytes_)noexcept
 	{
-		// 세선 등록
 		if (GetService()->AddSession(pThisSessionPtr))
 		{
 			m_bConnectedNonAtomic = m_bConnectedNonAtomicForRecv = true;
 			const RecvBuffer* const recv_buff = m_pRecvBuffer;
 			m_bConnected.store(true);
-			// 컨텐츠 코드에서 오버로딩 해야함
-			// 입장시 해야할 일
 
 			OnConnected();
-			// 수신 등록(낚싯대 던짐)
+			
 			RegisterRecv(std::move(pThisSessionPtr), recv_buff);
 		}
 		else
@@ -157,29 +144,29 @@ namespace ServerCore
 		DisconnectEvent* const disconnect_event = m_pDisconnectEvent.get();
 
 		disconnect_event->Init();
+		const auto ov_ptr = disconnect_event->GetOverlappedAddr();
 		disconnect_event->SetIocpObject(std::move(move_session));
 
 		::CancelIoEx(reinterpret_cast<HANDLE>(disconnect_socket), NULL);
 
-		if (false == SocketUtils::DisconnectEx(disconnect_socket, disconnect_event->GetOverlappedAddr(), TF_REUSE_SOCKET, 0))
+		if (false == SocketUtils::DisconnectEx(disconnect_socket, ov_ptr, TF_REUSE_SOCKET, 0))
 		{
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
 			{
-				const S_ptr<Session> temp_session{ disconnect_event->PassIocpObject() };
-
-				m_bConnectedNonAtomic = m_bConnectedNonAtomicForRecv = false;
-				m_bConnected.store(false);
+				S_ptr<Session> temp_session{ disconnect_event->PassIocpObject() };
 
 				::CancelIoEx(reinterpret_cast<HANDLE>(disconnect_socket), NULL);
 				SocketUtils::Close(m_sessionSocket);
-				m_sessionSocket = m_sessionSocketForRecv = SocketUtils::CreateSocket();
+				m_sessionSocket = m_pSendEvent->m_sendSocket = SocketUtils::CreateSocket();
 				::CreateIoCompletionPort((HANDLE)m_sessionSocket, IocpCore::GetIocpHandleGlobal(), 0, 0);
 
 				ContentsEntity* const pOwner = GetOwnerEntity();
 				pOwner->TryOnDestroy();
 				GetService()->ReleaseSession(this);
 				pOwner->DecRef();
+
+				HandleError(errorCode, std::move(temp_session));
 
 				return false;
 			}
@@ -207,14 +194,15 @@ namespace ServerCore
 			return;
 		}
 
-		const SOCKET recv_socket = m_sessionSocketForRecv;
+		const SOCKET recv_socket = m_sessionSocket;
 		RecvEvent* const recv_event = m_pRecvEvent;
 	
 		recv_event->Init();
+		const auto ov_ptr = recv_event->GetOverlappedAddr();
 		recv_event->SetIocpObject(std::move(pThisSessionPtr));
 		DWORD flags = 0;
 		
-		if (SOCKET_ERROR == ::WSARecv(recv_socket, &wsaBuf, 1, NULL, &flags, recv_event->GetOverlappedAddr(), nullptr))
+		if (SOCKET_ERROR == ::WSARecv(recv_socket, &wsaBuf, 1, NULL, &flags, ov_ptr, nullptr))
 		{
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
@@ -242,18 +230,17 @@ namespace ServerCore
 				return;
 			}
 
-			const int32 dataSize = recv_buff->DataSize(); // 더 읽어야할 데이터 w - r
-			// 컨텐츠 쪽에서 오버로딩 해야함
-
+			const int32_t dataSize = recv_buff->DataSize(); 
+			
 			const RecvStatus recvStatus = static_cast<PacketSession* const>(this)->PacketSession::OnRecv(recv_buff->ReadPos(), dataSize, pThisSessionPtr);
 
 			if (false == recvStatus.bIsOK || recvStatus.processLen < 0 || dataSize < recvStatus.processLen || false == recv_buff->OnRead(recvStatus.processLen)) [[unlikely]]
 			{
-				Disconnect(L"OnRecv Overflow", std::move(pThisSessionPtr));
+				Disconnect(L"Invalid Recv", std::move(pThisSessionPtr));
 				return;
 			}
 
-			recv_buff->Clear(); // 커서 정리
+			recv_buff->Clear();
 		}
 
 		RegisterRecv(std::move(pThisSessionPtr), recv_buff);
@@ -272,12 +259,12 @@ namespace ServerCore
 		}
 		
 		SendEvent* const send_event = m_pSendEvent;
-		const SOCKET send_socket = m_sessionSocket;
+		const SOCKET send_socket = send_event->m_sendSocket;
 
 		send_event->Init();
-		send_event->SetIocpObject(std::move(pThisSessionPtr));
 		const auto ov_ptr = send_event->GetOverlappedAddr();
-
+		send_event->SetIocpObject(std::move(pThisSessionPtr));
+		
 		auto& sendBuffer = send_event->m_sendBuffer;
 		m_sendQueue.try_flush_single(sendBuffer);
 
@@ -298,7 +285,6 @@ namespace ServerCore
 		extern thread_local XVector<S_ptr<SendBuffer>> clear_vec;
 
 		auto& sendBuffer = m_pSendEvent->m_sendBuffer;
-		//const XVector<S_ptr<SendBuffer>> temp{ std::move(sendBuffer) };
 		
 		clear_vec.swap(sendBuffer);
 
@@ -309,13 +295,12 @@ namespace ServerCore
 			return;
 		}
 
-		//sendBuffer.reserve(temp.size());
-
 		// TODO: Send후 해야할 일이 생겼을 때 다시 하자
 		// OnSend(numofBytes_);
 
 		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, false);
 
+		// empty체크 후, 컨텍스트 스위칭... 이후 남이 send다하고 그다음 돌아와서 뒤늦게 플래그걸면 성공하는데 비어있음
 		if (!m_sendQueue.empty_single() && false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			RegisterSend(std::move(pThisSessionPtr));
 
@@ -325,7 +310,7 @@ namespace ServerCore
 	void Session::RetrySendAsError(SendEvent* const pSendEvent_)noexcept
 	{
 		S_ptr<Session> temp_session{ pSendEvent_->PassIocpObject() };
-		auto& register_send_event = pSendEvent_->m_registerSendEvent;
+		auto& register_send_event = m_registerSendEvent;
 		const auto ov_ptr = register_send_event.GetOverlappedAddr();
 		const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
 		PrintLogEndl(std::format(L"Send Error: {}", ::WSAGetLastError()));
@@ -336,14 +321,14 @@ namespace ServerCore
 				false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			{
 				RegisterSend(std::move(temp_session));
-				PrintLogEndl("Retry RegisterSend!");
+				PrintLogEndl("Retry Send As Error");
 			}
 		}
 	}
 
 	void Session::RetrySend() const noexcept
 	{
-		auto& register_send_event = m_pSendEvent->m_registerSendEvent;
+		auto& register_send_event = m_registerSendEvent;
 		const auto ov_ptr = register_send_event.GetOverlappedAddr();
 		const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
 		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, false);
@@ -361,18 +346,8 @@ namespace ServerCore
 
 	void Session::HandleError(c_int32 errorCode, S_ptr<PacketSession>&& move_session)noexcept
 	{
+		m_iLastErrorCode = errorCode;
 		if (false == Disconnect(std::format(L"HErr: {}", errorCode), std::move(move_session)))
 			PrintLogEndl(std::format(L"HErr: {}", errorCode));
-		switch (errorCode)
-		{
-		case WSAECONNRESET:
-		case WSAECONNABORTED:
-			//Disconnect(L"HandleError");
-			break;
-		default:
-			// TODO 로그찍기
-			//LOG_MSG(std::format(L"Handle Error: {}", errorCode));
-			break;
-		}
 	}
 }

@@ -170,10 +170,12 @@ namespace ServerCore
 		:public IOEvent
 	{
 	public:
-		SendEvent()noexcept :IOEvent{ EVENT_TYPE::SEND }, m_registerSendEvent{ EVENT_TYPE::REGISTER_SEND } {}
-		//~SendEvent()noexcept { xdelete_sized<IocpEvent>(m_registerSendEvent, sizeof(IocpEvent)); }
-		IocpEvent m_registerSendEvent;
+		SendEvent(const SOCKET sock)noexcept
+			: IOEvent{ EVENT_TYPE::SEND }
+			, m_sendSocket{ sock }
+		{}
 		XVector<S_ptr<SendBuffer>> m_sendBuffer;
+		SOCKET m_sendSocket = INVALID_SOCKET;
 	};
 
 	class ContentsEntityTask

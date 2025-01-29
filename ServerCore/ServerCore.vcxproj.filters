@@ -157,6 +157,9 @@
     <Filter Include="Utils\struct\LockFreeDS">
       <UniqueIdentifier>{a11c09b3-db0d-4a48-ab98-41a4e751d9e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network\IocpCore\TimerRoutine">
+      <UniqueIdentifier>{ca528660-5ba8-46e5-aa87-86fc6302b43a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -393,6 +396,9 @@
     <ClInclude Include="NagoxDeleter.h">
       <Filter>Network\IocpCore\IocpObject</Filter>
     </ClInclude>
+    <ClInclude Include="TimerRoutine.h">
+      <Filter>Network\IocpCore\TimerRoutine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -529,6 +535,9 @@
     </ClCompile>
     <ClCompile Include="Benchmarker.cpp">
       <Filter>Manager\Benchmarker</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerRoutine.cpp">
+      <Filter>Network\IocpCore\TimerRoutine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

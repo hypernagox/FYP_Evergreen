@@ -630,8 +630,9 @@ namespace ServerCore
         using IndexType = uint32_t;
         using TableContainer = TableBase<Value, IndexType>;
     public:
-        constexpr VectorSetUnsafe(const std::size_t size_ = DEFAULT_ATOMIC_ALLOCATOR_SIZE)noexcept
-        {
+        constexpr VectorSetUnsafe()noexcept = default;
+        constexpr VectorSetUnsafe(const std::size_t size_)noexcept { reserve(size_); }
+        void reserve(const std::size_t size_)noexcept {
             if constexpr (std::same_as<TableContainer, XHashMap<Value, IndexType>>)
                 m_ID2idx.reserve(size_);
             m_listItem.reserve(size_);

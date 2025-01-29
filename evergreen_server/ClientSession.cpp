@@ -8,6 +8,7 @@
 #include "HP.h"
 #include "Death.h"
 #include "QuestSystem.h"
+#include "TimerRoutine.h"
 
 std::atomic_int cnt = 0;
 static NagoxAtomic::Atomic<int> g_connect_count{ 0 };
@@ -32,7 +33,7 @@ void ClientSession::OnConnected()
 	pOwner->AddComp<HP>()->InitHP(5);
 	pOwner->AddComp<PlayerDeath>();
 	pOwner->AddComp<QuestSystem>();
-
+	pOwner->AddComp<ServerCore::TimerHandler>();
 	//std::cout << ++g_connect_count << '\n';
 	//ServerCore::PrintKoreaRealTime("Connect !", GetAddress().GetIpAddress());
 }

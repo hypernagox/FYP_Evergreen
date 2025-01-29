@@ -55,6 +55,7 @@ public:
 	AuthenticPlayer(const std::shared_ptr<SceneObject>& object);
 	~AuthenticPlayer();
 
+	void FireProj();
 	void DoAttack();
 	void Start();
 	void Update(const Time& time, Scene& scene) override;

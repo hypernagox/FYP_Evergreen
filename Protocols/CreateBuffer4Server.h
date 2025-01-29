@@ -76,3 +76,9 @@ ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_CLEAR_QUEST(
     const uint8_t is_clear,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+ServerCore::S_ptr<ServerCore::SendBuffer> Create_s2c_FIRE_PROJ(
+    const uint64_t proj_id,
+    const Nagox::Struct::Vec3& pos,
+    const Nagox::Struct::Vec3& vel,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

@@ -36,6 +36,13 @@ void ServerObjectMgr::AddObject(EntityBuilderBase* b)
 	}
 }
 
+void ServerObjectMgr::AddObject(std::shared_ptr<SceneObject> scene_obj)
+{
+	const auto so = scene_obj->GetComponent<ServerObject>();
+	m_mapServerObj.emplace(so->GetObjID(), scene_obj);
+	targetScene->AddObject(scene_obj);
+}
+
 void ServerObjectMgr::RemoveObject(const uint64_t id)
 {
 	// 생각보다 씬에서 넣다 뺏다 할 일이 많을 것 같다 (더미 클라이언트 특성)
