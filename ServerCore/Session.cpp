@@ -235,7 +235,7 @@ namespace ServerCore
 			
 			const RecvStatus recvStatus = static_cast<PacketSession* const>(this)->PacketSession::OnRecv(recv_buff->ReadPos(), dataSize, pThisSessionPtr);
 
-			if (false == recvStatus.bIsOK || recvStatus.processLen < 0 || dataSize < recvStatus.processLen || false == recv_buff->OnRead(recvStatus.processLen)) [[unlikely]]
+			if (false == recvStatus.bIsOK || dataSize < recvStatus.processLen || false == recv_buff->OnRead(recvStatus.processLen)) [[unlikely]]
 			{
 				Disconnect(L"Invalid Recv", std::move(pThisSessionPtr));
 				return;

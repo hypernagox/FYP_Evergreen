@@ -11,37 +11,31 @@ namespace ServerCore
 	const RecvStatus PacketSession::OnRecv(BYTE* const buffer, c_int32 len, const S_ptr<PacketSession>& pThisSessionPtr)noexcept
 	{
 		const PacketHandleFunc* const __restrict packet_handler = g_sessionPacketHandler;
+		int32_t processLen = 0;
 
-		int32 processLen = 0;
-		bool bIsOk = true;
-		for (;;)
+		for(;;) [[likely]]
 		{
-			const int32 dataSize = len - processLen; // 두번째부터는 이미 해놓은게 있기 때문
-			// 최소한 헤더는 파싱할 수 있는가?
+			const int32_t dataSize = len - processLen;
+
 			if (dataSize < static_cast<c_int32>(sizeof(PacketHeader)))
 				break;
 
 			const PacketHeader* const __restrict header = reinterpret_cast<const PacketHeader* const>(buffer + processLen);
 			c_int32 packetSize = header->pkt_size;
 			c_uint16 packetId = header->pkt_id;
-			// 헤더에 기록된 패킷크기를 파싱할수있나?
+
 			if (dataSize < packetSize)
 				break;
 
-			// 일단 오긴다옴, 조립성공
-
-			//if (static_cast<c_uint16>(HEART_BEAT::c2s_HEART_BEAT) == packetId)
-			//{
-			//	SetHeartBeat(true);
-			//}
-			//else
-			{
-				bIsOk &= packet_handler[packetId](pThisSessionPtr, reinterpret_cast<const BYTE* const>(header), packetSize);
-			}
-
 			processLen += packetSize;
-		}
 
-		return { processLen,bIsOk };
+			// 패킷에 기입된 사이즈와 핸들링 할 패킷의 실제 사이즈가 일치하는 지 체크가 반드시 필요
+			// 컨텐츠 단에서 호출할 때, 핸들링 할 패킷사이즈와 들어온 사이즈가 같은지 여부를 체크하는 부분이 있어야함
+			// 패킷사이즈가 0일 때 무한루프가 돈다.
+			if (!packet_handler[packetId](pThisSessionPtr, reinterpret_cast<const BYTE* const>(header), packetSize))
+				return { processLen,false };
+		} 
+
+		return { processLen,true };
 	}
 }

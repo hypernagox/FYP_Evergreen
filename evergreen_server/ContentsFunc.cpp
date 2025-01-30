@@ -4,9 +4,9 @@
 
 XVector<std::pair<S_ptr<ContentsEntity>, class PositionComponent*>> CreateArrWithPosComp(const XVector<const ContentsEntity*>& vec_) noexcept
 {
-    XVector<std::pair<S_ptr<ContentsEntity>, class PositionComponent*>> temp;
     auto b = vec_.data();
     const auto e = b + vec_.size();
+    XVector<std::pair<S_ptr<ContentsEntity>, class PositionComponent*>> temp;
     temp.reserve(e - b);
     while (e != b) {
         const auto entity = (*b++);
