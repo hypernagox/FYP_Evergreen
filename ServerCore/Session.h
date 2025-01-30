@@ -85,7 +85,7 @@ namespace ServerCore
 		const bool IsConnectedAtomic()const noexcept { return m_bConnected.load(); }
 		const bool IsHeartBeatAlive()const noexcept { return m_bHeartBeatAlive; }
 		void SetHeartBeat(const bool bHeartBeat_)noexcept { m_bHeartBeatAlive = bHeartBeat_; }
-		void SetLastError(c_int32 errCode_)noexcept { m_iLastErrorCode *= errCode_; }
+		void SetLastError(c_int32 errCode_)noexcept { m_iLastErrorCode = errCode_; }
 	private:
 		HANDLE GetHandle()const noexcept { return reinterpret_cast<HANDLE>(m_sessionSocket); }
 		virtual void Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept override;

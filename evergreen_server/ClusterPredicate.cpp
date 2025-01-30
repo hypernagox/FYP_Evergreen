@@ -23,28 +23,28 @@ bool ClusterPredicate::Filter4Session(const ContentsEntity* const a, const Conte
 	const auto a_pos = a->GetComp<PositionComponent>()->pos;
 	const auto b_pos = b->GetComp<PositionComponent>()->pos;
 
-	const int dx = (int)(a_pos.x - b_pos.x);
-	const int dy = (int)(a_pos.y - b_pos.y);
-	const int dz = (int)(a_pos.z - b_pos.z);
+	//const int dx = (int)(a_pos.x - b_pos.x);
+	//const int dy = (int)(a_pos.y - b_pos.y);
+	//const int dz = (int)(a_pos.z - b_pos.z);
 	//return true;
-	return ((50 * 50) >= (dx * dx + dy * dy + dz * dz));
+	return CommonMath::IsInDistanceDX(a_pos, b_pos, 50);
+	//return ((50 * 50) >= (dx * dx + dy * dy + dz * dz));
 }
 
 bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsEntity* const b) const noexcept
 {
-	if (!a->IsValid() || !b->IsValid())return false;
-	if (a->IsPendingClusterEntry() || b->IsPendingClusterEntry())return false;
-
+	if (!a->IsReadyAndValid() || !b->IsReadyAndValid())return false;
+	
 	const auto a_pos = a->GetComp<PositionComponent>()->pos;
 	const auto b_pos = b->GetComp<PositionComponent>()->pos;
 
-	const int dx = (int)(a_pos.x - b_pos.x);
-	const int dy = (int)(a_pos.y - b_pos.y);
-	const int dz = (int)(a_pos.z - b_pos.z);
-
-	const uint32_t dist = ((dx * dx + dy * dy + dz * dz));
+	//const int dx = (int)(a_pos.x - b_pos.x);
+	//const int dy = (int)(a_pos.y - b_pos.y);
+	//const int dz = (int)(a_pos.z - b_pos.z);
+	//
+	//const uint32_t dist = ((dx * dx + dy * dy + dz * dz));
+	const auto dist = Vector3::DistanceSquared(a_pos, b_pos);
 	const bool bRes = (50 * 50) >= dist;
-
 	if (bRes)
 	{
 		if (const auto npc_timer = b->GetIocpComponent<ServerCore::TickTimer>())

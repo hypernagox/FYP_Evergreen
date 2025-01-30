@@ -15,12 +15,12 @@ namespace ServerCore
 
 		for(;;) [[likely]]
 		{
+			const PacketHeader* const __restrict header = reinterpret_cast<const PacketHeader* const>(buffer + processLen);
 			const int32_t dataSize = len - processLen;
 
 			if (dataSize < static_cast<c_int32>(sizeof(PacketHeader)))
 				break;
 
-			const PacketHeader* const __restrict header = reinterpret_cast<const PacketHeader* const>(buffer + processLen);
 			c_int32 packetSize = header->pkt_size;
 			c_uint16 packetId = header->pkt_id;
 
@@ -34,6 +34,7 @@ namespace ServerCore
 			// 패킷사이즈가 0일 때 무한루프가 돈다.
 			if (!packet_handler[packetId](pThisSessionPtr, reinterpret_cast<const BYTE* const>(header), packetSize))
 				return { processLen,false };
+			// 나중에 이 함수는 에러코드를 반환하고, 세션의 라스트에러에 저장해서 기록하는 식으로 에러처리를 한다.
 		} 
 
 		return { processLen,true };

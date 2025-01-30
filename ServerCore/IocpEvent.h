@@ -29,7 +29,13 @@ namespace ServerCore
 			:m_combined_ptr{ (static_cast<uint64_t>(eType_) << 56) |
 			(reinterpret_cast<uint64_t>(std::exchange(pObj.m_count_ptr,nullptr)) & 0x00FFFFFFFFFFFFFF) }
 		{}
-		~IocpEvent()noexcept { ReleaseIocpObject(); }
+		constexpr ~IocpEvent()noexcept { ReleaseIocpObject(); }
+
+		IocpEvent(const IocpEvent&) = delete;
+		IocpEvent& operator=(const IocpEvent&) = delete;
+		IocpEvent(IocpEvent&& other)noexcept 
+			:m_combined_ptr{ std::exchange(other.m_combined_ptr,0) }
+		{}
 	public:
 		const IocpObject* GetIocpObject()const noexcept { return GetPtr(); }
 		IocpObject* GetIocpObject()noexcept { return GetPtr(); }
@@ -50,7 +56,7 @@ namespace ServerCore
 		}
 
 		template<typename T = IocpObject>
-		void ReleaseIocpObject()noexcept {
+		constexpr void ReleaseIocpObject()noexcept {
 			if (const auto ptr = GetPtr())
 			{
 				ptr->DecRef<T>();
@@ -82,8 +88,8 @@ namespace ServerCore
 			:IocpEvent{ eType_,std::move(pObj) }
 		{}
 	public:
-		void Init()noexcept { ::memset(&m_overLapped, 0, sizeof(OVERLAPPED)); }
-		
+		OVERLAPPED* const Init()noexcept { return (OVERLAPPED*)::memset(&m_overLapped, 0, sizeof(OVERLAPPED)); }
+		OVERLAPPED* const GetOverlappedAddr()const noexcept = delete;
 	private:
 		OVERLAPPED m_overLapped;
 	};

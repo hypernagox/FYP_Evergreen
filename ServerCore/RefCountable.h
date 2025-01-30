@@ -12,10 +12,16 @@ namespace ServerCore
 	class RefCountable
 	{
 	public:
+		RefCountable(const RefCountable&) = delete;
+		RefCountable& operator=(const RefCountable&) = delete;
+		RefCountable(RefCountable&&)noexcept = delete;
+		RefCountable& operator=(RefCountable&&)noexcept = delete;
+	public:
 		friend static inline RefCountable* const IncAndGetPtrExternal(const RefCountable* const ref_ptr)noexcept;
 		friend static inline void DecRefExternal(const RefCountable* const ref_ptr)noexcept;
 		friend static inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept;
 	protected:
+		RefCountable()noexcept = default;
 		~RefCountable()noexcept = default;
 	public:
 		template<typename T> requires (false == std::same_as<std::decay_t<T>, RefCountable>)
@@ -102,7 +108,7 @@ namespace ServerCore
 				other.m_count_ptr = nullptr;
 				return *this;
 			}
-			else if(!other.m_count_ptr) [[unlikely]] {
+			else if(other.m_count_ptr) [[unlikely]] {
 				other.m_count_ptr->RefCountable::DecRef<T>();
 				other.m_count_ptr = nullptr;
 			}
@@ -134,7 +140,7 @@ namespace ServerCore
 				other.m_count_ptr = nullptr;
 				return *this;
 			}
-			else if (!other.m_count_ptr) [[unlikely]] {
+			else if (other.m_count_ptr) [[unlikely]] {
 				other.m_count_ptr->RefCountable::DecRef<U>();
 				other.m_count_ptr = nullptr;
 			}
@@ -212,12 +218,12 @@ namespace ServerCore
 		template <typename U>
 		void store(S_ptr<U>&& p)noexcept {
 			const auto other_ptr = static_cast<U* const>(p.m_count_ptr);
+			p.m_count_ptr = nullptr;
 			m_srwLock.lock();
 			const auto prev_ptr = m_ptr;
 			m_ptr = other_ptr;
 			m_srwLock.unlock();
 			if (prev_ptr && prev_ptr != other_ptr)prev_ptr->RefCountable::DecRef<T>();
-			p.m_count_ptr = nullptr;
 		}
 		S_ptr<T> load()const noexcept {
 			m_srwLock.lock_shared();

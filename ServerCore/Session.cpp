@@ -55,11 +55,11 @@ namespace ServerCore
 	bool Session::Disconnect(const std::wstring_view cause, S_ptr<PacketSession> move_session)noexcept
 	{
 		//LOG_MSG(std::move(cause));
-		if (false == m_bConnected.exchange(false))
+		if (false == m_bConnected.load_relaxed() || false == m_bConnected.exchange(false))
 			return false;
 		m_bConnectedNonAtomicForRecv = m_bConnectedNonAtomic = false;
-		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true);
 		const int32_t errCode = ::WSAGetLastError();
+		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true);
 		RegisterDisconnect(std::move(move_session));
 		PrintLogEndl(std::format(L"Err: {}, Cd: {}", cause, errCode));
 		return true;
@@ -100,8 +100,7 @@ namespace ServerCore
 		const SOCKET connect_socket = m_sessionSocket;
 		ConnectEvent* const connect_event = m_pConnectEvent.get();
 
-		connect_event->Init();
-		const auto ov_ptr = connect_event->GetOverlappedAddr();
+		const auto ov_ptr = connect_event->Init();
 		connect_event->SetIocpObject(SharedFromThis<IocpObject>());
 
 		_Post_ _Notnull_ ov_ptr;
@@ -144,8 +143,7 @@ namespace ServerCore
 		const SOCKET disconnect_socket = m_sessionSocket;
 		DisconnectEvent* const disconnect_event = m_pDisconnectEvent.get();
 
-		disconnect_event->Init();
-		const auto ov_ptr = disconnect_event->GetOverlappedAddr();
+		const auto ov_ptr = disconnect_event->Init();
 		disconnect_event->SetIocpObject(std::move(move_session));
 
 		::CancelIoEx(reinterpret_cast<HANDLE>(disconnect_socket), NULL);
@@ -198,8 +196,7 @@ namespace ServerCore
 		const SOCKET recv_socket = m_sessionSocket;
 		RecvEvent* const recv_event = m_pRecvEvent;
 	
-		recv_event->Init();
-		const auto ov_ptr = recv_event->GetOverlappedAddr();
+		const auto ov_ptr = recv_event->Init();
 		recv_event->SetIocpObject(std::move(pThisSessionPtr));
 		DWORD flags = 0;
 		
@@ -262,8 +259,7 @@ namespace ServerCore
 		SendEvent* const send_event = m_pSendEvent;
 		const SOCKET send_socket = send_event->m_sendSocket;
 
-		send_event->Init();
-		const auto ov_ptr = send_event->GetOverlappedAddr();
+		const auto ov_ptr = send_event->Init();
 		send_event->SetIocpObject(std::move(pThisSessionPtr));
 		
 		auto& sendBuffer = send_event->m_sendBuffer;
@@ -311,10 +307,7 @@ namespace ServerCore
 	void Session::RetrySendAsError(SendEvent* const pSendEvent_)noexcept
 	{
 		S_ptr<Session> temp_session{ pSendEvent_->PassIocpObject() };
-		auto& register_send_event = m_registerSendEvent;
-		const auto ov_ptr = register_send_event.GetOverlappedAddr();
-		const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
-		PrintLogEndl(std::format(L"Send Error: {}", ::WSAGetLastError()));
+		const int32_t errCode = ::WSAGetLastError();
 		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, false);
 		if (false == m_sendQueue.empty_single())
 		{
@@ -325,6 +318,7 @@ namespace ServerCore
 				PrintLogEndl("Retry Send As Error");
 			}
 		}
+		PrintLogEndl(std::format(L"Send Error: {}", errCode));
 	}
 
 	void Session::RetrySend() const noexcept

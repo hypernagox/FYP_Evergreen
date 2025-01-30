@@ -18,6 +18,7 @@ void Projectile::StartRoutine() noexcept
 ServerCore::ROUTINE_RESULT Projectile::Routine() noexcept
 {
 	// TODO: 개 쌉 하드코딩 + 매직넘버
+	DO_BENCH_GLOBAL_THIS_FUNC;
 	m_timer.Update();
 	const auto dt = m_timer.GetDT();
 	const auto pos = m_pos;
@@ -25,20 +26,21 @@ ServerCore::ROUTINE_RESULT Projectile::Routine() noexcept
 	bool isHit = false;
 	for (const auto& [mon,pos_comp] : m_mon_list)
 	{
-		if (!mon->IsValid() || mon->IsPendingClusterEntry())continue;
+		if (!mon->IsValid())continue;
 		if (const auto pCol = mon->GetComp<Collider>())
 		{
 			const auto owner = pCol->GetOwnerEntity();
 			const auto mon_pos = pos_comp->pos;
 			constexpr auto rr = RADIUS + RADIUS;
-			if(ServerCore::IsInDistance(&pos.x, &mon_pos.x, rr))
+			
+			if (CommonMath::IsInDistanceDX(pos, mon_pos, rr))
 			{
 				owner->GetComp<HP>()->PostDoDmg(1, m_owner);
 				isHit = true;
 			}
 		}
 	}
-	const auto delta= m_speed * dt;
+	const auto delta = m_speed * dt;
 	m_accDist += delta.LengthSquared();
 	if (isHit)return ServerCore::ROUTINE_RESULT::STOP;
 	if (MAX_DIST <= m_accDist)return ServerCore::ROUTINE_RESULT::STOP;

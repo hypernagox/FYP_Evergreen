@@ -29,7 +29,7 @@ namespace ServerCore
 		if (!target_vecHash.AddItem(obj_id, pEntity_))
 		{
 			// TODO: 이미 방에 있는데 또 들어오려한거임
-			std::cout << "Alread Exist in Space\n";
+			PrintLogEndl("Alread Exist in Space");
 			return;
 		}
 

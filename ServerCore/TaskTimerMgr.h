@@ -13,17 +13,11 @@ namespace ServerCore
 	{
 		uint64 executeTime;
 		mutable Task taskPtr;
-		TimerTask()noexcept = default;
-		TimerTask(const TimerTask& other)noexcept :executeTime{ other.executeTime }, taskPtr{ std::move(other.taskPtr) } {}
-		TimerTask(TimerTask&& other)noexcept :executeTime{ other.executeTime }, taskPtr{ std::move(other.taskPtr) } {}
-		constexpr void operator=(const TimerTask& other)noexcept
-		{
-			if (&other != this) [[likely]]
-			{
-				executeTime = other.executeTime;
-				taskPtr = std::move(other.taskPtr);
-			}
-		}
+		constexpr TimerTask()noexcept = default;
+		constexpr ~TimerTask()noexcept = default;
+		TimerTask(const TimerTask&) = delete;
+		void operator=(const TimerTask&) = delete;
+		constexpr TimerTask(TimerTask&& other)noexcept :executeTime{ other.executeTime }, taskPtr{ std::move(other.taskPtr) } {}
 		constexpr void operator=(TimerTask&& other)noexcept
 		{
 			if (&other != this) [[likely]]
@@ -33,7 +27,7 @@ namespace ServerCore
 			}
 		}
 		template <typename... Args>
-		TimerTask(const uint64_t tickCount, Args&&... args)noexcept :executeTime{ tickCount }, taskPtr{ std::forward<Args>(args)... } {}
+		constexpr TimerTask(const uint64_t tickCount, Args&&... args)noexcept :executeTime{ tickCount }, taskPtr{ std::forward<Args>(args)... } {}
 	};
 
 	struct TimerCompare

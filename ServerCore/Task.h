@@ -17,35 +17,7 @@ namespace ServerCore
 	class Task
 	{
 	public:
-		Task()noexcept :argPtr{ nullptr } {}
-		Task(const Task& other)noexcept
-			: argPtr{ std::exchange(other.argPtr,nullptr) }
-			, m_fpTask{ other.m_fpTask }
-		{
-		}
-		void operator=(const Task& other)noexcept
-		{
-			if (this != &other) [[likely]]
-			{
-				argPtr = other.argPtr;
-				m_fpTask = other.m_fpTask;
-			}
-			other.argPtr = nullptr;
-		}
-		Task(Task&& other)noexcept
-			: argPtr{ std::exchange(other.argPtr,nullptr) }
-			, m_fpTask{ other.m_fpTask }
-		{
-		}
-		void operator=(Task&& other)noexcept
-		{
-			if (this != &other) [[likely]]
-			{
-				argPtr = other.argPtr;
-				m_fpTask = other.m_fpTask;
-			}
-			other.argPtr = nullptr;
-		}
+		constexpr Task()noexcept :argPtr{ nullptr } {}
 		inline constexpr ~Task()noexcept {
 			if (argPtr)
 			{
@@ -53,6 +25,23 @@ namespace ServerCore
 				argPtr = nullptr;
 			}
 		}
+		Task(const Task&) = delete;
+		void operator=(const Task&) = delete;
+		constexpr Task(Task&& other)noexcept
+			: argPtr{ std::exchange(other.argPtr,nullptr) }
+			, m_fpTask{ other.m_fpTask }
+		{
+		}
+		constexpr void operator=(Task&& other)noexcept
+		{
+			if (this != &other) [[likely]]
+			{
+				argPtr = other.argPtr;
+				m_fpTask = other.m_fpTask;
+			}
+			other.argPtr = nullptr;
+		}
+	
 		void swap(Task& other)noexcept { 
 			std::swap(argPtr, other.argPtr); std::swap(m_fpTask, other.m_fpTask);
 		}

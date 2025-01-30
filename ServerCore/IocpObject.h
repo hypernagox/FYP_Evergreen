@@ -182,6 +182,7 @@ namespace ServerCore
 		const bool IsPendingClusterEntry()const noexcept { return 0 != m_clusterEnterCount; }
 		const bool RegisterEnterCount()noexcept { return 0 == InterlockedDecrement16(&m_clusterEnterCount); }
 		void ResetClusterCount()noexcept { InterlockedExchange16(&m_clusterEnterCount, static_cast<SHORT>(ThreadMgr::NUM_OF_THREADS)); }
+		const bool IsReadyAndValid()const noexcept { return IsValid() && !IsPendingClusterEntry(); }
 	private:
 		void PostEntityTask(Task&& task_)const noexcept;
 		void OnDestroy()noexcept;

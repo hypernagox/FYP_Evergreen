@@ -92,8 +92,7 @@ namespace ServerCore
 		if (false == CanAccept())
 			return;
 
-		acceptEvent->Init();
-		const auto ov_ptr = acceptEvent->GetOverlappedAddr();
+		const auto ov_ptr = acceptEvent->Init();
 		const S_ptr<Session>& session = acceptEvent->RegisterSession(m_pServerService->PopSession());
 
 		_Post_ _Notnull_ ov_ptr;
@@ -110,7 +109,7 @@ namespace ServerCore
 			}
 			else
 			{
-				std::cout << "Server Is Full or Fail to CreateSession\n";
+				PrintLogEndl("Server Is Full or Fail to CreateSession\n");
 				return;
 			}
 		}
@@ -123,9 +122,8 @@ namespace ServerCore
 			const int32 errCode = ::WSAGetLastError();
 			if (errCode != WSA_IO_PENDING)
 			{
-				// 일단 다시 Accept (입질이 왔는데 뭔가 문제가있음)
-				PrintLogEndl(std::format("Accept Error: {}", errCode));
 				xdelete<ContentsEntity>(acceptEvent->ReleaseSession()->GetOwnerEntity());
+				PrintLogEndl(std::format("Accept Error: {}", errCode));
 				Sleep(5000);
 				if (Mgr(ThreadMgr)->GetStopFlagRef())
 					return;
@@ -171,17 +169,6 @@ namespace ServerCore
 
 		session_ptr->SetNetAddress(NetAddress{ sockAddress });
 		session_ptr->ProcessConnect(std::move(pSession));
-
-		//if (session_ptr->IsConnected())
-		//{
-		//	//LOG_MSG(L"client in");
-		//}
-		//else
-		//{
-		//	LOG_MSG(L"Server Is Full");
-		//	// TODO: 입장 정원 초과 메시지 보내기 또는 현재 더 받을 여유가 없음
-		//	// std::this_thread::sleep_for(std::chrono::seconds(3));
-		//}
 
 		RegisterAccept(acceptEvent);
 	}
