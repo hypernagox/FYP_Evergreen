@@ -59,8 +59,9 @@ namespace ServerCore
 			return false;
 		m_bConnectedNonAtomicForRecv = m_bConnectedNonAtomic = false;
 		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true);
+		const int32_t errCode = ::WSAGetLastError();
 		RegisterDisconnect(std::move(move_session));
-		PrintLogEndl(std::format(L"Err: {}, Cd: {}", cause, ::WSAGetLastError()));
+		PrintLogEndl(std::format(L"Err: {}, Cd: {}", cause, errCode));
 		return true;
 	}
 

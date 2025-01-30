@@ -17,8 +17,8 @@ namespace Common
         const auto start_z_pos = CommonMath::InverseZ(start);
         auto dest_z_pos = CommonMath::InverseZ(dest);
 
-        float t;
-        float hitNormal[3];
+        //float t;
+        //float hitNormal[3];
 
         const auto start_poly = m_agent->GetCurCell().GetPolyRef();
 

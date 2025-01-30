@@ -32,6 +32,7 @@ namespace ServerCore
 		{
 			const auto session = CreateSession();
 			NAGOX_ASSERT_LOG(nullptr != session, "Fail To Create Session");
+			_Post_ _Notnull_ session;
 			session->m_serviceIdx = i;
 			m_sessionPool.emplace(session);
 		}

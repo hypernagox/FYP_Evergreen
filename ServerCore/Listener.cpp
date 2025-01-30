@@ -93,8 +93,10 @@ namespace ServerCore
 			return;
 
 		acceptEvent->Init();
-
+		const auto ov_ptr = acceptEvent->GetOverlappedAddr();
 		const S_ptr<Session>& session = acceptEvent->RegisterSession(m_pServerService->PopSession());
+
+		_Post_ _Notnull_ ov_ptr;
 
 		if (!session)
 		{
@@ -116,7 +118,7 @@ namespace ServerCore
 		//DWORD bytesReceived;
 
 		if (false == SocketUtils::AcceptEx(m_socket, session->GetSocket(), session->m_pRecvBuffer->WritePos(), 0,
-			sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, NULL, acceptEvent->GetOverlappedAddr()))
+			sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, NULL, ov_ptr))
 		{
 			const int32 errCode = ::WSAGetLastError();
 			if (errCode != WSA_IO_PENDING)
