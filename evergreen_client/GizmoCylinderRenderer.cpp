@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "GizmoBoxRenderer.h"
+#include "GizmoCylinderRenderer.h"
 
 static constexpr char g_psoResource[] = R"(
 	cbuffer cbPerObject : register(b0)
@@ -20,23 +20,31 @@ static constexpr char g_psoResource[] = R"(
 		float4 gEyePosW;
 	};
 
-	static float3 gVertexData[8] = 
+	static float3 gVertexData[16] = 
 	{
-		float3(-0.5f, -0.5f, -0.5f),
-        float3(-0.5f, -0.5f, 0.5f),
-		float3(-0.5f, 0.5f, -0.5f),
-		float3(-0.5f, 0.5f, 0.5f),
-		float3(0.5f, -0.5f, -0.5f),
-		float3(0.5f, -0.5f, 0.5f),
-		float3(0.5f, 0.5f, -0.5f),
-		float3(0.5f, 0.5f, 0.5f)
+        float3(-1.0f, 0.0f, 0.0f),
+		float3(-0.707f, 0.0f, -0.707f),
+		float3(0.0f, 0.0f, -1.0f),
+		float3(0.707f, 0.0f, -0.707f),
+		float3(1.0f, 0.0f, 0.0f),
+		float3(0.707f, 0.0f, 0.707f),
+		float3(0.0f, 0.0f, 1.0f),
+		float3(-0.707f, 0.0f, 0.707f),
+        float3(-1.0f, 1.0f, 0.0f),
+		float3(-0.707f, 1.0f, -0.707f),
+		float3(0.0f, 1.0f, -1.0f),
+		float3(0.707f, 1.0f, -0.707f),
+		float3(1.0f, 1.0f, 0.0f),
+		float3(0.707f, 1.0f, 0.707f),
+		float3(0.0f, 1.0f, 1.0f),
+		float3(-0.707f, 1.0f, 0.707f)
 	};
 
-	static uint gIndexData[24] = 
+	static uint gIndexData[40] = 
 	{
-		0, 1, 1, 3, 3, 2, 2, 0,
-		4, 5, 5, 7, 7, 6, 6, 4,
-		0, 4, 1, 5, 2, 6, 3, 7
+        0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 0,
+        8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 8,
+		0, 8, 2, 10, 4, 12, 6, 14,
 	};
 
 	float4 VS(uint vid : SV_VertexID) : SV_POSITION
@@ -54,26 +62,26 @@ static constexpr char g_psoResource[] = R"(
 
 using namespace udsdx;
 
-GizmoBoxRenderer::GizmoBoxRenderer(const std::shared_ptr<SceneObject>& object) : RendererBase(object)
+GizmoCylinderRenderer::GizmoCylinderRenderer(const std::shared_ptr<SceneObject>& object) : RendererBase(object)
 {
 	m_castShadow = false;
 	m_renderGroup = RenderGroup::Forward;
 	BuildPipelineState();
 }
 
-void GizmoBoxRenderer::Render(RenderParam& param, int instances)
+void GizmoCylinderRenderer::Render(RenderParam& param, int instances)
 {
 	ObjectConstants objectConstants;
-	Matrix4x4 worldTransform = XMMatrixScaling(m_size.x, m_size.y, m_size.z) * XMMatrixTranslation(m_offset.x, m_offset.y, m_offset.z) * XMLoadFloat4x4(&m_transformCache);
+	Matrix4x4 worldTransform = XMMatrixScaling(m_radius, m_height, m_radius) * XMMatrixTranslation(m_offset.x, m_offset.y, m_offset.z) * XMLoadFloat4x4(&m_transformCache);
 	objectConstants.World = worldTransform.Transpose();
 	objectConstants.PrevWorld = m_prevTransformCache.Transpose();
 
 	param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerObjectCBV, sizeof(ObjectConstants) / 4, &objectConstants, 0);
 	param.CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-	param.CommandList->DrawInstanced(24, instances, 0, 0);
+	param.CommandList->DrawInstanced(40, instances, 0, 0);
 }
 
-void GizmoBoxRenderer::BuildPipelineState()
+void GizmoCylinderRenderer::BuildPipelineState()
 {
 	ID3D12RootSignature* rootSignature = INSTANCE(Core)->GetRootSignature();
 	ID3D12Device* device = INSTANCE(Core)->GetDevice();

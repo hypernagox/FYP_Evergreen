@@ -24,8 +24,6 @@ private:
 
 	std::unique_ptr<SoundEffectInstance> soundEffectInstance;
 
-	std::function<void(void)> m_fpChangeCamMode[3];
-
 	float m_fMoveSpeed = 100.f;
 	float m_fMoveTime = 0.0f;
 	float m_fCamSensivity = 0.1f;
@@ -36,7 +34,6 @@ private:
 	Vector3 m_cameraAngleAxisSmooth = Vector3::Zero;
 
 	CameraPerspective* m_pCamera;
-	unsigned short m_curCamMode = 1;
 
 	bool m_bSendFlag = false;
 	Vector3Int m_vCurState = {};

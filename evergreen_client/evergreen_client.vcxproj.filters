@@ -153,6 +153,12 @@
     <ClCompile Include="Projectile.cpp">
       <Filter>Projectile</Filter>
     </ClCompile>
+    <ClCompile Include="GizmoSphereRenderer.cpp">
+      <Filter>GizmoRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="GizmoCylinderRenderer.cpp">
+      <Filter>GizmoRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -232,6 +238,12 @@
     </ClInclude>
     <ClInclude Include="Projectile.h">
       <Filter>Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="GizmoSphereRenderer.h">
+      <Filter>GizmoRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="GizmoCylinderRenderer.h">
+      <Filter>GizmoRenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
