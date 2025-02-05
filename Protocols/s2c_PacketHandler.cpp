@@ -9,7 +9,7 @@
 #include "PlayerRenderer.h"
 #include "Monster.h"
 #include "ServerTimeMgr.h"
-#include "GizmoBoxRenderer.h"
+#include "GizmoSphereRenderer.h"
 #include "Projectile.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
@@ -199,9 +199,8 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	auto s = std::make_shared<SceneObject>();
 	s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
 
-	auto gizmoRenderer = s->AddComponent<GizmoBoxRenderer>();
-	gizmoRenderer->SetSize(Vector3(1.5f, 3.5f, 1.5f));
-	gizmoRenderer->SetOffset(Vector3());
+	auto gizmoRenderer = s->AddComponent<GizmoSphereRenderer>();
+	gizmoRenderer->SetRadius(1.0f);
 
 	auto so = s->AddComponent<ServerObject>();
 	const auto proj = so->AddComp<Projectile>();

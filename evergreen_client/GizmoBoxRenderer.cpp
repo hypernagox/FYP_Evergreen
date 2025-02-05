@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "GizmoBoxRenderer.h"
 
-constexpr char g_psoResource[] = R"(
+static constexpr char g_psoResource[] = R"(
 	cbuffer cbPerObject : register(b0)
 	{
 		float4x4 gWorld;
+		float4x4 gPrevWorld;
 	};
 
 	cbuffer cbPerCamera : register(b1)
@@ -63,7 +64,8 @@ GizmoBoxRenderer::GizmoBoxRenderer(const std::shared_ptr<SceneObject>& object) :
 void GizmoBoxRenderer::Render(RenderParam& param, int instances)
 {
 	ObjectConstants objectConstants;
-	objectConstants.World = m_transformCache.Transpose();
+	Matrix4x4 worldTransform = XMMatrixScaling(m_size.x, m_size.y, m_size.z) * XMMatrixTranslation(m_offset.x, m_offset.y, m_offset.z) * XMLoadFloat4x4(&m_transformCache);
+	objectConstants.World = worldTransform.Transpose();
 	objectConstants.PrevWorld = m_prevTransformCache.Transpose();
 
 	param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerObjectCBV, sizeof(ObjectConstants) / 4, &objectConstants, 0);

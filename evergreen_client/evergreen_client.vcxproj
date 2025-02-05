@@ -59,7 +59,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableUnitySupport>true</EnableUnitySupport>
+    <EnableUnitySupport>false</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -67,7 +67,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableUnitySupport>true</EnableUnitySupport>
+    <EnableUnitySupport>false</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -75,7 +75,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableUnitySupport>true</EnableUnitySupport>
+    <EnableUnitySupport>false</EnableUnitySupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -254,6 +254,8 @@
     <ClCompile Include="EventTimer.cpp" />
     <ClCompile Include="func.cpp" />
     <ClCompile Include="GizmoBoxRenderer.cpp" />
+    <ClCompile Include="GizmoCylinderRenderer.cpp" />
+    <ClCompile Include="GizmoSphereRenderer.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monster.cpp" />
@@ -298,6 +300,8 @@
     <ClInclude Include="EventTimer.h" />
     <ClInclude Include="func.h" />
     <ClInclude Include="GizmoBoxRenderer.h" />
+    <ClInclude Include="GizmoCylinderRenderer.h" />
+    <ClInclude Include="GizmoSphereRenderer.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MoveInterpolator.h" />

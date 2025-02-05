@@ -986,6 +986,9 @@ namespace udsdx
 		ImGui::Begin("Frame Time Histogram");
 		ImGui::PlotHistogram("Frame Times", frameTimes.data(), frameTimes.size(), 0, nullptr, 0.0f, smoothMaxFrameTime, ImVec2(0, 100));
 
+		// Set window position to top left corner
+		ImGui::SetWindowPos(ImVec2(0, 0));
+
 		ImGui::End();
 	}
 

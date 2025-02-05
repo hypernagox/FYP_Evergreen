@@ -65,27 +65,9 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 {
 	Vector3 wv = GetSceneObject()->GetTransform()->GetLocalPosition() + m_cameraAnchor->GetTransform()->GetLocalPosition();
 	const float fMaxDist = 6.0f;
-	switch (m_curCamMode)
-	{
-	case 0:
-		pCameraTransfrom->SetLocalPosition(Vector3::Backward * 0.5f);
-		pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
-		break;
-	case 1:
-	{
-		float target = -fMaxDist;
-		pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, std::max(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
-		pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
-		break;
-	}
-	case 2:
-	{
-		float target = fMaxDist;
-		pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, std::min(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
-		pCameraTransfrom->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PI, 0.0f, 0.0f));
-		break;
-	}
-	}
+	float target = -fMaxDist;
+	pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, std::max(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
+	pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
 	float tParam = m_fMoveTime * 0.5f;
 	float mParam = 0.04f;
 	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, pCameraTransfrom->GetLocalPosition().z));
@@ -124,24 +106,10 @@ void AuthenticPlayer::RequestQuest()
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
 {
-	m_fpChangeCamMode[0] = [this]() noexcept {
-		m_cameraObj->GetTransform()->SetLocalPosition(Vector3::Zero);
-		m_cameraObj->GetTransform()->SetLocalRotation(Quaternion::Identity);
-		};
-	m_fpChangeCamMode[1] = [this]() noexcept {
-		m_cameraObj->GetTransform()->SetLocalPosition(Vector3::Zero);
-		m_cameraObj->GetTransform()->SetLocalRotation(Quaternion::Identity);
-		};
-	m_fpChangeCamMode[2] = [this]() noexcept {
-		m_cameraObj->GetTransform()->SetLocalPosition(Vector3::Zero);
-		m_cameraObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, PI, 0.0f));
-		};
-
 	m_cameraAnchor = std::make_shared<SceneObject>();
 	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3(0.0f, 2.0f, 0.0f));
 
 	m_cameraObj = std::make_shared<SceneObject>();
-	m_fpChangeCamMode[m_curCamMode]();
 
 	m_pCamera = m_cameraObj->AddComponent<CameraPerspective>();
 	m_pCamera->SetClearColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
@@ -175,6 +143,8 @@ void AuthenticPlayer::Start()
 	m_pServerObject = GetComponent<ServerObject>();
 	m_entityMovement = AddComponent<EntityMovement>();
 	m_playerRenderer = AddComponent<PlayerRenderer>();
+
+	m_entityMovement->SetFriction(40.0f);
 }
 
 void AuthenticPlayer::Update(const Time& time, Scene& scene)
@@ -204,11 +174,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	if (INSTANCE(Input)->GetKey(Keyboard::LeftShift))
 	{
 		MoveByView(Vector3::Down * 10.0f);
-	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::F5))
-	{
-		m_curCamMode = (m_curCamMode + 1) % 3;
-		m_fpChangeCamMode[m_curCamMode]();
 	}
 
 	// TODO 하드코딩
