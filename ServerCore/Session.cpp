@@ -183,6 +183,9 @@ namespace ServerCore
 
 	void Session::RegisterRecv(S_ptr<PacketSession>&& pThisSessionPtr, const RecvBuffer* const pRecvBuffPtr)noexcept
 	{
+		// m_bTurnOfZeroRecv가 volatile이 아니라면,
+		// 어셈블리가 그냥 cmp로 비교하고 넘어감
+		// volatile이라면 레지스터로 로드하고, 비교함
 		WSABUF wsaBuf = (m_bTurnOfZeroRecv)
 		? WSABUF{ 0,nullptr }
 		: WSABUF{ static_cast<const ULONG>(pRecvBuffPtr->FreeSize()),reinterpret_cast<char* const>(pRecvBuffPtr->WritePos()) };
@@ -265,9 +268,10 @@ namespace ServerCore
 		auto& sendBuffer = send_event->m_sendBuffer;
 		m_sendQueue.try_flush_single(sendBuffer);
 
-		const auto num = static_cast<const DWORD>(sendBuffer.size());
-
-		if (SOCKET_ERROR == ::WSASend(send_socket, reinterpret_cast<WSABUF*>(wsabuf_storage.data()), num, NULL, 0, ov_ptr, nullptr))
+		const auto num = static_cast<const DWORD>(wsabuf_storage.size());
+		const auto bufs = reinterpret_cast<WSABUF*>(wsabuf_storage.data());
+		
+		if (SOCKET_ERROR == ::WSASend(send_socket, bufs, num, NULL, 0, ov_ptr, nullptr))
 		{
 			const int32 errorCode = ::WSAGetLastError();
 			if (errorCode != WSA_IO_PENDING)
@@ -324,8 +328,6 @@ namespace ServerCore
 	void Session::RetrySend() const noexcept
 	{
 		auto& register_send_event = m_registerSendEvent;
-		const auto ov_ptr = register_send_event.GetOverlappedAddr();
-		const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
 		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, false);
 		if (false == m_sendQueue.empty_single())
 		{
@@ -333,7 +335,8 @@ namespace ServerCore
 				false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			{
 				register_send_event.SetIocpObject(SharedFromThis<IocpObject>());
-				::PostQueuedCompletionStatus(iocp_handle, 0, 0, ov_ptr);
+				GlobalEventQueue::PushGlobalEvent(&m_registerSendEvent);
+				//::PostQueuedCompletionStatus(iocp_handle, 0, 0, ov_ptr);
 				// PrintLogEndl("Retry Send!");
 			}
 		}

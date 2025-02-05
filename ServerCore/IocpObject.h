@@ -237,8 +237,10 @@ namespace ServerCore
 		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept = 0;
 		void PostIocpEvent(S_ptr<ContentsEntity>* const owner_entity = nullptr)noexcept;
 		void ReserveIocpEvent(const uint64_t tickAfterMs_, S_ptr<ContentsEntity>* const owner_entity = nullptr)noexcept;
-
+		void SetIncRefEntity()noexcept { SetIncRefEntity(S_ptr<IocpObject>{ m_pOwnerEntity }); }
+		void SetIncRefEntity(S_ptr<ContentsEntity>&& owner_entity)noexcept;
 		class IocpCompEvent& GetIocpCompEvent()const noexcept { return reinterpret_cast<IocpCompEvent&>(const_cast<uint64_t&>(m_iocpCompEvent)); }
+		[[nodiscard]] S_ptr<ContentsEntity> PassEntity()noexcept;
 	private:
 		ContentsEntity* const m_pOwnerEntity;
 		const uint64_t m_iocpCompEvent;

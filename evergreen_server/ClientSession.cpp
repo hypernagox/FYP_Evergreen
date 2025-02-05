@@ -34,8 +34,8 @@ void ClientSession::OnConnected()
 	pOwner->AddComp<PlayerDeath>();
 	pOwner->AddComp<QuestSystem>();
 	pOwner->AddComp<ServerCore::TimerHandler>();
-	//std::cout << ++g_connect_count << '\n';
-	//ServerCore::PrintKoreaRealTime("Connect !", GetAddress().GetIpAddress());
+	std::cout << ++g_connect_count << '\n';
+	ServerCore::PrintKoreaRealTime("Connect !", GetAddress().GetIpAddress());
 }
 
 void ClientSession::OnDisconnected(const ServerCore::Cluster* const curCluster_)noexcept
@@ -48,9 +48,9 @@ void ClientSession::OnDisconnected(const ServerCore::Cluster* const curCluster_)
 	//	const auto ptr = SharedFromThis<PacketSession>();
 	//	sector_ptr->BroadCastParallel(Create_s2c_REMOVE_OBJECT(GetSessionID()), temp, GetOwnerEntity());
 	//}
-	//std::cout << --g_connect_count << '\n';
-	//ServerCore::PrintKoreaRealTime("DisConnect !", GetAddress().GetIpAddress());
-	//std::cout << cnt << std::endl;
+	std::cout << --g_connect_count << '\n';
+	ServerCore::PrintKoreaRealTime("DisConnect !", GetAddress().GetIpAddress());
+	std::cout << cnt << std::endl;
 	//Mgr(TaskTimerMgr)->ReserveAsyncTask(1000 + ServerCore::my_rand() % 1000, [e = GetOwnerEntity()->SharedFromThis()]() {
 	//	const auto ee = e->UseCount();
 	//	if (ee != 1)std::cout <<"¿Ö?: "<< ee << std::endl;

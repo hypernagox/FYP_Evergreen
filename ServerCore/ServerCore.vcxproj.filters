@@ -160,6 +160,9 @@
     <Filter Include="Network\IocpCore\TimerRoutine">
       <UniqueIdentifier>{ca528660-5ba8-46e5-aa87-86fc6302b43a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network\IocpCore\IocpEvent\GlobalEventQueue">
+      <UniqueIdentifier>{c305936b-04b2-43c4-8e43-31025b125d91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -399,6 +402,9 @@
     <ClInclude Include="TimerRoutine.h">
       <Filter>Network\IocpCore\TimerRoutine</Filter>
     </ClInclude>
+    <ClInclude Include="GlobalEventQueue.h">
+      <Filter>Network\IocpCore\IocpEvent\GlobalEventQueue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -538,6 +544,9 @@
     </ClCompile>
     <ClCompile Include="TimerRoutine.cpp">
       <Filter>Network\IocpCore\TimerRoutine</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalEventQueue.cpp">
+      <Filter>Network\IocpCore\IocpEvent\GlobalEventQueue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

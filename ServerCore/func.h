@@ -62,7 +62,8 @@ namespace ServerCore
 	
 	inline void PrintLogEndl(const std::string_view log_msg)noexcept { printf("%s\n", log_msg.data()); }
 	inline void PrintLogEndl(const std::wstring_view log_msg)noexcept { wprintf(L"%s\n", log_msg.data()); }
-	
+	inline void PrintLogEndl(const float vec[3])noexcept { printf("%f, %f, %f \n", vec[0], vec[1], vec[2]); }
+
 	void LogStackTrace()noexcept;
 
 	inline const int32_t GetCurThreadNumber()noexcept {

@@ -29,7 +29,7 @@ namespace ServerCore
 	public:
 		template <typename... Args>
 		void emplace(Args&&... args) noexcept {
-			const BackOff bo{ NUM_OF_THREADS / 2 };
+			const BackOff bo;
 			Node* const newTop = xnew<Node>(std::forward<Args>(args)...);
 			for (;;)
 			{

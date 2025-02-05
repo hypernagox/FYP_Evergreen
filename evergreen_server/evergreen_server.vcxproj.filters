@@ -89,6 +89,12 @@
     <Filter Include="predefine\ContentsFunc">
       <UniqueIdentifier>{f01eb169-c56a-48e6-a594-d06140bed2a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EntityFactory\NPCState">
+      <UniqueIdentifier>{b250c385-c142-453b-96c6-529d45da2d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityFactory\NPCState\RangeMon">
+      <UniqueIdentifier>{e328c87e-db54-438d-a237-3b2a12f6bc13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -150,6 +156,9 @@
     </ClCompile>
     <ClCompile Include="ContentsFunc.cpp">
       <Filter>predefine\ContentsFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="RangeMonState.cpp">
+      <Filter>EntityFactory\NPCState\RangeMon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +230,9 @@
     </ClInclude>
     <ClInclude Include="ContentsFunc.h">
       <Filter>predefine\ContentsFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeMonState.h">
+      <Filter>EntityFactory\NPCState\RangeMon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

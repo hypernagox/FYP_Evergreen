@@ -10,7 +10,7 @@ namespace ServerCore
 		void Init()noexcept;
 		void Clear()noexcept
 		{
-			m_iocpEvent.ReleaseIocpObject();
+			//m_iocpEvent.ReleaseIocpObject();
 		}
 		DBPacketSender(const SOCKET s)noexcept :m_queryServerSocket{ s } {}
 		virtual ~DBPacketSender()noexcept;

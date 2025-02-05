@@ -14,14 +14,10 @@ namespace ServerCore
 		~CoreGlobal();
 	public:
 		const IocpCore& GetIocpCore()const noexcept { return m_iocpCore; }
-		void Init()const noexcept;
+		void Init()noexcept;
 	private:
-		void ExitRoutine()noexcept;
+		static void ExitRoutine()noexcept;
 	private:
 		const IocpCore m_iocpCore;
-#ifdef _DEBUG
-		_CrtMemState mem_start;
-		_CrtMemState mem_end;
-#endif
 	};
 }

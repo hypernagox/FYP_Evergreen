@@ -27,7 +27,7 @@ namespace ServerCore
 
 		if (nullptr == m_pServerService)
 			return false;
-		// 영업개시
+		
 		m_socket = SocketUtils::CreateSocket();
 
 		if (INVALID_SOCKET == m_socket)

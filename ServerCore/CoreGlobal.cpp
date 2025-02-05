@@ -12,6 +12,7 @@
 #include "TimeMgr.h"
 #include "Benchmarker.h"
 #include "Service.h"
+#include "ClusterUpdateQueue.h"
 
 namespace ServerCore
 {
@@ -25,17 +26,19 @@ namespace ServerCore
 		SocketUtils::Clear();
 	}
 
-	void CoreGlobal::Init()const noexcept
+	void CoreGlobal::Init()noexcept
 	{
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+		
+		GlobalEventQueue::Init();
+		ClusterUpdateQueue::Init();
 
-		_CrtMemDumpStatistics(&mem_start);
+		std::atexit(CoreGlobal::ExitRoutine);
+		Mgr(CoreGlobal)->RegisterDestroy();
 
 		Mgr(BenchmarkMgr)->RegisterDestroy();
 
-		std::atexit([]() {Mgr(CoreGlobal)->ExitRoutine(); });
-
-		Mgr(CoreGlobal)->RegisterDestroy();
+		
 		Mgr(TimeMgr)->RegisterDestroy();
 		Mgr(Logger)->RegisterDestroy();
 		Mgr(ThreadMgr)->RegisterDestroy();
@@ -56,17 +59,18 @@ namespace ServerCore
 		//Mgr(DBMgr)->Init();
 		Mgr(FieldMgr)->Init();
 	}
+
 	void CoreGlobal::ExitRoutine() noexcept
 	{
 		delete Service::GetMainService();
 		SendBufferMgr::DestroyTLSChunkPool();
-
+		ClusterUpdateQueue::Free();
+		GlobalEventQueue::Free();
 #ifdef _DEBUG
-		_CrtMemState mem_check;
-		_CrtMemDumpStatistics(&mem_end);
-
-		if (_CrtMemDifference(&mem_check, &mem_start, &mem_end))
-			_CrtMemDumpStatistics(&mem_check);
+		if (!_CrtCheckMemory()) 
+		{
+			PrintLogEndl("\n\n\nHeap corruption detected!\n");
+		}
 #endif
 	}
 }

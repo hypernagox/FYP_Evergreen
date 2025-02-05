@@ -27,7 +27,6 @@ namespace ServerCore
 		constinit extern thread_local class Queueabler* LCurQueueableComponent;
 
 		LCurQueueableComponent = this;
-		const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
 		Task task;
 		bool flag = false;
 		auto& origin_head = m_taskQueue.head_for_single_pop();

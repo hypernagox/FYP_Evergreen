@@ -58,10 +58,8 @@ namespace ServerCore
 				if (m_sendQueue.empty_single())
 					return RetrySend();
 				
-				const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
-				const auto ov_ptr = m_registerSendEvent.GetOverlappedAddr();
 				m_registerSendEvent.SetIocpObject(SharedFromThis<IocpObject>());
-				::PostQueuedCompletionStatus(iocp_handle, 0, 0, ov_ptr);
+				GlobalEventQueue::PushGlobalEvent(&m_registerSendEvent);
 			}
 		}
 		template <typename S_ptr_SendBuffer> requires std::same_as<std::decay_t<S_ptr_SendBuffer>, S_ptr<SendBuffer>>
@@ -88,7 +86,7 @@ namespace ServerCore
 		void SetLastError(c_int32 errCode_)noexcept { m_iLastErrorCode = errCode_; }
 	private:
 		HANDLE GetHandle()const noexcept { return reinterpret_cast<HANDLE>(m_sessionSocket); }
-		virtual void Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept override;
+		virtual void Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept override final;
 
 		void ClearSessionForReuse()noexcept;
 	private:
@@ -142,7 +140,7 @@ namespace ServerCore
 		// ----- RECV ----
 		SOCKET m_sessionSocket = INVALID_SOCKET;
 		bool m_bConnectedNonAtomicForRecv = false;
-		bool m_bTurnOfZeroRecv = true;
+		volatile bool m_bTurnOfZeroRecv = true;
 		RecvEvent* const m_pRecvEvent;
 		RecvBuffer* const m_pRecvBuffer;
 		// ----- ----- -----

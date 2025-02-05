@@ -11,6 +11,7 @@
 #include "FieldMgr.h"
 #include "SendBufferChunk.h"
 #include "MoveBroadcaster.h"
+#include "GlobalEventQueue.h"
 
 /*------------------
 	ThreadMgr
@@ -24,8 +25,8 @@ namespace ServerCore
 
 	//thread_local moodycamel::ProducerToken* LPro_token;
 	//thread_local moodycamel::ConsumerToken* LCon_token;
-	constinit thread_local moodycamel::ProducerToken* LPro_tokenGlobalTask;
-	constinit thread_local moodycamel::ConsumerToken* LCon_tokenGlobalTask;
+	//constinit thread_local moodycamel::ProducerToken* LPro_tokenGlobalTask;
+	//constinit thread_local moodycamel::ConsumerToken* LCon_tokenGlobalTask;
 
 	extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
 	extern thread_local VectorSetUnsafe<const ContentsEntity*, XHashMap> new_view_list_npc;
@@ -122,12 +123,12 @@ namespace ServerCore
 		LThreadContainerIndex = (int8_t)(g_threadID.fetch_add(1));
 
 		//LPro_token = xnew<moodycamel::ProducerToken>(m_globalTaskQueue);
-		thread_local moodycamel::ProducerToken pro_token{ Mgr(ThreadMgr)->m_globalTask };
-		LPro_tokenGlobalTask = &pro_token;
+		//thread_local moodycamel::ProducerToken pro_token{ Mgr(ThreadMgr)->m_globalTask };
+		//LPro_tokenGlobalTask = &pro_token;
 
 		//LCon_token = xnew <moodycamel::ConsumerToken>(m_globalTaskQueue);
-		thread_local moodycamel::ConsumerToken con_token{ Mgr(ThreadMgr)->m_globalTask };
-		LCon_tokenGlobalTask = &con_token;
+		//thread_local moodycamel::ConsumerToken con_token{ Mgr(ThreadMgr)->m_globalTask };
+		//LCon_tokenGlobalTask = &con_token;
 
 		LXVectorForTempCopy = &new_view_list_npc.GetItemListRef();
 
@@ -166,11 +167,11 @@ namespace ServerCore
 
 	void ThreadMgr::TryGlobalQueueTask()noexcept
 	{
-		Task task;
-		while (m_globalTask.try_dequeue(*LCon_tokenGlobalTask, task)) {
-			task.ExecuteTask();
-			//std::destroy_at<Task>(&task);
-		}
+		//Task task;
+		//while (m_globalTask.try_dequeue(*LCon_tokenGlobalTask, task)) {
+		//	task.ExecuteTask();
+		//	//std::destroy_at<Task>(&task);
+		//}
 	}
 
 	void ThreadMgr::LaunchInternal(const int8_t num_of_threads) noexcept
@@ -210,6 +211,7 @@ namespace ServerCore
 		{
 			if (IocpCore::Dispatch(iocpHandle)) [[likely]]{
 				taskTimer.DistributeTask();
+				GlobalEventQueue::TryGlobalEvent();
 				ClusterUpdateQueue::UpdateCluster();
 			}
 			else [[unlikely]] break;

@@ -31,15 +31,14 @@ namespace ServerCore
 		);
 	}
 
-	void TaskTimerMgr::ReserveAsyncTask(c_uint64 tickAfter, Queueabler* const memfuncInstance, Task&& task)noexcept
+	void TaskTimerMgr::ReserveAsyncTask(c_uint64 tickAfter, Queueabler* const queueabler, Task&& task)noexcept
 	{
-		memfuncInstance->GetOwnerEntity()->IncRef();
+		queueabler->SetIncRefEntity();
 		m_timerTaskQueue.emplace(
 			::GetTickCount64() + tickAfter,
-			[memfuncInstance, task = std::move(task)]()mutable noexcept
+			[queueabler, task = std::move(task)]()mutable noexcept
 			{
-				memfuncInstance->EnqueueAsyncTaskPushOnly(std::move(task));
-				memfuncInstance->GetOwnerEntity()->DecRef();
+				queueabler->EnqueueAsyncTaskPushOnly(queueabler->PassEntity(), std::move(task));
 			}
 		);
 	}
@@ -50,7 +49,8 @@ namespace ServerCore
 			::GetTickCount64() + tickAfter,
 			[pTimerEvent_]()noexcept
 			{
-				::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, pTimerEvent_->GetOverlappedAddr());
+				GlobalEventQueue::PushGlobalEventRelaxed(pTimerEvent_);
+				//::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, pTimerEvent_->GetOverlappedAddr());
 			}
 		);
 	}

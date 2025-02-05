@@ -65,7 +65,8 @@ namespace ServerCore
 		const auto ebr_pool = EBRPool<EBRBox<ContentsEntityTask>>::GetEBRPool();
 		ebr_pool->Start();
 		const auto ebr_node = ebr_pool->PopNode(SharedFromThis(), std::move(task_));
-		::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, ebr_node->box_object.GetOverlappedAddr());
+		GlobalEventQueue::PushGlobalEvent(&ebr_node->box_object);
+		//::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, ebr_node->box_object.GetOverlappedAddr());
 	}
 
 	void ContentsEntity::Dispatch(IocpEvent* const iocpEvent_, c_int32 numOfBytes) noexcept
@@ -142,27 +143,35 @@ namespace ServerCore
 
 	void IocpComponent::PostIocpEvent(S_ptr<ContentsEntity>* const owner_entity) noexcept
 	{
-		const auto iocp_handle = IocpCore::GetIocpHandleGlobal();
 		auto& iocp_comp_event = GetIocpCompEvent();
-		const auto over_addr = iocp_comp_event.GetOverlappedAddr();
 		
-		if(owner_entity)
+		if (owner_entity && owner_entity->m_count_ptr)
 			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{std::move(*owner_entity)});
 		else
 			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{ m_pOwnerEntity });
 
-		::PostQueuedCompletionStatus(iocp_handle, 0, 0, over_addr);
+		GlobalEventQueue::PushGlobalEvent(&iocp_comp_event);
 	}
 
 	void IocpComponent::ReserveIocpEvent(const uint64_t tickAfterMs_, S_ptr<ContentsEntity>* const owner_entity) noexcept
 	{
 		auto& iocp_comp_event = GetIocpCompEvent();
 
-		if (owner_entity)
+		if (owner_entity && owner_entity->m_count_ptr)
 			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{std::move(*owner_entity)});
 		else
 			iocp_comp_event.SetIocpObject(S_ptr<IocpObject>{ m_pOwnerEntity });
 
 		Mgr(TaskTimerMgr)->ReserveAsyncTask(tickAfterMs_, &iocp_comp_event);
+	}
+
+	void IocpComponent::SetIncRefEntity(S_ptr<ContentsEntity>&& owner_entity) noexcept
+	{
+		GetIocpCompEvent().SetIocpObject(std::move(owner_entity));
+	}
+
+	S_ptr<ContentsEntity> IocpComponent::PassEntity() noexcept
+	{
+		return GetIocpCompEvent().PassIocpObject();
 	}
 }

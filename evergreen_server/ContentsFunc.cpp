@@ -16,3 +16,8 @@ XVector<std::pair<S_ptr<ContentsEntity>, class PositionComponent*>> CreateArrWit
 
     return temp;
 }
+
+float GetDistPow(const ContentsEntity* const a, const ContentsEntity* const b) noexcept
+{
+    return CommonMath::GetDistPowDX(a->GetComp<PositionComponent>()->pos, b->GetComp<PositionComponent>()->pos);
+}

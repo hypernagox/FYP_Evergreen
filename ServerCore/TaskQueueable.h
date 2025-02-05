@@ -5,6 +5,7 @@
 #include "IocpObject.h"
 #include "IocpEvent.h"
 #include "NagoxAtomic.h"
+#include "GlobalEventQueue.h"
 
 namespace ServerCore
 {
@@ -121,7 +122,8 @@ namespace ServerCore
 			{
 				m_taskQueue.emplace(std::forward<Func>(fp), std::forward<Args>(args)...);
 				m_taskEvent.SetIocpObject(S_ptr<IocpObject>{this});
-				::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, m_taskEvent.GetOverlappedAddr());
+				GlobalEventQueue::PushGlobalEvent(&m_taskEvent);
+				//::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, m_taskEvent.GetOverlappedAddr());
 			}
 		}
 		else

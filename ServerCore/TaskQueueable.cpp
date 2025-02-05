@@ -28,7 +28,8 @@ namespace ServerCore
 		if (0 == prevCount)
 		{
 			m_taskEvent.SetIocpObject(S_ptr<IocpObject>{this});
-			::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, m_taskEvent.GetOverlappedAddr());
+			GlobalEventQueue::PushGlobalEvent(&m_taskEvent);
+			//::PostQueuedCompletionStatus(IocpCore::GetIocpHandleGlobal(), 0, 0, m_taskEvent.GetOverlappedAddr());
 		}
 	}
 
@@ -54,7 +55,8 @@ namespace ServerCore
 			if (0 == taskCount)
 			{
 				m_taskEvent.SetIocpObject(cur_ptr ? std::move(*cur_ptr) : S_ptr<IocpObject>{ this });
-				::PostQueuedCompletionStatus(iocp_handle, 0, 0, m_taskEvent.GetOverlappedAddr());
+				GlobalEventQueue::PushGlobalEvent(&m_taskEvent);
+				//::PostQueuedCompletionStatus(iocp_handle, 0, 0, m_taskEvent.GetOverlappedAddr());
 				break;
 			}
 
@@ -68,7 +70,8 @@ namespace ServerCore
 			if (::GetTickCount64() >= LEndTickCount)
 			{
 				m_taskEvent.SetIocpObject(cur_ptr ? std::move(*cur_ptr) : S_ptr<IocpObject>{ this });
-				::PostQueuedCompletionStatus(iocp_handle, 0, 0, m_taskEvent.GetOverlappedAddr());
+				GlobalEventQueue::PushGlobalEvent(&m_taskEvent);
+				//::PostQueuedCompletionStatus(iocp_handle, 0, 0, m_taskEvent.GetOverlappedAddr());
 				break;
 			}
 		}
