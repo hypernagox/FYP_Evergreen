@@ -125,3 +125,8 @@ const bool Handle_s2c_CLEAR_QUEST(const ServerCore::S_ptr<ServerCore::PacketSess
 {
 	return true;
 }
+
+const bool Handle_s2c_FIRE_PROJ(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_FIRE_PROJ& pkt_)
+{
+	return true;
+}

@@ -58,10 +58,10 @@ int main()
 	const auto pClientService = new ServerCore::ClientService
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
-			, ServerCore::NetAddress{ L"127.0.0.1",7777 }
+			, ServerCore::NetAddress{ L"3.39.255.229",7777 }
 			, ServerCore::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 1000
+			, 10
 		);
 	
 	ASSERT_CRASH(pClientService->Start());
