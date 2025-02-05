@@ -164,5 +164,52 @@ namespace ServerCore
 		void* const argPtr;
 		void (*const m_fpTask)(const void* const, void* const) noexcept;
 	};
+
+	//class GlobalTaskQueue
+	//{
+	//	friend class ThreadMgr;
+	//	static constexpr const uint64_t MAX_TASK = 1024 * 1024 * 16;
+	//	static constexpr const uint64_t MOD_TASK = MAX_TASK - 1;
+	//public:
+	//	GlobalTaskQueue() = delete;
+	//	~GlobalTaskQueue() = delete;
+	//public:
+	//	template<typename... Args>
+	//	static inline void PushGlobalTask(Args&&... args)noexcept {
+	//		const auto task = xnew<Task>(std::forward<Args>(args)...);
+	//		const auto arrTask = m_arrTask;
+	//		const auto cur_idx = (((ULONG64)InterlockedIncrement64((LONG64*)&m_rearIdx)) & (MOD_TASK));
+	//		arrTask[cur_idx] = task;
+	//		_Compiler_barrier();
+	//	}
+	//private:
+	//	static inline void TryGlobalTask()noexcept {
+	//		const auto arrTask = m_arrTask;
+	//		for (;;) [[likely]]
+	//		{
+	//			const auto old_front = m_frontIdx;
+	//			if (old_front == m_rearIdx)return;
+	//			const auto new_front = old_front + 1;
+	//			const auto task_ptr = arrTask + ((new_front) & (MOD_TASK));
+	//			_Compiler_barrier();
+	//			if (const auto task = *task_ptr)
+	//			{
+	//				if (old_front != m_frontIdx)continue;
+	//				if (old_front == (ULONG64)InterlockedCompareExchange64((LONG64*)&m_frontIdx, new_front, old_front))
+	//				{
+	//					*task_ptr = nullptr;
+	//					task->ExecuteTask();
+	//					xdelete<Task>(task);
+	//					_Compiler_barrier();
+	//				}
+	//			}
+	//			else return;
+	//		}
+	//	}
+	//private:
+	//	constinit __declspec(align(8)) static inline volatile uint64_t m_frontIdx = -1;
+	//	constinit __declspec(align(8)) static inline volatile uint64_t m_rearIdx = -1;
+	//	constinit __declspec(align(8)) static inline Task* volatile m_arrTask[MAX_TASK] = { nullptr };
+	//};
 }
 

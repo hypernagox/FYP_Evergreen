@@ -142,6 +142,7 @@ namespace ServerCore
 			if constexpr (std::same_as<std::decay_t<T>, S_ptr<SendBuffer>>){
 				extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
 				auto& wsa_bufs_vec = new_view_list_session.GetItemListRef();
+				static_assert(sizeof(WSABUF) == sizeof(wsa_bufs_vec[0]));
 				wsa_bufs_vec.clear();
 				while (try_pop_single(vec_, head_temp)){
 					const auto& sb = vec_.back();

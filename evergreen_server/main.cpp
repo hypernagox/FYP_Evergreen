@@ -22,12 +22,20 @@ class ContentsInitiator
 public:
 	virtual void GlobalInitialize()noexcept override
 	{
-		for (int i = 0; i < 100; ++i)
+		for (int i = 0; i < 20; ++i)
 		{
 			EntityBuilder b;
 			b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 			b.obj_type = MONSTER_TYPE_INFO::FOX;
 			const auto m = EntityFactory::CreateMonster(b);
+			Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
+		}
+		for (int i = 0; i < 20; ++i)
+		{
+			EntityBuilder b;
+			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+			b.obj_type = 0;
+			const auto m = EntityFactory::CreateRangeMonster(b);
 			Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
 		}
 		{

@@ -48,7 +48,7 @@ namespace ServerCore
 		template <typename MemFunc, typename... Args>
 		void PostClusterTask(const MemFunc memFunc, Args&&... args)noexcept
 		{
-			ClusterUpdateQueue::PushTask(xnew<ClusterUpdateTask>(
+			ClusterUpdateQueue::PushClusterTask(xnew<ClusterUpdateTask>(
 				m_info,
 				memFunc,
 				std::forward<Args>(args)...));

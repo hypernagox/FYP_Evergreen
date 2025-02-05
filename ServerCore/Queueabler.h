@@ -29,7 +29,7 @@ namespace ServerCore
 		}
 	public:
 		template<typename T, typename U, typename Ret, typename... Args> 
-			requires (std::derived_from<T, ContentsComponent> || std::derived_from<T, IocpComponent>) && std::derived_from<T, U>
+			requires (std::derived_from<T, NagoxDeleter> || std::derived_from<T, ContentsComponent> || std::derived_from<T, IocpComponent>) && std::derived_from<T, U>
 		void EnqueueAsyncTimer(c_uint64 tickAfter, Ret(T::* const memFunc)(Args...), U* const memFuncInst_, std::decay_t<Args>... args)noexcept
 		{
 			Mgr(TaskTimerMgr)->ReserveAsyncTask(tickAfter, this,
@@ -40,6 +40,8 @@ namespace ServerCore
 	private:
 		template <typename Func, typename... Args>
 		void EnqueueAsyncTaskPushOnly(Func&& fp, Args&&... args)noexcept;
+		template <typename Func, typename... Args>
+		void EnqueueAsyncTaskPushOnly(S_ptr<ContentsEntity> owner, Func&& fp, Args&&... args)noexcept;
 		template <typename Func, typename... Args> requires std::is_member_function_pointer_v<std::decay_t<Func>>
 		void EnqueueAsyncTask(Func&& fp, Args&&... args)noexcept;
 		void Execute(S_ptr<ContentsEntity>* const owner_entity = nullptr)noexcept;
@@ -56,6 +58,17 @@ namespace ServerCore
 		if (1 == prevCount)
 		{
 			PostIocpEvent();
+		}
+	}
+
+	template<typename Func, typename ...Args>
+	inline void Queueabler::EnqueueAsyncTaskPushOnly(S_ptr<ContentsEntity> owner, Func&& fp, Args && ...args) noexcept
+	{
+		const int32 prevCount = InterlockedIncrement(&m_taskCount);
+		m_taskQueue.emplace(std::forward<Func>(fp), std::forward<Args>(args)...);
+		if (1 == prevCount)
+		{
+			PostIocpEvent(&owner);
 		}
 	}
 

@@ -126,7 +126,7 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     if (m_attack_range * m_attack_range <= dx * dx + dy * dy + dz * dz)
         return NodeStatus::SUCCESS;
    
-    m_accTime -= bt_root_timer->GetBTTimerDT();
+    m_accTime -= bt_root_timer->GetFloatDT();
     if (0.f >= m_accTime)
     {
         // TODO: 스트레스 테스트 아직 패킷없음
@@ -188,7 +188,7 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
 
     dir.Normalize();
     
-    const float dt_ = bt_root_timer->GetBTTimerDT();
+    const float dt_ = bt_root_timer->GetFloatDT();
 
     const auto dx2 = cur_pos.x + dir.x * 10.2f * dt_;
     const auto dy2 = cur_pos.y + dir.y * 10.2f * dt_;

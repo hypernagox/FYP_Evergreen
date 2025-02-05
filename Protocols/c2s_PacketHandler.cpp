@@ -46,7 +46,8 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	//pSession_->SetEntity(entity);
 	//entity->AddIocpComponent<Queueabler>();
 	entity->AddComp<PositionComponent>()->pos = ToOriginVec3(pkt_.pos());
-	entity->AddComp<Collider>()->SetBox(entity->GetComp<PositionComponent>(), { 1,2,1.5f });
+	entity->AddComp<AABBCollider>()->SetAABB(entity->GetComp<PositionComponent>(), { 1,2,1.5f });
+
 	//Mgr(WorldMgr)->GetWorld(0) ->GetStartSector()->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER));
 	//Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
 	
@@ -128,13 +129,19 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
 	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
-
+	pos_comp->pos = ::ToOriginVec3(pkt_.atk_pos());
 	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pkt_.body_angle());
 
+	//std::cout << "MY angle: " << pkt_.body_angle() << '\n';
+	//std::cout << "Mypos: ";
+	//PrintLogEndl(&pos_comp->pos.x);
 	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
-
-	const auto& box = pOwner->GetComp<Collider>()->GetBox(rotatedForward);
+	auto c = pOwner->GetComp<AABBCollider>()->GetCollider<Common::AABBBox>();
+	c->m_offSet = rotatedForward;
+	auto box = c->GetAABB();
 	bool isHit = false;
+	const Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,5.f };
+	//fan.m_offSet = -rotatedForward;
 	//if (const auto sector = pOwner->GetCurCluster())
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
@@ -146,7 +153,8 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 				if (const auto pCol = pmon->GetComp<Collider>())
 				{
 					const auto owner = pCol->GetOwnerEntity();
-					if (pCol->IsCollision(box))
+					if(fan.IsIntersect(pCol->GetCollider()))
+					//if (pCol->IsCollision(box))
 					{
 						//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
 						//
@@ -154,7 +162,13 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 						owner->GetComp<HP>()->PostDoDmg(1, pOwner->SharedFromThis());
 						isHit = true;
 					}
+					else
+					{
+						//const auto ppp = pCol->GetCollider()->GetPosWithOffset();
+						//PrintLogEndl(&ppp.x);
+					}
 				}
+	
 			}
 		}
 	}
@@ -205,10 +219,10 @@ const bool Handle_c2s_FIRE_PROJ(const ServerCore::S_ptr<ServerCore::PacketSessio
 	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
 
 
-	const auto proj = TimerHandler::CreateTimerWithoutHandle<Projectile>(100);
+	const auto proj = TimerHandler::CreateTimerWithoutHandle<PlayerProjectile>(100);
 	proj.timer->m_pos = (pos_comp->pos);
 	proj.timer->m_speed = rotatedForward * 40.f;
-	proj.timer->m_mon_list = CreateArrWithPosComp(pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC());
+	proj.timer->SelectObjList(pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC());
 	proj.timer->m_owner = pOwner->SharedFromThis();
 
 	return true;

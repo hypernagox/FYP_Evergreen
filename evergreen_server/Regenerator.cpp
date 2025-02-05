@@ -6,12 +6,12 @@
 #include "NaviAgent_Common.h"
 #include "NavigationMesh.h"
 #include "Navigator.h"
-
+#include "Queueabler.h"
 
 void Regenerator::ProcessDestroy(S_ptr<ContentsEntity> entity) noexcept
 {
-	ServerCore::PrintLogEndl("Start Destroy Routine");
-	Mgr(TaskTimerMgr)->ReserveAsyncTask(m_duration, &Regenerator::RegenerateNPC, this, std::move(entity));
+	//ServerCore::PrintLogEndl("Start Destroy Routine");
+	entity->GetQueueabler()->EnqueueAsyncTimer(m_duration, &Regenerator::RegenerateNPC, this, std::move(entity));
 }
 
 void Regenerator::RegenerateNPC(S_ptr<ContentsEntity> entity) noexcept

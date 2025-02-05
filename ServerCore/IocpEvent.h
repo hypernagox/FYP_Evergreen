@@ -63,10 +63,7 @@ namespace ServerCore
 				SetPtr(nullptr);
 			}
 		}
-
 		const bool IsValid()const noexcept { return nullptr != GetPtr(); }
-	public:
-		OVERLAPPED* const GetOverlappedAddr()const noexcept { return reinterpret_cast<OVERLAPPED* const>(const_cast<IocpEvent*>(this) + 1); }
 		operator bool()const noexcept { return IsValid(); }
 	protected:
 		const uint8_t GetType() const noexcept { return (m_combined_ptr >> 56); }
@@ -89,7 +86,6 @@ namespace ServerCore
 		{}
 	public:
 		OVERLAPPED* const Init()noexcept { return (OVERLAPPED*)::memset(&m_overLapped, 0, sizeof(OVERLAPPED)); }
-		OVERLAPPED* const GetOverlappedAddr()const noexcept = delete;
 	private:
 		OVERLAPPED m_overLapped;
 	};

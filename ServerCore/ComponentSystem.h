@@ -54,6 +54,7 @@ class ComponentSystemNPC
 	:public ComponentSystem
 {
 	friend class TickTimerBT;
+	friend class TickTimerFSM;
 public:
 	ComponentSystemNPC(const NagoxAtomic::Atomic<bool>& bValidFlag_, ServerCore::ContentsEntity* const pOwner_)noexcept
 		: ComponentSystem{ bValidFlag_ }

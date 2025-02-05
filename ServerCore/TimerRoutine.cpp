@@ -7,7 +7,7 @@ namespace ServerCore
 	{
 		m_timerEvent.SetIocpObject(S_ptr<IocpObject>{(uint64_t)this});
 		StartRoutine();
-		TimerRoutine::Dispatch(&m_timerEvent, 0);
+		GlobalEventQueue::PushGlobalEvent(&m_timerEvent);
 	}
 
 	void TimerRoutine::Dispatch(ServerCore::IocpEvent* const iocpEvent_, c_int32 numOfBytes) noexcept

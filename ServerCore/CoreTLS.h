@@ -12,7 +12,6 @@ namespace ServerCore
 	constinit extern thread_local uint64_t LEndTickCount;
 	constinit extern thread_local class TaskQueueable* LCurTaskQueue;
 	constinit extern thread_local class Queueabler* LCurQueueableComponent;
-	constinit extern thread_local uint64_t LCurHandleSessionID;
 	constinit extern thread_local uint32_t LRandSeed;
 }
 

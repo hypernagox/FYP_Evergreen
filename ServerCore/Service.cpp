@@ -64,7 +64,7 @@ namespace ServerCore
 	{
 		auto pSession = m_sessionFactory();
 		pSession->SetService(this);
-		return m_iocpCore.RegisterIOCP(pSession, pSession->GetSessionID()) && SocketUtils::SetLinger(pSession->GetSocket(), 1, 0) ? pSession : nullptr;
+		return m_iocpCore.RegisterIOCP(pSession, (uint64_t)pSession) && SocketUtils::SetLinger(pSession->GetSocket(), 1, 0) ? pSession : nullptr;
 	}
 
 	const bool Service::AddSession(const S_ptr<PacketSession>& pSession_)noexcept
@@ -74,9 +74,10 @@ namespace ServerCore
 		const uint32_t obj_id = static_cast<c_uint32>(pOwnerEntity->GetObjectID());
 		const uint16_t idx = pSession_->m_serviceIdx;
 		if (m_maxSessionCount <= m_curNumOfSessions)return false;
+		auto ptr{ pOwnerEntity->SharedFromThis() };
 		m_id2Index.emplace(static_cast<c_uint32>(obj_id), static_cast<c_uint16>(idx));
 		InterlockedIncrement((LONG*)&m_curNumOfSessions);
-		(arr + idx)->ptr.store(pOwnerEntity->SharedFromThis());
+		(arr + idx)->ptr.store(std::move(ptr));
 		return true;
 	}
 

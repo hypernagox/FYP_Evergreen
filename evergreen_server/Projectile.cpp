@@ -7,12 +7,16 @@
 #include "MoveBroadcaster.h"
 #include "Cluster.h"
 
-void Projectile::StartRoutine() noexcept
+void Projectile::SelectObjList(const XVector<const ContentsEntity*>& vec_) noexcept
 {
-	auto pkt = Create_s2c_FIRE_PROJ(m_proj_id, ::ToFlatVec3(m_pos), ::ToFlatVec3(m_speed));
-	m_owner->GetSession()->SendAsync(pkt);
-	m_owner->GetComp<ServerCore::MoveBroadcaster>()->BroadcastPacket(std::move(pkt));
-	m_timer.Update();
+	auto b = vec_.data();
+	const auto e = b + vec_.size();
+	m_obj_list.reserve(e - b);
+	while (e != b) {
+		const auto entity = (*b++);
+		if (const auto col = entity->GetComp<Collider>())
+			m_obj_list.emplace_back(std::make_pair(entity, col));
+	}
 }
 
 ServerCore::ROUTINE_RESULT Projectile::Routine() noexcept
@@ -24,22 +28,18 @@ ServerCore::ROUTINE_RESULT Projectile::Routine() noexcept
 	const auto pos = m_pos;
 	constexpr const float RADIUS = 1.5f;
 	bool isHit = false;
-	for (const auto& [mon,pos_comp] : m_mon_list)
+	const DirectX::BoundingSphere s{ pos,RADIUS };
+	const auto& owner = m_owner;
+
+	for (const auto& [obj,col] : m_obj_list)
 	{
-		if (!mon->IsValid())continue;
-		if (const auto pCol = mon->GetComp<Collider>())
+		if (col->GetCollider()->IsIntersect(s))
 		{
-			const auto owner = pCol->GetOwnerEntity();
-			const auto mon_pos = pos_comp->pos;
-			constexpr auto rr = RADIUS + RADIUS;
-			
-			if (CommonMath::IsInDistanceDX(pos, mon_pos, rr))
-			{
-				owner->GetComp<HP>()->PostDoDmg(1, m_owner);
-				isHit = true;
-			}
+			obj->GetComp<HP>()->PostDoDmg(1, owner);
+			isHit = true;
 		}
 	}
+
 	const auto delta = m_speed * dt;
 	m_accDist += delta.LengthSquared();
 	if (isHit)return ServerCore::ROUTINE_RESULT::STOP;
@@ -48,9 +48,32 @@ ServerCore::ROUTINE_RESULT Projectile::Routine() noexcept
 	return ServerCore::ROUTINE_RESULT::STILL_RUNNIG;
 }
 
-void Projectile::ProcessRemove() noexcept
+void PlayerProjectile::StartRoutine() noexcept
+{
+	auto pkt = Create_s2c_FIRE_PROJ(m_proj_id, ::ToFlatVec3(m_pos), ::ToFlatVec3(m_speed));
+	m_owner->GetComp<ServerCore::MoveBroadcaster>()->BroadcastPacket(pkt);
+	m_owner->GetSession()->SendAsync(std::move(pkt));
+}
+
+void PlayerProjectile::ProcessRemove() noexcept
 {
 	auto pkt = Create_s2c_REMOVE_OBJECT(m_proj_id);
-	m_owner->GetSession()->SendAsync(pkt);
-	m_owner->GetComp<ServerCore::MoveBroadcaster>()->BroadcastPacket(std::move(pkt));
+	m_owner->GetComp<ServerCore::MoveBroadcaster>()->BroadcastPacket(pkt);
+	m_owner->GetSession()->SendAsync(std::move(pkt));
+}
+
+void MonProjectile::StartRoutine() noexcept
+{
+	auto pkt = Create_s2c_FIRE_PROJ(m_proj_id, ::ToFlatVec3(m_pos), ::ToFlatVec3(m_speed));
+	for (const auto& [obj, col] : m_obj_list) {
+		obj->GetSession()->SendAsync(pkt);
+	}
+}
+
+void MonProjectile::ProcessRemove() noexcept
+{
+	auto pkt = Create_s2c_REMOVE_OBJECT(m_proj_id);
+	for (const auto& [obj, col] : m_obj_list) {
+		obj->GetSession()->SendAsync(pkt);
+	}
 }

@@ -1,8 +1,9 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN 
 #define NOMINMAX
+#define _CRTDBG_MAP_ALLOC
 
-#include <flatbuffers/flatbuffers.h>
+#include "flatbuffers/flatbuffers.h"
 #include <enum_generated.h>
 #include <struct_generated.h>
 #include <protocol_generated.h>

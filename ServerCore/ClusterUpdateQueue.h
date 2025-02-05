@@ -4,12 +4,13 @@
 namespace ServerCore
 {
 	Cluster* const GetCluster(const ClusterInfo info)noexcept;
-	inline Cluster* const GetCluster(const uint8_t fieldID, const uint8_t x, const uint8_t y)noexcept {
+	static inline Cluster* const GetCluster(const uint8_t fieldID, const uint8_t x, const uint8_t y)noexcept {
 		return GetCluster({ fieldID,x,y });
 	}
 
 	class ClusterUpdateTask
 	{
+		friend class ClusterUpdateQueue;
 	public:
 		template<typename... Args>
 		ClusterUpdateTask(const ClusterInfo info,Args&&... args)noexcept
@@ -17,12 +18,8 @@ namespace ServerCore
 			, m_invoker{ std::forward<Args>(args)... }
 			, m_refCount{ ThreadMgr::NUM_OF_THREADS }
 		{}
-	public:
-		bool Execute()noexcept {
-			m_invoker.InvokeTask(GetCluster(m_info));
-			return 0 == InterlockedDecrement(&m_refCount);
-		}
-	
+	private:
+		bool Execute()noexcept;
 	private:
 		volatile LONG m_refCount = ThreadMgr::NUM_OF_THREADS;
 		const ClusterInfo m_info;
@@ -32,38 +29,35 @@ namespace ServerCore
 	class ClusterUpdateQueue
 	{
 		friend class ThreadMgr;
-		static constexpr const uint64_t MAX_TASK = 1024 * 1024 * 16;
+		friend class CoreGlobal;
+		static constexpr const uint64_t MAX_TASK = 1024 * 1024 * 16 * 2;
+		static constexpr const uint64_t MOD_TASK = MAX_TASK - 1;
 	public:
 		ClusterUpdateQueue() = delete;
-		~ClusterUpdateQueue() = delete;
+		~ClusterUpdateQueue()noexcept = delete;
 	public:
-		static inline void PushTask(ClusterUpdateTask* const task)noexcept {
-			const auto cur_idx = (ULONG64)InterlockedIncrement64((LONG64*)&m_taskCount) - 1;
-			InterlockedExchangePointer((PVOID*)(m_arrTask + ((cur_idx) & (MAX_TASK - 1)))
+		static inline void PushClusterTask(ClusterUpdateTask* const task)noexcept {
+			const auto arrTask = m_arrTask;
+			InterlockedExchangePointer((PVOID*)(arrTask + (((ULONG64)InterlockedIncrement64((LONG64*)&m_taskIdx)) & (MOD_TASK)))
 				, task);
 		}
-	private:
-		static inline void UpdateCluster()noexcept {
-			constinit thread_local uint64_t L_CurIndex = 0;
-			const auto arrTask = m_arrTask;
-			for (;;)
-			{
-				const auto task_ptr = arrTask + ((L_CurIndex) & (MAX_TASK - 1));
-				_Compiler_barrier();
-				const auto task = *task_ptr;
-				if (!task)return;
-				if (task->Execute())
-				{
-					ServerCore::xdelete<ClusterUpdateTask>(task);
-					InterlockedExchangePointer((PVOID*)(task_ptr)
-						, nullptr);
-				}
-				++L_CurIndex;
-			}
+		template<typename... Args>
+		static inline void PushClusterTask(Args&&... args)noexcept {
+			PushClusterTask(xnew<ClusterUpdateTask>(std::forward<Args>(args)...));
 		}
 	private:
-		constinit __declspec(align(8)) static inline ClusterUpdateTask* volatile m_arrTask[MAX_TASK] = { nullptr };
-		constinit __declspec(align(8)) static inline volatile uint64_t m_taskCount = 0;
+		static void UpdateCluster()noexcept;
+	private:
+		static void Init()noexcept {
+			m_arrTask = (decltype(m_arrTask))_aligned_malloc(sizeof(m_arrTask[0]) * MAX_TASK, 64);
+			_Post_ _Notnull_ m_arrTask;
+			::memset((void*)m_arrTask, 0, sizeof(m_arrTask[0]) * MAX_TASK);
+		}
+		static void Free()noexcept { _aligned_free((void*)m_arrTask); }
+	private:
+		constinit __declspec(align(64)) static inline ClusterUpdateTask* volatile* m_arrTask = nullptr;
+		constinit __declspec(align(64)) static inline volatile uint64_t m_taskIdx = -1;
 	};
+
 }
 

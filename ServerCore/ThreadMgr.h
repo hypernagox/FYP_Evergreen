@@ -23,8 +23,8 @@ namespace ServerCore
 
 	//extern thread_local moodycamel::ProducerToken* LPro_token;
 	//extern thread_local moodycamel::ConsumerToken* LCon_token;
-	constinit extern thread_local moodycamel::ProducerToken* LPro_tokenGlobalTask;
-	constinit extern thread_local moodycamel::ConsumerToken* LCon_tokenGlobalTask;
+	//constinit extern thread_local moodycamel::ProducerToken* LPro_tokenGlobalTask;
+	//constinit extern thread_local moodycamel::ConsumerToken* LCon_tokenGlobalTask;
 	constinit extern thread_local int8_t LThreadContainerIndex;
 
 	class ThreadMgr
@@ -33,12 +33,12 @@ namespace ServerCore
 		friend class Singleton;
 		ThreadMgr();
 		~ThreadMgr();
-		struct LFQueueAllocator
-			:public moodycamel::ConcurrentQueueDefaultTraits
-		{
-			static inline void* const malloc(const size_t size)noexcept { return  Memory::Alloc(size); }
-			static inline void free(void* const ptr)noexcept { return Memory::Free(ptr); }
-		};
+		//struct LFQueueAllocator
+		//	:public moodycamel::ConcurrentQueueDefaultTraits
+		//{
+		//	static inline void* const malloc(const size_t size)noexcept { return  Memory::Alloc(size); }
+		//	static inline void free(void* const ptr)noexcept { return Memory::Free(ptr); }
+		//};
 	public:
 		static constexpr const uint64 NUM_OF_THREADS = ServerCore::NUM_OF_THREADS;
 		void Launch(const uint64_t num_of_threads, Initiator* const initiator);
@@ -126,7 +126,7 @@ namespace ServerCore
 		
 		//std::thread m_timerThread;
 
-		moodycamel::ConcurrentQueue<Task, LFQueueAllocator> m_globalTask{ 32 };
+		//moodycamel::ConcurrentQueue<Task, LFQueueAllocator> m_globalTask{ 32 };
 
 		static inline std::thread m_threads[ThreadMgr::NUM_OF_THREADS];
 		constinit static inline std::thread::id g_mainThreadID;

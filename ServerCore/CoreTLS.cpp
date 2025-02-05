@@ -10,7 +10,6 @@ namespace ServerCore
 	constinit thread_local uint64_t LEndTickCount = 0;
 	constinit thread_local class TaskQueueable* LCurTaskQueue = nullptr;
 	constinit thread_local class Queueabler* LCurQueueableComponent = nullptr;
-	constinit thread_local uint64_t LCurHandleSessionID = 0;
 	constinit thread_local uint32_t LRandSeed = {};
 }
 

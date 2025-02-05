@@ -43,16 +43,16 @@ namespace ServerCore
 		~TaskTimerMgr();
 	public:
 		void ReserveAsyncTask(c_uint64 tickAfter, S_ptr<TaskQueueable>&& memfuncInstance, Task&& task)noexcept;
-		void ReserveAsyncTask(c_uint64 tickAfter, Queueabler* const memfuncInstance, Task&& task)noexcept;
-		template<typename Func, typename... Args> requires std::invocable<Func, Args...>
-		void ReserveAsyncTask(c_uint64 tickAfter, Func&& fp, Args&&... args)noexcept
-		{
-			m_timerTaskQueue.emplace(
-				::GetTickCount64() + tickAfter, [task = Task(std::forward<Func>(fp), std::forward<Args>(args)...)]()mutable noexcept
-				{
-					Mgr(ThreadMgr)->EnqueueGlobalTask(std::move(task));
-				});
-		}
+		void ReserveAsyncTask(c_uint64 tickAfter, Queueabler* const queueabler, Task&& task)noexcept;
+		//template<typename Func, typename... Args> requires std::invocable<Func, Args...>
+		//void ReserveAsyncTask(c_uint64 tickAfter, Func&& fp, Args&&... args)noexcept
+		//{
+		//	m_timerTaskQueue.emplace(
+		//		::GetTickCount64() + tickAfter, [task = Task(std::forward<Func>(fp), std::forward<Args>(args)...)]()mutable noexcept
+		//		{
+		//			Mgr(ThreadMgr)->EnqueueGlobalTask(std::move(task));
+		//		});
+		//}
 		void ReserveAsyncTask(c_uint64 tickAfter, IocpEvent* const pTimerEvent_)noexcept;
 		void DistributeTask()noexcept;
 	private:

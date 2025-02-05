@@ -5,6 +5,7 @@
 #include "CoreTLS.h"
 #include "CoreGlobal.h"
 #include "IocpCore.h"
+#include "GlobalEventQueue.h"
 
 #include <windows.h>
 #include <iostream>
@@ -38,7 +39,7 @@
 #include <mswsock.h>
 #include <ws2tcpip.h>
 #include <concurrent_priority_queue.h>
-#include "concurrentqueue.h"
+//#include "concurrentqueue.h"
 #include <concurrent_queue.h>
 #include <concurrent_unordered_map.h>
 #include <sql.h>
