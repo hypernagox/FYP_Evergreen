@@ -950,14 +950,24 @@ namespace udsdx
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-		ImGui_ImplDX12_Init(
-			m_d3dDevice.Get(),
-			FrameResourceCount,
-			DXGI_FORMAT_R8G8B8A8_UNORM,
-			m_srvHeap.Get(),
-			CD3DX12_CPU_DESCRIPTOR_HANDLE(m_srvHeap->GetCPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize),
-			CD3DX12_GPU_DESCRIPTOR_HANDLE(m_srvHeap->GetGPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize)
-		);
+		ImGui_ImplDX12_InitInfo init_info = {};
+		init_info.Device = m_d3dDevice.Get();
+		init_info.CommandQueue = m_commandQueue.Get();
+		init_info.NumFramesInFlight = FrameResourceCount;
+		init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		init_info.DSVFormat = DXGI_FORMAT_UNKNOWN;
+		// Allocating SRV descriptors (for textures) is up to the application, so we provide callbacks.
+		// (current version of the backend will only allocate one descriptor, future versions will need to allocate more)
+		init_info.SrvDescriptorHeap = g_pSrvHeap;
+		init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) {
+			*out_cpu_handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetCPUDescriptorHandleForHeapStart(), *g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
+			*out_gpu_handle = CD3DX12_GPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetGPUDescriptorHandleForHeapStart(), *g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
+			(*g_pSrvHeapSize)++;
+			};
+		init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE) {
+			(*g_pSrvHeapSize)--;
+			};
+		ImGui_ImplDX12_Init(&init_info);
 		ImGui_ImplWin32_Init(m_hMainWnd);
 	}
 
