@@ -190,9 +190,9 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
     
     const float dt_ = bt_root_timer->GetFloatDT();
 
-    const auto dx2 = cur_pos.x + dir.x * 10.2f * dt_;
-    const auto dy2 = cur_pos.y + dir.y * 10.2f * dt_;
-    const auto dz2 = cur_pos.z + dir.z * 10.2f * dt_;
+    const auto dx2 = cur_pos.x + dir.x * 5.2f * dt_;
+    const auto dy2 = cur_pos.y + dir.y * 5.2f * dt_;
+    const auto dz2 = cur_pos.z + dir.z * 5.2f * dt_;
 
     pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(cur_pos,Vector3{ dx2,dy2,dz2 });
    

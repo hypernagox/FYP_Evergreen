@@ -14,7 +14,7 @@ public:
 	template<typename T = Common::Collider>
 	const auto GetCollider()const noexcept { return reinterpret_cast<T*>(((char*)(&m_posComp)) + sizeof(m_posComp)); }
 	template<typename T>
-	bool IsCollision(const T& other)const noexcept { return GetCollider<T>()->IsIntersect(other); }
+	bool IsCollision(const T& other)const noexcept { return GetCollider()->IsIntersect(other); }
 	const auto GetPosComp()const noexcept { return m_posComp; }
 protected:
 	PositionComponent* m_posComp{ nullptr };
