@@ -9,14 +9,7 @@
 
 void Projectile::SelectObjList(const XVector<const ContentsEntity*>& vec_) noexcept
 {
-	auto b = vec_.data();
-	const auto e = b + vec_.size();
-	m_obj_list.reserve(e - b);
-	while (e != b) {
-		const auto entity = (*b++);
-		if (const auto col = entity->GetComp<Collider>())
-			m_obj_list.emplace_back(std::make_pair(entity, col));
-	}
+	ServerCore::CreateEntityCompArr<Collider>(m_obj_list, vec_);
 }
 
 ServerCore::ROUTINE_RESULT Projectile::Routine() noexcept

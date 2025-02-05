@@ -245,4 +245,40 @@ namespace ServerCore
 		ContentsEntity* const m_pOwnerEntity;
 		const uint64_t m_iocpCompEvent;
 	};
+
+	template<typename T>
+	struct EntityComp {
+		const S_ptr<ContentsEntity> entity_sptr;
+		T* const comp_ptr;
+		template<typename U> requires (false == std::integral<std::remove_cvref_t<U>>)
+		constexpr inline EntityComp(U&& entity, T* const comp)noexcept
+			:entity_sptr{ std::forward<U>(entity) }, comp_ptr{ comp } {
+			static_assert(std::derived_from<T, ContentsComponent>);
+		}
+		constexpr inline ~EntityComp()noexcept = default;
+	};
+
+	template<typename T> requires std::derived_from<T, ContentsComponent>
+	inline XVector<EntityComp<T>> CreateEntityCompArr(const XVector<const ContentsEntity*>& vec_)noexcept {
+		auto b = vec_.data();
+		const auto e = b + vec_.size();
+		XVector<EntityComp<T>> temp;
+		temp.reserve(e - b);
+		while (e != b) {
+			const auto entity = (*b++);
+			if (const auto comp = entity->GetComp<T>()) [[likely]]
+				temp.emplace_back(entity, comp);
+		}
+		return temp;
+	}
+
+	template<typename T> requires std::derived_from<T, ContentsComponent>
+	inline XVector<EntityComp<T>> CreateEntityCompArr(const XVector<ContentsEntity*>& vec_)noexcept {
+		return CreateEntityCompArr<T>(reinterpret_cast<const XVector<const ContentsEntity*>&>(vec_));
+	}
+
+	template<typename T, typename OUT_VEC, typename IN_VEC> requires std::derived_from<T, ContentsComponent>
+	inline void CreateEntityCompArr(OUT_VEC& o_v, const IN_VEC& i_v)noexcept {
+		std::construct_at(&o_v, CreateEntityCompArr<T>(i_v));
+	}
 }

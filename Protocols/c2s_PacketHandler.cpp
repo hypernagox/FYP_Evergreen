@@ -140,8 +140,8 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 	c->m_offSet = rotatedForward;
 	auto box = c->GetAABB();
 	bool isHit = false;
-	const Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,5.f };
-	//fan.m_offSet = -rotatedForward;
+	Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,8.f };
+	fan.m_offSet = rotatedForward * 2;
 	//if (const auto sector = pOwner->GetCurCluster())
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
