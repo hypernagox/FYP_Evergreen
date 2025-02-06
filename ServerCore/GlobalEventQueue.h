@@ -29,12 +29,13 @@ namespace ServerCore
 		}
 		static void TryGlobalEvent()noexcept;
 	private:
-		static void Init()noexcept {
-			m_arrEvent = (IocpEvent64*)_aligned_malloc(sizeof(m_arrEvent[0]) * MAX_EVENT, 64);
+		static void Init() noexcept {
+			m_arrEvent = (IocpEvent64*)VirtualAlloc(nullptr, sizeof(m_arrEvent[0]) * MAX_EVENT,
+				MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 			_Post_ _Notnull_ m_arrEvent;
 			::memset(m_arrEvent, 0, sizeof(m_arrEvent[0]) * MAX_EVENT);
 		}
-		static void Free()noexcept { _aligned_free(m_arrEvent); }
+		static void Free() noexcept { VirtualFree(m_arrEvent, 0, MEM_RELEASE); }
 	private:
 		struct alignas(64) IocpEvent64 { alignas(64) IocpEvent* volatile event; };
 		constinit __declspec(align(64)) static inline IocpEvent64* m_arrEvent = nullptr;

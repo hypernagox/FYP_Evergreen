@@ -26,6 +26,7 @@ namespace ServerCore
 		constinit extern thread_local uint64 LEndTickCount;
 		constinit extern thread_local class Queueabler* LCurQueueableComponent;
 
+		const auto end_tick = LEndTickCount;
 		LCurQueueableComponent = this;
 		Task task;
 		bool flag = false;
@@ -62,7 +63,7 @@ namespace ServerCore
 				break;
 			}
 
-			if (::GetTickCount64() >= LEndTickCount)
+			if (IocpCore::IsTimeOut(end_tick))
 			{
 				PostIocpEvent(owner_entity);
 				break;

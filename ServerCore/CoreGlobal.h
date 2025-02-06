@@ -20,4 +20,6 @@ namespace ServerCore
 	private:
 		const IocpCore m_iocpCore;
 	};
+
+	static inline const HANDLE GetIocpHandleGlobal()noexcept { return CoreGlobal::GetInst()->GetIocpCore().GetIocpHandle(); }
 }

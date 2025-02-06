@@ -3,11 +3,15 @@
 
 namespace ServerCore
 {
+	constinit extern thread_local uint64_t LEndTickCount;
+
 	void GlobalEventQueue::TryGlobalEvent() noexcept
 	{
+		constinit extern thread_local uint64_t LEndTickCount;
+		const auto end_tick = LEndTickCount;
 		const BackOff bo;
 		const auto arrEvent = m_arrEvent;
-		for (;;) [[likely]]
+		do
 		{
 			const auto old_front = m_frontIdx;
 			const auto new_front = old_front + 1;
@@ -28,6 +32,6 @@ namespace ServerCore
 				else bo.delay();
 			}
 			else return;
-		}
+		} while (!IocpCore::IsTimeOut(end_tick));
 	}
 }

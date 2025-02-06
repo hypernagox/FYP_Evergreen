@@ -8,16 +8,17 @@ namespace ServerCore
 {
 	class alignas(64) RecvBuffer
 	{
-		enum { BUFFER_COUNT = 8 };
-	public:
-		RecvBuffer(c_int32 bufferSize_)noexcept;
-		~RecvBuffer()noexcept = default;
-	public:
+		static constexpr const inline uint32_t DESIRE_BUF_SIZE = 0x10000; // 64KB
+		enum { BUFFER_COUNT = 16 };
 		enum RECV_BUFFER_SIZE
 		{
-			BUFFER_SIZE = 0x2000 - (16 / BUFFER_COUNT), // 64KB
+			BUFFER_SIZE = DESIRE_BUF_SIZE / BUFFER_COUNT // 4KB
 		};
-
+	public:
+		RecvBuffer()noexcept;
+		~RecvBuffer()noexcept = default;
+	public:
+		static constexpr const inline uint32_t ACTUAL_BUF_SIZE = (BUFFER_SIZE * BUFFER_COUNT) - 4;
 		void Clear()noexcept;
 		void ResetBufferCursor()noexcept { m_readPos = m_writePos = 0; }
 		bool OnRead(c_int32 numOfBytes)noexcept
@@ -46,9 +47,8 @@ namespace ServerCore
 	private:
 		uint16_t m_readPos = 0;
 		uint16_t m_writePos = 0;
-		const uint16_t m_bufferSize;
-		const uint16_t m_capacity;
-		BYTE m_buffer[BUFFER_SIZE * BUFFER_COUNT];
+		static constexpr inline const uint16_t m_capacity = ACTUAL_BUF_SIZE;
+		BYTE m_buffer[ACTUAL_BUF_SIZE];
 	};
 }
 

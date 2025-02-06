@@ -11,11 +11,11 @@ namespace ServerCore
 		Singleton(Singleton&&)noexcept = delete;
 		Singleton& operator=(Singleton&&)noexcept = delete;
 	private:
-		struct alignas(alignof(T)) SingletonBlock { 
+		struct alignas(std::hardware_constructive_interference_size) SingletonBlock { 
 			SingletonBlock()noexcept;
-			std::byte singleton_block[sizeof(T)];
+			alignas(std::hardware_constructive_interference_size) std::byte singleton_block[sizeof(T)];
 		};
-		static SingletonBlock g_singleton_block;
+		__declspec(align(std::hardware_constructive_interference_size)) static SingletonBlock g_singleton_block;
 	protected:
 		Singleton()noexcept = default;
 		~Singleton()noexcept = default;

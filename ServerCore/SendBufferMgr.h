@@ -24,7 +24,7 @@ namespace ServerCore
 		static void InitTLSChunkPool()noexcept;
 		static void DestroyTLSChunkPool()noexcept;
 	private:
-		static constexpr const int32_t NUM_OF_CHUNK_BUFFER = 16;
+		static constexpr const int32_t NUM_OF_CHUNK_BUFFER = 5;
 	};
 
 }

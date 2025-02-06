@@ -32,7 +32,7 @@ namespace ServerCore
 			top = nullptr;
 			while (node) {
 				const auto prev = node->prev;
-				Memory::AlignedFree(node->chunk, alignof(SendBufferChunk));
+				VirtualFree(node->chunk, 0, MEM_RELEASE);
 				xdelete<Node>(node);
 				node = prev;
 			}
@@ -69,7 +69,7 @@ namespace ServerCore
 		if (const auto chunk = tl_chunkBufferPool.Pop())
 			return chunk;
 		else
-			return aligned_xnew<SendBufferChunk>();
+			return virtual_xnew<SendBufferChunk>();
 	}
 	void SendBufferMgr::ReturnChunk(SendBufferChunk* const chunk) noexcept
 	{
@@ -79,7 +79,7 @@ namespace ServerCore
 	void SendBufferMgr::InitTLSChunkPool() noexcept
 	{
 		for (int i = 0; i < NUM_OF_CHUNK_BUFFER; ++i)
-			tl_chunkBufferPool.push(aligned_xnew<SendBufferChunk>());
+			tl_chunkBufferPool.push(virtual_xnew<SendBufferChunk>());
 	}
 	void SendBufferMgr::DestroyTLSChunkPool() noexcept
 	{

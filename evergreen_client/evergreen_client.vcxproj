@@ -75,7 +75,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableUnitySupport>false</EnableUnitySupport>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -255,7 +255,9 @@
     <ClCompile Include="func.cpp" />
     <ClCompile Include="GizmoBoxRenderer.cpp" />
     <ClCompile Include="GizmoCylinderRenderer.cpp" />
-    <ClCompile Include="GizmoSphereRenderer.cpp" />
+    <ClCompile Include="GizmoSphereRenderer.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">false</IncludeInUnityFile>
+    </ClCompile>
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monster.cpp" />

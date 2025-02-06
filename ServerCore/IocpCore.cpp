@@ -5,11 +5,12 @@
 
 namespace ServerCore
 {
+	constinit extern thread_local uint64_t LEndTickCount;
+
 	IocpCore::IocpCore(const HANDLE iocp_handle)noexcept
 		:m_iocpHandle{ iocp_handle }
 	{
 		NAGOX_ASSERT(INVALID_HANDLE_VALUE != m_iocpHandle);
-		g_iocpHandle = m_iocpHandle;
 	}
 
 	IocpCore::~IocpCore()

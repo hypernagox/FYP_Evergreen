@@ -12,7 +12,7 @@ const State::EntityState RangeMonIdle::Update(const float dt, const ComponentSys
 	if (!awaker)
 		return RANGE_MON_STATE::IDLE;
 
-	if (IsInDistEntity(awaker.get(), comp_sys->GetOwnerEntity(), 40))
+	if (IsInDistEntity(awaker.get(), comp_sys->GetOwnerEntity(), 50))
 		return RANGE_MON_STATE::CHASE;
 
     return RANGE_MON_STATE::IDLE;
@@ -28,7 +28,7 @@ const State::EntityState RangeMonChase::Update(const float dt, const ComponentSy
 
     const auto path = comp_sys->GetComp<PathFinder>()->GetPath(cur_pos, dest_pos);
 
-    if (CommonMath::IsInDistanceDX(dest_pos, cur_pos, 20))return RANGE_MON_STATE::ATTACK;
+    if (CommonMath::IsInDistanceDX(dest_pos, cur_pos, 10))return RANGE_MON_STATE::ATTACK;
     if (path.empty()) return RANGE_MON_STATE::IDLE;
 
     auto dir = path.size() >= 2 ? path[1] : path[0];
@@ -54,11 +54,15 @@ const State::EntityState RangeMonChase::Update(const float dt, const ComponentSy
 
 const State::EntityState RangeMonAttack::Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
 {
-    if (!awaker)
+    if (!awaker) {
+        m_acc = 2.f;
         return RANGE_MON_STATE::IDLE;
+    }
        
-    if (!IsInDistEntity(awaker.get(), comp_sys->GetOwnerEntity(), 25))
+    if (!IsInDistEntity(awaker.get(), comp_sys->GetOwnerEntity(), 10)) {
+        m_acc = 2.f;
         return RANGE_MON_STATE::CHASE;
+    }
     if (0.f < m_acc) {
         m_acc -= dt;
         return RANGE_MON_STATE::ATTACK;
