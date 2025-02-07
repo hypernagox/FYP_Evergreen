@@ -20,6 +20,7 @@ protected:
 	RiggedMeshRenderer* m_renderer;
 	std::shared_ptr<SceneObject> m_rendererObj;
 	std::array<std::shared_ptr<udsdx::Material>, 5> m_playerMaterials;
+	std::shared_ptr<udsdx::Material> m_toolMaterial;
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
 	
 public:
@@ -37,4 +38,5 @@ public:
 	void Hit() { *m_stateMachine->GetConditionRefBool("Hit") = true; }
 	void Death() { *m_stateMachine->GetConditionRefBool("Death") = true; }
 	bool TrySetState(AnimationState state) { return m_stateMachine->TrySetState(state); }
+	AnimationState GetCurrentState() const { return m_stateMachine->GetCurrentState(); }
 };

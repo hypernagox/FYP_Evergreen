@@ -107,6 +107,9 @@
     <ClCompile Include="source\inline_mesh_renderer.cpp">
       <Filter>Engine\Runtime</Filter>
     </ClCompile>
+    <ClCompile Include="source\rigged_prop_renderer.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -245,6 +248,9 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="source\inline_mesh_renderer.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\rigged_prop_renderer.h">
       <Filter>Engine\Runtime</Filter>
     </ClInclude>
   </ItemGroup>

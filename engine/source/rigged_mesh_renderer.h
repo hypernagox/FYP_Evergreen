@@ -34,11 +34,14 @@ namespace udsdx
 		virtual void Render(RenderParam& param, int instances = 1);
 
 	public:
+		RiggedMesh* GetMesh() const;
 		void SetMesh(RiggedMesh* mesh);
 		void SetAnimation(std::string_view animationName);
 
 		virtual ID3D12PipelineState* GetPipelineState() const override;
 		virtual ID3D12PipelineState* GetShadowPipelineState() const override;
+
+		void PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out);
 
 	protected:
 		RiggedMesh* m_riggedMesh = nullptr;
