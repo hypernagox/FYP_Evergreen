@@ -28,7 +28,7 @@ private:
 	float m_fMoveTime = 0.0f;
 	float m_fCamSensivity = 0.1f;
 
-	float m_fovBase = PIDIV4;
+	float m_fovBase = 75.0f * DEG2RAD;
 
 	Vector3 m_cameraAngleAxis = Vector3::Zero;
 	Vector3 m_cameraAngleAxisSmooth = Vector3::Zero;

@@ -4,8 +4,6 @@
 #include "ServerObject.h"
 #include "AuthenticPlayer.h"
 
-extern std::shared_ptr<SceneObject> g_heroObj;
-
 PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
 	m_rendererObj = std::make_shared<SceneObject>();
@@ -55,6 +53,18 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 
 
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Death, AnimationState::Idle, 2.f);
+
+	{
+		m_toolMaterial = std::make_shared<udsdx::Material>();
+		m_toolMaterial->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword_albedo.jpg")));
+
+		auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
+		toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword.obj")));
+		toolRenderer->SetShader(shader);
+		toolRenderer->SetMaterial(m_toolMaterial.get());
+		toolRenderer->SetBoneName("Bip001 R Hand");
+		toolRenderer->SetPropLocalTransform(Matrix4x4::CreateScale(16.0f) * Matrix4x4::CreateFromYawPitchRoll(0.0f, -PIDIV2, 0.0f) * Matrix4x4::CreateTranslation(3.0f, 1.0f, -12.0f));
+	}
 	
 	OnAnimationStateChange(AnimationState::Idle);
 }
@@ -66,28 +76,6 @@ PlayerRenderer::~PlayerRenderer()
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
 	m_stateMachine->Update(time.deltaTime);
-	// TODO: 복붙 하드코딩
-	const bool flag = g_heroObj->GetComponent<ServerObject>()->GetObjID() == GetSceneObject()->GetComponent<ServerObject>()->GetObjID();
-	if (INSTANCE(Input)->GetMouseLeftButtonDown() && flag)
-	{
-		const auto state = m_stateMachine->GetCurrentState();
-		if (AnimationState::Idle == state || AnimationState::Run == state)
-		{
-			Attack();
-			g_heroObj->GetComponent<AuthenticPlayer>()->DoAttack();
-			//std::cout << "공격 시도\n";
-		}
-	}
-	if (INSTANCE(Input)->GetMouseRightButtonDown() && flag)
-	{
-		const auto state = m_stateMachine->GetCurrentState();
-		if (AnimationState::Idle == state || AnimationState::Run == state)
-		{
-			Attack();
-			g_heroObj->GetComponent<AuthenticPlayer>()->FireProj();
-			//std::cout << "공격 시도\n";
-		}
-	}
 	const Vector3 velocity = GetComponent<EntityMovement>()->GetVelocity();
 	float mag = Vector2(velocity.x, velocity.z).LengthSquared();
 	*m_stateMachine->GetConditionRefFloat("MoveSpeed") = mag;

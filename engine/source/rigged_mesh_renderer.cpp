@@ -119,6 +119,11 @@ namespace udsdx
 		}
 	}
 
+	RiggedMesh* RiggedMeshRenderer::GetMesh() const
+	{
+		return m_riggedMesh;
+	}
+
 	void RiggedMeshRenderer::SetMesh(RiggedMesh* mesh)
 	{
 		m_riggedMesh = mesh;
@@ -157,5 +162,26 @@ namespace udsdx
 	ID3D12PipelineState* RiggedMeshRenderer::GetShadowPipelineState() const
 	{
 		return m_shader->RiggedShadowPipelineState();
+	}
+
+	void RiggedMeshRenderer::PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out)
+	{
+		if (m_animationName.empty())
+		{
+			m_riggedMesh->PopulateTransforms(submeshIndex, out);
+		}
+		else
+		{
+			m_riggedMesh->PopulateTransforms(submeshIndex, m_animationName, m_animationTime, out);
+		}
+		if (m_transitionFactor < 1.0f && !m_prevAnimationName.empty())
+		{
+			std::vector<Matrix4x4> prevTransforms;
+			m_riggedMesh->PopulateTransforms(submeshIndex, m_prevAnimationName, m_prevAnimationTime, prevTransforms);
+			for (size_t i = 0; i < out.size(); ++i)
+			{
+				out[i] = Matrix4x4::Lerp(prevTransforms[i], out[i], m_transitionFactor);
+			}
+		}
 	}
 }
