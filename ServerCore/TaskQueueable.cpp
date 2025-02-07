@@ -39,7 +39,7 @@ namespace ServerCore
 		constinit extern thread_local uint64 LEndTickCount;
 
 		LCurTaskQueue = this;
-		const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
+		//const HANDLE iocp_handle = IocpCore::GetIocpHandleGlobal();
 		Task task;
 		auto& origin_head = m_taskQueue.head_for_single_pop();
 		auto head_temp = origin_head.load(std::memory_order_seq_cst);

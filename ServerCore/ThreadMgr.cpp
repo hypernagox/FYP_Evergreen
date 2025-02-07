@@ -60,7 +60,7 @@ namespace ServerCore
 
 	void ThreadMgr::Launch(const uint64_t num_of_threads, Initiator* const initiator)
 	{
-		m_iocpHandle = IocpCore::GetIocpHandleGlobal();
+		m_iocpHandle = ServerCore::GetIocpHandleGlobal();
 		g_initiator = initiator;
 
 		if (Service::GetMainService()->GetServiceType() == SERVICE_TYPE::SERVER) {
@@ -136,8 +136,8 @@ namespace ServerCore
 		{
 			
 			{
-				new_view_list_session.reserve(DEFAULT_MEM_POOL_SIZE);
-				new_view_list_npc.reserve(DEFAULT_MEM_POOL_SIZE);
+				new_view_list_session.reserve(DEFAULT_MEM_POOL_SIZE * 4);
+				new_view_list_npc.reserve(DEFAULT_MEM_POOL_SIZE * 4);
 				clear_vec.reserve(DEFAULT_MEM_POOL_SIZE);
 			}
 
@@ -205,8 +205,7 @@ namespace ServerCore
 		constinit extern thread_local uint64_t LCurHandleSessionID;
 
 		TaskTimerMgr& taskTimer = *Mgr(TaskTimerMgr);
-		const HANDLE iocpHandle = IocpCore::GetIocpHandleGlobal();
-
+		const HANDLE iocpHandle = ServerCore::GetIocpHandleGlobal();
 		for(;;) [[likely]]
 		{
 			if (IocpCore::Dispatch(iocpHandle)) [[likely]]{

@@ -2,6 +2,14 @@
 
 #define OUT
 
+#define DECLARE_SINGLETON(ClassName) \
+    friend class Singleton;          \
+    ClassName()noexcept = default;   \
+    ~ClassName()noexcept = default;
+
+#define MEMBER_SIZE_SUM(Type, lastMember) (offsetof(Type, lastMember) + sizeof(((Type*)0)->lastMember))
+
+
 /*---------------
 	  Lock
 ---------------*/

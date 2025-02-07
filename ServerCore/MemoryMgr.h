@@ -201,6 +201,21 @@ namespace ServerCore
 		Memory::AlignedFree_Sized(arr_ptr, sizeof(T) * num_of_elements, alignof(T));
 	}
 
+	template<typename T, typename... Args> requires (alignof(T) > 8)
+		constexpr inline T* const virtual_xnew(Args&&... args)noexcept {
+		static_assert(alignof(T) > 8);
+		return new (VirtualAlloc(nullptr, sizeof(T),
+			MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE)) T{ std::forward<Args>(args)... };
+	}
+
+	template<typename T> requires (alignof(T) > 8)
+		constexpr inline void virtual_xdelete(T* const obj_ptr)noexcept {
+		static_assert(alignof(T) > 8);
+		if constexpr (!std::is_trivially_destructible_v<T>)
+			obj_ptr->~T();
+		VirtualFree(obj_ptr, 0, MEM_RELEASE);
+	}
+
 	//template<typename T>
 	//class ObjectPool
 	//{

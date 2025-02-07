@@ -57,7 +57,7 @@ namespace ServerCore
 
 	void TaskTimerMgr::DistributeTask()noexcept
 	{
-		if (false == m_timerTaskFlag && false == InterlockedExchange8(&m_timerTaskFlag, true))
+		if (!m_timerTaskFlag && !InterlockedExchange8(&m_timerTaskFlag, true))
 		{
 			TimerTask task;
 			while (m_timerTaskQueue.try_pop(task))

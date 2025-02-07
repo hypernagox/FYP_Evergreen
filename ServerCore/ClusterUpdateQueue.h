@@ -48,12 +48,13 @@ namespace ServerCore
 	private:
 		static void UpdateCluster()noexcept;
 	private:
-		static void Init()noexcept {
-			m_arrTask = (decltype(m_arrTask))_aligned_malloc(sizeof(m_arrTask[0]) * MAX_TASK, 64);
+		static void Init() noexcept {
+			m_arrTask = (decltype(m_arrTask))VirtualAlloc(nullptr, sizeof(m_arrTask[0]) * MAX_TASK,
+				MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 			_Post_ _Notnull_ m_arrTask;
 			::memset((void*)m_arrTask, 0, sizeof(m_arrTask[0]) * MAX_TASK);
 		}
-		static void Free()noexcept { _aligned_free((void*)m_arrTask); }
+		static void Free() noexcept { VirtualFree((void*)m_arrTask, 0, MEM_RELEASE); }
 	private:
 		constinit __declspec(align(64)) static inline ClusterUpdateTask* volatile* m_arrTask = nullptr;
 		constinit __declspec(align(64)) static inline volatile uint64_t m_taskIdx = -1;

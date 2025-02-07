@@ -19,7 +19,7 @@ namespace ServerCore
 		, m_pDisconnectEvent{ MakeUniqueSized<DisconnectEvent>() }
 		, m_pSendEvent{ xnew<SendEvent>(SocketUtils::CreateSocket()) }
 		, m_pRecvEvent{ xnew<RecvEvent>() }
-		, m_pRecvBuffer{ aligned_xnew<RecvBuffer>(RecvBuffer::BUFFER_SIZE) }
+		, m_pRecvBuffer{ virtual_xnew<RecvBuffer>() }
 		, m_sessionSocket{ m_pSendEvent->m_sendSocket }
 	{
 		GetRefCountExternal(this) = 2;
@@ -31,7 +31,7 @@ namespace ServerCore
 		, m_pDisconnectEvent{ MakeUniqueSized<DisconnectEvent>() }
 		, m_pSendEvent{ xnew<SendEvent>(SocketUtils::CreateSocket()) }
 		, m_pRecvEvent{ xnew<RecvEvent>() }
-		, m_pRecvBuffer{ aligned_xnew<RecvBuffer>(RecvBuffer::BUFFER_SIZE) }
+		, m_pRecvBuffer{ virtual_xnew<RecvBuffer>() }
 		, m_sessionSocket{ m_pSendEvent->m_sendSocket }
 	{
 		GetRefCountExternal(this) = 2;
@@ -41,7 +41,7 @@ namespace ServerCore
 	{
 		xdelete<SendEvent>(m_pSendEvent);
 		xdelete<RecvEvent>(m_pRecvEvent);
-		aligned_xdelete<RecvBuffer>(m_pRecvBuffer, alignof(RecvBuffer));
+		virtual_xdelete<RecvBuffer>(m_pRecvBuffer);
 		SocketUtils::Close(m_sessionSocket);
 		NAGOX_ASSERT_LOG(0 != m_serviceIdx, "Session Double Free !");
 		m_serviceIdx = 0;
@@ -158,8 +158,8 @@ namespace ServerCore
 				::CancelIoEx(reinterpret_cast<HANDLE>(disconnect_socket), NULL);
 				SocketUtils::Close(m_sessionSocket);
 				m_sessionSocket = m_pSendEvent->m_sendSocket = SocketUtils::CreateSocket();
-				::CreateIoCompletionPort((HANDLE)m_sessionSocket, IocpCore::GetIocpHandleGlobal(), 0, 0);
-
+				::CreateIoCompletionPort((HANDLE)m_sessionSocket, ServerCore::GetIocpHandleGlobal(), 0, 0);
+				SocketUtils::SetLinger(m_sessionSocket, 1, 0);
 				ContentsEntity* const pOwner = GetOwnerEntity();
 				pOwner->TryOnDestroy();
 				GetService()->ReleaseSession(this);

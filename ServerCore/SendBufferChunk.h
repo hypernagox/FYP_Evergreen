@@ -11,10 +11,11 @@ namespace ServerCore
 	class alignas(64) SendBufferChunk final
 		:public RefCountable
 	{
+		static constexpr const inline uint32_t DESIRE_BUF_SIZE = 0x200000; // 2MB
 		friend class SendBufferMgr;
 		enum
 		{
-			SEND_BUFFER_CHUNK_SIZE = 0x10000 - sizeof(RefCountable) - 4
+			SEND_BUFFER_CHUNK_SIZE = DESIRE_BUF_SIZE - sizeof(RefCountable) - 8
 		};
 	public:
 		SendBufferChunk()noexcept = default;
@@ -33,7 +34,7 @@ namespace ServerCore
 		c_uint32 FreeSize()const noexcept { return SEND_BUFFER_CHUNK_SIZE - m_usedSize; }
 	private:
 		bool m_bOpen = false;
-		uint16_t m_usedSize = 0;
+		uint32_t m_usedSize = 0;
 		BYTE m_buffer[SEND_BUFFER_CHUNK_SIZE];
 	};
 }

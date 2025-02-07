@@ -56,8 +56,8 @@ const bool Handle_s2c_APPEAR_OBJECT(const ServerCore::S_ptr<ServerCore::PacketSe
 const bool Handle_s2c_REMOVE_OBJECT(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_REMOVE_OBJECT& pkt_)
 {
 	const auto session = ServerCore::StaticCast<ServerSession>(pSession_);
-	session->m_accDelayMs = 0;
-	session->m_moveCount = 1;
+	//session->m_accDelayMs = 0;
+	//session->m_moveCount = 1;
 	return true;
 }
 

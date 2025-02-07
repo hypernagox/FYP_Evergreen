@@ -111,7 +111,7 @@ namespace ServerCore
 				const auto& listener = static_cast<ServerService*>(this)->GetListener();
 				if (false == listener->m_bCanAccept.exchange(true)) {
 					listener->RegisterAccept(listener->m_acceptEvent.get());
-					std::cout << "Accept available !\n";
+					PrintLogEndl("Accept available !");
 				}
 			}
 		}
