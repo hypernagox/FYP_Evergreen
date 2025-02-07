@@ -49,6 +49,7 @@ namespace ServerCore
 		static void UpdateCluster()noexcept;
 	private:
 		static void Init() noexcept {
+			static_assert(isPowerOfTwo(MAX_TASK));
 			m_arrTask = (decltype(m_arrTask))VirtualAlloc(nullptr, sizeof(m_arrTask[0]) * MAX_TASK,
 				MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 			_Post_ _Notnull_ m_arrTask;

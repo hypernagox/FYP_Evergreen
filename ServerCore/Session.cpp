@@ -19,7 +19,7 @@ namespace ServerCore
 		, m_pDisconnectEvent{ MakeUniqueSized<DisconnectEvent>() }
 		, m_pSendEvent{ xnew<SendEvent>(SocketUtils::CreateSocket()) }
 		, m_pRecvEvent{ xnew<RecvEvent>() }
-		, m_pRecvBuffer{ virtual_xnew<RecvBuffer>() }
+		, m_pRecvBuffer{ xnew<RecvBuffer>() }
 		, m_sessionSocket{ m_pSendEvent->m_sendSocket }
 	{
 		GetRefCountExternal(this) = 2;
@@ -31,7 +31,7 @@ namespace ServerCore
 		, m_pDisconnectEvent{ MakeUniqueSized<DisconnectEvent>() }
 		, m_pSendEvent{ xnew<SendEvent>(SocketUtils::CreateSocket()) }
 		, m_pRecvEvent{ xnew<RecvEvent>() }
-		, m_pRecvBuffer{ virtual_xnew<RecvBuffer>() }
+		, m_pRecvBuffer{ xnew<RecvBuffer>() }
 		, m_sessionSocket{ m_pSendEvent->m_sendSocket }
 	{
 		GetRefCountExternal(this) = 2;
@@ -41,7 +41,7 @@ namespace ServerCore
 	{
 		xdelete<SendEvent>(m_pSendEvent);
 		xdelete<RecvEvent>(m_pRecvEvent);
-		virtual_xdelete<RecvBuffer>(m_pRecvBuffer);
+		xdelete<RecvBuffer>(m_pRecvBuffer);
 		SocketUtils::Close(m_sessionSocket);
 		NAGOX_ASSERT_LOG(0 != m_serviceIdx, "Session Double Free !");
 		m_serviceIdx = 0;

@@ -30,6 +30,7 @@ namespace ServerCore
 		static void TryGlobalEvent()noexcept;
 	private:
 		static void Init() noexcept {
+			static_assert(isPowerOfTwo(MAX_EVENT));
 			m_arrEvent = (IocpEvent64*)VirtualAlloc(nullptr, sizeof(m_arrEvent[0]) * MAX_EVENT,
 				MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 			_Post_ _Notnull_ m_arrEvent;

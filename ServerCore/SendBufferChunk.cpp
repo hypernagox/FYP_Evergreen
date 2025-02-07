@@ -7,13 +7,19 @@ namespace ServerCore
 {
 	S_ptr<SendBuffer> SendBufferChunk::Open(c_uint32 allocSize)noexcept
 	{
-		static_assert(sizeof(SendBufferChunk) == MEMBER_SIZE_SUM(SendBufferChunk, m_buffer));
-		static_assert(sizeof(SendBufferChunk) == DESIRE_BUF_SIZE);
-		static_assert(DESIRE_BUF_SIZE == MEMBER_SIZE_SUM(SendBufferChunk, m_buffer));
+		static_assert(0 == SEND_BUFFER_CHUNK_SIZE % (PAGE_SIZE * 16));
+		static_assert(0 == SEND_BUFFER_CHUNK_SIZE % PAGE_SIZE);
 		NAGOX_ASSERT(allocSize <= SEND_BUFFER_CHUNK_SIZE);
 		NAGOX_ASSERT(false == m_bOpen);
 
 		m_bOpen = true;
+
+		if (PAGE_SIZE >= allocSize) [[likely]]
+		{
+			const auto old_page = m_curPage;
+			m_curPage = ((m_usedSize + allocSize - 1) >> 12);
+			m_usedSize += (~(m_curPage - old_page - 1)) & ((m_curPage << 12) - m_usedSize);
+		}
 
 		return MakeShared<SendBuffer>(S_ptr<SendBufferChunk>{this}, Buffer(), allocSize);
 	}

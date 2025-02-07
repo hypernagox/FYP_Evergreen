@@ -9,6 +9,7 @@
 
 #define MEMBER_SIZE_SUM(Type, lastMember) (offsetof(Type, lastMember) + sizeof(((Type*)0)->lastMember))
 
+#define PAGE_SIZE (0x1000)
 
 /*---------------
 	  Lock

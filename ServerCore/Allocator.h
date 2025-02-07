@@ -10,7 +10,7 @@ namespace ServerCore
 
 	class StompAllocator
 	{
-		enum { PAGE_SIZE = 0x1000 };
+		//enum { PAGE_SIZE = 0x1000 };
 
 	public:
 		static void* Alloc(const size_t size);

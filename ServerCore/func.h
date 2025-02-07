@@ -24,6 +24,8 @@ namespace ServerCore
 
 	//template <typename T> requires std::is_fundamental_v<T> || std::is_pointer_v<T>
 	//constexpr inline T rcast(const T val)noexcept { return val; }
+	
+	consteval bool isPowerOfTwo(const size_t N)noexcept { return (N != 0) && ((N & (N - 1)) == 0); }
 
 	template <typename T> //requires (!std::is_fundamental_v<std::decay_t<T>>)
 	constexpr inline std::decay_t<T> rcast(T&& val)noexcept { return std::forward<T>(val); }

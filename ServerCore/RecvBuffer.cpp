@@ -8,18 +8,16 @@ namespace ServerCore
 		: m_readPos{ 0 }
 		, m_writePos{ 0 }
 	{
-		static_assert(UINT16_MAX > sizeof(m_buffer));
-		static_assert((UINT16_MAX + 1) == sizeof(RecvBuffer));
-		static_assert(sizeof(RecvBuffer) == MEMBER_SIZE_SUM(RecvBuffer, m_buffer));
-		static_assert(sizeof(RecvBuffer) == DESIRE_BUF_SIZE);
-		static_assert(DESIRE_BUF_SIZE == MEMBER_SIZE_SUM(RecvBuffer, m_buffer));
+		static_assert(0 == RECV_BUF_SIZE % (PAGE_SIZE * 16));
+		static_assert(0 == RECV_BUF_SIZE % PAGE_SIZE);
 	}
 
 	void RecvBuffer::Clear()noexcept
 	{
+		constexpr const int32_t HALF_SLOT = (BUF_SLOT_SIZE / 2);
 		if (const int32_t dataSize = DataSize())
 		{
-			if (FreeSize() < static_cast<c_int32>(RECV_BUFFER_SIZE::BUFFER_SIZE >> 1))
+			if (FreeSize() < HALF_SLOT)
 			{
 				::memcpy(m_buffer, m_buffer + m_readPos, dataSize);
 				m_readPos = 0;
