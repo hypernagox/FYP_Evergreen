@@ -1,5 +1,5 @@
 #pragma once
-#include "../ServerCore/ServerCorePch.h"
+#include "../NagiocpX/NagiocpXPch.h"
 #include "enum_generated.h"
 #include "struct_generated.h"
 #include "protocol_generated.h"
@@ -34,29 +34,29 @@ enum class CREATE_PKT_ID : uint16_t {
     c2s_FIRE_PROJ = 1007,
 };
 
-class ServerCore::PacketSession;
-class ServerCore::Session;
-class ServerCore::SendBuffer;
+class NagiocpX::PacketSession;
+class NagiocpX::Session;
+class NagiocpX::SendBuffer;
 
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept;
-static inline const bool Handle_Invalid(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) noexcept { return false; }
+static inline const bool Handle_Invalid(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) noexcept { return false; }
 
-const bool Handle_s2c_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_);
-const bool Handle_s2c_PING_PONG(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_PING_PONG& pkt_);
-const bool Handle_s2c_APPEAR_OBJECT(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_APPEAR_OBJECT& pkt_);
-const bool Handle_s2c_REMOVE_OBJECT(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_REMOVE_OBJECT& pkt_);
-const bool Handle_s2c_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MOVE& pkt_);
-const bool Handle_s2c_MONSTER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_);
-const bool Handle_s2c_MONSTER_AGGRO_START(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_START& pkt_);
-const bool Handle_s2c_MONSTER_AGGRO_END(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_END& pkt_);
-const bool Handle_s2c_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_ATTACK& pkt_);
-const bool Handle_s2c_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_DEATH& pkt_);
-const bool Handle_s2c_REQUEST_QUEST(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_REQUEST_QUEST& pkt_);
-const bool Handle_s2c_CLEAR_QUEST(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_CLEAR_QUEST& pkt_);
-const bool Handle_s2c_FIRE_PROJ(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::s2c_FIRE_PROJ& pkt_);
+const bool Handle_s2c_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_);
+const bool Handle_s2c_PING_PONG(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PING_PONG& pkt_);
+const bool Handle_s2c_APPEAR_OBJECT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_APPEAR_OBJECT& pkt_);
+const bool Handle_s2c_REMOVE_OBJECT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_REMOVE_OBJECT& pkt_);
+const bool Handle_s2c_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_MOVE& pkt_);
+const bool Handle_s2c_MONSTER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_);
+const bool Handle_s2c_MONSTER_AGGRO_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_START& pkt_);
+const bool Handle_s2c_MONSTER_AGGRO_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_END& pkt_);
+const bool Handle_s2c_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_ATTACK& pkt_);
+const bool Handle_s2c_PLAYER_DEATH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_DEATH& pkt_);
+const bool Handle_s2c_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_REQUEST_QUEST& pkt_);
+const bool Handle_s2c_CLEAR_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_CLEAR_QUEST& pkt_);
+const bool Handle_s2c_FIRE_PROJ(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_FIRE_PROJ& pkt_);
 
 class s2c_DummyPacketHandler {
-    using PacketHandlerFunc = const bool (*)(const ServerCore::S_ptr<ServerCore::PacketSession>&, const BYTE* const, const int32_t);
+    using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
     constinit static inline PacketHandlerFunc g_fpPacketHandler[UINT16_MAX] = {};
 public:
     static void Init() noexcept {
@@ -94,11 +94,11 @@ public:
     ~s2c_DummyPacketHandler() = delete;
 
 private:
-    template<HANDLE_PKT_ID packetId, typename PacketType, const bool(*const handler)(const ServerCore::S_ptr<ServerCore::PacketSession>&, const PacketType&)>
+    template<HANDLE_PKT_ID packetId, typename PacketType, const bool(*const handler)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const PacketType&)>
     constexpr static void RegisterHandler()noexcept {
-        g_fpPacketHandler[net_etoi(packetId)] = [](const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) -> const bool {
-            const uint8_t* const pkt_ptr = reinterpret_cast<const uint8_t* const>(pBuff_ + sizeof(ServerCore::PacketHeader));
-            flatbuffers::Verifier verifier{ pkt_ptr, static_cast<const size_t>(len_ - static_cast<const int32_t>(sizeof(ServerCore::PacketHeader))) };
+        g_fpPacketHandler[net_etoi(packetId)] = [](const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) -> const bool {
+            const uint8_t* const pkt_ptr = reinterpret_cast<const uint8_t* const>(pBuff_ + sizeof(NagiocpX::PacketHeader));
+            flatbuffers::Verifier verifier{ pkt_ptr, static_cast<const size_t>(len_ - static_cast<const int32_t>(sizeof(NagiocpX::PacketHeader))) };
             return verifier.VerifyBuffer<PacketType>() && handler(pSession_, *flatbuffers::GetRoot<PacketType>(pkt_ptr));
         };
     }

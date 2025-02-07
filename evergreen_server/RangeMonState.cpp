@@ -7,7 +7,7 @@
 #include "Projectile.h"
 #include "TimerRoutine.h"
 
-const State::EntityState RangeMonIdle::Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+const State::EntityState RangeMonIdle::Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
 	if (!awaker)
 		return RANGE_MON_STATE::IDLE;
@@ -18,7 +18,7 @@ const State::EntityState RangeMonIdle::Update(const float dt, const ComponentSys
     return RANGE_MON_STATE::IDLE;
 }
 
-const State::EntityState RangeMonChase::Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+const State::EntityState RangeMonChase::Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
     if (!awaker)
         return RANGE_MON_STATE::IDLE;
@@ -47,12 +47,12 @@ const State::EntityState RangeMonChase::Update(const float dt, const ComponentSy
 
    
 
-    ServerCore::TickTimer::BroadcastObjInSight(ServerCore::TickTimer::GetTempVecForInsightObj(), ServerCore::MoveBroadcaster::CreateMovePacket(comp_sys->GetOwnerEntity()));
+    NagiocpX::TickTimer::BroadcastObjInSight(NagiocpX::TickTimer::GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(comp_sys->GetOwnerEntity()));
 
     return RANGE_MON_STATE::CHASE;
 }
 
-const State::EntityState RangeMonAttack::Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+const State::EntityState RangeMonAttack::Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
     if (!awaker) {
         m_acc = 2.f;
@@ -68,7 +68,7 @@ const State::EntityState RangeMonAttack::Update(const float dt, const ComponentS
         return RANGE_MON_STATE::ATTACK;
     }
     m_acc = 2.f;
-    const auto proj = ServerCore::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(100);
+    const auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(100);
     proj.timer->m_pos = (comp_sys->GetComp<PositionComponent>()->pos);
 
     auto dir = awaker->GetComp<PositionComponent>()->pos - proj.timer->m_pos;
@@ -76,7 +76,7 @@ const State::EntityState RangeMonAttack::Update(const float dt, const ComponentS
    
     proj.timer->m_speed = dir * 10.f;
    
-    proj.timer->SelectObjList(ServerCore::TickTimer::GetTempVecForInsightObj());
+    proj.timer->SelectObjList(NagiocpX::TickTimer::GetTempVecForInsightObj());
     proj.timer->m_owner = comp_sys->GetOwnerEntity()->SharedFromThis();
 
     return RANGE_MON_STATE::ATTACK;

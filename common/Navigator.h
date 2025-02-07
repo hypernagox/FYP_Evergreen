@@ -1,5 +1,5 @@
 #pragma once
-#include "../ServerCore/Singleton.hpp"
+#include "../NagiocpX/Singleton.hpp"
 #include "NavigationMesh.h"
 
 enum NAVI_MESH_NUM : uint8_t
@@ -13,7 +13,7 @@ enum NAVI_MESH_NUM : uint8_t
 class Common::NavigationMesh;
 
 class Navigator
-	:public ServerCore::Singleton<Navigator>
+	:public NagiocpX::Singleton<Navigator>
 {
 	friend class Singleton;
 	Navigator();

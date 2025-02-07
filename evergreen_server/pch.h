@@ -10,7 +10,7 @@
 #include <CreateBuffer4Server.h>
 #include <c2s_PacketHandler.h>
 
-#include "ServerCorePch.h"
+#include "NagiocpXPch.h"
 #include "protocol_define.h"
 #include "ContentsComponent.h"
 #include "PathManager.h"
@@ -22,5 +22,5 @@
 
 
 using Vector3 = DirectX::SimpleMath::Vector3;
-using ServerCore::SendBuffer;
-using ServerCore::rcast;
+using NagiocpX::SendBuffer;
+using NagiocpX::rcast;

@@ -1,6 +1,6 @@
 #pragma once
-#include "ServerCorePch.h"
-using ServerCore::ContentsEntity;
+#include "NagiocpXPch.h"
+using NagiocpX::ContentsEntity;
 
 static inline Vector3 ToOriginVec3(const Nagox::Struct::Vec3* const v)noexcept {
 	return Vector3{ v->x(),v->y(),v->z() };

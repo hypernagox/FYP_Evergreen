@@ -73,13 +73,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)ServerCore\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)ServerCore\;$(SolutionDir)Protocols\;$(IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
@@ -174,7 +174,7 @@
     <ProjectReference Include="..\common\common.vcxproj">
       <Project>{c0cbe185-8506-4671-9f9a-813fd075e8c4}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\ServerCore\ServerCore.vcxproj">
+    <ProjectReference Include="..\NagiocpX\NagiocpX.vcxproj">
       <Project>{cac2b122-7251-4759-8d77-04cd547b7348}</Project>
     </ProjectReference>
   </ItemGroup>

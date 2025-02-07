@@ -13,10 +13,10 @@ public:
 public:
 	virtual ~QuestSystem()noexcept;
 public:
-	void PostCheckQuestAchieve(ServerCore::S_ptr<ServerCore::ContentsEntity> key_entity)noexcept;
+	void PostCheckQuestAchieve(NagiocpX::S_ptr<NagiocpX::ContentsEntity> key_entity)noexcept;
 	bool AddQuest(Quest* const quest)noexcept;
 private:
-	void CheckQuestAchieve(const ServerCore::S_ptr<ServerCore::ContentsEntity> key_entity)noexcept;
+	void CheckQuestAchieve(const NagiocpX::S_ptr<NagiocpX::ContentsEntity> key_entity)noexcept;
 private:
 	// TODO: 바이트정렬
 	Quest* m_arrQuests[MAX_NUM_OF_QUESTS] = { nullptr };

@@ -18,6 +18,6 @@ void PlayerDeath::ProcessDeath() noexcept
 {
 	const auto owner = GetOwnerEntityRaw();
 	const auto pkt = Create_s2c_PLAYER_DEATH(owner->GetObjectID(), { 0,0,0 });
-	owner->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(pkt);
+	owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(pkt);
 }
 

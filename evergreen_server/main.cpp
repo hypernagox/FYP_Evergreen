@@ -10,14 +10,14 @@
 #include "ContentsField.h"
 #include "MoveBroadcaster.h"
 
-using namespace ServerCore;
+using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 101;
 constexpr const int32_t NUM_OF_MAX_USER = 502;
 
 extern std::vector<DirectX::BoundingBox> boxes;
 
 class ContentsInitiator
-	: public ServerCore::Initiator
+	: public NagiocpX::Initiator
 {
 public:
 	virtual void GlobalInitialize()noexcept override
@@ -80,7 +80,7 @@ int main()
 	ContentsInitiator con_init;
 	ClusterPredicate broad_helper;
 
-	ServerCore::PrintKoreaRealTime("Server Start !");
+	NagiocpX::PrintKoreaRealTime("Server Start !");
 	
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
@@ -91,11 +91,11 @@ int main()
 	Mgr(FieldMgr)->SetNumOfNPC<NUM_OF_NPC>();
 	Mgr(FieldMgr)->RegisterField<ContentsField>(0);
 	
-	const auto pServerService = new ServerCore::ServerService
+	const auto pServerService = new NagiocpX::ServerService
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
-			, ServerCore::NetAddress{ L"0.0.0.0",7777 }
-			, ServerCore::xnew<ClientSession>
+			, NagiocpX::NetAddress{ L"0.0.0.0",7777 }
+			, NagiocpX::xnew<ClientSession>
 			, c2s_PacketHandler::GetPacketHandlerList()
 			, NUM_OF_MAX_USER
 		);

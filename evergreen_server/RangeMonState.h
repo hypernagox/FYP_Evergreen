@@ -18,9 +18,9 @@ public:
 		:State{ RANGE_MON_STATE::IDLE,fsm } {
 	}
 public:
-	virtual const  State::EntityState Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker)noexcept override;
-	virtual void Enter(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker)noexcept override {}
-	virtual void Exit(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker)noexcept override {}
+	virtual const  State::EntityState Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
+	virtual void Enter(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override {}
+	virtual void Exit(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override {}
 	virtual void Reset()noexcept {}
 private:
 
@@ -34,9 +34,9 @@ public:
 		:State{ RANGE_MON_STATE::CHASE,fsm } {
 	}
 public:
-	virtual const  State::EntityState Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker)noexcept override;
-	virtual void Enter(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker)noexcept override {}
-	virtual void Exit(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker)noexcept override {}
+	virtual const  State::EntityState Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
+	virtual void Enter(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override {}
+	virtual void Exit(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override {}
 	virtual void Reset()noexcept {}
 private:
 
@@ -50,9 +50,9 @@ public:
 		:State{ RANGE_MON_STATE::ATTACK,fsm } {
 	}
 public:
-	virtual const  State::EntityState Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker)noexcept override;
-	virtual void Enter(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker)noexcept override {}
-	virtual void Exit(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<ServerCore::ContentsEntity>& awaker)noexcept override {}
+	virtual const  State::EntityState Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
+	virtual void Enter(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override {}
+	virtual void Exit(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override {}
 	virtual void Reset()noexcept {}
 private:
 	float m_acc = 0.f;

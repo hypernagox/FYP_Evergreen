@@ -2,7 +2,7 @@
 #include "NagoxDeleter.h"
 
 class Regenerator
-	:public ServerCore::NagoxDeleter
+	:public NagiocpX::NagoxDeleter
 {
 public:
 	virtual void ProcessDestroy(S_ptr<ContentsEntity> entity)noexcept override;

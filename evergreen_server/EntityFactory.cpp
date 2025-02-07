@@ -12,7 +12,7 @@
 #include "Regenerator.h"
 #include "RangeMonState.h"
 
-namespace ServerCore
+namespace NagiocpX
 {
 	S_ptr<ContentsEntity> EntityFactory::CreateMonster(const EntityBuilder& b) noexcept
 	{

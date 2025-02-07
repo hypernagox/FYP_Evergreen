@@ -38,9 +38,9 @@ def parse_fbs(file_path):
         elif field_type.startswith('[') and field_type.endswith(']'):
             elem_type = field_type[1:-1]
             if elem_type in scalar_types:
-                return f"std::vector<{scalar_types[elem_type]}>"
+                return f"Vector<{scalar_types[elem_type]}>"
             else:
-                return f"std::vector<{elem_type.replace('.', '::')}>"
+                return f"Vector<{elem_type.replace('.', '::')}>"
         else:
             return field_type.replace('.', '::')
 
@@ -85,29 +85,47 @@ def main():
         all_tables.extend(tables)
 
     start_id = 1000
-    all_packets = []
+    c2s_packets = []
+    s2c_packets = []
+    c2s_start_id = 0
+    s2c_start_id = 0
     for table in all_tables:
-        all_packets.append({"name": table['name'], "id": start_id})
-        start_id += 1
+        if table['name'].startswith('c2s'):
+            c2s_packets.append({"name": table['name'], "id": start_id + c2s_start_id})
+            c2s_start_id += 1
+        elif table['name'].startswith('s2c'):
+            s2c_packets.append({"name": table['name'], "id": start_id + s2c_start_id})
+            s2c_start_id += 1
 
     c2s_tables = [table for table in all_tables if table['name'].startswith('c2s')]
     s2c_tables = [table for table in all_tables if table['name'].startswith('s2c')]
 
     context_c2s = {
-        'all_packets': all_packets,
+        'handle_packets': c2s_packets,
+        'create_packets': s2c_packets,
         'packets': c2s_tables,
         'handler_class': 'c2s_PacketHandler',
-        'namespace_prefix': 'ServerCore::'
+        'namespace_prefix': 'NagiocpX::'
     }
     render_cpp(context_c2s, "create_packet_handler.h.j2", "c2s_PacketHandler.h")
 
     context_s2c = {
-        'all_packets': all_packets,
+        'handle_packets': s2c_packets,
+        'create_packets': c2s_packets,
         'packets': s2c_tables,
         'handler_class': 's2c_PacketHandler',
         'namespace_prefix': 'NetHelper::'
     }
     render_cpp(context_s2c, "create_packet_handler.h.j2", "s2c_PacketHandler.h")
 
+    context_s2c_dummy = {
+        'handle_packets': s2c_packets,
+        'create_packets': c2s_packets,
+        'packets': s2c_tables,
+        'handler_class': 's2c_DummyPacketHandler',
+        'namespace_prefix': 'NagiocpX::'
+    }
+    render_cpp(context_s2c_dummy, "create_packet_handler.h.j2", "s2c_DummyPacketHandler.h")
+
 if __name__ == "__main__":
-    main()
+    main()  

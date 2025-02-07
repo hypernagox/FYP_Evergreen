@@ -5,7 +5,7 @@
 #include "PositionComponent.h"
 #include "TickTimer.h"
 
-using namespace ServerCore;
+using namespace NagiocpX;
 
 ClusterPredicate::ClusterPredicate()
 {
@@ -47,7 +47,7 @@ bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsE
 	const bool bRes = (50 * 50) >= dist;
 	if (bRes)
 	{
-		if (const auto npc_timer = b->GetIocpComponent<ServerCore::TickTimer>())
+		if (const auto npc_timer = b->GetIocpComponent<NagiocpX::TickTimer>())
 		{
 			const uint32_t awake_dist = npc_timer->GetAwakeDistance();
 			if (awake_dist >= dist)

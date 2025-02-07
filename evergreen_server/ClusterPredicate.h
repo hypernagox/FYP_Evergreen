@@ -2,11 +2,11 @@
 #include "pch.h"
 #include "BroadcastHelper.h"
 
-class ServerCore::SendBuffer;
-class ServerCore::ContentsEntity;
+class NagiocpX::SendBuffer;
+class NagiocpX::ContentsEntity;
 
 class ClusterPredicate
-	:public ServerCore::BroadcastHelper
+	:public NagiocpX::BroadcastHelper
 {
 public:
 	ClusterPredicate();

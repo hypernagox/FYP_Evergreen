@@ -13,7 +13,7 @@ bool isValidIPAddress(std::wstring_view ipAddress) {
 extern Vector3 SetTerrainPos(const Vector3& v);
 
 class ContentsInitiator
-	: public ServerCore::Initiator
+	: public NagiocpX::Initiator
 {
 public:
 	virtual void GlobalInitialize()noexcept override
@@ -55,11 +55,11 @@ int main()
 	Mgr(CoreGlobal)->Init();
 	s2c_DummyPacketHandler::Init();
 
-	const auto pClientService = new ServerCore::ClientService
+	const auto pClientService = new NagiocpX::ClientService
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
-			, ServerCore::NetAddress{ L"3.39.255.229",7777 }
-			, ServerCore::xnew<ServerSession>
+			, NagiocpX::NetAddress{ L"3.39.255.229",7777 }
+			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
 			, 10
 		);
@@ -85,11 +85,11 @@ int main()
 	//int num_dm = 0;
 	//std::cin >> num_dm;
 	//
-	//const auto pClientService = new ServerCore::ClientService
+	//const auto pClientService = new NagiocpX::ClientService
 	//	(
 	//		Mgr(CoreGlobal)->GetIocpCore()
-	//		, ServerCore::NetAddress{ inputIP,7777 }
-	//		, ServerCore::xnew<ServerSession>
+	//		, NagiocpX::NetAddress{ inputIP,7777 }
+	//		, NagiocpX::xnew<ServerSession>
 	//		, s2c_DummyPacketHandler::GetPacketHandlerList()
 	//		, num_dm
 	//	);

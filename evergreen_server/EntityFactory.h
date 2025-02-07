@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 
-namespace ServerCore
+namespace NagiocpX
 {
 	struct EntityBuilder
 	{
@@ -23,5 +23,5 @@ namespace ServerCore
 	};
 }
 
-using ServerCore::EntityBuilder;
-using ServerCore::EntityFactory;
+using NagiocpX::EntityBuilder;
+using NagiocpX::EntityFactory;

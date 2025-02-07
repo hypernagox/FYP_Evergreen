@@ -17,7 +17,7 @@
 #include "ClusterPredicate.h"
 #include "Projectile.h"
 
-using namespace ServerCore;
+using namespace NagiocpX;
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -26,20 +26,20 @@ flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 	return &buillder;
 }
 
-const bool Handle_c2s_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
+const bool Handle_c2s_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
 {
 	pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp());
 	return true;
 }
 
-const bool Handle_c2s_PING_PONG(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PING_PONG& pkt_)
+const bool Handle_c2s_PING_PONG(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PING_PONG& pkt_)
 {
 	//std::cout << Mgr(TimeMgr)->GetServerTimeStamp() << std::endl;
 	pSession_ << Create_s2c_PING_PONG(Mgr(TimeMgr)->GetServerTimeStamp());
 	return true;
 }
 
-const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_ENTER& pkt_)
+const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_ENTER& pkt_)
 {
 	auto entity = pSession_->GetOwnerEntity();
 
@@ -57,7 +57,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	//	, s
 	//	, entity
 	//);
-	//ServerCore::PrintLogEndl("enter");
+	//NagiocpX::PrintLogEndl("enter");
 	//auto pbuff = Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER);
 	//Mgr(WorldMgr)->GetWorld(0)->GetSector({ 0,0 })->BroadCastEnqueue(std::move(pbuff));
 	//
@@ -87,7 +87,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	return true;
 }
 
-const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_)
+const bool Handle_c2s_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_)
 {
 	if (pSession_->GetOwnerEntity()->IsPendingClusterEntry())return true;
 	DO_BENCH_GLOBAL_THIS_FUNC;
@@ -111,15 +111,15 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 	ClusterPredicate helper;
 	//pSession_->SendAsync(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()));
 	pSession_->SendAsync(helper.CreateMovePacket(pSession_->GetOwnerEntity()));
-	pSession_->GetOwnerEntity()->GetComp<ServerCore::MoveBroadcaster>()->BroadcastMove(helper);
-	//pSession_->GetOwnerEntity()->GetComp<ServerCore::SectorInfoHelper>()->ImmigrationSector(0, 0);
+	pSession_->GetOwnerEntity()->GetComp<NagiocpX::MoveBroadcaster>()->BroadcastMove(helper);
+	//pSession_->GetOwnerEntity()->GetComp<NagiocpX::SectorInfoHelper>()->ImmigrationSector(0, 0);
 	//const auto en = pSession_->GetOwnerEntity();
 	//g_sector->BroadCastParallel(MoveBroadcaster::CreateMovePacket(en), s, en);
 	//pSession_->GetCurWorld()->GetStartSector()->BroadCastParallel(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()), s, pSession_->GetOwnerEntity(),true);
 	return true;
 }
 
-const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_)
+const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_)
 {
 	DO_BENCH_GLOBAL_THIS_FUNC;
 	
@@ -182,7 +182,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 	return true;
 }
 
-const bool Handle_c2s_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_DEATH& pkt_)
+const bool Handle_c2s_PLAYER_DEATH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_DEATH& pkt_)
 {
 	const auto owner = pSession_->GetOwnerEntity();
 
@@ -192,10 +192,10 @@ const bool Handle_c2s_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSes
 	return true;
 }
 
-const bool Handle_c2s_REQUEST_QUEST(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_)
+const bool Handle_c2s_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_)
 {
 	const auto owner = pSession_->GetOwnerEntity();
-	const auto q = ServerCore::xnew<KillFoxQuest>(0);
+	const auto q = NagiocpX::xnew<KillFoxQuest>(0);
 	if (!owner->GetComp<QuestSystem>()->AddQuest(q))
 	{
 		xdelete<Quest>(q);
@@ -207,7 +207,7 @@ const bool Handle_c2s_REQUEST_QUEST(const ServerCore::S_ptr<ServerCore::PacketSe
 	return true;
 }
 
-const bool Handle_c2s_FIRE_PROJ(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_FIRE_PROJ& pkt_)
+const bool Handle_c2s_FIRE_PROJ(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_FIRE_PROJ& pkt_)
 {
 	const auto pOwner = pSession_->GetOwnerEntity();
 

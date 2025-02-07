@@ -8,11 +8,11 @@ QuestSystem::~QuestSystem() noexcept
 	for (uint8_t i = 0; i < MAX_NUM_OF_QUESTS; ++i)
 	{
 		const auto q = m_arrQuests[i];
-		if (q)ServerCore::xdelete<Quest>(q);
+		if (q)NagiocpX::xdelete<Quest>(q);
 	}
 }
 
-void QuestSystem::PostCheckQuestAchieve(ServerCore::S_ptr<ServerCore::ContentsEntity> key_entity) noexcept
+void QuestSystem::PostCheckQuestAchieve(NagiocpX::S_ptr<NagiocpX::ContentsEntity> key_entity) noexcept
 {
 	GetOwnerEntityRaw()->GetQueueabler()->EnqueueAsyncPushOnly(&QuestSystem::CheckQuestAchieve, this, std::move(key_entity));
 }
@@ -42,7 +42,7 @@ bool QuestSystem::AddQuest(Quest* const quest) noexcept
 	return false;
 }
 
-void QuestSystem::CheckQuestAchieve(const ServerCore::S_ptr<ServerCore::ContentsEntity> key_entity) noexcept
+void QuestSystem::CheckQuestAchieve(const NagiocpX::S_ptr<NagiocpX::ContentsEntity> key_entity) noexcept
 {
 	const auto pOwner = GetOwnerEntityRaw();
 	const auto key_entity_raw = key_entity.get();
@@ -53,7 +53,7 @@ void QuestSystem::CheckQuestAchieve(const ServerCore::S_ptr<ServerCore::Contents
 		{
 			m_arrQuests[i] = nullptr;
 			q->OnReward(pOwner);
-			ServerCore::xdelete<Quest>(q);
+			NagiocpX::xdelete<Quest>(q);
 		}
 	}
 }
