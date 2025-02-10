@@ -100,7 +100,7 @@ int main()
 			, NUM_OF_MAX_USER
 		);
 	
-	ASSERT_CRASH(pServerService->Start());
+	NAGOX_ASSERT(pServerService->Start());
 	
 	std::atomic_thread_fence(std::memory_order_seq_cst);
 	

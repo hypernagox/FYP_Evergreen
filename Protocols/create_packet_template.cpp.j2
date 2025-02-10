@@ -28,7 +28,6 @@ static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendB
     header->pkt_size = packetSize;
     header->pkt_id = static_cast<c_uint16>(pktId);
     sendBuffer->Close(packetSize);
-    builder.Clear();
     return sendBuffer;
 }
 
@@ -48,6 +47,7 @@ static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendB
     {% endif %}
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     {% for field in table.fields %}
     {% if field.type == "std::string_view" %}
     const auto {{ field.name }}_offset = builder.CreateString({{ field.name }});

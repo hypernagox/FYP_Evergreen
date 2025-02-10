@@ -43,7 +43,7 @@ NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 
 void PlayerProjectile::StartRoutine() noexcept
 {
-	auto pkt = Create_s2c_FIRE_PROJ(m_proj_id, ::ToFlatVec3(m_pos), ::ToFlatVec3(m_speed));
+	auto pkt = Create_s2c_FIRE_PROJ(m_proj_id, ::ToFlatVec(m_pos), ::ToFlatVec(m_speed));
 	m_owner->GetComp<NagiocpX::MoveBroadcaster>()->BroadcastPacket(pkt);
 	m_owner->GetSession()->SendAsync(std::move(pkt));
 }
@@ -57,7 +57,7 @@ void PlayerProjectile::ProcessRemove() noexcept
 
 void MonProjectile::StartRoutine() noexcept
 {
-	auto pkt = Create_s2c_FIRE_PROJ(m_proj_id, ::ToFlatVec3(m_pos), ::ToFlatVec3(m_speed));
+	auto pkt = Create_s2c_FIRE_PROJ(m_proj_id, ::ToFlatVec(m_pos), ::ToFlatVec(m_speed));
 	for (const auto& [obj, col] : m_obj_list) {
 		obj->GetSession()->SendAsync(pkt);
 	}

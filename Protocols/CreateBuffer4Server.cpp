@@ -18,7 +18,6 @@ static NagiocpX::S_ptr<NagiocpX::SendBuffer> CreateSendBuffer(flatbuffers::FlatB
     header->pkt_size = packetSize;
     header->pkt_id = static_cast<c_uint16>(pktId);
     sendBuffer->Close(packetSize);
-    builder.Clear();
     return sendBuffer;
 }
 
@@ -28,6 +27,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_LOGIN(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto obj_id_value = obj_id;
     const auto server_time_stamp_value = server_time_stamp;
     const auto serializeds2c_LOGIN = Nagox::Protocol::Creates2c_LOGIN(
@@ -43,6 +43,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PING_PONG(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto server_time_stamp_value = server_time_stamp;
     const auto serializeds2c_PING_PONG = Nagox::Protocol::Creates2c_PING_PONG(
         builder
@@ -59,6 +60,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_APPEAR_OBJECT(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto obj_id_value = obj_id;
     const auto group_type_value = group_type;
     const auto obj_type_info_value = obj_type_info;
@@ -78,6 +80,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_REMOVE_OBJECT(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto obj_id_value = obj_id;
     const auto serializeds2c_REMOVE_OBJECT = Nagox::Protocol::Creates2c_REMOVE_OBJECT(
         builder
@@ -96,6 +99,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MOVE(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto obj_id_value = obj_id;
     const auto pos_offset = &pos;
     const auto vel_offset = &vel;
@@ -121,6 +125,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_ATTACK(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto obj_id_value = obj_id;
     const auto player_id_value = player_id;
     const auto dmg_value = dmg;
@@ -139,6 +144,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_AGGRO_START(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto group_type_value = group_type;
     const auto obj_type_info_value = obj_type_info;
     const auto serializeds2c_MONSTER_AGGRO_START = Nagox::Protocol::Creates2c_MONSTER_AGGRO_START(
@@ -155,6 +161,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_AGGRO_END(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto group_type_value = group_type;
     const auto obj_type_info_value = obj_type_info;
     const auto serializeds2c_MONSTER_AGGRO_END = Nagox::Protocol::Creates2c_MONSTER_AGGRO_END(
@@ -172,6 +179,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PLAYER_ATTACK(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto atk_player_id_value = atk_player_id;
     const auto body_angle_value = body_angle;
     const auto atk_pos_offset = &atk_pos;
@@ -190,6 +198,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PLAYER_DEATH(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto player_id_value = player_id;
     const auto rebirth_pos_offset = &rebirth_pos;
     const auto serializeds2c_PLAYER_DEATH = Nagox::Protocol::Creates2c_PLAYER_DEATH(
@@ -205,6 +214,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_REQUEST_QUEST(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto quest_id_value = quest_id;
     const auto serializeds2c_REQUEST_QUEST = Nagox::Protocol::Creates2c_REQUEST_QUEST(
         builder
@@ -219,6 +229,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CLEAR_QUEST(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto quest_id_value = quest_id;
     const auto is_clear_value = is_clear;
     const auto serializeds2c_CLEAR_QUEST = Nagox::Protocol::Creates2c_CLEAR_QUEST(
@@ -236,6 +247,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FIRE_PROJ(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     const auto proj_id_value = proj_id;
     const auto pos_offset = &pos;
     const auto vel_offset = &vel;

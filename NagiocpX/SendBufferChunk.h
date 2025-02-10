@@ -13,16 +13,18 @@ namespace NagiocpX
 	{
 		static constexpr const inline uint32_t SEND_BUFFER_CHUNK_SIZE = 0x200000; // 2MB
 		friend class SendBufferMgr;
+		friend class SendBuffer;
 	public:
 		SendBufferChunk()noexcept = default;
 		~SendBufferChunk()noexcept { VirtualFree(m_buffer, 0, MEM_RELEASE); }
+	private:
 		void Close(c_uint32 writeSize_)noexcept
 		{
 			NAGOX_ASSERT(true == m_bOpen);
 			m_bOpen = false;
 			m_usedSize += writeSize_;
+			IncRef();
 		}
-	private:
 		S_ptr<SendBuffer> Open(c_uint32 allocSize)noexcept;
 		void Reset()noexcept { m_curPage = m_usedSize = m_bOpen = false; }
 		const bool IsOpen()const noexcept { return m_bOpen; }

@@ -278,7 +278,5 @@ namespace NagiocpX
 	}
 
 	template<typename T, typename OUT_VEC, typename IN_VEC> requires std::derived_from<T, ContentsComponent>
-	inline void CreateEntityCompArr(OUT_VEC& o_v, const IN_VEC& i_v)noexcept {
-		std::construct_at(&o_v, CreateEntityCompArr<T>(i_v));
-	}
+	inline void CreateEntityCompArr(OUT_VEC& o_v, const IN_VEC& i_v)noexcept { CreateEntityCompArr<T>(i_v).swap(o_v); }
 }

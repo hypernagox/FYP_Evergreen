@@ -62,7 +62,7 @@ S_ptr<SendBuffer> ClusterPredicate::CreateAddPacket(const ContentsEntity* const 
 {
 	const auto& pEntity = entity_ptr->GetComp<PositionComponent>();
 
-	return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), ToFlatVec3(pEntity->pos));
+	return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos());
 }
 
 S_ptr<SendBuffer> ClusterPredicate::CreateRemovePacket(const uint32_t obj_id) const noexcept
@@ -75,9 +75,9 @@ S_ptr<SendBuffer> ClusterPredicate::CreateMovePacket(const ContentsEntity* const
 	const auto pos_comp = entity_ptr->GetComp<PositionComponent>();
 	return Create_s2c_MOVE(
 		pos_comp->GetOwnerObjectID(),
-		ToFlatVec3(pos_comp->pos),
-		ToFlatVec3(pos_comp->vel),
-		ToFlatVec3(pos_comp->accel),
+		pos_comp->GetPktPos(),
+		pos_comp->GetPktVel(),
+		pos_comp->GetPktAccel(),
 		pos_comp->body_angle,
 		pos_comp->time_stamp);
 }

@@ -45,7 +45,7 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 
 	//pSession_->SetEntity(entity);
 	//entity->AddIocpComponent<Queueabler>();
-	entity->AddComp<PositionComponent>()->pos = ToOriginVec3(pkt_.pos());
+	entity->AddComp<PositionComponent>()->pos = ToDxVec(pkt_.pos());
 	entity->AddComp<AABBCollider>()->SetAABB(entity->GetComp<PositionComponent>(), { 1,2,1.5f });
 
 	//Mgr(WorldMgr)->GetWorld(0) ->GetStartSector()->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER));
@@ -92,13 +92,15 @@ const bool Handle_c2s_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSess
 	if (pSession_->GetOwnerEntity()->IsPendingClusterEntry())return true;
 	DO_BENCH_GLOBAL_THIS_FUNC;
 	//if(pSession_->GetObjectID()!=1)
+	
 	//std::cout << "move" << std::endl;
 	const auto& pEntity = pSession_->GetOwnerEntity()->GetComp<PositionComponent>();
-	pEntity->pos = ToOriginVec3(pkt_.pos());
-	pEntity->vel = ToOriginVec3(pkt_.vel());
-	pEntity->accel = ToOriginVec3(pkt_.accel());
-	pEntity->body_angle = pkt_.body_angle();
-	pEntity->time_stamp = pkt_.time_stamp();
+	pEntity->SetMovementInfo(pkt_);
+	//pEntity->pos = ToDxVec(pkt_.pos());
+	//pEntity->vel = ToDxVec(pkt_.vel());
+	//pEntity->accel = ToDxVec(pkt_.accel());
+	//pEntity->body_angle = pkt_.body_angle();
+	//pEntity->time_stamp = pkt_.time_stamp();
 	//Vector<Sector*> s{ pSession_->GetCurCluster() };
 
 	//g_sector->BroadCastEnqueue(Create_s2c_MOVE(GetBuilder(), pEntity->GetObjectID(),
@@ -129,7 +131,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
 	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
-	pos_comp->pos = ::ToOriginVec3(pkt_.atk_pos());
+	pos_comp->pos = ::ToDxVec(pkt_.atk_pos());
 	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pkt_.body_angle());
 
 	//std::cout << "MY angle: " << pkt_.body_angle() << '\n';

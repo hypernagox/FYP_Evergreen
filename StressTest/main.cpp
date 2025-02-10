@@ -58,10 +58,10 @@ int main()
 	const auto pClientService = new NagiocpX::ClientService
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
-			, NagiocpX::NetAddress{ L"3.39.255.229",7777 }
+			, NagiocpX::NetAddress{ L"127.0.0.1",7777 }
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 10
+			, 500
 		);
 	
 	ASSERT_CRASH(pClientService->Start());

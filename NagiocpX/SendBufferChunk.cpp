@@ -21,6 +21,6 @@ namespace NagiocpX
 			m_usedSize += (~(m_curPage - old_page - 1)) & ((m_curPage << 12) - m_usedSize);
 		}
 
-		return MakeShared<SendBuffer>(S_ptr<SendBufferChunk>{this}, Buffer(), allocSize);
+		return MakeShared<SendBuffer>(this, Buffer(), allocSize);
 	}
 }

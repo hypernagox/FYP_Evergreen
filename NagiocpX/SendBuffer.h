@@ -12,13 +12,13 @@ namespace NagiocpX
 		:public RefCountable
 	{
 	public:
-		SendBuffer(S_ptr<SendBufferChunk>&& owner, BYTE* const buffer, c_uint32 allocSize_)noexcept
-			: m_pOwnerChunk{ std::move(owner) }
+		constexpr inline SendBuffer(SendBufferChunk* const owner, BYTE* const buffer, c_uint32 allocSize_)noexcept
+			: m_pOwnerChunk{ owner }
 			, m_buffer{ buffer }
 			, m_allocSize{ allocSize_ }
 			, m_writeSize{ 0 }
 		{}
-		~SendBuffer()noexcept = default;
+		constexpr inline ~SendBuffer()noexcept { m_pOwnerChunk->DecRef<SendBufferChunk>(); }
 	public:
 		BYTE* const Buffer()noexcept { return m_buffer; }
 		c_uint32 WriteSize()const noexcept { return m_writeSize; }
@@ -27,6 +27,6 @@ namespace NagiocpX
 		BYTE* const m_buffer;
 		c_uint32 m_allocSize;
 		uint32 m_writeSize = 0;
-		const S_ptr<SendBufferChunk> m_pOwnerChunk;
+		SendBufferChunk* const m_pOwnerChunk;
 	};
 }
