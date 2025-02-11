@@ -151,8 +151,8 @@ namespace NagiocpX
 		const int32 sessionCount = GetMaxSessionCount();
 		for (int i = 0; i < sessionCount; ++i)
 		{
-			auto pSession = CreateSession();
-			if (false == pSession->Connect())
+			auto pSession = PopSession();
+			if (!pSession ||false == pSession->Connect())
 				return false;
 			Sleep(10);
 		}

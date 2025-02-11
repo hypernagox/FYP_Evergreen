@@ -12,7 +12,7 @@
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 101;
-constexpr const int32_t NUM_OF_MAX_USER = 502;
+constexpr const int32_t NUM_OF_MAX_USER = 2002;
 
 extern std::vector<DirectX::BoundingBox> boxes;
 

@@ -61,7 +61,7 @@ int main()
 			, NagiocpX::NetAddress{ L"127.0.0.1",7777 }
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 500
+			, 2000
 		);
 	
 	ASSERT_CRASH(pClientService->Start());
@@ -100,6 +100,25 @@ int main()
 	//	num_th
 	//  , &con_init
 	//);
+
+	uint64_t accCount = 0;
+	uint64_t accTime = 0;
+	const auto con = NagiocpX::Service::GetMainService()->GetAllSessionContainer();
+	
+	for (const auto& c : con)
+	{
+		if (const auto con = c.ptr.load())
+		{
+			const auto seesion = (ServerSession*)con->GetSession();
+			accCount += seesion->m_moveCount;
+			accTime += seesion->m_accDelayMs;
+		}
+	}
+
+	if (accTime)
+		std::cout << "\n\n\nDelay AVG: " << ((float)accTime) / accCount << std::endl;
+
+	system("pause");
 }
 
 

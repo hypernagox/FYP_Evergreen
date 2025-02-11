@@ -72,5 +72,6 @@ namespace NagiocpX
 			PrintLogEndl("\n\n\nHeap corruption detected!\n");
 		}
 #endif
+		system("pause");
 	}
 }
