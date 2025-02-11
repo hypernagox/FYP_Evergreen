@@ -128,7 +128,7 @@ inline float4 RigTransform(float4 posL, uint i, uint indices, float4 weights)
 #define ObjectToWorldNormal(normal) float4(LocalToWorldNormal(normal.xyz), 0.0f)
 
 #ifdef GENERATE_SHADOWS
-#define WorldToClipPos(pos, vin) mul(pos, gLightViewProjClip[vin.InstanceID]);
+#define WorldToClipPos(pos, vin) mul(pos, gLightViewProjClip[vin.InstanceID % 4]);
 
 #else
 #define WorldToClipPos(pos, vin) mul(mul(pos, gView), gProj)
@@ -143,7 +143,7 @@ inline float3 LocalToWorldNormal(float3 normalL)
 }
 
 #ifdef GENERATE_SHADOWS
-#define ConstructPosP(vin, vout) vout.PosP = mul(vout.PosW, gLightViewProj[vin.InstanceID])
+#define ConstructPosP(vin, vout) vout.PosP = mul(vout.PosW, gLightViewProj[vin.InstanceID % 4])
 #define ConstructSSAOPosH(vin, vout) vout.SSAOPosH = float4(0.0f, 0.0f, 0.0f, 1.0f)
 #define ConstructPrevPosH(vin, vout) vout.PrevPosH = float4(0.0f, 0.0f, 0.0f, 1.0f)
 
@@ -166,7 +166,7 @@ inline float3 LocalToWorldNormal(float3 normalL)
     ConstructPosP(vin, vout);                                                       \
     ConstructPrevPosH(vin, vout);                                                   \
 
-#ifdef GENERATE_SHADOWS
+#if defined(GENERATE_SHADOWS) && !defined(USE_CUSTOM_SHADOWPS)
 
 void ShadowPS(VertexOut pin)
 {

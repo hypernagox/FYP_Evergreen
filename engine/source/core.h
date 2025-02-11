@@ -66,6 +66,8 @@ namespace udsdx
 		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
 
+		void IncrementSRVHeapDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE* cpuDescriptorOut, D3D12_GPU_DESCRIPTOR_HANDLE* gpuDescriptorOut);
+
 		int GetClientPosX() const;
 		int GetClientPosY() const;
 		int GetClientWidth() const;

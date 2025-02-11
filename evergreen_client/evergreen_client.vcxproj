@@ -276,6 +276,8 @@
     <ClCompile Include="ServerObject.cpp" />
     <ClCompile Include="ServerObjectMgr.cpp" />
     <ClCompile Include="ServerSession.cpp" />
+    <ClCompile Include="TerrainData.cpp" />
+    <ClCompile Include="TerrainInstanceRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientNetwork\ClientNetwork.vcxproj">
@@ -317,6 +319,8 @@
     <ClInclude Include="ServerObject.h" />
     <ClInclude Include="ServerObjectMgr.h" />
     <ClInclude Include="ServerSession.h" />
+    <ClInclude Include="TerrainData.h" />
+    <ClInclude Include="TerrainInstanceRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\create_packet_handler.h.j2" />

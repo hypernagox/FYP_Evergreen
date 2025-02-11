@@ -1090,6 +1090,13 @@ namespace udsdx
 		return m_dsvHeap->GetCPUDescriptorHandleForHeapStart();
 	}
 
+	void Core::IncrementSRVHeapDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE* cpuDescriptorOut, D3D12_GPU_DESCRIPTOR_HANDLE* gpuDescriptorOut)
+	{
+		*cpuDescriptorOut = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_srvHeap->GetCPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize);
+		*gpuDescriptorOut = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_srvHeap->GetGPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize);
+		m_srvHeapSize++;
+	}
+
 	int Core::GetClientPosX() const
 	{
 		return m_clientPosX;

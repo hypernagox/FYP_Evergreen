@@ -37,6 +37,28 @@ namespace udsdx
 			m_psByteCode->GetBufferSize()
 		};
 
+		// if HS and DS shaders exist, compile and set them
+		ComPtr<ID3DBlob> hsByteCode = nullptr;
+		ComPtr<ID3DBlob> dsByteCode = nullptr;
+		try
+		{
+			hsByteCode = d3dUtil::CompileShader(m_path, nullptr, "HS", "hs_5_0");
+			dsByteCode = d3dUtil::CompileShader(m_path, nullptr, "DS", "ds_5_0");
+
+			psoDesc.HS =
+			{
+				reinterpret_cast<BYTE*>(hsByteCode->GetBufferPointer()),
+				hsByteCode->GetBufferSize()
+			};
+			psoDesc.DS =
+			{
+				reinterpret_cast<BYTE*>(dsByteCode->GetBufferPointer()),
+				dsByteCode->GetBufferSize()
+			};
+			psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+		}
+		catch (const DxException&) {}
+
 		{
 			auto m_vsByteCode = d3dUtil::CompileShader(m_path, nullptr, "VS", "vs_5_0");
 
@@ -108,6 +130,28 @@ namespace udsdx
 				m_psByteCode->GetBufferSize()
 			};
 
+			// if HS and DS shaders exist, compile and set them
+			ComPtr<ID3DBlob> hsByteCode = nullptr;
+			ComPtr<ID3DBlob> dsByteCode = nullptr;
+			try
+			{
+				hsByteCode = d3dUtil::CompileShader(m_path, defines, "HS", "hs_5_0");
+				dsByteCode = d3dUtil::CompileShader(m_path, defines, "DS", "ds_5_0");
+
+				psoDesc.HS =
+				{
+					reinterpret_cast<BYTE*>(hsByteCode->GetBufferPointer()),
+					hsByteCode->GetBufferSize()
+				};
+				psoDesc.DS =
+				{
+					reinterpret_cast<BYTE*>(dsByteCode->GetBufferPointer()),
+					dsByteCode->GetBufferSize()
+				};
+				psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+			}
+			catch (const DxException&) {}
+
 			ThrowIfFailed(pDevice->CreateGraphicsPipelineState(
 				&psoDesc,
 				IID_PPV_ARGS(m_shadowPipelineState.GetAddressOf())
@@ -139,6 +183,28 @@ namespace udsdx
 				reinterpret_cast<BYTE*>(m_psByteCode->GetBufferPointer()),
 				m_psByteCode->GetBufferSize()
 			};
+
+			// if HS and DS shaders exist, compile and set them
+			ComPtr<ID3DBlob> hsByteCode = nullptr;
+			ComPtr<ID3DBlob> dsByteCode = nullptr;
+			try
+			{
+				hsByteCode = d3dUtil::CompileShader(m_path, defines, "HS", "hs_5_0");
+				dsByteCode = d3dUtil::CompileShader(m_path, defines, "DS", "ds_5_0");
+
+				psoDesc.HS =
+				{
+					reinterpret_cast<BYTE*>(hsByteCode->GetBufferPointer()),
+					hsByteCode->GetBufferSize()
+				};
+				psoDesc.DS =
+				{
+					reinterpret_cast<BYTE*>(dsByteCode->GetBufferPointer()),
+					dsByteCode->GetBufferSize()
+				};
+				psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+			}
+			catch (const DxException&) {}
 
 			ThrowIfFailed(pDevice->CreateGraphicsPipelineState(
 				&psoDesc,
