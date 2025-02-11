@@ -48,6 +48,10 @@ namespace udsdx
 			std::wstring filename = directory.path().filename().wstring();
 			std::wstring suffix = directory.path().extension().wstring();
 
+			std::transform(path.begin(), path.end(), path.begin(), ::tolower);
+			std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
+			std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
+
 			// if the file is in the ignore list, skip it
 			if (m_ignoreFiles.find(filename) != m_ignoreFiles.end())
 			{

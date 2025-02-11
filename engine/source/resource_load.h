@@ -91,7 +91,9 @@ namespace udsdx
 	template<typename T>
 	inline T* Resource::Load(std::wstring_view path)
 	{
-		auto iter = m_resources.find(path.data());
+		std::wstring wsPath = path.data();
+		std::transform(wsPath.begin(), wsPath.end(), wsPath.begin(), ::tolower);
+		auto iter = m_resources.find(wsPath);
 		if (iter == m_resources.end())
 		{
 			return nullptr;
