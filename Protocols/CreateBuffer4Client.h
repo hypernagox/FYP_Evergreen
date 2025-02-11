@@ -4,12 +4,12 @@
 #include "struct_generated.h"
 #include "protocol_generated.h"
 
+template<typename T>
+using Vector = std::vector<T>;
+
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 
-static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept {
-    thread_local flatbuffers::FlatBufferBuilder* const builder = CreateBuilder();
-    return builder;
-}
+static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { return CreateBuilder(); }
 
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_LOGIN(
     const std::string_view& name,
@@ -40,5 +40,10 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_DEATH(
 )noexcept;
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_REQUEST_QUEST(
     const uint64_t quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_FIRE_PROJ(
+    const Nagox::Struct::Vec3& pos,
+    const float body_angle,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;

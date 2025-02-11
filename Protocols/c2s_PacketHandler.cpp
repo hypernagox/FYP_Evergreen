@@ -14,39 +14,40 @@
 #include "HP.h"
 #include "QuestSystem.h"
 #include "Quest.h"
+#include "ClusterPredicate.h"
+#include "Projectile.h"
 
-using namespace ServerCore;
+using namespace NagiocpX;
+
+thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
-	thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
+	extern thread_local flatbuffers::FlatBufferBuilder buillder;
 	return &buillder;
 }
 
-static inline Vector3 ToOriginVec3(const Nagox::Struct::Vec3* const v)noexcept {
-	return Vector3{ v->x(),v->y(),v->z() };
-}
-
-const bool Handle_c2s_LOGIN(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
+const bool Handle_c2s_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
 {
 	pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp());
 	return true;
 }
 
-const bool Handle_c2s_PING_PONG(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PING_PONG& pkt_)
+const bool Handle_c2s_PING_PONG(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PING_PONG& pkt_)
 {
 	//std::cout << Mgr(TimeMgr)->GetServerTimeStamp() << std::endl;
 	pSession_ << Create_s2c_PING_PONG(Mgr(TimeMgr)->GetServerTimeStamp());
 	return true;
 }
 
-const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_ENTER& pkt_)
+const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_ENTER& pkt_)
 {
 	auto entity = pSession_->GetOwnerEntity();
 
 	//pSession_->SetEntity(entity);
 	//entity->AddIocpComponent<Queueabler>();
-	entity->AddComp<PositionComponent>()->pos = ToOriginVec3(pkt_.pos());
-	entity->AddComp<Collider>()->SetBox(entity->GetComp<PositionComponent>(), { 1,2,1.5f });
+	entity->AddComp<PositionComponent>()->pos = ToDxVec(pkt_.pos());
+	entity->AddComp<AABBCollider>()->SetAABB(entity->GetComp<PositionComponent>(), { 1,2,1.5f });
+
 	//Mgr(WorldMgr)->GetWorld(0) ->GetStartSector()->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER));
 	//Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
 	
@@ -56,7 +57,7 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	//	, s
 	//	, entity
 	//);
-	std::cout << "enter" << std::endl;
+	//NagiocpX::PrintLogEndl("enter");
 	//auto pbuff = Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER);
 	//Mgr(WorldMgr)->GetWorld(0)->GetSector({ 0,0 })->BroadCastEnqueue(std::move(pbuff));
 	//
@@ -86,17 +87,20 @@ const bool Handle_c2s_ENTER(const ServerCore::S_ptr<ServerCore::PacketSession>& 
 	return true;
 }
 
-const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_)
+const bool Handle_c2s_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_)
 {
+	if (pSession_->GetOwnerEntity()->IsPendingClusterEntry())return true;
 	DO_BENCH_GLOBAL_THIS_FUNC;
 	//if(pSession_->GetObjectID()!=1)
+	
 	//std::cout << "move" << std::endl;
 	const auto& pEntity = pSession_->GetOwnerEntity()->GetComp<PositionComponent>();
-	pEntity->pos = ToOriginVec3(pkt_.pos());
-	pEntity->vel = ToOriginVec3(pkt_.vel());
-	pEntity->accel = ToOriginVec3(pkt_.accel());
-	pEntity->body_angle = pkt_.body_angle();
-	pEntity->time_stamp = pkt_.time_stamp();
+	pEntity->SetMovementInfo(pkt_);
+	//pEntity->pos = ToDxVec(pkt_.pos());
+	//pEntity->vel = ToDxVec(pkt_.vel());
+	//pEntity->accel = ToDxVec(pkt_.accel());
+	//pEntity->body_angle = pkt_.body_angle();
+	//pEntity->time_stamp = pkt_.time_stamp();
 	//Vector<Sector*> s{ pSession_->GetCurCluster() };
 
 	//g_sector->BroadCastEnqueue(Create_s2c_MOVE(GetBuilder(), pEntity->GetObjectID(),
@@ -106,16 +110,18 @@ const bool Handle_c2s_MOVE(const ServerCore::S_ptr<ServerCore::PacketSession>& p
 	//	pEntity->body_angle,
 	//	pEntity->time_stamp));
 	//g_sector->MoveBroadCast(pSession_, s);
-	pSession_->SendAsync(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()));
-	pSession_->GetOwnerEntity()->GetComp<ServerCore::MoveBroadcaster>()->BroadcastMove();
-	//pSession_->GetOwnerEntity()->GetComp<ServerCore::SectorInfoHelper>()->ImmigrationSector(0, 0);
+	ClusterPredicate helper;
+	//pSession_->SendAsync(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()));
+	pSession_->SendAsync(helper.CreateMovePacket(pSession_->GetOwnerEntity()));
+	pSession_->GetOwnerEntity()->GetComp<NagiocpX::MoveBroadcaster>()->BroadcastMove(helper);
+	//pSession_->GetOwnerEntity()->GetComp<NagiocpX::SectorInfoHelper>()->ImmigrationSector(0, 0);
 	//const auto en = pSession_->GetOwnerEntity();
 	//g_sector->BroadCastParallel(MoveBroadcaster::CreateMovePacket(en), s, en);
 	//pSession_->GetCurWorld()->GetStartSector()->BroadCastParallel(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()), s, pSession_->GetOwnerEntity(),true);
 	return true;
 }
 
-const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_)
+const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_)
 {
 	DO_BENCH_GLOBAL_THIS_FUNC;
 	
@@ -125,13 +131,19 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
 	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
-
+	pos_comp->pos = ::ToDxVec(pkt_.atk_pos());
 	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pkt_.body_angle());
 
+	//std::cout << "MY angle: " << pkt_.body_angle() << '\n';
+	//std::cout << "Mypos: ";
+	//PrintLogEndl(&pos_comp->pos.x);
 	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
-
-	const auto& box = pOwner->GetComp<Collider>()->GetBox(rotatedForward);
+	auto c = pOwner->GetComp<AABBCollider>()->GetCollider<Common::AABBBox>();
+	c->m_offSet = rotatedForward;
+	auto box = c->GetAABB();
 	bool isHit = false;
+	Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,8.f };
+	fan.m_offSet = rotatedForward * 2;
 	//if (const auto sector = pOwner->GetCurCluster())
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
@@ -143,7 +155,8 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 				if (const auto pCol = pmon->GetComp<Collider>())
 				{
 					const auto owner = pCol->GetOwnerEntity();
-					if (pCol->IsCollision(box))
+					if(fan.IsIntersect(pCol->GetCollider()))
+					//if (pCol->IsCollision(box))
 					{
 						//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
 						//
@@ -151,7 +164,13 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 						owner->GetComp<HP>()->PostDoDmg(1, pOwner->SharedFromThis());
 						isHit = true;
 					}
+					else
+					{
+						//const auto ppp = pCol->GetCollider()->GetPosWithOffset();
+						//PrintLogEndl(&ppp.x);
+					}
 				}
+	
 			}
 		}
 	}
@@ -165,7 +184,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const ServerCore::S_ptr<ServerCore::PacketSe
 	return true;
 }
 
-const bool Handle_c2s_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_DEATH& pkt_)
+const bool Handle_c2s_PLAYER_DEATH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_DEATH& pkt_)
 {
 	const auto owner = pSession_->GetOwnerEntity();
 
@@ -175,10 +194,10 @@ const bool Handle_c2s_PLAYER_DEATH(const ServerCore::S_ptr<ServerCore::PacketSes
 	return true;
 }
 
-const bool Handle_c2s_REQUEST_QUEST(const ServerCore::S_ptr<ServerCore::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_)
+const bool Handle_c2s_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_)
 {
 	const auto owner = pSession_->GetOwnerEntity();
-	const auto q = ServerCore::xnew<KillFoxQuest>(0);
+	const auto q = NagiocpX::xnew<KillFoxQuest>(0);
 	if (!owner->GetComp<QuestSystem>()->AddQuest(q))
 	{
 		xdelete<Quest>(q);
@@ -187,6 +206,27 @@ const bool Handle_c2s_REQUEST_QUEST(const ServerCore::S_ptr<ServerCore::PacketSe
 	{
 		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(0));
 	}
+	return true;
+}
+
+const bool Handle_c2s_FIRE_PROJ(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_FIRE_PROJ& pkt_)
+{
+	const auto pOwner = pSession_->GetOwnerEntity();
+
+	const auto pos_comp = pOwner->GetComp<PositionComponent>();
+	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
+
+	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pkt_.body_angle());
+
+	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
+
+
+	const auto proj = TimerHandler::CreateTimerWithoutHandle<PlayerProjectile>(100);
+	proj.timer->m_pos = (pos_comp->pos);
+	proj.timer->m_speed = rotatedForward * 40.f;
+	proj.timer->SelectObjList(pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC());
+	proj.timer->m_owner = pOwner->SharedFromThis();
+
 	return true;
 }
 

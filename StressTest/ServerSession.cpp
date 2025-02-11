@@ -7,7 +7,7 @@ extern Vector3 O_VEC3(const Nagox::Struct::Vec3* const v);
 extern Nagox::Struct::Vec3 F_VEC3(const Vector3& v);
 
 ServerSession::ServerSession()
-	:ServerCore::PacketSession{ s2c_DummyPacketHandler::GetPacketHandlerList(),true }
+	:NagiocpX::PacketSession{ true }
 {
 }
 
@@ -25,7 +25,7 @@ void ServerSession::OnSend(c_int32 len)noexcept
 {
 }
 
-void ServerSession::OnDisconnected(const ServerCore::Cluster* const curCluster_)noexcept
+void ServerSession::OnDisconnected(const NagiocpX::Cluster* const curCluster_)noexcept
 {
 	IncRef();
 	std::cout << "DisConnect !" << std::endl;

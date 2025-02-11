@@ -1,0 +1,12 @@
+0: ServerCore::LogStackTrace - 0x7ff6396f18c0
+1: ServerCore::ThreadMgr::InitTLS - 0x7ff63973da10
+2: ServerCore::ThreadMgr::ThreadMgr - 0x7ff6396aa620
+3: ServerCore::Singleton<ServerCore::ThreadMgr>::SingletonBlock::SingletonBlock - 0x7ff639615220
+4: `dynamic initializer for 'ServerCore::Singleton<ServerCore::ThreadMgr>::g_singleton_block'' - 0x7ff63960d200
+5: initterm - 0x7ff8a4cf2240
+6: __scrt_common_main_seh - 0x7ff6397fa750
+7: __scrt_common_main - 0x7ff6397fa730
+8: mainCRTStartup - 0x7ff6397faa20
+9: BaseThreadInitThunk - 0x7ff94fbe7360
+10: RtlUserThreadStart - 0x7ff9509dcc70
+  2025-01-21 20:41:07 [LOG]: 

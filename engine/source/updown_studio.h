@@ -26,6 +26,8 @@
 #include "component.h"
 #include "mesh_renderer.h"
 #include "rigged_mesh_renderer.h"
+#include "rigged_prop_renderer.h"
+#include "inline_mesh_renderer.h"
 #include "camera.h"
 #include "light_directional.h"
 

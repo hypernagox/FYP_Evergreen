@@ -5,13 +5,11 @@ Thread 1 Func Log:
 
 
 Thread 2 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 2 Func Log End----- 
 
 
 Thread 3 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 3 Func Log End----- 
 
@@ -22,31 +20,26 @@ Thread 4 Func Log:
 
 
 Thread 5 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 5 Func Log End----- 
 
 
 Thread 6 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 6 Func Log End----- 
 
 
 Thread 7 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 7 Func Log End----- 
 
 
 Thread 8 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 8 Func Log End----- 
 
 
 Thread 9 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 9 Func Log End----- 
 
@@ -62,17 +55,25 @@ Thread 11 Func Log:
 
 
 Thread 12 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 12 Func Log End----- 
 
 
+Thread 13 Func Log: 
+
+ -----ID 13 Func Log End----- 
+
+
+Thread 14 Func Log: 
+
+ -----ID 14 Func Log End----- 
+
+
 Total Result 
 
-FuncName: Handle_c2s_MOVE, CallCount: 12, TotalCallTime: 0ms, Avg: 0.000000 ms
 
 
-Server Running Time: 34.83 seconds, Total Func Acc Time: 0.00 seconds / 0 ms
+Server Running Time: 6.86 seconds, Total Func Acc Time: 0.00 seconds / 0 ms
 
 
 

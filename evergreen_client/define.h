@@ -2,8 +2,8 @@
 
 #include "pch.h"
 
-#define DT INSTANCE(TimeMeasure)->GetElapsedSeconds()
-#define ET INSTANCE(TimeMeasure)->GetTotalSeconds()
+#define DT INSTANCE(udsdx::TimeMeasure)->GetElapsedSeconds()
+#define ET INSTANCE(udsdx::TimeMeasure)->GetTotalSeconds()
 
 inline udsdx::Vector3 GetLookVector(float yaw)
 {

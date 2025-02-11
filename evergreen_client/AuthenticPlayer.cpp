@@ -64,40 +64,36 @@ void AuthenticPlayer::InitCamDirection()
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
 	Vector3 wv = GetSceneObject()->GetTransform()->GetLocalPosition() + m_cameraAnchor->GetTransform()->GetLocalPosition();
-	const float fMaxDist = 6.0f;
-	switch (m_curCamMode)
-	{
-	case 0:
-		pCameraTransfrom->SetLocalPosition(Vector3::Backward * 0.5f);
-		pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
-		break;
-	case 1:
-	{
-		float target = -fMaxDist;
-		pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, std::max(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
-		pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
-		break;
-	}
-	case 2:
-	{
-		float target = fMaxDist;
-		pCameraTransfrom->SetLocalPosition(Vector3(0.0f, 0.0f, std::min(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f))));
-		pCameraTransfrom->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PI, 0.0f, 0.0f));
-		break;
-	}
-	}
+	const float fMaxDist = 3.0f;
+	float target = -fMaxDist;
+	float zPos = std::max(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f));
 	float tParam = m_fMoveTime * 0.5f;
 	float mParam = 0.04f;
-	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, pCameraTransfrom->GetLocalPosition().z));
+	pCameraTransfrom->SetLocalPosition(Vector3(1.5f + sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, zPos));
+	pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
+	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), m_fovBase + (INSTANCE(Input)->GetMouseRightButton() ? -30.0f * DEG2RAD : 0.0f), deltaTime * 8.0f));
+}
+
+void AuthenticPlayer::FireProj()
+{
+	if constexpr (g_bUseNetWork)
+	{
+		const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
+		m_bSendFlag = true;
+		Send(
+			Create_c2s_FIRE_PROJ(ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()), rad)
+		);
+	}
 }
 
 void AuthenticPlayer::DoAttack()
 {
 	if constexpr (g_bUseNetWork)
 	{
+		const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
 		m_bSendFlag = true;
 		Send(
-			Create_c2s_PLAYER_ATTACK(m_rendererBodyAngleY, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
+			Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
 		);
 	}
 }
@@ -114,24 +110,10 @@ void AuthenticPlayer::RequestQuest()
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
 {
-	m_fpChangeCamMode[0] = [this]() noexcept {
-		m_cameraObj->GetTransform()->SetLocalPosition(Vector3::Zero);
-		m_cameraObj->GetTransform()->SetLocalRotation(Quaternion::Identity);
-		};
-	m_fpChangeCamMode[1] = [this]() noexcept {
-		m_cameraObj->GetTransform()->SetLocalPosition(Vector3::Zero);
-		m_cameraObj->GetTransform()->SetLocalRotation(Quaternion::Identity);
-		};
-	m_fpChangeCamMode[2] = [this]() noexcept {
-		m_cameraObj->GetTransform()->SetLocalPosition(Vector3::Zero);
-		m_cameraObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, PI, 0.0f));
-		};
-
 	m_cameraAnchor = std::make_shared<SceneObject>();
-	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3(0.0f, 2.0f, 0.0f));
+	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3(0.0f, 3.0f, 0.0f));
 
 	m_cameraObj = std::make_shared<SceneObject>();
-	m_fpChangeCamMode[m_curCamMode]();
 
 	m_pCamera = m_cameraObj->AddComponent<CameraPerspective>();
 	m_pCamera->SetClearColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
@@ -165,6 +147,8 @@ void AuthenticPlayer::Start()
 	m_pServerObject = GetComponent<ServerObject>();
 	m_entityMovement = AddComponent<EntityMovement>();
 	m_playerRenderer = AddComponent<PlayerRenderer>();
+
+	m_entityMovement->SetFriction(40.0f);
 }
 
 void AuthenticPlayer::Update(const Time& time, Scene& scene)
@@ -176,14 +160,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	const Vector3Int vPrevState = m_vCurState;
 	m_vCurState = {};
 
-	if (INSTANCE(Input)->GetKey(Keyboard::E))
-	{
-		m_fovBase = std::min(m_fovBase + time.deltaTime, 170.0f * DEG2RAD);
-	}
-	if (INSTANCE(Input)->GetKey(Keyboard::Q))
-	{
-		m_fovBase = std::max(m_fovBase - time.deltaTime, 10.0f * DEG2RAD);
-	}
 	if (INSTANCE(Input)->GetKey(Keyboard::Space))
 	{
 		//const Vector3 UP = Vector3::Up * 10.0f;
@@ -194,11 +170,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	if (INSTANCE(Input)->GetKey(Keyboard::LeftShift))
 	{
 		MoveByView(Vector3::Down * 10.0f);
-	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::F5))
-	{
-		m_curCamMode = (m_curCamMode + 1) % 3;
-		m_fpChangeCamMode[m_curCamMode]();
 	}
 
 	// TODO 하드코딩
@@ -216,11 +187,9 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	UpdatePlayerCamFpsMode(time.deltaTime);
 	UpdateCameraTransform(m_cameraObj->GetTransform(), time.deltaTime);
 
-	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), m_fovBase * (INSTANCE(Input)->GetKey(Keyboard::W) ? 1.5f : 1.0f), time.deltaTime * 8.0f));
-
 	float rotationFactor = Vector2(velocity.x, velocity.z).Length() * 0.15f * sin(m_fMoveTime * 1.5f) * PIDIV4;
 
-	m_rendererBodyAngleY = std::clamp(m_rendererBodyAngleY, m_cameraAngleAxisSmooth.y - 30.0f, m_cameraAngleAxisSmooth.y + 30.0f);
+	// m_rendererBodyAngleY = std::clamp(m_rendererBodyAngleY, m_cameraAngleAxisSmooth.y - 30.0f, m_cameraAngleAxisSmooth.y + 30.0f);
 	m_playerRenderer->SetRotation(Quaternion::CreateFromYawPitchRoll(m_rendererBodyAngleY * DEG2RAD + PI, 0.0f, 0.0f));
 
 	const bool vec3int_equal = vPrevState.x == m_vCurState.x && vPrevState.y == m_vCurState.y && vPrevState.z == m_vCurState.z;
@@ -235,6 +204,27 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	navi->SetCellPos(prev_pos, transform->GetLocalPosition(), temp);
 	transform->SetLocalPosition(temp);
 	GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
+
+	if (INSTANCE(Input)->GetMouseLeftButtonDown())
+	{
+		const auto state = m_playerRenderer->GetCurrentState();
+		if (PlayerRenderer::AnimationState::Idle == state || PlayerRenderer::AnimationState::Run == state)
+		{
+			m_playerRenderer->Attack();
+			DoAttack();
+			//std::cout << "공격 시도\n";
+		}
+	}
+	if (INSTANCE(Input)->GetMouseRightButtonDown())
+	{
+		const auto state = m_playerRenderer->GetCurrentState();
+		if (PlayerRenderer::AnimationState::Idle == state || PlayerRenderer::AnimationState::Run == state)
+		{
+			// m_playerRenderer->Attack();
+			FireProj();
+			//std::cout << "공격 시도\n";
+		}
+	}
 
 	//
 	//// 무브패킷 센드 업데이트

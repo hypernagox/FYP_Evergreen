@@ -15,6 +15,9 @@ std::shared_ptr<SceneObject> g_lightObject;
 std::shared_ptr<SceneObject> g_object[3];
 std::shared_ptr<SceneObject> g_floorObject;
 std::shared_ptr<udsdx::Material> g_material;
+std::shared_ptr<udsdx::Material> g_skyboxMaterial;
+std::shared_ptr<SceneObject> m_characterObject;
+std::array<std::shared_ptr<udsdx::Material>, 4> m_characterMaterials;
 
 void Update(const Time& time);
 
@@ -72,7 +75,39 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     floorRenderer->SetShader(res->Load<udsdx::Shader>(L"resource\\colornotex.hlsl"));
     g_scene->AddObject(g_floorObject);
 
-    INSTANCE(Core)->GetRenderer()->SetEnvironmentMap(res->Load<udsdx::Texture>(L"resource\\Interior.jpg"));
+    {
+        auto skyboxObj = std::make_shared<SceneObject>();
+        auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
+        skyboxRenderer->SetShader(res->Load<Shader>(L"resource\\skybox.hlsl"));
+        skyboxRenderer->SetVertexCount(6);
+        skyboxRenderer->SetCastShadow(false);
+
+        auto skyboxTexture = res->Load<udsdx::Texture>(L"resource\\Interior.jpg");
+        g_skyboxMaterial = std::make_shared<udsdx::Material>();
+        g_skyboxMaterial->SetMainTexture(skyboxTexture);
+        skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
+
+        g_scene->AddObject(skyboxObj);
+    }
+    
+    m_characterObject = std::make_shared<SceneObject>();
+    auto meshRenderer = m_characterObject->AddComponent<RiggedMeshRenderer>();
+    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\character.glb"));
+    meshRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\color.hlsl"));
+    meshRenderer->SetAnimation("Bip001|Take 001|BaseLayer");
+
+    for (int i = 0; i < 4; ++i)
+    {
+        m_characterMaterials[i] = std::make_shared<udsdx::Material>();
+        meshRenderer->SetMaterial(m_characterMaterials[i].get(), i);
+    }
+
+    m_characterMaterials[3]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Body_Main.png"));
+    m_characterMaterials[2]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Cloth_Main.png"));
+    m_characterMaterials[1]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Hat_Main.png"));
+    m_characterMaterials[0]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Extra_Main.png"));
+
+    g_scene->AddObject(m_characterObject);
 
     return UpdownStudio::Run(g_scene, nCmdShow);
 }

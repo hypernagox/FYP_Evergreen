@@ -17,6 +17,7 @@ class ServerObjectMgr
 public:
 	// TODO: 만드는 방법이 현저하게 다르면 이걸 오버로딩 할 까 고민
 	void AddObject(EntityBuilderBase* b);
+	void AddObject(std::shared_ptr<SceneObject> scene_obj);
 	void RemoveObject(const uint64_t id);
 	ServerObject* const GetServerObj(const uint64_t id) const {
 		const auto iter = m_mapServerObj.find(id);

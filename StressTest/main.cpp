@@ -3,37 +3,122 @@
 #include "s2c_DummyPacketHandler.h"
 #include "Service.h"
 #include "CreateBuffer4Dummy.h"
+#include <regex>
 
 std::shared_ptr<HeightMap> g_heightMap;
-
+bool isValidIPAddress(std::wstring_view ipAddress) {
+	const std::wregex ipRegex(L"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+	return std::regex_match(ipAddress.data(), ipRegex);
+}
 extern Vector3 SetTerrainPos(const Vector3& v);
+
+class ContentsInitiator
+	: public NagiocpX::Initiator
+{
+public:
+	virtual void GlobalInitialize()noexcept override
+	{
+		
+		
+	}
+
+	virtual void TLSInitialize()noexcept override
+	{
+		const volatile auto init_builder = GetBuilder();
+	}
+
+	virtual void TLSDestroy()noexcept override
+	{
+		
+	}
+
+	virtual void GlobalDestroy()noexcept override
+	{
+	}
+
+	virtual void ControlThreadFunc()noexcept override
+	{
+		for (;;)
+		{
+			system("pause");
+			char buf[32]{};
+			std::cin >> buf;
+			if ("EXIT" == std::string_view{ buf })break;
+		}
+	}
+};
 
 int main()
 {
+	ContentsInitiator con_init;
 	g_heightMap = std::make_shared<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 4096, 4096);
 	Mgr(CoreGlobal)->Init();
 	s2c_DummyPacketHandler::Init();
 
-	const auto pClientService = std::make_unique<ServerCore::ClientService>
+	const auto pClientService = new NagiocpX::ClientService
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
-			, ServerCore::NetAddress{ L"127.0.0.1",7777 }
-			, ServerCore::MakeSharedAligned<ServerSession>
-			, 500
+			, NagiocpX::NetAddress{ L"127.0.0.1",7777 }
+			, NagiocpX::xnew<ServerSession>
+			, s2c_DummyPacketHandler::GetPacketHandlerList()
+			, 2000
 		);
-
+	
 	ASSERT_CRASH(pClientService->Start());
-
+	
 	Mgr(ThreadMgr)->Launch(
 		  2
-		, []() noexcept {const volatile auto init_builder = GetBuilder(); }
+		, &con_init
 	);
 
+	//std::wstring inputIP;
+	//std::wcout << L"Input IP Address: ";
+	//std::wcin >> inputIP;
+	//if (!isValidIPAddress(inputIP))
+	//{
+	//	std::wcout << L"Invalid Address !'\n";
+	//}
+	//std::cout << "Num of Threads: ";
+	//int num_th = 0;
+	//std::cin >> num_th;
+	//std::cout << "Num of Dummy: ";
+	//int num_dm = 0;
+	//std::cin >> num_dm;
+	//
+	//const auto pClientService = new NagiocpX::ClientService
+	//	(
+	//		Mgr(CoreGlobal)->GetIocpCore()
+	//		, NagiocpX::NetAddress{ inputIP,7777 }
+	//		, NagiocpX::xnew<ServerSession>
+	//		, s2c_DummyPacketHandler::GetPacketHandlerList()
+	//		, num_dm
+	//	);
+	//
+	//ASSERT_CRASH(pClientService->Start());
+	//
+	//Mgr(ThreadMgr)->Launch(
+	//	num_th
+	//  , &con_init
+	//);
 
-	int n;
-	std::cin >> n;
+	uint64_t accCount = 0;
+	uint64_t accTime = 0;
+	const auto con = NagiocpX::Service::GetMainService()->GetAllSessionContainer();
+	
+	for (const auto& c : con)
+	{
+		if (const auto con = c.ptr.load())
+		{
+			const auto seesion = (ServerSession*)con->GetSession();
+			accCount += seesion->m_moveCount;
+			accTime += seesion->m_accDelayMs;
+		}
+	}
 
-	Mgr(ThreadMgr)->Join();
+	if (accTime)
+		std::cout << "\n\n\nDelay AVG: " << ((float)accTime) / accCount << std::endl;
+
+	system("pause");
 }
 
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 
-namespace ServerCore
+namespace NagiocpX
 {
 	struct EntityBuilder
 	{
@@ -18,5 +18,10 @@ namespace ServerCore
 		static S_ptr<ContentsEntity> CreateMonster(const EntityBuilder& b)noexcept;
 
 		static S_ptr<ContentsEntity> CreateNPC(const EntityBuilder& b)noexcept;
+
+		static S_ptr<ContentsEntity> CreateRangeMonster(const EntityBuilder& b)noexcept;
 	};
 }
+
+using NagiocpX::EntityBuilder;
+using NagiocpX::EntityFactory;

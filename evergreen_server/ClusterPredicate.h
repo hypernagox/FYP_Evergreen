@@ -1,22 +1,22 @@
 #pragma once
 #include "pch.h"
+#include "BroadcastHelper.h"
 
-class ServerCore::SendBuffer;
-class ServerCore::ContentsEntity;
+class NagiocpX::SendBuffer;
+class NagiocpX::ContentsEntity;
 
 class ClusterPredicate
-	:public ServerCore::Singleton<ClusterPredicate>
+	:public NagiocpX::BroadcastHelper
 {
-	friend class Singleton;
+public:
 	ClusterPredicate();
 	~ClusterPredicate();
 public:
-	static bool ClusterHuristicFunc2Session(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b)noexcept;
-	static bool ClusterHuristicFunc2NPC(const ServerCore::ContentsEntity* const a, const ServerCore::ContentsEntity* const b)noexcept;
-
-	static ServerCore::S_ptr<ServerCore::SendBuffer> ClusterAddPacketFunc(const ServerCore::ContentsEntity* const)noexcept;
-	static ServerCore::S_ptr<ServerCore::SendBuffer> ClusterRemovePacketFunc(const uint32_t obj_id)noexcept;
-	static ServerCore::S_ptr<ServerCore::SendBuffer> ClusterMovePacketFunc(const ServerCore::ContentsEntity* const)noexcept;
+	virtual bool Filter4Session(const ContentsEntity* const a, const ContentsEntity* const b)const noexcept;
+	virtual bool Filter4NPC(const ContentsEntity* const a, const ContentsEntity* const b)const noexcept;
+	virtual S_ptr<SendBuffer> CreateAddPacket(const ContentsEntity* const entity_ptr)const noexcept;
+	virtual S_ptr<SendBuffer> CreateRemovePacket(const uint32_t obj_id)const noexcept;
+	virtual S_ptr<SendBuffer> CreateMovePacket(const ContentsEntity* const entity_ptr)const noexcept;
 
 private:
 

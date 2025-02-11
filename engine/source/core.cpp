@@ -17,14 +17,21 @@
 #include "screen_space_ao.h"
 #include "deferred_renderer.h"
 #include "motion_blur.h"
+#include "rigged_mesh.h"
 
 #include <assimp/DefaultLogger.hpp>
+
+#include <imgui.h>
+#include <imgui_impl_dx12.h>
+#include <imgui_impl_win32.h>
+
+// Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace udsdx
 {
 	Core::Core()
 	{
-
 	}
 
 	Core::~Core()
@@ -94,7 +101,8 @@ namespace udsdx
 		m_fenceEvent = ::CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
 
 		// Create frame debug window
-		m_frameDebug = std::make_unique<FrameDebug>(m_hInstance);
+		// m_frameDebug = std::make_unique<FrameDebug>(m_hInstance);
+		InitImGui();
 	}
 
 	void Core::InitializeDirect3D()
@@ -255,6 +263,7 @@ namespace udsdx
 	void Core::CreateDescriptorHeaps()
 	{ ZoneScoped;
 		std::vector<Texture*> textures = INSTANCE(Resource)->LoadAll<Texture>();
+		std::vector<RiggedMesh*> riggedMeshes = INSTANCE(Resource)->LoadAll<RiggedMesh>();
 
 		D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
 		cbvHeapDesc.NumDescriptors = FrameResourceCount;
@@ -264,7 +273,7 @@ namespace udsdx
 		ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(m_cbvHeap.GetAddressOf())));
 
 		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc;
-		srvHeapDesc.NumDescriptors = static_cast<UINT>(textures.size() + 16);
+		srvHeapDesc.NumDescriptors = static_cast<UINT>(textures.size() + riggedMeshes.size() + 64);
 		srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 		srvHeapDesc.NodeMask = 0;
@@ -295,12 +304,14 @@ namespace udsdx
 
 			// Release the context
 			TracyD3D12Destroy(m_tracyQueueCtx);
+			ReleaseImGui();
 		}
 	}
 
 	void Core::RegisterDescriptorsToHeaps()
 	{ ZoneScoped;
 		std::vector<Texture*> textures = INSTANCE(Resource)->LoadAll<Texture>();
+		std::vector<RiggedMesh*> riggedMeshes = INSTANCE(Resource)->LoadAll<RiggedMesh>();
 
 		DescriptorParam descriptorParam{
 			.CbvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetCPUDescriptorHandleForHeapStart()),
@@ -323,6 +334,13 @@ namespace udsdx
 		{
 			texture->CreateShaderResourceView(m_d3dDevice.Get(), descriptorParam);
 		}
+
+		for (auto riggedMesh : riggedMeshes)
+		{
+			riggedMesh->BuildBoneDescriptors(m_d3dDevice.Get(), descriptorParam);
+		}
+
+		m_srvHeapSize = (descriptorParam.SrvCpuHandle.ptr - m_srvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_cbvSrvUavDescriptorSize;
 	}
 
 	void Core::BuildConstantBuffers()
@@ -348,14 +366,16 @@ namespace udsdx
 
 	void Core::BuildRootSignature()
 	{ ZoneScoped;
-		CD3DX12_ROOT_PARAMETER slotRootParameter[8];
+		CD3DX12_ROOT_PARAMETER slotRootParameter[9];
 
 		CD3DX12_DESCRIPTOR_RANGE texTable;
 		texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 		CD3DX12_DESCRIPTOR_RANGE normalTable;
 		normalTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+		CD3DX12_DESCRIPTOR_RANGE bonesTable;
+		bonesTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
 		CD3DX12_DESCRIPTOR_RANGE shadowMapTable;
-		shadowMapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 2);
+		shadowMapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 3);
 
 		slotRootParameter[RootParam::PerObjectCBV].InitAsConstants(sizeof(ObjectConstants) / 4, 0);
 		slotRootParameter[RootParam::PerCameraCBV].InitAsConstantBufferView(1);
@@ -364,12 +384,13 @@ namespace udsdx
 		slotRootParameter[RootParam::PerFrameCBV].InitAsConstantBufferView(4);
 		slotRootParameter[RootParam::MainTexSRV].InitAsDescriptorTable(1, &texTable);
 		slotRootParameter[RootParam::NormalSRV].InitAsDescriptorTable(1, &normalTable);
+		slotRootParameter[RootParam::BonesSRV].InitAsDescriptorTable(1, &bonesTable);
 		slotRootParameter[RootParam::ShadowMapSRV].InitAsDescriptorTable(1, &shadowMapTable);
 
 		CD3DX12_STATIC_SAMPLER_DESC samplerDesc[] = {
 			CD3DX12_STATIC_SAMPLER_DESC(
 			0,
-			D3D12_FILTER_MIN_MAG_MIP_POINT,
+			D3D12_FILTER_MIN_MAG_MIP_LINEAR,
 			D3D12_TEXTURE_ADDRESS_MODE_WRAP,
 			D3D12_TEXTURE_ADDRESS_MODE_WRAP,
 			D3D12_TEXTURE_ADDRESS_MODE_WRAP),
@@ -546,6 +567,7 @@ namespace udsdx
 		INSTANCE(Audio)->Update();
 		INSTANCE(Input)->Update();
 
+		ImGuiNewFrame();
 		BroadcastUpdateMessage();
 		m_scene->Update(m_timeMeasure->GetTime());
 		m_scene->PostUpdate(m_timeMeasure->GetTime());
@@ -623,6 +645,9 @@ namespace udsdx
 		// Draw the scene objects. 
 		m_scene->Render(param);
 
+		// Draw the debug window with ImGui.
+		ImGuiRender();
+
 		// indicate a state transition on the resource usage.
 		// Transition the back buffer to make it ready for presentation. (Reading memory)
 		m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
@@ -660,13 +685,16 @@ namespace udsdx
 		m_commandQueue->Signal(m_fence.Get(), m_currentFence);
 
 		// Frame debug
-		m_frameDebug->Update(m_timeMeasure->GetTime());
+		// m_frameDebug->Update(m_timeMeasure->GetTime());
 	}
 
 	void Core::UpdateMainPassCB()
 	{ ZoneScoped;
 		PassConstants passConstants;
 		passConstants.TotalTime = m_timeMeasure->GetTime().totalTime;
+		passConstants.DeltaTime = m_timeMeasure->GetTime().deltaTime;
+		passConstants.MotionBlurFactor = MotionBlur::BlurTimeScale / m_timeMeasure->GetTime().deltaTime;
+		passConstants.MotionBlurRadius = static_cast<float>(MotionBlur::MaxBlurRadius);
 
 		auto frameResource = CurrentFrameResource();
 		frameResource->GetObjectCB()->CopyData(0, passConstants);
@@ -674,6 +702,11 @@ namespace udsdx
 
 	bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{ ZoneScoped;
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		{
+			return true;
+		}
+
 		switch (message)
 		{
 		case WM_MOVE:
@@ -902,6 +935,85 @@ namespace udsdx
 		m_scissorRect = { 0, 0, width, height };
 
 		return true;
+	}
+
+	void Core::InitImGui()
+	{
+		static ID3D12DescriptorHeap* g_pSrvHeap = m_srvHeap.Get();
+		static UINT* g_pCbvSrvUavDescriptorSize = &m_cbvSrvUavDescriptorSize;
+		static UINT* g_pSrvHeapSize = &m_srvHeapSize;
+
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+		ImGui_ImplDX12_InitInfo init_info = {};
+		init_info.Device = m_d3dDevice.Get();
+		init_info.CommandQueue = m_commandQueue.Get();
+		init_info.NumFramesInFlight = FrameResourceCount;
+		init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		init_info.DSVFormat = DXGI_FORMAT_UNKNOWN;
+		// Allocating SRV descriptors (for textures) is up to the application, so we provide callbacks.
+		// (current version of the backend will only allocate one descriptor, future versions will need to allocate more)
+		init_info.SrvDescriptorHeap = g_pSrvHeap;
+		init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) {
+			*out_cpu_handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetCPUDescriptorHandleForHeapStart(), *g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
+			*out_gpu_handle = CD3DX12_GPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetGPUDescriptorHandleForHeapStart(), *g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
+			(*g_pSrvHeapSize)++;
+			};
+		init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE) {
+			(*g_pSrvHeapSize)--;
+			};
+		ImGui_ImplDX12_Init(&init_info);
+		ImGui_ImplWin32_Init(m_hMainWnd);
+	}
+
+	void Core::ImGuiNewFrame()
+	{
+		static std::array<float, 100> frameTimes;
+		static float smoothMaxFrameTime = 0.0f;
+
+		ImGui_ImplDX12_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+		// ImGui::ShowDemoWindow();
+		// ImGui::ShowStyleEditor();
+
+		// Draw histogram
+
+		// Calculate the frame time
+		std::copy(frameTimes.begin() + 1, frameTimes.end(), frameTimes.begin());
+		frameTimes.back() = m_timeMeasure->GetTime().deltaTime;
+
+		// Find the maximum frame time
+		float maxFrameTime = *std::max_element(frameTimes.begin(), frameTimes.end());
+		smoothMaxFrameTime = std::lerp(smoothMaxFrameTime, maxFrameTime, 0.1f);
+
+		// Draw the histogram
+		ImGui::Begin("Frame Time Histogram");
+		ImGui::PlotHistogram("Frame Times", frameTimes.data(), frameTimes.size(), 0, nullptr, 0.0f, smoothMaxFrameTime, ImVec2(0, 100));
+
+		// Set window position to top left corner
+		ImGui::SetWindowPos(ImVec2(0, 0));
+
+		ImGui::End();
+	}
+
+	void Core::ImGuiRender()
+	{
+		ImGui::Render();
+		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_commandList.Get());
+	}
+
+	void Core::ReleaseImGui()
+	{
+		ImGui_ImplDX12_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+
+		ImGui::DestroyContext();
 	}
 
 	ID3D12Device* Core::GetDevice() const

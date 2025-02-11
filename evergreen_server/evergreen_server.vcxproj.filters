@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="ClientSession">
       <UniqueIdentifier>{7dba2f76-5c3c-49c9-bb4e-88376fee2a86}</UniqueIdentifier>
     </Filter>
@@ -77,10 +73,32 @@
     <Filter Include="QuestSystem\Quest">
       <UniqueIdentifier>{ee2d6b9f-2fde-4452-b3b7-adef921a9a04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ContentsDeleter">
+      <UniqueIdentifier>{dd04d87f-f7a3-4e84-9430-234983698e98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ContentsDeleter\Regenerator">
+      <UniqueIdentifier>{0f8c2751-35eb-40b8-8687-465da5f6caaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Projectile">
+      <UniqueIdentifier>{fb9deeaa-02b6-4e3a-9bc0-97aff95e70bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="predefine\ContentsFunc">
+      <UniqueIdentifier>{f01eb169-c56a-48e6-a594-d06140bed2a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityFactory\NPCState">
+      <UniqueIdentifier>{b250c385-c142-453b-96c6-529d45da2d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityFactory\NPCState\RangeMon">
+      <UniqueIdentifier>{e328c87e-db54-438d-a237-3b2a12f6bc13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="ClientSession.cpp">
       <Filter>ClientSession</Filter>
@@ -129,6 +147,18 @@
     </ClCompile>
     <ClCompile Include="Quest.cpp">
       <Filter>QuestSystem\Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="Regenerator.cpp">
+      <Filter>ContentsDeleter\Regenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="ContentsFunc.cpp">
+      <Filter>predefine\ContentsFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="RangeMonState.cpp">
+      <Filter>EntityFactory\NPCState\RangeMon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +221,18 @@
     </ClInclude>
     <ClInclude Include="Quest.h">
       <Filter>QuestSystem\Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="Regenerator.h">
+      <Filter>ContentsDeleter\Regenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="ContentsFunc.h">
+      <Filter>predefine\ContentsFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeMonState.h">
+      <Filter>EntityFactory\NPCState\RangeMon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

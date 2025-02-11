@@ -1,6 +1,6 @@
 #pragma once
 #include <flatbuffers/flatbuffers.h>
-#include "ServerCorePch.h"
+#include "NagiocpXPch.h"
 #include "enum_generated.h"
 #include "struct_generated.h"
 #include "protocol_generated.h"

@@ -13,9 +13,9 @@
 #include "ClusterInfoHelper.h"
 #include "HP.h"
 
-using namespace ServerCore;
+using namespace NagiocpX;
 
-NodeStatus MoveNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus MoveNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
     //const auto cur_pos = pOwnerEntity->GetComp<PositionComponent>()->pos;
     ////if (!m_bHasDest)
@@ -46,7 +46,7 @@ NodeStatus MoveNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTi
     return NodeStatus::SUCCESS;
 }
 
-NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
     const auto cur_pos = owner_comp_sys->GetComp<PositionComponent>()->pos;
     uint32_t min_dist = 999999;
@@ -94,22 +94,22 @@ NodeStatus RangeCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, 
     const auto dy = dest_pos.y - cur_pos.y;
     const auto dz = dest_pos.z - cur_pos.z;
 
-    const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+   // const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
   
     if (m_range * m_range <= dx * dx + dy * dy + dz * dz) 
     {
-        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+        //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
         float temp[3]{};
-        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
+       // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
         
-        ag->active = false;
+       // ag->active = false;
         return NodeStatus::FAILURE;
     }
-    ag->active = true;
+    //ag->active = true;
     return NodeStatus::SUCCESS;
 }
 
-NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
     const auto cur_pos = owner_comp_sys->GetComp<PositionComponent>()->pos;
 
@@ -126,7 +126,7 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     if (m_attack_range * m_attack_range <= dx * dx + dy * dy + dz * dz)
         return NodeStatus::SUCCESS;
    
-    m_accTime -= bt_root_timer->GetBTTimerDT();
+    m_accTime -= bt_root_timer->GetFloatDT();
     if (0.f >= m_accTime)
     {
         // TODO: 스트레스 테스트 아직 패킷없음
@@ -141,7 +141,7 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     return NodeStatus::RUNNING;
 }
 
-NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
     const auto pOwnerEntity = bt_root_timer->GetOwnerEntity();
     if (!awaker)return NodeStatus::FAILURE;
@@ -153,33 +153,33 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
    //     return NodeStatus::FAILURE;
     if (2 * 2 >= (dest_pos - cur_pos).LengthSquared())
     {
-        const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
-        ag->active = false;
-        //std::cout << "추격 성공" << std::endl;
-        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
-        float temp[3]{};
-        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
+       //const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+       //ag->active = false;
+       ////std::cout << "추격 성공" << std::endl;
+       //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->resetMoveTarget(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+       //float temp[3]{};
+       //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveVelocity(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx, temp);
         return NodeStatus::SUCCESS;
     }
 
 
     const auto path = pOwnerEntity->GetComp<PathFinder>()->GetPath(cur_pos, dest_pos);
     {
-   // ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
+   // NagiocpX::Vector<NagiocpX::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     
-        const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
+        //const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
        
-        Vector3 ppp{ ag->npos[0],ag->npos[1],-ag->npos[2] };
-        Vector3 vpp{ ag->vel[0],ag->vel[1],-ag->vel[2] };
-        pOwnerEntity->GetComp<PositionComponent>()->pos = ppp;
-        pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(vpp.x, vpp.z) * 180.f / 3.141592f;
-
-        bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-        //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-        //ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+        //Vector3 ppp{ ag->npos[0],ag->npos[1],-ag->npos[2] };
+        //Vector3 vpp{ ag->vel[0],ag->vel[1],-ag->vel[2] };
+        //pOwnerEntity->GetComp<PositionComponent>()->pos = ppp;
+        //pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(vpp.x, vpp.z) * 180.f / 3.141592f;
+        //
+        //bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+        //pOwnerEntity->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+        //NagiocpX::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     }
-    return NodeStatus::RUNNING;
+   // return NodeStatus::RUNNING;
 
     if(path.empty()) return NodeStatus::FAILURE;
 
@@ -188,18 +188,20 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
 
     dir.Normalize();
     
-    const float dt_ = bt_root_timer->GetBTTimerDT();
+    const float dt_ = bt_root_timer->GetFloatDT();
 
-    const auto dx2 = cur_pos.x + dir.x * 10.2f * dt_;
-    const auto dy2 = cur_pos.y + dir.y * 10.2f * dt_;
-    const auto dz2 = cur_pos.z + dir.z * 10.2f * dt_;
+    const auto dx2 = cur_pos.x + dir.x * 5.2f * dt_;
+    const auto dy2 = cur_pos.y + dir.y * 5.2f * dt_;
+    const auto dz2 = cur_pos.z + dir.z * 5.2f * dt_;
 
     pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(cur_pos,Vector3{ dx2,dy2,dz2 });
-    
-   // ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
-    bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-    //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-   // ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+   
+    pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
+    // 
+   // NagiocpX::Vector<NagiocpX::Sector*> sectors{ pOwnerEntity->GetCurSector() };
+    bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    //pOwnerEntity->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+   // NagiocpX::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     
 
     if (2 * 2 >= (dest_pos - cur_pos).LengthSquared())
@@ -212,16 +214,16 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
     return NodeStatus::RUNNING;
 }
 
-NodeStatus PatrolNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const ServerCore::S_ptr<ServerCore::ContentsEntity>& awaker) noexcept
+NodeStatus PatrolNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
     // owner_comp_sys->GetComp<PositionComponent>()->body_angle += 1000.f * bt_root_timer->GetBTTimerDT();
     const auto pOwnerEntity = owner_comp_sys->GetOwnerEntity();
-    //ServerCore::Vector<ServerCore::Sector*> sectors{ pOwnerEntity->GetCurSector() };
+    //NagiocpX::Vector<NagiocpX::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-    bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-    //pOwnerEntity->GetComp<ServerCore::ClusterInfoHelper>()->BroadcastCluster(ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-   // ServerCore::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), ServerCore::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+    //pOwnerEntity->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+   // NagiocpX::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
 
     //if (SECTOR_STATE::USER_EMPTY & sector_state)
     //    return NodeStatus::FAILURE;

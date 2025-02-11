@@ -1,17 +1,19 @@
 {
     "name": "evergreen-libs",
     "version-string": "1.0.0",
-    "dependencies": [
-        "lua",
-        "flatbuffers",
-        "assimp",
-        "directxtex",
-        "directxtk12",
-        "tbb",
-        "jemalloc"
-    ]
+  "dependencies": [
+    "lua",
+    "assimp",
+    "directxtex",
+    "directxtk12",
+    "tbb",
+    "jemalloc",
+    {
+      "name": "imgui",
+      "features": [
+        "dx12-binding",
+        "win32-binding"
+      ]
+    }
+  ]
 }
-
-
-
-

@@ -1,20 +1,22 @@
 #include "pch.h"
 #include <flatbuffers/flatbuffers.h>
-{% if namespace_prefix == 'ServerCore::' %}
-#include "../ServerCore/ServerCorePch.h"
+{% if namespace_prefix == 'NagiocpX::' %}
+#include "../NagiocpX/NagiocpXPch.h"
 {% else %}
 #include "../ClientNetwork/ClientNetHelper.h"
 {% endif %}
 #include "enum_generated.h"
 #include "struct_generated.h"
 #include "protocol_generated.h"
-{% if namespace_prefix == 'ServerCore::' %}
-#include "c2s_PacketHandler.h"
-{% else %}
+{% if namespace_prefix == 'NetHelper::' %}
 #include "s2c_PacketHandler.h"
+{% elif create_packet_type == 'c2s' %}
+#include "s2c_DummyPacketHandler.h"
+{% else %}
+#include "c2s_PacketHandler.h"
 {% endif %}
 
-static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendBuffer(flatbuffers::FlatBufferBuilder& builder, const PKT_ID pktId) noexcept
+static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendBuffer(flatbuffers::FlatBufferBuilder& builder, const CREATE_PKT_ID pktId) noexcept
 {
     const uint16_t dataSize = builder.GetSize();
     const uint16_t packetSize = dataSize + static_cast<c_uint16>(sizeof({{ namespace_prefix }}PacketHeader));
@@ -26,7 +28,6 @@ static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendB
     header->pkt_size = packetSize;
     header->pkt_id = static_cast<c_uint16>(pktId);
     sendBuffer->Close(packetSize);
-    builder.Clear();
     return sendBuffer;
 }
 
@@ -46,6 +47,7 @@ static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendB
     {% endif %}
 )noexcept {
     auto& builder = *builder_ptr;
+    builder.Clear();
     {% for field in table.fields %}
     {% if field.type == "std::string_view" %}
     const auto {{ field.name }}_offset = builder.CreateString({{ field.name }});
@@ -75,6 +77,6 @@ static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendB
     );
     builder.Finish(serialized{{ table.name }});
 
-    return CreateSendBuffer(builder, PKT_ID::{{ table.name }});
+    return CreateSendBuffer(builder, CREATE_PKT_ID::{{ table.name }});
 }
 {% endfor %}

@@ -36,7 +36,7 @@ namespace udsdx
 		Texture2D gShadowMap  : register(t3);
 		Texture2D gSSAOMap	  : register(t4);
 		Texture2D gBufferDSV  : register(t5);
-		Texture2D gEnvironmentMap : register(t6);
+
 
 		SamplerState gsamPointClamp : register(s0);
 		SamplerState gsamLinearClamp : register(s1);
@@ -129,14 +129,6 @@ namespace udsdx
 			return percentLit / 9.0f;
 		}
 
-		float2 DirectionToEnvironmentUV(float3 dir)
-		{
-			const float PI = 3.14159265359f;
-			float t = atan2(dir.z, dir.x);
-			float p = asin(dir.y);
-			return float2(t / PI * -0.5f + 0.5f, -p / PI + 0.5f);
-		}
-
 		float3 ReconstructNormal(float2 np)
 		{
 			float3 n;
@@ -153,23 +145,17 @@ namespace udsdx
             float4 PosW = mul(PosNDC, gViewProjInverse);
 			PosW /= PosW.w;
 
-			if (depth == 1.0f)
-			{
-				float3 delta = normalize(PosW.xyz - gEyePosW.xyz);
-				float2 uv = DirectionToEnvironmentUV(delta);
-				float4 color = gEnvironmentMap.Sample(gsamLinearClamp, uv);
-				return color;
-			}
-
 			float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
 			float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
 			float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
 			float distanceH = length(PosW.xyz - gEyePosW.xyz);
 
+			// Sky color. #142743
+			float4 skyColor = float4(0.078f, 0.157f, 0.263f, 1.0f);
 			float diffuse = pow(saturate(dot(normalW, -gDirLight) * 1.1f - 0.1f), 0.3f);
 			float shadowValue = ShadowValue(PosW, normalW, distanceH);
 			float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
-			gBuffer1Color.rgb = (gBuffer1Color.rgb - (1.0f - min(shadowValue, diffuse)) * 0.75f) * AOFactor;
+			gBuffer1Color.rgb = gBuffer1Color.rgb * lerp(skyColor, 1.0f.xxxx, min(shadowValue, diffuse)) * AOFactor;
 			return float4(gBuffer1Color.rgb, 1.0f);
 		}
 	)";
@@ -234,7 +220,10 @@ namespace udsdx
 				col = float4(gBuffer2.Sample(gsamPointClamp, pin.TexC).rg, 0.0f, 1.0f);
 				break;
 			case 2:
-				col = float4(saturate(sqrt(abs(gBuffer3.Sample(gsamPointClamp, pin.TexC).rg))), 0.0f, 1.0f);
+				{
+					float2 src = gBuffer3.Sample(gsamPointClamp, pin.TexC).rg;
+                    col = float4(saturate(src.x * -0.5f + 0.5f), saturate(src.y * 0.5f + 0.5f), saturate(max(src.y * -0.5f + 0.5f, 0.5f)), 1.0f);
+				}
 				break;
 			case 3:
 				col = float4(gShadowMap.Sample(gsamPointClamp, pin.TexC).rrr, 1.0f);
@@ -350,7 +339,7 @@ namespace udsdx
 		CD3DX12_DESCRIPTOR_RANGE texTable5;
 		texTable5.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 6);
 
-		CD3DX12_ROOT_PARAMETER slotRootParameter[7];
+		CD3DX12_ROOT_PARAMETER slotRootParameter[6];
 
 		// Perfomance TIP: Order from most frequent to least frequent.
 		slotRootParameter[0].InitAsConstantBufferView(0);
@@ -359,7 +348,6 @@ namespace udsdx
 		slotRootParameter[3].InitAsDescriptorTable(1, &texTable2, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[4].InitAsDescriptorTable(1, &texTable3, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[5].InitAsDescriptorTable(1, &texTable4, D3D12_SHADER_VISIBILITY_PIXEL);
-		slotRootParameter[6].InitAsDescriptorTable(1, &texTable5, D3D12_SHADER_VISIBILITY_PIXEL);
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(_countof(slotRootParameter), slotRootParameter,
 			static_cast<UINT>(staticSamplers.size()), staticSamplers.data(),
@@ -475,6 +463,22 @@ namespace udsdx
 			&optClear,
 			IID_PPV_ARGS(&m_depthBuffer)
 		));
+
+		for (UINT i = 0; i < NUM_GBUFFERS; ++i)
+		{
+			m_gBufferBeginRenderTransitions[i] = CD3DX12_RESOURCE_BARRIER::Transition(m_gBuffers[i].Get(),
+				D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		}
+		m_gBufferBeginRenderTransitions[NUM_GBUFFERS] = CD3DX12_RESOURCE_BARRIER::Transition(m_depthBuffer.Get(),
+			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+
+		for (UINT i = 0; i < NUM_GBUFFERS; ++i)
+		{
+			m_gBufferEndRenderTransitions[i] = CD3DX12_RESOURCE_BARRIER::Transition(m_gBuffers[i].Get(),
+				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+		}
+		m_gBufferEndRenderTransitions[NUM_GBUFFERS] = CD3DX12_RESOURCE_BARRIER::Transition(m_depthBuffer.Get(),
+			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
     }
 
 	void DeferredRenderer::BuildPipelineStateObjects()
@@ -498,7 +502,6 @@ namespace udsdx
 		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 		{
-			// Build the normal PSO
 			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "VS", "vs_5_0");
 			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "PS", "ps_5_0");
 
@@ -520,7 +523,6 @@ namespace udsdx
 		}
 
 		{
-			// Build the normal PSO
 			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "VS", "vs_5_0");
 			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "PS", "ps_5_0");
 
@@ -560,13 +562,7 @@ namespace udsdx
 	{
 		ID3D12GraphicsCommandList* pCommandList = renderParam.CommandList;
 
-		for (UINT i = 0; i < NUM_GBUFFERS; ++i)
-		{
-			pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_gBuffers[i].Get(),
-				D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET));
-		}
-		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_depthBuffer.Get(),
-			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+		pCommandList->ResourceBarrier(static_cast<UINT>(m_gBufferBeginRenderTransitions.size()), m_gBufferBeginRenderTransitions.data());
 
 		pCommandList->SetGraphicsRootSignature(renderParam.RootSignature);
 		pCommandList->OMSetRenderTargets(NUM_GBUFFERS, m_gBuffersCpuRtv.data(), true, &m_depthBufferCpuDsv);
@@ -579,13 +575,7 @@ namespace udsdx
 	{
 		ID3D12GraphicsCommandList* pCommandList = renderParam.CommandList;
 
-		for (UINT i = 0; i < NUM_GBUFFERS; ++i)
-		{
-			pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_gBuffers[i].Get(),
-				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ));
-		}
-		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_depthBuffer.Get(),
-			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
+		pCommandList->ResourceBarrier(static_cast<UINT>(m_gBufferEndRenderTransitions.size()), m_gBufferEndRenderTransitions.data());
 	}
 
 	void DeferredRenderer::PassRender(RenderParam& renderParam, D3D12_GPU_VIRTUAL_ADDRESS cbvGpu)
@@ -611,8 +601,6 @@ namespace udsdx
 		pCommandList->SetGraphicsRootDescriptorTable(3, renderParam.RenderShadowMap->GetSrvGpu());
 		pCommandList->SetGraphicsRootDescriptorTable(4, renderParam.RenderScreenSpaceAO->GetAmbientMapGpuSrv());
 		pCommandList->SetGraphicsRootDescriptorTable(5, m_depthBufferGpuSrv);
-		if (m_environmentMap)
-			pCommandList->SetGraphicsRootDescriptorTable(6, m_environmentMap->GetSrvGpu());
 
 		pCommandList->DrawInstanced(6, 1, 0, 0);
 

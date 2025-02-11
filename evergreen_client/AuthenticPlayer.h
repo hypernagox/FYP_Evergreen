@@ -24,19 +24,16 @@ private:
 
 	std::unique_ptr<SoundEffectInstance> soundEffectInstance;
 
-	std::function<void(void)> m_fpChangeCamMode[3];
-
 	float m_fMoveSpeed = 100.f;
 	float m_fMoveTime = 0.0f;
 	float m_fCamSensivity = 0.1f;
 
-	float m_fovBase = PIDIV4;
+	float m_fovBase = 75.0f * DEG2RAD;
 
 	Vector3 m_cameraAngleAxis = Vector3::Zero;
 	Vector3 m_cameraAngleAxisSmooth = Vector3::Zero;
 
 	CameraPerspective* m_pCamera;
-	unsigned short m_curCamMode = 1;
 
 	bool m_bSendFlag = false;
 	Vector3Int m_vCurState = {};
@@ -55,6 +52,7 @@ public:
 	AuthenticPlayer(const std::shared_ptr<SceneObject>& object);
 	~AuthenticPlayer();
 
+	void FireProj();
 	void DoAttack();
 	void Start();
 	void Update(const Time& time, Scene& scene) override;

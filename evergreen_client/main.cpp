@@ -22,7 +22,10 @@
 #include "NaviCell.h"
 #include "Navigator.h"
 #include "ServerTimeMgr.h"
+
 #include "GizmoBoxRenderer.h"
+#include "GizmoCylinderRenderer.h"
+#include "GizmoSphereRenderer.h"
 
 using namespace udsdx;
 
@@ -79,7 +82,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         if constexpr (true == g_bUseDefaultIP)
         {
-            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(L"127.0.0.1", 7777, s2c_PacketHandler::GetPacketHandlerList()));
+            // L"3.39.255.229"
+            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(L"3.39.255.229", 7777, s2c_PacketHandler::GetPacketHandlerList()));
         }
         else
         {
@@ -92,13 +96,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
             std::wstring inputIP;
             do {
-            RE_INPUT:
                 std::wcout << L"Input IP Address: ";
                 std::wcin >> inputIP;
                 if (!isValidIPAddress(inputIP))
                 {
                     std::wcout << L"Invalid Address !'\n";
-                    goto RE_INPUT;
                 }
             } while (!NetMgr(NetworkMgr)->Connect<ServerSession>(inputIP, 7777, s2c_PacketHandler::GetPacketHandlerList()));
         }
@@ -131,9 +133,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_heroComponent = g_heroObj->AddComponent<AuthenticPlayer>();
 
     // Gizmo Renderer for debugging
-    auto gizmoRenderer = g_heroObj->AddComponent<GizmoBoxRenderer>();
-    gizmoRenderer->SetSize(Vector3(1.5f, 3.5f, 1.5f));
-    gizmoRenderer->SetOffset(Vector3(0.0f, 1.75f, 0.0f));
+    auto gizmoRenderer = g_heroObj->AddComponent<GizmoCylinderRenderer>();
+    gizmoRenderer->SetRadius(1.0f);
+	gizmoRenderer->SetHeight(3.0f);
   
     Vector3 temp = {};
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
@@ -182,6 +184,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         // scene->AddObject(terrainObj);
     }
 
+    {
+        auto skyboxObj = std::make_shared<SceneObject>();
+        auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
+        skyboxRenderer->SetShader(res->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")));
+        skyboxRenderer->SetVertexCount(6);
+        skyboxRenderer->SetCastShadow(false);
+
+        auto skyboxTexture = res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"));
+        g_skyboxMaterial = std::make_shared<udsdx::Material>();
+        g_skyboxMaterial->SetMainTexture(skyboxTexture);
+        skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
+
+        scene->AddObject(skyboxObj);
+    }
+
     if constexpr (true == g_bUseNetWork)
     {
         ServerObjectMgr::GetInst()->SetTargetScene(scene);
@@ -201,8 +218,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             NetMgr(NetworkMgr)->DoNetworkIO();
             });
     }
-
-    INSTANCE(Core)->GetRenderer()->SetEnvironmentMap(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg")));
 
     return UpdownStudio::Run(scene, nCmdShow);
 }

@@ -2,7 +2,7 @@
 #include "Quest.h"
 #include "Session.h"
 
-bool KillFoxQuest::OnAchieve(ServerCore::ContentsEntity* const key_entity, ServerCore::ContentsEntity* const clear_entity) noexcept
+bool KillFoxQuest::OnAchieve(NagiocpX::ContentsEntity* const key_entity, NagiocpX::ContentsEntity* const clear_entity) noexcept
 {
     if (const auto session = clear_entity->GetSession())
     {
@@ -11,7 +11,7 @@ bool KillFoxQuest::OnAchieve(ServerCore::ContentsEntity* const key_entity, Serve
     return m_clearCount <= ++m_curCount;
 }
 
-void KillFoxQuest::OnReward(ServerCore::ContentsEntity* const clear_entity) noexcept
+void KillFoxQuest::OnReward(NagiocpX::ContentsEntity* const clear_entity) noexcept
 {
     if (const auto session = clear_entity->GetSession())
     {

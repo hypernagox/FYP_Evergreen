@@ -2,7 +2,7 @@
 #include "PacketSession.h"
 
 class ServerSession
-	:public ServerCore::PacketSession
+	:public NagiocpX::PacketSession
 {
 public:
 	ServerSession();
@@ -10,7 +10,7 @@ public:
 public:
 	virtual void OnConnected() override;
 	virtual void OnSend(c_int32 len)noexcept override;
-	virtual void OnDisconnected(const ServerCore::Cluster* const curCluster_)noexcept override;
+	virtual void OnDisconnected(const NagiocpX::Cluster* const curCluster_)noexcept override;
 
 	const auto GetDelayAvg()const noexcept { return ((float)m_accDelayMs / (float)m_moveCount); }
 	void UpdateTimeStamp(const uint64_t old_time_stamp)noexcept { m_accDelayMs += (::GetTickCount64() - old_time_stamp); }

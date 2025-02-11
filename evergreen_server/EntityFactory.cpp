@@ -9,8 +9,10 @@
 #include "Collider_Common.h"
 #include "HP.h"
 #include "Death.h"
+#include "Regenerator.h"
+#include "RangeMonState.h"
 
-namespace ServerCore
+namespace NagiocpX
 {
 	S_ptr<ContentsEntity> EntityFactory::CreateMonster(const EntityBuilder& b) noexcept
 	{
@@ -42,10 +44,13 @@ namespace ServerCore
 		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
 
 		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
-		monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
+		//monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
+		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1);
 
 		monster_entity->AddComp<HP>();
 		monster_entity->AddComp<MonsterDeath>();
+
+		monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
 
 		return monster_entity;
 	}
@@ -55,5 +60,34 @@ namespace ServerCore
 		// TODO: NPC에 필요한 부가정보
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
 		return entity;
+	}
+
+	S_ptr<ContentsEntity> EntityFactory::CreateRangeMonster(const EntityBuilder& b) noexcept
+	{
+		const auto monster_entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
+		monster_entity->AddComp<PositionComponent>();
+		const auto fsm = monster_entity->AddIocpComponent<TickTimerFSM>();
+		fsm->SetTickInterval(500);
+
+		fsm->AddState<RangeMonIdle>();
+		fsm->AddState<RangeMonChase>();
+		fsm->AddState<RangeMonAttack>();
+
+		fsm->SetDefaultState(RANGE_MON_STATE::IDLE);
+
+		const auto agent = monster_entity->AddComp<NaviAgent>();
+		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
+		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+
+		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
+		//monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
+		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1);
+
+		monster_entity->AddComp<HP>();
+		monster_entity->AddComp<MonsterDeath>();
+
+		monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
+
+		return monster_entity;
 	}
 }

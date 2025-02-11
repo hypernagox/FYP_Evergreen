@@ -10,76 +10,102 @@
 #include "ContentsField.h"
 #include "MoveBroadcaster.h"
 
-using namespace ServerCore;
-constexpr const int32_t NUM_OF_NPC = 10240;
+using namespace NagiocpX;
+constexpr const int32_t NUM_OF_NPC = 101;
+constexpr const int32_t NUM_OF_MAX_USER = 2002;
+
 extern std::vector<DirectX::BoundingBox> boxes;
 
-void InitTLSFunc()noexcept
+class ContentsInitiator
+	: public NagiocpX::Initiator
 {
-	const volatile auto init_builder = GetBuilder();
-	//NAVIGATION->navMesh->InitNavMeshQuery();
-}
+public:
+	virtual void GlobalInitialize()noexcept override
+	{
+		for (int i = 0; i < 20; ++i)
+		{
+			EntityBuilder b;
+			b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
+			b.obj_type = MONSTER_TYPE_INFO::FOX;
+			const auto m = EntityFactory::CreateMonster(b);
+			Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
+		}
+		for (int i = 0; i < 20; ++i)
+		{
+			EntityBuilder b;
+			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+			b.obj_type = 0;
+			const auto m = EntityFactory::CreateRangeMonster(b);
+			Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
+		}
+		{
+			EntityBuilder b;
+			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+			b.obj_type = 0;
+			b.x = -10.0f;
+			b.y = 0.f;
+			b.z = -10.0f;
+			Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(EntityFactory::CreateNPC(b));
+		}
+	}
 
-void DestroyTLSFunc()noexcept
-{
-	NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
-}
+	virtual void TLSInitialize()noexcept override
+	{
+		const volatile auto init_builder = GetBuilder();
+	}
+
+	virtual void TLSDestroy()noexcept override
+	{
+		NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
+	}
+	
+	virtual void GlobalDestroy()noexcept override
+	{
+	}
+
+	virtual void ControlThreadFunc()noexcept override
+	{
+		for (;;)
+		{
+			system("pause");
+			char buf[32]{};
+			std::cin >> buf;
+			if ("EXIT" == std::string_view{ buf })break;
+		}
+	}
+};
 
 int main()
 {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	ContentsInitiator con_init;
+	ClusterPredicate broad_helper;
 
+	NagiocpX::PrintKoreaRealTime("Server Start !");
+	
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
 	NAVIGATION->Init();
-	
-	//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->LoadByObj(RESOURCE_PATH(L"navmesh10.obj"));
 	NAVIGATION->RegisterDestroy();
-	//AStar::SaveAStarPath(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+
+	MoveBroadcaster::RegisterGlobalHelper(&broad_helper);
 	Mgr(FieldMgr)->SetNumOfNPC<NUM_OF_NPC>();
 	Mgr(FieldMgr)->RegisterField<ContentsField>(0);
-	//Mgr(WorldMgr)->RegisterWolrd<ContentsWorld>(0);
 	
-	ServerCore::MoveBroadcaster::RegisterHuristicFunc2Session(ClusterPredicate::ClusterHuristicFunc2Session);
-	ServerCore::MoveBroadcaster::RegisterHuristicFunc2NPC(ClusterPredicate::ClusterHuristicFunc2NPC);
-	
-	
-	ServerCore::MoveBroadcaster::RegisterAddPacketFunc(ClusterPredicate::ClusterAddPacketFunc);
-	ServerCore::MoveBroadcaster::RegisterRemovePacketFunc(ClusterPredicate::ClusterRemovePacketFunc);
-	ServerCore::MoveBroadcaster::RegisterMovePacketFunc(ClusterPredicate::ClusterMovePacketFunc);
-	
-	for(int i=0;i<100;++i)
-	{
-		EntityBuilder b;
-		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
-		b.obj_type = MONSTER_TYPE_INFO::FOX;
-		const auto m = EntityFactory::CreateMonster(b);
-		Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
-	}
-	{
-		EntityBuilder b;
-		b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
-		b.obj_type = 0;
-		b.x = -10.0f;
-		b.y = 0.f;
-		b.z = -10.0f;
-		Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(EntityFactory::CreateNPC(b));
-	}
-	const auto pServerService = std::make_unique<ServerCore::ServerService>
+	const auto pServerService = new NagiocpX::ServerService
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
-			, ServerCore::NetAddress{ L"0.0.0.0",7777 }
-			, ServerCore::MakeSharedAligned<ClientSession>
-			, 5001
+			, NagiocpX::NetAddress{ L"0.0.0.0",7777 }
+			, NagiocpX::xnew<ClientSession>
+			, c2s_PacketHandler::GetPacketHandlerList()
+			, NUM_OF_MAX_USER
 		);
 	
-	ASSERT_CRASH(pServerService->Start());
+	NAGOX_ASSERT(pServerService->Start());
 	
 	std::atomic_thread_fence(std::memory_order_seq_cst);
-
+	
 	Mgr(ThreadMgr)->Launch(
 		  ThreadMgr::NUM_OF_THREADS
-		, DestroyTLSFunc
-		, InitTLSFunc
+		, &con_init
 	);
 }

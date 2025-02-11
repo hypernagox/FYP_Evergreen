@@ -17,8 +17,8 @@ namespace Common
         const auto start_z_pos = CommonMath::InverseZ(start);
         auto dest_z_pos = CommonMath::InverseZ(dest);
 
-        float t;
-        float hitNormal[3];
+        //float t;
+        //float hitNormal[3];
 
         const auto start_poly = m_agent->GetCurCell().GetPolyRef();
 
@@ -37,9 +37,8 @@ namespace Common
 
         nav_q->findNearestPoly(&dest_z_pos.x, NaviCell::g_extent, nav_f, &dest_poly, &dest_z_pos.x);
         
-        NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveTarget(idx, dest_poly, &dest_z_pos.x);
+       // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveTarget(idx, dest_poly, &dest_z_pos.x);
 
-        return {};
         dtStatus status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
 
         if (dtStatusFailed(status))
@@ -49,7 +48,9 @@ namespace Common
         }
 
         // TODO: 매직넘버
-        thread_local DirectX::SimpleMath::Vector3 straightPath[10];
+        constinit thread_local float straightPathRaw[10 * 3] = {};
+       // thread_local DirectX::SimpleMath::Vector3 straightPath[10];
+        const auto straightPath = (Vector3*)straightPathRaw;
         unsigned char straightPathFlags[10];
         dtPolyRef straightPathPolys[10];
         int straightPathCount = 0;
