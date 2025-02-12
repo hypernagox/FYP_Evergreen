@@ -82,7 +82,6 @@ namespace udsdx
 #if defined(DEBUG) || defined(_DEBUG)
 		Assimp::DefaultLogger::kill();
 #endif
-
 		CreateDescriptorHeaps();
 		RegisterDescriptorsToHeaps();
 		BuildConstantBuffers();
@@ -107,11 +106,13 @@ namespace udsdx
 
 	void Core::InitializeDirect3D()
 	{ ZoneScoped;
+	    UINT factoryFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)
 		EnableDebugLayer();
+		factoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
 		// Create DXGI Factory
-		ThrowIfFailed(::CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
+		ThrowIfFailed(::CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&m_dxgiFactory)));
 		// Create hardware device
 		HRESULT hr = ::D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_d3dDevice));
 
@@ -125,7 +126,11 @@ namespace udsdx
 			ThrowIfFailed(::D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_d3dDevice)));
 		}
 
-		m_tearingSupport = CheckTearingSupport();
+		// Check for tearing support
+		if (FAILED(m_dxgiFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &m_tearingSupport, sizeof(m_tearingSupport))))
+		{
+			m_tearingSupport = false;
+		}
 
 		// Get descriptor sizes for offsets
 		m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -169,11 +174,6 @@ namespace udsdx
 		// Create Motion Blur
 		m_motionBlur = std::make_unique<MotionBlur>(m_d3dDevice.Get(), m_commandList.Get());
 		m_motionBlur->BuildPipelineState();
-
-		if (m_tearingSupport)
-		{
-			m_dxgiFactory->MakeWindowAssociation(m_hMainWnd, DXGI_MWA_NO_ALT_ENTER);
-		}
 
 		const char tracyQueueName[] = "D3D12 Graphics Queue";
 		m_tracyQueueCtx = TracyD3D12Context(m_d3dDevice.Get(), m_commandQueue.Get());
@@ -227,37 +227,30 @@ namespace udsdx
 		// Release the previous swapchain we will be recreating.
 		m_swapChain.Reset();
 
-		DXGI_SWAP_CHAIN_DESC sd;
-		sd.BufferDesc.Width = m_clientWidth;
-		sd.BufferDesc.Height = m_clientHeight;
-		sd.BufferDesc.RefreshRate.Numerator = 60;
-		sd.BufferDesc.RefreshRate.Denominator = 1;
-		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		DXGI_SWAP_CHAIN_DESC1 desc;
+		ZeroMemory(&desc, sizeof(desc));
 
-		// Use 4X MSAA
-		if (m_4xMsaaState)
-		{
-			sd.SampleDesc.Count = 4;
-			sd.SampleDesc.Quality = m_4xMsaaQuality - 1;
-		}
-		// No MSAA
-		else
-		{
-			sd.SampleDesc.Count = 1;
-			sd.SampleDesc.Quality = 0;
-		}
+		desc.Width = m_clientWidth;
+		desc.Height = m_clientHeight;
+		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		desc.BufferCount = SwapChainBufferCount;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+		desc.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
+		desc.SampleDesc.Quality = m_4xMsaaState ? m_4xMsaaQuality - 1 : 0;
+		desc.Flags = m_tearingSupport ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
 
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		sd.BufferCount = SwapChainBufferCount;
-		sd.OutputWindow = m_hMainWnd;
-		sd.Windowed = true;
-		sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-		sd.Flags = m_tearingSupport ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+		ComPtr<IDXGISwapChain1> swapChain1;
 
 		// Note: Swap chain uses queue to perform flush.
-		ThrowIfFailed(m_dxgiFactory->CreateSwapChain(m_commandQueue.Get(), &sd, m_swapChain.GetAddressOf()));
+		ThrowIfFailed(m_dxgiFactory->CreateSwapChainForHwnd(m_commandQueue.Get(), m_hMainWnd, &desc, nullptr, nullptr, &swapChain1));
+		ThrowIfFailed(swapChain1.As(&m_swapChain));
+
+		// Suppress the Alt+Enter fullscreen toggle for tearing support.
+		if (m_tearingSupport)
+		{
+			m_dxgiFactory->MakeWindowAssociation(m_hMainWnd, DXGI_MWA_NO_ALT_ENTER);
+		}
 	}
 
 	void Core::CreateDescriptorHeaps()
@@ -301,6 +294,8 @@ namespace udsdx
 			// Ensure that the GPU is no longer referencing resources that are about to be destroyed.
 			FlushCommandQueue();
 			::CloseHandle(m_fenceEvent);
+
+			SetWindowFullscreen(false);
 
 			// Release the context
 			TracyD3D12Destroy(m_tracyQueueCtx);
@@ -421,27 +416,6 @@ namespace udsdx
 			serializedRootSig->GetBufferSize(),
 			IID_PPV_ARGS(m_rootSignature.GetAddressOf())
 		));
-	}
-
-	void Core::CreateMRTRenderTargetViews()
-	{
-
-	}
-
-	bool Core::CheckTearingSupport() const
-	{
-#if FALSE
-		ComPtr<IDXGIFactory6> factory;
-		HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&factory));
-		BOOL allowTearing = FALSE;
-		if (SUCCEEDED(hr))
-		{
-			hr = factory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));
-		}
-		return SUCCEEDED(hr) && allowTearing;
-#else
-		return true;
-#endif
 	}
 
 	void Core::LogAdapterInfo()
