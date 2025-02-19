@@ -502,8 +502,8 @@ namespace udsdx
 		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 		{
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "VS", "vs_5_0");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "PS", "ps_5_0");
+			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "VS", "vs_5_1");
+			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "PS", "ps_5_1");
 
 			psoDesc.VS =
 			{
@@ -523,8 +523,8 @@ namespace udsdx
 		}
 
 		{
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "VS", "vs_5_0");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "PS", "ps_5_0");
+			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "VS", "vs_5_1");
+			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "PS", "ps_5_1");
 
 			psoDesc.VS =
 			{

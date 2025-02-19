@@ -30,7 +30,7 @@ namespace udsdx
 		psoDesc.SampleDesc.Quality = 0; // m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
 		psoDesc.DSVFormat = DeferredRenderer::DEPTH_FORMAT;
 
-		auto m_psByteCode = d3dUtil::CompileShader(m_path, nullptr, "PS", "ps_5_0");
+		auto m_psByteCode = d3dUtil::CompileShader(m_path, nullptr, "PS", "ps_5_1");
 		psoDesc.PS =
 		{
 			reinterpret_cast<BYTE*>(m_psByteCode->GetBufferPointer()),
@@ -42,8 +42,8 @@ namespace udsdx
 		ComPtr<ID3DBlob> dsByteCode = nullptr;
 		try
 		{
-			hsByteCode = d3dUtil::CompileShader(m_path, nullptr, "HS", "hs_5_0");
-			dsByteCode = d3dUtil::CompileShader(m_path, nullptr, "DS", "ds_5_0");
+			hsByteCode = d3dUtil::CompileShader(m_path, nullptr, "HS", "hs_5_1");
+			dsByteCode = d3dUtil::CompileShader(m_path, nullptr, "DS", "ds_5_1");
 
 			psoDesc.HS =
 			{
@@ -60,7 +60,7 @@ namespace udsdx
 		catch (const DxException&) {}
 
 		{
-			auto m_vsByteCode = d3dUtil::CompileShader(m_path, nullptr, "VS", "vs_5_0");
+			auto m_vsByteCode = d3dUtil::CompileShader(m_path, nullptr, "VS", "vs_5_1");
 
 			psoDesc.InputLayout = { Vertex::DescriptionTable, Vertex::DescriptionTableSize };
 			psoDesc.VS =
@@ -84,7 +84,7 @@ namespace udsdx
 				NULL, NULL
 			};
 
-			auto m_vsByteCode = d3dUtil::CompileShader(m_path, defines, "VS", "vs_5_0");
+			auto m_vsByteCode = d3dUtil::CompileShader(m_path, defines, "VS", "vs_5_1");
 
 			psoDesc.InputLayout = { RiggedVertex::DescriptionTable, RiggedVertex::DescriptionTableSize };
 			psoDesc.VS =
@@ -114,8 +114,8 @@ namespace udsdx
 				NULL, NULL
 			};
 
-			auto m_vsByteCode = d3dUtil::CompileShader(m_path, defines, "VS", "vs_5_0");
-			auto m_psByteCode = d3dUtil::CompileShader(m_path, defines, "ShadowPS", "ps_5_0");
+			auto m_vsByteCode = d3dUtil::CompileShader(m_path, defines, "VS", "vs_5_1");
+			auto m_psByteCode = d3dUtil::CompileShader(m_path, defines, "ShadowPS", "ps_5_1");
 
 			psoDesc.InputLayout = { Vertex::DescriptionTable, Vertex::DescriptionTableSize };
 
@@ -135,8 +135,8 @@ namespace udsdx
 			ComPtr<ID3DBlob> dsByteCode = nullptr;
 			try
 			{
-				hsByteCode = d3dUtil::CompileShader(m_path, defines, "HS", "hs_5_0");
-				dsByteCode = d3dUtil::CompileShader(m_path, defines, "DS", "ds_5_0");
+				hsByteCode = d3dUtil::CompileShader(m_path, defines, "HS", "hs_5_1");
+				dsByteCode = d3dUtil::CompileShader(m_path, defines, "DS", "ds_5_1");
 
 				psoDesc.HS =
 				{
@@ -168,8 +168,8 @@ namespace udsdx
 				NULL, NULL
 			};
 
-			auto m_vsByteCode = d3dUtil::CompileShader(m_path, defines, "VS", "vs_5_0");
-			auto m_psByteCode = d3dUtil::CompileShader(m_path, defines, "ShadowPS", "ps_5_0");
+			auto m_vsByteCode = d3dUtil::CompileShader(m_path, defines, "VS", "vs_5_1");
+			auto m_psByteCode = d3dUtil::CompileShader(m_path, defines, "ShadowPS", "ps_5_1");
 
 			psoDesc.InputLayout = { RiggedVertex::DescriptionTable, RiggedVertex::DescriptionTableSize };
 
@@ -189,8 +189,8 @@ namespace udsdx
 			ComPtr<ID3DBlob> dsByteCode = nullptr;
 			try
 			{
-				hsByteCode = d3dUtil::CompileShader(m_path, defines, "HS", "hs_5_0");
-				dsByteCode = d3dUtil::CompileShader(m_path, defines, "DS", "ds_5_0");
+				hsByteCode = d3dUtil::CompileShader(m_path, defines, "HS", "hs_5_1");
+				dsByteCode = d3dUtil::CompileShader(m_path, defines, "DS", "ds_5_1");
 
 				psoDesc.HS =
 				{

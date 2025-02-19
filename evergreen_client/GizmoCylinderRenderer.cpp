@@ -91,8 +91,8 @@ void GizmoCylinderRenderer::BuildPipelineState()
 
 	if (vsByteCode == nullptr || psByteCode == nullptr)
 	{
-		vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoResource, nullptr, "VS", "vs_5_0");
-		psByteCode = d3dUtil::CompileShaderFromMemory(g_psoResource, nullptr, "PS", "ps_5_0");
+		vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoResource, nullptr, "VS", "vs_5_1");
+		psByteCode = d3dUtil::CompileShaderFromMemory(g_psoResource, nullptr, "PS", "ps_5_1");
 	}
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;

@@ -452,7 +452,7 @@ namespace udsdx
 		};
 
 		{
-			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoTileMax, defines, "CS", "cs_5_0");
+			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoTileMax, defines, "CS", "cs_5_1");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
@@ -468,7 +468,7 @@ namespace udsdx
 		}
 
 		{
-			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoNeighborMax, defines, "CS", "cs_5_0");
+			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoNeighborMax, defines, "CS", "cs_5_1");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
@@ -484,7 +484,7 @@ namespace udsdx
 		}
 
 		{
-			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoPass, defines, "CS", "cs_5_0");
+			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoPass, defines, "CS", "cs_5_1");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));

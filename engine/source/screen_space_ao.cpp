@@ -669,8 +669,8 @@ namespace udsdx
 
 		{
 			// Build the SSAO PSO
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoSSAOResource, defines, "VS", "vs_5_0");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoSSAOResource, defines, "PS", "ps_5_0");
+			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoSSAOResource, defines, "VS", "vs_5_1");
+			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoSSAOResource, defines, "PS", "ps_5_1");
 
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -709,7 +709,7 @@ namespace udsdx
 
 		{
 			// Build the blur PSO
-			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoBlurResource, defines, "CS", "cs_5_0");
+			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoBlurResource, defines, "CS", "cs_5_1");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
