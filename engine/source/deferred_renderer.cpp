@@ -4,6 +4,7 @@
 #include "shadow_map.h"
 #include "texture.h"
 #include "scene.h"
+#include "shader_compile.h"
 
 namespace udsdx
 {
@@ -502,8 +503,8 @@ namespace udsdx
 		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 		{
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "VS", "vs_5_1");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "PS", "ps_5_1");
+			auto vsByteCode = udsdx::CompileShaderFromMemory(g_psoRenderResource, {}, L"VS", L"vs_6_0");
+			auto psByteCode = udsdx::CompileShaderFromMemory(g_psoRenderResource, {}, L"PS", L"ps_6_0");
 
 			psoDesc.VS =
 			{
@@ -523,8 +524,8 @@ namespace udsdx
 		}
 
 		{
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "VS", "vs_5_1");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "PS", "ps_5_1");
+			auto vsByteCode = udsdx::CompileShaderFromMemory(g_psoDebugResource, {}, L"VS", L"vs_6_0");
+			auto psByteCode = udsdx::CompileShaderFromMemory(g_psoDebugResource, {}, L"PS", L"ps_6_0");
 
 			psoDesc.VS =
 			{

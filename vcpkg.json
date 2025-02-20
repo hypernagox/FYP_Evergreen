@@ -7,10 +7,11 @@
     {
       "name": "directxtex",
       "features": [
-         "dx12"
+        "dx12"
       ]
     },
     "directxtk12",
+    "directx-dxc",
     "tbb",
     "jemalloc",
     {

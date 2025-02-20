@@ -58,12 +58,12 @@ HullOut HS(InputPatch<VertexOut, 16> vin, uint index : SV_OutputControlPointID)
 struct DomainOut
 {
 	float4 PosH		: SV_POSITION;
-	float4 PosW		: POSITION;
+	float4 PosW		: POSITION0;
 	float4 PrevPosH	: POSITION1;
 	float2 Tex		: TEXCOORD0;
 	float4 NormalW	: NORMAL;
 #ifdef GENERATE_SHADOWS
-    float4 PosP		: POSITION0;
+    float4 PosP		: POSITION2;
 #endif
 };
 

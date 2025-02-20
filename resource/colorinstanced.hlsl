@@ -1,6 +1,6 @@
 #include "common.hlsl"
 
-VertexOut VS(VertexIn vin, uint InstanceID : SV_InstanceID)
+VertexOut VS(VertexIn vin)
 {
     VertexOut vout;
 

@@ -2,6 +2,7 @@
 #include "motion_blur.h"
 #include "deferred_renderer.h"
 #include "camera.h"
+#include "shader_compile.h"
 
 namespace udsdx
 {
@@ -437,22 +438,19 @@ namespace udsdx
 
 	void MotionBlur::BuildPipelineState()
 	{
-		auto itos = [](int i) -> std::string {
-			std::stringstream ss;
+		auto itos = [](int i) -> std::wstring {
+			std::wstringstream ss;
 			ss << i;
 			return ss.str();
 			};
 
-		std::string sMAX_BLUR_RADIUS = itos(MaxBlurRadius);
-
-		D3D_SHADER_MACRO defines[] =
-		{
-			"MAX_BLUR_RADIUS", sMAX_BLUR_RADIUS.c_str(),
-			nullptr, nullptr
+		std::wstring sMAX_BLUR_RADIUS = itos(MaxBlurRadius);
+		std::wstring defines[] = {
+			L"MAX_BLUR_RADIUS=" + sMAX_BLUR_RADIUS,
 		};
 
 		{
-			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoTileMax, defines, "CS", "cs_5_1");
+			auto csByteCode = udsdx::CompileShaderFromMemory(g_psoTileMax, defines, L"CS", L"cs_6_0");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
@@ -468,7 +466,7 @@ namespace udsdx
 		}
 
 		{
-			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoNeighborMax, defines, "CS", "cs_5_1");
+			auto csByteCode = udsdx::CompileShaderFromMemory(g_psoNeighborMax, defines, L"CS", L"cs_6_0");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
@@ -484,7 +482,7 @@ namespace udsdx
 		}
 
 		{
-			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoPass, defines, "CS", "cs_5_1");
+			auto csByteCode = udsdx::CompileShaderFromMemory(g_psoPass, defines, L"CS", L"cs_6_0");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
