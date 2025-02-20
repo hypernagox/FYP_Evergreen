@@ -12,18 +12,7 @@ namespace udsdx
 	public:
 		struct BoneConstants
 		{
-			UINT FrameStride = 0;
-			UINT SubmeshIndex = 0;
-			UINT FrameIndex = 0;
-			UINT PrevFrameIndex = 0;
-			float FrameFrac = 0.0f;
-			float PrevFrameFrac = 0.0f;
-			UINT TransitionFrameIndex = 0;
-			UINT PrevTransitionFrameIndex = 0;
-			float TransitionFrameFrac = 0.0f;
-			float PrevTransitionFrameFrac = 0.0f;
-			float TransitionFactor = 0.0f;
-			float PrevTransitionFactor = 0.0f;
+			Matrix4x4 BoneTransforms[256];
 		};
 
 	public:
@@ -53,7 +42,8 @@ namespace udsdx
 		float m_transitionFactor = 0.0f;
 
 		std::array<std::vector<std::unique_ptr<UploadBuffer<BoneConstants>>>, FrameResourceCount> m_constantBuffers;
+		std::array<std::vector<std::unique_ptr<UploadBuffer<BoneConstants>>>, FrameResourceCount> m_prevConstantBuffers;
+		std::vector<BoneConstants> m_boneConstantsCache;
 		bool m_constantBuffersDirty = true;
-		BoneConstants m_boneConstantCache{};
 	};
 }

@@ -1,3 +1,5 @@
+#define MAX_BONES 256
+
 cbuffer cbPerObject : register(b0)
 {
     float4x4 gWorld;
@@ -17,16 +19,9 @@ cbuffer cbPerCamera : register(b1)
     float2 gRenderTargetSize;
 }
 
-cbuffer cbBones : register(b2)
-{
-    uint gFrameStride;
-    uint gSubmeshIndex;
-    uint2 gFrameIndex;
-    float2 gFrameFrac;
-    uint2 gTransitionFrameIndex;
-    float2 gTransitionFrameFrac;
-    float2 gTransitionFactor;
-};
+struct BoneData { float4x4 m[MAX_BONES]; };
+ConstantBuffer<BoneData> gBoneTransforms : register(b2, space0);
+ConstantBuffer<BoneData> gPrevBoneTransforms : register(b2, space1);
 
 cbuffer cbPerShadow : register(b3)
 {
@@ -55,9 +50,8 @@ static const float4x4 gTex =
 
 Texture2D gMainTex : register(t0);
 Texture2D gNormalMap : register(t1);
-StructuredBuffer<float4x4> gBoneMatrices : register(t2);
-Texture2D gShadowMap : register(t3);
-Texture2D gSSAOMap : register(t4);
+Texture2D gShadowMap : register(t2);
+Texture2D gSSAOMap : register(t3);
 
 SamplerState gSampler : register(s0);
 
@@ -67,6 +61,7 @@ struct VertexIn
     float2 Tex          : TEXCOORD;
     float3 Normal       : NORMAL;
     float3 Tangent	    : TANGENT;
+    float4x4 InstanceTransform : INSTANCETRANSFORM;
 #ifdef RIGGED
 	uint   BoneIndices  : BONEINDICES;
 	float4 BoneWeights  : BONEWEIGHTS;
@@ -98,23 +93,24 @@ struct PixelOut
 
 #ifdef RIGGED
 
-#define LocalToObjectPos(vin) RigTransform(float4(vin.PosL, 1.0f), 0, vin.BoneIndices, vin.BoneWeights)
-#define LocalToObjectNormal(vin, normal) RigTransform(float4(normal, 0.0f), 0, vin.BoneIndices, vin.BoneWeights)
+#define LocalToObjectPos(vin) RigTransform(float4(vin.PosL, 1.0f), vin.BoneIndices, vin.BoneWeights)
+#define LocalToObjectNormal(vin, normal) RigTransform(float4(normal, 0.0f), vin.BoneIndices, vin.BoneWeights)
 
-inline float4x4 BoneTransform(uint i, uint boneIndex)
+inline float4 RigTransform(float4 posL, uint indices, float4 weights)
 {
-    float4x4 boneOffset = gBoneMatrices[gSubmeshIndex * gFrameStride + boneIndex];
-    float4x4 currFrame = lerp(gBoneMatrices[gFrameIndex[i] * gFrameStride + boneIndex], gBoneMatrices[(gFrameIndex[i] + 1) * gFrameStride + boneIndex], gFrameFrac[i]);
-    float4x4 prevFrame = lerp(gBoneMatrices[gTransitionFrameIndex[i] * gFrameStride + boneIndex], gBoneMatrices[(gTransitionFrameIndex[i] + 1) * gFrameStride + boneIndex], gTransitionFrameFrac[i]);
-    return mul(boneOffset, lerp(prevFrame, currFrame, gTransitionFactor[i]));
+	float4 posW =  mul(posL, gBoneTransforms.m[indices & 0xFF])         * weights.x;
+	       posW += mul(posL, gBoneTransforms.m[indices >> 8 & 0xFF])    * weights.y;
+	       posW += mul(posL, gBoneTransforms.m[indices >> 16 & 0xFF])   * weights.z;
+	       posW += mul(posL, gBoneTransforms.m[indices >> 24 & 0xFF])   * weights.w;
+	return posW;
 }
 
-inline float4 RigTransform(float4 posL, uint i, uint indices, float4 weights)
+inline float4 PrevRigTransform(float4 posL, uint indices, float4 weights)
 {
-	float4 posW =  mul(posL, BoneTransform(i, indices & 0xFF))         * weights.x;
-	       posW += mul(posL, BoneTransform(i, indices >> 8 & 0xFF))    * weights.y;
-	       posW += mul(posL, BoneTransform(i, indices >> 16 & 0xFF))   * weights.z;
-	       posW += mul(posL, BoneTransform(i, indices >> 24 & 0xFF))   * weights.w;
+	float4 posW =  mul(posL, gPrevBoneTransforms.m[indices & 0xFF])         * weights.x;
+	       posW += mul(posL, gPrevBoneTransforms.m[indices >> 8 & 0xFF])    * weights.y;
+	       posW += mul(posL, gPrevBoneTransforms.m[indices >> 16 & 0xFF])   * weights.z;
+	       posW += mul(posL, gPrevBoneTransforms.m[indices >> 24 & 0xFF])   * weights.w;
 	return posW;
 }
 
@@ -150,7 +146,7 @@ inline float3 LocalToWorldNormal(float3 normalL)
 #else
 #define ConstructPosP(vin, vout)
 #ifdef RIGGED
-#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(RigTransform(float4(vin.PosL, 1.0f), 1, vin.BoneIndices, vin.BoneWeights), gPrevWorld), gPrevViewProj)
+#define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(PrevRigTransform(float4(vin.PosL, 1.0f), vin.BoneIndices, vin.BoneWeights), gPrevWorld), gPrevViewProj)
 #else
 #define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(float4(vin.PosL, 1.0f), gPrevWorld), gPrevViewProj)
 #endif

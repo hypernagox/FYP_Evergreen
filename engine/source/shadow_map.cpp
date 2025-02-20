@@ -105,6 +105,7 @@ namespace udsdx
 		pCommandList->OMSetRenderTargets(0, nullptr, false, &m_dsvCpu);
 
 		// Bind the current frame's constant buffer to the pipeline.
+		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerShadowCBV, GetConstantBuffer(param.FrameResourceIndex));
 		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerFrameCBV, param.ConstantBufferView);
 		pCommandList->SetGraphicsRootDescriptorTable(RootParam::ShadowMapSRV, m_srvGpu);
 

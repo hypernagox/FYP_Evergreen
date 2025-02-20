@@ -172,10 +172,7 @@ namespace udsdx
 		std::unique_ptr<MeshBase> mesh = nullptr;
 		if (hasBones)
 		{
-			std::unique_ptr<RiggedMesh> riggedMesh = std::make_unique<RiggedMesh>(*assimpScene, preMultiplication);
-			riggedMesh->CreateBoneBuffer();
-			riggedMesh->UploadBoneBuffer(m_device, m_commandList);
-			mesh = std::move(riggedMesh);
+			mesh = std::make_unique<RiggedMesh>(*assimpScene, preMultiplication);
 			DebugConsole::Log("\tRegistered the resource as RiggedMesh");
 		}
 		else

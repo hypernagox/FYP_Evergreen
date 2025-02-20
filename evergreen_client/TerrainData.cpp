@@ -7,13 +7,12 @@ TerrainData::TerrainData(std::wstring_view instancesPath)
 {
 	CreateBuffer(instancesPath);
 	UploadBuffer(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
-	BuildDescriptors();
 }
 
 void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 {
 	std::vector<std::pair<int, Matrix4x4>> intermediateData;
-	std::vector<std::vector<Matrix4x4>> bufferData;
+	std::vector<Matrix4x4> bufferData;
 
 	std::ifstream file(instancesPath.data());
 	nlohmann::json j;
@@ -33,78 +32,46 @@ void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 	}
 
 	std::sort(intermediateData.begin(), intermediateData.end(), [](const std::pair<int, Matrix4x4>& a, const std::pair<int, Matrix4x4>& b) { return a.first < b.first; });
-	int base = 0, p = 0;
-	bufferData.emplace_back();
+	int base = 0;
 	for (size_t i = 0; i < intermediateData.size(); i++)
 	{
 		if (i > 0 && intermediateData[i].first != intermediateData[i - 1].first)
 		{
 			m_baseCountPairs.emplace_back(base, i - base);
 			base = i;
-			bufferData.emplace_back();
-			++p;
 		}
-		bufferData[p].emplace_back(std::move(intermediateData[i].second));
+		bufferData.emplace_back(std::move(intermediateData[i].second));
 	}
 	m_baseCountPairs.emplace_back(base, intermediateData.size() - base);
 
 	m_prototypeCount = static_cast<UINT>(bufferData.size());
-	m_bufferCPU.resize(m_prototypeCount);
-	m_bufferGpu.resize(m_prototypeCount);
-	m_bufferUpload.resize(m_prototypeCount);
+	m_vertexBufferByteSize = static_cast<UINT>(bufferData.size()) * sizeof(Matrix4x4);
 
-	m_desciptorCpuSrv.resize(m_prototypeCount);
-	m_desciptorGpuSrv.resize(m_prototypeCount);
-
-	for (UINT i = 0; i < m_prototypeCount; ++i)
-	{
-		const UINT bufferByteSize = static_cast<UINT>(bufferData[i].size()) * sizeof(Matrix4x4);
-		m_bufferCPU[i] = ComPtr<ID3DBlob>();
-
-		ThrowIfFailed(D3DCreateBlob(bufferByteSize, &m_bufferCPU[i]));
-		CopyMemory(m_bufferCPU[i]->GetBufferPointer(), bufferData[i].data(), bufferByteSize);
-	}
+	ThrowIfFailed(D3DCreateBlob(m_vertexBufferByteSize, &m_bufferCPU));
+	CopyMemory(m_bufferCPU->GetBufferPointer(), bufferData.data(), m_vertexBufferByteSize);
 }
 
 void TerrainData::UploadBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
 {	
-	for (UINT i = 0; i < m_prototypeCount; ++i)
-	{
-		// Make sure buffers are uploaded to the CPU.
-		assert(m_bufferCPU[i] != nullptr);
+	assert(m_bufferCPU != nullptr);
 
-		m_bufferGpu[i] = d3dUtil::CreateDefaultBuffer(
-			device,
-			commandList,
-			m_bufferCPU[i]->GetBufferPointer(),
-			m_bufferCPU[i]->GetBufferSize(),
-			m_bufferUpload[i]
-		);
-	}
+	m_bufferGpu = d3dUtil::CreateDefaultBuffer(
+		device,
+		commandList,
+		m_bufferCPU->GetBufferPointer(),
+		m_bufferCPU->GetBufferSize(),
+		m_bufferUpload
+	);
 }
 
-void TerrainData::BuildDescriptors()
+D3D12_VERTEX_BUFFER_VIEW TerrainData::GetTransformBufferView() const
 {
-	for (UINT i = 0; i < m_prototypeCount; ++i)
-	{
-		INSTANCE(Core)->IncrementSRVHeapDescriptor(&m_desciptorCpuSrv[i], &m_desciptorGpuSrv[i]);
+	D3D12_VERTEX_BUFFER_VIEW vbv;
+	vbv.BufferLocation = m_bufferGpu->GetGPUVirtualAddress();
+	vbv.StrideInBytes = m_vertexByteStride;
+	vbv.SizeInBytes = m_vertexBufferByteSize;
 
-		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.FirstElement = 0;
-		srvDesc.Buffer.NumElements = m_bufferCPU[i]->GetBufferSize() / sizeof(Matrix4x4);
-		srvDesc.Buffer.StructureByteStride = sizeof(Matrix4x4);
-		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-
-		INSTANCE(Core)->GetDevice()->CreateShaderResourceView(m_bufferGpu[i].Get(), &srvDesc, m_desciptorCpuSrv[i]);
-	}
-}
-
-CD3DX12_GPU_DESCRIPTOR_HANDLE TerrainData::GetTransformGpuSrv(int index) const
-{
-	return m_desciptorGpuSrv[index];
+	return vbv;
 }
 
 UINT TerrainData::GetPrototypeCount() const

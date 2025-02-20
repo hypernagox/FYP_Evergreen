@@ -19,14 +19,14 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 	UINT numPrototype = m_terrainData->GetPrototypeCount();
 	for (UINT prototypeIndex = 0; prototypeIndex < numPrototype; ++prototypeIndex)
 	{
-		param.CommandList->SetGraphicsRootDescriptorTable(RootParam::BonesSRV, m_terrainData->GetTransformGpuSrv(prototypeIndex));
-
 		const auto& mesh = m_meshes[prototypeIndex];
 
 		D3D12_VERTEX_BUFFER_VIEW vbv = mesh->VertexBufferView();
+		D3D12_VERTEX_BUFFER_VIEW vibv = m_terrainData->GetTransformBufferView();
 		D3D12_INDEX_BUFFER_VIEW ibv = mesh->IndexBufferView();
 
 		param.CommandList->IASetVertexBuffers(0, 1, &vbv);
+		param.CommandList->IASetVertexBuffers(1, 1, &vibv);
 		param.CommandList->IASetIndexBuffer(&ibv);
 		param.CommandList->IASetPrimitiveTopology(m_topology);
 
@@ -50,7 +50,7 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 				}
 			}
 			const auto& submesh = submeshes[index];
-			param.CommandList->DrawIndexedInstanced(submesh.IndexCount, prototypeCount * instances, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
+			param.CommandList->DrawIndexedInstanced(submesh.IndexCount, prototypeCount, submesh.StartIndexLocation, submesh.BaseVertexLocation, prototypeBase);
 		}
 	}
 }

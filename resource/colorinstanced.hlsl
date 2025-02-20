@@ -4,19 +4,13 @@ VertexOut VS(VertexIn vin)
 {
     VertexOut vout;
 
-#ifdef GENERATE_SHADOWS
-    float4x4 TransformPerInstance = gBoneMatrices[InstanceID / 4];
-#else
-    float4x4 TransformPerInstance = gBoneMatrices[InstanceID];
-#endif
-
-    float4 PosL = mul(float4(vin.PosL, 1.0f), TransformPerInstance);
+    float4 PosL = mul(float4(vin.PosL, 1.0f), vin.InstanceTransform);
 
     vout.PosW = ObjectToWorldPos(PosL);
 	vout.PosH = WorldToClipPos(vout.PosW, vin);                                     
 	vout.Tex = vin.Tex;                                                             
-	vout.NormalW = ObjectToWorldNormal(mul(vin.Normal, (float3x3)TransformPerInstance));       
-    vout.TangentW = ObjectToWorldNormal(mul(vin.Tangent, (float3x3)TransformPerInstance));     
+	vout.NormalW = ObjectToWorldNormal(mul(vin.Normal, (float3x3)vin.InstanceTransform));       
+    vout.TangentW = ObjectToWorldNormal(mul(vin.Tangent, (float3x3)vin.InstanceTransform));     
     ConstructPosP(vin, vout);                                                       
     vout.PrevPosH = mul(mul(PosL, gPrevWorld), gPrevViewProj);
 
