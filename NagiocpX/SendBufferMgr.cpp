@@ -67,9 +67,9 @@ namespace NagiocpX
 	SendBufferChunk* const SendBufferMgr::Pop()noexcept
 	{ 
 		extern thread_local ChunkStack tl_chunkBufferPool;
-		if (const auto chunk = tl_chunkBufferPool.Pop())
+		if (const auto chunk = tl_chunkBufferPool.Pop()) [[likely]]
 			return chunk;
-		else
+		else [[unlikely]]
 			return xnew<SendBufferChunk>();
 	}
 	void SendBufferMgr::ReturnChunk(SendBufferChunk* const chunk) noexcept
