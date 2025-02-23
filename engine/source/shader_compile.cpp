@@ -83,7 +83,7 @@ namespace udsdx
         ComPtr<IDxcBlobUtf8> pErrors;
         ThrowIfFailed(pResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&pErrors), nullptr));
         if (pErrors && pErrors->GetStringLength() > 0) {
-            DebugConsole::LogError(std::string((char*)pErrors->GetBufferPointer()));
+            DebugConsole::Log(std::string((char*)pErrors->GetBufferPointer()));
         }
 
         HRESULT hrStatus;
@@ -127,7 +127,7 @@ namespace udsdx
         ComPtr<IDxcBlobUtf8> pErrors;
         ThrowIfFailed(pResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&pErrors), nullptr));
         if (pErrors && pErrors->GetStringLength() > 0) {
-            DebugConsole::LogError(std::string((char*)pErrors->GetBufferPointer()));
+            DebugConsole::Log(std::string((char*)pErrors->GetBufferPointer()));
         }
 
         HRESULT hrStatus;
