@@ -85,6 +85,9 @@
     <Filter Include="Projectile">
       <UniqueIdentifier>{1e9b632f-91d6-4901-acff-c573e854db4f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Terrain">
+      <UniqueIdentifier>{26376024-ac6b-47b1-a6bb-ba9ceeae52ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -158,6 +161,12 @@
     </ClCompile>
     <ClCompile Include="GizmoCylinderRenderer.cpp">
       <Filter>GizmoRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainData.cpp">
+      <Filter>Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainInstanceRenderer.cpp">
+      <Filter>Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,6 +253,12 @@
     </ClInclude>
     <ClInclude Include="GizmoCylinderRenderer.h">
       <Filter>GizmoRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainData.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainInstanceRenderer.h">
+      <Filter>Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

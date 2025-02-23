@@ -185,6 +185,7 @@
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CommonMath.h" />
     <ClInclude Include="HeightMap.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="NaviAgent.h" />
     <ClInclude Include="NaviCell.h" />
     <ClInclude Include="Navigator.h" />

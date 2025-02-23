@@ -93,8 +93,6 @@ namespace udsdx
 	{
 		auto pCommandList = param.CommandList;
 
-		pCommandList->SetGraphicsRootSignature(param.RootSignature);
-
 		pCommandList->RSSetViewports(1, &m_viewport);
 		pCommandList->RSSetScissorRects(1, &m_scissorRect);
 
@@ -104,7 +102,7 @@ namespace udsdx
 		pCommandList->ClearDepthStencilView(m_dsvCpu, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr); 
 		pCommandList->OMSetRenderTargets(0, nullptr, false, &m_dsvCpu);
 
-		// Bind the current frame's constant buffer to the pipeline.
+		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerShadowCBV, GetConstantBuffer(param.FrameResourceIndex));
 		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerFrameCBV, param.ConstantBufferView);
 		pCommandList->SetGraphicsRootDescriptorTable(RootParam::ShadowMapSRV, m_srvGpu);
 

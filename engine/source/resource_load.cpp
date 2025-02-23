@@ -48,6 +48,10 @@ namespace udsdx
 			std::wstring filename = directory.path().filename().wstring();
 			std::wstring suffix = directory.path().extension().wstring();
 
+			std::transform(path.begin(), path.end(), path.begin(), ::tolower);
+			std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
+			std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
+
 			// if the file is in the ignore list, skip it
 			if (m_ignoreFiles.find(filename) != m_ignoreFiles.end())
 			{
@@ -96,6 +100,7 @@ namespace udsdx
 		m_extensionDictionary.emplace(L".jpeg", L"texture");
 		m_extensionDictionary.emplace(L".bmp", L"texture");
 		m_extensionDictionary.emplace(L".tif", L"texture");
+		m_extensionDictionary.emplace(L".tga", L"texture");
 		m_extensionDictionary.emplace(L".obj", L"model");
 		m_extensionDictionary.emplace(L".fbx", L"model");
 		m_extensionDictionary.emplace(L".dae", L"model");
@@ -125,7 +130,7 @@ namespace udsdx
 
 	std::unique_ptr<ResourceObject> TextureLoader::Load(std::wstring_view path)
 	{ ZoneScoped;
-		auto texture = std::make_unique<Texture>(path, m_device, m_commandQueue);
+		auto texture = std::make_unique<Texture>(path, m_device, m_commandList);
 		return texture;
 	}
 
@@ -167,10 +172,7 @@ namespace udsdx
 		std::unique_ptr<MeshBase> mesh = nullptr;
 		if (hasBones)
 		{
-			std::unique_ptr<RiggedMesh> riggedMesh = std::make_unique<RiggedMesh>(*assimpScene, preMultiplication);
-			riggedMesh->CreateBoneBuffer();
-			riggedMesh->UploadBoneBuffer(m_device, m_commandList);
-			mesh = std::move(riggedMesh);
+			mesh = std::make_unique<RiggedMesh>(*assimpScene, preMultiplication);
 			DebugConsole::Log("\tRegistered the resource as RiggedMesh");
 		}
 		else

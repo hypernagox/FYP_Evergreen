@@ -4,6 +4,7 @@
 #include "shadow_map.h"
 #include "texture.h"
 #include "scene.h"
+#include "shader_compile.h"
 
 namespace udsdx
 {
@@ -502,8 +503,8 @@ namespace udsdx
 		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 		{
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "VS", "vs_5_0");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoRenderResource, nullptr, "PS", "ps_5_0");
+			auto vsByteCode = udsdx::CompileShaderFromMemory(g_psoRenderResource, {}, L"VS", L"vs_6_0");
+			auto psByteCode = udsdx::CompileShaderFromMemory(g_psoRenderResource, {}, L"PS", L"ps_6_0");
 
 			psoDesc.VS =
 			{
@@ -520,11 +521,12 @@ namespace udsdx
 				&psoDesc,
 				IID_PPV_ARGS(m_renderPipelineState.GetAddressOf())
 			));
+			m_renderPipelineState->SetName(L"DeferredRenderer::Pass");
 		}
 
 		{
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "VS", "vs_5_0");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoDebugResource, nullptr, "PS", "ps_5_0");
+			auto vsByteCode = udsdx::CompileShaderFromMemory(g_psoDebugResource, {}, L"VS", L"vs_6_0");
+			auto psByteCode = udsdx::CompileShaderFromMemory(g_psoDebugResource, {}, L"PS", L"ps_6_0");
 
 			psoDesc.VS =
 			{
@@ -541,6 +543,7 @@ namespace udsdx
 				&psoDesc,
 				IID_PPV_ARGS(m_debugPipelineState.GetAddressOf())
 			));
+			m_debugPipelineState->SetName(L"DeferredRenderer::PassDebug");
 		}
 	}
 
@@ -595,7 +598,7 @@ namespace udsdx
 
 		pCommandList->SetPipelineState(m_renderPipelineState.Get());
 
-		renderParam.CommandList->SetGraphicsRootConstantBufferView(0, cbvGpu);
+		pCommandList->SetGraphicsRootConstantBufferView(0, cbvGpu);
 		pCommandList->SetGraphicsRootConstantBufferView(1, renderParam.RenderShadowMap->GetConstantBuffer(renderParam.FrameResourceIndex));
 		pCommandList->SetGraphicsRootDescriptorTable(2, m_gBuffersGpuSrv[0]);
 		pCommandList->SetGraphicsRootDescriptorTable(3, renderParam.RenderShadowMap->GetSrvGpu());

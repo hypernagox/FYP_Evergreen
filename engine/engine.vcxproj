@@ -181,6 +181,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(VcpkgManifestRoot)\vcpkg_installed\x64-windows\x64-windows\debug\bin\dxil.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <ClCompile>
@@ -188,7 +191,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>TRACY_ENABLE;NDEBUG;_CONSOLE;CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TRACY_ENABLE;PROFILE_ENABLE;NDEBUG;_CONSOLE;CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -200,6 +203,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(VcpkgManifestRoot)\vcpkg_installed\x64-windows\x64-windows\bin\dxil.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -219,6 +225,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(VcpkgManifestRoot)\vcpkg_installed\x64-windows\x64-windows\bin\dxil.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\allocation.cpp" />
@@ -259,6 +268,7 @@
     <ClCompile Include="source\scene_object.cpp" />
     <ClCompile Include="source\screen_space_ao.cpp" />
     <ClCompile Include="source\shader.cpp" />
+    <ClCompile Include="source\shader_compile.cpp" />
     <ClCompile Include="source\shadow_map.cpp" />
     <ClCompile Include="source\texture.cpp" />
     <ClCompile Include="source\time_measure.cpp" />
@@ -304,6 +314,7 @@
     <ClInclude Include="source\scene_object.h" />
     <ClInclude Include="source\screen_space_ao.h" />
     <ClInclude Include="source\shader.h" />
+    <ClInclude Include="source\shader_compile.h" />
     <ClInclude Include="source\shadow_map.h" />
     <ClInclude Include="source\singleton.h" />
     <ClInclude Include="source\texture.h" />

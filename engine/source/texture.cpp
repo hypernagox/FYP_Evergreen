@@ -1,21 +1,45 @@
 #include "pch.h"
 #include "texture.h"
 
+#include <DirectXTex.h>
+
 namespace udsdx
 {
-	Texture::Texture(std::wstring_view path, ID3D12Device* device, ID3D12CommandQueue* commandQueue) : ResourceObject(path)
+	Texture::Texture(std::wstring_view path, ID3D12Device* device, ID3D12GraphicsCommandList* commandList) : ResourceObject(path)
 	{
-		ResourceUploadBatch resourceUpload(device);
-		D3D12_RESOURCE_FLAGS resourceFlags = D3D12_RESOURCE_FLAG_NONE;
-		WIC_LOADER_FLAGS wicFlags = WIC_LOADER_IGNORE_SRGB;
+		ScratchImage image;
+		if (path.ends_with(L".tga"))
+		{
+			ThrowIfFailed(::LoadFromTGAFile(path.data(), nullptr, image));
+		}
+		else
+		{
+			ThrowIfFailed(::LoadFromWICFile(path.data(), WIC_FLAGS_NONE, nullptr, image));
+		}
 
-		resourceUpload.Begin();
-		ThrowIfFailed(CreateWICTextureFromFileEx(
-			device, resourceUpload, path.data(), 0, resourceFlags, wicFlags, m_texture.GetAddressOf()
-		));
+		ThrowIfFailed(::CreateTextureEx(device, image.GetMetadata(), D3D12_RESOURCE_FLAG_NONE, CREATETEX_IGNORE_SRGB, &m_texture));
 
-		auto uploadFinished = resourceUpload.End(commandQueue);
-		uploadFinished.wait();
+		std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+		ThrowIfFailed(::PrepareUpload(device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), subresources));
+
+		const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture.Get(), 0, static_cast<unsigned int>(subresources.size()));
+
+		ThrowIfFailed(device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(m_textureUpload.GetAddressOf())));
+
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(),
+			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
+		UpdateSubresources(commandList,
+			m_texture.Get(), m_textureUpload.Get(),
+			0, 0, static_cast<unsigned int>(subresources.size()),
+			subresources.data());
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 	}
 
 	Texture::~Texture()
