@@ -194,21 +194,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     terrainInstanceRenderer->SetMaterial(g_treeMaterials[0].get(), 1);
     scene->AddObject(terrainInstance);
 
-    terrainObj = std::make_shared<SceneObject>();
-    auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-    terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"terrain.obj")));
-    terrainRenderer->SetMaterial(terrainMaterial.get());
-    terrainRenderer->SetShader(shaderTerrain);
-    // scene->AddObject(terrainObj);
-
     {
-        auto terrainObj = std::make_shared<SceneObject>();
+        terrainObj = std::make_shared<SceneObject>();
         terrainObj->GetTransform()->SetLocalPosition(Vector3(0.0f, -100.0f, 0.0f));
         terrainObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 512.0f);
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
         terrainRenderer->SetMesh(terrainMesh.get());
         terrainRenderer->SetMaterial(terrainMaterial.get());
-        //terrainRenderer->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
         terrainRenderer->SetShader(shaderTerrain);
         terrainRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST);
         scene->AddObject(terrainObj);

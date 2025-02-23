@@ -47,15 +47,25 @@ namespace udsdx
 
 	void Scene::Render(RenderParam& param)
 	{ ZoneScoped;
+		std::vector<D3D12_GPU_VIRTUAL_ADDRESS> cameraCbvs(m_renderCameraQueue.size());
+		for (size_t i = 0; i < m_renderCameraQueue.size(); ++i)
+		{
+			cameraCbvs[i] = m_renderCameraQueue[i]->UpdateConstantBuffer(param.FrameResourceIndex, param.Viewport.Width, param.Viewport.Height);
+		}
+
+		param.CommandList->SetGraphicsRootSignature(param.RootSignature);
+
 		// Shadow map rendering pass
 		if (!m_renderLightQueue.empty() && !m_renderCameraQueue.empty())
 		{
+			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cameraCbvs[0]);
 			PassRenderShadow(param, m_renderCameraQueue.front(), m_renderLightQueue[0]);
 		}
 
-		for (const auto& camera : m_renderCameraQueue)
+		for (size_t i = 0; i < m_renderCameraQueue.size(); ++i)
 		{
-			PassRenderMain(param, camera);
+			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cameraCbvs[i]);
+			PassRenderMain(param, m_renderCameraQueue[i], cameraCbvs[i]);
 		}
 	}
 
@@ -100,7 +110,7 @@ namespace udsdx
 		param.RenderScreenSpaceAO->PassBlur(param);
 	}
 
-	void Scene::PassRenderMain(RenderParam& param, Camera* camera)
+	void Scene::PassRenderMain(RenderParam& param, Camera* camera, D3D12_GPU_VIRTUAL_ADDRESS cameraCbv)
 	{
 		ZoneScopedN("Main Pass");
 		TracyD3D12Zone(*param.TracyQueueContext, param.CommandList, "Main Pass");
@@ -111,12 +121,7 @@ namespace udsdx
 		param.Renderer->PassBufferPreparation(param);
 		param.Renderer->ClearRenderTargets(pCommandList);
 
-		Matrix4x4 viewMat = camera->GetViewMatrix();
-		Matrix4x4 projMat = camera->GetProjMatrix(param.AspectRatio);
 		param.ViewFrustumWorld = camera->GetViewFrustumWorld(param.AspectRatio);
-
-		D3D12_GPU_VIRTUAL_ADDRESS cbvGpu = camera->UpdateConstantBuffer(param.FrameResourceIndex, param.Viewport.Width, param.Viewport.Height);
-		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cbvGpu);
 
 		RenderSceneObjects(param, RenderGroup::Deferred, 1);
 
@@ -124,7 +129,7 @@ namespace udsdx
 
 		PassRenderSSAO(param, camera);
 
-		param.Renderer->PassRender(param, cbvGpu);
+		param.Renderer->PassRender(param, cameraCbv);
 
 		// Forward rendering pass
 		param.Renderer->PassBufferPreparation(param);
@@ -135,12 +140,13 @@ namespace udsdx
 		pCommandList->RSSetViewports(1, &param.Viewport);
 		pCommandList->RSSetScissorRects(1, &param.ScissorRect);
 
+		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cameraCbv);
 		RenderSceneObjects(param, RenderGroup::Forward, 1);
 
 		param.Renderer->PassBufferPostProcess(param);
 
 		// Motion blur pass
-		param.RenderMotionBlur->Pass(param, cbvGpu);
+		param.RenderMotionBlur->Pass(param, cameraCbv);
 	}
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)

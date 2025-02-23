@@ -145,10 +145,6 @@ namespace udsdx
 		// Swap Chain (front and back buffer, similar as double-buffering)
 		ComPtr<IDXGISwapChain4> m_swapChain;
 
-		// Direct3D 12 Debug Layer
-		// Used to enable debug messages in the output window
-		ComPtr<ID3D12Debug> m_debugLayer;
-
 		// Fence for CPU/GPU synchronization
 		ComPtr<ID3D12Fence> m_fence;
 		UINT64 m_currentFence = 0;

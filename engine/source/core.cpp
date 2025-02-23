@@ -181,8 +181,13 @@ namespace udsdx
 
 	void Core::EnableDebugLayer()
 	{
-		ThrowIfFailed(::D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugLayer)));
-		m_debugLayer->EnableDebugLayer();
+		ComPtr<ID3D12Debug> debugLayer0;
+		ComPtr<ID3D12Debug1> debugLayer1;
+
+		ThrowIfFailed(::D3D12GetDebugInterface(IID_PPV_ARGS(&debugLayer0)));
+		ThrowIfFailed(debugLayer0->QueryInterface(IID_PPV_ARGS(&debugLayer1)));
+		debugLayer0->EnableDebugLayer();
+		debugLayer1->SetEnableGPUBasedValidation(true);
 	}
 
 	void Core::CreateCommandObjects()

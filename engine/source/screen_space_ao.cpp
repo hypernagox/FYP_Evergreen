@@ -703,6 +703,7 @@ namespace udsdx
 				&psoDesc,
 				IID_PPV_ARGS(m_ssaoPSO.GetAddressOf())
 			));
+			m_ssaoPSO->SetName(L"ScreenSpaceAO::PassSSAO");
 		}
 
 		{
@@ -724,6 +725,7 @@ namespace udsdx
 				&psoDesc,
 				IID_PPV_ARGS(m_blurPSO.GetAddressOf())
 			));
+			m_blurPSO->SetName(L"ScreenSpaceAO::PassBlur");
 		}
 	}
 

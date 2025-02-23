@@ -76,6 +76,7 @@ namespace udsdx
 				IID_PPV_ARGS(m_defaultPipelineState.GetAddressOf())
 			));
 
+			m_defaultPipelineState->SetName((m_path + L" (Default)").c_str());
 			DebugConsole::Log("\tDefault shader compiled");
 		}
 
@@ -98,6 +99,7 @@ namespace udsdx
 				IID_PPV_ARGS(m_riggedPipelineState.GetAddressOf())
 			));
 
+			m_riggedPipelineState->SetName((m_path + L" (Rigged)").c_str());
 			DebugConsole::Log("\tRigged shader compiled");
 		}
 
@@ -155,6 +157,7 @@ namespace udsdx
 				IID_PPV_ARGS(m_shadowPipelineState.GetAddressOf())
 			));
 
+			m_shadowPipelineState->SetName((m_path + L" (Default Shadow)").c_str());
 			DebugConsole::Log("\tShadow shader compiled");
 		}
 
@@ -206,6 +209,7 @@ namespace udsdx
 				IID_PPV_ARGS(m_riggedShadowPipelineState.GetAddressOf())
 			));
 
+			m_riggedShadowPipelineState->SetName((m_path + L" (Rigged Shadow)").c_str());
 			DebugConsole::Log("\tRigged shadow shader compiled");
 		}
 	}

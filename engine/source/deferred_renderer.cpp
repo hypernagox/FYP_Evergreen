@@ -521,6 +521,7 @@ namespace udsdx
 				&psoDesc,
 				IID_PPV_ARGS(m_renderPipelineState.GetAddressOf())
 			));
+			m_renderPipelineState->SetName(L"DeferredRenderer::Pass");
 		}
 
 		{
@@ -542,6 +543,7 @@ namespace udsdx
 				&psoDesc,
 				IID_PPV_ARGS(m_debugPipelineState.GetAddressOf())
 			));
+			m_debugPipelineState->SetName(L"DeferredRenderer::PassDebug");
 		}
 	}
 
@@ -596,7 +598,7 @@ namespace udsdx
 
 		pCommandList->SetPipelineState(m_renderPipelineState.Get());
 
-		renderParam.CommandList->SetGraphicsRootConstantBufferView(0, cbvGpu);
+		pCommandList->SetGraphicsRootConstantBufferView(0, cbvGpu);
 		pCommandList->SetGraphicsRootConstantBufferView(1, renderParam.RenderShadowMap->GetConstantBuffer(renderParam.FrameResourceIndex));
 		pCommandList->SetGraphicsRootDescriptorTable(2, m_gBuffersGpuSrv[0]);
 		pCommandList->SetGraphicsRootDescriptorTable(3, renderParam.RenderShadowMap->GetSrvGpu());

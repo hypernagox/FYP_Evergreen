@@ -463,6 +463,7 @@ namespace udsdx
 			};
 
 			ThrowIfFailed(m_device->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(m_tileMaxPso.GetAddressOf())));
+			m_tileMaxPso->SetName(L"MotionBlur::TileMaxPass");
 		}
 
 		{
@@ -479,6 +480,7 @@ namespace udsdx
 			};
 
 			ThrowIfFailed(m_device->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(m_neighborMaxPso.GetAddressOf())));
+			m_neighborMaxPso->SetName(L"MotionBlur::NeighborMaxPass");
 		}
 
 		{
@@ -495,6 +497,7 @@ namespace udsdx
 			};
 
 			ThrowIfFailed(m_device->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(m_pso.GetAddressOf())));
+			m_pso->SetName(L"MotionBlur::Pass");
 		}
 	}
 }
