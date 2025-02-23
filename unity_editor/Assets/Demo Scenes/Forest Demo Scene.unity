@@ -150,7 +150,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &884717747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -160,9 +160,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 884717746}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d889ae3bd79e0824c9b35b8070adfd51, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f2c58a81333f5748b0dd88ae393a07a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrain: {fileID: 2042694253}
+  exportName: terrain
 --- !u!4 &884717748
 Transform:
   m_ObjectHideFlags: 0
@@ -331,9 +333,6 @@ GameObject:
   - component: {fileID: 1705633040}
   - component: {fileID: 1705633039}
   - component: {fileID: 1705633038}
-  - component: {fileID: 1705633035}
-  - component: {fileID: 1705633034}
-  - component: {fileID: 1705633042}
   m_Layer: 0
   m_Name: Free Fly Main Camera
   m_TagString: MainCamera
@@ -341,51 +340,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &1705633034
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1705633032}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b742f13419af95c42a0e834b1288509f, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!320 &1705633035
-PlayableDirector:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1705633032}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: c717eabeaf7109540a7660b03dedaaaa, type: 2}
-  m_InitialState: 1
-  m_WrapMode: 2
-  m_DirectorUpdateMode: 1
-  m_InitialTime: 0
-  m_SceneBindings:
-  - key: {fileID: 1680747092993024743, guid: 9de57fdd72274db4bb3554b4db8ba84a, type: 2}
-    value: {fileID: 1705633034}
-  - key: {fileID: 0}
-    value: {fileID: 0}
-  - key: {fileID: 114737332455736114, guid: c717eabeaf7109540a7660b03dedaaaa, type: 2}
-    value: {fileID: 1705633034}
-  m_ExposedReferences:
-    m_References: []
 --- !u!81 &1705633038
 AudioListener:
   m_ObjectHideFlags: 0
@@ -468,18 +422,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 1.7190001, y: -6.905, z: 0.531}
---- !u!114 &1705633042
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1705633032}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1847340766
 GameObject:
   m_ObjectHideFlags: 19
@@ -560,7 +502,7 @@ TerrainCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_TerrainData: {fileID: 15600000, guid: 2a37ceb41f87f8142aa739d03d12b198, type: 2}
+  m_TerrainData: {fileID: 15600000, guid: bc8fc278da375a443832f7ce6abd285d, type: 2}
   m_EnableTreeColliders: 1
 --- !u!218 &2042694253
 Terrain:
@@ -571,7 +513,7 @@ Terrain:
   m_GameObject: {fileID: 2042694251}
   m_Enabled: 1
   serializedVersion: 6
-  m_TerrainData: {fileID: 15600000, guid: 2a37ceb41f87f8142aa739d03d12b198, type: 2}
+  m_TerrainData: {fileID: 15600000, guid: bc8fc278da375a443832f7ce6abd285d, type: 2}
   m_TreeDistance: 5000
   m_TreeBillboardDistance: 50
   m_TreeCrossFadeLength: 5
