@@ -67,7 +67,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <EnableUnitySupport>false</EnableUnitySupport>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -253,7 +253,9 @@
     <ClCompile Include="EntityMovement.cpp" />
     <ClCompile Include="EventTimer.cpp" />
     <ClCompile Include="func.cpp" />
-    <ClCompile Include="GizmoBoxRenderer.cpp" />
+    <ClCompile Include="GizmoBoxRenderer.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
     <ClCompile Include="GizmoCylinderRenderer.cpp" />
     <ClCompile Include="GizmoSphereRenderer.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">false</IncludeInUnityFile>
