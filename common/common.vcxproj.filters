@@ -111,6 +111,7 @@
     <ClInclude Include="StateTransition.hpp">
       <Filter>StateMachine</Filter>
     </ClInclude>
+    <ClInclude Include="json.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />

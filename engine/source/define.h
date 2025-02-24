@@ -74,16 +74,16 @@ namespace udsdx
 
 	enum RootParam : UINT
 	{
-		PerObjectCBV = 0,
-		PerCameraCBV = 1,
-		BonesCBV = 2,
-		PerShadowCBV = 3,
-		PerFrameCBV = 4,
-		MainTexSRV = 5,
-		NormalSRV = 6,
-		BonesSRV = 7,
-		ShadowMapSRV = 8,
-		SSAOMapSRV = 9
+		PerObjectCBV,
+		PerCameraCBV,
+		BonesCBV,
+		PrevBonesCBV,
+		PerShadowCBV,
+		PerFrameCBV,
+		MainTexSRV,
+		NormalSRV,
+		ShadowMapSRV,
+		SSAOMapSRV
 	};
 
 	enum RenderGroup : UINT

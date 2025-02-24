@@ -22,7 +22,6 @@ namespace udsdx
 		virtual ~Core();
 
 		void Initialize(HINSTANCE hInstance, HWND hWnd);
-		bool CheckTearingSupport() const;
 
 		void DisplayFrameStats();
 		void OnDestroy();
@@ -30,8 +29,6 @@ namespace udsdx
 		void RegisterDescriptorsToHeaps();
 		void BuildConstantBuffers();
 		void BuildRootSignature();
-
-		void CreateMRTRenderTargetViews();
 
 		void ExecuteCommandList();
 		void FlushCommandQueue();
@@ -65,6 +62,8 @@ namespace udsdx
 
 		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
+
+		void IncrementSRVHeapDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE* cpuDescriptorOut, D3D12_GPU_DESCRIPTOR_HANDLE* gpuDescriptorOut);
 
 		int GetClientPosX() const;
 		int GetClientPosY() const;
@@ -114,7 +113,7 @@ namespace udsdx
 
 		RECT		m_windowedRect;
 
-		bool		m_tearingSupport = false;
+		BOOL		m_tearingSupport = false;
 
 		// Set true to use 4X MSAA (?.1.8).  The default is false.
 		bool		m_4xMsaaState = false;    // 4X MSAA enabled
@@ -138,17 +137,13 @@ namespace udsdx
 		// DXGI Objects
 		// * DXGI Adapter: represents a display subsystem (including one or more GPUs)
 		// * DXGI Output: represents an output on an adapter (monitor)
-		ComPtr<IDXGIFactory4> m_dxgiFactory;
+		ComPtr<IDXGIFactory6> m_dxgiFactory;
 
 		// Direct3D 12 Device
 		ComPtr<ID3D12Device> m_d3dDevice;
 
 		// Swap Chain (front and back buffer, similar as double-buffering)
-		ComPtr<IDXGISwapChain> m_swapChain;
-
-		// Direct3D 12 Debug Layer
-		// Used to enable debug messages in the output window
-		ComPtr<ID3D12Debug> m_debugLayer;
+		ComPtr<IDXGISwapChain4> m_swapChain;
 
 		// Fence for CPU/GPU synchronization
 		ComPtr<ID3D12Fence> m_fence;

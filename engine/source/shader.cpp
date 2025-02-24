@@ -2,6 +2,7 @@
 #include "shader.h"
 #include "debug_console.h"
 #include "deferred_renderer.h"
+#include "shader_compile.h"
 
 namespace udsdx
 {
@@ -30,15 +31,38 @@ namespace udsdx
 		psoDesc.SampleDesc.Quality = 0; // m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
 		psoDesc.DSVFormat = DeferredRenderer::DEPTH_FORMAT;
 
-		auto m_psByteCode = d3dUtil::CompileShader(m_path, nullptr, "PS", "ps_5_0");
+		auto m_psByteCode = udsdx::CompileShader(m_path, {}, L"PS", L"ps_6_0");
 		psoDesc.PS =
 		{
 			reinterpret_cast<BYTE*>(m_psByteCode->GetBufferPointer()),
 			m_psByteCode->GetBufferSize()
 		};
 
+		// if HS and DS shaders exist, compile and set them
+		ComPtr<IDxcBlob> hsByteCode = nullptr;
+		ComPtr<IDxcBlob> dsByteCode = nullptr;
+		try
 		{
-			auto m_vsByteCode = d3dUtil::CompileShader(m_path, nullptr, "VS", "vs_5_0");
+			
+			hsByteCode = udsdx::CompileShader(m_path, {}, L"HS", L"hs_6_0");
+			dsByteCode = udsdx::CompileShader(m_path, {}, L"DS", L"ds_6_0");
+
+			psoDesc.HS =
+			{
+				reinterpret_cast<BYTE*>(hsByteCode->GetBufferPointer()),
+				hsByteCode->GetBufferSize()
+			};
+			psoDesc.DS =
+			{
+				reinterpret_cast<BYTE*>(dsByteCode->GetBufferPointer()),
+				dsByteCode->GetBufferSize()
+			};
+			psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+		}
+		catch (const DxException&) {}
+
+		{
+			auto m_vsByteCode = udsdx::CompileShader(m_path, {}, L"VS", L"vs_6_0");
 
 			psoDesc.InputLayout = { Vertex::DescriptionTable, Vertex::DescriptionTableSize };
 			psoDesc.VS =
@@ -52,17 +76,16 @@ namespace udsdx
 				IID_PPV_ARGS(m_defaultPipelineState.GetAddressOf())
 			));
 
+			m_defaultPipelineState->SetName((m_path + L" (Default)").c_str());
 			DebugConsole::Log("\tDefault shader compiled");
 		}
 
 		{
-			D3D_SHADER_MACRO defines[] =
-			{
-				"RIGGED", NULL,
-				NULL, NULL
+			std::wstring defines[] = {
+				L"RIGGED"
 			};
 
-			auto m_vsByteCode = d3dUtil::CompileShader(m_path, defines, "VS", "vs_5_0");
+			auto m_vsByteCode = udsdx::CompileShader(m_path, defines, L"VS", L"vs_6_0");
 
 			psoDesc.InputLayout = { RiggedVertex::DescriptionTable, RiggedVertex::DescriptionTableSize };
 			psoDesc.VS =
@@ -76,6 +99,7 @@ namespace udsdx
 				IID_PPV_ARGS(m_riggedPipelineState.GetAddressOf())
 			));
 
+			m_riggedPipelineState->SetName((m_path + L" (Rigged)").c_str());
 			DebugConsole::Log("\tRigged shader compiled");
 		}
 
@@ -86,14 +110,12 @@ namespace udsdx
 		}
 
 		{	
-			D3D_SHADER_MACRO defines[] =
-			{
-				"GENERATE_SHADOWS", NULL,
-				NULL, NULL
+			std::wstring defines[] = {
+				L"GENERATE_SHADOWS"
 			};
 
-			auto m_vsByteCode = d3dUtil::CompileShader(m_path, defines, "VS", "vs_5_0");
-			auto m_psByteCode = d3dUtil::CompileShader(m_path, defines, "ShadowPS", "ps_5_0");
+			auto m_vsByteCode = udsdx::CompileShader(m_path, defines, L"VS", L"vs_6_0");
+			auto m_psByteCode = udsdx::CompileShader(m_path, defines, L"ShadowPS", L"ps_6_0");
 
 			psoDesc.InputLayout = { Vertex::DescriptionTable, Vertex::DescriptionTableSize };
 
@@ -108,24 +130,44 @@ namespace udsdx
 				m_psByteCode->GetBufferSize()
 			};
 
+			// if HS and DS shaders exist, compile and set them
+			ComPtr<IDxcBlob> hsByteCode = nullptr;
+			ComPtr<IDxcBlob> dsByteCode = nullptr;
+			try
+			{
+				hsByteCode = udsdx::CompileShader(m_path, defines, L"HS", L"hs_6_0");
+				dsByteCode = udsdx::CompileShader(m_path, defines, L"DS", L"ds_6_0");
+
+				psoDesc.HS =
+				{
+					reinterpret_cast<BYTE*>(hsByteCode->GetBufferPointer()),
+					hsByteCode->GetBufferSize()
+				};
+				psoDesc.DS =
+				{
+					reinterpret_cast<BYTE*>(dsByteCode->GetBufferPointer()),
+					dsByteCode->GetBufferSize()
+				};
+				psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+			}
+			catch (const DxException&) {}
+
 			ThrowIfFailed(pDevice->CreateGraphicsPipelineState(
 				&psoDesc,
 				IID_PPV_ARGS(m_shadowPipelineState.GetAddressOf())
 			));
 
+			m_shadowPipelineState->SetName((m_path + L" (Default Shadow)").c_str());
 			DebugConsole::Log("\tShadow shader compiled");
 		}
 
 		{
-			D3D_SHADER_MACRO defines[] =
-			{
-				"RIGGED", NULL,
-				"GENERATE_SHADOWS", NULL,
-				NULL, NULL
+			std::wstring defines[] = {
+				L"RIGGED", L"GENERATE_SHADOWS"
 			};
 
-			auto m_vsByteCode = d3dUtil::CompileShader(m_path, defines, "VS", "vs_5_0");
-			auto m_psByteCode = d3dUtil::CompileShader(m_path, defines, "ShadowPS", "ps_5_0");
+			auto m_vsByteCode = udsdx::CompileShader(m_path, defines, L"VS", L"vs_6_0");
+			auto m_psByteCode = udsdx::CompileShader(m_path, defines, L"ShadowPS", L"ps_6_0");
 
 			psoDesc.InputLayout = { RiggedVertex::DescriptionTable, RiggedVertex::DescriptionTableSize };
 
@@ -140,11 +182,34 @@ namespace udsdx
 				m_psByteCode->GetBufferSize()
 			};
 
+			// if HS and DS shaders exist, compile and set them
+			ComPtr<IDxcBlob> hsByteCode = nullptr;
+			ComPtr<IDxcBlob> dsByteCode = nullptr;
+			try
+			{
+				hsByteCode = udsdx::CompileShader(m_path, defines, L"HS", L"hs_6_0");
+				dsByteCode = udsdx::CompileShader(m_path, defines, L"DS", L"ds_6_0");
+
+				psoDesc.HS =
+				{
+					reinterpret_cast<BYTE*>(hsByteCode->GetBufferPointer()),
+					hsByteCode->GetBufferSize()
+				};
+				psoDesc.DS =
+				{
+					reinterpret_cast<BYTE*>(dsByteCode->GetBufferPointer()),
+					dsByteCode->GetBufferSize()
+				};
+				psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+			}
+			catch (const DxException&) {}
+
 			ThrowIfFailed(pDevice->CreateGraphicsPipelineState(
 				&psoDesc,
 				IID_PPV_ARGS(m_riggedShadowPipelineState.GetAddressOf())
 			));
 
+			m_riggedShadowPipelineState->SetName((m_path + L" (Rigged Shadow)").c_str());
 			DebugConsole::Log("\tRigged shadow shader compiled");
 		}
 	}

@@ -8,7 +8,7 @@ namespace udsdx
 	class Texture : public ResourceObject
 	{
 	public:
-		Texture(std::wstring_view path, ID3D12Device* device, ID3D12CommandQueue* commandQueue);
+		Texture(std::wstring_view path, ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 		~Texture();
 
 	public:
@@ -20,6 +20,7 @@ namespace udsdx
 
 	private:
 		ComPtr<ID3D12Resource> m_texture;
+		ComPtr<ID3D12Resource> m_textureUpload;
 
 		D3D12_CPU_DESCRIPTOR_HANDLE m_srvCpu;
 		D3D12_GPU_DESCRIPTOR_HANDLE m_srvGpu;

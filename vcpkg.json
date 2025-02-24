@@ -4,8 +4,14 @@
   "dependencies": [
     "lua",
     "assimp",
-    "directxtex",
+    {
+      "name": "directxtex",
+      "features": [
+        "dx12"
+      ]
+    },
     "directxtk12",
+    "directx-dxc",
     "tbb",
     "jemalloc",
     {

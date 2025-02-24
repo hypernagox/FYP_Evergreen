@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "screen_space_ao.h"
 #include "deferred_renderer.h"
+#include "shader_compile.h"
 #include "frame_resource.h"
 #include "scene_object.h"
 #include "transform.h"
@@ -651,26 +652,23 @@ namespace udsdx
 
 	void ScreenSpaceAO::BuildPipelineState(ID3D12Device* pDevice, ID3D12RootSignature* pRootSignature)
 	{
-		auto itos = [](int i) -> std::string {
-			std::stringstream ss;
+		auto itos = [](int i) -> std::wstring {
+			std::wstringstream ss;
 			ss << i;
 			return ss.str();
 			};
 
-		std::string sKERNEL_SIZE = itos(KERNEL_SIZE);
-		std::string sBLUR_SMAPLE = itos(BLUR_SMAPLE);
-
-		D3D_SHADER_MACRO defines[] =
-		{
-			"KERNEL_SIZE", sKERNEL_SIZE.c_str(),
-			"BLUR_SAMPLE", sBLUR_SMAPLE.c_str(),
-			nullptr, nullptr
+		std::wstring sKERNEL_SIZE = itos(KERNEL_SIZE);
+		std::wstring sBLUR_SMAPLE = itos(BLUR_SMAPLE);
+		std::wstring defines[] = {
+			L"KERNEL_SIZE=" + sKERNEL_SIZE,
+			L"BLUR_SAMPLE=" + sBLUR_SMAPLE,
 		};
 
 		{
 			// Build the SSAO PSO
-			auto vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoSSAOResource, defines, "VS", "vs_5_0");
-			auto psByteCode = d3dUtil::CompileShaderFromMemory(g_psoSSAOResource, defines, "PS", "ps_5_0");
+			auto vsByteCode = udsdx::CompileShaderFromMemory(g_psoSSAOResource, defines, L"VS", L"vs_6_0");
+			auto psByteCode = udsdx::CompileShaderFromMemory(g_psoSSAOResource, defines, L"PS", L"ps_6_0");
 
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -705,11 +703,12 @@ namespace udsdx
 				&psoDesc,
 				IID_PPV_ARGS(m_ssaoPSO.GetAddressOf())
 			));
+			m_ssaoPSO->SetName(L"ScreenSpaceAO::PassSSAO");
 		}
 
 		{
 			// Build the blur PSO
-			auto csByteCode = d3dUtil::CompileShaderFromMemory(g_psoBlurResource, defines, "CS", "cs_5_0");
+			auto csByteCode = udsdx::CompileShaderFromMemory(g_psoBlurResource, defines, L"CS", L"cs_6_0");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
@@ -726,6 +725,7 @@ namespace udsdx
 				&psoDesc,
 				IID_PPV_ARGS(m_blurPSO.GetAddressOf())
 			));
+			m_blurPSO->SetName(L"ScreenSpaceAO::PassBlur");
 		}
 	}
 

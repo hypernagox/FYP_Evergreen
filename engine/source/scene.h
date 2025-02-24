@@ -34,7 +34,7 @@ namespace udsdx
 	private:
 		void PassRenderShadow(RenderParam& param, Camera* camera, LightDirectional* light);
 		void PassRenderSSAO(RenderParam& param, Camera* camera);
-		void PassRenderMain(RenderParam& param, Camera* camera);
+		void PassRenderMain(RenderParam& param, Camera* camera, D3D12_GPU_VIRTUAL_ADDRESS cameraCbv);
 
 	protected:
 		std::unique_ptr<SceneObject> m_rootObject;

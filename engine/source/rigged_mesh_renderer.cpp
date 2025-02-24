@@ -53,44 +53,22 @@ namespace udsdx
 		param.CommandList->IASetPrimitiveTopology(m_topology);
 
 		auto& uploaders = m_constantBuffers[param.FrameResourceIndex];
+		auto& prevUploaders = m_prevConstantBuffers[param.FrameResourceIndex];
 
 		if (m_constantBuffersDirty)
 		{
 			// Update bone constants
-			BoneConstants boneConstants{};
-			auto [frameIndex, frameFrac] = m_riggedMesh->GetAnimationFrameTime(m_animationName, m_animationTime);
-
-			boneConstants.FrameStride = m_riggedMesh->GetBoneCount();
-			boneConstants.FrameIndex = frameIndex;
-			boneConstants.FrameFrac = frameFrac;
-
-			if (m_transitionFactor < 1.0f && !m_prevAnimationName.empty())
-			{
-				auto [transitionFrameIndex, transitionFrameFrac] = m_riggedMesh->GetAnimationFrameTime(m_prevAnimationName, m_prevAnimationTime);
-				boneConstants.TransitionFrameIndex = transitionFrameIndex;
-				boneConstants.TransitionFrameFrac = transitionFrameFrac;
-				boneConstants.TransitionFactor = m_transitionFactor;
-			}
-			else
-			{
-				boneConstants.TransitionFrameIndex = frameIndex;
-				boneConstants.TransitionFrameFrac = frameFrac;
-				boneConstants.TransitionFactor = 0.0f;
-			}
-
-			boneConstants.PrevFrameIndex = m_boneConstantCache.FrameIndex;
-			boneConstants.PrevFrameFrac = m_boneConstantCache.FrameFrac;
-			boneConstants.PrevTransitionFrameIndex = m_boneConstantCache.TransitionFrameIndex;
-			boneConstants.PrevTransitionFrameFrac = m_boneConstantCache.TransitionFrameFrac;
-			boneConstants.PrevTransitionFactor = m_boneConstantCache.TransitionFactor;
-
 			for (size_t index = 0; index < submeshes.size(); ++index)
 			{
-				boneConstants.SubmeshIndex = index;
-				uploaders[index]->CopyData(0, boneConstants);
-			}
+				std::vector<Matrix4x4> boneTransforms;
+				PopulateTransforms(index, boneTransforms);
 
-			memcpy(&m_boneConstantCache, &boneConstants, sizeof(BoneConstants));
+				BoneConstants boneConstants;
+				memcpy(boneConstants.BoneTransforms, boneTransforms.data(), boneTransforms.size() * sizeof(Matrix4x4));
+				uploaders[index]->CopyData(0, boneConstants);
+				prevUploaders[index]->CopyData(0, m_boneConstantsCache[index]);
+				memcpy(&m_boneConstantsCache[index], &boneConstants, sizeof(BoneConstants));
+			}
 			m_constantBuffersDirty = false;
 		}
 
@@ -99,7 +77,7 @@ namespace udsdx
 			const auto& submesh = submeshes[index];
 
 			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::BonesCBV, uploaders[index]->Resource()->GetGPUVirtualAddress());
-			param.CommandList->SetGraphicsRootDescriptorTable(RootParam::BonesSRV, m_riggedMesh->GetBoneGpuSrv());
+			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PrevBonesCBV, prevUploaders[index]->Resource()->GetGPUVirtualAddress());
 
 			if (index < m_materials.size() && m_materials[index] != nullptr)
 			{
@@ -128,14 +106,24 @@ namespace udsdx
 	{
 		m_riggedMesh = mesh;
 
+		size_t numSubmeshes = mesh->GetSubmeshes().size();
 		for (auto& buffer : m_constantBuffers)
 		{
-			buffer.resize(mesh->GetSubmeshes().size());
+			buffer.resize(numSubmeshes);
 			for (auto& subBuffer : buffer)
 			{
 				subBuffer = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
 			}
 		}
+		for (auto& buffer : m_prevConstantBuffers)
+		{
+			buffer.resize(numSubmeshes);
+			for (auto& subBuffer : buffer)
+			{
+				subBuffer = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
+			}
+		}
+		m_boneConstantsCache.resize(numSubmeshes);
 	}
 
 	void RiggedMeshRenderer::SetAnimation(std::string_view animationName)
@@ -178,9 +166,11 @@ namespace udsdx
 		{
 			std::vector<Matrix4x4> prevTransforms;
 			m_riggedMesh->PopulateTransforms(submeshIndex, m_prevAnimationName, m_prevAnimationTime, prevTransforms);
+			float t = std::clamp(m_transitionFactor, 0.0f, 1.0f);
+			t = 3.0f * t * t - 2.0f * t * t * t;
 			for (size_t i = 0; i < out.size(); ++i)
 			{
-				out[i] = Matrix4x4::Lerp(prevTransforms[i], out[i], m_transitionFactor);
+				out[i] = Matrix4x4::Lerp(prevTransforms[i], out[i], t);
 			}
 		}
 	}

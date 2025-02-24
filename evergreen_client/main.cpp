@@ -11,6 +11,8 @@
 #include "ServerSession.h"
 
 #include <HeightMap.h>
+#include "TerrainData.h"
+#include "TerrainInstanceRenderer.h"
 #include "AuthenticPlayer.h"
 #include "PlayerRenderer.h"
 #include "MovePacketSender.h"
@@ -27,14 +29,14 @@
 #include "GizmoCylinderRenderer.h"
 #include "GizmoSphereRenderer.h"
 
+#include "../common/json.hpp"
+
 using namespace udsdx;
 
 std::shared_ptr<Scene> scene;
 
 std::shared_ptr<SceneObject> playerLightObj;
-
 std::shared_ptr<SceneObject> g_heroObj;
-
 std::shared_ptr<SceneObject> terrainObj;
 
 AuthenticPlayer* g_heroComponent;
@@ -42,9 +44,11 @@ AuthenticPlayer* g_heroComponent;
 std::shared_ptr<udsdx::Material> terrainMaterial;
 std::shared_ptr<udsdx::Material> playerMaterial;
 std::shared_ptr<udsdx::Material> g_skyboxMaterial;
+std::array<std::shared_ptr<udsdx::Material>, 2> g_treeMaterials;
 std::shared_ptr<udsdx::Mesh> terrainMesh;
 
 std::unique_ptr<HeightMap> heightMap;
+std::unique_ptr<TerrainData> terrainData;
 
 Vector3 moveDirection = Vector3::Zero;
 Vector3 g_curPos = {};
@@ -52,6 +56,7 @@ float yawDirection = 0.0f;
 float g_lightAngle = 0.0f;
 
 void Update(const Time& time);
+void PlaceTrees(std::wstring_view filename, std::shared_ptr<Scene> targetScene);
 
 std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap, LONG segmentWidth, LONG segmentHeight, float heightScale);
 
@@ -120,7 +125,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     playerMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
     terrainMaterial = std::make_shared<udsdx::Material>();
-    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"terrain_diffuse.png")));
+    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"terrain\\T_ground_beech_forest_soil_01_BC_SM.tga")));
 
     scene = std::make_shared<Scene>();
 
@@ -151,37 +156,54 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     scene->AddObject(playerLightObj);
 
-    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_test.raw"), 4096/8, 4096/8);
-    terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 1000, 1000, 1.0f);
-    terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
-
-    terrainObj = std::make_shared<SceneObject>();
-    auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-    terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"terrain.obj")));
-    terrainRenderer->SetMaterial(terrainMaterial.get());
-    terrainRenderer->SetShader(shaderTerrain);
-    scene->AddObject(terrainObj);
-
     {
-        auto terrainExtraObj = std::make_shared<SceneObject>();
-        auto terrainRenderer = terrainExtraObj->AddComponent<MeshRenderer>();
-        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"terrain_extra.glb")));
-        terrainRenderer->SetMaterial(terrainMaterial.get());
-        terrainRenderer->SetShader(shader);
-        scene->AddObject(terrainExtraObj);
+        auto treeTexture1 = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\T_beech_atlas_BC.tga"));
+        auto treeTexture2 = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\T_beech_bark_01_BC.tga"));
+
+        g_treeMaterials[0] = std::make_shared<udsdx::Material>();
+        g_treeMaterials[0]->SetMainTexture(treeTexture1);
+        g_treeMaterials[1] = std::make_shared<udsdx::Material>();
+        g_treeMaterials[1]->SetMainTexture(treeTexture2);
     }
 
+    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 513, 513);
+    terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 128, 128, 1.0f);
+    terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
+
+    terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"terrain_treeInstances.json"));
+    auto terrainInstance = std::make_shared<SceneObject>();
+    auto terrainInstanceRenderer = terrainInstance->AddComponent<TerrainInstanceRenderer>();
+    terrainInstanceRenderer->SetTerrainData(terrainData.get());
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_plant_01.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_plant_03.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_00_B.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_00_D.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_01.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_02.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_03.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_04.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_05.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_06.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_07.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_08.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_09.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Forest_black_cherry_02.fbx")));
+    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Forest_black_cherry_04.fbx")));
+    terrainInstanceRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"colorinstanced.hlsl")));
+    terrainInstanceRenderer->SetMaterial(g_treeMaterials[1].get(), 0);
+    terrainInstanceRenderer->SetMaterial(g_treeMaterials[0].get(), 1);
+    scene->AddObject(terrainInstance);
+
     {
-        auto terrainObj = std::make_shared<SceneObject>();
-       // terrainObj->GetTransform()->SetLocalScale(Vector3::One *2.f);
-       // terrainObj->GetTransform()->SetLocalScale(Vector3::One * 1.f);;
-       // terrainObj->GetTransform()->SetLocalPosition(Vector3(-256, 0.0f, -256 ));
+        terrainObj = std::make_shared<SceneObject>();
+        terrainObj->GetTransform()->SetLocalPosition(Vector3(0.0f, -100.0f, 0.0f));
+        terrainObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 512.0f);
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-        terrainRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh1000.obj")));
+        terrainRenderer->SetMesh(terrainMesh.get());
         terrainRenderer->SetMaterial(terrainMaterial.get());
-        //terrainRenderer->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
-        terrainRenderer->SetShader(shader);
-        // scene->AddObject(terrainObj);
+        terrainRenderer->SetShader(shaderTerrain);
+        terrainRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST);
+        scene->AddObject(terrainObj);
     }
 
     {
@@ -259,6 +281,49 @@ void Update(const Time& time)
     playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PI / 4.0f, 0) * Quaternion::CreateFromAxisAngle(n, g_lightAngle));
 }
 
+void PlaceTrees(std::wstring_view filename, std::shared_ptr<Scene> targetScene)
+{
+    auto res = INSTANCE(Resource);
+	auto shader = res->Load<Shader>(RESOURCE_PATH(L"color.hlsl"));
+
+	std::ifstream file(filename.data());
+	nlohmann::json j;
+	file >> j;
+
+    for (auto& tree : j)
+	{
+        Vector3 position = Vector3(tree["position_x"], tree["position_y"], tree["position_z"]);
+        Quaternion rotation = Quaternion::CreateFromYawPitchRoll(0.0f, -PIDIV2, tree["rotation_y"]);
+        Vector3 scale = Vector3(tree["size_width"], tree["size_height"], tree["size_width"]);
+        std::string treePrototype = tree["prototype_name"];
+        std::wstring wtreePrototype(treePrototype.begin(), treePrototype.end());
+
+        auto treeObj = std::make_shared<SceneObject>();
+        treeObj->GetTransform()->SetLocalPosition(position * Vector3(-1.0f, 1.0f, -1.0f) * 512.0f + Vector3::Up * -100.0f);
+        treeObj->GetTransform()->SetLocalRotation(rotation);
+        treeObj->GetTransform()->SetLocalScale(scale * 0.02f);
+        auto treeRenderer = treeObj->AddComponent<MeshRenderer>();
+        treeRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\" + wtreePrototype + L".fbx")));
+        treeRenderer->SetShader(shader);
+
+        // if the name of the tree contains "tree", set the bark material
+        if (treePrototype.find("tree_00") != std::string::npos)
+        {
+            treeRenderer->SetMaterial(g_treeMaterials[0].get(), 0);
+            treeRenderer->SetMaterial(g_treeMaterials[1].get(), 1);
+        }
+        if (treePrototype.find("tree") != std::string::npos)
+        {
+            treeRenderer->SetMaterial(g_treeMaterials[1].get(), 0);
+            treeRenderer->SetMaterial(g_treeMaterials[0].get(), 1);
+        }
+		else
+            treeRenderer->SetMaterial(g_treeMaterials[0].get(), 0);
+
+        targetScene->AddObject(treeObj);
+	}
+}
+
 std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap, LONG segmentWidth, LONG segmentHeight, float heightScale)
 {
     std::vector<Vertex> vertices;
@@ -299,7 +364,7 @@ std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap,
             float d1 = h11 - h00;
             float d2 = h10 - h01;
 
-            UINT ib[6]{};
+            uint16_t ib[6]{};
 
             if (abs(d1) > abs(d2))
             {
@@ -331,10 +396,19 @@ std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap,
             normals[ib[3]] += n2;
             normals[ib[4]] += n2;
             normals[ib[5]] += n2;
+        }
+    }
 
-            for (int i = 0; i < 6; ++i)
+    for (LONG y = 0; y < segmentHeight - 2; ++y)
+    {
+        for (LONG x = 0; x < segmentWidth - 2; ++x)
+        {
+            for (LONG k = 0; k < 4; ++k)
             {
-                indices.emplace_back(ib[i]);
+                indices.push_back((y + k) * (segmentWidth + 1) + x);
+                indices.push_back((y + k) * (segmentWidth + 1) + x + 1);
+                indices.push_back((y + k) * (segmentWidth + 1) + x + 2);
+                indices.push_back((y + k) * (segmentWidth + 1) + x + 3);
             }
         }
     }
@@ -342,7 +416,7 @@ std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap,
     for (int i = 0; i < positions.size(); ++i)
     {
         normals[i].Normalize();
-        vertices.emplace_back(Vertex(positions[i], uvs[i], normals[i], Vector3::Up));
+        vertices.emplace_back(Vertex(positions[i], uvs[i], normals[i], Vector3::One));
     }
 
     auto mesh = std::make_shared<udsdx::Mesh>(vertices, indices);

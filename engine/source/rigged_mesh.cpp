@@ -158,19 +158,19 @@ namespace udsdx
 						switch (++countTable[vertexID])
 						{
 						case 1:
-							vertices[vertexID].boneIndices |= boneIndex;
+							vertices[vertexID].boneIndices |= i;
 							vertices[vertexID].boneWeights.x = weight;
 							break;
 						case 2:
-							vertices[vertexID].boneIndices |= boneIndex << 8;
+							vertices[vertexID].boneIndices |= i << 8;
 							vertices[vertexID].boneWeights.y = weight;
 							break;
 						case 3:
-							vertices[vertexID].boneIndices |= boneIndex << 16;
+							vertices[vertexID].boneIndices |= i << 16;
 							vertices[vertexID].boneWeights.z = weight;
 							break;
 						case 4:
-							vertices[vertexID].boneIndices |= boneIndex << 24;
+							vertices[vertexID].boneIndices |= i << 24;
 							vertices[vertexID].boneWeights.w = weight;
 							break;
 						default:
@@ -277,16 +277,14 @@ namespace udsdx
 			UINT boneID = submesh.BoneNodeIDs[i];
 			XMMATRIX boneTransform = XMLoadFloat4x4(&in[boneID]);
 			XMMATRIX boneOffset = XMLoadFloat4x4(&submesh.BoneOffsets[i]);
-			XMMATRIX transform = meshInverse * boneTransform * boneOffset;
-			XMStoreFloat4x4(&out[i], transform);
+			XMStoreFloat4x4(&out[i], XMMatrixTranspose(meshInverse * boneTransform * boneOffset));
 		}
 	}
 
 	void RiggedMesh::PopulateTransforms(int submeshIndex, std::string_view animationKey, float time, std::vector<Matrix4x4>& out) const
 	{
 		const Animation& anim = m_animations.at(animationKey.data());
-		int frameNum = m_animationFrameNumMap.at(animationKey.data()) - 1;
-		time = fmod(time, frameNum / AnimationFrameRate) * anim.TicksPerSecond;
+		time = fmod(time * anim.TicksPerSecond, anim.Duration);
 		std::vector<Matrix4x4> in(m_bones.size());
 
 		for (UINT i = 0; i < m_bones.size(); ++i)
@@ -342,7 +340,7 @@ namespace udsdx
 			UINT boneID = submesh.BoneNodeIDs[i];
 			XMMATRIX boneTransform = XMLoadFloat4x4(&in[boneID]);
 			XMMATRIX boneOffset = XMLoadFloat4x4(&submesh.BoneOffsets[i]);
-			XMStoreFloat4x4(&out[i], boneOffset * boneTransform);
+			XMStoreFloat4x4(&out[i], XMMatrixTranspose(boneOffset * boneTransform));
 		}
 	}
 

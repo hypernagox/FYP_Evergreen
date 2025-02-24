@@ -88,13 +88,13 @@ void GizmoSphereRenderer::BuildPipelineState()
 	ID3D12RootSignature* rootSignature = INSTANCE(Core)->GetRootSignature();
 	ID3D12Device* device = INSTANCE(Core)->GetDevice();
 
-	static ComPtr<ID3DBlob> vsByteCode = nullptr;
-	static ComPtr<ID3DBlob> psByteCode = nullptr;
+	static ComPtr<IDxcBlob> vsByteCode = nullptr;
+	static ComPtr<IDxcBlob> psByteCode = nullptr;
 
 	if (vsByteCode == nullptr || psByteCode == nullptr)
 	{
-		vsByteCode = d3dUtil::CompileShaderFromMemory(g_psoResource, nullptr, "VS", "vs_5_0");
-		psByteCode = d3dUtil::CompileShaderFromMemory(g_psoResource, nullptr, "PS", "ps_5_0");
+		vsByteCode = udsdx::CompileShaderFromMemory(g_psoResource, {}, L"VS", L"vs_6_0");
+		psByteCode = udsdx::CompileShaderFromMemory(g_psoResource, {}, L"PS", L"ps_6_0");
 	}
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
