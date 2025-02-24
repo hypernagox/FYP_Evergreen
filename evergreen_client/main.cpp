@@ -142,7 +142,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     gizmoRenderer->SetRadius(1.0f);
 	gizmoRenderer->SetHeight(3.0f);
   
-    Vector3 temp = {};
+    Vector3 temp = Vector3(0.0f, 40.0f, 0.0f);
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(temp);
 
@@ -196,7 +196,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     {
         terrainObj = std::make_shared<SceneObject>();
-        terrainObj->GetTransform()->SetLocalPosition(Vector3(0.0f, -100.0f, 0.0f));
+        terrainObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
         terrainObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 512.0f);
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
         terrainRenderer->SetMesh(terrainMesh.get());
@@ -204,6 +204,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         terrainRenderer->SetShader(shaderTerrain);
         terrainRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST);
         scene->AddObject(terrainObj);
+    }
+
+    {
+        auto navMeshObj = std::make_shared<SceneObject>();
+        auto navMeshRenderer = navMeshObj->AddComponent<MeshRenderer>();
+        navMeshRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"NAVIMESHOBJ.obj")));
+        navMeshRenderer->SetMaterial(terrainMaterial.get());
+        navMeshRenderer->SetShader(shader);
+        navMeshRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        scene->AddObject(navMeshObj);
     }
 
     {
