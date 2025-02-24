@@ -208,7 +208,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	if (INSTANCE(Input)->GetMouseLeftButtonDown())
 	{
 		const auto state = m_playerRenderer->GetCurrentState();
-		if (PlayerRenderer::AnimationState::Idle == state || PlayerRenderer::AnimationState::Run == state)
+		if (PlayerRenderer::AnimationState::Idle == state || PlayerRenderer::AnimationState::Run == state || PlayerRenderer::AnimationState::Attack == state)
 		{
 			m_playerRenderer->Attack();
 			DoAttack();

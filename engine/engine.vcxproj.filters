@@ -113,6 +113,9 @@
     <ClCompile Include="source\shader_compile.cpp">
       <Filter>Utility Sources</Filter>
     </ClCompile>
+    <ClCompile Include="source\animation_clip.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -258,6 +261,9 @@
     </ClInclude>
     <ClInclude Include="source\shader_compile.h">
       <Filter>Utility Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="source\animation_clip.h">
+      <Filter>Engine\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

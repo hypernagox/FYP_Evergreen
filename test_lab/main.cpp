@@ -91,10 +91,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
     
     m_characterObject = std::make_shared<SceneObject>();
+    m_characterObject->GetTransform()->SetLocalPositionY(-1.375f);
+    m_characterObject->GetTransform()->SetLocalScale(Vector3::One * 0.1f);
     auto meshRenderer = m_characterObject->AddComponent<RiggedMeshRenderer>();
     meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\character.glb"));
     meshRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\color.hlsl"));
-    meshRenderer->SetAnimation("Bip001|Take 001|BaseLayer");
+    meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\biped_attack1.fbx"));
 
     for (int i = 0; i < 4; ++i)
     {

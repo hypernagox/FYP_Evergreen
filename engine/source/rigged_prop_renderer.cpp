@@ -18,12 +18,9 @@ namespace udsdx
 
 	void RiggedPropRenderer::UpdateTransformCache()
 	{
-		int boneIndex = m_targetCache->GetMesh()->GetBoneIndex(m_boneName);
-		std::vector<Matrix4x4> boneMatrices;
-		m_targetCache->PopulateTransforms(-1, boneMatrices);
-
+		Matrix4x4 boneMatrix = m_targetCache->PopulateTransform(m_boneName).Transpose();
 		m_prevTransformCache = std::move(m_transformCache);
-		m_transformCache = m_propLocalTransform * boneMatrices[boneIndex] * GetSceneObject()->GetTransform()->GetWorldSRTMatrix();
+		m_transformCache = m_propLocalTransform * boneMatrix * GetSceneObject()->GetTransform()->GetWorldSRTMatrix();
 	}
 
 	std::string_view RiggedPropRenderer::GetBoneName() const

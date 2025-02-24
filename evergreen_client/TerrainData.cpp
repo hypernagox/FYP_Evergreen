@@ -3,7 +3,7 @@
 
 using namespace udsdx;
 
-TerrainData::TerrainData(std::wstring_view instancesPath)
+TerrainData::TerrainData(std::wstring_view instancesPath, float terrainScale, float instanceScale) : m_terrainScale(terrainScale), m_instanceScale(instanceScale)
 {
 	CreateBuffer(instancesPath);
 	UploadBuffer(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
@@ -25,9 +25,9 @@ void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 		Vector3 scale = Vector3(tree["size_width"], tree["size_height"], tree["size_width"]);
 		int treePrototype = tree["prototype_index"];
 
-		Matrix4x4 treeMatrix = Matrix4x4::CreateScale(scale * 0.02f) *
+		Matrix4x4 treeMatrix = Matrix4x4::CreateScale(scale * m_instanceScale) *
 			Matrix4x4::CreateFromQuaternion(rotation) *
-			Matrix4x4::CreateTranslation(position * Vector3(-1.0f, 1.0f, -1.0f) * 512.0f);
+			Matrix4x4::CreateTranslation(position * Vector3(-1.0f, 1.0f, -1.0f) * m_terrainScale);
 		intermediateData.emplace_back(treePrototype, treeMatrix.Transpose());
 	}
 

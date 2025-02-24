@@ -231,6 +231,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\allocation.cpp" />
+    <ClCompile Include="source\animation_clip.cpp" />
     <ClCompile Include="source\audio.cpp" />
     <ClCompile Include="source\audio_clip.cpp" />
     <ClCompile Include="source\camera.cpp" />
@@ -283,6 +284,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource\resource.h" />
+    <ClInclude Include="source\animation_clip.h" />
     <ClInclude Include="source\audio.h" />
     <ClInclude Include="source\audio_clip.h" />
     <ClInclude Include="source\camera.h" />

@@ -32,12 +32,13 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	auto sceneObject = GetSceneObject();
 	sceneObject->AddChild(m_rendererObj);
 
-	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 32);
+	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 16.0f);
 
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(to); });
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Run, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 1.f);
 	
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
@@ -86,21 +87,37 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 	switch (state)
 	{
 	case AnimationState::Idle:
-		m_renderer->SetAnimation("Bip001|stand|BaseLayer");
+		m_attackState = 0;
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.fbx")));
 		break;
 	case AnimationState::Run:
-		m_renderer->SetAnimation("Bip001|run|BaseLayer");
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_run.fbx")));
 		break;
 	case AnimationState::Attack:
-		m_renderer->SetAnimation("Bip001|attack1|BaseLayer");
+		switch (m_attackState)
+		{
+		case 0:
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack1.fbx")), true);
+			break;
+		case 1:
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack2.fbx")), true);
+			break;
+		case 2:
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack3.fbx")), true);
+			break;
+		case 3:
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack4.fbx")), true);
+			break;
+		}
+		m_attackState = (m_attackState + 1) % 4;
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
 		break;
 	case AnimationState::Hit:
-		m_renderer->SetAnimation("Bip001|hit|BaseLayer");
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_hit.fbx")));
 		*m_stateMachine->GetConditionRefBool("Hit") = false;
 		break;
 	case AnimationState::Death:
-		m_renderer->SetAnimation("Bip001|die|BaseLayer");
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_die.fbx")));
 		*m_stateMachine->GetConditionRefBool("Death") = false;
 		break;
 	}

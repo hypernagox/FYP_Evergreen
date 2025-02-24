@@ -14,6 +14,7 @@
 #include "shadow_map.h"
 #include "deferred_renderer.h"
 #include "shader_compile.h"
+#include "animation_clip.h"
 
 #include "debug_console.h"
 #include "time_measure.h"

@@ -5,7 +5,7 @@
 class TerrainData
 {
 public:
-	TerrainData(std::wstring_view instancesPath);
+	TerrainData(std::wstring_view instancesPath, float terrainScale, float instanceScale);
 
 	void CreateBuffer(std::wstring_view instancesPath);
 	void UploadBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
@@ -16,6 +16,9 @@ public:
 	UINT GetPrototypeInstanceCount(int index) const;
 
 private:
+	float m_terrainScale = 1.0f;
+	float m_instanceScale = 1.0f;
+
 	UINT m_prototypeCount = 0;
 	UINT m_vertexByteStride = sizeof(udsdx::Matrix4x4);
 	UINT m_vertexBufferByteSize = 0;
