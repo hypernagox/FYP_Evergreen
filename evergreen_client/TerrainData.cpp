@@ -27,7 +27,7 @@ void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 
 		Matrix4x4 treeMatrix = Matrix4x4::CreateScale(scale * 0.02f) *
 			Matrix4x4::CreateFromQuaternion(rotation) *
-			Matrix4x4::CreateTranslation(position * Vector3(-1.0f, 1.0f, -1.0f) * 512.0f + Vector3::Up * -100.0f);
+			Matrix4x4::CreateTranslation(position * Vector3(-1.0f, 1.0f, -1.0f) * 512.0f);
 		intermediateData.emplace_back(treePrototype, treeMatrix.Transpose());
 	}
 
@@ -37,12 +37,12 @@ void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 	{
 		if (i > 0 && intermediateData[i].first != intermediateData[i - 1].first)
 		{
-			m_baseCountPairs.emplace_back(base, i - base);
-			base = i;
+			m_baseCountPairs.emplace_back(static_cast<UINT>(base), static_cast<UINT>(i - base));
+			base = static_cast<UINT>(i);
 		}
 		bufferData.emplace_back(std::move(intermediateData[i].second));
 	}
-	m_baseCountPairs.emplace_back(base, intermediateData.size() - base);
+	m_baseCountPairs.emplace_back(static_cast<UINT>(base), static_cast<UINT>(intermediateData.size() - base));
 
 	m_prototypeCount = static_cast<UINT>(bufferData.size());
 	m_vertexBufferByteSize = static_cast<UINT>(bufferData.size()) * sizeof(Matrix4x4);
