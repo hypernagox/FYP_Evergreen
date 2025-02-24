@@ -6,8 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/NatureManufacture Assets/Forest Environment Dynamic Nature/Demo
+    path: Assets/Temp/NatureManufacture Assets/Forest Environment Dynamic Nature/Demo
       Scenes/Forest Demo Scene.unity
     guid: 3c698a3ac77025942a8cd0682cb02889
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_UseUCBPForAssetBundles: 0
