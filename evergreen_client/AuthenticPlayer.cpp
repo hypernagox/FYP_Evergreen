@@ -28,7 +28,7 @@ void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
 	m_cameraAngleAxis += delta * m_fCamSensivity;
 	m_cameraAngleAxis.x = std::clamp(m_cameraAngleAxis.x, -89.0f, 89.0f);
 
-	m_cameraAngleAxisSmooth = m_cameraAngleAxisSmooth + (m_cameraAngleAxis - m_cameraAngleAxisSmooth) * deltaTime * 16.0f;
+	m_cameraAngleAxisSmooth = Vector3::Lerp(m_cameraAngleAxisSmooth, m_cameraAngleAxis, deltaTime * 16.0f);
 	camTrans->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(m_cameraAngleAxisSmooth * DEG2RAD));
 }
 

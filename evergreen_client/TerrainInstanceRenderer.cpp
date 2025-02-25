@@ -22,7 +22,7 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 		const auto& mesh = m_meshes[prototypeIndex];
 
 		D3D12_VERTEX_BUFFER_VIEW vbv = mesh->VertexBufferView();
-		D3D12_VERTEX_BUFFER_VIEW vibv = m_terrainData->GetTransformBufferView();
+		D3D12_VERTEX_BUFFER_VIEW vibv = m_terrainData->GetTransformBufferView(instances);
 		D3D12_INDEX_BUFFER_VIEW ibv = mesh->IndexBufferView();
 
 		param.CommandList->IASetVertexBuffers(0, 1, &vbv);
@@ -50,7 +50,7 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 				}
 			}
 			const auto& submesh = submeshes[index];
-			param.CommandList->DrawIndexedInstanced(submesh.IndexCount, prototypeCount, submesh.StartIndexLocation, submesh.BaseVertexLocation, prototypeBase);
+			param.CommandList->DrawIndexedInstanced(submesh.IndexCount, prototypeCount * instances, submesh.StartIndexLocation, submesh.BaseVertexLocation, prototypeBase * instances);
 		}
 	}
 }

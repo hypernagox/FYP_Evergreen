@@ -152,7 +152,7 @@ namespace udsdx
 			float distanceH = length(PosW.xyz - gEyePosW.xyz);
 
 			// Sky color. #142743
-			float4 skyColor = float4(0.078f, 0.157f, 0.263f, 1.0f);
+			float4 skyColor = float4(0.178f, 0.257f, 0.363f, 1.0f);
 			float diffuse = pow(saturate(dot(normalW, -gDirLight) * 1.1f - 0.1f), 0.3f);
 			float shadowValue = ShadowValue(PosW, normalW, distanceH);
 			float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;

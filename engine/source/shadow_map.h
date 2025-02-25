@@ -33,7 +33,7 @@ namespace udsdx
 		UINT m_mapWidth;
 		UINT m_mapHeight;
 
-		float m_shadowRanges[4] = { 12.0f, 48.0f, 120.0f, 1280.0f };
+		float m_shadowRanges[4] = { 16.0f, 64.0f, 128.0f, 512.0f };
 
 		D3D12_VIEWPORT m_viewport;
 		D3D12_RECT m_scissorRect;

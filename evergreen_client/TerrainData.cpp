@@ -18,6 +18,8 @@ void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 	nlohmann::json j;
 	file >> j;
 
+	constexpr int NumPerInstance = 4;
+
 	for (auto& tree : j)
 	{
 		Vector3 position = Vector3(tree["position_x"], tree["position_y"], tree["position_z"]);
@@ -40,7 +42,10 @@ void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 			m_baseCountPairs.emplace_back(static_cast<UINT>(base), static_cast<UINT>(i - base));
 			base = static_cast<UINT>(i);
 		}
-		bufferData.emplace_back(std::move(intermediateData[i].second));
+		for (int j = 0; j < NumPerInstance; j++)
+		{
+			bufferData.emplace_back(intermediateData[i].second);
+		}
 	}
 	m_baseCountPairs.emplace_back(static_cast<UINT>(base), static_cast<UINT>(intermediateData.size() - base));
 
@@ -64,11 +69,11 @@ void TerrainData::UploadBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* 
 	);
 }
 
-D3D12_VERTEX_BUFFER_VIEW TerrainData::GetTransformBufferView() const
+D3D12_VERTEX_BUFFER_VIEW TerrainData::GetTransformBufferView(int instances) const
 {
 	D3D12_VERTEX_BUFFER_VIEW vbv;
 	vbv.BufferLocation = m_bufferGpu->GetGPUVirtualAddress();
-	vbv.StrideInBytes = m_vertexByteStride;
+	vbv.StrideInBytes = m_vertexByteStride * 4 / instances;
 	vbv.SizeInBytes = m_vertexBufferByteSize;
 
 	return vbv;

@@ -10,7 +10,7 @@ public:
 	void CreateBuffer(std::wstring_view instancesPath);
 	void UploadBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 
-	D3D12_VERTEX_BUFFER_VIEW GetTransformBufferView() const;
+	D3D12_VERTEX_BUFFER_VIEW GetTransformBufferView(int instances) const;
 	UINT GetPrototypeCount() const;
 	UINT GetPrototypeInstanceBase(int index) const;
 	UINT GetPrototypeInstanceCount(int index) const;
