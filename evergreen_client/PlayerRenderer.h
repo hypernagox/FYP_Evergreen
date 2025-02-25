@@ -24,6 +24,7 @@ protected:
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
 	
 public:
+	int m_attackState = 0;
 	Transform* m_transformBody;
 	PlayerRenderer(const std::shared_ptr<SceneObject>& object);
 	~PlayerRenderer();
@@ -32,7 +33,7 @@ public:
 
 	Transform* const GetRenderObjTransform() const noexcept { return m_rendererObj->GetTransform(); }
 	void SetRotation(const Quaternion& rotation) { m_rendererObj->GetTransform()->SetLocalRotation(rotation); }
-	void SetAnimation(const std::string& animationName) { m_renderer->SetAnimation(animationName); }
+	void SetAnimation(AnimationClip* animationClip) { m_renderer->SetAnimation(animationClip); }
 	void OnAnimationStateChange(const AnimationState& state);
 	void Attack() { *m_stateMachine->GetConditionRefBool("Attack") = true; }
 	void Hit() { *m_stateMachine->GetConditionRefBool("Hit") = true; }

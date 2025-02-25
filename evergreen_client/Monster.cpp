@@ -17,18 +17,18 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	m_rendererObj->GetTransform()->SetLocalPosition(Vector3::Up * -0.05f);
 
 	m_riggedMeshRenderer = pBody->AddComponent<RiggedMeshRenderer>();
-	m_riggedMeshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"fox\\fox_animation.glb")));
+	m_riggedMeshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"fox\\fox.glb")));
 	m_riggedMeshRenderer->SetShader(shader);
 	m_riggedMeshRenderer->SetMaterial(m_monsterMaterial.get());
 
-	m_transformBody->SetLocalScale(Vector3::One * 2.5f);
+	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 24.0f);
 
 	m_entityMovement = object->AddComponent<EntityMovement>();
 
 	GetSceneObject()->AddChild(m_rendererObj);
 
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
-	m_riggedMeshRenderer->SetAnimation("idle");
+	m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.fbx")));
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 0.365f);
@@ -54,10 +54,10 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 	switch (to)
 	{
 	case AnimationState::Idle:
-		m_riggedMeshRenderer->SetAnimation("idle");
+		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.fbx")));
 		break;
 	case AnimationState::Attack:
-		m_riggedMeshRenderer->SetAnimation("attack");
+		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_attack.fbx", true)));
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
 		break;
 	}

@@ -88,7 +88,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         if constexpr (true == g_bUseDefaultIP)
         {
             // L"3.39.255.229"
-            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(L"3.39.255.229", 7777, s2c_PacketHandler::GetPacketHandlerList()));
+            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(L"127.0.0.1", 7777, s2c_PacketHandler::GetPacketHandlerList()));
         }
         else
         {
@@ -142,7 +142,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     gizmoRenderer->SetRadius(1.0f);
 	gizmoRenderer->SetHeight(3.0f);
   
-    Vector3 temp = Vector3(0.0f, 40.0f, 0.0f);
+    Vector3 temp = Vector3(-100.0f, 60.0f, -100.0f);
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(temp);
 
@@ -170,7 +170,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 128, 128, 1.0f);
     terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
-    terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"terrain_treeInstances.json"));
+    terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"terrain_treeInstances.json"), 512.0f, 0.02f);
     auto terrainInstance = std::make_shared<SceneObject>();
     auto terrainInstanceRenderer = terrainInstance->AddComponent<TerrainInstanceRenderer>();
     terrainInstanceRenderer->SetTerrainData(terrainData.get());
@@ -203,17 +203,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         terrainRenderer->SetMaterial(terrainMaterial.get());
         terrainRenderer->SetShader(shaderTerrain);
         terrainRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST);
-        scene->AddObject(terrainObj);
-    }
 
-    {
-        auto navMeshObj = std::make_shared<SceneObject>();
-        auto navMeshRenderer = navMeshObj->AddComponent<MeshRenderer>();
-        navMeshRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"NAVIMESHOBJ.obj")));
-        navMeshRenderer->SetMaterial(terrainMaterial.get());
-        navMeshRenderer->SetShader(shader);
-        navMeshRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        scene->AddObject(navMeshObj);
+        scene->AddObject(terrainObj);
     }
 
     {

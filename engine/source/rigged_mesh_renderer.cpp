@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "rigged_mesh_renderer.h"
+#include "animation_clip.h"
 #include "renderer_base.h"
 #include "frame_resource.h"
 #include "scene_object.h"
@@ -126,20 +127,20 @@ namespace udsdx
 		m_boneConstantsCache.resize(numSubmeshes);
 	}
 
-	void RiggedMeshRenderer::SetAnimation(std::string_view animationName)
+	void RiggedMeshRenderer::SetAnimation(AnimationClip* animationClip, bool forcePlay)
 	{
-		if (m_animationName == animationName)
+		if (!forcePlay && m_animation == animationClip)
 		{
 			return;
 		}
 		if (m_transitionFactor > 1.0f)
 		{
-			m_prevAnimationName = m_animationName;
+			m_prevAnimation = m_animation;
 			m_prevAnimationTime = m_animationTime;
 		}
 		m_animationTime = 0.0f;
 		m_transitionFactor = 0.0f;
-		m_animationName = animationName;
+		m_animation = animationClip;
 	}
 
 	ID3D12PipelineState* RiggedMeshRenderer::GetPipelineState() const
@@ -152,22 +153,53 @@ namespace udsdx
 		return m_shader->RiggedShadowPipelineState();
 	}
 
+	static constexpr float SmoothStep(float t)
+	{
+		return t * t * (3.0f - 2.0f * t);
+	}
+
+	Matrix4x4 RiggedMeshRenderer::PopulateTransform(std::string_view boneName)
+	{
+		std::vector<std::string> names;
+		std::vector<Matrix4x4> offsets;
+		std::vector<Matrix4x4> out;
+
+		names.emplace_back(boneName.data());
+		offsets.emplace_back(Matrix4x4::Identity);
+
+		if (m_animation == nullptr)
+		{
+			out.emplace_back(Matrix4x4::Identity);
+		}
+		else
+		{
+			m_animation->PopulateTransforms(m_animationTime, names, offsets, out);
+		}
+		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
+		{
+			std::vector<Matrix4x4> prevTransforms;
+			m_prevAnimation->PopulateTransforms(m_prevAnimationTime, names, offsets, prevTransforms);
+			float t = SmoothStep(std::clamp(m_transitionFactor, 0.0f, 1.0f));
+			out[0] = Matrix4x4::Lerp(prevTransforms[0], out[0], t);
+		}
+		return out[0];
+	}
+
 	void RiggedMeshRenderer::PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out)
 	{
-		if (m_animationName.empty())
+		if (m_animation == nullptr)
 		{
 			m_riggedMesh->PopulateTransforms(submeshIndex, out);
 		}
 		else
 		{
-			m_riggedMesh->PopulateTransforms(submeshIndex, m_animationName, m_animationTime, out);
+			m_riggedMesh->PopulateTransforms(submeshIndex, *m_animation, m_animationTime, out);
 		}
-		if (m_transitionFactor < 1.0f && !m_prevAnimationName.empty())
+		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
 		{
 			std::vector<Matrix4x4> prevTransforms;
-			m_riggedMesh->PopulateTransforms(submeshIndex, m_prevAnimationName, m_prevAnimationTime, prevTransforms);
-			float t = std::clamp(m_transitionFactor, 0.0f, 1.0f);
-			t = 3.0f * t * t - 2.0f * t * t * t;
+			m_riggedMesh->PopulateTransforms(submeshIndex, *m_prevAnimation, m_prevAnimationTime, prevTransforms);
+			float t = SmoothStep(std::clamp(m_transitionFactor, 0.0f, 1.0f));
 			for (size_t i = 0; i < out.size(); ++i)
 			{
 				out[i] = Matrix4x4::Lerp(prevTransforms[i], out[i], t);

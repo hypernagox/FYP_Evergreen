@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "mesh.h"
 #include "rigged_mesh.h"
+#include "animation_clip.h"
 #include "shader.h"
 #include "debug_console.h"
 #include "audio.h"
@@ -160,28 +161,47 @@ namespace udsdx
 		XMFLOAT4X4 preMultiplication;
 		std::string extension = pathString.extension().string();
 		transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+		XMMATRIX T = XMMatrixIdentity();
 		if (extension == ".fbx")
 		{
-			XMStoreFloat4x4(&preMultiplication, XMMatrixRotationX(XM_PIDIV2));
+			T = XMMatrixRotationX(PIDIV2);
 		}
-		else
+		float scaleFactor;
+		if (assimpScene->mMetaData->Get<float>("UnitScaleFactor", scaleFactor))
 		{
-			XMStoreFloat4x4(&preMultiplication, XMMatrixIdentity());
+			// T = XMMatrixScaling(scaleFactor, scaleFactor, scaleFactor) * T;
+		}
+		XMStoreFloat4x4(&preMultiplication, T);
+
+		std::unique_ptr<ResourceObject> ret;
+		if (assimpScene->HasMeshes())
+		{
+			if (assimpScene->HasAnimations())
+			{
+				DebugConsole::LogWarning("\tThe model has both meshes and animations. The engine regards the file as a mesh data and the animations are ignored.");
+			}
+			std::unique_ptr<MeshBase> mesh = nullptr;
+			if (hasBones)
+			{
+				mesh = std::make_unique<RiggedMesh>(*assimpScene, preMultiplication);
+				mesh->UploadBuffers(m_device, m_commandList);
+				DebugConsole::Log("\tRegistered the resource as RiggedMesh");
+			}
+			else
+			{
+				mesh = std::make_unique<Mesh>(*assimpScene, preMultiplication);
+				mesh->UploadBuffers(m_device, m_commandList);
+				DebugConsole::Log("\tRegistered the resource as Mesh");
+			}
+			ret = std::move(mesh);
+		}
+		else if (assimpScene->HasAnimations())
+		{
+			ret = std::make_unique<AnimationClip>(*assimpScene, preMultiplication);
+			DebugConsole::Log("\tRegistered the resource as AnimationClip");
 		}
 
-		std::unique_ptr<MeshBase> mesh = nullptr;
-		if (hasBones)
-		{
-			mesh = std::make_unique<RiggedMesh>(*assimpScene, preMultiplication);
-			DebugConsole::Log("\tRegistered the resource as RiggedMesh");
-		}
-		else
-		{
-			mesh = std::make_unique<Mesh>(*assimpScene, preMultiplication);
-			DebugConsole::Log("\tRegistered the resource as Mesh");
-		}
-		mesh->UploadBuffers(m_device, m_commandList);
-		return mesh;
+		return ret;
 	}
 
 	ShaderLoader::ShaderLoader(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* rootSignature) : ResourceLoader(device, commandList), m_rootSignature(rootSignature)

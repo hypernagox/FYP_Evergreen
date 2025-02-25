@@ -6,6 +6,7 @@
 namespace udsdx
 {
 	class RiggedMesh;
+	class AnimationClip;
 
 	class RiggedMeshRenderer : public RendererBase
 	{
@@ -25,18 +26,19 @@ namespace udsdx
 	public:
 		RiggedMesh* GetMesh() const;
 		void SetMesh(RiggedMesh* mesh);
-		void SetAnimation(std::string_view animationName);
+		void SetAnimation(AnimationClip* animationClip, bool forcePlay = false);
 
 		virtual ID3D12PipelineState* GetPipelineState() const override;
 		virtual ID3D12PipelineState* GetShadowPipelineState() const override;
 
+		Matrix4x4 PopulateTransform(std::string_view boneName);
 		void PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out);
 
 	protected:
 		RiggedMesh* m_riggedMesh = nullptr;
 
-		std::string m_animationName{};
-		std::string m_prevAnimationName{};
+		AnimationClip* m_animation = nullptr;
+		AnimationClip* m_prevAnimation = nullptr;
 		float m_animationTime = 0.0f;
 		float m_prevAnimationTime = 0.0f;
 		float m_transitionFactor = 0.0f;

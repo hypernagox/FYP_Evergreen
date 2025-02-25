@@ -15,7 +15,7 @@ namespace udsdx
 
 		// For Rigged Mesh
 		UINT NodeID = 0;
-		std::vector<UINT> BoneNodeIDs;
+		std::vector<std::string> BoneNodeIDs;
 		std::vector<Matrix4x4> BoneOffsets;
 	};
 
