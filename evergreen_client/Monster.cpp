@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Monster.h"
 #include "EntityMovement.h"
+#include "MonsterHPPanel.h"
 
 Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
@@ -33,6 +34,11 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 0.365f);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(from, to); });
+
+	auto hpPanelObj = std::make_shared<SceneObject>();
+	hpPanelObj->GetTransform()->SetLocalPosition(Vector3::Up * 3.0f);
+	m_hpPanel = hpPanelObj->AddComponent<MonsterHPPanel>();
+	GetSceneObject()->AddChild(hpPanelObj);
 }
 
 Monster::~Monster()
@@ -61,4 +67,10 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
 		break;
 	}
+}
+
+void Monster::OnHit(int damage)
+{
+	m_hp -= damage;
+	m_hpPanel->SetHPFraction(m_hp / 3.0f);
 }

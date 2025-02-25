@@ -341,6 +341,7 @@
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monster.cpp" />
+    <ClCompile Include="MonsterHPPanel.cpp" />
     <ClCompile Include="MoveInterpolator.cpp" />
     <ClCompile Include="MovePacketSender.cpp" />
     <ClCompile Include="ObjectIdentifier.cpp" />
@@ -389,6 +390,7 @@
     <ClInclude Include="GizmoSphereRenderer.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Monster.h" />
+    <ClInclude Include="MonsterHPPanel.h" />
     <ClInclude Include="MoveInterpolator.h" />
     <ClInclude Include="MovePacketSender.h" />
     <ClInclude Include="ObjectIdentifier.h" />

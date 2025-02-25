@@ -168,6 +168,9 @@
     <ClCompile Include="TerrainInstanceRenderer.cpp">
       <Filter>Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="MonsterHPPanel.cpp">
+      <Filter>Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -259,6 +262,9 @@
     </ClInclude>
     <ClInclude Include="TerrainInstanceRenderer.h">
       <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterHPPanel.h">
+      <Filter>Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

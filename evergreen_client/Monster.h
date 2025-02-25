@@ -5,6 +5,7 @@
 using namespace udsdx;
 
 class EntityMovement;
+class MonsterHPPanel;
 
 class Monster : public Component
 {
@@ -23,6 +24,9 @@ protected:
 	udsdx::RiggedMeshRenderer* m_riggedMeshRenderer;
 
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
+	MonsterHPPanel* m_hpPanel;
+
+	int m_hp = 3;
 
 public:
 	Transform* m_transformBody;
@@ -33,4 +37,5 @@ public:
 	const auto& GetRenderObjTransform()const noexcept { return m_rendererObj->GetTransform(); }
 	void OnAttackToPlayer();
 	void OnAnimationStateChange(AnimationState from, AnimationState to);
+	void OnHit(int damage);
 };

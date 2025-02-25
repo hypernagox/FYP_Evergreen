@@ -217,7 +217,10 @@ const bool Handle_s2c_MONSTER_HIT(const NetHelper::S_ptr<NetHelper::PacketSessio
 	const auto dmg = pkt_.dmg(); // 데미지, 현재는 걍 전부 1 , 몹의 피통은3
 	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
 	if (!hit_obj_ptr)return true;
-	
+	if (const auto monster = hit_obj_ptr->GetComponent<Monster>())
+	{
+		monster->OnHit(dmg);
+	}
 	std::cout << std::format("HIT ID: {}, DMG: {}\n", hit_obj_id, dmg);
 	return true;
 }
