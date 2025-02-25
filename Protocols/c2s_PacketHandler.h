@@ -25,13 +25,14 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_REMOVE_OBJECT = 1003,
     s2c_MOVE = 1004,
     s2c_MONSTER_ATTACK = 1005,
-    s2c_MONSTER_AGGRO_START = 1006,
-    s2c_MONSTER_AGGRO_END = 1007,
-    s2c_PLAYER_ATTACK = 1008,
-    s2c_PLAYER_DEATH = 1009,
-    s2c_REQUEST_QUEST = 1010,
-    s2c_CLEAR_QUEST = 1011,
-    s2c_FIRE_PROJ = 1012,
+    s2c_MONSTER_HIT = 1006,
+    s2c_MONSTER_AGGRO_START = 1007,
+    s2c_MONSTER_AGGRO_END = 1008,
+    s2c_PLAYER_ATTACK = 1009,
+    s2c_PLAYER_DEATH = 1010,
+    s2c_REQUEST_QUEST = 1011,
+    s2c_CLEAR_QUEST = 1012,
+    s2c_FIRE_PROJ = 1013,
 };
 
 class NagiocpX::PacketSession;

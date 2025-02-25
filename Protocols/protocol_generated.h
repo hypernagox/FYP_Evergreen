@@ -49,6 +49,9 @@ struct s2c_MOVEBuilder;
 struct s2c_MONSTER_ATTACK;
 struct s2c_MONSTER_ATTACKBuilder;
 
+struct s2c_MONSTER_HIT;
+struct s2c_MONSTER_HITBuilder;
+
 struct s2c_MONSTER_AGGRO_START;
 struct s2c_MONSTER_AGGRO_STARTBuilder;
 
@@ -708,6 +711,63 @@ inline ::flatbuffers::Offset<s2c_MONSTER_ATTACK> Creates2c_MONSTER_ATTACK(
   s2c_MONSTER_ATTACKBuilder builder_(_fbb);
   builder_.add_player_id(player_id);
   builder_.add_obj_id(obj_id);
+  builder_.add_dmg(dmg);
+  return builder_.Finish();
+}
+
+struct s2c_MONSTER_HIT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_MONSTER_HITBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_HIT_OBJ_ID = 4,
+    VT_DMG = 6
+  };
+  uint64_t hit_obj_id() const {
+    return GetField<uint64_t>(VT_HIT_OBJ_ID, 0);
+  }
+  bool mutate_hit_obj_id(uint64_t _hit_obj_id = 0) {
+    return SetField<uint64_t>(VT_HIT_OBJ_ID, _hit_obj_id, 0);
+  }
+  uint32_t dmg() const {
+    return GetField<uint32_t>(VT_DMG, 0);
+  }
+  bool mutate_dmg(uint32_t _dmg = 0) {
+    return SetField<uint32_t>(VT_DMG, _dmg, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_HIT_OBJ_ID, 8) &&
+           VerifyField<uint32_t>(verifier, VT_DMG, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_MONSTER_HITBuilder {
+  typedef s2c_MONSTER_HIT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_hit_obj_id(uint64_t hit_obj_id) {
+    fbb_.AddElement<uint64_t>(s2c_MONSTER_HIT::VT_HIT_OBJ_ID, hit_obj_id, 0);
+  }
+  void add_dmg(uint32_t dmg) {
+    fbb_.AddElement<uint32_t>(s2c_MONSTER_HIT::VT_DMG, dmg, 0);
+  }
+  explicit s2c_MONSTER_HITBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_MONSTER_HIT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_MONSTER_HIT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_MONSTER_HIT> Creates2c_MONSTER_HIT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t hit_obj_id = 0,
+    uint32_t dmg = 0) {
+  s2c_MONSTER_HITBuilder builder_(_fbb);
+  builder_.add_hit_obj_id(hit_obj_id);
   builder_.add_dmg(dmg);
   return builder_.Finish();
 }

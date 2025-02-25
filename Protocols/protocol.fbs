@@ -68,6 +68,12 @@ table s2c_MONSTER_ATTACK
     dmg : uint32;
 }
 
+table s2c_MONSTER_HIT
+{
+    hit_obj_id : uint64;
+    dmg : uint32;
+}
+
 table s2c_MONSTER_AGGRO_START
 {
     group_type: Nagox.Enum.GROUP_TYPE;

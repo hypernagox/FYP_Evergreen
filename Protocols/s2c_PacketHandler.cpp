@@ -211,3 +211,13 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	return true;
 }
 
+const bool Handle_s2c_MONSTER_HIT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_HIT& pkt_)
+{
+	const auto hit_obj_id = pkt_.hit_obj_id(); // 맞은 애 아이디
+	const auto dmg = pkt_.dmg(); // 데미지, 현재는 걍 전부 1 , 몹의 피통은3
+	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
+	if (!hit_obj_ptr)return true;
+	
+	std::cout << std::format("HIT ID: {}, DMG: {}\n", hit_obj_id, dmg);
+	return true;
+}
