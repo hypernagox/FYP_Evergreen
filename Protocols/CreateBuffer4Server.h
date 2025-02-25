@@ -46,6 +46,11 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_ATTACK(
     const uint32_t dmg,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_HIT(
+    const uint64_t hit_obj_id,
+    const uint32_t dmg,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_AGGRO_START(
     const Nagox::Enum::GROUP_TYPE& group_type,
     const uint8_t obj_type_info,

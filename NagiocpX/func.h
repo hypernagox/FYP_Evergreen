@@ -1,5 +1,6 @@
 #pragma once
 #include "NagiocpXPch.h"
+#include <chrono>
 
 namespace NagiocpX
 {

@@ -138,6 +138,23 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_ATTACK(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_MONSTER_ATTACK);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_HIT(
+    const uint64_t hit_obj_id,
+    const uint32_t dmg,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto hit_obj_id_value = hit_obj_id;
+    const auto dmg_value = dmg;
+    const auto serializeds2c_MONSTER_HIT = Nagox::Protocol::Creates2c_MONSTER_HIT(
+        builder
+,        hit_obj_id_value,
+        dmg_value    );
+    builder.Finish(serializeds2c_MONSTER_HIT);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_MONSTER_HIT);
+}
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_AGGRO_START(
     const Nagox::Enum::GROUP_TYPE& group_type,
     const uint8_t obj_type_info,
