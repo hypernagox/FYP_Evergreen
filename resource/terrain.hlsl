@@ -14,9 +14,6 @@ struct HullOut
 	float4 PosW : POSITION;
 	float2 Tex : TEXCOORD0;
 	float4 NormalW : NORMAL;
-#ifdef GENERATE_SHADOWS
-    float4 PosP         : POSITION2;
-#endif
 };
 
 struct HullConstantOut
@@ -49,9 +46,6 @@ HullOut HS(InputPatch<VertexOut, 16> vin, uint index : SV_OutputControlPointID)
 	output.PosW = vin[index].PosW;
 	output.Tex = vin[index].Tex;
 	output.NormalW = vin[index].NormalW;
-#ifdef GENERATE_SHADOWS
-	output.PosP = vin[index].PosP;
-#endif
 	return output;
 }
 
@@ -62,9 +56,6 @@ struct DomainOut
 	float4 PrevPosH	: POSITION1;
 	float2 Tex		: TEXCOORD0;
 	float4 NormalW	: NORMAL;
-#ifdef GENERATE_SHADOWS
-    float4 PosP		: POSITION2;
-#endif
 };
 
 float4 CatmullRom(float4 p0, float4 p1, float4 p2, float4 p3, float t)
@@ -98,17 +89,12 @@ DomainOut DS(HullConstantOut hcin, OutputPatch<HullOut, 16> hin, float2 uv : SV_
 	output.PrevPosH = mul(output.PosW, gPrevViewProj);
 	output.Tex = BILINEAR(Tex);
 	output.NormalW = BILINEAR(NormalW);
-#ifdef GENERATE_SHADOWS
-	output.PosP = BILINEAR(PosP);
-#endif
 	return output;
 }
 
 #ifdef GENERATE_SHADOWS
 void ShadowPS(DomainOut pin)
 {
-    float a = gMainTex.Sample(gSampler, pin.Tex).a;
-    clip(1.0f - max(abs(pin.PosP.x), abs(pin.PosP.y)));
 }
 
 #else

@@ -66,9 +66,6 @@ struct VertexIn
 	uint   BoneIndices  : BONEINDICES;
 	float4 BoneWeights  : BONEWEIGHTS;
 #endif
-#ifdef GENERATE_SHADOWS
-	uint   InstanceID   : SV_InstanceID;
-#endif
 };
 
 struct VertexOut
@@ -79,9 +76,6 @@ struct VertexOut
     float4 NormalW      : NORMAL;
     float4 TangentW     : TANGENT;
     float4 PrevPosH     : POSITION2;
-#ifdef GENERATE_SHADOWS
-    float4 PosP         : POSITION3;
-#endif
 };
 
 struct PixelOut
@@ -92,7 +86,6 @@ struct PixelOut
 };
 
 #ifdef RIGGED
-
 #define LocalToObjectPos(vin) RigTransform(float4(vin.PosL, 1.0f), vin.BoneIndices, vin.BoneWeights)
 #define LocalToObjectNormal(vin, normal) RigTransform(float4(normal, 0.0f), vin.BoneIndices, vin.BoneWeights)
 
@@ -123,14 +116,7 @@ inline float4 PrevRigTransform(float4 posL, uint indices, float4 weights)
 #define ObjectToWorldPos(pos) mul(pos, gWorld)
 #define ObjectToWorldNormal(normal) float4(LocalToWorldNormal(normal.xyz), 0.0f)
 
-#ifdef GENERATE_SHADOWS
-#define WorldToClipPos(pos, vin) mul(pos, gLightViewProjClip[vin.InstanceID % 4]);
-
-#else
 #define WorldToClipPos(pos, vin) mul(mul(pos, gView), gProj)
-
-#endif
-
 #define ObjectToClipPos(pos) WorldToClipPos(ObjectToWorldPos(pos))
 
 inline float3 LocalToWorldNormal(float3 normalL)
@@ -139,12 +125,10 @@ inline float3 LocalToWorldNormal(float3 normalL)
 }
 
 #ifdef GENERATE_SHADOWS
-#define ConstructPosP(vin, vout) vout.PosP = mul(vout.PosW, gLightViewProj[vin.InstanceID % 4])
 #define ConstructSSAOPosH(vin, vout) vout.SSAOPosH = float4(0.0f, 0.0f, 0.0f, 1.0f)
 #define ConstructPrevPosH(vin, vout) vout.PrevPosH = float4(0.0f, 0.0f, 0.0f, 1.0f)
 
 #else
-#define ConstructPosP(vin, vout)
 #ifdef RIGGED
 #define ConstructPrevPosH(vin, vout) vout.PrevPosH = mul(mul(PrevRigTransform(float4(vin.PosL, 1.0f), vin.BoneIndices, vin.BoneWeights), gPrevWorld), gPrevViewProj)
 #else
@@ -159,7 +143,6 @@ inline float3 LocalToWorldNormal(float3 normalL)
 	vout.Tex = vin.Tex;                                                             \
 	vout.NormalW = ObjectToWorldNormal(LocalToObjectNormal(vin, vin.Normal));       \
     vout.TangentW = ObjectToWorldNormal(LocalToObjectNormal(vin, vin.Tangent));     \
-    ConstructPosP(vin, vout);                                                       \
     ConstructPrevPosH(vin, vout);                                                   \
 
 #if defined(GENERATE_SHADOWS) && !defined(USE_CUSTOM_SHADOWPS)
@@ -168,7 +151,6 @@ void ShadowPS(VertexOut pin)
 {
     float a = gMainTex.Sample(gSampler, pin.Tex).a;
     clip(a - 0.1f);
-    clip(1.0f - max(abs(pin.PosP.x), abs(pin.PosP.y)));
 }
 
 #endif

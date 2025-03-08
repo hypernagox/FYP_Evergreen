@@ -10,8 +10,7 @@ VertexOut VS(VertexIn vin)
 	vout.PosH = WorldToClipPos(vout.PosW, vin);                                     
 	vout.Tex = vin.Tex;                                                             
 	vout.NormalW = ObjectToWorldNormal(mul(vin.Normal, (float3x3)vin.InstanceTransform));       
-    vout.TangentW = ObjectToWorldNormal(mul(vin.Tangent, (float3x3)vin.InstanceTransform));     
-    ConstructPosP(vin, vout);                                                       
+    vout.TangentW = ObjectToWorldNormal(mul(vin.Tangent, (float3x3)vin.InstanceTransform));
     vout.PrevPosH = mul(mul(PosL, gPrevWorld), gPrevViewProj);
 
     return vout;

@@ -22,6 +22,13 @@ namespace udsdx
 		{
 			buffer = std::make_unique<UploadBuffer<ShadowConstants>>(device, 1, true);
 		}
+		for (auto& bufferSet : m_lightCameraBuffers)
+		{
+			for (auto& buffer : bufferSet)
+			{
+				buffer = std::make_unique<UploadBuffer<CameraConstants>>(device, 1, true);
+			}
+		}
 	}
 
 	ShadowMap::~ShadowMap()
@@ -121,15 +128,59 @@ namespace udsdx
 
 			shadowConstants.ShadowBias[i] = f;
 			shadowConstants.ShadowDistance[i] = f * 0.5f;
+
+			CameraConstants cameraConstants{};
+			XMStoreFloat4x4(&cameraConstants.View, XMMatrixTranspose(lightView));
+			XMStoreFloat4x4(&cameraConstants.Proj, XMMatrixTranspose(lightProj));
+			XMStoreFloat4x4(&cameraConstants.ViewProj, XMMatrixTranspose(lightViewProj));
+			m_lightCameraBuffers[param.FrameResourceIndex][i]->CopyData(0, cameraConstants);
 		}
 		shadowConstants.LightDirection = lightDirection;
 
 		m_constantBuffers[param.FrameResourceIndex]->CopyData(0, shadowConstants);
 
-		param.CommandList->SetGraphicsRootConstantBufferView(3, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
+		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerShadowCBV, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
 
 		param.UseFrustumCulling = false;
-		target->RenderShadowSceneObjects(param, 4);
+
+		D3D12_VIEWPORT tempViewport{};
+		D3D12_RECT tempScissorRect{};
+
+		int halfWidth = m_mapWidth / 2;
+		int halfHeight = m_mapHeight / 2;
+
+		tempViewport = { 0.0f, (float)halfHeight, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
+		tempScissorRect = { 0, halfHeight, halfWidth, halfHeight * 2 };
+
+		param.CommandList->RSSetViewports(1, &tempViewport);
+		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
+		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][0]->Resource()->GetGPUVirtualAddress());
+		target->RenderShadowSceneObjects(param, 1);
+
+		tempViewport = { (float)halfWidth, (float)halfHeight, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
+		tempScissorRect = { halfWidth, halfHeight, halfWidth * 2, halfHeight * 2 };
+
+		param.CommandList->RSSetViewports(1, &tempViewport);
+		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
+		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][1]->Resource()->GetGPUVirtualAddress());
+		target->RenderShadowSceneObjects(param, 1);
+
+		tempViewport = { 0.0f, 0.0f, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
+		tempScissorRect = { 0, 0, halfWidth, halfHeight };
+
+		param.CommandList->RSSetViewports(1, &tempViewport);
+		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
+		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][2]->Resource()->GetGPUVirtualAddress());
+		target->RenderShadowSceneObjects(param, 1);
+
+		tempViewport = { (float)halfWidth, 0.0f, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
+		tempScissorRect = { halfWidth, 0, halfWidth * 2, halfHeight };
+
+		param.CommandList->RSSetViewports(1, &tempViewport);
+		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
+		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][3]->Resource()->GetGPUVirtualAddress());
+		target->RenderShadowSceneObjects(param, 1);
+
 		param.UseFrustumCulling = true;
 
 		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_shadowMap.Get(),

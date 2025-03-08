@@ -92,7 +92,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     
     m_characterObject = std::make_shared<SceneObject>();
     m_characterObject->GetTransform()->SetLocalPositionY(-1.375f);
-    m_characterObject->GetTransform()->SetLocalScale(Vector3::One * 0.1f);
+    m_characterObject->GetTransform()->SetLocalScale(Vector3::One * 1e-2f);
     auto meshRenderer = m_characterObject->AddComponent<RiggedMeshRenderer>();
     meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\character.glb"));
     meshRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\color.hlsl"));

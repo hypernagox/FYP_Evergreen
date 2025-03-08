@@ -45,5 +45,6 @@ namespace udsdx
 		ComPtr<ID3D12Resource> m_shadowMap;
 
 		std::array<std::unique_ptr<UploadBuffer<ShadowConstants>>, FrameResourceCount> m_constantBuffers;
+		std::array<std::array<std::unique_ptr<UploadBuffer<CameraConstants>>, 4>, FrameResourceCount> m_lightCameraBuffers;
 	};
 }
