@@ -10,6 +10,7 @@
 #include "shader.h"
 #include "scene.h"
 #include "rigged_mesh.h"
+#include "camera.h"
 #include "core.h"
 
 namespace udsdx
@@ -38,7 +39,7 @@ namespace udsdx
 			// Perform frustum culling
 			BoundingBox boundsWorld;
 			m_riggedMesh->GetBounds().Transform(boundsWorld, m_transformCache);
-			if (param.ViewFrustumWorld.Contains(boundsWorld) == ContainmentType::DISJOINT)
+			if (param.ViewFrustumWorld->Contains(boundsWorld) == ContainmentType::DISJOINT)
 			{
 				return;
 			}
@@ -62,7 +63,7 @@ namespace udsdx
 			for (size_t index = 0; index < submeshes.size(); ++index)
 			{
 				std::vector<Matrix4x4> boneTransforms;
-				PopulateTransforms(index, boneTransforms);
+				PopulateTransforms(static_cast<int>(index), boneTransforms);
 
 				BoneConstants boneConstants;
 				memcpy(boneConstants.BoneTransforms, boneTransforms.data(), boneTransforms.size() * sizeof(Matrix4x4));

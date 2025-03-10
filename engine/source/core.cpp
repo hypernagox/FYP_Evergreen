@@ -573,6 +573,7 @@ namespace udsdx
 
 			.AspectRatio = static_cast<float>(m_clientWidth) / m_clientHeight,
 			.FrameResourceIndex = m_currFrameResourceIndex,
+			.RenderStageIndex = 0,
 			.Time = m_timeMeasure->GetTime(),
 
 			.Viewport = m_screenViewport,
@@ -669,7 +670,7 @@ namespace udsdx
 		frameResource->GetObjectCB()->CopyData(0, passConstants);
 	}
 
-	bool Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+	LRESULT Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{ ZoneScoped;
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
 		{
@@ -708,11 +709,13 @@ namespace udsdx
 					break;
 				}
 			}
+			break;
+
 		default:
 			return INSTANCE(Input)->ProcessMessage(hWnd, message, wParam, lParam);
 		}
 		
-		return true;
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
 	void Core::SetWindowFullscreen(bool fullscreen)

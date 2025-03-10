@@ -10,11 +10,13 @@ namespace udsdx
 		Input();
 		~Input();
 
-		bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		void Initialize(HWND hWnd);
 		void Reset();
 		void Update();
 
+		// Get mouse mode
+		Mouse::Mode GetMouseMode() const;
 		// Set relative mouse mode
 		void SetRelativeMouse(bool value);
 

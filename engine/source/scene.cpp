@@ -19,7 +19,7 @@ namespace udsdx
 {
 	Scene::Scene()
 	{
-		m_rootObject = std::make_unique<SceneObject>();
+		m_rootObject = std::make_shared<SceneObject>();
 	}
 
 	Scene::~Scene()
@@ -29,7 +29,7 @@ namespace udsdx
 
 	void Scene::Update(const Time& time)
 	{ ZoneScoped;
-		m_rootObject->Update(time, *this);
+		SceneObject::EnumerateUpdate(m_rootObject, time, *this);
 	}
 
 	void Scene::PostUpdate(const Time& time)
@@ -42,7 +42,7 @@ namespace udsdx
 		}
 		m_renderShadowObjectQueue.clear();
 
-		m_rootObject->PostUpdate(time, *this, false);
+		SceneObject::EnumeratePostUpdate(m_rootObject, time, *this);
 	}
 
 	void Scene::Render(RenderParam& param)
@@ -121,7 +121,8 @@ namespace udsdx
 		param.Renderer->PassBufferPreparation(param);
 		param.Renderer->ClearRenderTargets(pCommandList);
 
-		param.ViewFrustumWorld = camera->GetViewFrustumWorld(param.AspectRatio);
+		std::unique_ptr<BoundingCamera> boundingCamera = camera->GetViewFrustumWorld(param.AspectRatio);
+		param.ViewFrustumWorld = boundingCamera.get();
 
 		RenderSceneObjects(param, RenderGroup::Deferred, 1);
 
@@ -156,6 +157,7 @@ namespace udsdx
 			param.CommandList->SetPipelineState(object->GetShadowPipelineState());
 			object->Render(param, instances);
 		}
+		param.RenderStageIndex++;
 	}
 	
 	void Scene::RenderSceneObjects(RenderParam& param, RenderGroup group, int instances)
@@ -165,5 +167,6 @@ namespace udsdx
 			param.CommandList->SetPipelineState(object->GetPipelineState());
 			object->Render(param, instances);
 		}
+		param.RenderStageIndex++;
 	}
 }

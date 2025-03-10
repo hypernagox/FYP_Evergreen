@@ -8,6 +8,48 @@ namespace udsdx
 {
 	class Scene;
 
+	class BoundingCamera
+	{
+	public:
+		virtual ContainmentType Contains(const BoundingBox& box) const = 0;
+	};
+
+	class BoundingCameraOrthographic : public BoundingCamera
+	{
+	private:
+		BoundingOrientedBox m_cameraOrientedBox;
+
+	public:
+		BoundingCameraOrthographic(Matrix4x4 viewMatrix, float width, float height, float nearPlane, float farPlane)
+		{
+			m_cameraOrientedBox = BoundingOrientedBox(Vector3::Forward * (nearPlane + farPlane) * 0.5f, Vector3(width * 0.5f, height * 0.5f, (farPlane - nearPlane) * 0.5f), Quaternion::Identity);
+			m_cameraOrientedBox.Transform(m_cameraOrientedBox, viewMatrix.Invert());
+		}
+
+		ContainmentType Contains(const BoundingBox& box) const override
+		{
+			return m_cameraOrientedBox.Contains(box);
+		}
+	};
+
+	class BoundingCameraPerspective : public BoundingCamera
+	{
+	private:
+		BoundingFrustum m_frustum;
+
+	public:
+		BoundingCameraPerspective(Matrix4x4 viewMatrix, Matrix4x4 projMatrix)
+		{
+			m_frustum = BoundingFrustum(projMatrix);
+			m_frustum.Transform(m_frustum, viewMatrix.Invert());
+		}
+
+		ContainmentType Contains(const BoundingBox& box) const override
+		{
+			return m_frustum.Contains(box);
+		}
+	};
+
 	class Camera : public Component
 	{
 	public:
@@ -20,7 +62,7 @@ namespace udsdx
 	public:
 		virtual Matrix4x4 GetViewMatrix() const;
 		virtual Matrix4x4 GetProjMatrix(float aspect) const = 0;
-		BoundingFrustum GetViewFrustumWorld(float aspect) const;
+		virtual std::unique_ptr<BoundingCamera> GetViewFrustumWorld(float aspect) const = 0;
 
 		void SetClearColor(const Color& color);
 		Color GetClearColor() const;
@@ -39,6 +81,7 @@ namespace udsdx
 
 	public:
 		virtual Matrix4x4 GetProjMatrix(float aspect) const override;
+		virtual std::unique_ptr<BoundingCamera> GetViewFrustumWorld(float aspect) const override;
 
 	public:
 		void SetFov(float fov);
@@ -62,6 +105,7 @@ namespace udsdx
 
 	public:
 		virtual Matrix4x4 GetProjMatrix(float aspect) const override;
+		virtual std::unique_ptr<BoundingCamera> GetViewFrustumWorld(float aspect) const override;
 
 	public:
 		void SetNear(float fNear);

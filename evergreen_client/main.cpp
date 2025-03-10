@@ -55,8 +55,9 @@ Vector3 g_curPos = {};
 float yawDirection = 0.0f;
 float g_lightAngle = 0.0f;
 
+bool g_inFocus = false;
+
 void Update(const Time& time);
-void PlaceTrees(std::wstring_view filename, std::shared_ptr<Scene> targetScene);
 
 std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap, LONG segmentWidth, LONG segmentHeight, float heightScale);
 
@@ -233,8 +234,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		NetMgr(NetworkMgr)->DoNetworkIO();
 	}
 
-    INSTANCE(Input)->SetRelativeMouse(true);
-
     if constexpr (true == g_bUseNetWork)
     {
         UpdownStudio::RegisterIOUpdateCallback([]()noexcept {
@@ -259,13 +258,30 @@ void Update(const Time& time)
 			});
 	}
 
+    if (INSTANCE(Input)->GetMouseLeftButtonDown())
+    {
+        if (!g_inFocus)
+        {
+			g_inFocus = true;
+			INSTANCE(Input)->SetRelativeMouse(true);
+		}
+    }
+
     if (INSTANCE(Input)->GetKeyDown(Keyboard::Escape))
     {
-        // TODO: 일단 끄기전 서버오브젝트 컨테이너 밀어줌
-        ServerObjectMgr::GetInst()->Clear();
-        // TODO: 이거해야 메모리릭 없는데 왜 터짐?
-       // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
-        UpdownStudio::Quit();
+        if (g_inFocus)
+        {
+            g_inFocus = false;
+			INSTANCE(Input)->SetRelativeMouse(false);
+		}
+        else
+        {
+            // TODO: 일단 끄기전 서버오브젝트 컨테이너 밀어줌
+            ServerObjectMgr::GetInst()->Clear();
+            // TODO: 이거해야 메모리릭 없는데 왜 터짐?
+           // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
+            UpdownStudio::Quit();
+        }
     }
 
     Vector3 terrainPos = g_heroObj->GetTransform()->GetLocalPosition() * 0.01f;
@@ -280,49 +296,6 @@ void Update(const Time& time)
     float theta = 105.0f * DEG2RAD;
     Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
     playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PI / 4.0f, 0) * Quaternion::CreateFromAxisAngle(n, g_lightAngle));
-}
-
-void PlaceTrees(std::wstring_view filename, std::shared_ptr<Scene> targetScene)
-{
-    auto res = INSTANCE(Resource);
-	auto shader = res->Load<Shader>(RESOURCE_PATH(L"color.hlsl"));
-
-	std::ifstream file(filename.data());
-	nlohmann::json j;
-	file >> j;
-
-    for (auto& tree : j)
-	{
-        Vector3 position = Vector3(tree["position_x"], tree["position_y"], tree["position_z"]);
-        Quaternion rotation = Quaternion::CreateFromYawPitchRoll(0.0f, -PIDIV2, tree["rotation_y"]);
-        Vector3 scale = Vector3(tree["size_width"], tree["size_height"], tree["size_width"]);
-        std::string treePrototype = tree["prototype_name"];
-        std::wstring wtreePrototype(treePrototype.begin(), treePrototype.end());
-
-        auto treeObj = std::make_shared<SceneObject>();
-        treeObj->GetTransform()->SetLocalPosition(position * Vector3(-1.0f, 1.0f, -1.0f) * 512.0f + Vector3::Up * -100.0f);
-        treeObj->GetTransform()->SetLocalRotation(rotation);
-        treeObj->GetTransform()->SetLocalScale(scale * 0.02f);
-        auto treeRenderer = treeObj->AddComponent<MeshRenderer>();
-        treeRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\" + wtreePrototype + L".fbx")));
-        treeRenderer->SetShader(shader);
-
-        // if the name of the tree contains "tree", set the bark material
-        if (treePrototype.find("tree_00") != std::string::npos)
-        {
-            treeRenderer->SetMaterial(g_treeMaterials[0].get(), 0);
-            treeRenderer->SetMaterial(g_treeMaterials[1].get(), 1);
-        }
-        if (treePrototype.find("tree") != std::string::npos)
-        {
-            treeRenderer->SetMaterial(g_treeMaterials[1].get(), 0);
-            treeRenderer->SetMaterial(g_treeMaterials[0].get(), 1);
-        }
-		else
-            treeRenderer->SetMaterial(g_treeMaterials[0].get(), 0);
-
-        targetScene->AddObject(treeObj);
-	}
 }
 
 std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap, LONG segmentWidth, LONG segmentHeight, float heightScale)
@@ -365,7 +338,7 @@ std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap,
             float d1 = h11 - h00;
             float d2 = h10 - h01;
 
-            uint16_t ib[6]{};
+            LONG ib[6]{};
 
             if (abs(d1) > abs(d2))
             {

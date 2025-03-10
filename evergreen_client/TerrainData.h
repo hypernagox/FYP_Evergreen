@@ -10,10 +10,11 @@ public:
 	void CreateBuffer(std::wstring_view instancesPath);
 	void UploadBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 
-	D3D12_VERTEX_BUFFER_VIEW GetTransformBufferView(int instances) const;
+	D3D12_VERTEX_BUFFER_VIEW GetTransformBufferView() const;
 	UINT GetPrototypeCount() const;
 	UINT GetPrototypeInstanceBase(int index) const;
 	UINT GetPrototypeInstanceCount(int index) const;
+	UINT PopulateInstanceData(UINT prototypeIndex, const udsdx::BoundingCamera& bound, const udsdx::Matrix4x4& worldTransform, const udsdx::Mesh* mesh, udsdx::Matrix4x4* out) const;
 
 private:
 	float m_terrainScale = 1.0f;

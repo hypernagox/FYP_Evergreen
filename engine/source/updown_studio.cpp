@@ -65,25 +65,21 @@ namespace udsdx
         MSG message{};
         while (message.message != WM_QUIT)
         { ZoneScopedN("Updown Studio Main Loop"); FrameMark;
-            if (m_ioUpdateCallback)
-            {
-                m_ioUpdateCallback();
-            }
-            bool terminated = false;
-            while (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE))
+            if (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
             {
 				TranslateMessage(&message);
 				DispatchMessage(&message);
-                terminated |= message.message == WM_QUIT;
 			}
-            if (terminated)
+            else
             {
-                break;
+                if (m_ioUpdateCallback != nullptr)
+                {
+                    m_ioUpdateCallback();
+                }
+                core->AcquireNextFrameResource();
+                core->Update();
+                core->Render();
             }
-
-            core->AcquireNextFrameResource();
-            core->Update();
-            core->Render();
         }
 
         core->OnDestroy();
@@ -110,11 +106,7 @@ namespace udsdx
 			break;
 
         default:
-            if (!INSTANCE(Core)->ProcessMessage(hWnd, message, wParam, lParam))
-            {
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-            break;
+            return INSTANCE(Core)->ProcessMessage(hWnd, message, wParam, lParam);
         }
         return 0;
     }

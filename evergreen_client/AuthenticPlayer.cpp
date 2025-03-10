@@ -22,13 +22,17 @@ bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
 void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
 {
 	Transform* camTrans = m_cameraAnchor->GetTransform();
-	float mouse_dx = static_cast<float>(INSTANCE(Input)->GetMouseX());
-	float mouse_dy = static_cast<float>(INSTANCE(Input)->GetMouseY());
-	Vector3 delta = Vector3(mouse_dy, mouse_dx, 0.0f);
-	m_cameraAngleAxis += delta * m_fCamSensivity;
-	m_cameraAngleAxis.x = std::clamp(m_cameraAngleAxis.x, -89.0f, 89.0f);
 
-	m_cameraAngleAxisSmooth = Vector3::Lerp(m_cameraAngleAxisSmooth, m_cameraAngleAxis, deltaTime * 16.0f);
+	if (INSTANCE(Input)->GetMouseMode() == Mouse::Mode::MODE_RELATIVE)
+	{
+		float mouse_dx = static_cast<float>(INSTANCE(Input)->GetMouseX());
+		float mouse_dy = static_cast<float>(INSTANCE(Input)->GetMouseY());
+		Vector3 delta = Vector3(mouse_dy, mouse_dx, 0.0f);
+		m_cameraAngleAxis += delta * m_fCamSensivity;
+		m_cameraAngleAxis.x = std::clamp(m_cameraAngleAxis.x, -89.0f, 89.0f);
+	}
+
+	m_cameraAngleAxisSmooth = Vector3::Lerp(m_cameraAngleAxisSmooth, m_cameraAngleAxis, std::min(deltaTime * 16.0f, 1.0f));
 	camTrans->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(m_cameraAngleAxisSmooth * DEG2RAD));
 }
 

@@ -19,10 +19,13 @@ public:
         if(isConstantBuffer)
             mElementByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(T));
 
+        D3D12_HEAP_PROPERTIES heapProperty = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+        D3D12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(mElementByteSize * elementCount);
+
         ThrowIfFailed(device->CreateCommittedResource(
-            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+            &heapProperty,
             D3D12_HEAP_FLAG_NONE,
-            &CD3DX12_RESOURCE_DESC::Buffer(mElementByteSize*elementCount),
+            &resourceDesc,
 			D3D12_RESOURCE_STATE_GENERIC_READ,
             nullptr,
             IID_PPV_ARGS(&mUploadBuffer)));
@@ -46,6 +49,11 @@ public:
     ID3D12Resource* Resource()const
     {
         return mUploadBuffer.Get();
+    }
+
+    void CopyData(int elementIndex, const std::vector<T>& data)
+    {
+        memcpy(&mMappedData[elementIndex * mElementByteSize], data.data(), data.size() * sizeof(T));
     }
 
     void CopyData(int elementIndex, const T& data)

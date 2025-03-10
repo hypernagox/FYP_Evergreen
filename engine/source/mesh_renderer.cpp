@@ -6,6 +6,7 @@
 #include "material.h"
 #include "texture.h"
 #include "shader.h"
+#include "camera.h"
 #include "scene.h"
 #include "mesh.h"
 
@@ -22,7 +23,7 @@ namespace udsdx
 			// Perform frustum culling
 			BoundingBox boundsWorld;
 			m_mesh->GetBounds().Transform(boundsWorld, m_transformCache);
-			if (param.ViewFrustumWorld.Contains(boundsWorld) == ContainmentType::DISJOINT)
+			if (param.ViewFrustumWorld->Contains(boundsWorld) == ContainmentType::DISJOINT)
 			{
 				return;
 			}

@@ -78,7 +78,7 @@ namespace udsdx
         }
 
         ComPtr<IDxcResult> pResult;
-        ThrowIfFailed(g_pCompiler->Compile(&source, args.data(), args.size(), pIncludeHandler.Get(), IID_PPV_ARGS(&pResult)));
+        ThrowIfFailed(g_pCompiler->Compile(&source, args.data(), static_cast<UINT32>(args.size()), pIncludeHandler.Get(), IID_PPV_ARGS(&pResult)));
 
         ComPtr<IDxcBlobUtf8> pErrors;
         ThrowIfFailed(pResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&pErrors), nullptr));
@@ -122,7 +122,7 @@ namespace udsdx
 		}
 
         ComPtr<IDxcResult> pResult;
-        ThrowIfFailed(g_pCompiler->Compile(&source, args.data(), args.size(), nullptr, IID_PPV_ARGS(&pResult)));
+        ThrowIfFailed(g_pCompiler->Compile(&source, args.data(), static_cast<UINT32>(args.size()), nullptr, IID_PPV_ARGS(&pResult)));
 
         ComPtr<IDxcBlobUtf8> pErrors;
         ThrowIfFailed(pResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&pErrors), nullptr));

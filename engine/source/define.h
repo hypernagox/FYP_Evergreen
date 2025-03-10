@@ -25,6 +25,7 @@ namespace udsdx
 	class ScreenSpaceAO;
 	class DeferredRenderer;
 	class MotionBlur;
+	class BoundingCamera;
 
 	struct RenderParam
 	{
@@ -37,12 +38,13 @@ namespace udsdx
 
 		float AspectRatio;
 		int FrameResourceIndex;
+		int RenderStageIndex;
 		const Time& Time;
 
 		const D3D12_VIEWPORT& Viewport;
 		const D3D12_RECT& ScissorRect;
 
-		BoundingFrustum ViewFrustumWorld;
+		BoundingCamera* ViewFrustumWorld;
 		bool UseFrustumCulling;
 
 		const D3D12_GPU_VIRTUAL_ADDRESS& ConstantBufferView;

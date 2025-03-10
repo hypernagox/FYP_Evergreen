@@ -117,6 +117,8 @@ namespace udsdx
 		Vector3 lightDirection = light->GetLightDirection();
 		Vector3 cameraPos = Vector3::Transform(Vector3::Zero, camera->GetSceneObject()->GetTransform()->GetWorldSRTMatrix());
 		XMMATRIX lightView = XMMatrixLookAtLH(cameraPos, XMLoadFloat3(&(cameraPos + lightDirection)), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+		std::array<std::unique_ptr<BoundingCamera>, 4> cameraBounds;
+
 		for (int i = 0; i < 4; ++i)
 		{
 			float f = m_shadowRanges[i];
@@ -134,6 +136,10 @@ namespace udsdx
 			XMStoreFloat4x4(&cameraConstants.Proj, XMMatrixTranspose(lightProj));
 			XMStoreFloat4x4(&cameraConstants.ViewProj, XMMatrixTranspose(lightViewProj));
 			m_lightCameraBuffers[param.FrameResourceIndex][i]->CopyData(0, cameraConstants);
+
+			Matrix4x4 mView;
+			XMStoreFloat4x4(&mView, lightView);	
+			cameraBounds[i] = std::make_unique<BoundingCameraOrthographic>(mView, f, f, -f * 10.0f, f * 10.0f);
 		}
 		shadowConstants.LightDirection = lightDirection;
 
@@ -152,6 +158,7 @@ namespace udsdx
 		tempViewport = { 0.0f, (float)halfHeight, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
 		tempScissorRect = { 0, halfHeight, halfWidth, halfHeight * 2 };
 
+		param.ViewFrustumWorld = cameraBounds[0].get();
 		param.CommandList->RSSetViewports(1, &tempViewport);
 		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
 		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][0]->Resource()->GetGPUVirtualAddress());
@@ -160,6 +167,7 @@ namespace udsdx
 		tempViewport = { (float)halfWidth, (float)halfHeight, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
 		tempScissorRect = { halfWidth, halfHeight, halfWidth * 2, halfHeight * 2 };
 
+		param.ViewFrustumWorld = cameraBounds[1].get();
 		param.CommandList->RSSetViewports(1, &tempViewport);
 		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
 		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][1]->Resource()->GetGPUVirtualAddress());
@@ -168,6 +176,7 @@ namespace udsdx
 		tempViewport = { 0.0f, 0.0f, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
 		tempScissorRect = { 0, 0, halfWidth, halfHeight };
 
+		param.ViewFrustumWorld = cameraBounds[2].get();
 		param.CommandList->RSSetViewports(1, &tempViewport);
 		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
 		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][2]->Resource()->GetGPUVirtualAddress());
@@ -176,6 +185,7 @@ namespace udsdx
 		tempViewport = { (float)halfWidth, 0.0f, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
 		tempScissorRect = { halfWidth, 0, halfWidth * 2, halfHeight };
 
+		param.ViewFrustumWorld = cameraBounds[3].get();
 		param.CommandList->RSSetViewports(1, &tempViewport);
 		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
 		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][3]->Resource()->GetGPUVirtualAddress());

@@ -41,7 +41,7 @@ namespace udsdx
 		void Render();
 		void UpdateMainPassCB();
 		void SetWindowFullscreen(bool fullscreen);
-		bool ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		virtual bool OnResizeWindow(int width, int height);
 
 		void InitImGui();

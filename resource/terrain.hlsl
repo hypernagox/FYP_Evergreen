@@ -22,10 +22,18 @@ struct HullConstantOut
 	float inside[2] : SV_InsideTessFactor;
 };
 
+float NdcDepthToViewDepth(float z_ndc)
+{
+	float viewZ = gProj[3][2] / (z_ndc - gProj[2][2]);
+	return viewZ;
+}
+
 HullConstantOut HSConstant(InputPatch<VertexOut, 16> vin)
 {
+	float minZ = min(vin[5].PosH.w, vin[6].PosH.w);
+	minZ = min(minZ, min(vin[9].PosH.w, vin[10].PosH.w));
 	HullConstantOut output;
-	const float c = max(min(32 / vin[0].PosH.w, 4), 1);
+	const float c = max(min(minZ * -0.03f + 4.0f, 4), 1);
 	output.edges[0] = c;
 	output.edges[1] = c;
 	output.edges[2] = c;

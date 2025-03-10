@@ -58,15 +58,6 @@ namespace udsdx
 		return m;
 	}
 
-	BoundingFrustum Camera::GetViewFrustumWorld(float aspect) const
-	{
-		BoundingFrustum frustum;
-		frustum.CreateFromMatrix(frustum, GetProjMatrix(aspect));
-		Matrix4x4 viewInv = GetViewMatrix().Invert();
-		frustum.Transform(frustum, XMLoadFloat4x4(&viewInv));
-		return frustum;
-	}
-
 	void Camera::SetClearColor(const Color& color)
 	{
 		m_clearColor = color;
@@ -86,6 +77,11 @@ namespace udsdx
 		Matrix4x4 m;
 		XMStoreFloat4x4(&m, XMMatrixPerspectiveFovLH(m_fov, aspect, m_near, m_far));
 		return m;
+	}
+
+	std::unique_ptr<BoundingCamera> CameraPerspective::GetViewFrustumWorld(float aspect) const
+	{
+		return std::make_unique<BoundingCameraPerspective>(GetViewMatrix(), GetProjMatrix(aspect));
 	}
 
 	void CameraPerspective::SetFov(float fov)
@@ -127,6 +123,11 @@ namespace udsdx
 		XMFLOAT4X4 m;
 		XMStoreFloat4x4(&m, XMMatrixOrthographicLH(aspect * m_radius, m_radius, m_near, m_far));
 		return m;
+	}
+
+	std::unique_ptr<BoundingCamera> CameraOrthographic::GetViewFrustumWorld(float aspect) const
+	{
+		return std::make_unique<BoundingCameraOrthographic>(GetViewMatrix(), m_radius * 2.0f * aspect, m_radius * 2.0f, m_near, m_far);
 	}
 
 	void CameraOrthographic::SetNear(float fNear)

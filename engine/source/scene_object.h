@@ -11,6 +11,10 @@ namespace udsdx
 	class SceneObject : public std::enable_shared_from_this<SceneObject>
 	{
 	public:
+		static void EnumerateUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene);
+		static void EnumeratePostUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene);
+
+	public:
 		SceneObject();
 		SceneObject(const SceneObject& rhs) = delete;
 		SceneObject& operator=(const SceneObject& rhs) = delete;
@@ -19,7 +23,7 @@ namespace udsdx
 	public:
 		Transform* GetTransform();
 		void Update(const Time& time, Scene& scene);
-		void PostUpdate(const Time& time, Scene& scene, bool forceValidate);
+		void PostUpdate(const Time& time, Scene& scene, bool& forceValidate);
 
 	public:
 		void AddChild(std::shared_ptr<SceneObject> child);

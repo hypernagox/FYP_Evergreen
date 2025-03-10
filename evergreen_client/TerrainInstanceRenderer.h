@@ -25,4 +25,6 @@ public:
 protected:
 	std::vector<udsdx::Mesh*> m_meshes;
 	TerrainData* m_terrainData = nullptr;
+
+	std::vector<std::array<std::unique_ptr<UploadBuffer<udsdx::Matrix4x4>>, udsdx::FrameResourceCount>> m_instanceUploadBuffer;
 };

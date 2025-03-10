@@ -175,7 +175,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <UnityFilesDirectory>UnitiyBulid\$(Platform)\$(Configuration)\</UnityFilesDirectory>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -196,6 +197,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <UnityFilesDirectory>UnitiyBulid\$(Platform)\$(Configuration)\</UnityFilesDirectory>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -218,6 +220,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <UnityFilesDirectory>UnitiyBulid\$(Platform)\$(Configuration)\</UnityFilesDirectory>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

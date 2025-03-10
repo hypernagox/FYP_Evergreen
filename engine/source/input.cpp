@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Input.h"
+#include "debug_console.h"
 
 namespace udsdx
 {
@@ -14,18 +15,17 @@ namespace udsdx
 
 	}
 
-	bool Input::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+	LRESULT Input::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		switch (message)
 		{
 		case WM_MOUSEACTIVATE:
-			// When you click to activate the window, we want Mouse to ignore that event.
-			return false;
-		case WM_ACTIVATE:
+			return MA_ACTIVATEANDEAT;
 		case WM_ACTIVATEAPP:
 			m_mouse->ProcessMessage(message, wParam, lParam);
 			m_keyboard->ProcessMessage(message, wParam, lParam);
 			break;
+		case WM_ACTIVATE:
 		case WM_INPUT:
 		case WM_MOUSEMOVE:
 		case WM_LBUTTONDOWN:
@@ -47,9 +47,15 @@ namespace udsdx
 			m_keyboard->ProcessMessage(message, wParam, lParam);
 			break;
 		default:
-			return false;
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
-		return true;
+
+#if defined(DEBUG) || defined(_DEBUG)
+		// Print the message to the console
+		DebugConsole::Log(std::format("Message: {} wParam: {} lParam: {}", message, wParam, lParam));
+#endif // DEBUG
+
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
 	void Input::Initialize(HWND hWnd)
@@ -78,9 +84,15 @@ namespace udsdx
 		m_keyboardTracker.Update(kState);
 	}
 
+	Mouse::Mode Input::GetMouseMode() const
+	{
+		return m_mouse->GetState().positionMode;
+	}
+
 	void Input::SetRelativeMouse(bool value)
 	{
 		m_mouse->SetMode(value ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
+		m_mouse->SetVisible(value);
 	}
 
 	bool Input::GetKey(Keyboard::Keys key) const

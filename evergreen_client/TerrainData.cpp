@@ -18,8 +18,6 @@ void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 	nlohmann::json j;
 	file >> j;
 
-	constexpr int NumPerInstance = 4;
-
 	for (auto& tree : j)
 	{
 		Vector3 position = Vector3(tree["position_x"], tree["position_y"], tree["position_z"]);
@@ -42,10 +40,7 @@ void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 			m_baseCountPairs.emplace_back(static_cast<UINT>(base), static_cast<UINT>(i - base));
 			base = static_cast<UINT>(i);
 		}
-		for (int j = 0; j < NumPerInstance; j++)
-		{
-			bufferData.emplace_back(intermediateData[i].second);
-		}
+		bufferData.emplace_back(intermediateData[i].second);
 	}
 	m_baseCountPairs.emplace_back(static_cast<UINT>(base), static_cast<UINT>(intermediateData.size() - base));
 
@@ -69,11 +64,11 @@ void TerrainData::UploadBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* 
 	);
 }
 
-D3D12_VERTEX_BUFFER_VIEW TerrainData::GetTransformBufferView(int instances) const
+D3D12_VERTEX_BUFFER_VIEW TerrainData::GetTransformBufferView() const
 {
 	D3D12_VERTEX_BUFFER_VIEW vbv;
 	vbv.BufferLocation = m_bufferGpu->GetGPUVirtualAddress();
-	vbv.StrideInBytes = m_vertexByteStride * 4 / instances;
+	vbv.StrideInBytes = m_vertexByteStride;
 	vbv.SizeInBytes = m_vertexBufferByteSize;
 
 	return vbv;
@@ -94,3 +89,23 @@ UINT TerrainData::GetPrototypeInstanceCount(int index) const
 	return m_baseCountPairs[index].second;
 }
 
+UINT TerrainData::PopulateInstanceData(UINT prototypeIndex, const udsdx::BoundingCamera& bound, const udsdx::Matrix4x4& worldTransform, const udsdx::Mesh* mesh, udsdx::Matrix4x4* out) const
+{
+	UINT instanceCount = 0;
+	UINT base = GetPrototypeInstanceBase(prototypeIndex);
+	UINT count = GetPrototypeInstanceCount(prototypeIndex);
+
+	for (UINT index = 0; index < count; index++)
+	{
+		Matrix4x4 instance = reinterpret_cast<Matrix4x4*>(m_bufferCPU->GetBufferPointer())[base + index];
+		Matrix4x4 world = instance.Transpose() * worldTransform;
+		BoundingBox boxWorld;
+		mesh->GetBounds().Transform(boxWorld, world);
+
+		if (bound.Contains(boxWorld) != ContainmentType::DISJOINT)
+		{
+			out[instanceCount++] = instance;
+		}
+	}
+	return instanceCount;
+}

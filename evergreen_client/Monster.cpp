@@ -63,7 +63,7 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.fbx")));
 		break;
 	case AnimationState::Attack:
-		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_attack.fbx", true)));
+		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_attack.fbx")), true);
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
 		break;
 	}
