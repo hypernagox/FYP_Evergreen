@@ -126,7 +126,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     playerMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
     terrainMaterial = std::make_shared<udsdx::Material>();
-    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"terrain\\T_ground_beech_forest_soil_01_BC_SM.tga")));
+    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"T_ground_pine_needles_02_BC_SM.tga")));
 
     scene = std::make_shared<Scene>();
 
