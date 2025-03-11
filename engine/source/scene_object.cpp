@@ -48,8 +48,14 @@ namespace udsdx
 			{
 				node = s.top();
 				s.pop();
-				node.first->PostUpdate(time, scene, node.second);
-				node = std::make_pair(node.first->m_child, node.second);
+				if (node.first->PostUpdate(time, scene, node.second))
+				{
+					node = std::make_pair(node.first->m_child, node.second);
+				}
+				else
+				{
+					node = std::make_pair(nullptr, node.second);
+				}
 			}
 		}
 	}
@@ -106,12 +112,12 @@ namespace udsdx
 		}
 	}
 
-	void SceneObject::PostUpdate(const Time& time, Scene& scene, bool& forceValidate)
+	bool SceneObject::PostUpdate(const Time& time, Scene& scene, bool& forceValidate)
 	{
 		if (m_detachDirty)
 		{
 			DetachFromHierarchy();
-			return;
+			return false;
 		}
 
 		// Validate SRT matrix
@@ -126,6 +132,8 @@ namespace udsdx
 		{
 			component->PostUpdate(time, scene);
 		}
+
+		return true;
 	}
 
 	void SceneObject::AddChild(std::shared_ptr<SceneObject> child)

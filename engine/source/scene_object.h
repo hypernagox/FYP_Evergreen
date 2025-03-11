@@ -23,7 +23,7 @@ namespace udsdx
 	public:
 		Transform* GetTransform();
 		void Update(const Time& time, Scene& scene);
-		void PostUpdate(const Time& time, Scene& scene, bool& forceValidate);
+		bool PostUpdate(const Time& time, Scene& scene, bool& forceValidate);
 
 	public:
 		void AddChild(std::shared_ptr<SceneObject> child);

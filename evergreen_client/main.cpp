@@ -143,7 +143,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     gizmoRenderer->SetRadius(1.0f);
 	gizmoRenderer->SetHeight(3.0f);
   
-    Vector3 temp = Vector3(-100.0f, 60.0f, -100.0f);
+    Vector3 temp = Vector3(-4.345f, 76.17f, 0.0f);
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(temp);
 
@@ -167,7 +167,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         g_treeMaterials[1]->SetMainTexture(treeTexture2);
     }
 
-    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 513, 513);
+    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta.raw"), 513, 513);
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 128, 128, 1.0f);
     terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
@@ -197,8 +197,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     {
         terrainObj = std::make_shared<SceneObject>();
-        terrainObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
-        terrainObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 512.0f);
+        terrainObj->GetTransform()->SetLocalPosition(Vector3(512.0f,0, 512.0f));
+        terrainObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 1024.0f);
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
         terrainRenderer->SetMesh(terrainMesh.get());
         terrainRenderer->SetMaterial(terrainMaterial.get());
