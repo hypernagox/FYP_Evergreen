@@ -20,12 +20,12 @@
 
 #include <assimp/DefaultLogger.hpp>
 
-#include <imgui.h>
-#include <imgui_impl_dx12.h>
-#include <imgui_impl_win32.h>
+//#include <imgui.h>
+//#include <imgui_impl_dx12.h>
+//#include <imgui_impl_win32.h>
 
 // Forward declare message handler from imgui_impl_win32.cpp
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+// extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace udsdx
 {
@@ -672,10 +672,10 @@ namespace udsdx
 
 	LRESULT Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{ ZoneScoped;
-		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
-		{
-			return true;
-		}
+		//if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		//{
+		//	return true;
+		//}
 
 		switch (message)
 		{
@@ -911,81 +911,81 @@ namespace udsdx
 
 	void Core::InitImGui()
 	{
-		static ID3D12DescriptorHeap* g_pSrvHeap = m_srvHeap.Get();
-		static UINT* g_pCbvSrvUavDescriptorSize = &m_cbvSrvUavDescriptorSize;
-		static UINT* g_pSrvHeapSize = &m_srvHeapSize;
+		//static ID3D12DescriptorHeap* g_pSrvHeap = m_srvHeap.Get();
+		//static UINT* g_pCbvSrvUavDescriptorSize = &m_cbvSrvUavDescriptorSize;
+		//static UINT* g_pSrvHeapSize = &m_srvHeapSize;
 
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
+		//IMGUI_CHECKVERSION();
+		//ImGui::CreateContext();
 
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+		//ImGuiIO& io = ImGui::GetIO();
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-		ImGui_ImplDX12_InitInfo init_info = {};
-		init_info.Device = m_d3dDevice.Get();
-		init_info.CommandQueue = m_commandQueue.Get();
-		init_info.NumFramesInFlight = FrameResourceCount;
-		init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-		init_info.DSVFormat = DXGI_FORMAT_UNKNOWN;
-		// Allocating SRV descriptors (for textures) is up to the application, so we provide callbacks.
-		// (current version of the backend will only allocate one descriptor, future versions will need to allocate more)
-		init_info.SrvDescriptorHeap = g_pSrvHeap;
-		init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) {
-			*out_cpu_handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetCPUDescriptorHandleForHeapStart(), *g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
-			*out_gpu_handle = CD3DX12_GPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetGPUDescriptorHandleForHeapStart(), *g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
-			(*g_pSrvHeapSize)++;
-			};
-		init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE) {
-			(*g_pSrvHeapSize)--;
-			};
-		ImGui_ImplDX12_Init(&init_info);
-		ImGui_ImplWin32_Init(m_hMainWnd);
+		//ImGui_ImplDX12_InitInfo init_info = {};
+		//init_info.Device = m_d3dDevice.Get();
+		//init_info.CommandQueue = m_commandQueue.Get();
+		//init_info.NumFramesInFlight = FrameResourceCount;
+		//init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		//init_info.DSVFormat = DXGI_FORMAT_UNKNOWN;
+		//// Allocating SRV descriptors (for textures) is up to the application, so we provide callbacks.
+		//// (current version of the backend will only allocate one descriptor, future versions will need to allocate more)
+		//init_info.SrvDescriptorHeap = g_pSrvHeap;
+		//init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) {
+		//	*out_cpu_handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetCPUDescriptorHandleForHeapStart(), *g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
+		//	*out_gpu_handle = CD3DX12_GPU_DESCRIPTOR_HANDLE(g_pSrvHeap->GetGPUDescriptorHandleForHeapStart(), *g_pSrvHeapSize, *g_pCbvSrvUavDescriptorSize);
+		//	(*g_pSrvHeapSize)++;
+		//	};
+		//init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE) {
+		//	(*g_pSrvHeapSize)--;
+		//	};
+		//ImGui_ImplDX12_Init(&init_info);
+		//ImGui_ImplWin32_Init(m_hMainWnd);
 	}
 
 	void Core::ImGuiNewFrame()
 	{
-		static std::array<float, 100> frameTimes;
-		static float smoothMaxFrameTime = 0.0f;
+		//static std::array<float, 100> frameTimes;
+		//static float smoothMaxFrameTime = 0.0f;
 
-		ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-		// ImGui::ShowDemoWindow();
-		// ImGui::ShowStyleEditor();
+		//ImGui_ImplDX12_NewFrame();
+		//ImGui_ImplWin32_NewFrame();
+		//ImGui::NewFrame();
+		//// ImGui::ShowDemoWindow();
+		//// ImGui::ShowStyleEditor();
 
-		// Draw histogram
+		//// Draw histogram
 
-		// Calculate the frame time
-		std::copy(frameTimes.begin() + 1, frameTimes.end(), frameTimes.begin());
-		frameTimes.back() = m_timeMeasure->GetTime().deltaTime;
+		//// Calculate the frame time
+		//std::copy(frameTimes.begin() + 1, frameTimes.end(), frameTimes.begin());
+		//frameTimes.back() = m_timeMeasure->GetTime().deltaTime;
 
-		// Find the maximum frame time
-		float maxFrameTime = *std::max_element(frameTimes.begin(), frameTimes.end());
-		smoothMaxFrameTime = std::lerp(smoothMaxFrameTime, maxFrameTime, 0.1f);
+		//// Find the maximum frame time
+		//float maxFrameTime = *std::max_element(frameTimes.begin(), frameTimes.end());
+		//smoothMaxFrameTime = std::lerp(smoothMaxFrameTime, maxFrameTime, 0.1f);
 
-		// Draw the histogram
-		ImGui::Begin("Frame Time Histogram");
-		ImGui::PlotHistogram("Frame Times", frameTimes.data(), static_cast<int>(frameTimes.size()), 0, nullptr, 0.0f, smoothMaxFrameTime, ImVec2(0, 100));
+		//// Draw the histogram
+		//ImGui::Begin("Frame Time Histogram");
+		//ImGui::PlotHistogram("Frame Times", frameTimes.data(), static_cast<int>(frameTimes.size()), 0, nullptr, 0.0f, smoothMaxFrameTime, ImVec2(0, 100));
 
-		// Set window position to top left corner
-		ImGui::SetWindowPos(ImVec2(0, 0));
+		//// Set window position to top left corner
+		//ImGui::SetWindowPos(ImVec2(0, 0));
 
-		ImGui::End();
+		//ImGui::End();
 	}
 
 	void Core::ImGuiRender()
 	{
-		ImGui::Render();
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_commandList.Get());
+		//ImGui::Render();
+		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_commandList.Get());
 	}
 
 	void Core::ReleaseImGui()
 	{
-		ImGui_ImplDX12_Shutdown();
-		ImGui_ImplWin32_Shutdown();
+		//ImGui_ImplDX12_Shutdown();
+		//ImGui_ImplWin32_Shutdown();
 
-		ImGui::DestroyContext();
+		//ImGui::DestroyContext();
 	}
 
 	ID3D12Device* Core::GetDevice() const
