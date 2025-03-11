@@ -11,7 +11,7 @@
 #include "MoveBroadcaster.h"
 
 using namespace NagiocpX;
-constexpr const int32_t NUM_OF_NPC = 101;
+constexpr const int32_t NUM_OF_NPC = 1001;
 constexpr const int32_t NUM_OF_MAX_USER = 2002;
 
 extern std::vector<DirectX::BoundingBox> boxes;
@@ -22,7 +22,7 @@ class ContentsInitiator
 public:
 	virtual void GlobalInitialize()noexcept override
 	{
-		for (int i = 0; i < 20; ++i)
+		for (int i = 0; i < 200; ++i)
 		{
 			EntityBuilder b;
 			b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
@@ -30,7 +30,7 @@ public:
 			const auto m = EntityFactory::CreateMonster(b);
 			Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
 		}
-		for (int i = 0; i < 20; ++i)
+		for (int i = 0; i < 200; ++i)
 		{
 			EntityBuilder b;
 			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
