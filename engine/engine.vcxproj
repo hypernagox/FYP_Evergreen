@@ -249,6 +249,8 @@
     <ClCompile Include="source\deferred_renderer.cpp" />
     <ClCompile Include="source\frame_debug.cpp" />
     <ClCompile Include="source\frame_resource.cpp" />
+    <ClCompile Include="source\gui_image.cpp" />
+    <ClCompile Include="source\gui_text.cpp" />
     <ClCompile Include="source\inline_mesh_renderer.cpp" />
     <ClCompile Include="source\input.cpp" />
     <ClCompile Include="source\light_directional.cpp" />
@@ -300,6 +302,8 @@
     <ClInclude Include="source\define.h" />
     <ClInclude Include="source\frame_debug.h" />
     <ClInclude Include="source\frame_resource.h" />
+    <ClInclude Include="source\gui_image.h" />
+    <ClInclude Include="source\gui_text.h" />
     <ClInclude Include="source\inline_mesh_renderer.h" />
     <ClInclude Include="source\input.h" />
     <ClInclude Include="source\light_directional.h" />

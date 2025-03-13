@@ -14,6 +14,7 @@
 #include "input.h"
 #include "deferred_renderer.h"
 #include "motion_blur.h"
+#include "gui_image.h"
 
 namespace udsdx
 {
@@ -41,6 +42,7 @@ namespace udsdx
 			queue.clear();
 		}
 		m_renderShadowObjectQueue.clear();
+		m_renderGUIObjectQueue.clear();
 
 		SceneObject::EnumeratePostUpdate(m_rootObject, time, *this);
 	}
@@ -92,6 +94,11 @@ namespace udsdx
 	void Scene::EnqueueRenderShadowObject(RendererBase* object)
 	{
 		m_renderShadowObjectQueue.emplace_back(object);
+	}
+
+	void Scene::EnqueueRenderGUIObject(GUIImage* object)
+	{
+		m_renderGUIObjectQueue.emplace_back(object);
 	}
 
 	void Scene::PassRenderShadow(RenderParam& param, Camera* camera, LightDirectional* light)
@@ -148,6 +155,8 @@ namespace udsdx
 
 		// Motion blur pass
 		param.RenderMotionBlur->Pass(param, cameraCbv);
+
+		RenderGUIObjects(param, 1);
 	}
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)
@@ -168,5 +177,18 @@ namespace udsdx
 			object->Render(param, instances);
 		}
 		param.RenderStageIndex++;
+	}
+
+	void Scene::RenderGUIObjects(RenderParam& param, int instances)
+	{
+		param.CommandList->SetPipelineState(GUIImage::GetPipelineState());
+		param.CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		param.CommandList->IASetVertexBuffers(0, 0, nullptr);
+		param.CommandList->IASetIndexBuffer(nullptr);
+
+		for (const auto& object : m_renderGUIObjectQueue)
+		{
+			object->Render(param, instances);
+		}
 	}
 }

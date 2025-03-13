@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.h"
+#include "scene_object.h"
 
 namespace udsdx
 {
