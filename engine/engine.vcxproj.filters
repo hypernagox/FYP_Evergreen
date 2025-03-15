@@ -116,6 +116,12 @@
     <ClCompile Include="source\animation_clip.cpp">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="source\gui_image.cpp">
+      <Filter>Engine\Runtime\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui_text.cpp">
+      <Filter>Engine\Runtime\Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -138,6 +144,9 @@
     </Filter>
     <Filter Include="Engine\External Sources">
       <UniqueIdentifier>{2a4c4a61-42fa-46c7-a545-6fe2054977ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Runtime\Gui">
+      <UniqueIdentifier>{b23d477f-3376-4798-a14c-0fb0f69cbc9b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -264,6 +273,12 @@
     </ClInclude>
     <ClInclude Include="source\animation_clip.h">
       <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gui_image.h">
+      <Filter>Engine\Runtime\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gui_text.h">
+      <Filter>Engine\Runtime\Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
