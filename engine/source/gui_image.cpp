@@ -3,6 +3,8 @@
 #include "scene.h"
 #include "core.h"
 #include "shader_compile.h"
+#include "transform.h"
+#include "texture.h"
 
 namespace udsdx
 {
@@ -30,20 +32,21 @@ namespace udsdx
 			float2 uv : TEXCOORD0;
 		};
 
-		static float2 gVertexData[4] = { float2(0.0f, 0.0f), float2(1.0f, 0.0f), float2(0.0f, 1.0f), float2(1.0f, 1.0f) };
+		static float2 gVertexData[4] = { float2(-0.5f, -0.5f), float2(0.5f, -0.5f), float2(-0.5f, 0.5f), float2(0.5f, 0.5f) };
+		static float2 gUVData[4] = { float2(0.0f, 1.0f), float2(1.0f, 1.0f), float2(0.0f, 0.0f), float2(1.0f, 0.0f) };
 		static uint gIndexData[6] = { 0, 2, 1, 3, 1, 2 };
 
 		VertexOut VS(uint id : SV_VertexID)
 		{
 			VertexOut output;
-			output.pos = float4(gVertexData[gIndexData[id]], 0.0f, 1.0f);
-			output.uv = output.pos.xy;
+			output.pos = mul(float4(gVertexData[gIndexData[id]], 0.0f, 1.0f), gWorld);
+			output.uv = gUVData[gIndexData[id]];
 			return output;
 		}
 
 		float4 PS(VertexOut input) : SV_TARGET
 		{
-			return 1.0f;
+			return gMainTex.Sample(gSampler, input.uv);
 		}
 	)";
 
@@ -111,6 +114,23 @@ namespace udsdx
 
 	void GUIImage::Render(RenderParam& param, int instances)
 	{
+		const float height = 1080.0f;
+		const float width = height * param.AspectRatio;
+		Matrix4x4 world = Matrix4x4::CreateScale(m_size.x, m_size.y, 1.0f) * GetTransform()->GetWorldSRTMatrix() * Matrix4x4::CreateScale(2.0f / width, 2.0f / height, 1.0f);
+		param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerObjectCBV, 16, &world.Transpose(), 0);
+		if (m_texture != nullptr)
+		{
+			param.CommandList->SetGraphicsRootDescriptorTable(RootParam::MainTexSRV, m_texture->GetSrvGpu());
+		}
 		param.CommandList->DrawInstanced(6, instances, 0, 0);
+	}
+
+	void GUIImage::SetTexture(Texture* value, bool setImageSize)
+	{
+		m_texture = value;
+		if (setImageSize && m_texture)
+		{
+			m_size = Vector2(static_cast<float>(m_texture->GetWidth()), static_cast<float>(m_texture->GetHeight()));
+		}
 	}
 }

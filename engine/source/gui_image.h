@@ -25,11 +25,14 @@ namespace udsdx
 		Vector2 GetSize() const { return m_size; }
 		void SetSize(const Vector2& value) { m_size = value; }
 
+		Texture* GetTexture() const { return m_texture; }
+		void SetTexture(Texture* value, bool setImageSize = false);
+
 	private:
 		static ComPtr<ID3D12PipelineState> g_pipelineState;
 
 	private:
-		std::shared_ptr<Texture> m_texture;
+		Texture* m_texture;
 		Vector2 m_size = Vector2::One * 100.0f;
 	};
 }
