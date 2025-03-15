@@ -88,6 +88,9 @@
     <Filter Include="Terrain">
       <UniqueIdentifier>{26376024-ac6b-47b1-a6bb-ba9ceeae52ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Gui">
+      <UniqueIdentifier>{36b6f00f-1829-471b-a082-55de1b0b0576}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -170,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="MonsterHPPanel.cpp">
       <Filter>Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerStatusGUI.cpp">
+      <Filter>Gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +271,9 @@
     </ClInclude>
     <ClInclude Include="MonsterHPPanel.h">
       <Filter>Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerStatusGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

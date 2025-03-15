@@ -41,7 +41,7 @@ namespace udsdx
 		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(),
 			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 
-		m_size = Vector2Int(image.GetMetadata().width, image.GetMetadata().height);
+		m_size = Vector2Int(static_cast<int32_t>(image.GetMetadata().width), static_cast<int32_t>(image.GetMetadata().height));
 	}
 
 	Texture::~Texture()

@@ -37,5 +37,5 @@ public:
 	const auto& GetRenderObjTransform()const noexcept { return m_rendererObj->GetTransform(); }
 	void OnAttackToPlayer();
 	void OnAnimationStateChange(AnimationState from, AnimationState to);
-	void OnHit(int damage);
+	void OnHit(int afterHealth);
 };

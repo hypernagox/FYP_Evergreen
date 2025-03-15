@@ -11,6 +11,7 @@
 #include "ServerTimeMgr.h"
 #include "GizmoSphereRenderer.h"
 #include "Projectile.h"
+#include "AuthenticPlayer.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -107,23 +108,28 @@ const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_)
 {
 	const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id());
-	if (!obj)return true;
-	Monster* monsterComp = obj->GetComponent<Monster>();
-	if (monsterComp)
+	if (nullptr != obj)
 	{
-		monsterComp->OnAttackToPlayer();
+		Monster* monsterComp = obj->GetComponent<Monster>();
+		if (monsterComp)
+		{
+			monsterComp->OnAttackToPlayer();
+		}
 	}
 
-	const auto player = Mgr(ServerObjectMgr)->GetServerObj(pkt_.player_id());
-	if (player)
+	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(pkt_.player_id());
+	if (nullptr != hit_obj_ptr)
 	{
-		if(player->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Hit))
-			player->GetComponent<PlayerRenderer>()->Hit();
+		if (const auto player = hit_obj_ptr->GetComponent<PlayerRenderer>())
+		{
+			if (player->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Hit))
+				player->GetComponent<PlayerRenderer>()->Hit();
+		}
 	}
 
-	else if (NetMgr(NetworkMgr)->GetSessionID() == pkt_.player_id())
+	if (NetMgr(NetworkMgr)->GetSessionID() == pkt_.player_id())
 	{
-
+		g_heroObj->GetComponent<AuthenticPlayer>()->OnHit(pkt_.dmg());
 		if (g_heroObj->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Hit))
 			g_heroObj->GetComponent<PlayerRenderer>()->Hit();
 	}
@@ -142,7 +148,7 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 	{
 		// TODO: 현재체력과 힛 애프터의 차이가 필요,
 		// 이 수치를 기록하고 관리할 클래스 있어야함
-		monster->OnHit(1);
+		monster->OnHit(hit_after_hp);
 	}
 	std::cout << std::format("HIT ID: {}, DMG: {}\n", hit_obj_id, 1);
 	return true;
