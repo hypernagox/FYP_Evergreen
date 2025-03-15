@@ -196,6 +196,7 @@
     <ClInclude Include="StateMachine.hpp" />
     <ClInclude Include="StateTransition.hpp" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="SharedDefines.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

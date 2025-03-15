@@ -47,6 +47,11 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	// 앞으로도 이렇게 하드코딩해서 객체를 만들 순 없다.
 	const auto obj_id = pkt_.obj_id();
 	
+	// 해당 오브젝트의 HP 정보.
+	// 이거 근데 HP 개념이없는 예) NPC같은거 있어서 그런애는 -1 주고있는데 걍 HP 컴포넌트 달고 1씩 넣고 공격불가로 할까
+	const auto obj_max_hp = pkt_.obj_max_hp();
+	const auto obj_cur_hp = pkt_.obj_cur_hp();
+
 	if (Mgr(ServerObjectMgr)->GetServerObj(obj_id))
 		return true;
 
@@ -124,6 +129,22 @@ const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSes
 	}
 
 	//std::cout << "여우가 당신에게 " << pkt_.dmg() << "데미지를 주었다 !" << std::endl;
+	return true;
+}
+
+const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_HIT_DMG& pkt_)
+{
+	const auto hit_obj_id = pkt_.hit_obj_id(); // 맞은 애 아이디
+	const auto hit_after_hp = pkt_.hit_after_hp();
+	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
+	if (!hit_obj_ptr)return true;
+	if (const auto monster = hit_obj_ptr->GetComponent<Monster>())
+	{
+		// TODO: 현재체력과 힛 애프터의 차이가 필요,
+		// 이 수치를 기록하고 관리할 클래스 있어야함
+		monster->OnHit(1);
+	}
+	std::cout << std::format("HIT ID: {}, DMG: {}\n", hit_obj_id, 1);
 	return true;
 }
 
@@ -208,19 +229,5 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	so->SetObjID((uint32_t)pkt_.proj_id());
 	Mgr(ServerObjectMgr)->AddObject(s);
 
-	return true;
-}
-
-const bool Handle_s2c_MONSTER_HIT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_HIT& pkt_)
-{
-	const auto hit_obj_id = pkt_.hit_obj_id(); // 맞은 애 아이디
-	const auto dmg = pkt_.dmg(); // 데미지, 현재는 걍 전부 1 , 몹의 피통은3
-	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
-	if (!hit_obj_ptr)return true;
-	if (const auto monster = hit_obj_ptr->GetComponent<Monster>())
-	{
-		monster->OnHit(dmg);
-	}
-	std::cout << std::format("HIT ID: {}, DMG: {}\n", hit_obj_id, dmg);
 	return true;
 }

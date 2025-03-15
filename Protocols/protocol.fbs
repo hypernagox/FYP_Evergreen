@@ -34,6 +34,8 @@ table s2c_APPEAR_OBJECT
     group_type: Nagox.Enum.GROUP_TYPE;
     obj_type_info: ubyte;
     appear_pos: Nagox.Struct.Vec3;
+    obj_max_hp: int32;
+    obj_cur_hp: int32;
 }
 
 table s2c_REMOVE_OBJECT
@@ -68,10 +70,10 @@ table s2c_MONSTER_ATTACK
     dmg : uint32;
 }
 
-table s2c_MONSTER_HIT
+table s2c_NOTIFY_HIT_DMG
 {
     hit_obj_id : uint64;
-    dmg : uint32;
+    hit_after_hp : int32;
 }
 
 table s2c_MONSTER_AGGRO_START

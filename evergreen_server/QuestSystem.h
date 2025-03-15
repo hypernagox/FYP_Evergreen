@@ -7,8 +7,6 @@ class QuestSystem
 	:public ContentsComponent
 {
 public:
-	static constexpr const uint8_t MAX_NUM_OF_QUESTS = 10;
-public:
 	CONSTRUCTOR_CONTENTS_COMPONENT(QuestSystem)
 public:
 	virtual ~QuestSystem()noexcept;
@@ -19,6 +17,6 @@ private:
 	void CheckQuestAchieve(const NagiocpX::S_ptr<NagiocpX::ContentsEntity> key_entity)noexcept;
 private:
 	// TODO: 바이트정렬
-	Quest* m_arrQuests[MAX_NUM_OF_QUESTS] = { nullptr };
+	Quest* m_arrQuests[NUM_OF_MAX_QUESTS] = { nullptr };
 };
 

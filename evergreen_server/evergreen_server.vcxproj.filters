@@ -58,9 +58,6 @@
     <Filter Include="BattleComponent">
       <UniqueIdentifier>{aecd6113-3a51-4c9a-8edf-97c34c1e507f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="BattleComponent\HP">
-      <UniqueIdentifier>{ef45a976-de65-46e5-bedb-32f814f549ca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="BattleComponent\Death">
       <UniqueIdentifier>{79d6fb6b-4388-43b8-b421-a675915af5a9}</UniqueIdentifier>
     </Filter>
@@ -72,10 +69,6 @@
     </Filter>
     <Filter Include="QuestSystem\Quest">
       <UniqueIdentifier>{ee2d6b9f-2fde-4452-b3b7-adef921a9a04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="main">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="ContentsDeleter">
       <UniqueIdentifier>{dd04d87f-f7a3-4e84-9430-234983698e98}</UniqueIdentifier>
@@ -94,6 +87,25 @@
     </Filter>
     <Filter Include="EntityFactory\NPCState\RangeMon">
       <UniqueIdentifier>{e328c87e-db54-438d-a237-3b2a12f6bc13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BattleComponent\Status\HP">
+      <UniqueIdentifier>{ef45a976-de65-46e5-bedb-32f814f549ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Items">
+      <UniqueIdentifier>{1190f1af-79f7-4881-9e0a-7270b2164e67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Items\QuickSlot">
+      <UniqueIdentifier>{2ee84710-5ea5-47ca-8795-71f7f73e57a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Items\Item">
+      <UniqueIdentifier>{c84d2657-5b90-4597-975b-3eb63f11b770}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Items\Inventory">
+      <UniqueIdentifier>{6e728756-72f5-465d-a1d6-bfd26d104c33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -137,7 +149,7 @@
       <Filter>ContentsField</Filter>
     </ClCompile>
     <ClCompile Include="HP.cpp">
-      <Filter>BattleComponent\HP</Filter>
+      <Filter>BattleComponent\Status\HP</Filter>
     </ClCompile>
     <ClCompile Include="Death.cpp">
       <Filter>BattleComponent\Death</Filter>
@@ -159,6 +171,15 @@
     </ClCompile>
     <ClCompile Include="RangeMonState.cpp">
       <Filter>EntityFactory\NPCState\RangeMon</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Items\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickSlot.cpp">
+      <Filter>Items\QuickSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Items\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -211,7 +232,7 @@
       <Filter>ContentsField</Filter>
     </ClInclude>
     <ClInclude Include="HP.h">
-      <Filter>BattleComponent\HP</Filter>
+      <Filter>BattleComponent\Status\HP</Filter>
     </ClInclude>
     <ClInclude Include="Death.h">
       <Filter>BattleComponent\Death</Filter>
@@ -233,6 +254,15 @@
     </ClInclude>
     <ClInclude Include="RangeMonState.h">
       <Filter>EntityFactory\NPCState\RangeMon</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>Items\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="QuickSlot.h">
+      <Filter>Items\QuickSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Items\Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

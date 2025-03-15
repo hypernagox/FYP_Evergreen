@@ -4,6 +4,7 @@
 #include "func.h"
 #include "PositionComponent.h"
 #include "TickTimer.h"
+#include "HP.h"
 
 using namespace NagiocpX;
 
@@ -61,8 +62,14 @@ bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsE
 S_ptr<SendBuffer> ClusterPredicate::CreateAddPacket(const ContentsEntity* const entity_ptr) const noexcept
 {
 	const auto& pEntity = entity_ptr->GetComp<PositionComponent>();
-
-	return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos());
+	// TODO: HP가 없는 오브젝트의 appear는 어떻게 할 까
+	if (const auto hp = entity_ptr->GetComp<HP>())
+		return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()
+			, hp->GetMaxHP(), hp->GetCurHP()
+		);
+	else
+		return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()
+			, -1, -1);
 }
 
 S_ptr<SendBuffer> ClusterPredicate::CreateRemovePacket(const uint32_t obj_id) const noexcept

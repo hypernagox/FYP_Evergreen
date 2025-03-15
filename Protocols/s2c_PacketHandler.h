@@ -14,7 +14,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_REMOVE_OBJECT = 1003,
     s2c_MOVE = 1004,
     s2c_MONSTER_ATTACK = 1005,
-    s2c_MONSTER_HIT = 1006,
+    s2c_NOTIFY_HIT_DMG = 1006,
     s2c_MONSTER_AGGRO_START = 1007,
     s2c_MONSTER_AGGRO_END = 1008,
     s2c_PLAYER_ATTACK = 1009,
@@ -48,7 +48,7 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 const bool Handle_s2c_REMOVE_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REMOVE_OBJECT& pkt_);
 const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MOVE& pkt_);
 const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_);
-const bool Handle_s2c_MONSTER_HIT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_HIT& pkt_);
+const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_HIT_DMG& pkt_);
 const bool Handle_s2c_MONSTER_AGGRO_START(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_START& pkt_);
 const bool Handle_s2c_MONSTER_AGGRO_END(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_END& pkt_);
 const bool Handle_s2c_PLAYER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_ATTACK& pkt_);
@@ -68,7 +68,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_REMOVE_OBJECT, Nagox::Protocol::s2c_REMOVE_OBJECT, Handle_s2c_REMOVE_OBJECT>();
         RegisterHandler<HANDLE_PKT_ID::s2c_MOVE, Nagox::Protocol::s2c_MOVE, Handle_s2c_MOVE>();
         RegisterHandler<HANDLE_PKT_ID::s2c_MONSTER_ATTACK, Nagox::Protocol::s2c_MONSTER_ATTACK, Handle_s2c_MONSTER_ATTACK>();
-        RegisterHandler<HANDLE_PKT_ID::s2c_MONSTER_HIT, Nagox::Protocol::s2c_MONSTER_HIT, Handle_s2c_MONSTER_HIT>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_NOTIFY_HIT_DMG, Nagox::Protocol::s2c_NOTIFY_HIT_DMG, Handle_s2c_NOTIFY_HIT_DMG>();
         RegisterHandler<HANDLE_PKT_ID::s2c_MONSTER_AGGRO_START, Nagox::Protocol::s2c_MONSTER_AGGRO_START, Handle_s2c_MONSTER_AGGRO_START>();
         RegisterHandler<HANDLE_PKT_ID::s2c_MONSTER_AGGRO_END, Nagox::Protocol::s2c_MONSTER_AGGRO_END, Handle_s2c_MONSTER_AGGRO_END>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PLAYER_ATTACK, Nagox::Protocol::s2c_PLAYER_ATTACK, Handle_s2c_PLAYER_ATTACK>();

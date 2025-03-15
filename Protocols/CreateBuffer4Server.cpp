@@ -57,6 +57,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_APPEAR_OBJECT(
     const Nagox::Enum::GROUP_TYPE& group_type,
     const uint8_t obj_type_info,
     const Nagox::Struct::Vec3& appear_pos,
+    const int32_t obj_max_hp,
+    const int32_t obj_cur_hp,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
@@ -65,12 +67,16 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_APPEAR_OBJECT(
     const auto group_type_value = group_type;
     const auto obj_type_info_value = obj_type_info;
     const auto appear_pos_offset = &appear_pos;
+    const auto obj_max_hp_value = obj_max_hp;
+    const auto obj_cur_hp_value = obj_cur_hp;
     const auto serializeds2c_APPEAR_OBJECT = Nagox::Protocol::Creates2c_APPEAR_OBJECT(
         builder
 ,        obj_id_value,
         group_type_value,
         obj_type_info_value,
-        appear_pos_offset    );
+        appear_pos_offset,
+        obj_max_hp_value,
+        obj_cur_hp_value    );
     builder.Finish(serializeds2c_APPEAR_OBJECT);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_APPEAR_OBJECT);
@@ -138,22 +144,22 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_ATTACK(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_MONSTER_ATTACK);
 }
-NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_HIT(
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_HIT_DMG(
     const uint64_t hit_obj_id,
-    const uint32_t dmg,
+    const int32_t hit_after_hp,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto hit_obj_id_value = hit_obj_id;
-    const auto dmg_value = dmg;
-    const auto serializeds2c_MONSTER_HIT = Nagox::Protocol::Creates2c_MONSTER_HIT(
+    const auto hit_after_hp_value = hit_after_hp;
+    const auto serializeds2c_NOTIFY_HIT_DMG = Nagox::Protocol::Creates2c_NOTIFY_HIT_DMG(
         builder
 ,        hit_obj_id_value,
-        dmg_value    );
-    builder.Finish(serializeds2c_MONSTER_HIT);
+        hit_after_hp_value    );
+    builder.Finish(serializeds2c_NOTIFY_HIT_DMG);
 
-    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_MONSTER_HIT);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_NOTIFY_HIT_DMG);
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_AGGRO_START(
     const Nagox::Enum::GROUP_TYPE& group_type,

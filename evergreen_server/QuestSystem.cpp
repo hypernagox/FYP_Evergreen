@@ -5,7 +5,7 @@
 
 QuestSystem::~QuestSystem() noexcept
 {
-	for (uint8_t i = 0; i < MAX_NUM_OF_QUESTS; ++i)
+	for (uint8_t i = 0; i < NUM_OF_MAX_QUESTS; ++i)
 	{
 		const auto q = m_arrQuests[i];
 		if (q)NagiocpX::xdelete<Quest>(q);
@@ -19,10 +19,10 @@ void QuestSystem::PostCheckQuestAchieve(NagiocpX::S_ptr<NagiocpX::ContentsEntity
 
 bool QuestSystem::AddQuest(Quest* const quest) noexcept
 {
-	uint8_t temp[MAX_NUM_OF_QUESTS] = { 0 };
+	uint8_t temp[NUM_OF_MAX_QUESTS] = { 0 };
 	uint8_t num_of_temp = 0;
 	const auto quest_key = quest->GetQuestKey();
-	for (uint8_t i = 0; i < MAX_NUM_OF_QUESTS; ++i)
+	for (uint8_t i = 0; i < NUM_OF_MAX_QUESTS; ++i)
 	{
 		const auto q = m_arrQuests[i];
 		if (q)
@@ -33,7 +33,7 @@ bool QuestSystem::AddQuest(Quest* const quest) noexcept
 		else
 			temp[num_of_temp++] = i + 1;
 	}
-	for (uint8_t i = 0; i < MAX_NUM_OF_QUESTS; ++i)
+	for (uint8_t i = 0; i < NUM_OF_MAX_QUESTS; ++i)
 	{
 		if (0 == temp[i])break;
 		m_arrQuests[temp[i] - 1] = quest;
@@ -46,7 +46,7 @@ void QuestSystem::CheckQuestAchieve(const NagiocpX::S_ptr<NagiocpX::ContentsEnti
 {
 	const auto pOwner = GetOwnerEntityRaw();
 	const auto key_entity_raw = key_entity.get();
-	for (uint8_t i = 0; i < MAX_NUM_OF_QUESTS; ++i)
+	for (uint8_t i = 0; i < NUM_OF_MAX_QUESTS; ++i)
 	{
 		const auto q = m_arrQuests[i];
 		if (q && q->OnAchieve(key_entity_raw, pOwner))

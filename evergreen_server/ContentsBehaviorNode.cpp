@@ -131,6 +131,7 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     {
         // TODO: 스트레스 테스트 아직 패킷없음
         //awaker->GetSession()->SendAsync(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), 1));
+        // TODO: 데미지 매직넘버
         bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), awaker->GetObjectID(), 1));
        // awaker->GetCurCluster()->Broadcast(Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), awaker->GetObjectID(), 1));
         awaker->GetComp<HP>()->PostDoDmg(1,owner_comp_sys->GetOwnerEntity()->SharedFromThis());

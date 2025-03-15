@@ -195,6 +195,14 @@
     <ClCompile Include="Death.cpp" />
     <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="HP.cpp" />
+    <ClCompile Include="Inventory.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NaviAgent_Common.cpp" />
     <ClCompile Include="PathFinder_Common.cpp" />
@@ -207,6 +215,10 @@
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Quest.cpp" />
     <ClCompile Include="QuestSystem.cpp" />
+    <ClCompile Include="QuickSlot.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="RangeMonState.cpp" />
     <ClCompile Include="Regenerator.cpp" />
   </ItemGroup>
@@ -225,6 +237,8 @@
     <ClInclude Include="Death.h" />
     <ClInclude Include="EntityFactory.h" />
     <ClInclude Include="HP.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="NaviAgent_Common.h" />
     <ClInclude Include="PathFinder_Common.h" />
     <ClInclude Include="pch.h" />
@@ -233,6 +247,7 @@
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Quest.h" />
     <ClInclude Include="QuestSystem.h" />
+    <ClInclude Include="QuickSlot.h" />
     <ClInclude Include="RangeMonState.h" />
     <ClInclude Include="Regenerator.h" />
   </ItemGroup>

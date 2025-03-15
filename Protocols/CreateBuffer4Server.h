@@ -25,6 +25,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_APPEAR_OBJECT(
     const Nagox::Enum::GROUP_TYPE& group_type,
     const uint8_t obj_type_info,
     const Nagox::Struct::Vec3& appear_pos,
+    const int32_t obj_max_hp,
+    const int32_t obj_cur_hp,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_REMOVE_OBJECT(
@@ -46,9 +48,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_ATTACK(
     const uint32_t dmg,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
-NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_HIT(
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_HIT_DMG(
     const uint64_t hit_obj_id,
-    const uint32_t dmg,
+    const int32_t hit_after_hp,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_AGGRO_START(

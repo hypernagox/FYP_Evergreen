@@ -49,8 +49,8 @@ struct s2c_MOVEBuilder;
 struct s2c_MONSTER_ATTACK;
 struct s2c_MONSTER_ATTACKBuilder;
 
-struct s2c_MONSTER_HIT;
-struct s2c_MONSTER_HITBuilder;
+struct s2c_NOTIFY_HIT_DMG;
+struct s2c_NOTIFY_HIT_DMGBuilder;
 
 struct s2c_MONSTER_AGGRO_START;
 struct s2c_MONSTER_AGGRO_STARTBuilder;
@@ -319,7 +319,9 @@ struct s2c_APPEAR_OBJECT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table 
     VT_OBJ_ID = 4,
     VT_GROUP_TYPE = 6,
     VT_OBJ_TYPE_INFO = 8,
-    VT_APPEAR_POS = 10
+    VT_APPEAR_POS = 10,
+    VT_OBJ_MAX_HP = 12,
+    VT_OBJ_CUR_HP = 14
   };
   uint32_t obj_id() const {
     return GetField<uint32_t>(VT_OBJ_ID, 0);
@@ -345,12 +347,26 @@ struct s2c_APPEAR_OBJECT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table 
   Nagox::Struct::Vec3 *mutable_appear_pos() {
     return GetStruct<Nagox::Struct::Vec3 *>(VT_APPEAR_POS);
   }
+  int32_t obj_max_hp() const {
+    return GetField<int32_t>(VT_OBJ_MAX_HP, 0);
+  }
+  bool mutate_obj_max_hp(int32_t _obj_max_hp = 0) {
+    return SetField<int32_t>(VT_OBJ_MAX_HP, _obj_max_hp, 0);
+  }
+  int32_t obj_cur_hp() const {
+    return GetField<int32_t>(VT_OBJ_CUR_HP, 0);
+  }
+  bool mutate_obj_cur_hp(int32_t _obj_cur_hp = 0) {
+    return SetField<int32_t>(VT_OBJ_CUR_HP, _obj_cur_hp, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_OBJ_ID, 4) &&
            VerifyField<uint8_t>(verifier, VT_GROUP_TYPE, 1) &&
            VerifyField<uint8_t>(verifier, VT_OBJ_TYPE_INFO, 1) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_APPEAR_POS, 4) &&
+           VerifyField<int32_t>(verifier, VT_OBJ_MAX_HP, 4) &&
+           VerifyField<int32_t>(verifier, VT_OBJ_CUR_HP, 4) &&
            verifier.EndTable();
   }
 };
@@ -371,6 +387,12 @@ struct s2c_APPEAR_OBJECTBuilder {
   void add_appear_pos(const Nagox::Struct::Vec3 *appear_pos) {
     fbb_.AddStruct(s2c_APPEAR_OBJECT::VT_APPEAR_POS, appear_pos);
   }
+  void add_obj_max_hp(int32_t obj_max_hp) {
+    fbb_.AddElement<int32_t>(s2c_APPEAR_OBJECT::VT_OBJ_MAX_HP, obj_max_hp, 0);
+  }
+  void add_obj_cur_hp(int32_t obj_cur_hp) {
+    fbb_.AddElement<int32_t>(s2c_APPEAR_OBJECT::VT_OBJ_CUR_HP, obj_cur_hp, 0);
+  }
   explicit s2c_APPEAR_OBJECTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -387,8 +409,12 @@ inline ::flatbuffers::Offset<s2c_APPEAR_OBJECT> Creates2c_APPEAR_OBJECT(
     uint32_t obj_id = 0,
     Nagox::Enum::GROUP_TYPE group_type = Nagox::Enum::GROUP_TYPE_PLAYER,
     uint8_t obj_type_info = 0,
-    const Nagox::Struct::Vec3 *appear_pos = nullptr) {
+    const Nagox::Struct::Vec3 *appear_pos = nullptr,
+    int32_t obj_max_hp = 0,
+    int32_t obj_cur_hp = 0) {
   s2c_APPEAR_OBJECTBuilder builder_(_fbb);
+  builder_.add_obj_cur_hp(obj_cur_hp);
+  builder_.add_obj_max_hp(obj_max_hp);
   builder_.add_appear_pos(appear_pos);
   builder_.add_obj_id(obj_id);
   builder_.add_obj_type_info(obj_type_info);
@@ -715,11 +741,11 @@ inline ::flatbuffers::Offset<s2c_MONSTER_ATTACK> Creates2c_MONSTER_ATTACK(
   return builder_.Finish();
 }
 
-struct s2c_MONSTER_HIT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
-  typedef s2c_MONSTER_HITBuilder Builder;
+struct s2c_NOTIFY_HIT_DMG FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_NOTIFY_HIT_DMGBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_HIT_OBJ_ID = 4,
-    VT_DMG = 6
+    VT_HIT_AFTER_HP = 6
   };
   uint64_t hit_obj_id() const {
     return GetField<uint64_t>(VT_HIT_OBJ_ID, 0);
@@ -727,48 +753,48 @@ struct s2c_MONSTER_HIT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_hit_obj_id(uint64_t _hit_obj_id = 0) {
     return SetField<uint64_t>(VT_HIT_OBJ_ID, _hit_obj_id, 0);
   }
-  uint32_t dmg() const {
-    return GetField<uint32_t>(VT_DMG, 0);
+  int32_t hit_after_hp() const {
+    return GetField<int32_t>(VT_HIT_AFTER_HP, 0);
   }
-  bool mutate_dmg(uint32_t _dmg = 0) {
-    return SetField<uint32_t>(VT_DMG, _dmg, 0);
+  bool mutate_hit_after_hp(int32_t _hit_after_hp = 0) {
+    return SetField<int32_t>(VT_HIT_AFTER_HP, _hit_after_hp, 0);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint64_t>(verifier, VT_HIT_OBJ_ID, 8) &&
-           VerifyField<uint32_t>(verifier, VT_DMG, 4) &&
+           VerifyField<int32_t>(verifier, VT_HIT_AFTER_HP, 4) &&
            verifier.EndTable();
   }
 };
 
-struct s2c_MONSTER_HITBuilder {
-  typedef s2c_MONSTER_HIT Table;
+struct s2c_NOTIFY_HIT_DMGBuilder {
+  typedef s2c_NOTIFY_HIT_DMG Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
   void add_hit_obj_id(uint64_t hit_obj_id) {
-    fbb_.AddElement<uint64_t>(s2c_MONSTER_HIT::VT_HIT_OBJ_ID, hit_obj_id, 0);
+    fbb_.AddElement<uint64_t>(s2c_NOTIFY_HIT_DMG::VT_HIT_OBJ_ID, hit_obj_id, 0);
   }
-  void add_dmg(uint32_t dmg) {
-    fbb_.AddElement<uint32_t>(s2c_MONSTER_HIT::VT_DMG, dmg, 0);
+  void add_hit_after_hp(int32_t hit_after_hp) {
+    fbb_.AddElement<int32_t>(s2c_NOTIFY_HIT_DMG::VT_HIT_AFTER_HP, hit_after_hp, 0);
   }
-  explicit s2c_MONSTER_HITBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+  explicit s2c_NOTIFY_HIT_DMGBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  ::flatbuffers::Offset<s2c_MONSTER_HIT> Finish() {
+  ::flatbuffers::Offset<s2c_NOTIFY_HIT_DMG> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = ::flatbuffers::Offset<s2c_MONSTER_HIT>(end);
+    auto o = ::flatbuffers::Offset<s2c_NOTIFY_HIT_DMG>(end);
     return o;
   }
 };
 
-inline ::flatbuffers::Offset<s2c_MONSTER_HIT> Creates2c_MONSTER_HIT(
+inline ::flatbuffers::Offset<s2c_NOTIFY_HIT_DMG> Creates2c_NOTIFY_HIT_DMG(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint64_t hit_obj_id = 0,
-    uint32_t dmg = 0) {
-  s2c_MONSTER_HITBuilder builder_(_fbb);
+    int32_t hit_after_hp = 0) {
+  s2c_NOTIFY_HIT_DMGBuilder builder_(_fbb);
   builder_.add_hit_obj_id(hit_obj_id);
-  builder_.add_dmg(dmg);
+  builder_.add_hit_after_hp(hit_after_hp);
   return builder_.Finish();
 }
 

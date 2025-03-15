@@ -112,6 +112,9 @@
       <Filter>StateMachine</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="SharedDefines.h">
+      <Filter>pch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />

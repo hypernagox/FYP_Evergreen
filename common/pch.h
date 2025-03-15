@@ -25,6 +25,7 @@
 #include <format>
 #include <algorithm>
 #include "recastnavigation/DetourCrowd.h"
+#include "SharedDefines.h"
 
 using Vector3 = DirectX::SimpleMath::Vector3;
 
