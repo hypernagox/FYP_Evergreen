@@ -26,7 +26,7 @@ protected:
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
 	MonsterHPPanel* m_hpPanel;
 
-	int m_hp = DATA_TABLE->GetObjectData("Fox", "hp");
+	int m_hp = GET_DATA("Fox", "hp");
 
 public:
 	Transform* m_transformBody;

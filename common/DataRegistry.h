@@ -50,4 +50,5 @@ namespace Common
 	};
 
 #define DATA_TABLE (Common::DataRegistry::GetDataTable())
+#define GET_DATA(category, detailType) (DATA_TABLE->GetObjectData(category, detailType))
 }
