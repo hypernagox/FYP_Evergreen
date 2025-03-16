@@ -69,8 +69,8 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 	}
 }
 
-void Monster::OnHit(int damage)
+void Monster::OnHit(int afterHealth)
 {
-	m_hp -= damage;
+	m_hp = afterHealth;
 	m_hpPanel->SetHPFraction(m_hp / 3.0f);
 }

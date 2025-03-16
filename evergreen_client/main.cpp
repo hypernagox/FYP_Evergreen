@@ -24,6 +24,7 @@
 #include "NaviCell.h"
 #include "Navigator.h"
 #include "ServerTimeMgr.h"
+#include "PlayerStatusGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -140,9 +141,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_heroComponent = g_heroObj->AddComponent<AuthenticPlayer>();
 
     // Gizmo Renderer for debugging
-    auto gizmoRenderer = g_heroObj->AddComponent<GizmoCylinderRenderer>();
+    /*auto gizmoRenderer = g_heroObj->AddComponent<GizmoCylinderRenderer>();
     gizmoRenderer->SetRadius(1.0f);
-	gizmoRenderer->SetHeight(3.0f);
+	gizmoRenderer->SetHeight(3.0f);*/
   
     Vector3 temp = Vector3(-4.345f, 76.17f, 0.0f);
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
@@ -222,6 +223,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
 
         scene->AddObject(skyboxObj);
+    }
+
+    {
+        auto guiObj = std::make_shared<SceneObject>();
+		auto guiRenderer = guiObj->AddComponent<PlayerStatusGUI>();
+		scene->AddObject(guiObj);
+        g_heroComponent->SetPlayerStatusGUI(guiRenderer);
     }
 
     if constexpr (true == g_bUseNetWork)

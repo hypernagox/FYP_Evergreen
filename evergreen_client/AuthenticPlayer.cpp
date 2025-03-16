@@ -6,6 +6,7 @@
 #include "PlayerRenderer.h"
 #include "MovePacketSender.h"
 #include "NaviAgent.h"
+#include "PlayerStatusGUI.h"
 
 
 bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
@@ -63,6 +64,32 @@ void AuthenticPlayer::InitCamDirection()
 
 	m_pCamera->GetSceneObject()->GetTransform()->SetLocalRotation(Quaternion::Identity);
 	GetSceneObject()->GetTransform()->SetLocalRotation(Quaternion::Identity);
+}
+
+void AuthenticPlayer::SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexcept
+{
+	m_playerStatusGUI = playerStatusGUI;
+
+	if (m_playerStatusGUI)
+	{
+		// TODO: Magic Number; the total health of the playuer is 5
+		m_playerStatusGUI->SetMaxHealth(m_iMaxHP);
+		m_playerStatusGUI->SetCurrentHealth(m_iCurHP);
+	}
+}
+
+void AuthenticPlayer::OnHit(int damage)
+{
+	m_iCurHP -= damage;
+
+	if (m_playerStatusGUI)
+	{
+		m_playerStatusGUI->SetCurrentHealth(m_iCurHP);
+	}
+	if (m_iCurHP <= 0)
+	{
+		m_iCurHP = m_iMaxHP;
+	}
 }
 
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
