@@ -9,6 +9,7 @@
 #include "Cluster.h"
 #include "ContentsField.h"
 #include "MoveBroadcaster.h"
+#include "DataRegistry.h"
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 1001;
@@ -79,6 +80,7 @@ int main()
 {
 	ContentsInitiator con_init;
 	ClusterPredicate broad_helper;
+	Common::DataRegistry::Load();
 
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	

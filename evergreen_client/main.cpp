@@ -80,6 +80,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     NAVIGATION->Init();
     NAVIGATION->RegisterDestroy();
+    Common::DataRegistry::Load();
     s2c_PacketHandler::Init();
     
    // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)-> Load(RESOURCE_PATH(L"NAVIMESH.bin"));

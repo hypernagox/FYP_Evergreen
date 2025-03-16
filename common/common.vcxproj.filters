@@ -111,9 +111,14 @@
     <ClInclude Include="StateTransition.hpp">
       <Filter>StateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="json.hpp" />
     <ClInclude Include="SharedDefines.h">
       <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="DataRegistry.h">
+      <Filter>Json\DataRegistry</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +241,9 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Transform</Filter>
     </ClCompile>
+    <ClCompile Include="DataRegistry.cpp">
+      <Filter>Json\DataRegistry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Navigation">
@@ -274,5 +282,22 @@
     <Filter Include="StateMachine">
       <UniqueIdentifier>{48e505b3-4a32-40f3-a8ca-7cc4be43f364}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Json">
+      <UniqueIdentifier>{e3952897-9e38-4119-9efa-825bd6db9084}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Json\DataRegistry">
+      <UniqueIdentifier>{5096666d-d357-4cc8-bf84-c2fa3a4535b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Json\Data">
+      <UniqueIdentifier>{614ff580-f952-4e83-ab03-2a033e9700a3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resource\json\Monster.json">
+      <Filter>Json\Data</Filter>
+    </None>
+    <None Include="..\resource\json\Player.json">
+      <Filter>Json\Data</Filter>
+    </None>
   </ItemGroup>
 </Project>

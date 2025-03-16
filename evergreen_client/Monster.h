@@ -26,7 +26,7 @@ protected:
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
 	MonsterHPPanel* m_hpPanel;
 
-	int m_hp = 3; // TODO: 매직넘버, ㅅㅂ 서버랑 데이터 다르니 이런거가 문제네
+	int m_hp = DATA_TABLE->GetObjectData("Fox", "hp");
 
 public:
 	Transform* m_transformBody;

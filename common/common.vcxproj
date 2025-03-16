@@ -141,6 +141,7 @@
     </ClCompile>
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="CommonMath.cpp" />
+    <ClCompile Include="DataRegistry.cpp" />
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="NaviAgent.cpp" />
     <ClCompile Include="NaviCell.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="..\library\inc\recastnavigation\version.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CommonMath.h" />
+    <ClInclude Include="DataRegistry.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="NaviAgent.h" />
@@ -197,6 +199,10 @@
     <ClInclude Include="StateTransition.hpp" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="SharedDefines.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resource\json\Monster.json" />
+    <None Include="..\resource\json\Player.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

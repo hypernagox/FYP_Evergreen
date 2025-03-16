@@ -31,3 +31,4 @@ using Vector3 = DirectX::SimpleMath::Vector3;
 
 #include "CommonMath.h"
 #include "json.hpp"
+#include "DataRegistry.h"
