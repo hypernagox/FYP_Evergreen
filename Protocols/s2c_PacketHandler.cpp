@@ -28,7 +28,8 @@ extern std::shared_ptr<SceneObject> g_heroObj;
 const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_)
 {
 	NetMgr(NetworkMgr)->SetSessionID(pkt_.obj_id());
-	//g_heroObj->GetComponent<ServerObject>()->SetObjID(pkt_.obj_id());
+	// TODO: 아이디 통일
+	// g_heroObj->GetComponent<ServerObject>()->SetObjID(pkt_.obj_id());
 	NetMgr(ServerTimeMgr)->UpdateServerTimeStamp(pkt_.server_time_stamp());
 	return true;
 }
@@ -107,6 +108,7 @@ const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 
 const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_)
 {
+	// 몬스터 공격 종류 및 애니메이션
 	const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id());
 	if (nullptr != obj)
 	{
@@ -117,38 +119,39 @@ const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSes
 		}
 	}
 
-	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(pkt_.player_id());
-	if (nullptr != hit_obj_ptr)
-	{
-		if (const auto player = hit_obj_ptr->GetComponent<PlayerRenderer>())
-		{
-			if (player->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Hit))
-				player->GetComponent<PlayerRenderer>()->Hit();
-		}
-	}
-
-	if (NetMgr(NetworkMgr)->GetSessionID() == pkt_.player_id())
-	{
-		g_heroObj->GetComponent<AuthenticPlayer>()->OnHit(pkt_.dmg());
-		if (g_heroObj->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Hit))
-			g_heroObj->GetComponent<PlayerRenderer>()->Hit();
-	}
-
 	//std::cout << "여우가 당신에게 " << pkt_.dmg() << "데미지를 주었다 !" << std::endl;
 	return true;
 }
 
 const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_HIT_DMG& pkt_)
 {
+	// 어떤 오브젝트가 몇 데미지 받았는가
 	const auto hit_obj_id = pkt_.hit_obj_id(); // 맞은 애 아이디
 	const auto hit_after_hp = pkt_.hit_after_hp();
-	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
-	if (!hit_obj_ptr)return true;
+	auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
+	if (!hit_obj_ptr)
+	{
+		if (NetMgr(NetworkMgr)->GetSessionID() == hit_obj_id)
+			hit_obj_ptr = g_heroObj->GetComponent<ServerObject>();
+		else {
+			std::cout << std::format("Invalid hit Object ID from :{}", __FUNCTION__) << std::endl;
+			return true;
+		}
+	}
 	if (const auto monster = hit_obj_ptr->GetComponent<Monster>())
 	{
 		// TODO: 현재체력과 힛 애프터의 차이가 필요,
 		// 이 수치를 기록하고 관리할 클래스 있어야함
 		monster->OnHit(hit_after_hp);
+	}
+	if (const auto player = hit_obj_ptr->GetComponent<PlayerRenderer>())
+	{
+		if (player->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Hit))
+			player->GetComponent<PlayerRenderer>()->Hit();
+	}
+	if (const auto player = hit_obj_ptr->GetComponent<AuthenticPlayer>())
+	{
+		player->OnHit(pkt_.hit_after_hp());
 	}
 	std::cout << std::format("HIT ID: {}, DMG: {}\n", hit_obj_id, 1);
 	return true;

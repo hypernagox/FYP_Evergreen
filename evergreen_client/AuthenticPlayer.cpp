@@ -78,9 +78,9 @@ void AuthenticPlayer::SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexc
 	}
 }
 
-void AuthenticPlayer::OnHit(int damage)
+void AuthenticPlayer::OnHit(int afterHP)
 {
-	m_iCurHP -= damage;
+	m_iCurHP = afterHP;
 
 	if (m_playerStatusGUI)
 	{

@@ -26,6 +26,10 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 	{
 		atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - dmg_));
 	}
+	else if (owner->GetSession())
+	{
+		owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - dmg_));
+	}
 	if (0 < m_hp)return;
 	if (const auto death = owner->GetComp<Death>())
 	{
