@@ -38,10 +38,8 @@ namespace udsdx
 		);
 	}
 
-	AnimationClip::AnimationClip(const aiScene& assimpScene, const Matrix4x4& preMultiplication)
+	AnimationClip::AnimationClip(const aiScene& assimpScene)
 	{
-		XMMATRIX vertexTransform = XMLoadFloat4x4(&preMultiplication);
-
 		auto model = &assimpScene;
 
 		// Depth-first traversal of the scene graph to collect the bones
@@ -55,10 +53,7 @@ namespace udsdx
 
 			Bone boneData{};
 			boneData.Name = node->mName.C_Str();
-			if (node == model->mRootNode)
-				boneData.Transform = preMultiplication;
-			else
-				boneData.Transform = ToMatrix4x4(node->mTransformation);
+			boneData.Transform = ToMatrix4x4(node->mTransformation);
 
 			for (UINT i = 0; i < node->mNumMeshes; ++i)
 			{
@@ -119,7 +114,7 @@ namespace udsdx
 
 	void AnimationClip::PopulateTransforms(float animationTime, const std::vector<std::string>& boneNames, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const
 	{
-		animationTime = fmod(animationTime * m_animation.TicksPerSecond, m_animation.Duration);
+		float animationTicks = animationTime * m_animation.TicksPerSecond;
 		std::vector<Matrix4x4> in(m_bones.size());
 
 		for (UINT i = 0; i < m_bones.size(); ++i)
@@ -138,9 +133,9 @@ namespace udsdx
 				tLocal = XMLoadFloat4x4(&bone.Transform);
 			else
 			{
-				auto [ps1, ps2, pf] = ToTimeFraction(channel.PositionTimestamps, animationTime);
-				auto [rs1, rs2, rf] = ToTimeFraction(channel.RotationTimestamps, animationTime);
-				auto [ss1, ss2, sf] = ToTimeFraction(channel.ScaleTimestamps, animationTime);
+				auto [ps1, ps2, pf] = ToTimeFraction(channel.PositionTimestamps, animationTicks);
+				auto [rs1, rs2, rf] = ToTimeFraction(channel.RotationTimestamps, animationTicks);
+				auto [ss1, ss2, sf] = ToTimeFraction(channel.ScaleTimestamps, animationTicks);
 
 				XMVECTOR p0 = XMLoadFloat3(&channel.Positions[ps1]);
 				XMVECTOR p1 = XMLoadFloat3(&channel.Positions[ps2]);
@@ -183,5 +178,10 @@ namespace udsdx
 	UINT AnimationClip::GetBoneCount() const
 	{
 		return static_cast<UINT>(m_bones.size());
+	}
+
+	float AnimationClip::GetAnimationDuration() const
+	{
+		return m_animation.Duration / m_animation.TicksPerSecond;
 	}
 }

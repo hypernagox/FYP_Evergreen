@@ -35,12 +35,13 @@ namespace udsdx
 	class AnimationClip : public ResourceObject
 	{
 	public:
-		AnimationClip(const aiScene& assimpScene, const Matrix4x4& preMultiplication);
+		AnimationClip(const aiScene& assimpScene);
 
 	public:
 		void PopulateTransforms(float animationTime, const std::vector<std::string>& boneNames, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const;
 		int GetBoneIndex(std::string_view boneName) const;
 		UINT GetBoneCount() const;
+		float GetAnimationDuration() const;
 
 	protected:
 		Animation m_animation;

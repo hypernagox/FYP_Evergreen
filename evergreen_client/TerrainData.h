@@ -6,27 +6,15 @@ class TerrainData
 {
 public:
 	TerrainData(std::wstring_view instancesPath, float terrainScale, float instanceScale);
-
 	void CreateBuffer(std::wstring_view instancesPath);
-	void UploadBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 
-	D3D12_VERTEX_BUFFER_VIEW GetTransformBufferView() const;
 	UINT GetPrototypeCount() const;
-	UINT GetPrototypeInstanceBase(int index) const;
-	UINT GetPrototypeInstanceCount(int index) const;
-	UINT PopulateInstanceData(UINT prototypeIndex, const udsdx::BoundingCamera& bound, const udsdx::Matrix4x4& worldTransform, const udsdx::Mesh* mesh, udsdx::Matrix4x4* out) const;
+	UINT GetPrototypeInstanceCount(std::string_view prototypeName) const;
+	UINT PopulateInstanceData(std::string_view prototypeName, const udsdx::BoundingCamera& bound, const udsdx::Matrix4x4& worldTransform, const udsdx::Mesh* mesh, udsdx::Matrix4x4* out) const;
 
 private:
 	float m_terrainScale = 1.0f;
 	float m_instanceScale = 1.0f;
 
-	UINT m_prototypeCount = 0;
-	UINT m_vertexByteStride = sizeof(udsdx::Matrix4x4);
-	UINT m_vertexBufferByteSize = 0;
-
-	ComPtr<ID3DBlob> m_bufferCPU;
-	ComPtr<ID3D12Resource> m_bufferGpu;
-	ComPtr<ID3D12Resource> m_bufferUpload;
-
-	std::vector<std::pair<UINT, UINT>> m_baseCountPairs;
+	std::unordered_map<std::string, std::vector<udsdx::Matrix4x4>> m_instanceData;
 };

@@ -26,7 +26,7 @@ namespace udsdx
 	public:
 		RiggedMesh* GetMesh() const;
 		void SetMesh(RiggedMesh* mesh);
-		void SetAnimation(AnimationClip* animationClip, bool forcePlay = false);
+		void SetAnimation(AnimationClip* animationClip, bool loop = false, bool forcePlay = false);
 
 		virtual ID3D12PipelineState* GetPipelineState() const override;
 		virtual ID3D12PipelineState* GetShadowPipelineState() const override;
@@ -39,6 +39,7 @@ namespace udsdx
 
 		AnimationClip* m_animation = nullptr;
 		AnimationClip* m_prevAnimation = nullptr;
+		bool m_loop = false;
 		float m_animationTime = 0.0f;
 		float m_prevAnimationTime = 0.0f;
 		float m_transitionFactor = 0.0f;

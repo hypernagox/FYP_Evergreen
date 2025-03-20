@@ -145,6 +145,7 @@ namespace udsdx
 
 		// Load the model using Assimp
 		Assimp::Importer importer;
+		importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 		auto assimpScene = importer.ReadFile(
 			pathString.string(),
 			aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights
@@ -157,21 +158,55 @@ namespace udsdx
 		{
 			hasBones |= assimpScene->mMeshes[i]->HasBones();
 		}
+		
+		if (assimpScene->mMetaData)
+		{
+			int32_t UpAxis = 1, UpAxisSign = 1, FrontAxis = 2, FrontAxisSign = 1, CoordAxis = 0, CoordAxisSign = 1;
+			double UnitScaleFactor = 1.0;
+			for (unsigned MetadataIndex = 0; MetadataIndex < assimpScene->mMetaData->mNumProperties; ++MetadataIndex)
+			{
+				if (strcmp(assimpScene->mMetaData->mKeys[MetadataIndex].C_Str(), "UpAxis") == 0)
+				{
+					assimpScene->mMetaData->Get<int32_t>(MetadataIndex, UpAxis);
+				}
+				if (strcmp(assimpScene->mMetaData->mKeys[MetadataIndex].C_Str(), "UpAxisSign") == 0)
+				{
+					assimpScene->mMetaData->Get<int32_t>(MetadataIndex, UpAxisSign);
+				}
+				if (strcmp(assimpScene->mMetaData->mKeys[MetadataIndex].C_Str(), "FrontAxis") == 0)
+				{
+					assimpScene->mMetaData->Get<int32_t>(MetadataIndex, FrontAxis);
+				}
+				if (strcmp(assimpScene->mMetaData->mKeys[MetadataIndex].C_Str(), "FrontAxisSign") == 0)
+				{
+					assimpScene->mMetaData->Get<int32_t>(MetadataIndex, FrontAxisSign);
+				}
+				if (strcmp(assimpScene->mMetaData->mKeys[MetadataIndex].C_Str(), "CoordAxis") == 0)
+				{
+					assimpScene->mMetaData->Get<int32_t>(MetadataIndex, CoordAxis);
+				}
+				if (strcmp(assimpScene->mMetaData->mKeys[MetadataIndex].C_Str(), "CoordAxisSign") == 0)
+				{
+					assimpScene->mMetaData->Get<int32_t>(MetadataIndex, CoordAxisSign);
+				}
+				if (strcmp(assimpScene->mMetaData->mKeys[MetadataIndex].C_Str(), "UnitScaleFactor") == 0)
+				{
+					assimpScene->mMetaData->Get<double>(MetadataIndex, UnitScaleFactor);
+				}
+			}
 
-		XMFLOAT4X4 preMultiplication;
-		std::string extension = pathString.extension().string();
-		transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-		XMMATRIX T = XMMatrixIdentity();
-		if (extension == ".fbx")
-		{
-			T = XMMatrixRotationX(PIDIV2);
+			aiVector3D upVec, forwardVec, rightVec;
+
+			upVec[UpAxis] = UpAxisSign * (float)UnitScaleFactor;
+			forwardVec[FrontAxis] = FrontAxisSign * (float)UnitScaleFactor;
+			rightVec[CoordAxis] = CoordAxisSign * (float)UnitScaleFactor;
+
+			aiMatrix4x4 mat(rightVec.x, rightVec.y, rightVec.z, 0.0f,
+				upVec.x, upVec.y, upVec.z, 0.0f,
+				forwardVec.x, forwardVec.y, forwardVec.z, 0.0f,
+				0.0f, 0.0f, 0.0f, 1.0f);
+			assimpScene->mRootNode->mTransformation = mat;
 		}
-		float scaleFactor;
-		if (assimpScene->mMetaData->Get<float>("UnitScaleFactor", scaleFactor))
-		{
-			// T = XMMatrixScaling(scaleFactor, scaleFactor, scaleFactor) * T;
-		}
-		XMStoreFloat4x4(&preMultiplication, T);
 
 		std::unique_ptr<ResourceObject> ret;
 		if (assimpScene->HasMeshes())
@@ -183,13 +218,13 @@ namespace udsdx
 			std::unique_ptr<MeshBase> mesh = nullptr;
 			if (hasBones)
 			{
-				mesh = std::make_unique<RiggedMesh>(*assimpScene, preMultiplication);
+				mesh = std::make_unique<RiggedMesh>(*assimpScene);
 				mesh->UploadBuffers(m_device, m_commandList);
 				DebugConsole::Log("\tRegistered the resource as RiggedMesh");
 			}
 			else
 			{
-				mesh = std::make_unique<Mesh>(*assimpScene, preMultiplication);
+				mesh = std::make_unique<Mesh>(*assimpScene);
 				mesh->UploadBuffers(m_device, m_commandList);
 				DebugConsole::Log("\tRegistered the resource as Mesh");
 			}
@@ -197,7 +232,7 @@ namespace udsdx
 		}
 		else if (assimpScene->HasAnimations())
 		{
-			ret = std::make_unique<AnimationClip>(*assimpScene, preMultiplication);
+			ret = std::make_unique<AnimationClip>(*assimpScene);
 			DebugConsole::Log("\tRegistered the resource as AnimationClip");
 		}
 

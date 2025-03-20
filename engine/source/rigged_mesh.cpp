@@ -21,10 +21,8 @@ static udsdx::Matrix4x4 ToMatrix4x4(const aiMatrix4x4& m)
 
 namespace udsdx
 {
-	RiggedMesh::RiggedMesh(const aiScene& assimpScene, const Matrix4x4& preMultiplication) : MeshBase()
+	RiggedMesh::RiggedMesh(const aiScene& assimpScene) : MeshBase()
 	{
-		XMMATRIX vertexTransform = XMLoadFloat4x4(&preMultiplication);
-
 		std::vector<RiggedVertex> vertices;
 		std::vector<UINT> indices;
 
@@ -92,17 +90,6 @@ namespace udsdx
 					vertex.tangent.y = mesh->mTangents[i].y;
 					vertex.tangent.z = mesh->mTangents[i].z;
 				}
-
-				XMMATRIX transform = vertexTransform;
-				XMVECTOR pos = XMLoadFloat3(&vertex.position);
-				XMVECTOR nor = XMLoadFloat3(&vertex.normal);
-				XMVECTOR tan = XMLoadFloat3(&vertex.tangent);
-				pos = XMVector3Transform(pos, transform);
-				nor = XMVector3TransformNormal(nor, transform);
-				tan = XMVector3TransformNormal(tan, transform);
-				XMStoreFloat3(&vertex.position, pos);
-				XMStoreFloat3(&vertex.normal, nor);
-				XMStoreFloat3(&vertex.tangent, tan);
 
 				vertex.boneIndices = 0;
 				vertex.boneWeights = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);

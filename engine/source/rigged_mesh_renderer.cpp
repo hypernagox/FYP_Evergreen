@@ -128,7 +128,7 @@ namespace udsdx
 		m_boneConstantsCache.resize(numSubmeshes);
 	}
 
-	void RiggedMeshRenderer::SetAnimation(AnimationClip* animationClip, bool forcePlay)
+	void RiggedMeshRenderer::SetAnimation(AnimationClip* animationClip, bool loop, bool forcePlay)
 	{
 		if (!forcePlay && m_animation == animationClip)
 		{
@@ -142,6 +142,7 @@ namespace udsdx
 		m_animationTime = 0.0f;
 		m_transitionFactor = 0.0f;
 		m_animation = animationClip;
+		m_loop = loop;
 	}
 
 	ID3D12PipelineState* RiggedMeshRenderer::GetPipelineState() const
@@ -174,7 +175,8 @@ namespace udsdx
 		}
 		else
 		{
-			m_animation->PopulateTransforms(m_animationTime, names, offsets, out);
+			float animationTime = m_loop ? fmodf(m_animationTime, m_animation->GetAnimationDuration()) : m_animationTime;
+			m_animation->PopulateTransforms(animationTime, names, offsets, out);
 		}
 		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
 		{
@@ -194,7 +196,8 @@ namespace udsdx
 		}
 		else
 		{
-			m_riggedMesh->PopulateTransforms(submeshIndex, *m_animation, m_animationTime, out);
+			float animationTime = m_loop ? fmodf(m_animationTime, m_animation->GetAnimationDuration()) : m_animationTime;
+			m_riggedMesh->PopulateTransforms(submeshIndex, *m_animation, animationTime, out);
 		}
 		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
 		{
