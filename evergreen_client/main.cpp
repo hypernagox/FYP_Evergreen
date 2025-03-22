@@ -190,8 +190,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     {
         terrainObj = std::make_shared<SceneObject>();
-        terrainObj->GetTransform()->SetLocalPosition(Vector3(512.0f, 0, 512.0f));
-        terrainObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 1024.0f);
+        terrainObj->GetTransform()->SetLocalPosition(Vector3(-512.0f, 0, -512.0f));
+        terrainObj->GetTransform()->SetLocalScale(Vector3::One * 1024.0f);
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
         terrainRenderer->SetMesh(terrainMesh.get());
         terrainRenderer->SetMaterial(terrainMaterial.get());
@@ -221,6 +221,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		auto guiRenderer = guiObj->AddComponent<PlayerStatusGUI>();
 		scene->AddObject(guiObj);
         g_heroComponent->SetPlayerStatusGUI(guiRenderer);
+    }
+
+    {
+        auto textObj = std::make_shared<SceneObject>();
+        auto textRenderer = textObj->AddComponent<GUIText>();
+        textRenderer->SetText(L"테스트 문장\n테스트 문장");
+        textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
+
+        scene->AddObject(textObj);
     }
 
     if constexpr (true == g_bUseNetWork)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pch.h"
-#include "component.h"
+#include "gui_element.h"
 #include "frame_resource.h"
 
 namespace udsdx
@@ -9,30 +9,23 @@ namespace udsdx
 	class Scene;
 	class Texture;
 
-	class GUIImage : public Component
+	class GUIImage : public GUIElement
 	{
-	public:
-		static ID3D12PipelineState* GetPipelineState();
-
 	public:
 		GUIImage(const std::shared_ptr<SceneObject>& object);
 
 	public:
-		void PostUpdate(const Time& time, Scene& scene) override;
-		void Render(RenderParam& param, int instances = 1);
+		void Render(RenderParam& param) override;
 
 	public:
-		Vector2 GetSize() const { return m_size; }
-		void SetSize(const Vector2& value) { m_size = value; }
+		Vector2Int GetSize() const { return m_size; }
+		void SetSize(const Vector2Int& value) { m_size = value; }
 
 		Texture* GetTexture() const { return m_texture; }
 		void SetTexture(Texture* value, bool setImageSize = false);
 
 	private:
-		static ComPtr<ID3D12PipelineState> g_pipelineState;
-
-	private:
-		Texture* m_texture;
-		Vector2 m_size = Vector2::One * 100.0f;
+		Texture* m_texture = nullptr;
+		Vector2Int m_size = Vector2Int(100, 100);
 	};
 }

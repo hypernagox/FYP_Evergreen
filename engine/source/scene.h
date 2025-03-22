@@ -6,7 +6,7 @@ namespace udsdx
 {
 	class SceneObject;
 	class RendererBase;
-	class GUIImage;
+	class GUIElement;
 	class Camera;
 	class LightDirectional;
 
@@ -28,7 +28,7 @@ namespace udsdx
 		void EnqueueRenderLight(LightDirectional* light);
 		void EnqueueRenderObject(RendererBase* object, RenderGroup group);
 		void EnqueueRenderShadowObject(RendererBase* object);
-		void EnqueueRenderGUIObject(GUIImage* object);
+		void EnqueueRenderGUIObject(GUIElement* object);
 
 		void RenderShadowSceneObjects(RenderParam& param, int instances = 1);
 		void RenderSceneObjects(RenderParam& param, RenderGroup group, int instances = 1);
@@ -38,6 +38,7 @@ namespace udsdx
 		void PassRenderShadow(RenderParam& param, Camera* camera, LightDirectional* light);
 		void PassRenderSSAO(RenderParam& param, Camera* camera);
 		void PassRenderMain(RenderParam& param, Camera* camera, D3D12_GPU_VIRTUAL_ADDRESS cameraCbv);
+		void PassRenderHUD(RenderParam& param);
 
 	protected:
 		std::shared_ptr<SceneObject> m_rootObject;
@@ -46,7 +47,7 @@ namespace udsdx
 		std::vector<LightDirectional*> m_renderLightQueue;
 		std::array<std::vector<RendererBase*>, 2> m_renderObjectQueues;
 		std::vector<RendererBase*> m_renderShadowObjectQueue;
-		std::vector<GUIImage*> m_renderGUIObjectQueue;
+		std::vector<GUIElement*> m_renderGUIObjectQueue;
 	};
 }
 

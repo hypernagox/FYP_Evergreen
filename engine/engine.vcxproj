@@ -247,8 +247,10 @@
     </ClCompile>
     <ClCompile Include="source\debug_console.cpp" />
     <ClCompile Include="source\deferred_renderer.cpp" />
+    <ClCompile Include="source\font.cpp" />
     <ClCompile Include="source\frame_debug.cpp" />
     <ClCompile Include="source\frame_resource.cpp" />
+    <ClCompile Include="source\gui_element.cpp" />
     <ClCompile Include="source\gui_image.cpp" />
     <ClCompile Include="source\gui_text.cpp" />
     <ClCompile Include="source\inline_mesh_renderer.cpp" />
@@ -300,8 +302,10 @@
     <ClInclude Include="source\debug_console.h" />
     <ClInclude Include="source\deferred_renderer.h" />
     <ClInclude Include="source\define.h" />
+    <ClInclude Include="source\font.h" />
     <ClInclude Include="source\frame_debug.h" />
     <ClInclude Include="source\frame_resource.h" />
+    <ClInclude Include="source\gui_element.h" />
     <ClInclude Include="source\gui_image.h" />
     <ClInclude Include="source\gui_text.h" />
     <ClInclude Include="source\inline_mesh_renderer.h" />

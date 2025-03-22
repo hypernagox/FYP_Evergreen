@@ -69,8 +69,12 @@ using namespace DirectX;
 #include <directxtk12/Keyboard.h>
 #include <directxtk12/SimpleMath.h>
 #include <directxtk12/ResourceUploadBatch.h>
+#include <directxtk12/SpriteBatch.h>
+#include <directxtk12/SpriteFont.h>
+#include <directxtk12/GraphicsMemory.h>
 #include <directxtk12/DDSTextureLoader.h>
 #include <directxtk12/WICTextureLoader.h>
+#include <directxtk12/CommonStates.h>
 
 // Tracy Profiler
 #include "../tracy/public/tracy/Tracy.hpp"

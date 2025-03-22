@@ -13,6 +13,7 @@
 #include "debug_console.h"
 #include "audio.h"
 #include "texture.h"
+#include "font.h"
 #include "shadow_map.h"
 #include "screen_space_ao.h"
 #include "deferred_renderer.h"
@@ -71,6 +72,8 @@ namespace udsdx
 		auto resource = Singleton<Resource>::GetInstance();
 		m_timeMeasure = Singleton<TimeMeasure>::GetInstance();
 
+		m_graphicsMemory = std::make_unique<GraphicsMemory>(m_d3dDevice.Get());
+
 #if defined(DEBUG) || defined(_DEBUG)
 		Assimp::DefaultLogger::create();
 		Assimp::DefaultLogger::get()->attachStream(new AssimpLogStream(), Assimp::Logger::VERBOSE);
@@ -84,6 +87,7 @@ namespace udsdx
 		CreateDescriptorHeaps();
 		RegisterDescriptorsToHeaps();
 		BuildConstantBuffers();
+		InitializeSpriteBatch();
 
 		ExecuteCommandList();
 		OnResizeWindow(m_clientWidth, m_clientHeight);
@@ -303,13 +307,13 @@ namespace udsdx
 			// Release the context
 			TracyD3D12Destroy(m_tracyQueueCtx);
 			ReleaseImGui();
+
+			m_graphicsMemory.reset();
 		}
 	}
 
 	void Core::RegisterDescriptorsToHeaps()
 	{ ZoneScoped;
-		std::vector<Texture*> textures = INSTANCE(Resource)->LoadAll<Texture>();
-
 		DescriptorParam descriptorParam{
 			.CbvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetCPUDescriptorHandleForHeapStart()),
 			.SrvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_srvHeap->GetCPUDescriptorHandleForHeapStart()),
@@ -327,9 +331,14 @@ namespace udsdx
 		m_screenSpaceAO->BuildDescriptors(descriptorParam, m_depthStencilBuffer.Get());
 		m_motionBlur->BuildDescriptors(descriptorParam);
 
-		for (auto texture : textures)
+		for (auto texture : INSTANCE(Resource)->LoadAll<Texture>())
 		{
 			texture->CreateShaderResourceView(m_d3dDevice.Get(), descriptorParam);
+		}
+
+		for (auto font : INSTANCE(Resource)->LoadAll<Font>())
+		{
+			font->CreateShaderResourceView(m_d3dDevice.Get(), descriptorParam);
 		}
 
 		m_srvHeapSize = static_cast<UINT>(descriptorParam.SrvCpuHandle.ptr - m_srvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_cbvSrvUavDescriptorSize;
@@ -459,6 +468,21 @@ namespace udsdx
 		DebugConsole::Log(text);
 	}
 
+	void Core::InitializeSpriteBatch()
+	{
+		ResourceUploadBatch uploadBatch(m_d3dDevice.Get());
+
+		uploadBatch.Begin();
+
+		RenderTargetState rtState(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_UNKNOWN);
+
+		m_hudSpriteBatch = std::make_unique<SpriteBatch>(m_d3dDevice.Get(), uploadBatch, SpriteBatchPipelineStateDescription(rtState, &CommonStates::NonPremultiplied));
+		m_hudSpriteBatchPremultipliedAlpha = std::make_unique<SpriteBatch>(m_d3dDevice.Get(), uploadBatch, SpriteBatchPipelineStateDescription(rtState));
+
+		auto uploadResourcesFinished = uploadBatch.End(INSTANCE(Core)->GetCommandQueue());
+		uploadResourcesFinished.wait();
+	}
+
 	void Core::DisplayFrameStats()
 	{
 		constexpr int RefreshRate = 15;
@@ -584,7 +608,11 @@ namespace udsdx
 			.ConstantBufferView = objectCB->Resource()->GetGPUVirtualAddress(),
 			.DepthStencilView = DepthStencilView(),
 			.RenderTargetView = CurrentBackBufferView(),
+
 			.RenderTargetResource = CurrentBackBuffer(),
+
+			.SpriteBatchNonPremultipliedAlpha = m_hudSpriteBatch.get(),
+			.SpriteBatchPreMultipliedAlpha = m_hudSpriteBatchPremultipliedAlpha.get(),
 
 			.RenderShadowMap = m_shadowMap.get(),
 			.RenderScreenSpaceAO = m_screenSpaceAO.get(),

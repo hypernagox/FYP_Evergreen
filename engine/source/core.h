@@ -95,6 +95,8 @@ namespace udsdx
 		// Enumerate adapters and outputs using DXGI Factory
 		void LogAdapterInfo();
 
+		void InitializeSpriteBatch();
+
 	protected:
 		HINSTANCE	m_hInstance = 0;
 		HWND		m_hMainWnd = 0;
@@ -215,6 +217,12 @@ namespace udsdx
 		std::unique_ptr<ShadowMap> m_shadowMap;
 		std::unique_ptr<ScreenSpaceAO> m_screenSpaceAO;
 		std::unique_ptr<MotionBlur> m_motionBlur;
+
+		std::unique_ptr<GraphicsMemory> m_graphicsMemory;
+
+		// DirectXTK Sprite Batch for HUD rendering
+		std::unique_ptr<SpriteBatch> m_hudSpriteBatch;
+		std::unique_ptr<SpriteBatch> m_hudSpriteBatchPremultipliedAlpha;
 	};
 }
 

@@ -59,6 +59,14 @@ namespace udsdx
 		std::unique_ptr<ResourceObject> Load(std::wstring_view path) override;
 	};
 
+	class FontLoader : public ResourceLoader
+	{
+	public:
+		FontLoader(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+
+		std::unique_ptr<ResourceObject> Load(std::wstring_view path) override;
+	};
+
 	class Resource
 	{
 	private:

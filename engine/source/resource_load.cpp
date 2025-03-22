@@ -8,6 +8,7 @@
 #include "debug_console.h"
 #include "audio.h"
 #include "audio_clip.h"
+#include "font.h"
 
 // Assimp Library
 #include <assimp/Importer.hpp>
@@ -87,6 +88,7 @@ namespace udsdx
 		m_loaders.emplace(L"model", std::make_unique<ModelLoader>(device, commandList));
 		m_loaders.emplace(L"shader", std::make_unique<ShaderLoader>(device, commandList, rootSignature));
 		m_loaders.emplace(L"audio", std::make_unique<AudioClipLoader>(device, commandList));
+		m_loaders.emplace(L"font", std::make_unique<FontLoader>(device, commandList));
 	}
 
 	void Resource::SetResourceRootPath(std::wstring_view path)
@@ -109,6 +111,7 @@ namespace udsdx
 		m_extensionDictionary.emplace(L".gltf", L"model");
 		m_extensionDictionary.emplace(L".hlsl", L"shader");
 		m_extensionDictionary.emplace(L".wav", L"audio");
+		m_extensionDictionary.emplace(L".spritefont", L"font");
 	}
 
 	void Resource::InitializeIgnoreFiles()
@@ -258,5 +261,15 @@ namespace udsdx
 	std::unique_ptr<ResourceObject> AudioClipLoader::Load(std::wstring_view path)
 	{ ZoneScoped;
 		return std::make_unique<AudioClip>(path, m_audioEngine);
+	}
+
+	FontLoader::FontLoader(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) : ResourceLoader(device, commandList)
+	{
+
+	}
+
+	std::unique_ptr<ResourceObject> FontLoader::Load(std::wstring_view path)
+	{
+		return std::make_unique<Font>(path);
 	}
 }

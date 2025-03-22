@@ -52,6 +52,9 @@ namespace udsdx
 		const D3D12_CPU_DESCRIPTOR_HANDLE& RenderTargetView;
 		ID3D12Resource* RenderTargetResource;
 
+		SpriteBatch* SpriteBatchNonPremultipliedAlpha;
+		SpriteBatch* SpriteBatchPreMultipliedAlpha;
+
 		ShadowMap* RenderShadowMap;
 		ScreenSpaceAO* RenderScreenSpaceAO;
 		MotionBlur* RenderMotionBlur;

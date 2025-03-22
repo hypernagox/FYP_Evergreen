@@ -11,6 +11,8 @@
 #include "shader.h"
 #include "texture.h"
 #include "audio_clip.h"
+#include "font.h"
+
 #include "shadow_map.h"
 #include "deferred_renderer.h"
 #include "shader_compile.h"
