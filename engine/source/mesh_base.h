@@ -17,6 +17,10 @@ namespace udsdx
 		UINT NodeID = 0;
 		std::vector<std::string> BoneNodeIDs;
 		std::vector<Matrix4x4> BoneOffsets;
+
+		// Metadata
+		std::string DiffuseTexturePath = {};
+		std::string NormalTexturePath = {};
 	};
 
 	class MeshBase : public ResourceObject

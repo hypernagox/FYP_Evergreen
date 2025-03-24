@@ -30,6 +30,7 @@ namespace udsdx
 		std::unordered_map<std::string, Matrix4x4> boneTransforms;
 		std::queue<aiNode*> bfsSearch;
 		bfsSearch.push(model->mRootNode);
+		
 		while (!bfsSearch.empty())
 		{
 			auto node = bfsSearch.front();
@@ -59,6 +60,23 @@ namespace udsdx
 				submesh.IndexCount = mesh->mNumFaces * 3;
 				submesh.StartIndexLocation = static_cast<UINT>(indices.size());
 				submesh.BaseVertexLocation = static_cast<UINT>(vertices.size());
+				
+				aiMaterial* material = model->mMaterials[mesh->mMaterialIndex];
+				if (material != nullptr)
+				{
+					aiString texturePath;
+					if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
+					{
+						submesh.DiffuseTexturePath = std::filesystem::path(texturePath.C_Str()).filename().string();
+						DebugConsole::Log(std::string("\tDiffuse Texture File Name: ") + submesh.DiffuseTexturePath.c_str());
+					}
+					if (material->GetTexture(aiTextureType_NORMALS, 0, &texturePath) == AI_SUCCESS)
+					{
+						submesh.NormalTexturePath = std::filesystem::path(texturePath.C_Str()).filename().string();
+						DebugConsole::Log(std::string("\tNormal Texture File Name: ") + submesh.NormalTexturePath.c_str());
+					}
+				}
+
 				m_submeshes.emplace_back(submesh);
 
 				for (UINT i = 0; i < mesh->mNumVertices; ++i)

@@ -15,6 +15,8 @@ public:
 private:
 	std::shared_ptr<udsdx::SceneObject> m_healthBackground;
 	std::shared_ptr<udsdx::SceneObject> m_healthFill;
+	std::shared_ptr<udsdx::SceneObject> m_textObj;
+	udsdx::GUIText* m_textRenderer;
 
 	float m_healthFillWidthCache = 0.0f;
 
