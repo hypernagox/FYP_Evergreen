@@ -1,11 +1,13 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using System;
 using UnityEngine.AI;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Linq;
+using System.Text;
+using UnityEngine;
 
 namespace Extend
 {
@@ -39,7 +41,7 @@ namespace Extend
                 EditorUtility.DisplayDialog("오류", "NavMesh를 NavBin 파일로 내보내기 실패!", "닫기");
         }
 
-        [UnityEditor.MenuItem("NavMeshExporter/Debug/ExportToJson")]
+        [UnityEditor.MenuItem("NavMeshExporter/ExportToJson")]
         static void ExportToJson()
         {
             ProgressBarName = "ExportToJson";
@@ -51,7 +53,7 @@ namespace Extend
             EditorUtility.DisplayDialog("알림", "NavMesh를 JSON 파일로 내보내기 성공!", "확인");
         }
 
-        [UnityEditor.MenuItem("NavMeshExporter/Debug/ExportToObj")]
+        [UnityEditor.MenuItem("NavMeshExporter/ExportToObj")]
         static void ExportToObj()
         {
             ProgressBarName = "ExportToObj";
@@ -62,15 +64,6 @@ namespace Extend
             EditorUtility.ClearProgressBar();
             EditorUtility.DisplayDialog("알림", "NavMesh를 OBJ 파일로 내보내기 성공!", "확인");
         }
-
-        static void RevertX(ref List<Vector3> vertices)
-        {
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                vertices[i] = new Vector3(-vertices[i].x, vertices[i].y, vertices[i].z);
-            }
-        }
-
         static void GetBounds(List<Vector3> vertices, ref float[] boundsMin, ref float[] boundsMax)
         {
             for (int axis = 0; axis <= 2; axis++)
@@ -164,46 +157,61 @@ namespace Extend
 
         static void GenNeighbor(List<List<int>> polys, ref List<List<int>> neighbor, float progress)
         {
+            if (neighbor == null)
+                neighbor = new List<List<int>>();
+
             for (int i = 0; i < polys.Count; i++)
+                neighbor.Add(new List<int>(Enumerable.Repeat((int)NullIndex, MaxVertexPerPoly)));
+
+            var edgeToPolys = new Dictionary<(int, int), List<(int polyIndex, int edgeIndex)>>();
+
+            for (int polyIndex = 0; polyIndex < polys.Count; polyIndex++)
             {
-                float detailPro = progress + 0.1f * (i + 1) / polys.Count;
-                EditorUtility.DisplayProgressBar(ProgressBarName, "인접 다각형 데이터 가져오는 중 (" + (i + 1) + "/" + polys.Count + ")", detailPro);
+                var poly = polys[polyIndex];
+                int validVerts = GetVaildVertexNum(poly);
 
-                neighbor.Add(new List<int>());
-                for (int j = 0; j < MaxVertexPerPoly; j++)
-                    neighbor[i].Add(NullIndex);
-
-                for (int j = 0; j < polys.Count; j++)
+                for (int i = 0; i < validVerts; i++)
                 {
-                    if (i == j)
-                        continue;
+                    int v1 = poly[i];
+                    int v2 = poly[(i + 1) % validVerts];
+                    var edgeKey = (Math.Min(v1, v2), Math.Max(v1, v2));
 
-                    List<int> shardVertex = new List<int>();
-                    GetShardVertex(polys[i], polys[j], ref shardVertex);
-
-                    if (shardVertex.Count > 2)
+                    if (!edgeToPolys.TryGetValue(edgeKey, out var list))
                     {
-                        EditorUtility.DisplayDialog("오류", "다각형 " + i + "과(와) " + j + " 사이에 2개 이상의 정점이 공유됨", "확인");
-                        return;
+                        list = new List<(int, int)>();
+                        edgeToPolys[edgeKey] = list;
                     }
+                    list.Add((polyIndex, i));
+                }
+            }
 
-                    if (shardVertex.Count == 2)
-                    {
-                        if (shardVertex[0] == 0)
-                        {
-                            if (shardVertex[1] == 1)
-                                neighbor[i][0] = j;
-                            else
-                                neighbor[i][GetVaildVertexNum(polys[i]) - 1] = j;
-                        }
-                        else
-                        {
-                            neighbor[i][shardVertex[0]] = j;
-                        }
-                    }
+            int count = 0;
+            foreach (var kvp in edgeToPolys)
+            {
+                var polyList = kvp.Value;
+
+                if (polyList.Count == 2)
+                {
+                    var (a, aIdx) = polyList[0];
+                    var (b, bIdx) = polyList[1];
+                    neighbor[a][aIdx] = b;
+                    neighbor[b][bIdx] = a;
+                }
+                else if (polyList.Count > 2)
+                {
+                    Debug.LogError($"❌ 여러 폴리곤이 같은 edge를 공유함: {kvp.Key.Item1}, {kvp.Key.Item2}");
+                }
+
+
+                if (++count % 500 == 0)
+                {
+                    float detailPro = progress + 0.1f * count / edgeToPolys.Count;
+                    EditorUtility.DisplayProgressBar(ProgressBarName, $"인접 다각형 계산 중 ({count}/{edgeToPolys.Count})", detailPro);
                 }
             }
         }
+
+
 
         static private void AddPolyByVertex(List<int> vertexList, ref List<List<int>> polys, bool isReverse)
         {
@@ -226,6 +234,7 @@ namespace Extend
             EditorUtility.DisplayProgressBar(ProgressBarName, "NavMesh 삼각형 데이터 가져오는 중", progress);
             UnityEngine.AI.NavMeshTriangulation navtri = UnityEngine.AI.NavMesh.CalculateTriangulation();
 
+            Dictionary<Vector3, int> vertexMap = new Dictionary<Vector3, int>(navtri.vertices.Length);
             Dictionary<int, int> indexmap = new Dictionary<int, int>();
             List<Vector3> repos = new List<Vector3>();
 
@@ -234,41 +243,34 @@ namespace Extend
 
             for (int i = 0; i < navtri.vertices.Length; i++)
             {
-                detailPro = (progress + mergeSameVertexSumPro * (i + 1) / navtri.vertices.Length);
-                EditorUtility.DisplayProgressBar(ProgressBarName, "동일 정점 병합 중(" + (i + 1) + "/" + navtri.vertices.Length + ")", detailPro);
+                if (i % 10 == 0)
+                    EditorUtility.DisplayProgressBar(ProgressBarName, $"동일 정점 병합 중({i + 1}/{navtri.vertices.Length})", progress + mergeSameVertexSumPro * (i + 1) / navtri.vertices.Length);
 
-                int ito = -1;
-                for (int j = 0; j < repos.Count; j++)
+                if (!vertexMap.TryGetValue(navtri.vertices[i], out int existingIndex))
                 {
-                    if (Vector3.Distance(navtri.vertices[i], repos[j]) < 0.01f)
-                    {
-                        ito = j;
-                        break;
-                    }
-                }
-                if (ito < 0)
-                {
-                    indexmap[i] = repos.Count;
+                    existingIndex = repos.Count;
                     repos.Add(navtri.vertices[i]);
+                    vertexMap[navtri.vertices[i]] = existingIndex;
                 }
-                else
-                {
-                    indexmap[i] = ito;
-                }
+
+                indexmap[i] = existingIndex;
             }
 
             progress = detailPro;
             detailPro = 0.0f;
 
-            List<int> polylast = new List<int>();
+            HashSet<int> polylast = new HashSet<int>();
             List<List<int>> polys = new List<List<int>>();
             MaxVertexPerPoly = 6;
             float makePolySumPro = 0.1f;
 
             for (int i = 0; i < navtri.indices.Length / 3; i++)
             {
-                detailPro = progress + makePolySumPro * i / (navtri.indices.Length / 3);
-                EditorUtility.DisplayProgressBar(ProgressBarName, "인접 삼각형 병합 중(" + i + "/" + (navtri.indices.Length / 3) + ")", detailPro);
+                if (i % 10 == 0)
+                {
+                    detailPro = progress + makePolySumPro * (i / (float)(navtri.indices.Length / 3));
+                    EditorUtility.DisplayProgressBar(ProgressBarName, $"인접 삼각형 병합 중({i}/{navtri.indices.Length / 3})", detailPro);
+                }
 
                 int i0 = navtri.indices[i * 3 + 0];
                 int i1 = navtri.indices[i * 3 + 1];
@@ -276,15 +278,15 @@ namespace Extend
 
                 if (polylast.Contains(i0) || polylast.Contains(i1) || polylast.Contains(i2))
                 {
-                    if (!polylast.Contains(i0)) polylast.Add(i0);
-                    if (!polylast.Contains(i1)) polylast.Add(i1);
-                    if (!polylast.Contains(i2)) polylast.Add(i2);
+                    polylast.Add(i0);
+                    polylast.Add(i1);
+                    polylast.Add(i2);
                 }
                 else
                 {
                     if (polylast.Count > 0)
                     {
-                        AddPolyByVertex(polylast, ref polys, style == "json");
+                        AddPolyByVertex(polylast.ToList(), ref polys, style == "json");
                     }
                     polylast.Clear();
                     polylast.Add(i0);
@@ -295,12 +297,12 @@ namespace Extend
 
             if (polylast.Count > 0)
             {
-                AddPolyByVertex(polylast, ref polys, style == "json");
+                AddPolyByVertex(polylast.ToList(), ref polys, style == "json");
             }
 
             progress = detailPro;
             detailPro = 0.0f;
-            string outnav = "";
+            StringBuilder outnavBuilder = new StringBuilder();
 
             if (style == "json")
             {
@@ -317,108 +319,111 @@ namespace Extend
 
                 List<List<int>> neighbor = new List<List<int>>();
                 GenNeighbor(polys, ref neighbor, progress);
-
                 progress += 0.1f;
+
                 MergePolyAndNeighbor(ref polys, neighbor);
 
                 float[] boundsMin = new float[3];
                 float[] boundsMax = new float[3];
 
                 EditorUtility.DisplayProgressBar(ProgressBarName, "모든 정점의 X축 반전", progress += 0.1f);
-                RevertX(ref repos);
-
+              
                 EditorUtility.DisplayProgressBar(ProgressBarName, "바운딩 박스 계산", progress += 0.1f);
                 GetBounds(repos, ref boundsMin, ref boundsMax);
 
                 for (int i = 0; i < repos.Count; i++)
                 {
-                    ushort x = (ushort)Math.Round((repos[i].x - boundsMin[0]) / xzCellSize);
-                    ushort y = (ushort)Math.Round((repos[i].y - boundsMin[1]) / yCellSize);
-                    ushort z = (ushort)Math.Round((repos[i].z - boundsMin[2]) / xzCellSize);
-                    repos[i] = new Vector3(x, y, z);
+                    float rx = repos[i].x - boundsMin[0];
+                    float ry = repos[i].y - boundsMin[1];
+                    float rz = repos[i].z - boundsMin[2];
+                    repos[i] = new Vector3(
+                        (ushort)Math.Round(rx / xzCellSize),
+                        (ushort)Math.Round(ry / yCellSize),
+                        (ushort)Math.Round(rz / xzCellSize)
+                    );
                 }
 
-                outnav = "{";
-                outnav += "\"nvp\":" + MaxVertexPerPoly + ",\n";
-                outnav += "\"cs\":" + xzCellSize + ",\n";
-                outnav += "\"ch\":" + yCellSize + ",\n";
+                outnavBuilder.Append("{");
+                outnavBuilder.AppendFormat("\"nvp\":{0},\n", MaxVertexPerPoly);
+                outnavBuilder.AppendFormat("\"cs\":{0},\n", xzCellSize);
+                outnavBuilder.AppendFormat("\"ch\":{0},\n", yCellSize);
 
-                NavMeshBuildSettings settings = NavMesh.GetSettingsByIndex(0);
-                outnav += "\"agentHeight\":" + settings.agentHeight + ",\n";
-                outnav += "\"agentRadius\":" + settings.agentRadius + ",\n";
-                outnav += "\"agentMaxClimb\":" + settings.agentClimb + ",\n";
+                var settings = NavMesh.GetSettingsByIndex(0);
+                outnavBuilder.AppendFormat("\"agentHeight\":{0},\n", settings.agentHeight);
+                outnavBuilder.AppendFormat("\"agentRadius\":{0},\n", settings.agentRadius);
+                outnavBuilder.AppendFormat("\"agentMaxClimb\":{0},\n", settings.agentClimb);
 
-                outnav += "\"bmin\":[" + boundsMin[0] + ", " + boundsMin[1] + ", " + boundsMin[2] + "],\n";
-                outnav += "\"bmax\":[" + boundsMax[0] + ", " + boundsMax[1] + ", " + boundsMax[2] + "],\n";
-                outnav += "\"v\":[\n";
+                outnavBuilder.AppendFormat("\"bmin\":[{0},{1},{2}],\n", boundsMin[0], boundsMin[1], boundsMin[2]);
+                outnavBuilder.AppendFormat("\"bmax\":[{0},{1},{2}],\n", boundsMax[0], boundsMax[1], boundsMax[2]);
 
-                detailPro = 0.0f;
+                // 정점
+                outnavBuilder.Append("\"v\":[\n");
                 for (int i = 0; i < repos.Count; i++)
                 {
                     detailPro = progress + 0.1f * (i + 1) / repos.Count;
-                    EditorUtility.DisplayProgressBar(ProgressBarName, "JSON 정점 데이터 생성 중(" + (i + 1) + "/" + repos.Count + ")", detailPro);
+                    if (i % 10 == 0)
+                        EditorUtility.DisplayProgressBar(ProgressBarName, $"JSON 정점 데이터 생성 중({i + 1}/{repos.Count})", detailPro);
 
                     if (i > 0)
-                        outnav += ",\n";
-                    outnav += "[" + repos[i].x + "," + repos[i].y + "," + repos[i].z + "]";
+                        outnavBuilder.Append(",\n");
+
+                    outnavBuilder.AppendFormat("[{0},{1},{2}]", repos[i].x, repos[i].y, -repos[i].z);
                 }
-                outnav += "\n],\n\"p\":[\n";
+                outnavBuilder.Append("\n],\n\"p\":[\n");
 
                 progress = detailPro;
-                detailPro = 0.0f;
 
+                // 폴리곤
                 for (int i = 0; i < polys.Count; i++)
                 {
                     detailPro = progress + 0.1f * (i + 1) / polys.Count;
-                    EditorUtility.DisplayProgressBar(ProgressBarName, "JSON 다각형 데이터 생성 중(" + (i + 1) + "/" + polys.Count + ")", detailPro);
-
-                    string outs = polys[i][0].ToString();
-                    for (int j = 1; j < MaxVertexPerPoly; j++)
-                    {
-                        var verIndex = polys[i][j];
-                        outs += "," + verIndex;
-                    }
-                    for (int j = MaxVertexPerPoly; j < MaxVertexPerPoly * 2; j++)
-                    {
-                        outs += "," + polys[i][j];
-                    }
+                    if (i % 10 == 0)
+                        EditorUtility.DisplayProgressBar(ProgressBarName, $"JSON 다각형 데이터 생성 중({i + 1}/{polys.Count})", detailPro);
 
                     if (i > 0)
-                        outnav += ",\n";
-                    outnav += "[" + outs + "]";
+                        outnavBuilder.Append(",\n");
+
+                    List<int> polyLine = new List<int>();
+                    for (int j = 0; j < MaxVertexPerPoly * 2; j++)
+                        polyLine.Add(polys[i][j]);
+
+                    outnavBuilder.Append("[" + string.Join(",", polyLine) + "]");
                 }
-                outnav += "\n]}";
+
+                outnavBuilder.Append("\n]}");
             }
             else if (style == "obj")
             {
                 detailPro = 0.0f;
-                outnav = "";
 
                 for (int i = 0; i < repos.Count; i++)
                 {
                     detailPro = progress + 0.4f * (i + 1) / polys.Count;
-                    EditorUtility.DisplayProgressBar(ProgressBarName, "OBJ 정점 데이터 생성 중(" + (i + 1) + "/" + repos.Count + ")", detailPro);
-                    outnav += "v " + (repos[i].x * -1) + " " + repos[i].y + " " + repos[i].z + "\r\n";
+                    if (i % 10 == 0)
+                        EditorUtility.DisplayProgressBar(ProgressBarName, $"OBJ 정점 데이터 생성 중({i + 1}/{repos.Count})", detailPro);
+
+                    outnavBuilder.AppendFormat("v {0} {1} {2}\r\n", repos[i].x, repos[i].y, -repos[i].z);
                 }
-                outnav += "\r\n";
+                outnavBuilder.Append("\r\n");
 
                 progress = detailPro;
-                detailPro = 0.0f;
 
                 for (int i = 0; i < polys.Count; i++)
                 {
                     detailPro = progress + 0.5f * (i + 1) / polys.Count;
-                    EditorUtility.DisplayProgressBar(ProgressBarName, "OBJ 다각형 데이터 생성 중(" + (i + 1) + "/" + polys.Count + ")", detailPro);
+                    if (i % 10 == 0)
+                        EditorUtility.DisplayProgressBar(ProgressBarName, $"OBJ 다각형 데이터 생성 중({i + 1}/{polys.Count})", detailPro);
 
-                    outnav += "f";
+                    outnavBuilder.Append("f");
                     for (int j = polys[i].Count - 1; j >= 0; j--)
                     {
-                        outnav += " " + (indexmap[polys[i][j]] + 1);
+                        outnavBuilder.Append(" " + (indexmap[polys[i][j]] + 1));
                     }
-                    outnav += "\r\n";
+                    outnavBuilder.Append("\r\n");
                 }
             }
-            return outnav;
+
+            return outnavBuilder.ToString();
         }
     }
 }
