@@ -24,10 +24,10 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
 		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
 	}
-	m_playerMaterials[2]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
-	m_playerMaterials[3]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
-	m_playerMaterials[0]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_body_BaseColor.png")));
-	m_playerMaterials[1]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
+	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
+	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
+	m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_body_BaseColor.png")));
+	m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
 
 	auto sceneObject = GetSceneObject();
 	sceneObject->AddChild(m_rendererObj);
@@ -57,7 +57,7 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 
 	{
 		m_toolMaterial = std::make_shared<udsdx::Material>();
-		m_toolMaterial->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword_albedo.jpg")));
+		m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword_albedo.jpg")));
 
 		auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
 		toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword.obj")));

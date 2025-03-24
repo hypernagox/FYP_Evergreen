@@ -22,10 +22,11 @@ void TerrainData::CreateBuffer(std::wstring_view instancesPath)
 		std::string prototypeName = prototype["prefab"];
 		for (auto& instance : prototype["instances"])
 		{
-			Vector3 position = Vector3(instance["position"]["x"] * -1.0f, instance["position"]["y"], instance["position"]["z"] * -1.0f);
+			Vector3 position = Vector3(instance["position"]["x"], instance["position"]["y"], instance["position"]["z"]);
 			Quaternion rotation = Quaternion(instance["rotation"]["x"], instance["rotation"]["y"], instance["rotation"]["z"], instance["rotation"]["w"]);
 			Vector3 scale = Vector3(instance["scale"]["x"], instance["scale"]["y"], instance["scale"]["z"]);
 			Matrix4x4 instanceMatrix =
+				Matrix4x4::CreateScale(-1.0f, 1.0f, -1.0f) *
 				Matrix4x4::CreateScale(scale * m_instanceScale) *
 				Matrix4x4::CreateFromQuaternion(rotation) *
 				Matrix4x4::CreateTranslation(position * m_terrainScale);

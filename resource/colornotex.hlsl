@@ -17,8 +17,6 @@ PixelOut PS(VertexOut pin)
     posH /= posH.w;
     pin.PrevPosH /= pin.PrevPosH.w;
     float4 posDelta = posH - pin.PrevPosH;
-    
-    clip(texColor.a - 0.1f);
      
     pOut.Buffer1 = texColor;
     pOut.Buffer2 = PackNormal(normal);

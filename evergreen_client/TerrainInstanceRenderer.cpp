@@ -10,6 +10,11 @@ TerrainInstanceRenderer::TerrainInstanceRenderer(const std::shared_ptr<udsdx::Sc
 
 void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 {
+	if (param.RenderStageIndex == 3)
+	{
+		return;
+	}
+
 	static std::vector<udsdx::Matrix4x4> instanceBuffer;
 	UINT prototypeCount = m_terrainData->GetPrototypeInstanceCount(m_prototypeName);
 	instanceBuffer.resize(prototypeCount);
@@ -58,15 +63,13 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 	{
 		if (index < m_materials.size() && m_materials[index] != nullptr)
 		{
-			udsdx::Texture* mainTex = m_materials[index]->GetMainTexture();
-			if (mainTex != nullptr)
+			for (UINT textureSrcIndex = 0; textureSrcIndex < m_materials[index]->GetTextureCount(); ++textureSrcIndex)
 			{
-				param.CommandList->SetGraphicsRootDescriptorTable(RootParam::MainTexSRV, mainTex->GetSrvGpu());
-			}
-			udsdx::Texture* normalTex = m_materials[index]->GetNormalTexture();
-			if (normalTex != nullptr)
-			{
-				param.CommandList->SetGraphicsRootDescriptorTable(RootParam::NormalSRV, normalTex->GetSrvGpu());
+				const udsdx::Texture* texture = m_materials[index]->GetSourceTexture(textureSrcIndex);
+				if (texture != nullptr)
+				{
+					param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0 + textureSrcIndex, texture->GetSrvGpu());
+				}
 			}
 		}
 		const auto& submesh = submeshes[index];

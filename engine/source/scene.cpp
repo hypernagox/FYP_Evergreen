@@ -164,12 +164,12 @@ namespace udsdx
 		param.SpriteBatchNonPremultipliedAlpha->SetViewport(param.Viewport);
 		param.SpriteBatchPreMultipliedAlpha->SetViewport(param.Viewport);
 		param.SpriteBatchNonPremultipliedAlpha->Begin(param.CommandList);
-		param.SpriteBatchPreMultipliedAlpha->Begin(param.CommandList);
+		//param.SpriteBatchPreMultipliedAlpha->Begin(param.CommandList);
 
 		RenderGUIObjects(param, 1);
 
 		param.SpriteBatchNonPremultipliedAlpha->End();
-		param.SpriteBatchPreMultipliedAlpha->End();
+		//param.SpriteBatchPreMultipliedAlpha->End();
 	}
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)

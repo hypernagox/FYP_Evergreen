@@ -111,7 +111,6 @@ namespace udsdx
 
 		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerShadowCBV, GetConstantBuffer(param.FrameResourceIndex));
 		pCommandList->SetGraphicsRootConstantBufferView(RootParam::PerFrameCBV, param.ConstantBufferView);
-		pCommandList->SetGraphicsRootDescriptorTable(RootParam::ShadowMapSRV, m_srvGpu);
 
 		ShadowConstants shadowConstants;
 		Vector3 lightDirection = light->GetLightDirection();

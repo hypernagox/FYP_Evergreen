@@ -12,14 +12,12 @@ namespace udsdx
 		~Material();
 
 	private:
-		Texture* m_mainTex = nullptr;
-		Texture* m_normalTex = nullptr;
+		std::array<Texture*, 8> m_mainTex = {};
 
 	public:
-		void SetMainTexture(Texture* texture);
-		void SetNormalTexture(Texture* texture);
+		void SetSourceTexture(Texture* texture, UINT index = 0);
 
-		Texture* GetMainTexture() const;
-		Texture* GetNormalTexture() const;
+		UINT GetTextureCount() const;
+		Texture* GetSourceTexture(UINT index = 0) const;
 	};
 }

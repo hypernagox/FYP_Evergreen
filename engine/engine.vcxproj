@@ -266,6 +266,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="source\rect_transform.cpp" />
     <ClCompile Include="source\renderer_base.cpp" />
     <ClCompile Include="source\resource_load.cpp" />
     <ClCompile Include="source\resource_object.cpp" />
@@ -317,6 +318,7 @@
     <ClInclude Include="source\mesh_renderer.h" />
     <ClInclude Include="source\motion_blur.h" />
     <ClInclude Include="source\pch.h" />
+    <ClInclude Include="source\rect_transform.h" />
     <ClInclude Include="source\renderer_base.h" />
     <ClInclude Include="source\resource_load.h" />
     <ClInclude Include="source\resource_object.h" />

@@ -85,10 +85,14 @@ namespace udsdx
 		PrevBonesCBV,
 		PerShadowCBV,
 		PerFrameCBV,
-		MainTexSRV,
-		NormalSRV,
-		ShadowMapSRV,
-		SSAOMapSRV
+		SrcTexSRV_0,
+		SrcTexSRV_1,
+		SrcTexSRV_2,
+		SrcTexSRV_3,
+		SrcTexSRV_4,
+		SrcTexSRV_5,
+		SrcTexSRV_6,
+		SrcTexSRV_7,
 	};
 
 	enum RenderGroup : UINT

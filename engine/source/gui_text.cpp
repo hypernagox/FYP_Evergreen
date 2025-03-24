@@ -11,6 +11,6 @@ namespace udsdx
 
 	void GUIText::Render(RenderParam& param)
 	{
-		m_font->GetSpriteFont()->DrawString(param.SpriteBatchPreMultipliedAlpha, m_text.c_str(), Vector2(100.0f, 100.0f));
+		m_font->GetSpriteFont()->DrawString(param.SpriteBatchNonPremultipliedAlpha, m_text.c_str(), Vector2(100.0f, 100.0f));
 	}
 }

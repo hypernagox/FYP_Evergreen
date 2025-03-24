@@ -13,23 +13,18 @@ namespace udsdx
 
 	}
 
-	void Material::SetMainTexture(Texture* texture)
+	void Material::SetSourceTexture(Texture* texture, UINT index)
 	{
-		m_mainTex = texture;
+		m_mainTex[index] = texture;
 	}
 
-	void Material::SetNormalTexture(Texture* texture)
+	Texture* Material::GetSourceTexture(UINT index) const
 	{
-		m_normalTex = texture;
+		return m_mainTex[index];
 	}
 
-	Texture* Material::GetMainTexture() const
+	UINT Material::GetTextureCount() const
 	{
-		return m_mainTex;
-	}
-
-	Texture* Material::GetNormalTexture() const
-	{
-		return m_normalTex;
+		return static_cast<UINT>(m_mainTex.size());
 	}
 }

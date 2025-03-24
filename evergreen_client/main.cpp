@@ -45,6 +45,7 @@ AuthenticPlayer* g_heroComponent;
 std::shared_ptr<udsdx::Material> terrainMaterial;
 std::shared_ptr<udsdx::Material> playerMaterial;
 std::shared_ptr<udsdx::Material> g_skyboxMaterial;
+std::shared_ptr<udsdx::Material> g_gizmoMaterial;
 std::shared_ptr<udsdx::Mesh> terrainMesh;
 
 std::unique_ptr<HeightMap> heightMap;
@@ -82,9 +83,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     NAVIGATION->RegisterDestroy();
     Common::DataRegistry::Load();
     s2c_PacketHandler::Init();
-    
-   // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)-> Load(RESOURCE_PATH(L"NAVIMESH.bin"));
-   //NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->LoadByObj(RESOURCE_PATH(L"navmesh1000.obj"));
+
     if constexpr (true == g_bUseNetWork)
     {
         if constexpr (true == g_bUseDefaultIP)
@@ -124,10 +123,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     auto shaderTerrain = res->Load<Shader>(RESOURCE_PATH(L"terrain.hlsl"));
 
     playerMaterial = std::make_shared<udsdx::Material>();
-    playerMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
+    playerMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
     terrainMaterial = std::make_shared<udsdx::Material>();
-    terrainMaterial->SetMainTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"T_ground_pine_needles_02_BC_SM.tga")));
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSplatmap.tga")), 0);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSrc_0.png")), 1);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSrc_1.tga")), 2);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSrc_2.png")), 3);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSrc_3.png")), 4);
 
     scene = std::make_shared<Scene>();
 
@@ -138,11 +141,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   
     heroServerComponent->AddComp<MovePacketSender>();
     g_heroComponent = g_heroObj->AddComponent<AuthenticPlayer>();
-
-    // Gizmo Renderer for debugging
-    /*auto gizmoRenderer = g_heroObj->AddComponent<GizmoCylinderRenderer>();
-    gizmoRenderer->SetRadius(1.0f);
-	gizmoRenderer->SetHeight(3.0f);*/
   
     Vector3 temp = Vector3(-4.345f, 76.17f, 0.0f);
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
@@ -189,9 +187,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     {
+        constexpr float TerrainSize = 1024.0f;
+
         terrainObj = std::make_shared<SceneObject>();
-        terrainObj->GetTransform()->SetLocalPosition(Vector3(-512.0f, 0, -512.0f));
-        terrainObj->GetTransform()->SetLocalScale(Vector3::One * 1024.0f);
+        terrainObj->GetTransform()->SetLocalPosition(Vector3(-TerrainSize * 0.5f, 0, -TerrainSize * 0.5f));
+        terrainObj->GetTransform()->SetLocalScale(Vector3(1.0f, 1.0f, 1.0f) * TerrainSize);
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
         terrainRenderer->SetMesh(terrainMesh.get());
         terrainRenderer->SetMaterial(terrainMaterial.get());
@@ -210,7 +210,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         auto skyboxTexture = res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"));
         g_skyboxMaterial = std::make_shared<udsdx::Material>();
-        g_skyboxMaterial->SetMainTexture(skyboxTexture);
+        g_skyboxMaterial->SetSourceTexture(skyboxTexture);
         skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
 
         scene->AddObject(skyboxObj);
@@ -226,10 +226,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         auto textObj = std::make_shared<SceneObject>();
         auto textRenderer = textObj->AddComponent<GUIText>();
-        textRenderer->SetText(L"테스트 문장\n테스트 문장");
+        textRenderer->SetText(L"밺롎궳괽굈갏긵깓긲긃긞긘깈긥깑괧");
         textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 
         scene->AddObject(textObj);
+    }
+
+    if (false)
+    {
+        g_gizmoMaterial = std::make_shared<udsdx::Material>();
+        g_gizmoMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
+
+        auto navMeshVisualizer = std::make_shared<SceneObject>();
+        auto navMeshRenderer = navMeshVisualizer->AddComponent<MeshRenderer>();
+        navMeshRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh.obj")));
+        navMeshRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+        navMeshRenderer->SetMaterial(g_gizmoMaterial.get());
+
+        scene->AddObject(navMeshVisualizer);
     }
 
     if constexpr (true == g_bUseNetWork)

@@ -1,6 +1,11 @@
 #define USE_CUSTOM_SHADOWPS
 #include "common.hlsl"
 
+Texture2D gSrcTex0 : register(t1);
+Texture2D gSrcTex1 : register(t2);
+Texture2D gSrcTex2 : register(t3);
+Texture2D gSrcTex3 : register(t4);
+
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout;
@@ -110,7 +115,15 @@ PixelOut PS(DomainOut pin)
 {
 	PixelOut pOut;
     float3 normal = normalize(mul(pin.NormalW.xyz, (float3x3)gView));
-    float4 texColor = gMainTex.Sample(gSampler, pin.Tex * 16.0f);
+	float2 uvMapped = pin.Tex * 128.0f;
+
+	float4 texSplat = gMainTex.Sample(gSampler, pin.Tex);
+	float4 texColor0 = gSrcTex0.Sample(gSampler, uvMapped);
+	float4 texColor1 = gSrcTex1.Sample(gSampler, uvMapped);
+	float4 texColor2 = gSrcTex2.Sample(gSampler, uvMapped);
+	float4 texColor3 = gSrcTex3.Sample(gSampler, uvMapped);
+	float4 texColor = texColor0 * texSplat.x + texColor1 * texSplat.y + texColor2 * texSplat.z + texColor3 * texSplat.w;
+
     float4 posH = mul(pin.PosW, gViewProj);
     posH /= posH.w;
     pin.PrevPosH /= pin.PrevPosH.w;

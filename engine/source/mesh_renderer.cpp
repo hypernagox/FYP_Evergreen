@@ -44,15 +44,13 @@ namespace udsdx
 		{
 			if (index < m_materials.size() && m_materials[index] != nullptr)
 			{
-				Texture* mainTex = m_materials[index]->GetMainTexture();
-				if (mainTex != nullptr)
+				for (UINT textureSrcIndex = 0; textureSrcIndex < m_materials[index]->GetTextureCount(); ++textureSrcIndex)
 				{
-					param.CommandList->SetGraphicsRootDescriptorTable(RootParam::MainTexSRV, mainTex->GetSrvGpu());
-				}
-				Texture* normalTex = m_materials[index]->GetNormalTexture();
-				if (normalTex != nullptr)
-				{
-					param.CommandList->SetGraphicsRootDescriptorTable(RootParam::NormalSRV, normalTex->GetSrvGpu());
+					const Texture* texture = m_materials[index]->GetSourceTexture(textureSrcIndex);
+					if (texture != nullptr)
+					{
+						param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0 + textureSrcIndex, texture->GetSrvGpu());
+					}
 				}
 			}
 			const auto& submesh = submeshes[index];

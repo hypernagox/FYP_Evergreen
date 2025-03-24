@@ -18,7 +18,7 @@ namespace udsdx
 		objectConstants.PrevWorld = m_prevTransformCache.Transpose();
 
 		param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerObjectCBV, sizeof(ObjectConstants) / 4, &objectConstants, 0);
-		param.CommandList->SetGraphicsRootDescriptorTable(RootParam::MainTexSRV, m_materials[0]->GetMainTexture()->GetSrvGpu());
+		param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0, m_materials[0]->GetSourceTexture()->GetSrvGpu());
 
 		param.CommandList->IASetVertexBuffers(0, 0, nullptr);
 		param.CommandList->IASetIndexBuffer(nullptr);

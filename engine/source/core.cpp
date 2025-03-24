@@ -367,14 +367,7 @@ namespace udsdx
 
 	void Core::BuildRootSignature()
 	{ ZoneScoped;
-		CD3DX12_ROOT_PARAMETER slotRootParameter[9];
-
-		CD3DX12_DESCRIPTOR_RANGE texTable;
-		texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-		CD3DX12_DESCRIPTOR_RANGE normalTable;
-		normalTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
-		CD3DX12_DESCRIPTOR_RANGE shadowMapTable;
-		shadowMapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 2);
+		CD3DX12_ROOT_PARAMETER slotRootParameter[14];
 
 		slotRootParameter[RootParam::PerObjectCBV].InitAsConstants(sizeof(ObjectConstants) / 4, 0);
 		slotRootParameter[RootParam::PerCameraCBV].InitAsConstantBufferView(1);
@@ -382,9 +375,21 @@ namespace udsdx
 		slotRootParameter[RootParam::PrevBonesCBV].InitAsConstantBufferView(2, 1);
 		slotRootParameter[RootParam::PerShadowCBV].InitAsConstantBufferView(3);
 		slotRootParameter[RootParam::PerFrameCBV].InitAsConstantBufferView(4);
-		slotRootParameter[RootParam::MainTexSRV].InitAsDescriptorTable(1, &texTable);
-		slotRootParameter[RootParam::NormalSRV].InitAsDescriptorTable(1, &normalTable);
-		slotRootParameter[RootParam::ShadowMapSRV].InitAsDescriptorTable(1, &shadowMapTable);
+
+		CD3DX12_DESCRIPTOR_RANGE texRange[8]{};
+		for (int i = 0; i < 8; ++i)
+		{
+			texRange[i].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, i, 0);
+		}
+
+		slotRootParameter[RootParam::SrcTexSRV_0].InitAsDescriptorTable(1, &texRange[0]);
+		slotRootParameter[RootParam::SrcTexSRV_1].InitAsDescriptorTable(1, &texRange[1]);
+		slotRootParameter[RootParam::SrcTexSRV_2].InitAsDescriptorTable(1, &texRange[2]);
+		slotRootParameter[RootParam::SrcTexSRV_3].InitAsDescriptorTable(1, &texRange[3]);
+		slotRootParameter[RootParam::SrcTexSRV_4].InitAsDescriptorTable(1, &texRange[4]);
+		slotRootParameter[RootParam::SrcTexSRV_5].InitAsDescriptorTable(1, &texRange[5]);
+		slotRootParameter[RootParam::SrcTexSRV_6].InitAsDescriptorTable(1, &texRange[6]);
+		slotRootParameter[RootParam::SrcTexSRV_7].InitAsDescriptorTable(1, &texRange[7]);
 
 		CD3DX12_STATIC_SAMPLER_DESC samplerDesc[] = {
 			CD3DX12_STATIC_SAMPLER_DESC(
@@ -682,8 +687,8 @@ namespace udsdx
 		frameResource->SetFence(++m_currentFence);
 		m_commandQueue->Signal(m_fence.Get(), m_currentFence);
 
-		// Frame debug
-		// m_frameDebug->Update(m_timeMeasure->GetTime());
+		// Add the one-shot resource to the command queue for execution.
+		m_graphicsMemory->Commit(m_commandQueue.Get());
 	}
 
 	void Core::UpdateMainPassCB()
