@@ -14,17 +14,18 @@ public:
 	virtual void Render(udsdx::RenderParam& param, int instances = 1) override;
 
 public:
-	void AddMesh(udsdx::Mesh* mesh);
+	void SetMesh(udsdx::Mesh* mesh);
 
 	TerrainData* GetTerrainData() const;
-	void SetTerrainData(TerrainData* terrainData);
+	void SetTerrainData(TerrainData* terrainData, std::string_view prototypeName);
 
 	virtual ID3D12PipelineState* GetPipelineState() const override;
 	virtual ID3D12PipelineState* GetShadowPipelineState() const override;
 
 protected:
-	std::vector<udsdx::Mesh*> m_meshes;
+	udsdx::Mesh* m_mesh = nullptr;
 	TerrainData* m_terrainData = nullptr;
+	std::string m_prototypeName;
 
 	std::vector<std::array<std::unique_ptr<UploadBuffer<udsdx::Matrix4x4>>, udsdx::FrameResourceCount>> m_instanceUploadBuffer;
 };

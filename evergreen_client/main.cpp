@@ -45,7 +45,6 @@ AuthenticPlayer* g_heroComponent;
 std::shared_ptr<udsdx::Material> terrainMaterial;
 std::shared_ptr<udsdx::Material> playerMaterial;
 std::shared_ptr<udsdx::Material> g_skyboxMaterial;
-std::array<std::shared_ptr<udsdx::Material>, 2> g_treeMaterials;
 std::shared_ptr<udsdx::Mesh> terrainMesh;
 
 std::unique_ptr<HeightMap> heightMap;
@@ -159,47 +158,39 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     scene->AddObject(playerLightObj);
 
-    {
-        auto treeTexture1 = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\T_beech_atlas_BC.tga"));
-        auto treeTexture2 = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\T_beech_bark_01_BC.tga"));
-
-        g_treeMaterials[0] = std::make_shared<udsdx::Material>();
-        g_treeMaterials[0]->SetMainTexture(treeTexture1);
-        g_treeMaterials[1] = std::make_shared<udsdx::Material>();
-        g_treeMaterials[1]->SetMainTexture(treeTexture2);
-    }
-
     heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta.raw"), 513, 513);
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 128, 128, 1.0f);
     terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
-    terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"terrain_treeInstances.json"), 512.0f, 0.02f);
-    auto terrainInstance = std::make_shared<SceneObject>();
-    auto terrainInstanceRenderer = terrainInstance->AddComponent<TerrainInstanceRenderer>();
-    terrainInstanceRenderer->SetTerrainData(terrainData.get());
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_plant_01.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_plant_03.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_00_B.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_00_D.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_01.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_02.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_03.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_04.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_05.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_06.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_07.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_08.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\beech_tree_09.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Forest_black_cherry_02.fbx")));
-    terrainInstanceRenderer->AddMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Forest_black_cherry_04.fbx")));
-    terrainInstanceRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"colorinstanced.hlsl")));
-    terrainInstanceRenderer->SetMaterial(g_treeMaterials[1].get(), 0);
-    terrainInstanceRenderer->SetMaterial(g_treeMaterials[0].get(), 1);
-    scene->AddObject(terrainInstance);
+    terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
+
+    for (const auto& directory : std::filesystem::recursive_directory_iterator(RESOURCE_PATH(L"environment")))
+    {
+        // if the file is not a regular file(e.g. if it is a directory), skip it
+        if (!directory.is_regular_file())
+            continue;
+
+        std::string filename = directory.path().filename().stem().string();
+        std::wstring suffix = directory.path().extension().wstring();
+        std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
+
+        if (suffix != L".fbx")
+            continue;
+        if (terrainData->GetPrototypeInstanceCount(filename) == 0)
+			continue;
+
+        auto terrainInstance = std::make_shared<SceneObject>();
+        auto terrainInstanceRenderer = terrainInstance->AddComponent<TerrainInstanceRenderer>();
+        terrainInstanceRenderer->SetTerrainData(terrainData.get(), filename);
+        terrainInstanceRenderer->SetMesh(res->Load<udsdx::Mesh>(directory.path().c_str()));
+        terrainInstanceRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotexinstanced.hlsl")));
+
+        scene->AddObject(terrainInstance);
+    }
 
     {
         terrainObj = std::make_shared<SceneObject>();
-        terrainObj->GetTransform()->SetLocalPosition(Vector3(512.0f,0, 512.0f));
+        terrainObj->GetTransform()->SetLocalPosition(Vector3(512.0f, 0, 512.0f));
         terrainObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 1024.0f);
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
         terrainRenderer->SetMesh(terrainMesh.get());

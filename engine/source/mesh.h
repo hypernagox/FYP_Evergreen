@@ -12,6 +12,6 @@ namespace udsdx
 	{
 	public:
 		Mesh(const std::vector<Vertex>& vertices, const std::vector<UINT> indices);
-		Mesh(const aiScene& assimpScene, const Matrix4x4& preMultiplication);
+		Mesh(const aiScene& assimpScene);
 	};
 }
