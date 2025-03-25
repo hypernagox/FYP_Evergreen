@@ -227,7 +227,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         auto textObj = std::make_shared<SceneObject>();
         auto textRenderer = textObj->AddComponent<GUIText>();
         textObj->GetTransform()->SetLocalPosition(Vector3(-640, 480, 0));
-        textRenderer->SetText(L"»ùÇÃ ÅØ½ºÆ®");
+        textRenderer->SetText(GET_DATA(std::wstring, "Intro", "Start"));
         textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 
         scene->AddObject(textObj);

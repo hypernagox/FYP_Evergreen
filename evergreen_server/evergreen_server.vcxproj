@@ -195,6 +195,7 @@
     <ClCompile Include="Death.cpp" />
     <ClCompile Include="DropItem.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="HP.cpp" />

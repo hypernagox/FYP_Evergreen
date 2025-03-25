@@ -1,4 +1,5 @@
 #pragma once
+#include "pch.h"
 
 namespace Common
 {
@@ -23,8 +24,10 @@ namespace Common
 			return m_str2detail_id.find(str.data())->second;
 		}
 	public:
+		static std::wstring Str2Wstr(const std::string_view str) noexcept;
+	public:
 		template<typename T>
-		const T& GetObjectData(const std::string_view obj_name, const std::string_view att_name) const {
+		T GetObjectData(const std::string_view obj_name, const std::string_view att_name) const {
 #ifdef _DEBUG
 #define DBG_ASSERT(cond, msg) \
         if (!(cond)) { \
@@ -44,8 +47,14 @@ namespace Common
 			const auto& attrMap = attrMapIter->second;
 			const auto attrIter = attrMap.find(att_name.data());
 			DBG_ASSERT(attrIter != attrMap.end(), "Attribute not found");
-			DBG_ASSERT(std::holds_alternative<T>(attrIter->second), "Type mismatch for attribute");
-			return std::get<T>(attrIter->second);
+			if constexpr (std::same_as<T, std::wstring>) {
+				DBG_ASSERT(std::holds_alternative<std::string>(attrIter->second), "Type mismatch for attribute");
+				return Str2Wstr(std::get<std::string>(attrIter->second));
+			}
+			else {
+				DBG_ASSERT(std::holds_alternative<T>(attrIter->second), "Type mismatch for attribute");
+				return std::get<T>(attrIter->second);
+			}
 		}
 	private:
 		using AttributeValue = std::variant<int, bool, float, std::string>;

@@ -5,6 +5,7 @@
 
 namespace Common
 {
+
 	void DataRegistry::Load(const std::wstring_view path) noexcept
 	{
         static DataRegistry table;
@@ -86,4 +87,12 @@ namespace Common
             }
         }
 	}
+    std::wstring DataRegistry::Str2Wstr(const std::string_view str) noexcept
+    {
+        const int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.data(), -1, nullptr, 0);
+        std::wstring wstr(size_needed, 0);
+        MultiByteToWideChar(CP_UTF8, 0, str.data(), -1, &wstr[0], size_needed);
+        wstr.pop_back();
+        return wstr;
+    }
 }
