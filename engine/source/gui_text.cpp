@@ -11,6 +11,11 @@ namespace udsdx
 
 	void GUIText::Render(RenderParam& param)
 	{
-		m_font->GetSpriteFont()->DrawString(param.SpriteBatchNonPremultipliedAlpha, m_text.c_str(), Vector2(100.0f, 100.0f));
+		const float height = 1080.0f;
+		const float width = height * param.AspectRatio;
+		float ratio = param.Viewport.Height / height;
+		Vector3 position = GetTransform()->GetWorldPosition() * Vector3(ratio, -ratio, 1.0f) + Vector3(param.Viewport.Width / 2.0f, param.Viewport.Height / 2.0f, 0.0f);
+		Vector2 size = m_font->GetSpriteFont()->MeasureString(m_text.c_str());
+		m_font->GetSpriteFont()->DrawString(param.SpriteBatchNonPremultipliedAlpha, m_text.c_str(), position, Colors::White, 0.0f, size * 0.5f, Vector2::One * ratio);
 	}
 }

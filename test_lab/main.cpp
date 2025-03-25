@@ -48,7 +48,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_scene->AddObject(g_lightObject);
 
     g_material = std::make_shared<udsdx::Material>();
-    g_material->SetMainTexture(res->Load<udsdx::Texture>(L"resource\\UV_checker_Map_byValle.jpg"));
+    g_material->SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\UV_checker_Map_byValle.jpg"));
 
     for (int i = 0; i < 3; ++i)
     {
@@ -84,7 +84,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         auto skyboxTexture = res->Load<udsdx::Texture>(L"resource\\Interior.jpg");
         g_skyboxMaterial = std::make_shared<udsdx::Material>();
-        g_skyboxMaterial->SetMainTexture(skyboxTexture);
+        g_skyboxMaterial->SetSourceTexture(skyboxTexture);
         skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
 
         g_scene->AddObject(skyboxObj);
@@ -104,10 +104,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         meshRenderer->SetMaterial(m_characterMaterials[i].get(), i);
     }
 
-    m_characterMaterials[3]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Body_Main.png"));
-    m_characterMaterials[2]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Cloth_Main.png"));
-    m_characterMaterials[1]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Hat_Main.png"));
-    m_characterMaterials[0]->SetMainTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Extra_Main.png"));
+    m_characterMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Body_Main.png"));
+    m_characterMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Cloth_Main.png"));
+    m_characterMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Hat_Main.png"));
+    m_characterMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Extra_Main.png"));
 
     g_scene->AddObject(m_characterObject);
 

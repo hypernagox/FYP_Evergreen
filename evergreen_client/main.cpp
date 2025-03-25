@@ -126,11 +126,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     playerMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
     terrainMaterial = std::make_shared<udsdx::Material>();
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSplatmap.tga")), 0);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSrc_0.png")), 1);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSrc_1.tga")), 2);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSrc_2.png")), 3);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Textures\\TerrainSrc_3.png")), 4);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap.tga")), 0);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_0.png")), 1);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_1.tga")), 2);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_2.png")), 3);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_3.png")), 4);
 
     scene = std::make_shared<Scene>();
 
@@ -226,7 +226,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         auto textObj = std::make_shared<SceneObject>();
         auto textRenderer = textObj->AddComponent<GUIText>();
-        textRenderer->SetText(L"電車でＧＯ！プロフェッショナル２");
+        textObj->GetTransform()->SetLocalPosition(Vector3(-640, 480, 0));
+        textRenderer->SetText(L"ｻﾃ ﾅﾘｽｺﾆｮ");
         textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 
         scene->AddObject(textObj);

@@ -21,8 +21,17 @@ PlayerStatusGUI::PlayerStatusGUI(const std::shared_ptr<udsdx::SceneObject>& obje
         m_healthFillWidthCache = m_healthFillRenderer->GetSize().x;
     }
 
+    {
+        m_textObj = std::make_shared<SceneObject>();
+        m_textObj->GetTransform()->SetLocalPosition(Vector3(-622.5f, -480.0f, 0.0f));
+        m_textRenderer = m_textObj->AddComponent<GUIText>();
+        m_textRenderer->SetText(L"## / ##");
+        m_textRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
+    }
+
     object->AddChild(m_healthBackground);
     object->AddChild(m_healthFill);
+    object->AddChild(m_textObj);
 
     SetCurrentHealth(m_maxHealth);
 }
@@ -40,6 +49,7 @@ void PlayerStatusGUI::SetCurrentHealth(int value)
     size.x = m_healthFillWidthCache * factor;
     m_healthFillRenderer->SetSize(size);
     m_healthFill->GetTransform()->SetLocalPosition(Vector3(-622.5f + (size.x - m_healthFillWidthCache) / 2.0f, -480.0f, 0.0f));
+    m_textRenderer->SetText(std::format(L"{0:02} / {1:02}", m_currentHealth, m_maxHealth));
 }
 
 void PlayerStatusGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
