@@ -23,5 +23,11 @@ enum MONSTER_TYPE_INFO : uint8_t
 	FOX = 0,
 };
 
+enum ITEM_TYPE_INFO : uint8_t
+{
+	// TODO: 아이템 아이디 정수값 정하기
+	DEFAULT = 0,
+};
+
 // 앞으로 월드의 너비-높이 , 등 서버와 통일시킬 constexpr 값이 올 예정
 // ex) constexpr int WORLD_WIDTH = 1400

@@ -141,3 +141,13 @@ table s2c_FIRE_PROJ
    pos: Nagox.Struct.Vec3;
    vel: Nagox.Struct.Vec3;
 }
+
+table c2s_ACQUIRE_ITEM
+{
+    item_id : uint64;
+}
+
+table s2c_ACQUIRE_ITEM
+{
+    item_id : uint64;
+}

@@ -47,7 +47,7 @@ namespace NagiocpX
 		//monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
 		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1);
 
-		monster_entity->AddComp<HP>()->InitHP(GET_DATA("Fox","hp")); // TODO 매직넘버
+		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int,"Fox","hp")); // TODO 매직넘버
 		monster_entity->AddComp<MonsterDeath>();
 
 		monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
@@ -89,5 +89,11 @@ namespace NagiocpX
 		monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
 
 		return monster_entity;
+	}
+	S_ptr<ContentsEntity> EntityFactory::CreateDropItem(const EntityBuilder& b) noexcept
+	{
+		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
+		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
+		return entity;
 	}
 }

@@ -73,23 +73,29 @@
     <Filter Include="EntityBuilder">
       <UniqueIdentifier>{18cb6b2f-23c6-407c-8bc2-a8cb6058d216}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Monster">
-      <UniqueIdentifier>{5b9e1f8d-9a15-4410-bce9-381734102083}</UniqueIdentifier>
-    </Filter>
     <Filter Include="NetEntity\ServerObject\ServerComponent\ObjectIdentifier">
       <UniqueIdentifier>{6e0ef11e-072d-491e-bf80-15bee75703ae}</UniqueIdentifier>
     </Filter>
     <Filter Include="GizmoRenderer">
       <UniqueIdentifier>{6e3d7ae2-c78a-484a-b7d6-0f31027d2b52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Projectile">
-      <UniqueIdentifier>{1e9b632f-91d6-4901-acff-c573e854db4f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Terrain">
       <UniqueIdentifier>{26376024-ac6b-47b1-a6bb-ba9ceeae52ec}</UniqueIdentifier>
     </Filter>
     <Filter Include="Gui">
       <UniqueIdentifier>{36b6f00f-1829-471b-a082-55de1b0b0576}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ContentsEntity">
+      <UniqueIdentifier>{e082b5a1-a705-41b6-a7a4-c5476fdecd7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ContentsEntity\Monster">
+      <UniqueIdentifier>{5b9e1f8d-9a15-4410-bce9-381734102083}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ContentsEntity\Projectile">
+      <UniqueIdentifier>{1e9b632f-91d6-4901-acff-c573e854db4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetEntity\ContentsEntity\DropItem">
+      <UniqueIdentifier>{c5bc0980-ef3f-4bdc-9e7e-9bce198f04ca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -136,7 +142,7 @@
       <Filter>EntityBuilder</Filter>
     </ClCompile>
     <ClCompile Include="Monster.cpp">
-      <Filter>Monster</Filter>
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClCompile>
     <ClCompile Include="AuthenticPlayer.cpp">
       <Filter>Player</Filter>
@@ -157,7 +163,7 @@
       <Filter>GizmoRenderer</Filter>
     </ClCompile>
     <ClCompile Include="Projectile.cpp">
-      <Filter>Projectile</Filter>
+      <Filter>NetEntity\ContentsEntity\Projectile</Filter>
     </ClCompile>
     <ClCompile Include="GizmoSphereRenderer.cpp">
       <Filter>GizmoRenderer</Filter>
@@ -172,10 +178,13 @@
       <Filter>Terrain</Filter>
     </ClCompile>
     <ClCompile Include="MonsterHPPanel.cpp">
-      <Filter>Monster</Filter>
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClCompile>
     <ClCompile Include="PlayerStatusGUI.cpp">
       <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="DropItem.cpp">
+      <Filter>NetEntity\ContentsEntity\DropItem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,7 +240,7 @@
       <Filter>EntityBuilder</Filter>
     </ClInclude>
     <ClInclude Include="Monster.h">
-      <Filter>Monster</Filter>
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
     <ClInclude Include="AuthenticPlayer.h">
       <Filter>Player</Filter>
@@ -255,7 +264,7 @@
       <Filter>GizmoRenderer</Filter>
     </ClInclude>
     <ClInclude Include="Projectile.h">
-      <Filter>Projectile</Filter>
+      <Filter>NetEntity\ContentsEntity\Projectile</Filter>
     </ClInclude>
     <ClInclude Include="GizmoSphereRenderer.h">
       <Filter>GizmoRenderer</Filter>
@@ -270,10 +279,13 @@
       <Filter>Terrain</Filter>
     </ClInclude>
     <ClInclude Include="MonsterHPPanel.h">
-      <Filter>Monster</Filter>
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
     <ClInclude Include="PlayerStatusGUI.h">
       <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="DropItem.h">
+      <Filter>NetEntity\ContentsEntity\DropItem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

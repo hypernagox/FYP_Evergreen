@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 
+// TODO: 자동화
 struct EntityBuilderBase
 {
 	Nagox::Enum::GROUP_TYPE group_type;
@@ -37,6 +38,11 @@ private:
 	
 #pragma endregion
 
+#pragma region DROP_ITEM
+	// 드랍아이템을 여기에 추가
+	static std::shared_ptr<udsdx::SceneObject> Create_DropItem(EntityBuilderBase* builder);
+#pragma endregion
+
 #pragma endregion
 
 
@@ -66,6 +72,12 @@ private:
 		auto& npc_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_NPC];
 
 		npc_func_table[0] = Create_NPC;
+#pragma endregion
+
+#pragma region DROP_ITEM
+		auto& drop_item_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_DROP_ITEM];
+
+		drop_item_func_table[0] = Create_DropItem;
 #pragma endregion
 
 #pragma endregion

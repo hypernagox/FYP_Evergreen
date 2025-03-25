@@ -47,3 +47,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_FIRE_PROJ(
     const float body_angle,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ACQUIRE_ITEM(
+    const uint64_t item_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

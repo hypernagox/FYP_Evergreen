@@ -131,7 +131,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
 	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
-	pos_comp->pos = ::ToDxVec(pkt_.atk_pos());
+	
 	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pkt_.body_angle());
 
 	//std::cout << "MY angle: " << pkt_.body_angle() << '\n';
@@ -144,6 +144,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 	bool isHit = false;
 	Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,8.f };
 	fan.m_offSet = rotatedForward * 2;
+	pos_comp->pos = ::ToDxVec(pkt_.atk_pos());
 	//if (const auto sector = pOwner->GetCurCluster())
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
@@ -230,4 +231,22 @@ const bool Handle_c2s_FIRE_PROJ(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 	return true;
 }
 
+const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_ACQUIRE_ITEM& pkt_)
+{
+	// TODO: 아이템 충돌체크 유효성 검사하기 + 아이템 아이디
+	// 아이템 클래스 + 아토믹 불값
+	// 아이템을 아예 다른 컨테이너에 넣어서 관리하는게 맞을 것같음
+	// 아이템 사라졌단 사실 따로 보내기
+	const auto cluster = pSession_->GetCurCluster();
+	if (const auto item = cluster->GetAllEntites()[Nagox::Enum::GROUP_TYPE_DROP_ITEM].FindItem((uint32_t)pkt_.item_id()))
+	{
+		if (!item->IsValid())return true;
+		pSession_->SendAsync(Create_s2c_ACQUIRE_ITEM(item->GetObjectID()));
+		item->TryOnDestroy();
+		std::cout << "아이템 획득\n";
+	}
+	
+	
+	return true;
+}
 

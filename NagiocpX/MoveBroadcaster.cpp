@@ -48,6 +48,7 @@ namespace NagiocpX
 
 		for (const Cluster* const cluster : clusters)
 		{
+			// TODO: 순회가 필요없는 컨테이너는 걸러내기
 			for (const auto& entities : cluster->GetEntitesExceptSession())
 			{
 				const auto& entity_list = entities.GetItemListRef();

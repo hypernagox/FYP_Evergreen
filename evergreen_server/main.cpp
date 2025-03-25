@@ -84,6 +84,8 @@ int main()
 
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	
+	GET_DATA(std::string, "Warrior", "name");
+
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
 	NAVIGATION->Init();

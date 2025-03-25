@@ -147,3 +147,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_FIRE_PROJ(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_FIRE_PROJ);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ACQUIRE_ITEM(
+    const uint64_t item_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto item_id_value = item_id;
+    const auto serializedc2s_ACQUIRE_ITEM = Nagox::Protocol::Createc2s_ACQUIRE_ITEM(
+        builder
+,        item_id_value    );
+    builder.Finish(serializedc2s_ACQUIRE_ITEM);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ACQUIRE_ITEM);
+}

@@ -23,15 +23,34 @@ namespace Common
 			return m_str2detail_id.find(str.data())->second;
 		}
 	public:
-		int GetObjectData(
-			const std::string_view obj_name,
-			const std::string_view att_name
-		)const noexcept {
-			const auto iter = m_detail2category_str.find(obj_name.data());
-			return m_mapDatatable.find(iter->second)->second.find(obj_name.data())->second.find(att_name.data())->second;
+		template<typename T>
+		const T& GetObjectData(const std::string_view obj_name, const std::string_view att_name) const {
+#ifdef _DEBUG
+#define DBG_ASSERT(cond, msg) \
+        if (!(cond)) { \
+            assert(false && msg); \
+        }
+#else
+#define DBG_ASSERT(cond, msg) ((void)0)
+#endif
+			const auto categoryIter = m_detail2category_str.find(obj_name.data());
+			DBG_ASSERT(categoryIter != m_detail2category_str.end(), "Object not found");
+			const auto& category = categoryIter->second;
+			const auto objIter = m_mapDatatable.find(category);
+			DBG_ASSERT(objIter != m_mapDatatable.end(), "Category not found");
+			const auto& dataTable = objIter->second;
+			const auto attrMapIter = dataTable.find(obj_name.data());
+			DBG_ASSERT(attrMapIter != dataTable.end(), "Object attributes not found");
+			const auto& attrMap = attrMapIter->second;
+			const auto attrIter = attrMap.find(att_name.data());
+			DBG_ASSERT(attrIter != attrMap.end(), "Attribute not found");
+			DBG_ASSERT(std::holds_alternative<T>(attrIter->second), "Type mismatch for attribute");
+			return std::get<T>(attrIter->second);
 		}
 	private:
-		using DataTable = std::map<std::string, std::map<std::string, int>>;
+		using AttributeValue = std::variant<int, bool, float, std::string>;
+		using AttributeMap = std::map<std::string, AttributeValue>;
+		using DataTable = std::map<std::string, AttributeMap>;
 		std::map<std::string, DataTable> m_mapDatatable;
 
 		// 오브젝트의 대분류 -> 스트링 예) 1 -> Monster
@@ -50,5 +69,5 @@ namespace Common
 	};
 
 #define DATA_TABLE (Common::DataRegistry::GetDataTable())
-#define GET_DATA(category, detailType) (DATA_TABLE->GetObjectData(category, detailType))
+#define GET_DATA(type, obj_name, attr_name) (DATA_TABLE->GetObjectData<type>(obj_name, attr_name))
 }

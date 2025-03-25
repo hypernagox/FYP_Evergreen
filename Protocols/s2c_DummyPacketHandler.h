@@ -22,6 +22,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_REQUEST_QUEST = 1011,
     s2c_CLEAR_QUEST = 1012,
     s2c_FIRE_PROJ = 1013,
+    s2c_ACQUIRE_ITEM = 1014,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -33,6 +34,7 @@ enum class CREATE_PKT_ID : uint16_t {
     c2s_PLAYER_DEATH = 1005,
     c2s_REQUEST_QUEST = 1006,
     c2s_FIRE_PROJ = 1007,
+    c2s_ACQUIRE_ITEM = 1008,
 };
 
 class NagiocpX::PacketSession;
@@ -56,6 +58,7 @@ const bool Handle_s2c_PLAYER_DEATH(const NagiocpX::S_ptr<NagiocpX::PacketSession
 const bool Handle_s2c_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_REQUEST_QUEST& pkt_);
 const bool Handle_s2c_CLEAR_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_CLEAR_QUEST& pkt_);
 const bool Handle_s2c_FIRE_PROJ(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_FIRE_PROJ& pkt_);
+const bool Handle_s2c_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_ACQUIRE_ITEM& pkt_);
 
 class s2c_DummyPacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -76,6 +79,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_REQUEST_QUEST, Nagox::Protocol::s2c_REQUEST_QUEST, Handle_s2c_REQUEST_QUEST>();
         RegisterHandler<HANDLE_PKT_ID::s2c_CLEAR_QUEST, Nagox::Protocol::s2c_CLEAR_QUEST, Handle_s2c_CLEAR_QUEST>();
         RegisterHandler<HANDLE_PKT_ID::s2c_FIRE_PROJ, Nagox::Protocol::s2c_FIRE_PROJ, Handle_s2c_FIRE_PROJ>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_ACQUIRE_ITEM, Nagox::Protocol::s2c_ACQUIRE_ITEM, Handle_s2c_ACQUIRE_ITEM>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

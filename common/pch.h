@@ -23,6 +23,7 @@
 #include <unordered_set>
 #include <span>
 #include <format>
+#include <variant>
 #include <algorithm>
 #include "recastnavigation/DetourCrowd.h"
 #include "SharedDefines.h"

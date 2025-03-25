@@ -85,6 +85,12 @@ struct c2s_FIRE_PROJBuilder;
 struct s2c_FIRE_PROJ;
 struct s2c_FIRE_PROJBuilder;
 
+struct c2s_ACQUIRE_ITEM;
+struct c2s_ACQUIRE_ITEMBuilder;
+
+struct s2c_ACQUIRE_ITEM;
+struct s2c_ACQUIRE_ITEMBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -1394,6 +1400,94 @@ inline ::flatbuffers::Offset<s2c_FIRE_PROJ> Creates2c_FIRE_PROJ(
   builder_.add_proj_id(proj_id);
   builder_.add_vel(vel);
   builder_.add_pos(pos);
+  return builder_.Finish();
+}
+
+struct c2s_ACQUIRE_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_ACQUIRE_ITEMBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ITEM_ID = 4
+  };
+  uint64_t item_id() const {
+    return GetField<uint64_t>(VT_ITEM_ID, 0);
+  }
+  bool mutate_item_id(uint64_t _item_id = 0) {
+    return SetField<uint64_t>(VT_ITEM_ID, _item_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_ITEM_ID, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_ACQUIRE_ITEMBuilder {
+  typedef c2s_ACQUIRE_ITEM Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_item_id(uint64_t item_id) {
+    fbb_.AddElement<uint64_t>(c2s_ACQUIRE_ITEM::VT_ITEM_ID, item_id, 0);
+  }
+  explicit c2s_ACQUIRE_ITEMBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_ACQUIRE_ITEM> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_ACQUIRE_ITEM>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_ACQUIRE_ITEM> Createc2s_ACQUIRE_ITEM(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t item_id = 0) {
+  c2s_ACQUIRE_ITEMBuilder builder_(_fbb);
+  builder_.add_item_id(item_id);
+  return builder_.Finish();
+}
+
+struct s2c_ACQUIRE_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_ACQUIRE_ITEMBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ITEM_ID = 4
+  };
+  uint64_t item_id() const {
+    return GetField<uint64_t>(VT_ITEM_ID, 0);
+  }
+  bool mutate_item_id(uint64_t _item_id = 0) {
+    return SetField<uint64_t>(VT_ITEM_ID, _item_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_ITEM_ID, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_ACQUIRE_ITEMBuilder {
+  typedef s2c_ACQUIRE_ITEM Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_item_id(uint64_t item_id) {
+    fbb_.AddElement<uint64_t>(s2c_ACQUIRE_ITEM::VT_ITEM_ID, item_id, 0);
+  }
+  explicit s2c_ACQUIRE_ITEMBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_ACQUIRE_ITEM> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_ACQUIRE_ITEM>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_ACQUIRE_ITEM> Creates2c_ACQUIRE_ITEM(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t item_id = 0) {
+  s2c_ACQUIRE_ITEMBuilder builder_(_fbb);
+  builder_.add_item_id(item_id);
   return builder_.Finish();
 }
 

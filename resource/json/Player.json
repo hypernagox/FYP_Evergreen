@@ -1,6 +1,7 @@
 {
   "Warrior": {
     "hp": 5,
-    "atk": 1
+    "atk": 1,
+    "name": "abcd"
   }
 }

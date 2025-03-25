@@ -395,6 +395,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">$(SolutionDir)evergreen_client\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="AuthenticPlayer.cpp" />
+    <ClCompile Include="DropItem.cpp" />
     <ClCompile Include="EntityBuilder.cpp" />
     <ClCompile Include="EntityMovement.cpp" />
     <ClCompile Include="EventTimer.cpp" />
@@ -402,7 +403,9 @@
     <ClCompile Include="GizmoBoxRenderer.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
     </ClCompile>
-    <ClCompile Include="GizmoCylinderRenderer.cpp" />
+    <ClCompile Include="GizmoCylinderRenderer.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">false</IncludeInUnityFile>
+    </ClCompile>
     <ClCompile Include="GizmoSphereRenderer.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">false</IncludeInUnityFile>
     </ClCompile>
@@ -451,6 +454,7 @@
     <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="AuthenticPlayer.h" />
     <ClInclude Include="define.h" />
+    <ClInclude Include="DropItem.h" />
     <ClInclude Include="EntityBuilder.h" />
     <ClInclude Include="EntityMovement.h" />
     <ClInclude Include="EventTimer.h" />

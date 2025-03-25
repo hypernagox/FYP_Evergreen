@@ -64,6 +64,10 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 		g_npcid = pkt_.obj_id();
 		std::cout << "NPC 등장\n";
 	}
+	else if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_DROP_ITEM)
+	{
+		std::cout << "아이템 등장\n";
+	}
 	DefaultEntityBuilder b;
 	b.obj_id = pkt_.obj_id();
 	b.obj_type = pkt_.obj_type_info();
@@ -238,5 +242,11 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	so->SetObjID((uint32_t)pkt_.proj_id());
 	Mgr(ServerObjectMgr)->AddObject(s);
 
+	return true;
+}
+
+const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ACQUIRE_ITEM& pkt_)
+{
+	std::cout << std::format("ID: {} 아이템 획득함!", pkt_.item_id());
 	return true;
 }

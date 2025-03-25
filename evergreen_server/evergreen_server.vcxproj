@@ -193,6 +193,9 @@
     <ClCompile Include="ContentsField.cpp" />
     <ClCompile Include="ContentsFunc.cpp" />
     <ClCompile Include="Death.cpp" />
+    <ClCompile Include="DropItem.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="HP.cpp" />
     <ClCompile Include="Inventory.cpp">
@@ -235,6 +238,7 @@
     <ClInclude Include="ContentsField.h" />
     <ClInclude Include="ContentsFunc.h" />
     <ClInclude Include="Death.h" />
+    <ClInclude Include="DropItem.h" />
     <ClInclude Include="EntityFactory.h" />
     <ClInclude Include="HP.h" />
     <ClInclude Include="Inventory.h" />
