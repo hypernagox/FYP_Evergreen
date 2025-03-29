@@ -16,6 +16,7 @@
 #include "Quest.h"
 #include "ClusterPredicate.h"
 #include "Projectile.h"
+#include "Inventory.h"
 
 using namespace NagiocpX;
 
@@ -241,9 +242,18 @@ const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession
 	if (const auto item = cluster->GetAllEntites()[Nagox::Enum::GROUP_TYPE_DROP_ITEM].FindItem((uint32_t)pkt_.item_id()))
 	{
 		if (!item->IsValid())return true;
-		pSession_->SendAsync(Create_s2c_ACQUIRE_ITEM(item->GetObjectID()));
+		pSession_->SendAsync(Create_s2c_ACQUIRE_ITEM(item->GetDetailType()));
 		item->TryOnDestroy();
-		std::cout << "¾ÆÀÌÅÛ È¹µæ\n";
+		
+		if (const auto inv = pSession_->GetOwnerEntity()->GetComp<Inventory>())
+		{
+			// inv->AddItem2Inventory()
+			std::cout << "¾ÆÀÌÅÛ È¹µæ\n";
+		}
+		else
+		{
+			std::cout << "¹®Á¦ ÀÖÀ½\n";
+		}
 	}
 	
 	

@@ -247,6 +247,8 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 
 const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ACQUIRE_ITEM& pkt_)
 {
-	std::cout << std::format("ID: {} 아이템 획득함!", pkt_.item_id());
+	// TODO: 만약 내가 아닌 다른 플레이어가 아이템 먹은걸 알아야 한다면 (예: XX님이 YY를 획득!) 누가 먹었는지 ID도 필요
+	// 기획의 영역..
+	std::cout << std::format("아이템 ID: {} 아이템 획득함!\n", pkt_.item_id());
 	return true;
 }

@@ -9,6 +9,7 @@
 #include "Death.h"
 #include "QuestSystem.h"
 #include "TimerRoutine.h"
+#include "Inventory.h"
 
 std::atomic_int cnt = 0;
 static NagoxAtomic::Atomic<int> g_connect_count{ 0 };
@@ -34,6 +35,8 @@ void ClientSession::OnConnected()
 	pOwner->AddComp<PlayerDeath>();
 	pOwner->AddComp<QuestSystem>();
 	pOwner->AddComp<NagiocpX::TimerHandler>();
+
+	pOwner->AddComp<Inventory>();
 	std::cout << ++g_connect_count << '\n';
 	NagiocpX::PrintKoreaRealTime("Connect !", GetAddress().GetIpAddress());
 }
