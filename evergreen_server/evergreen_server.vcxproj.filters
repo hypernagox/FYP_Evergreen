@@ -25,9 +25,6 @@
     <Filter Include="Protocols\templates">
       <UniqueIdentifier>{aea5e660-90d6-4955-ada0-858870b72855}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SectorPredicate">
-      <UniqueIdentifier>{9fe04f13-b05e-4bd4-9d52-d183d2037262}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ContentsComponents">
       <UniqueIdentifier>{ff710fd3-b914-4706-9803-18e44195083e}</UniqueIdentifier>
     </Filter>
@@ -110,6 +107,9 @@
     <Filter Include="Items\DropItem">
       <UniqueIdentifier>{94310aa3-c43b-488a-9e40-0c8e314a3b83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ClusterPredicate">
+      <UniqueIdentifier>{9fe04f13-b05e-4bd4-9d52-d183d2037262}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -122,7 +122,7 @@
       <Filter>predefine\pch</Filter>
     </ClCompile>
     <ClCompile Include="ClusterPredicate.cpp">
-      <Filter>SectorPredicate</Filter>
+      <Filter>ClusterPredicate</Filter>
     </ClCompile>
     <ClCompile Include="PositionComponent.cpp">
       <Filter>ContentsComponents\PositionComponent</Filter>
@@ -205,7 +205,7 @@
       <Filter>Protocols\generated</Filter>
     </ClInclude>
     <ClInclude Include="ClusterPredicate.h">
-      <Filter>SectorPredicate</Filter>
+      <Filter>ClusterPredicate</Filter>
     </ClInclude>
     <ClInclude Include="PositionComponent.h">
       <Filter>ContentsComponents\PositionComponent</Filter>

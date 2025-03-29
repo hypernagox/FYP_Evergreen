@@ -12,6 +12,8 @@
 #include "Field.h"
 #include "EntityFactory.h"
 #include "PositionComponent.h"
+#include "DropItem.h"
+#include "ClusterPredicate.h"
 
 void MonsterDeath::ProcessDeath() noexcept
 {
@@ -24,9 +26,19 @@ void MonsterDeath::ProcessDeath() noexcept
 	b.x = pos.x;
 	b.y = pos.y;
 	b.z = pos.z;
-	Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(
-		EntityFactory::CreateDropItem(b)
-	);
+	auto item = EntityFactory::CreateDropItem(b);
+	if (const auto item_ptr = item->GetComp<DropItem>())
+	{
+		if (item_ptr->TryDropItem())
+		{
+			const auto temp_ptr = item.get();
+			ClusterPredicate p;
+			Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(
+				std::move(item)
+			);
+			owner->GetCurCluster()->Broadcast(p.CreateAddPacket(temp_ptr));
+		}
+	}
 	owner->TryOnDestroy();
 }
 

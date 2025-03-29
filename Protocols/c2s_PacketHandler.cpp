@@ -17,6 +17,7 @@
 #include "ClusterPredicate.h"
 #include "Projectile.h"
 #include "Inventory.h"
+#include "DropItem.h"
 
 using namespace NagiocpX;
 
@@ -237,22 +238,26 @@ const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession
 	// TODO: 아이템 충돌체크 유효성 검사하기 + 아이템 아이디
 	// 아이템 클래스 + 아토믹 불값
 	// 아이템을 아예 다른 컨테이너에 넣어서 관리하는게 맞을 것같음
-	// 아이템 사라졌단 사실 따로 보내기
+	// 아이템 사라졌단 사실 따로 보내기 << 해야됨
+	
 	const auto cluster = pSession_->GetCurCluster();
 	if (const auto item = cluster->GetAllEntites()[Nagox::Enum::GROUP_TYPE_DROP_ITEM].FindItem((uint32_t)pkt_.item_id()))
 	{
 		if (!item->IsValid())return true;
-		pSession_->SendAsync(Create_s2c_ACQUIRE_ITEM(item->GetDetailType()));
-		item->TryOnDestroy();
-		
-		if (const auto inv = pSession_->GetOwnerEntity()->GetComp<Inventory>())
+		if (const auto item_ptr = item->GetComp<DropItem>())
 		{
-			// inv->AddItem2Inventory()
-			std::cout << "아이템 획득\n";
-		}
-		else
-		{
-			std::cout << "문제 있음\n";
+			pSession_->SendAsync(Create_s2c_ACQUIRE_ITEM(item->GetDetailType(), item_ptr->GetNumOfItemStack()));
+			item->TryOnDestroy();
+
+			if (const auto inv = pSession_->GetOwnerEntity()->GetComp<Inventory>())
+			{
+				// inv->AddItem2Inventory()
+				std::cout << "아이템 획득\n";
+			}
+			else
+			{
+				std::cout << "문제 있음\n";
+			}
 		}
 	}
 	

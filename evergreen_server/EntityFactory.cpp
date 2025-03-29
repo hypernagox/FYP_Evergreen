@@ -11,6 +11,7 @@
 #include "Death.h"
 #include "Regenerator.h"
 #include "RangeMonState.h"
+#include "DropItem.h"
 
 namespace NagiocpX
 {
@@ -94,6 +95,7 @@ namespace NagiocpX
 	{
 		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
+		entity->AddComp<DropItem>();
 		return entity;
 	}
 }

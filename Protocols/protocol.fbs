@@ -150,4 +150,5 @@ table c2s_ACQUIRE_ITEM
 table s2c_ACQUIRE_ITEM
 {
     item_id : uint64;
+    item_stack_size : uint8;
 }

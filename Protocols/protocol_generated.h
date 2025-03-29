@@ -1450,7 +1450,8 @@ inline ::flatbuffers::Offset<c2s_ACQUIRE_ITEM> Createc2s_ACQUIRE_ITEM(
 struct s2c_ACQUIRE_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_ACQUIRE_ITEMBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_ITEM_ID = 4
+    VT_ITEM_ID = 4,
+    VT_ITEM_STACK_SIZE = 6
   };
   uint64_t item_id() const {
     return GetField<uint64_t>(VT_ITEM_ID, 0);
@@ -1458,9 +1459,16 @@ struct s2c_ACQUIRE_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_item_id(uint64_t _item_id = 0) {
     return SetField<uint64_t>(VT_ITEM_ID, _item_id, 0);
   }
+  uint8_t item_stack_size() const {
+    return GetField<uint8_t>(VT_ITEM_STACK_SIZE, 0);
+  }
+  bool mutate_item_stack_size(uint8_t _item_stack_size = 0) {
+    return SetField<uint8_t>(VT_ITEM_STACK_SIZE, _item_stack_size, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint64_t>(verifier, VT_ITEM_ID, 8) &&
+           VerifyField<uint8_t>(verifier, VT_ITEM_STACK_SIZE, 1) &&
            verifier.EndTable();
   }
 };
@@ -1471,6 +1479,9 @@ struct s2c_ACQUIRE_ITEMBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_item_id(uint64_t item_id) {
     fbb_.AddElement<uint64_t>(s2c_ACQUIRE_ITEM::VT_ITEM_ID, item_id, 0);
+  }
+  void add_item_stack_size(uint8_t item_stack_size) {
+    fbb_.AddElement<uint8_t>(s2c_ACQUIRE_ITEM::VT_ITEM_STACK_SIZE, item_stack_size, 0);
   }
   explicit s2c_ACQUIRE_ITEMBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -1485,9 +1496,11 @@ struct s2c_ACQUIRE_ITEMBuilder {
 
 inline ::flatbuffers::Offset<s2c_ACQUIRE_ITEM> Creates2c_ACQUIRE_ITEM(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint64_t item_id = 0) {
+    uint64_t item_id = 0,
+    uint8_t item_stack_size = 0) {
   s2c_ACQUIRE_ITEMBuilder builder_(_fbb);
   builder_.add_item_id(item_id);
+  builder_.add_item_stack_size(item_stack_size);
   return builder_.Finish();
 }
 
