@@ -396,6 +396,7 @@
     </ClCompile>
     <ClCompile Include="AuthenticPlayer.cpp" />
     <ClCompile Include="DropItem.cpp" />
+    <ClCompile Include="DropItemRenderer.cpp" />
     <ClCompile Include="EntityBuilder.cpp" />
     <ClCompile Include="EntityMovement.cpp" />
     <ClCompile Include="EventTimer.cpp" />
@@ -459,6 +460,7 @@
     <ClInclude Include="AuthenticPlayer.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DropItem.h" />
+    <ClInclude Include="DropItemRenderer.h" />
     <ClInclude Include="EntityBuilder.h" />
     <ClInclude Include="EntityMovement.h" />
     <ClInclude Include="EventTimer.h" />

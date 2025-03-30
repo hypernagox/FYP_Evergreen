@@ -6,6 +6,8 @@
 #include "Monster.h"
 #include "MoveInterpolator.h"
 #include "DropItem.h"
+#include "DropItemRenderer.h"
+#include "../common/json.hpp"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 extern std::shared_ptr<SceneObject> g_heroObj;
@@ -74,7 +76,6 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 
 	auto instance = std::make_shared<udsdx::SceneObject>();
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
-	instance->GetTransform()->SetLocalScale(Vector3::One * .5f);
 
 	auto serverComponent = instance->AddComponent<ServerObject>();
 	serverComponent->SetObjID(builder->obj_id);
@@ -82,9 +83,8 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 	const auto item = serverComponent->AddComp<DropItem>();
 	item->SetItemPos(b->obj_pos);
 	item->SetMainHero(g_heroObj); // TODO: g_hero 처형
-	auto renderer = instance->AddComponent<MeshRenderer>();
-	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"char_sample.obj")));
-	renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+	auto renderer = instance->AddComponent<DropItemRenderer>();
+	renderer->SetDropItem(b->obj_type);
 
 	return instance;
 }

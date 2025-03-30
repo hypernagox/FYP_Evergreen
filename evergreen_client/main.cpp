@@ -187,11 +187,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     {
-        constexpr float TerrainSize = 1024.0f;
-
+        const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
         terrainObj = std::make_shared<SceneObject>();
         terrainObj->GetTransform()->SetLocalPosition(Vector3(-TerrainSize * 0.5f, 0, -TerrainSize * 0.5f));
-        terrainObj->GetTransform()->SetLocalScale(Vector3(1.0f, 1.0f, 1.0f) * TerrainSize);
+        terrainObj->GetTransform()->SetLocalScale(Vector3::One * TerrainSize);
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
         terrainRenderer->SetMesh(terrainMesh.get());
         terrainRenderer->SetMaterial(terrainMaterial.get());
@@ -308,10 +307,10 @@ void Update(const Time& time)
         }
     }
 
-    Vector3 terrainPos = g_heroObj->GetTransform()->GetLocalPosition() * 0.01f;
+    Vector3 terrainPos = g_heroObj->GetTransform()->GetLocalPosition() / terrainObj->GetTransform()->GetLocalScale();
     terrainPos.x = fmod(terrainPos.x + 1.0f, 1.0f);
     terrainPos.z = fmod(terrainPos.z + 1.0f, 1.0f);
-    float terrainHeight = heightMap->GetHeight(terrainPos.x * 4096/8, terrainPos.z * 4096/8);
+    float terrainHeight = heightMap->GetHeight(terrainPos.x * heightMap->GetPixelWidth(), terrainPos.z * heightMap->GetPixelHeight());
     terrainPos.y = std::max(terrainPos.y, terrainHeight);
     //g_heroObj->GetTransform()->SetLocalPosition(terrainPos * 100.0f);
    // g_curPos = terrainPos * 100.0f;

@@ -1,0 +1,11 @@
+{
+  "TerrainSize": {
+    "Value": 1024.0
+  },
+  "CharacterScale": {
+    "Value": 0.1
+  },
+  "DropitemScale": {
+    "Value": 0.05
+  }
+}

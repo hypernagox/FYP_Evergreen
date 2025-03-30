@@ -97,6 +97,9 @@
     <Filter Include="NetEntity\ContentsEntity\DropItem">
       <UniqueIdentifier>{c5bc0980-ef3f-4bdc-9e7e-9bce198f04ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DropItem">
+      <UniqueIdentifier>{b176c93d-ab6d-4f02-8a21-fcb2d41898d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -185,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="DropItem.cpp">
       <Filter>NetEntity\ContentsEntity\DropItem</Filter>
+    </ClCompile>
+    <ClCompile Include="DropItemRenderer.cpp">
+      <Filter>DropItem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -286,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="DropItem.h">
       <Filter>NetEntity\ContentsEntity\DropItem</Filter>
+    </ClInclude>
+    <ClInclude Include="DropItemRenderer.h">
+      <Filter>DropItem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

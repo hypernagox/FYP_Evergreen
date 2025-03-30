@@ -1,0 +1,16 @@
+{
+  "0": {
+    "Name": "Fox Tail",
+    "Description": "A fox tail.",
+    "Icon": "fox-tail.png",
+    "DropitemResource": "item\\foxtail\\foxtail.fbx",
+    "DropitemResourceDiffuse": "item\\foxtail\\foxtail_DefaultMaterial_BaseColor.png"
+  },
+  "1": {
+    "Name": "Meat",
+    "Description": "A piece of meat.",
+    "Icon": "meat.png",
+    "DropitemResource": "item\\meat\\meat.fbx",
+    "DropitemResourceDiffuse": "item\\meat\\meat_DefaultMaterial_BaseColor.png"
+  }
+}
