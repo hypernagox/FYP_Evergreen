@@ -22,6 +22,8 @@ namespace udsdx
 		int GetWidth() const { return m_size.x; }
 		int GetHeight() const { return m_size.y; }
 
+		void DisposeUploaders();
+
 	private:
 		ComPtr<ID3D12Resource> m_texture;
 		ComPtr<ID3D12Resource> m_textureUpload;

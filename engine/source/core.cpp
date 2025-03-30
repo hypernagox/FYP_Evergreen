@@ -97,6 +97,11 @@ namespace udsdx
 			resource_mesh->DisposeUploaders();
 		}
 
+		for (auto& resource_shader : resource->LoadAll<Texture>())
+		{
+			resource_shader->DisposeUploaders();
+		}
+
 		// Reset the command list to prep for initialization commands.
 		ThrowIfFailed(m_commandList->Reset(m_directCmdListAlloc.Get(), nullptr));
 

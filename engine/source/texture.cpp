@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "texture.h"
+#include "debug_console.h"
 
 #include <DirectXTex.h>
 
@@ -7,19 +8,49 @@ namespace udsdx
 {
 	Texture::Texture(std::wstring_view path, ID3D12Device* device, ID3D12GraphicsCommandList* commandList) : ResourceObject(path)
 	{
-		ScratchImage image;
-		if (path.ends_with(L".tga"))
+		std::filesystem::path pathDds(path);
+		pathDds.replace_extension(L".ddscache");
+
+		bool loadFromCache = false;
+		if (std::filesystem::exists(pathDds))
 		{
-			ThrowIfFailed(::LoadFromTGAFile(path.data(), nullptr, image));
+			// Check when the file was last modified
+			auto lastWriteTime = std::filesystem::last_write_time(path);
+			auto lastWriteTimeCache = std::filesystem::last_write_time(pathDds);
+			if (lastWriteTimeCache >= lastWriteTime)
+			{
+				loadFromCache = true;
+			}
+		}
+
+		ScratchImage image;
+		if (loadFromCache)
+		{
+			ThrowIfFailed(::LoadFromDDSFile(pathDds.c_str(), DDS_FLAGS_NONE, nullptr, image));
 		}
 		else
 		{
-			ThrowIfFailed(::LoadFromWICFile(path.data(), WIC_FLAGS_NONE, nullptr, image));
+			if (path.ends_with(L".tga"))
+			{
+				ThrowIfFailed(::LoadFromTGAFile(path.data(), nullptr, image));
+			}
+			else
+			{
+				ThrowIfFailed(::LoadFromWICFile(path.data(), WIC_FLAGS_NONE, nullptr, image));
+			}
+
+			ScratchImage compressedImage;
+			// BC2 Compression
+			ThrowIfFailed(::Compress(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DXGI_FORMAT_BC2_UNORM, TEX_COMPRESS_DEFAULT, 1.0f, compressedImage));
+			ThrowIfFailed(::SaveToDDSFile(compressedImage.GetImages(), compressedImage.GetImageCount(), compressedImage.GetMetadata(), DDS_FLAGS_NONE, pathDds.c_str()));
+			std::filesystem::last_write_time(pathDds, std::filesystem::last_write_time(path));
+
+			image = std::move(compressedImage);
+			DebugConsole::Log("\tTexture compressed and cached: " + pathDds.string());
 		}
 
-		ThrowIfFailed(::CreateTextureEx(device, image.GetMetadata(), D3D12_RESOURCE_FLAG_NONE, CREATETEX_IGNORE_SRGB, &m_texture));
-
 		std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+		ThrowIfFailed(::CreateTextureEx(device, image.GetMetadata(), D3D12_RESOURCE_FLAG_NONE, CREATETEX_IGNORE_SRGB, &m_texture));
 		ThrowIfFailed(::PrepareUpload(device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), subresources));
 
 		const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture.Get(), 0, static_cast<unsigned int>(subresources.size()));
@@ -77,5 +108,10 @@ namespace udsdx
 	D3D12_GPU_DESCRIPTOR_HANDLE Texture::GetSrvGpu() const
 	{
 		return m_srvGpu;
+	}
+
+	void Texture::DisposeUploaders()
+	{
+		m_textureUpload.Reset();
 	}
 }
