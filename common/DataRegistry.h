@@ -11,6 +11,13 @@ namespace Common
 		static void Load(const std::wstring_view path = L"")noexcept;
 		static const auto GetDataTable()noexcept { return g_table; }
 	public:
+		const int GetDropItemID(const std::string_view drop_item_name)const noexcept {
+			return m_dropItemName2Int.find(drop_item_name.data())->second;
+		}
+		const std::string& GetDropItemName(const int drop_item_id)const noexcept {
+			return m_dropItemID2String.find(drop_item_id)->second;
+		}
+	public:
 		const std::string& GetId2Category(const int id)const {
 			return m_categoryId2str.find(id)->second;
 		}
@@ -24,10 +31,10 @@ namespace Common
 			return m_str2detail_id.find(str.data())->second;
 		}
 	public:
-		static std::wstring Str2Wstr(const std::string_view str) noexcept;
+		static const std::wstring& Str2Wstr(const std::string_view str) noexcept;
 	public:
 		template<typename T>
-		T GetObjectData(const std::string_view obj_name, const std::string_view att_name) const {
+		const T& GetObjectData(const std::string_view obj_name, const std::string_view att_name) const {
 #ifdef _DEBUG
 #define DBG_ASSERT(cond, msg) \
         if (!(cond)) { \
@@ -74,6 +81,8 @@ namespace Common
 		std::map<std::string, int> m_str2detail_id;
 
 
+		std::map<std::string, int> m_dropItemName2Int;
+		std::map<int, std::string> m_dropItemID2String;
 		constinit static inline const DataRegistry* g_table = nullptr;
 	};
 

@@ -12,9 +12,14 @@ struct EntityBuilderBase
 public:
 	static inline std::shared_ptr<udsdx::SceneObject> CreateObject(EntityBuilderBase* builder)noexcept {
 		const auto create_func = g_createObjectFunc[builder->group_type][builder->obj_type];
+		if (builder->group_type == Nagox::Enum::GROUP_TYPE_DROP_ITEM) 
+		{
+			return g_createObjectFunc[builder->group_type][0](builder);
+		}
 		if (!create_func)
 		{
 			//TODO:: 적당한 예외처리 nullptr 뱉는게 의미가 없고 그냥 터뜨리고 다시 빌드하는게 맞을 것 같음
+			std::cout << "Invalid Bulider Enum\n";
 		}
 		return create_func(builder);
 	}

@@ -12,6 +12,7 @@
 #include "Regenerator.h"
 #include "RangeMonState.h"
 #include "DropItem.h"
+#include "DropTable.h"
 
 namespace NagiocpX
 {
@@ -53,6 +54,8 @@ namespace NagiocpX
 
 		monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
 
+		monster_entity->AddComp<DropTable>()->SetItemType("Fox");
+
 		return monster_entity;
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreateNPC(const EntityBuilder& b) noexcept
@@ -88,6 +91,8 @@ namespace NagiocpX
 		monster_entity->AddComp<MonsterDeath>();
 
 		monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
+
+		monster_entity->AddComp<DropTable>()->SetItemType("Bear");
 
 		return monster_entity;
 	}

@@ -149,6 +149,8 @@ table c2s_ACQUIRE_ITEM
 
 table s2c_ACQUIRE_ITEM
 {
-    item_id : uint64;
+    get_user_id :uint64;
+    item_obj_id : uint64;
+    item_detail_id : uint8;
     item_stack_size : uint8;
 }

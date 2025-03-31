@@ -110,6 +110,9 @@
     <Filter Include="ClusterPredicate">
       <UniqueIdentifier>{9fe04f13-b05e-4bd4-9d52-d183d2037262}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Items\DropTable">
+      <UniqueIdentifier>{06cefa0b-1d9a-4268-ac56-53ff99080dc2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -186,6 +189,9 @@
     </ClCompile>
     <ClCompile Include="DropItem.cpp">
       <Filter>Items\DropItem</Filter>
+    </ClCompile>
+    <ClCompile Include="DropTable.cpp">
+      <Filter>Items\DropTable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -272,6 +278,9 @@
     </ClInclude>
     <ClInclude Include="DropItem.h">
       <Filter>Items\DropItem</Filter>
+    </ClInclude>
+    <ClInclude Include="DropTable.h">
+      <Filter>Items\DropTable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

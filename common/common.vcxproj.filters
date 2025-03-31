@@ -299,5 +299,14 @@
     <None Include="..\resource\json\Player.json">
       <Filter>Json\Data</Filter>
     </None>
+    <None Include="..\resource\json\GlabalValues.json">
+      <Filter>Json\Data</Filter>
+    </None>
+    <None Include="..\resource\json\Item.json">
+      <Filter>Json\Data</Filter>
+    </None>
+    <None Include="..\resource\json\Script.json">
+      <Filter>Json\Data</Filter>
+    </None>
   </ItemGroup>
 </Project>

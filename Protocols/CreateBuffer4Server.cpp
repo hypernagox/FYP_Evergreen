@@ -284,17 +284,23 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FIRE_PROJ(
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_FIRE_PROJ);
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ACQUIRE_ITEM(
-    const uint64_t item_id,
+    const uint64_t get_user_id,
+    const uint64_t item_obj_id,
+    const uint8_t item_detail_id,
     const uint8_t item_stack_size,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
-    const auto item_id_value = item_id;
+    const auto get_user_id_value = get_user_id;
+    const auto item_obj_id_value = item_obj_id;
+    const auto item_detail_id_value = item_detail_id;
     const auto item_stack_size_value = item_stack_size;
     const auto serializeds2c_ACQUIRE_ITEM = Nagox::Protocol::Creates2c_ACQUIRE_ITEM(
         builder
-,        item_id_value,
+,        get_user_id_value,
+        item_obj_id_value,
+        item_detail_id_value,
         item_stack_size_value    );
     builder.Finish(serializeds2c_ACQUIRE_ITEM);
 

@@ -90,7 +90,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FIRE_PROJ(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ACQUIRE_ITEM(
-    const uint64_t item_id,
+    const uint64_t get_user_id,
+    const uint64_t item_obj_id,
+    const uint8_t item_detail_id,
     const uint8_t item_stack_size,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;

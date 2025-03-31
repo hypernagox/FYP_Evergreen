@@ -132,15 +132,11 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 	// 어떤 오브젝트가 몇 데미지 받았는가
 	const auto hit_obj_id = pkt_.hit_obj_id(); // 맞은 애 아이디
 	const auto hit_after_hp = pkt_.hit_after_hp();
-	auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
+	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
 	if (!hit_obj_ptr)
 	{
-		if (NetMgr(NetworkMgr)->GetSessionID() == hit_obj_id)
-			hit_obj_ptr = g_heroObj->GetComponent<ServerObject>();
-		else {
-			std::cout << std::format("Invalid hit Object ID from :{}", __FUNCTION__) << std::endl;
-			return true;
-		}
+		std::cout << std::format("Invalid hit Object ID from :{}", __FUNCTION__) << std::endl;
+		return true;
 	}
 	if (const auto monster = hit_obj_ptr->GetComponent<Monster>())
 	{
@@ -251,7 +247,7 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 	// 기획의 영역..
 	
 	// ID는 정수이나, json 테이블에서 해당 ID에 대응하는 아이템 정보를 획득하기 위해선 문자열로의 변환이 필요하다.
-
-	std::cout << std::format("아이템 획득함! 아이템 ID: {} \n , 개수: {}", pkt_.item_id(), pkt_.item_stack_size());
+	Mgr(ServerObjectMgr)->RemoveObject(pkt_.item_obj_id());
+	std::cout << std::format("아이템 획득함! 아이템 ID: {} 먹은 User ID: {} , 개수: {}\n", pkt_.item_detail_id(), pkt_.get_user_id(), pkt_.item_stack_size());
 	return true;
 }

@@ -32,6 +32,7 @@
 #include "GizmoSphereRenderer.h"
 
 #include "../common/json.hpp"
+#include "ServerObjectMgr.h"
 
 using namespace udsdx;
 
@@ -137,7 +138,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     g_heroObj = std::make_shared<SceneObject>();
     
-    
+    ServerObjectMgr::GetInst()->SetMainHero(NetMgr(NetworkMgr)->GetSessionID(), g_heroObj);
     auto heroServerComponent = g_heroObj->AddComponent<ServerObject>();
   
     heroServerComponent->AddComp<MovePacketSender>();

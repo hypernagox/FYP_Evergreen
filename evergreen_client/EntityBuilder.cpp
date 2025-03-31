@@ -84,6 +84,8 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 	item->SetItemPos(b->obj_pos);
 	item->SetMainHero(g_heroObj); // TODO: g_hero Ã³Çü
 	auto renderer = instance->AddComponent<DropItemRenderer>();
+
+
 	renderer->SetDropItem(b->obj_type);
 
 	return instance;

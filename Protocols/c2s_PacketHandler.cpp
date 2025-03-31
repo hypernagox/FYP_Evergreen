@@ -246,7 +246,7 @@ const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession
 		if (!item->IsValid())return true;
 		if (const auto item_ptr = item->GetComp<DropItem>())
 		{
-			pSession_->SendAsync(Create_s2c_ACQUIRE_ITEM(item->GetDetailType(), item_ptr->GetNumOfItemStack()));
+			cluster->Broadcast(Create_s2c_ACQUIRE_ITEM(pSession_->GetSessionID(), item->GetObjectID(), item->GetDetailType(), item_ptr->GetNumOfItemStack()));
 			item->TryOnDestroy();
 
 			if (const auto inv = pSession_->GetOwnerEntity()->GetComp<Inventory>())

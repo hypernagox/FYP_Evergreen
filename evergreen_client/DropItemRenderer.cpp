@@ -24,7 +24,7 @@ void DropItemRenderer::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void DropItemRenderer::SetDropItem(uint8_t item_id)
 {
-	std::string key = std::to_string(item_id);
+	const auto& key = DATA_TABLE->GetDropItemName(item_id);
 	m_meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring, key, "DropitemResource"))));
 	m_material = std::make_shared<udsdx::Material>();
 	m_material->SetSourceTexture(INSTANCE(udsdx::Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, key, "DropitemResourceDiffuse"))));

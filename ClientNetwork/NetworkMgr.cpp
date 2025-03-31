@@ -41,7 +41,7 @@ namespace NetHelper
 
     c_uint32 NetworkMgr::GetSessionID() const noexcept
     {
-        return m_c2sSession->GetSessionID();
+        return m_c2sSession ? m_c2sSession->GetSessionID() : 0;
     }
 
     void NetworkMgr::FinishNetwork() noexcept

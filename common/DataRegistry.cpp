@@ -30,8 +30,17 @@ namespace Common
                     table.m_str2category_id.try_emplace(category, category_idx);
                     file >> jsonData;
                     int entity_start_index = 0;
+                    int item_start_index = 0;
                     for (const auto& [entityName, attributes] : jsonData.items())
                     {
+                        // TODO: 이렇게 해야하는 오브젝트 종류가 늘어나면 쌉 하드코딩 각이 보인다.
+                        if ("Item" == category)
+                        {
+                            table.m_dropItemID2String.try_emplace(item_start_index, entityName);
+                            table.m_dropItemName2Int.try_emplace(entityName, item_start_index);
+                            ++item_start_index;
+                        }
+
                         const auto entity_idx = entity_start_index++;
                         table.m_str2detail_id.try_emplace(entityName, entity_idx);
                         table.m_detailType2str[category].try_emplace(entity_idx, entityName);
@@ -87,10 +96,12 @@ namespace Common
             }
         }
 	}
-    std::wstring DataRegistry::Str2Wstr(const std::string_view str) noexcept
+    const std::wstring& DataRegistry::Str2Wstr(const std::string_view str) noexcept
     {
         const int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.data(), -1, nullptr, 0);
-        std::wstring wstr(size_needed, 0);
+        thread_local std::wstring wstr;
+        wstr.clear();
+        wstr.resize(size_needed);
         MultiByteToWideChar(CP_UTF8, 0, str.data(), -1, &wstr[0], size_needed);
         wstr.pop_back();
         return wstr;

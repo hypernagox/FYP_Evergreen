@@ -201,8 +201,11 @@
     <ClInclude Include="SharedDefines.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\resource\json\GlabalValues.json" />
+    <None Include="..\resource\json\Item.json" />
     <None Include="..\resource\json\Monster.json" />
     <None Include="..\resource\json\Player.json" />
+    <None Include="..\resource\json\Script.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
