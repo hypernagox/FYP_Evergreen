@@ -29,6 +29,6 @@ void PlayerQuickSlotGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void PlayerQuickSlotGUI::SetSlotContents(int slotIndex, uint8_t item_id)
 {
-	std::string key = std::to_string(item_id);
+	const std::string& key = DATA_TABLE->GetDropItemName(item_id);
 	m_slotContents[slotIndex]->GetComponent<GUIText>()->SetText(GET_DATA(std::wstring, key, "Name"));
 }
