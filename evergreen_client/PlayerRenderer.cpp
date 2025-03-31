@@ -3,6 +3,7 @@
 #include "EntityMovement.h"
 #include "ServerObject.h"
 #include "AuthenticPlayer.h"
+#include "../common/json.hpp"
 
 PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
@@ -32,7 +33,7 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	auto sceneObject = GetSceneObject();
 	sceneObject->AddChild(m_rendererObj);
 
-	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 18.0f);
+	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "CharacterScale", "Value"));
 
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(to); });

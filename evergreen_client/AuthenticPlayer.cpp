@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "AuthenticPlayer.h"
 #include "ServerObject.h"
 #include "InputHandler.h"
@@ -7,6 +7,7 @@
 #include "MovePacketSender.h"
 #include "NaviAgent.h"
 #include "PlayerStatusGUI.h"
+#include "PlayerQuickSlotGUI.h"
 
 
 bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
@@ -49,7 +50,7 @@ void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 
 	Vector3 vWorldDelta = Vector3::Transform(vDelta, Quaternion::CreateFromYawPitchRoll(Vector3(0.0f, m_cameraAngleAxis.y * DEG2RAD, 0.0f)));
 	
-	//TODO: �����ѹ�
+	//TODO: 매직넘버
 	if (m_entityMovement->GetVelocity().LengthSquared() == 0.f && 0.f == m_entityMovement->GetAcceleration().LengthSquared())
 		m_entityMovement->AddVelocity(vWorldDelta *= .1f);
 	else
@@ -78,6 +79,11 @@ void AuthenticPlayer::SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexc
 	}
 }
 
+void AuthenticPlayer::SetPlayerQuickSlotGUI(PlayerQuickSlotGUI* playerQuickSlotGUI) noexcept
+{
+	m_playerQuickSlotGUI = playerQuickSlotGUI;
+}
+
 void AuthenticPlayer::OnHit(int afterHP)
 {
 	m_iCurHP = afterHP;
@@ -90,6 +96,19 @@ void AuthenticPlayer::OnHit(int afterHP)
 	{
 		m_iCurHP = m_iMaxHP;
 	}
+}
+
+void AuthenticPlayer::SetQuickSlotItem(int index, uint8_t itemID)
+{
+	// 클라이언트 GUI에게 해당 퀵슬롯에 대한 아이템을 설정한다.
+	m_playerQuickSlotGUI->SetSlotContents(index, itemID);
+
+	// TODO: 클라이언트가 서버에게 해당 퀵슬롯에 대한 아이템 설정을 요청한다.
+}
+
+void AuthenticPlayer::UseQuickSlotItem(int index)
+{
+	// TODO: 클라이언트가 서버에게 해당 퀵슬롯에 대한 아이템 사용을 요청한다.
 }
 
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
@@ -191,19 +210,12 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	const Vector3Int vPrevState = m_vCurState;
 	m_vCurState = {};
 
-	if (INSTANCE(Input)->GetKey(Keyboard::Space))
-	{
-		//const Vector3 UP = Vector3::Up * 10.0f;
-		//if (m_bGround)
-		//	m_entityMovement->AddAcceleration(UP);
-		//m_vCurState.y += (int)UP.y;
-	}
 	if (INSTANCE(Input)->GetKey(Keyboard::LeftShift))
 	{
 		MoveByView(Vector3::Down * 10.0f);
 	}
 
-	// TODO �ϵ��ڵ�
+	// TODO 하드코딩
 	//static float cool_down = 0.f;
 	//cool_down -= DT;
 	//if (INSTANCE(Input)->GetMouseLeftButtonDown() && 0.f >= cool_down)
@@ -243,7 +255,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		{
 			m_playerRenderer->Attack();
 			DoAttack();
-			//std::cout << "���� �õ�\n";
+			//std::cout << "공격 시도\n";
 		}
 	}
 	if (INSTANCE(Input)->GetMouseRightButtonDown())
@@ -253,12 +265,25 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		{
 			// m_playerRenderer->Attack();
 			FireProj();
-			//std::cout << "���� �õ�\n";
+			//std::cout << "공격 시도\n";
 		}
 	}
 
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::D1))
+		UseQuickSlotItem(0);
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::D2))
+		UseQuickSlotItem(1);
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::D3))
+		UseQuickSlotItem(2);
+
+	// 퀵슬롯 설정을 확인하기 위한 임시 키세팅; 추후 인벤토리 시스템이 구현되어 퀵슬롯과 상호작용이 가능해지면 삭제 요
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::F1))
+		SetQuickSlotItem(0, 0);
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::F2))
+		SetQuickSlotItem(1, 1);
+
 	//
-	//// ������Ŷ ���� ������Ʈ
+	//// 무브패킷 센드 업데이트
 
 	m_bSendFlag |=
 		INSTANCE(Input)->GetKeyDown(Keyboard::W)

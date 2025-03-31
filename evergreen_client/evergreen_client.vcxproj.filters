@@ -192,6 +192,9 @@
     <ClCompile Include="DropItemRenderer.cpp">
       <Filter>DropItem</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerQuickSlotGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -295,6 +298,9 @@
     </ClInclude>
     <ClInclude Include="DropItemRenderer.h">
       <Filter>DropItem</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerQuickSlotGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

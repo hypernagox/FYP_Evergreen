@@ -249,6 +249,9 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 {
 	// TODO: 만약 내가 아닌 다른 플레이어가 아이템 먹은걸 알아야 한다면 (예: XX님이 YY를 획득!) 누가 먹었는지 ID도 필요
 	// 기획의 영역..
+	
+	// ID는 정수이나, json 테이블에서 해당 ID에 대응하는 아이템 정보를 획득하기 위해선 문자열로의 변환이 필요하다.
+
 	std::cout << std::format("아이템 획득함! 아이템 ID: {} \n , 개수: {}", pkt_.item_id(), pkt_.item_stack_size());
 	return true;
 }

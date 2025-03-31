@@ -8,6 +8,7 @@ class ServerObject;
 class EntityMovement;
 class PlayerRenderer;
 class PlayerStatusGUI;
+class PlayerQuickSlotGUI;
 
 // AuthenticPlayer는 우리가 조종할 수 있는 진짜의 플레이어를 나타내는 클래스
 //   - 인풋 핸들러를 이용해 플레이어의 움직임을 직접 조종
@@ -47,6 +48,7 @@ private:
 	ServerObject* m_pServerObject = nullptr;
 
 	PlayerStatusGUI* m_playerStatusGUI = nullptr;
+	PlayerQuickSlotGUI* m_playerQuickSlotGUI = nullptr;
 
 private:
 	void UpdatePlayerCamFpsMode(float deltaTime);
@@ -68,6 +70,10 @@ public:
 	bool& GetSendFlag()noexcept { return m_bSendFlag; }
 	const float GetYAngle()const noexcept { return m_rendererBodyAngleY; }
 	void SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexcept;
+	void SetPlayerQuickSlotGUI(PlayerQuickSlotGUI* playerQuickSlotGUI) noexcept;
 	void OnHit(int damage);
+
+	void SetQuickSlotItem(int index, uint8_t itemID);
+	void UseQuickSlotItem(int index);
 };
 

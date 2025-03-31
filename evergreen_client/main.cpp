@@ -25,6 +25,7 @@
 #include "Navigator.h"
 #include "ServerTimeMgr.h"
 #include "PlayerStatusGUI.h"
+#include "PlayerQuickSlotGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -220,6 +221,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		auto guiRenderer = guiObj->AddComponent<PlayerStatusGUI>();
 		scene->AddObject(guiObj);
         g_heroComponent->SetPlayerStatusGUI(guiRenderer);
+
+        auto quickSlotObj = std::make_shared<SceneObject>();
+        auto quickSlotRenderer = quickSlotObj->AddComponent<PlayerQuickSlotGUI>();
+        scene->AddObject(quickSlotObj);
+        g_heroComponent->SetPlayerQuickSlotGUI(quickSlotRenderer);
     }
 
     {
