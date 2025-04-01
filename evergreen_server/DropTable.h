@@ -12,6 +12,6 @@ public:
 	void TryCreateItem()const noexcept;
 private:
 	int8_t m_itemType = -1;
-	// TODO: È®·ü
+	// TODO: È®·ü / °¹¼ö
 };
 

@@ -161,3 +161,34 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ACQUIRE_ITEM(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ACQUIRE_ITEM);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_REQUEST_QUICK_SLOT(
+    const uint8_t item_id,
+    const uint8_t quick_slot_idx,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto item_id_value = item_id;
+    const auto quick_slot_idx_value = quick_slot_idx;
+    const auto serializedc2s_REQUEST_QUICK_SLOT = Nagox::Protocol::Createc2s_REQUEST_QUICK_SLOT(
+        builder
+,        item_id_value,
+        quick_slot_idx_value    );
+    builder.Finish(serializedc2s_REQUEST_QUICK_SLOT);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REQUEST_QUICK_SLOT);
+}
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_USE_QUICK_SLOT_ITEM(
+    const uint8_t quick_slot_idx,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto quick_slot_idx_value = quick_slot_idx;
+    const auto serializedc2s_USE_QUICK_SLOT_ITEM = Nagox::Protocol::Createc2s_USE_QUICK_SLOT_ITEM(
+        builder
+,        quick_slot_idx_value    );
+    builder.Finish(serializedc2s_USE_QUICK_SLOT_ITEM);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_USE_QUICK_SLOT_ITEM);
+}

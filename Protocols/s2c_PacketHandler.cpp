@@ -251,3 +251,8 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 	std::cout << std::format("¾ÆÀÌÅÛ È¹µæÇÔ! ¾ÆÀÌÅÛ ID: {} ¸ÔÀº User ID: {} , °³¼ö: {}\n", pkt_.item_detail_id(), pkt_.get_user_id(), pkt_.item_stack_size());
 	return true;
 }
+
+const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_USE_QUICK_SLOT_ITEM& pkt_)
+{
+	return true;
+}

@@ -51,3 +51,12 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ACQUIRE_ITEM(
     const uint64_t item_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_REQUEST_QUICK_SLOT(
+    const uint8_t item_id,
+    const uint8_t quick_slot_idx,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_USE_QUICK_SLOT_ITEM(
+    const uint8_t quick_slot_idx,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

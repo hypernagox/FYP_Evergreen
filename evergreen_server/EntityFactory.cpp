@@ -98,9 +98,12 @@ namespace NagiocpX
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreateDropItem(const EntityBuilder& b) noexcept
 	{
-		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
-		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
-		entity->AddComp<DropItem>();
+		const auto& b_ = static_cast<const DropItemBuilder&>(b);
+		const auto entity = CreateContentsEntity(b_.group_type, (ITEM_TYPE_INFO)b_.obj_type);
+		entity->AddComp<PositionComponent>()->pos = { b_.x, b_.y, b_.z };
+		const auto item = entity->AddComp<DropItem>();
+		item->SetDropItemDetailInfo(b_.item_detail_type);
+		item->SetItemStack(b_.item_stack_size);
 		return entity;
 	}
 }

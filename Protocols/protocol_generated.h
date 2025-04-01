@@ -91,6 +91,15 @@ struct c2s_ACQUIRE_ITEMBuilder;
 struct s2c_ACQUIRE_ITEM;
 struct s2c_ACQUIRE_ITEMBuilder;
 
+struct c2s_REQUEST_QUICK_SLOT;
+struct c2s_REQUEST_QUICK_SLOTBuilder;
+
+struct c2s_USE_QUICK_SLOT_ITEM;
+struct c2s_USE_QUICK_SLOT_ITEMBuilder;
+
+struct s2c_USE_QUICK_SLOT_ITEM;
+struct s2c_USE_QUICK_SLOT_ITEMBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -1527,6 +1536,177 @@ inline ::flatbuffers::Offset<s2c_ACQUIRE_ITEM> Creates2c_ACQUIRE_ITEM(
   builder_.add_get_user_id(get_user_id);
   builder_.add_item_stack_size(item_stack_size);
   builder_.add_item_detail_id(item_detail_id);
+  return builder_.Finish();
+}
+
+struct c2s_REQUEST_QUICK_SLOT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_REQUEST_QUICK_SLOTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ITEM_ID = 4,
+    VT_QUICK_SLOT_IDX = 6
+  };
+  uint8_t item_id() const {
+    return GetField<uint8_t>(VT_ITEM_ID, 0);
+  }
+  bool mutate_item_id(uint8_t _item_id = 0) {
+    return SetField<uint8_t>(VT_ITEM_ID, _item_id, 0);
+  }
+  uint8_t quick_slot_idx() const {
+    return GetField<uint8_t>(VT_QUICK_SLOT_IDX, 0);
+  }
+  bool mutate_quick_slot_idx(uint8_t _quick_slot_idx = 0) {
+    return SetField<uint8_t>(VT_QUICK_SLOT_IDX, _quick_slot_idx, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint8_t>(verifier, VT_ITEM_ID, 1) &&
+           VerifyField<uint8_t>(verifier, VT_QUICK_SLOT_IDX, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_REQUEST_QUICK_SLOTBuilder {
+  typedef c2s_REQUEST_QUICK_SLOT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_item_id(uint8_t item_id) {
+    fbb_.AddElement<uint8_t>(c2s_REQUEST_QUICK_SLOT::VT_ITEM_ID, item_id, 0);
+  }
+  void add_quick_slot_idx(uint8_t quick_slot_idx) {
+    fbb_.AddElement<uint8_t>(c2s_REQUEST_QUICK_SLOT::VT_QUICK_SLOT_IDX, quick_slot_idx, 0);
+  }
+  explicit c2s_REQUEST_QUICK_SLOTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_REQUEST_QUICK_SLOT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_REQUEST_QUICK_SLOT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_REQUEST_QUICK_SLOT> Createc2s_REQUEST_QUICK_SLOT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint8_t item_id = 0,
+    uint8_t quick_slot_idx = 0) {
+  c2s_REQUEST_QUICK_SLOTBuilder builder_(_fbb);
+  builder_.add_quick_slot_idx(quick_slot_idx);
+  builder_.add_item_id(item_id);
+  return builder_.Finish();
+}
+
+struct c2s_USE_QUICK_SLOT_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_USE_QUICK_SLOT_ITEMBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_QUICK_SLOT_IDX = 4
+  };
+  uint8_t quick_slot_idx() const {
+    return GetField<uint8_t>(VT_QUICK_SLOT_IDX, 0);
+  }
+  bool mutate_quick_slot_idx(uint8_t _quick_slot_idx = 0) {
+    return SetField<uint8_t>(VT_QUICK_SLOT_IDX, _quick_slot_idx, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint8_t>(verifier, VT_QUICK_SLOT_IDX, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_USE_QUICK_SLOT_ITEMBuilder {
+  typedef c2s_USE_QUICK_SLOT_ITEM Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_quick_slot_idx(uint8_t quick_slot_idx) {
+    fbb_.AddElement<uint8_t>(c2s_USE_QUICK_SLOT_ITEM::VT_QUICK_SLOT_IDX, quick_slot_idx, 0);
+  }
+  explicit c2s_USE_QUICK_SLOT_ITEMBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_USE_QUICK_SLOT_ITEM> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_USE_QUICK_SLOT_ITEM>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_USE_QUICK_SLOT_ITEM> Createc2s_USE_QUICK_SLOT_ITEM(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint8_t quick_slot_idx = 0) {
+  c2s_USE_QUICK_SLOT_ITEMBuilder builder_(_fbb);
+  builder_.add_quick_slot_idx(quick_slot_idx);
+  return builder_.Finish();
+}
+
+struct s2c_USE_QUICK_SLOT_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_USE_QUICK_SLOT_ITEMBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_USE_USER_ID = 4,
+    VT_ITEM_ID = 6,
+    VT_QUICK_SLOT_IDX = 8
+  };
+  uint64_t use_user_id() const {
+    return GetField<uint64_t>(VT_USE_USER_ID, 0);
+  }
+  bool mutate_use_user_id(uint64_t _use_user_id = 0) {
+    return SetField<uint64_t>(VT_USE_USER_ID, _use_user_id, 0);
+  }
+  uint8_t item_id() const {
+    return GetField<uint8_t>(VT_ITEM_ID, 0);
+  }
+  bool mutate_item_id(uint8_t _item_id = 0) {
+    return SetField<uint8_t>(VT_ITEM_ID, _item_id, 0);
+  }
+  uint8_t quick_slot_idx() const {
+    return GetField<uint8_t>(VT_QUICK_SLOT_IDX, 0);
+  }
+  bool mutate_quick_slot_idx(uint8_t _quick_slot_idx = 0) {
+    return SetField<uint8_t>(VT_QUICK_SLOT_IDX, _quick_slot_idx, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_USE_USER_ID, 8) &&
+           VerifyField<uint8_t>(verifier, VT_ITEM_ID, 1) &&
+           VerifyField<uint8_t>(verifier, VT_QUICK_SLOT_IDX, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_USE_QUICK_SLOT_ITEMBuilder {
+  typedef s2c_USE_QUICK_SLOT_ITEM Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_use_user_id(uint64_t use_user_id) {
+    fbb_.AddElement<uint64_t>(s2c_USE_QUICK_SLOT_ITEM::VT_USE_USER_ID, use_user_id, 0);
+  }
+  void add_item_id(uint8_t item_id) {
+    fbb_.AddElement<uint8_t>(s2c_USE_QUICK_SLOT_ITEM::VT_ITEM_ID, item_id, 0);
+  }
+  void add_quick_slot_idx(uint8_t quick_slot_idx) {
+    fbb_.AddElement<uint8_t>(s2c_USE_QUICK_SLOT_ITEM::VT_QUICK_SLOT_IDX, quick_slot_idx, 0);
+  }
+  explicit s2c_USE_QUICK_SLOT_ITEMBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_USE_QUICK_SLOT_ITEM> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_USE_QUICK_SLOT_ITEM>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_USE_QUICK_SLOT_ITEM> Creates2c_USE_QUICK_SLOT_ITEM(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t use_user_id = 0,
+    uint8_t item_id = 0,
+    uint8_t quick_slot_idx = 0) {
+  s2c_USE_QUICK_SLOT_ITEMBuilder builder_(_fbb);
+  builder_.add_use_user_id(use_user_id);
+  builder_.add_quick_slot_idx(quick_slot_idx);
+  builder_.add_item_id(item_id);
   return builder_.Finish();
 }
 

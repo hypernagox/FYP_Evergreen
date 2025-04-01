@@ -154,3 +154,21 @@ table s2c_ACQUIRE_ITEM
     item_detail_id : uint8;
     item_stack_size : uint8;
 }
+
+table c2s_REQUEST_QUICK_SLOT
+{
+    item_id : uint8;
+    quick_slot_idx : uint8;
+}
+
+table c2s_USE_QUICK_SLOT_ITEM
+{
+    quick_slot_idx : uint8;
+}
+
+table s2c_USE_QUICK_SLOT_ITEM
+{
+    use_user_id : uint64;
+    item_id : uint8;
+    quick_slot_idx : uint8;
+}

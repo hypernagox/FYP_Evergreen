@@ -2,6 +2,7 @@
 #include "pch.h"
 
 class Item;
+class ContentsEntity;
 
 class QuickSlot
 {
@@ -10,12 +11,14 @@ public:
 		if (MAX_QUICK_SLOT <= index)return nullptr;
 		return m_slotItems[index];
 	}
-	void SetSlotItem(Item* const item, const uint32_t index) {
-		if (MAX_QUICK_SLOT <= index || m_slotItems[index])return;
+	bool SetSlotItem(Item* const item, const uint32_t index) {
+		if (MAX_QUICK_SLOT <= index || m_slotItems[index])return false;
 		m_slotItems[index] = item;
+		return true;
 	}
 public:
-	bool UseSlotItem(const uint32_t index)noexcept;
+	bool UseSlotItem(ContentsEntity* const owner,
+		const uint32_t index)noexcept;
 private:
 	Item* m_slotItems[MAX_QUICK_SLOT] = { nullptr };
 };

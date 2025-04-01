@@ -6,9 +6,11 @@
 // 아이템 식별자 필요
 class Item
 {
-public:
-	virtual bool UseItem()noexcept {}
-private:
 
+public:
+	virtual bool UseItem(ContentsEntity* const owner)noexcept { return true; }
+public:
+	int8_t m_itemDetailType = -1;
+	int8_t m_numOfItemStack = -1;
 };
 

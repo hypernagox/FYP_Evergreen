@@ -11,6 +11,13 @@ namespace NagiocpX
 		float x, y, z;
 	};
 
+	struct DropItemBuilder
+		:public EntityBuilder
+	{
+		int8_t item_detail_type = -1;
+		int8_t item_stack_size = -1;
+	};
+
 	class EntityFactory
 	{
 	public:
@@ -27,3 +34,4 @@ namespace NagiocpX
 
 using NagiocpX::EntityBuilder;
 using NagiocpX::EntityFactory;
+using NagiocpX::DropItemBuilder;

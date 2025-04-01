@@ -14,8 +14,11 @@ public:
 	void SetItemStack(const uint8_t item_stack)noexcept {
 		m_numOfItemsStack = item_stack;
 	}
+	int8_t GetDropItemDetailInfo()const noexcept { return m_dropItemDetailType; }
+	void SetDropItemDetailInfo(const int8_t info) { m_dropItemDetailType = info; }
 private:
-	uint8_t m_numOfItemsStack = 1;
+	int8_t m_dropItemDetailType = -1;
+	int8_t m_numOfItemsStack = -1;
 	float m_probability = .7f;
 	// TODO: 그 외의 아이템 식별자..
 

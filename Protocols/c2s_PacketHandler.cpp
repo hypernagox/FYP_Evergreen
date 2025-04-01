@@ -18,6 +18,7 @@
 #include "Projectile.h"
 #include "Inventory.h"
 #include "DropItem.h"
+#include "Item.h"
 
 using namespace NagiocpX;
 
@@ -252,7 +253,15 @@ const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession
 			if (const auto inv = pSession_->GetOwnerEntity()->GetComp<Inventory>())
 			{
 				// inv->AddItem2Inventory()
-				std::cout << "아이템 획득\n";
+				if (const auto add_item = inv->AddDropItem(item_ptr))
+				{
+					std::cout << std::format("획득 아이템 ID:{} , 현재 개수:{}개 \n", add_item->m_itemDetailType, add_item->m_numOfItemStack);
+				}
+				else
+				{
+					std::cout << "문제 있음\n";
+				}
+				
 			}
 			else
 			{
@@ -262,6 +271,38 @@ const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession
 	}
 	
 	
+	return true;
+}
+
+const bool Handle_c2s_REQUEST_QUICK_SLOT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUICK_SLOT& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+	if (const auto inv = owner->GetComp<Inventory>())
+	{
+		// TODO: 반환값으로 알려야하나?
+		std::cout << std::format("등록 아이템 ID:{} , 인덱스:{} \n", pkt_.item_id(), pkt_.quick_slot_idx());
+		if (!inv->SetQuickSlotItem(pkt_.item_id(), pkt_.quick_slot_idx()))
+		{
+			std::cout << "템 없는데 구라침\n";
+		}
+	}
+	return true;
+}
+
+const bool Handle_c2s_USE_QUICK_SLOT_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_USE_QUICK_SLOT_ITEM& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+	if (const auto inv = owner->GetComp<Inventory>())
+	{
+		if (!inv->UseQuickSlotItem(pkt_.quick_slot_idx()))
+		{
+			std::cout << "템 없음\n";
+		}
+		else
+		{
+			std::cout << "사용\n";
+		}
+	}
 	return true;
 }
 

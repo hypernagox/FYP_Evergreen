@@ -306,3 +306,23 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ACQUIRE_ITEM(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_ACQUIRE_ITEM);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_USE_QUICK_SLOT_ITEM(
+    const uint64_t use_user_id,
+    const uint8_t item_id,
+    const uint8_t quick_slot_idx,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto use_user_id_value = use_user_id;
+    const auto item_id_value = item_id;
+    const auto quick_slot_idx_value = quick_slot_idx;
+    const auto serializeds2c_USE_QUICK_SLOT_ITEM = Nagox::Protocol::Creates2c_USE_QUICK_SLOT_ITEM(
+        builder
+,        use_user_id_value,
+        item_id_value,
+        quick_slot_idx_value    );
+    builder.Finish(serializeds2c_USE_QUICK_SLOT_ITEM);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_USE_QUICK_SLOT_ITEM);
+}

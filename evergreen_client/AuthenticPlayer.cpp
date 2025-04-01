@@ -102,13 +102,18 @@ void AuthenticPlayer::SetQuickSlotItem(int index, uint8_t itemID)
 {
 	// 클라이언트 GUI에게 해당 퀵슬롯에 대한 아이템을 설정한다.
 	m_playerQuickSlotGUI->SetSlotContents(index, itemID);
-
+	Send(
+		Create_c2s_REQUEST_QUICK_SLOT(itemID, (uint8_t)index)
+	);
 	// TODO: 클라이언트가 서버에게 해당 퀵슬롯에 대한 아이템 설정을 요청한다.
 }
 
 void AuthenticPlayer::UseQuickSlotItem(int index)
 {
 	// TODO: 클라이언트가 서버에게 해당 퀵슬롯에 대한 아이템 사용을 요청한다.
+	Send(
+		Create_c2s_USE_QUICK_SLOT_ITEM((uint8_t)index)
+	);
 }
 
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)

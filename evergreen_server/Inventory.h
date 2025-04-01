@@ -3,6 +3,19 @@
 #include "QuickSlot.h"
 
 class Item;
+class DropItem;
+
+/// <summary>
+/// //////////////////////////////////////////////////////////
+/// 
+/// 
+/// 
+/// 
+/// 주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주주
+/// 의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의의
+/// </summary>
+/// 
+/// 컨텐츠 살붙으면 무조건 데이터레이스
 
 class Inventory
 	:public ContentsComponent
@@ -10,6 +23,8 @@ class Inventory
 public:
 	CONSTRUCTOR_CONTENTS_COMPONENT(Inventory)
 public:
+	
+	~Inventory();
 	QuickSlot* GetQuickSlot()noexcept { return &m_quickSlot; }
 	const QuickSlot* GetQuickSlot()const noexcept { return &m_quickSlot; }
 public:
@@ -17,18 +32,14 @@ public:
 	const auto GetItemsAll()const noexcept { return const_cast<Inventory*>(this)->GetItemsAll(); }
 public:
 	const auto GetNumOfItems()const noexcept { return m_curNumOfItems; }
+	void DecItemStack(const int8_t item_type, const int cnt)noexcept;
 public:
-	Item* AddItem2Inventory(Item* const item)noexcept {
-		// TODO: 스레드 세이프 하지 않다면 바꾸어야 함
-		if (!item)return nullptr;
-		if (NUM_OF_MAX_INVENTORY_ITEM >= m_curNumOfItems)return nullptr;
-		m_curItemPos = FindItemPos();
-		if (-1 == m_curItemPos)return nullptr;
-		m_items[m_curItemPos] = item;
-		++m_curNumOfItems;
-		return item;
-	}
+	Item* AddDropItem(const DropItem* const drop_item_info)noexcept;
+	bool SetQuickSlotItem(const uint8_t item_id, const uint8_t quick_idx)noexcept;
+	bool UseQuickSlotItem(const uint8_t quick_idx)noexcept { return m_quickSlot.UseSlotItem(GetOwnerEntityRaw(), quick_idx); }
 private:
+	Item* FindItem(const int8_t item_type)const noexcept;
+	int8_t FindItemIndex(const int8_t item_type)const noexcept;
 	const int32_t FindItemPos()const noexcept {
 		for (int i = 0; i < NUM_OF_MAX_INVENTORY_ITEM; ++i) {
 			if (!m_items[i])return i;
@@ -40,5 +51,18 @@ private:
 	int32_t m_curItemPos = 0;
 	Item* m_items[NUM_OF_MAX_INVENTORY_ITEM]{ nullptr }; // 최대 아이템 제한이 30개 정도면 그냥 배열이 빠를 것 같다
 	QuickSlot m_quickSlot;
+
+private:
+	Item* AddItem2Inventory(Item* const item)noexcept {
+		// TODO: 스레드 세이프 하지 않다면 바꾸어야 함
+		if (!item)return nullptr;
+		if (NUM_OF_MAX_INVENTORY_ITEM <= m_curNumOfItems)return nullptr;
+		m_curItemPos = FindItemPos();
+		if (-1 == m_curItemPos)return nullptr;
+		m_items[m_curItemPos] = item;
+		++m_curNumOfItems;
+		return item;
+	}
 };
+
 

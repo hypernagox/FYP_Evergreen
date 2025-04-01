@@ -16,15 +16,17 @@ void DropTable::SetItemType(const std::string_view mon_name)
 
 void DropTable::TryCreateItem() const noexcept
 {
-	// TODO: È®·ü
+	// TODO: È®·ü°ú °¹¼ö
 	const auto owner = GetOwnerEntityRaw();
-	EntityBuilder b;
+	DropItemBuilder b;
 	const auto pos = owner->GetComp<PositionComponent>()->pos;
 	b.group_type = Nagox::Enum::GROUP_TYPE_DROP_ITEM;
 	b.obj_type = m_itemType;
 	b.x = pos.x;
 	b.y = pos.y;
 	b.z = pos.z;
+	b.item_detail_type = m_itemType;
+	b.item_stack_size = 1;
 	auto item = EntityFactory::CreateDropItem(b);
 	const auto temp_ptr = item.get();
 	ClusterPredicate p;
