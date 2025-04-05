@@ -5,6 +5,7 @@
 
 namespace Common
 {
+    inline thread_local std::wstring wstr = {};
 
 	void DataRegistry::Load(const std::wstring_view path) noexcept
 	{
@@ -98,8 +99,8 @@ namespace Common
 	}
     const std::wstring& DataRegistry::Str2Wstr(const std::string_view str) noexcept
     {
+        extern thread_local std::wstring wstr;
         const int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.data(), -1, nullptr, 0);
-        thread_local std::wstring wstr;
         wstr.clear();
         wstr.resize(size_needed);
         MultiByteToWideChar(CP_UTF8, 0, str.data(), -1, &wstr[0], size_needed);
