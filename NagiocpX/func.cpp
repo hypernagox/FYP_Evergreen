@@ -96,6 +96,12 @@ namespace NagiocpX
 		const_cast<Service* const>(Service::GetMainService())->ReturnSession(pSession);
 	}
 
+	bool ProbabilityCheck(const float chance) noexcept
+	{
+		extern thread_local std::mt19937 LRandEngine;
+		return std::uniform_real_distribution<float> { 0.0f, 1.0f }(LRandEngine) < chance;
+	}
+
 	S_ptr<SendBuffer> CreateHeartBeatSendBuffer(const HEART_BEAT eHeartBeatType_) noexcept
 	{
 		S_ptr<SendBuffer> sendBuffer = SendBufferMgr::Open(sizeof(PacketHeader));

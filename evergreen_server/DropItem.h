@@ -21,7 +21,5 @@ private:
 	int8_t m_numOfItemsStack = -1;
 	float m_probability = .7f;
 	// TODO: 그 외의 아이템 식별자..
-
-	static inline std::uniform_real_distribution<float> g_urd{ 0.0f, 1.0f };
 };
 

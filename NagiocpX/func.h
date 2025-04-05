@@ -90,6 +90,8 @@ namespace NagiocpX
 		return GetDistPow(a, b) <= (th_hold * th_hold);
 	}
 
+	bool ProbabilityCheck(const float chance)noexcept;
+
 	template<typename T>
 	class AllocateSharedSizeTrait
 	{

@@ -148,7 +148,7 @@ namespace NagiocpX
 			g_initiator->TLSInitialize();
 		}
 
-		LRandSeed = std::uniform_int_distribution<uint32_t>{ 0, UINT32_MAX }(g_RandEngine);
+		LRandSeed = std::uniform_int_distribution<uint32_t>{ 0, UINT32_MAX }(LRandEngine);
 	}
 
 	void ThreadMgr::DestroyTLS()noexcept

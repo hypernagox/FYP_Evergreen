@@ -11,6 +11,6 @@ namespace NagiocpX
 	constinit thread_local class TaskQueueable* LCurTaskQueue = nullptr;
 	constinit thread_local class Queueabler* LCurQueueableComponent = nullptr;
 	constinit thread_local uint32_t LRandSeed = {};
-}
 
-std::mt19937 g_RandEngine{ std::random_device{}() };
+	thread_local std::mt19937 LRandEngine{ std::random_device{}() };
+}

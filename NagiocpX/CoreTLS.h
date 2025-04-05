@@ -13,6 +13,6 @@ namespace NagiocpX
 	constinit extern thread_local class TaskQueueable* LCurTaskQueue;
 	constinit extern thread_local class Queueabler* LCurQueueableComponent;
 	constinit extern thread_local uint32_t LRandSeed;
-}
 
-extern std::mt19937 g_RandEngine;
+	extern thread_local std::mt19937 LRandEngine;
+}
