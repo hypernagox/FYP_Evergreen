@@ -93,6 +93,14 @@ namespace udsdx
 		SrcTexSRV_5,
 		SrcTexSRV_6,
 		SrcTexSRV_7,
+		SrcTexSRV_8,
+		SrcTexSRV_9,
+		SrcTexSRV_10,
+		SrcTexSRV_11,
+		SrcTexSRV_12,
+		SrcTexSRV_13,
+		SrcTexSRV_14,
+		SrcTexSRV_15,
 	};
 
 	enum RenderGroup : UINT
@@ -103,4 +111,5 @@ namespace udsdx
 
 	static constexpr int FrameResourceCount = 2;
 	static constexpr int SwapChainBufferCount = 2;
+	static constexpr int NumTextureSlots = 16;
 }

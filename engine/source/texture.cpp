@@ -8,6 +8,10 @@ namespace udsdx
 {
 	Texture::Texture(std::wstring_view path, ID3D12Device* device, ID3D12GraphicsCommandList* commandList) : ResourceObject(path)
 	{
+		// Set the name of the texture (with file name except directory)
+		std::filesystem::path pathTexture(path);
+		m_name = pathTexture.filename().string();
+
 		std::filesystem::path pathDds(path);
 		pathDds.replace_extension(L".ddscache");
 
@@ -58,7 +62,7 @@ namespace udsdx
 		ThrowIfFailed(device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+			&CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize + 3 & ~3),
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
 			IID_PPV_ARGS(m_textureUpload.GetAddressOf())));

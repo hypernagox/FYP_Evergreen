@@ -53,6 +53,8 @@ std::shared_ptr<udsdx::Mesh> terrainMesh;
 std::unique_ptr<HeightMap> heightMap;
 std::unique_ptr<TerrainData> terrainData;
 
+std::vector<std::shared_ptr<udsdx::Material>> g_instanceMaterials;
+
 Vector3 moveDirection = Vector3::Zero;
 Vector3 g_curPos = {};
 float yawDirection = 0.0f;
@@ -128,11 +130,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     playerMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
     terrainMaterial = std::make_shared<udsdx::Material>();
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap.tga")), 0);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_0.png")), 1);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_1.tga")), 2);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_2.png")), 3);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_3.png")), 4);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_0.tga")), 0);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_1.tga")), 1);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_0.png")), 2);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_1.tga")), 3);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_2.png")), 4);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_3.png")), 5);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\T_ground_soil_01_BC_SM.tga")), 6);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\T_ground_moss_01_BC_SM.tga")), 7);
+    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\Grass_and_Clover.tif")), 8);
 
     scene = std::make_shared<Scene>();
 
@@ -164,6 +170,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
 
+    std::map<std::string, udsdx::Texture*> textureMap;
+    for (auto texture : INSTANCE(Resource)->LoadAll<udsdx::Texture>())
+		textureMap[texture->GetName().data()] = texture;
+
     for (const auto& directory : std::filesystem::recursive_directory_iterator(RESOURCE_PATH(L"environment")))
     {
         // if the file is not a regular file(e.g. if it is a directory), skip it
@@ -181,9 +191,30 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         auto terrainInstance = std::make_shared<SceneObject>();
         auto terrainInstanceRenderer = terrainInstance->AddComponent<TerrainInstanceRenderer>();
+        auto mesh = res->Load<udsdx::Mesh>(directory.path().c_str());
+
+        const auto& subMeshes = mesh->GetSubmeshes();
+        for (size_t i = 0; i < subMeshes.size(); ++i)
+        {
+            auto material = std::make_shared<udsdx::Material>();
+            std::string key = subMeshes[i].DiffuseTexturePath;
+            std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+
+            // if the extension is .psd, replace it with .tga
+            if (key.ends_with(".psd"))
+				key.replace(key.end() - 4, key.end(), ".tga");
+
+            if (auto it = textureMap.find(key); it != textureMap.end())
+				material->SetSourceTexture(it->second);
+			else
+				material->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
+			g_instanceMaterials.emplace_back(material);
+            terrainInstanceRenderer->SetMaterial(material.get(), i);
+		}
+
         terrainInstanceRenderer->SetTerrainData(terrainData.get(), filename);
-        terrainInstanceRenderer->SetMesh(res->Load<udsdx::Mesh>(directory.path().c_str()));
-        terrainInstanceRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotexinstanced.hlsl")));
+        terrainInstanceRenderer->SetMesh(mesh);
+        terrainInstanceRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"colorinstanced.hlsl")));
 
         scene->AddObject(terrainInstance);
     }

@@ -12,7 +12,7 @@ namespace udsdx
 		~Material();
 
 	private:
-		std::array<Texture*, 8> m_mainTex = {};
+		std::array<Texture*, NumTextureSlots> m_mainTex = {};
 
 	public:
 		void SetSourceTexture(Texture* texture, UINT index = 0);

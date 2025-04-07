@@ -15,6 +15,8 @@ namespace udsdx
 		void CreateShaderResourceView(ID3D12Device* device, DescriptorParam& descriptorParam);
 
 	public:
+		std::string_view GetName() const { return m_name; }
+
 		D3D12_CPU_DESCRIPTOR_HANDLE GetSrvCpu() const;
 		D3D12_GPU_DESCRIPTOR_HANDLE GetSrvGpu() const;
 
@@ -25,6 +27,8 @@ namespace udsdx
 		void DisposeUploaders();
 
 	private:
+		std::string m_name;
+
 		ComPtr<ID3D12Resource> m_texture;
 		ComPtr<ID3D12Resource> m_textureUpload;
 

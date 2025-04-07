@@ -372,7 +372,7 @@ namespace udsdx
 
 	void Core::BuildRootSignature()
 	{ ZoneScoped;
-		CD3DX12_ROOT_PARAMETER slotRootParameter[14];
+		CD3DX12_ROOT_PARAMETER slotRootParameter[22];
 
 		slotRootParameter[RootParam::PerObjectCBV].InitAsConstants(sizeof(ObjectConstants) / 4, 0);
 		slotRootParameter[RootParam::PerCameraCBV].InitAsConstantBufferView(1);
@@ -381,20 +381,12 @@ namespace udsdx
 		slotRootParameter[RootParam::PerShadowCBV].InitAsConstantBufferView(3);
 		slotRootParameter[RootParam::PerFrameCBV].InitAsConstantBufferView(4);
 
-		CD3DX12_DESCRIPTOR_RANGE texRange[8]{};
-		for (int i = 0; i < 8; ++i)
+		CD3DX12_DESCRIPTOR_RANGE texRange[NumTextureSlots]{};
+		for (int i = 0; i < NumTextureSlots; ++i)
 		{
 			texRange[i].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, i, 0);
+			slotRootParameter[RootParam::SrcTexSRV_0 + i].InitAsDescriptorTable(1, &texRange[i]);
 		}
-
-		slotRootParameter[RootParam::SrcTexSRV_0].InitAsDescriptorTable(1, &texRange[0]);
-		slotRootParameter[RootParam::SrcTexSRV_1].InitAsDescriptorTable(1, &texRange[1]);
-		slotRootParameter[RootParam::SrcTexSRV_2].InitAsDescriptorTable(1, &texRange[2]);
-		slotRootParameter[RootParam::SrcTexSRV_3].InitAsDescriptorTable(1, &texRange[3]);
-		slotRootParameter[RootParam::SrcTexSRV_4].InitAsDescriptorTable(1, &texRange[4]);
-		slotRootParameter[RootParam::SrcTexSRV_5].InitAsDescriptorTable(1, &texRange[5]);
-		slotRootParameter[RootParam::SrcTexSRV_6].InitAsDescriptorTable(1, &texRange[6]);
-		slotRootParameter[RootParam::SrcTexSRV_7].InitAsDescriptorTable(1, &texRange[7]);
 
 		CD3DX12_STATIC_SAMPLER_DESC samplerDesc[] = {
 			CD3DX12_STATIC_SAMPLER_DESC(
