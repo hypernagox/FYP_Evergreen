@@ -11,7 +11,11 @@ public:
 	void SetCurrentHealth(int value);
 
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
-
+	void IncHP(const int hp_inc_val) { 
+		const auto after_hp = m_currentHealth + hp_inc_val;
+		if (after_hp > m_maxHealth)return;
+		SetCurrentHealth(after_hp);
+	}
 private:
 	std::shared_ptr<udsdx::SceneObject> m_healthBackground;
 	std::shared_ptr<udsdx::SceneObject> m_healthFill;

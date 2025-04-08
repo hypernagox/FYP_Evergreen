@@ -264,19 +264,25 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CLEAR_QUEST(
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_CLEAR_QUEST);
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FIRE_PROJ(
+    const uint64_t shoot_obj_id,
     const uint64_t proj_id,
+    const uint8_t proj_type,
     const Nagox::Struct::Vec3& pos,
     const Nagox::Struct::Vec3& vel,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
+    const auto shoot_obj_id_value = shoot_obj_id;
     const auto proj_id_value = proj_id;
+    const auto proj_type_value = proj_type;
     const auto pos_offset = &pos;
     const auto vel_offset = &vel;
     const auto serializeds2c_FIRE_PROJ = Nagox::Protocol::Creates2c_FIRE_PROJ(
         builder
-,        proj_id_value,
+,        shoot_obj_id_value,
+        proj_id_value,
+        proj_type_value,
         pos_offset,
         vel_offset    );
     builder.Finish(serializeds2c_FIRE_PROJ);

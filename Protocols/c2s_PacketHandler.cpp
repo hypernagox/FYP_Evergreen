@@ -283,7 +283,7 @@ const bool Handle_c2s_REQUEST_QUICK_SLOT(const NagiocpX::S_ptr<NagiocpX::PacketS
 		std::cout << std::format("등록 아이템 ID:{} , 인덱스:{} \n", pkt_.item_id(), pkt_.quick_slot_idx());
 		if (!inv->SetQuickSlotItem(pkt_.item_id(), pkt_.quick_slot_idx()))
 		{
-			std::cout << "템 없는데 구라침\n";
+			//std::cout << "템 없는데 구라침\n";
 		}
 	}
 	return true;
@@ -300,6 +300,12 @@ const bool Handle_c2s_USE_QUICK_SLOT_ITEM(const NagiocpX::S_ptr<NagiocpX::Packet
 		}
 		else
 		{
+			owner->GetComp<HP>()->PostDoHeal(1);
+			pSession_->SendAsync(Create_s2c_USE_QUICK_SLOT_ITEM
+			(owner->GetObjectID(),
+				0,
+				pkt_.quick_slot_idx())
+			);
 			std::cout << "사용\n";
 		}
 	}

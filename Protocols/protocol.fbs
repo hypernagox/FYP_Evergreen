@@ -137,7 +137,9 @@ table c2s_FIRE_PROJ
 
 table s2c_FIRE_PROJ
 {
+   shoot_obj_id : uint64;
    proj_id : uint64;
+   proj_type : uint8;
    pos: Nagox.Struct.Vec3;
    vel: Nagox.Struct.Vec3;
 }

@@ -22,7 +22,10 @@ namespace NetHelper
 			return Connect(ip, port, handler);
 		}
 		void DoNetworkIO(const DWORD timeout_millisecond = 0)noexcept;
-		void Send(S_ptr<class SendBuffer> pSendBuffer)const noexcept { m_c2sSession->Send(std::move(pSendBuffer)); }
+		void Send(S_ptr<class SendBuffer> pSendBuffer)const noexcept { 
+			if (!m_c2sSession)return;
+			m_c2sSession->Send(std::move(pSendBuffer)); 
+		}
 		const S_ptr<PacketSession>& GetSession()const noexcept { return m_c2sSession; }
 		const NetAddress& GetServerAddr()const noexcept { return m_serverAddr; }
 		void SetSessionID(const uint32_t sessionID_)const noexcept;

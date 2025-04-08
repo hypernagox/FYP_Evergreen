@@ -1345,15 +1345,29 @@ inline ::flatbuffers::Offset<c2s_FIRE_PROJ> Createc2s_FIRE_PROJ(
 struct s2c_FIRE_PROJ FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_FIRE_PROJBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_PROJ_ID = 4,
-    VT_POS = 6,
-    VT_VEL = 8
+    VT_SHOOT_OBJ_ID = 4,
+    VT_PROJ_ID = 6,
+    VT_PROJ_TYPE = 8,
+    VT_POS = 10,
+    VT_VEL = 12
   };
+  uint64_t shoot_obj_id() const {
+    return GetField<uint64_t>(VT_SHOOT_OBJ_ID, 0);
+  }
+  bool mutate_shoot_obj_id(uint64_t _shoot_obj_id = 0) {
+    return SetField<uint64_t>(VT_SHOOT_OBJ_ID, _shoot_obj_id, 0);
+  }
   uint64_t proj_id() const {
     return GetField<uint64_t>(VT_PROJ_ID, 0);
   }
   bool mutate_proj_id(uint64_t _proj_id = 0) {
     return SetField<uint64_t>(VT_PROJ_ID, _proj_id, 0);
+  }
+  uint8_t proj_type() const {
+    return GetField<uint8_t>(VT_PROJ_TYPE, 0);
+  }
+  bool mutate_proj_type(uint8_t _proj_type = 0) {
+    return SetField<uint8_t>(VT_PROJ_TYPE, _proj_type, 0);
   }
   const Nagox::Struct::Vec3 *pos() const {
     return GetStruct<const Nagox::Struct::Vec3 *>(VT_POS);
@@ -1369,7 +1383,9 @@ struct s2c_FIRE_PROJ FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_SHOOT_OBJ_ID, 8) &&
            VerifyField<uint64_t>(verifier, VT_PROJ_ID, 8) &&
+           VerifyField<uint8_t>(verifier, VT_PROJ_TYPE, 1) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_POS, 4) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_VEL, 4) &&
            verifier.EndTable();
@@ -1380,8 +1396,14 @@ struct s2c_FIRE_PROJBuilder {
   typedef s2c_FIRE_PROJ Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_shoot_obj_id(uint64_t shoot_obj_id) {
+    fbb_.AddElement<uint64_t>(s2c_FIRE_PROJ::VT_SHOOT_OBJ_ID, shoot_obj_id, 0);
+  }
   void add_proj_id(uint64_t proj_id) {
     fbb_.AddElement<uint64_t>(s2c_FIRE_PROJ::VT_PROJ_ID, proj_id, 0);
+  }
+  void add_proj_type(uint8_t proj_type) {
+    fbb_.AddElement<uint8_t>(s2c_FIRE_PROJ::VT_PROJ_TYPE, proj_type, 0);
   }
   void add_pos(const Nagox::Struct::Vec3 *pos) {
     fbb_.AddStruct(s2c_FIRE_PROJ::VT_POS, pos);
@@ -1402,13 +1424,17 @@ struct s2c_FIRE_PROJBuilder {
 
 inline ::flatbuffers::Offset<s2c_FIRE_PROJ> Creates2c_FIRE_PROJ(
     ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t shoot_obj_id = 0,
     uint64_t proj_id = 0,
+    uint8_t proj_type = 0,
     const Nagox::Struct::Vec3 *pos = nullptr,
     const Nagox::Struct::Vec3 *vel = nullptr) {
   s2c_FIRE_PROJBuilder builder_(_fbb);
   builder_.add_proj_id(proj_id);
+  builder_.add_shoot_obj_id(shoot_obj_id);
   builder_.add_vel(vel);
   builder_.add_pos(pos);
+  builder_.add_proj_type(proj_type);
   return builder_.Finish();
 }
 
