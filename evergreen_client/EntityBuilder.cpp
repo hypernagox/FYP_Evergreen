@@ -8,6 +8,7 @@
 #include "DropItem.h"
 #include "DropItemRenderer.h"
 #include "../common/json.hpp"
+#include "MonsterRenderer.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 extern std::shared_ptr<SceneObject> g_heroObj;
@@ -54,7 +55,6 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderB
 
 	auto instance = std::make_shared<udsdx::SceneObject>();
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
-	instance->GetTransform()->SetLocalScale(Vector3::One * 1.4f);
 
 	instance->AddComponent<EntityMovement>();
 	auto serverComponent = instance->AddComponent<ServerObject>();
@@ -63,10 +63,8 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderB
 	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 	moveInterpolator->InitInterpolator(b->obj_pos);
 
-	auto renderer = instance->AddComponent<MeshRenderer>();
-	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"char_sample.obj")));
-	renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
-
+	// TODO: 원거리 공격 몬스터가 NPC로 생성된다. Create_Moster로 통합하여 타입별로 컴포넌트 생성을 다양화시키는 방향
+	auto renderer = instance->AddComponent<MonsterRenderer>();
 	return instance;
 }
 

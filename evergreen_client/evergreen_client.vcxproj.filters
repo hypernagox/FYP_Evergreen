@@ -192,6 +192,9 @@
     <ClCompile Include="DropItemRenderer.cpp">
       <Filter>NetEntity\ContentsEntity\DropItem</Filter>
     </ClCompile>
+    <ClCompile Include="MonsterRenderer.cpp">
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -298,6 +301,9 @@
     </ClInclude>
     <ClInclude Include="DropItemRenderer.h">
       <Filter>NetEntity\ContentsEntity\DropItem</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterRenderer.h">
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
