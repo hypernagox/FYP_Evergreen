@@ -75,5 +75,7 @@ public:
 
 	void SetQuickSlotItem(int index, uint8_t itemID);
 	void UseQuickSlotItem(int index);
+public:
+	const auto& GetStatusGUI()const noexcept { return m_playerStatusGUI; }
 };
 

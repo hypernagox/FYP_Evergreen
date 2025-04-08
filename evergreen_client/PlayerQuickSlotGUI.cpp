@@ -15,9 +15,9 @@ PlayerQuickSlotGUI::PlayerQuickSlotGUI(const std::shared_ptr<udsdx::SceneObject>
 		object->AddChild(m_slotBackground[i]);
 
 		m_slotContents[i] = std::make_shared<SceneObject>();
-		auto renderer = m_slotContents[i]->AddComponent<GUIText>();
-		renderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
-		m_slotContents[i]->GetTransform()->SetLocalPosition(Vector3(640.0f + 120.0f * i, -400.0f, 0.0f));
+		auto renderer = m_slotContents[i]->AddComponent<GUIImage>();
+		m_slotContents[i]->GetTransform()->SetLocalPosition(Vector3(640.0f + 120.0f * i, -380.0f, 0.0f));
+		renderer->SetSize(Vector2Int(100, 100));
 		object->AddChild(m_slotContents[i]);
 	}
 }
@@ -30,5 +30,6 @@ void PlayerQuickSlotGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void PlayerQuickSlotGUI::SetSlotContents(int slotIndex, uint8_t item_id)
 {
 	const std::string& key = DATA_TABLE->GetDropItemName(item_id);
-	m_slotContents[slotIndex]->GetComponent<GUIText>()->SetText(GET_DATA(std::wstring, key, "Name"));
+	udsdx::Texture* texture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, key, "Icon")));
+	m_slotContents[slotIndex]->GetComponent<GUIImage>()->SetTexture(texture);
 }

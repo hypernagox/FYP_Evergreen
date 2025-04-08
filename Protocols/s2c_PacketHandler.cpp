@@ -12,6 +12,8 @@
 #include "GizmoSphereRenderer.h"
 #include "Projectile.h"
 #include "AuthenticPlayer.h"
+#include "PlayerStatusGUI.h"
+#include "PlayerQuickSlotGUI.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -226,6 +228,8 @@ const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSessio
 const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_FIRE_PROJ& pkt_)
 {
 	// TODO: 개 쌉 하드코딩 + 매넘
+	const auto shoot_obj_id = pkt_.shoot_obj_id();
+	const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
 	auto s = std::make_shared<SceneObject>();
 	s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
 
@@ -254,5 +258,10 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 
 const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_USE_QUICK_SLOT_ITEM& pkt_)
 {
+	const auto use_user_id = pkt_.use_user_id();
+	const auto item_id = pkt_.item_id();
+	const auto quick_idx = pkt_.quick_slot_idx();
+	const auto& gui = Mgr(ServerObjectMgr)->GetMainHero()->GetComponent<AuthenticPlayer>()->GetStatusGUI();
+	gui->IncHP(1);
 	return true;
 }

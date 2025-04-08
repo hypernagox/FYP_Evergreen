@@ -84,7 +84,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CLEAR_QUEST(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FIRE_PROJ(
+    const uint64_t shoot_obj_id,
     const uint64_t proj_id,
+    const uint8_t proj_type,
     const Nagox::Struct::Vec3& pos,
     const Nagox::Struct::Vec3& vel,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
