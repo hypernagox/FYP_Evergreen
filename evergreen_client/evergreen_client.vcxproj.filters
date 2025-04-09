@@ -195,6 +195,12 @@
     <ClCompile Include="MonsterRenderer.cpp">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="FocusAgentGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerInventoryGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -304,6 +310,12 @@
     </ClInclude>
     <ClInclude Include="MonsterRenderer.h">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="FocusAgentGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerInventoryGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

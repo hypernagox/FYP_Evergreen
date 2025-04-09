@@ -400,6 +400,7 @@
     <ClCompile Include="EntityBuilder.cpp" />
     <ClCompile Include="EntityMovement.cpp" />
     <ClCompile Include="EventTimer.cpp" />
+    <ClCompile Include="FocusAgentGUI.cpp" />
     <ClCompile Include="func.cpp" />
     <ClCompile Include="GizmoBoxRenderer.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
@@ -437,6 +438,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PlayerInventoryGUI.cpp" />
     <ClCompile Include="PlayerQuickSlotGUI.cpp" />
     <ClCompile Include="PlayerRenderer.cpp" />
     <ClCompile Include="PlayerStatusGUI.cpp" />
@@ -474,6 +476,7 @@
     <ClInclude Include="EntityBuilder.h" />
     <ClInclude Include="EntityMovement.h" />
     <ClInclude Include="EventTimer.h" />
+    <ClInclude Include="FocusAgentGUI.h" />
     <ClInclude Include="func.h" />
     <ClInclude Include="GizmoBoxRenderer.h" />
     <ClInclude Include="GizmoCylinderRenderer.h" />
@@ -486,6 +489,7 @@
     <ClInclude Include="MovePacketSender.h" />
     <ClInclude Include="ObjectIdentifier.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PlayerInventoryGUI.h" />
     <ClInclude Include="PlayerQuickSlotGUI.h" />
     <ClInclude Include="PlayerRenderer.h" />
     <ClInclude Include="PlayerStatusGUI.h" />

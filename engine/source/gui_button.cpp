@@ -1,21 +1,26 @@
 #include "pch.h"
-#include "gui_image.h"
-#include "scene.h"
-#include "core.h"
-#include "shader_compile.h"
-#include "transform.h"
+#include "gui_button.h"
 #include "texture.h"
 
 namespace udsdx
 {
-	GUIImage::GUIImage(const std::shared_ptr<SceneObject>& object) : GUIElement(object)
+	GUIButton::GUIButton(const std::shared_ptr<SceneObject>& object) : GUIImage(object)
 	{
 	}
 
-	void GUIImage::Render(RenderParam& param)
+	void GUIButton::Render(RenderParam& param)
 	{
 		float ratio = param.Viewport.Height / RefScreenSize.y;
 		Vector3 position = GetTransform()->GetWorldPosition() * Vector3(ratio, -ratio, 1.0f) + Vector3(param.Viewport.Width / 2.0f, param.Viewport.Height / 2.0f, 0.0f);
+		Vector4 color = Colors::White;
+		if (GetMouseHovering())
+		{
+			color = Colors::LightGray;
+		}
+		if (GetMousePressing())
+		{
+			color = Colors::DimGray;
+		}
 		if (m_texture != nullptr)
 		{
 			param.SpriteBatchNonPremultipliedAlpha->Draw(
@@ -23,7 +28,7 @@ namespace udsdx
 				XMUINT2(static_cast<UINT>(m_size.x), static_cast<UINT>(m_size.y)),
 				position,
 				nullptr,
-				Colors::White,
+				color,
 				0.0f,
 				Vector2(m_size.x, m_size.y) * 0.5f,
 				Vector2::One * ratio
@@ -31,13 +36,11 @@ namespace udsdx
 		}
 	}
 
-	void GUIImage::SetTexture(Texture* value, bool setImageSize)
+	void GUIButton::OnMouseRelease()
 	{
-		m_texture = value;
-		if (setImageSize && m_texture)
+		if (m_clickCallback)
 		{
-			Vector2Int textureSize = m_texture->GetSize();
-			m_size = Vector2(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y));
+			m_clickCallback();
 		}
 	}
 }

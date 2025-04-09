@@ -8,7 +8,30 @@
 #include "NaviAgent.h"
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
+#include "PlayerInventoryGUI.h"
 
+AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
+	: Component{ object }
+{
+	m_cameraAnchor = std::make_shared<SceneObject>();
+	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3(0.0f, 3.0f, 0.0f));
+
+	m_cameraObj = std::make_shared<SceneObject>();
+
+	m_pCamera = m_cameraObj->AddComponent<CameraPerspective>();
+	m_pCamera->SetClearColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+	// TODO: 아이템 Json 레지스트리에서 종류의 개수를 알아내서 가져오면 좋겠다.
+	m_inventory = std::vector<int>(16, 0);
+	m_quickSlot = std::vector<int>(3, -1);
+
+	Start();
+}
+
+AuthenticPlayer::~AuthenticPlayer()
+{
+
+}
 
 bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
 	const DirectX::SimpleMath::Vector3& targetPosition,
@@ -73,7 +96,6 @@ void AuthenticPlayer::SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexc
 
 	if (m_playerStatusGUI)
 	{
-		// TODO: Magic Number; the total health of the playuer is 5
 		m_playerStatusGUI->SetMaxHealth(m_iMaxHP);
 		m_playerStatusGUI->SetCurrentHealth(m_iCurHP);
 	}
@@ -82,6 +104,11 @@ void AuthenticPlayer::SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexc
 void AuthenticPlayer::SetPlayerQuickSlotGUI(PlayerQuickSlotGUI* playerQuickSlotGUI) noexcept
 {
 	m_playerQuickSlotGUI = playerQuickSlotGUI;
+}
+
+void AuthenticPlayer::SetPlayerInventoryGUI(PlayerInventoryGUI* playerInventoryGUI) noexcept
+{
+	m_playerInventoryGUI = playerInventoryGUI;
 }
 
 void AuthenticPlayer::OnHit(int afterHP)
@@ -98,10 +125,31 @@ void AuthenticPlayer::OnHit(int afterHP)
 	}
 }
 
+void AuthenticPlayer::OnModifyInventory(uint8_t itemID, int delta)
+{
+	m_inventory[itemID] += delta;
+
+	m_playerQuickSlotGUI->UpdateSlotContents(m_quickSlot, m_inventory);
+	m_playerInventoryGUI->UpdateSlotContents(this, m_inventory);
+}
+
+void AuthenticPlayer::SetQuickSlotItemOnBlank(uint8_t itemID)
+{
+	for (int i = 0; i < m_quickSlot.size(); ++i)
+	{
+		if (m_quickSlot[i] == -1)
+		{
+			SetQuickSlotItem(i, itemID);
+			break;
+		}
+	}
+}
+
 void AuthenticPlayer::SetQuickSlotItem(int index, uint8_t itemID)
 {
 	// 클라이언트 GUI에게 해당 퀵슬롯에 대한 아이템을 설정한다.
-	m_playerQuickSlotGUI->SetSlotContents(index, itemID);
+	m_quickSlot[index] = itemID;
+	m_playerQuickSlotGUI->UpdateSlotContents(m_quickSlot, m_inventory);
 	Send(
 		Create_c2s_REQUEST_QUICK_SLOT(itemID, (uint8_t)index)
 	);
@@ -127,6 +175,17 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	pCameraTransfrom->SetLocalPosition(Vector3(1.5f + sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, zPos));
 	pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
 	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), m_fovBase + (INSTANCE(Input)->GetMouseRightButton() ? -30.0f * DEG2RAD : 0.0f), deltaTime * 8.0f));
+}
+
+void AuthenticPlayer::TryClickScreen()
+{
+	const auto state = m_playerRenderer->GetCurrentState();
+	if (PlayerRenderer::AnimationState::Idle == state || PlayerRenderer::AnimationState::Run == state || PlayerRenderer::AnimationState::Attack == state)
+	{
+		m_playerRenderer->Attack();
+		DoAttack();
+		//std::cout << "공격 시도\n";
+	}
 }
 
 void AuthenticPlayer::FireProj()
@@ -160,25 +219,6 @@ void AuthenticPlayer::RequestQuest()
 	{	
 		Send(Create_c2s_REQUEST_QUEST(0));
 	}
-}
-
-AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
-	: Component{ object }
-{
-	m_cameraAnchor = std::make_shared<SceneObject>();
-	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3(0.0f, 3.0f, 0.0f));
-
-	m_cameraObj = std::make_shared<SceneObject>();
-
-	m_pCamera = m_cameraObj->AddComponent<CameraPerspective>();
-	m_pCamera->SetClearColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
-
-	Start();
-}
-
-AuthenticPlayer::~AuthenticPlayer()
-{
-
 }
 
 void AuthenticPlayer::Start()
@@ -253,16 +293,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	transform->SetLocalPosition(temp);
 	GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
 
-	if (INSTANCE(Input)->GetMouseLeftButtonDown())
-	{
-		const auto state = m_playerRenderer->GetCurrentState();
-		if (PlayerRenderer::AnimationState::Idle == state || PlayerRenderer::AnimationState::Run == state || PlayerRenderer::AnimationState::Attack == state)
-		{
-			m_playerRenderer->Attack();
-			DoAttack();
-			//std::cout << "공격 시도\n";
-		}
-	}
 	if (INSTANCE(Input)->GetMouseRightButtonDown())
 	{
 		const auto state = m_playerRenderer->GetCurrentState();
@@ -280,12 +310,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		UseQuickSlotItem(1);
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::D3))
 		UseQuickSlotItem(2);
-
-	// 퀵슬롯 설정을 확인하기 위한 임시 키세팅; 추후 인벤토리 시스템이 구현되어 퀵슬롯과 상호작용이 가능해지면 삭제 요
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::F1))
-		SetQuickSlotItem(0, 0);
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::F2))
-		SetQuickSlotItem(1, 1);
 
 	//
 	//// 무브패킷 센드 업데이트

@@ -19,6 +19,7 @@
 #include "animation_clip.h"
 #include "gui_image.h"
 #include "gui_text.h"
+#include "gui_button.h"
 
 #include "debug_console.h"
 #include "time_measure.h"

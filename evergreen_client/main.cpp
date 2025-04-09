@@ -26,6 +26,7 @@
 #include "ServerTimeMgr.h"
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
+#include "PlayerInventoryGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -33,6 +34,7 @@
 
 #include "../common/json.hpp"
 #include "ServerObjectMgr.h"
+#include "FocusAgentGUI.h"
 
 using namespace udsdx;
 
@@ -158,6 +160,26 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     scene->AddObject(g_heroObj);
 
+    // Region: Focus Agent GUI
+    {
+        auto focusAgentObj = std::make_shared<SceneObject>();
+        auto focusAgent = focusAgentObj->AddComponent<FocusAgentGUI>();
+
+        focusAgent->SetSize(Vector2::One * 8192.0f);
+        focusAgent->SetTryExitCallback([]() {
+            // TODO: 일단 끄기전 서버오브젝트 컨테이너 밀어줌
+            ServerObjectMgr::GetInst()->Clear();
+            // TODO: 이거해야 메모리릭 없는데 왜 터짐?
+           // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
+            UpdownStudio::Quit();
+            });
+        focusAgent->SetTryClickCallback([]() {
+            g_heroComponent->TryClickScreen();
+            });
+
+        scene->AddObject(focusAgentObj);
+    }
+
     playerLightObj = std::make_shared<SceneObject>();
     auto playerLight = playerLightObj->AddComponent<LightDirectional>();
     playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PI / 4.0f, PI / 4.0f, 0.0f));
@@ -258,6 +280,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         auto quickSlotRenderer = quickSlotObj->AddComponent<PlayerQuickSlotGUI>();
         scene->AddObject(quickSlotObj);
         g_heroComponent->SetPlayerQuickSlotGUI(quickSlotRenderer);
+
+        auto inventoryObj = std::make_shared<SceneObject>();
+        auto inventoryRenderer = inventoryObj->AddComponent<PlayerInventoryGUI>();
+        scene->AddObject(inventoryObj);
+        g_heroComponent->SetPlayerInventoryGUI(inventoryRenderer);
     }
 
     {
@@ -318,32 +345,6 @@ void Update(const Time& time)
             DebugConsole::Log("Calling the event at " + std::to_string(t) + "s");
 			});
 	}
-
-    if (INSTANCE(Input)->GetMouseLeftButtonDown())
-    {
-        if (!g_inFocus)
-        {
-			g_inFocus = true;
-			INSTANCE(Input)->SetRelativeMouse(true);
-		}
-    }
-
-    if (INSTANCE(Input)->GetKeyDown(Keyboard::Escape))
-    {
-        if (g_inFocus)
-        {
-            g_inFocus = false;
-			INSTANCE(Input)->SetRelativeMouse(false);
-		}
-        else
-        {
-            // TODO: 일단 끄기전 서버오브젝트 컨테이너 밀어줌
-            ServerObjectMgr::GetInst()->Clear();
-            // TODO: 이거해야 메모리릭 없는데 왜 터짐?
-           // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
-            UpdownStudio::Quit();
-        }
-    }
 
     Vector3 terrainPos = g_heroObj->GetTransform()->GetLocalPosition() / terrainObj->GetTransform()->GetLocalScale();
     terrainPos.x = fmod(terrainPos.x + 1.0f, 1.0f);

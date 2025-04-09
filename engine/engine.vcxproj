@@ -250,6 +250,7 @@
     <ClCompile Include="source\font.cpp" />
     <ClCompile Include="source\frame_debug.cpp" />
     <ClCompile Include="source\frame_resource.cpp" />
+    <ClCompile Include="source\gui_button.cpp" />
     <ClCompile Include="source\gui_element.cpp" />
     <ClCompile Include="source\gui_image.cpp" />
     <ClCompile Include="source\gui_text.cpp" />
@@ -306,6 +307,7 @@
     <ClInclude Include="source\font.h" />
     <ClInclude Include="source\frame_debug.h" />
     <ClInclude Include="source\frame_resource.h" />
+    <ClInclude Include="source\gui_button.h" />
     <ClInclude Include="source\gui_element.h" />
     <ClInclude Include="source\gui_image.h" />
     <ClInclude Include="source\gui_text.h" />

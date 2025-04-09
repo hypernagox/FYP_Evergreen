@@ -253,6 +253,13 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 	// ID는 정수이나, json 테이블에서 해당 ID에 대응하는 아이템 정보를 획득하기 위해선 문자열로의 변환이 필요하다.
 	Mgr(ServerObjectMgr)->RemoveObject(pkt_.item_obj_id());
 	std::cout << std::format("아이템 획득함! 아이템 ID: {} 먹은 User ID: {} , 개수: {}\n", pkt_.item_detail_id(), pkt_.get_user_id(), pkt_.item_stack_size());
+
+	if (auto targetObject = Mgr(ServerObjectMgr)->GetServerObj(pkt_.get_user_id()))
+	{
+		if (auto playerComp = targetObject->GetComponent<AuthenticPlayer>())
+			playerComp->OnModifyInventory(pkt_.item_detail_id(), pkt_.item_stack_size());
+	}
+
 	return true;
 }
 
@@ -263,5 +270,12 @@ const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::Pack
 	const auto quick_idx = pkt_.quick_slot_idx();
 	const auto& gui = Mgr(ServerObjectMgr)->GetMainHero()->GetComponent<AuthenticPlayer>()->GetStatusGUI();
 	gui->IncHP(1);
+
+	if (auto targetObject = Mgr(ServerObjectMgr)->GetServerObj(use_user_id))
+	{
+		if (auto playerComp = targetObject->GetComponent<AuthenticPlayer>())
+			playerComp->OnModifyInventory(item_id, -1);
+	}
+
 	return true;
 }

@@ -77,17 +77,17 @@ namespace udsdx
 	void Scene::UpdateGUIElementEvent(const Time& time)
 	{
 		auto elements = m_rootObject->GetComponentsInChildren<GUIElement>();
-		int x = INSTANCE(Input)->GetMouseX();
-		int y = INSTANCE(Input)->GetMouseY();
+		int mx = INSTANCE(Input)->GetMouseX();
+		int my = INSTANCE(Input)->GetMouseY();
 
 		GUIElement* hoveredElement = nullptr;
 		for (auto iter = elements.rbegin(); iter != elements.rend(); ++iter)
 		{
 			GUIElement* element = *iter;
-			if (hoveredElement == nullptr)
+			if (hoveredElement == nullptr && element->GetRaycastTarget())
 			{
 				RECT rect = element->GetScreenRect();
-				if (rect.left <= x && x <= rect.right && rect.top <= y && y <= rect.bottom)
+				if (rect.left <= mx && mx <= rect.right && rect.top <= my && my <= rect.bottom)
 				{
 					hoveredElement = element;
 				}

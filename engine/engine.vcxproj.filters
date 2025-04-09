@@ -131,6 +131,9 @@
     <ClCompile Include="source\rect_transform.cpp">
       <Filter>Engine\Runtime</Filter>
     </ClCompile>
+    <ClCompile Include="source\gui_button.cpp">
+      <Filter>Engine\Runtime\Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -297,6 +300,9 @@
     </ClInclude>
     <ClInclude Include="source\rect_transform.h">
       <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gui_button.h">
+      <Filter>Engine\Runtime\Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

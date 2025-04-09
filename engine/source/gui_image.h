@@ -21,7 +21,7 @@ namespace udsdx
 		Texture* GetTexture() const { return m_texture; }
 		void SetTexture(Texture* value, bool setImageSize = false);
 
-	private:
+	protected:
 		Texture* m_texture = nullptr;
 	};
 }
