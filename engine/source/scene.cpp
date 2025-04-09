@@ -30,6 +30,7 @@ namespace udsdx
 
 	void Scene::Update(const Time& time)
 	{ ZoneScoped;
+	    UpdateGUIElementEvent(time);
 		SceneObject::EnumerateUpdate(m_rootObject, time, *this);
 	}
 
@@ -71,6 +72,28 @@ namespace udsdx
 		}
 
 		PassRenderHUD(param);
+	}
+
+	void Scene::UpdateGUIElementEvent(const Time& time)
+	{
+		auto elements = m_rootObject->GetComponentsInChildren<GUIElement>();
+		int x = INSTANCE(Input)->GetMouseX();
+		int y = INSTANCE(Input)->GetMouseY();
+
+		GUIElement* hoveredElement = nullptr;
+		for (auto iter = elements.rbegin(); iter != elements.rend(); ++iter)
+		{
+			GUIElement* element = *iter;
+			if (hoveredElement == nullptr)
+			{
+				RECT rect = element->GetScreenRect();
+				if (rect.left <= x && x <= rect.right && rect.top <= y && y <= rect.bottom)
+				{
+					hoveredElement = element;
+				}
+			}
+			element->UpdateEvent(element == hoveredElement);
+		}
 	}
 
 	void Scene::AddObject(std::shared_ptr<SceneObject> object)

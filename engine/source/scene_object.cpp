@@ -6,10 +6,10 @@
 
 namespace udsdx
 {
-	void SceneObject::EnumerateUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene)
+	void SceneObject::Enumerate(const std::shared_ptr<SceneObject>& root, std::function<void(const std::shared_ptr<SceneObject>&)> callback)
 	{
-		static std::stack<SceneObject*> s;
-		SceneObject* node = root.get();
+		static std::stack<std::shared_ptr<SceneObject>> s;
+		std::shared_ptr<SceneObject> node = root;
 
 		// Perform in-order traversal (sibiling-node-child)
 		// Since the order of the siblings is reversed, it needs to visit the siblings first
@@ -18,16 +18,21 @@ namespace udsdx
 			if (node != nullptr)
 			{
 				s.emplace(node);
-				node = node->m_sibling.get();
+				node = node->m_sibling;
 			}
 			else
 			{
 				node = s.top();
 				s.pop();
-				node->Update(time, scene);
-				node = node->m_child.get();
+				callback(node);
+				node = node->m_child;
 			}
 		}
+	}
+
+	void SceneObject::EnumerateUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene)
+	{
+		Enumerate(root, [&](const std::shared_ptr<SceneObject>& node) { node->Update(time, scene); });
 	}
 
 	void SceneObject::EnumeratePostUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene)

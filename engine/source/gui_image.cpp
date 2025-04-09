@@ -29,7 +29,8 @@ namespace udsdx
 		m_texture = value;
 		if (setImageSize && m_texture)
 		{
-			m_size = m_texture->GetSize();
+			Vector2Int textureSize = m_texture->GetSize();
+			m_size = Vector2(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y));
 		}
 	}
 }

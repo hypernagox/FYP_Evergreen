@@ -11,13 +11,13 @@ PlayerQuickSlotGUI::PlayerQuickSlotGUI(const std::shared_ptr<udsdx::SceneObject>
 		auto uiRenderer = m_slotBackground[i]->AddComponent<GUIImage>();
 		m_slotBackground[i]->GetTransform()->SetLocalPosition(Vector3(640.0f + 120.0f * i, -400.0f, 0.0f));
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(std::format(L"gui\\quickslot_{0}.png", i + 1))));
-		uiRenderer->SetSize(Vector2Int(105, 136));
+		uiRenderer->SetSize(Vector2(105, 136));
 		object->AddChild(m_slotBackground[i]);
 
 		m_slotContents[i] = std::make_shared<SceneObject>();
 		auto renderer = m_slotContents[i]->AddComponent<GUIImage>();
 		m_slotContents[i]->GetTransform()->SetLocalPosition(Vector3(640.0f + 120.0f * i, -380.0f, 0.0f));
-		renderer->SetSize(Vector2Int(100, 100));
+		renderer->SetSize(Vector2(100, 100));
 		object->AddChild(m_slotContents[i]);
 	}
 }

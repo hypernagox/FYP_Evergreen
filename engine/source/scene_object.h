@@ -11,6 +11,7 @@ namespace udsdx
 	class SceneObject : public std::enable_shared_from_this<SceneObject>
 	{
 	public:
+		static void Enumerate(const std::shared_ptr<SceneObject>& root, std::function<void(const std::shared_ptr<SceneObject>&)> callback);
 		static void EnumerateUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene);
 		static void EnumeratePostUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene);
 
@@ -53,6 +54,20 @@ namespace udsdx
 			}
 			return nullptr;
 		}
+
+		template <typename Component_T>
+		std::vector<Component_T*> GetComponentsInChildren() const
+		{
+			std::vector<Component_T*> components;
+			Enumerate(m_child, [&](const std::shared_ptr<SceneObject>& node) {
+				if (Component_T* component = node->GetComponent<Component_T>())
+				{
+					components.push_back(component);
+				}
+			});
+			return components;
+		}
+
 		void RemoveAllComponents();
 
 	private:

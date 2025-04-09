@@ -20,6 +20,7 @@ namespace udsdx
 		virtual void Update(const Time& time);
 		virtual void PostUpdate(const Time& time);
 		void Render(RenderParam& param);
+		void UpdateGUIElementEvent(const Time& time);
 
 		void AddObject(std::shared_ptr<SceneObject> object);
 
