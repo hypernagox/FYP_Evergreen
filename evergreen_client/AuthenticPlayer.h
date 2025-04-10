@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "pch.h"
 
@@ -12,10 +12,10 @@ class PlayerQuickSlotGUI;
 class PlayerInventoryGUI;
 class PlayerCraftGUI;
 
-// AuthenticPlayer´Â ¿ì¸®°¡ Á¶Á¾ÇÒ ¼ö ÀÖ´Â ÁøÂ¥ÀÇ ÇÃ·¹ÀÌ¾î¸¦ ³ªÅ¸³»´Â Å¬·¡½º
-//   - ÀÎÇ² ÇÚµé·¯¸¦ ÀÌ¿ëÇØ ÇÃ·¹ÀÌ¾îÀÇ ¿òÁ÷ÀÓÀ» Á÷Á¢ Á¶Á¾
-//   - ÇÃ·¹ÀÌ¾îÀÇ ÇöÀç À§Ä¡¸¦ °è¼ÓÇØ¼­ ¼­¹ö·Î Àü¼Û
-//   - Ä«¸Þ¶ó¸¦ »ý¼ºÇÏ°í Á¶Á¾
+// AuthenticPlayerëŠ” ìš°ë¦¬ê°€ ì¡°ì¢…í•  ìˆ˜ ìžˆëŠ” ì§„ì§œì˜ í”Œë ˆì´ì–´ë¥¼ ë‚˜íƒ€ë‚´ëŠ” í´ëž˜ìŠ¤
+//   - ì¸í’‹ í•¸ë“¤ëŸ¬ë¥¼ ì´ìš©í•´ í”Œë ˆì´ì–´ì˜ ì›€ì§ìž„ì„ ì§ì ‘ ì¡°ì¢…
+//   - í”Œë ˆì´ì–´ì˜ í˜„ìž¬ ìœ„ì¹˜ë¥¼ ê³„ì†í•´ì„œ ì„œë²„ë¡œ ì „ì†¡
+//   - ì¹´ë©”ë¼ë¥¼ ìƒì„±í•˜ê³  ì¡°ì¢…
 class AuthenticPlayer : public Component
 {
 private:
@@ -37,13 +37,13 @@ private:
 	int m_iMaxHP = 5; // TODO: Magic Number
 	int m_iCurHP = 5;
 
-	// ÇÃ·¹ÀÌ¾îÀÇ ¾ÆÀÌÅÛ IDº° ¼ÒÁö °³¼ö¸¦ ³ªÅ¸³»´Â ÀÚ·á±¸Á¶
-	// ex) m_inventory[x] = y: id°¡ xÀÎ ¾ÆÀÌÅÛÀ» y°³ ¼ÒÁöÇÏ°í ÀÖ´Ù.
+	// í”Œë ˆì´ì–´ì˜ ì•„ì´í…œ IDë³„ ì†Œì§€ ê°œìˆ˜ë¥¼ ë‚˜íƒ€ë‚´ëŠ” ìžë£Œêµ¬ì¡°
+	// ex) m_inventory[x] = y: idê°€ xì¸ ì•„ì´í…œì„ yê°œ ì†Œì§€í•˜ê³  ìžˆë‹¤.
 	std::vector<int> m_inventory;
 
-	// ÇÃ·¹ÀÌ¾îÀÇ ½½·Ôº°·Î µî·ÏµÈ ¾ÆÀÌÅÛÀ» ³ªÅ¸³»´Â ÀÚ·á±¸Á¶
-	// ex) m_quickSlot[x] = y: x¹ø ½½·Ô¿¡ id°¡ yÀÎ ¾ÆÀÌÅÛÀÌ µî·ÏµÇ¾î ÀÖ´Ù.
-	// y°¡ -1ÀÏ °æ¿ì ¾Æ¹« ¾ÆÀÌÅÛµµ µî·ÏµÇÁö ¾Ê¾ÒÀ½À» ÀÇ¹Ì
+	// í”Œë ˆì´ì–´ì˜ ìŠ¬ë¡¯ë³„ë¡œ ë“±ë¡ëœ ì•„ì´í…œì„ ë‚˜íƒ€ë‚´ëŠ” ìžë£Œêµ¬ì¡°
+	// ex) m_quickSlot[x] = y: xë²ˆ ìŠ¬ë¡¯ì— idê°€ yì¸ ì•„ì´í…œì´ ë“±ë¡ë˜ì–´ ìžˆë‹¤.
+	// yê°€ -1ì¼ ê²½ìš° ì•„ë¬´ ì•„ì´í…œë„ ë“±ë¡ë˜ì§€ ì•Šì•˜ìŒì„ ì˜ë¯¸
 	std::vector<int> m_quickSlot;
 
 	Vector3 m_cameraAngleAxis = Vector3::Zero;
