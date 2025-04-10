@@ -5,7 +5,7 @@ using namespace udsdx;
 
 PlayerQuickSlotGUI::PlayerQuickSlotGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
 {
-    for (int i = 0; i < NUM_SLOTS; i++)
+    for (int i = 0; i < MAX_QUICK_SLOT; i++)
     {
 		m_slotBackground[i] = std::make_shared<SceneObject>();
 		auto uiRenderer = m_slotBackground[i]->AddComponent<GUIButton>();
@@ -37,7 +37,7 @@ void PlayerQuickSlotGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void PlayerQuickSlotGUI::UpdateSlotContents(const std::vector<int>& table, const std::vector<int>& tableInventory)
 {
-	for (int i = 0; i < NUM_SLOTS; i++)
+	for (int i = 0; i < MAX_QUICK_SLOT; i++)
 	{
 		if (table[i] == -1)
 		{

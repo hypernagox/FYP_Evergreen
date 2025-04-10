@@ -1,6 +1,11 @@
 #pragma once
 #include "pch.h"
 
+struct ItemCombineInfo {
+	std::string itemName;
+	int numOfRequire;
+};
+
 namespace Common
 {
 	class DataRegistry
@@ -33,6 +38,11 @@ namespace Common
 	public:
 		static const std::wstring& Str2Wstr(const std::string_view str) noexcept;
 	public:
+		const auto& GetItemRecipe(const std::string_view item_name)const noexcept {
+			// TODO: ¾øÀ¸¸é°Á Æø
+			return (const_cast<DataRegistry*>(this))->m_mapItemRecipe[item_name.data()];
+			return m_mapItemRecipe.find(item_name.data())->second;
+		}
 		template<typename T>
 		const T& GetObjectData(const std::string_view obj_name, const std::string_view att_name) const {
 #ifdef _DEBUG
@@ -83,9 +93,13 @@ namespace Common
 
 		std::map<std::string, int> m_dropItemName2Int;
 		std::map<int, std::string> m_dropItemID2String;
+
 		constinit static inline const DataRegistry* g_table = nullptr;
+
+		std::map<std::string, std::vector<ItemCombineInfo>> m_mapItemRecipe;
 	};
 
 #define DATA_TABLE (Common::DataRegistry::GetDataTable())
 #define GET_DATA(type, obj_name, attr_name) (DATA_TABLE->GetObjectData<type>(obj_name, attr_name))
+#define GET_RECIPE(item_name) (DATA_TABLE->GetItemRecipe(item_name))
 }

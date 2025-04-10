@@ -3,20 +3,24 @@
 #include "Item.h"
 #include "Inventory.h"
 
-bool QuickSlot::UseSlotItem(ContentsEntity* const owner,
+int8_t QuickSlot::UseSlotItem(ContentsEntity* const owner,
 	const uint32_t index) noexcept
 {
 	if (const auto item = GetSlotItem(index))
 	{
+		if (0 == item->m_numOfItemStack)
+		{
+			return -1;
+		}
 		owner->GetComp<Inventory>()->DecItemStack(item->m_itemDetailType, 1);
 		const bool res = item->UseItem(owner);
+		const auto item_id = item->m_itemDetailType;
 		NagiocpX::PrintLogEndl(std::format("남은 개수: {}", item->m_numOfItemStack));
 		if (0 == item->m_numOfItemStack)
 		{
 			NagiocpX::PrintLogEndl("다씀");
-			m_slotItems[index] = nullptr;
 		}
-		return res;
+		return item_id;
 	}
-	else return false;
+	else return -1;
 }

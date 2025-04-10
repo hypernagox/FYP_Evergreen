@@ -294,7 +294,8 @@ const bool Handle_c2s_USE_QUICK_SLOT_ITEM(const NagiocpX::S_ptr<NagiocpX::Packet
 	const auto owner = pSession_->GetOwnerEntity();
 	if (const auto inv = owner->GetComp<Inventory>())
 	{
-		if (!inv->UseQuickSlotItem(pkt_.quick_slot_idx()))
+		const auto item_id = inv->UseQuickSlotItem(pkt_.quick_slot_idx());
+		if (-1 == item_id)
 		{
 			std::cout << "템 없음\n";
 		}
@@ -303,12 +304,17 @@ const bool Handle_c2s_USE_QUICK_SLOT_ITEM(const NagiocpX::S_ptr<NagiocpX::Packet
 			owner->GetComp<HP>()->PostDoHeal(1);
 			pSession_->SendAsync(Create_s2c_USE_QUICK_SLOT_ITEM
 			(owner->GetObjectID(),
-				0,
+				item_id,
 				pkt_.quick_slot_idx())
 			);
 			std::cout << "사용\n";
 		}
 	}
+	return true;
+}
+
+const bool Handle_c2s_COMBINE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_COMBINE_ITEM& pkt_)
+{
 	return true;
 }
 

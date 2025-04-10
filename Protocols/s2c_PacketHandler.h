@@ -24,6 +24,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_FIRE_PROJ = 1013,
     s2c_ACQUIRE_ITEM = 1014,
     s2c_USE_QUICK_SLOT_ITEM = 1015,
+    s2c_COMBINE_ITEM = 1016,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -38,6 +39,7 @@ enum class CREATE_PKT_ID : uint16_t {
     c2s_ACQUIRE_ITEM = 1008,
     c2s_REQUEST_QUICK_SLOT = 1009,
     c2s_USE_QUICK_SLOT_ITEM = 1010,
+    c2s_COMBINE_ITEM = 1011,
 };
 
 class NetHelper::PacketSession;
@@ -63,6 +65,7 @@ const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSessio
 const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_FIRE_PROJ& pkt_);
 const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ACQUIRE_ITEM& pkt_);
 const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_USE_QUICK_SLOT_ITEM& pkt_);
+const bool Handle_s2c_COMBINE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_COMBINE_ITEM& pkt_);
 
 class s2c_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const BYTE* const, const int32_t);
@@ -85,6 +88,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_FIRE_PROJ, Nagox::Protocol::s2c_FIRE_PROJ, Handle_s2c_FIRE_PROJ>();
         RegisterHandler<HANDLE_PKT_ID::s2c_ACQUIRE_ITEM, Nagox::Protocol::s2c_ACQUIRE_ITEM, Handle_s2c_ACQUIRE_ITEM>();
         RegisterHandler<HANDLE_PKT_ID::s2c_USE_QUICK_SLOT_ITEM, Nagox::Protocol::s2c_USE_QUICK_SLOT_ITEM, Handle_s2c_USE_QUICK_SLOT_ITEM>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_COMBINE_ITEM, Nagox::Protocol::s2c_COMBINE_ITEM, Handle_s2c_COMBINE_ITEM>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

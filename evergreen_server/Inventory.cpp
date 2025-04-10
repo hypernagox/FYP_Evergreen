@@ -36,8 +36,8 @@ void Inventory::DecItemStack(const int8_t item_type, const int cnt) noexcept
 		{
 			const auto idx = FindItemIndex(item_type);
 			if (-1 == idx)return;
-			NagiocpX::xdelete<Item>(m_items[idx]);
-			m_items[idx] = nullptr;
+			//NagiocpX::xdelete<Item>(m_items[idx]);
+			//m_items[idx] = nullptr;
 		}
 	}
 }

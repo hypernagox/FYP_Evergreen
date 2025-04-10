@@ -34,7 +34,7 @@ namespace NagiocpX
 	//};
 
 
-#define USE_JE_MALLOC
+//#define USE_JE_MALLOC
 
 	class Memory
 	{

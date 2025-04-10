@@ -192,3 +192,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_USE_QUICK_SLOT_ITEM(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_USE_QUICK_SLOT_ITEM);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_COMBINE_ITEM(
+    const uint8_t combine_item_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto combine_item_id_value = combine_item_id;
+    const auto serializedc2s_COMBINE_ITEM = Nagox::Protocol::Createc2s_COMBINE_ITEM(
+        builder
+,        combine_item_id_value    );
+    builder.Finish(serializedc2s_COMBINE_ITEM);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_COMBINE_ITEM);
+}

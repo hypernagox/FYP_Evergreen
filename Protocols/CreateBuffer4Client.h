@@ -60,3 +60,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_USE_QUICK_SLOT_ITEM(
     const uint8_t quick_slot_idx,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_COMBINE_ITEM(
+    const uint8_t combine_item_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

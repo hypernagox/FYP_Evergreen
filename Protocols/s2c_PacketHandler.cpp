@@ -279,3 +279,8 @@ const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::Pack
 
 	return true;
 }
+
+const bool Handle_s2c_COMBINE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_COMBINE_ITEM& pkt_)
+{
+	return true;
+}

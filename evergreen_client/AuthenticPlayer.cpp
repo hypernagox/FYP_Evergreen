@@ -23,7 +23,7 @@ AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 
 	// TODO: 아이템 Json 레지스트리에서 종류의 개수를 알아내서 가져오면 좋겠다.
 	m_inventory = std::vector<int>(16, 0);
-	m_quickSlot = std::vector<int>(3, -1);
+	m_quickSlot = std::vector<int>(MAX_QUICK_SLOT, -1);
 
 	Start();
 }
@@ -137,7 +137,7 @@ void AuthenticPlayer::SetQuickSlotItemOnBlank(uint8_t itemID)
 {
 	for (int i = 0; i < m_quickSlot.size(); ++i)
 	{
-		if (m_quickSlot[i] == -1)
+		if (m_quickSlot[i] == -1 || m_quickSlot[i] == itemID)
 		{
 			SetQuickSlotItem(i, itemID);
 			break;
@@ -260,6 +260,29 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		MoveByView(Vector3::Down * 10.0f);
 	}
 
+	// TODO: 트리거 생기면 처형
+	// TODO: 조합 시도에 대한 트리거를 만들어 주세요
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::C))
+	{
+		const auto& combine_list = GET_RECIPE("C");
+		if (!combine_list.empty())
+		{
+			for (const auto& [itemName, numOfRequire] : combine_list)
+			{
+				const auto item_id = DATA_TABLE->GetDropItemID(itemName);
+				const auto diff = m_inventory[item_id] - numOfRequire;
+				if (0 <= diff)
+				{
+
+				}
+				else
+				{
+					std::cout << DATA_TABLE->GetDropItemName(item_id)
+						<< " " << -diff << "개 부족함\n";
+				}
+			}
+		}
+	}
 	// TODO 하드코딩
 	//static float cool_down = 0.f;
 	//cool_down -= DT;

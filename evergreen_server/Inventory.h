@@ -36,7 +36,9 @@ public:
 public:
 	Item* AddDropItem(const DropItem* const drop_item_info)noexcept;
 	bool SetQuickSlotItem(const uint8_t item_id, const uint8_t quick_idx)noexcept;
-	bool UseQuickSlotItem(const uint8_t quick_idx)noexcept { return m_quickSlot.UseSlotItem(GetOwnerEntityRaw(), quick_idx); }
+	
+	// 퀵슬롯 아이템 사용에 성공했다면 해당 아이템의 ID를, 실패했다면 -1를 반환한다.
+	int8_t UseQuickSlotItem(const uint8_t quick_idx)noexcept { return m_quickSlot.UseSlotItem(GetOwnerEntityRaw(), quick_idx); }
 private:
 	Item* FindItem(const int8_t item_type)const noexcept;
 	int8_t FindItemIndex(const int8_t item_type)const noexcept;

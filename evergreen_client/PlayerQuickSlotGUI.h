@@ -11,9 +11,7 @@ public:
 	void UpdateSlotContents(const std::vector<int>& table, const std::vector<int>& tableInventory);
 
 private:
-	static constexpr int NUM_SLOTS = 3;
-
-	std::shared_ptr<udsdx::SceneObject> m_slotBackground[NUM_SLOTS];
-	std::shared_ptr<udsdx::SceneObject> m_slotContents[NUM_SLOTS];
-	std::shared_ptr<udsdx::SceneObject> m_slotText[NUM_SLOTS];
+	std::shared_ptr<udsdx::SceneObject> m_slotBackground[MAX_QUICK_SLOT];
+	std::shared_ptr<udsdx::SceneObject> m_slotContents[MAX_QUICK_SLOT];
+	std::shared_ptr<udsdx::SceneObject> m_slotText[MAX_QUICK_SLOT];
 };

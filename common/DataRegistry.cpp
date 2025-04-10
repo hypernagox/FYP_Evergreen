@@ -35,6 +35,22 @@ namespace Common
                     for (const auto& [entityName, attributes] : jsonData.items())
                     {
                         // TODO: 이렇게 해야하는 오브젝트 종류가 늘어나면 쌉 하드코딩 각이 보인다.
+                        if ("ItemRecipe" == category)
+                        {
+                            for (const auto& [attrName, value] : attributes.items())
+                            {
+                                if (nlohmann::json::value_t::number_integer == value.type()
+                                    || nlohmann::json::value_t::number_unsigned == value.type())
+                                {
+                                    table.m_mapItemRecipe[entityName].emplace_back(attrName, value.get<int>());
+                                }
+                                else
+                                {
+                                    throw std::runtime_error{ "Recipe Value Error" };
+                                }
+                            }
+                            continue;
+                        }
                         if ("Item" == category)
                         {
                             table.m_dropItemID2String.try_emplace(item_start_index, entityName);

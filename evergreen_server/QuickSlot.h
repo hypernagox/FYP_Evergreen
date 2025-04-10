@@ -12,12 +12,12 @@ public:
 		return m_slotItems[index];
 	}
 	bool SetSlotItem(Item* const item, const uint32_t index) {
-		if (MAX_QUICK_SLOT <= index || m_slotItems[index])return false;
+		if (MAX_QUICK_SLOT <= index)return false;
 		m_slotItems[index] = item;
 		return true;
 	}
 public:
-	bool UseSlotItem(ContentsEntity* const owner,
+	int8_t UseSlotItem(ContentsEntity* const owner,
 		const uint32_t index)noexcept;
 private:
 	Item* m_slotItems[MAX_QUICK_SLOT] = { nullptr };

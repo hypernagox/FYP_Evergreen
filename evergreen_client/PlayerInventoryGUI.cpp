@@ -21,7 +21,7 @@ PlayerInventoryGUI::PlayerInventoryGUI(const std::shared_ptr<udsdx::SceneObject>
 		m_slotBackground[i] = std::make_shared<SceneObject>();
 		auto uiRenderer = m_slotBackground[i]->AddComponent<GUIButton>();
 		m_slotBackground[i]->GetTransform()->SetLocalPosition(Vector3(x, y, 0.0f));
-		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\item_slot.png", i + 1)));
+		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\item_slot.png")));
 		uiRenderer->SetSize(Vector2(100, 100));
 		m_panel->AddChild(m_slotBackground[i]);
 

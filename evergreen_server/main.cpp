@@ -81,7 +81,7 @@ int main()
 	ContentsInitiator con_init;
 	ClusterPredicate broad_helper;
 	Common::DataRegistry::Load();
-
+	
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	
 	GET_DATA(std::string, "Warrior", "name");

@@ -203,6 +203,7 @@
   <ItemGroup>
     <None Include="..\resource\json\GlabalValues.json" />
     <None Include="..\resource\json\Item.json" />
+    <None Include="..\resource\json\ItemRecipe.json" />
     <None Include="..\resource\json\Monster.json" />
     <None Include="..\resource\json\Player.json" />
     <None Include="..\resource\json\Script.json" />
