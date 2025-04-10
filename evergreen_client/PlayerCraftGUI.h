@@ -13,6 +13,7 @@ private:
 		std::shared_ptr<udsdx::SceneObject> OutputSlotBackground;
 		std::shared_ptr<udsdx::SceneObject> OutputSlotContents;
 		std::shared_ptr<udsdx::SceneObject> OutputSlotText;
+		std::shared_ptr<udsdx::SceneObject> CraftButton;
 		std::vector<std::shared_ptr<udsdx::SceneObject>> InputSlotBackground;
 		std::vector<std::shared_ptr<udsdx::SceneObject>> InputSlotContents;
 		std::vector<std::shared_ptr<udsdx::SceneObject>> InputSlotText;
@@ -20,8 +21,6 @@ private:
 
 public:
 	PlayerCraftGUI(const std::shared_ptr<udsdx::SceneObject>& object);
-
-	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table);
 
 private:

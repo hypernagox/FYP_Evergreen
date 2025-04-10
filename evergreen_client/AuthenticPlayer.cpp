@@ -9,6 +9,7 @@
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
 #include "PlayerInventoryGUI.h"
+#include "PlayerCraftGUI.h"
 
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
@@ -136,6 +137,7 @@ void AuthenticPlayer::OnModifyInventory(uint8_t itemID, int delta)
 
 	m_playerQuickSlotGUI->UpdateSlotContents(m_quickSlot, m_inventory);
 	m_playerInventoryGUI->UpdateSlotContents(this, m_inventory);
+	m_playerCraftGUI->UpdateSlotContents(this, m_inventory);
 }
 
 void AuthenticPlayer::SetQuickSlotItemOnBlank(uint8_t itemID)
@@ -167,6 +169,12 @@ void AuthenticPlayer::UseQuickSlotItem(int index)
 	Send(
 		Create_c2s_USE_QUICK_SLOT_ITEM((uint8_t)index)
 	);
+}
+
+void AuthenticPlayer::CraftItem(int recipeIndex)
+{
+	// TODO: 아이템을 조합하는 패킷을 서버에 전송
+	DebugConsole::Log("아이템 조합 요청");
 }
 
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
@@ -265,29 +273,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		MoveByView(Vector3::Down * 10.0f);
 	}
 
-	// TODO: 트리거 생기면 처형
-	// TODO: 조합 시도에 대한 트리거를 만들어 주세요
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::C))
-	{
-		const auto& combine_list = GET_RECIPE("C");
-		if (!combine_list.empty())
-		{
-			for (const auto& [itemName, numOfRequire] : combine_list)
-			{
-				const auto item_id = DATA_TABLE->GetDropItemID(itemName);
-				const auto diff = m_inventory[item_id] - numOfRequire;
-				if (0 <= diff)
-				{
-
-				}
-				else
-				{
-					std::cout << DATA_TABLE->GetDropItemName(item_id)
-						<< " " << -diff << "개 부족함\n";
-				}
-			}
-		}
-	}
 	// TODO 하드코딩
 	//static float cool_down = 0.f;
 	//cool_down -= DT;

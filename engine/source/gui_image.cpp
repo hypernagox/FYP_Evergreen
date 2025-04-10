@@ -26,7 +26,7 @@ namespace udsdx
 				nullptr,
 				Colors::White,
 				0.0f,
-				Vector2(textureSize.x, textureSize.y) * 0.5f,
+				Vector2(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y)) * 0.5f,
 				Vector2(m_size.x / textureSize.x, m_size.y / textureSize.y) * ratio
 			);
 		}

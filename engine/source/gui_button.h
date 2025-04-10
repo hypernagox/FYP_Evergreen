@@ -19,9 +19,12 @@ namespace udsdx
 		void OnMouseRelease() override;
 
 	public:
+		bool GetInteractable() const { return m_interactable; }
 		void SetClickCallback(std::function<void()> clickCallback) { m_clickCallback = clickCallback; }
+		void SetInteractable(bool interactable) { m_interactable = interactable; }
 
 	private:
 		std::function<void()> m_clickCallback = nullptr;
+		bool m_interactable = true;
 	};
 }

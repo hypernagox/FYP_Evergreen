@@ -92,6 +92,7 @@ public:
 	void SetQuickSlotItemOnBlank(uint8_t itemID);
 	void SetQuickSlotItem(int index, uint8_t itemID);
 	void UseQuickSlotItem(int index);
+	void CraftItem(int recipeIndex);
 public:
 	const auto& GetStatusGUI()const noexcept { return m_playerStatusGUI; }
 };
