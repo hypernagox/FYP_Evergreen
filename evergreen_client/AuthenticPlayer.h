@@ -10,6 +10,7 @@ class PlayerRenderer;
 class PlayerStatusGUI;
 class PlayerQuickSlotGUI;
 class PlayerInventoryGUI;
+class PlayerCraftGUI;
 
 // AuthenticPlayer는 우리가 조종할 수 있는 진짜의 플레이어를 나타내는 클래스
 //   - 인풋 핸들러를 이용해 플레이어의 움직임을 직접 조종
@@ -36,7 +37,13 @@ private:
 	int m_iMaxHP = 5; // TODO: Magic Number
 	int m_iCurHP = 5;
 
+	// 플레이어의 아이템 ID별 소지 개수를 나타내는 자료구조
+	// ex) m_inventory[x] = y: id가 x인 아이템을 y개 소지하고 있다.
 	std::vector<int> m_inventory;
+
+	// 플레이어의 슬롯별로 등록된 아이템을 나타내는 자료구조
+	// ex) m_quickSlot[x] = y: x번 슬롯에 id가 y인 아이템이 등록되어 있다.
+	// y가 -1일 경우 아무 아이템도 등록되지 않았음을 의미
 	std::vector<int> m_quickSlot;
 
 	Vector3 m_cameraAngleAxis = Vector3::Zero;
@@ -54,6 +61,7 @@ private:
 	PlayerStatusGUI* m_playerStatusGUI = nullptr;
 	PlayerQuickSlotGUI* m_playerQuickSlotGUI = nullptr;
 	PlayerInventoryGUI* m_playerInventoryGUI = nullptr;
+	PlayerCraftGUI* m_playerCraftGUI = nullptr;
 
 private:
 	void UpdatePlayerCamFpsMode(float deltaTime);
@@ -77,6 +85,7 @@ public:
 	void SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexcept;
 	void SetPlayerQuickSlotGUI(PlayerQuickSlotGUI* playerQuickSlotGUI) noexcept;
 	void SetPlayerInventoryGUI(PlayerInventoryGUI* playerInventoryGUI) noexcept;
+	void SetPlayerCraftGUI(PlayerCraftGUI* playerCraftGUI) noexcept;
 	void OnHit(int damage);
 	void OnModifyInventory(uint8_t itemID, int delta);
 

@@ -35,21 +35,21 @@ void PlayerQuickSlotGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
     Component::Update(time, scene);
 }
 
-void PlayerQuickSlotGUI::UpdateSlotContents(const std::vector<int>& table, const std::vector<int>& tableInventory)
+void PlayerQuickSlotGUI::UpdateSlotContents(const std::vector<int>& tableQuickSlot, const std::vector<int>& tableInventory)
 {
 	for (int i = 0; i < MAX_QUICK_SLOT; i++)
 	{
-		if (table[i] == -1)
+		if (tableQuickSlot[i] == -1)
 		{
 			m_slotContents[i]->GetComponent<GUIImage>()->SetTexture(nullptr);
 			m_slotText[i]->GetComponent<GUIText>()->SetText(L"");
 		}
 		else
 		{
-			const std::string& key = DATA_TABLE->GetDropItemName(table[i]);
+			const std::string& key = DATA_TABLE->GetDropItemName(tableQuickSlot[i]);
 			udsdx::Texture* texture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, key, "Icon")));
 			m_slotContents[i]->GetComponent<GUIImage>()->SetTexture(texture);
-			m_slotText[i]->GetComponent<GUIText>()->SetText(std::to_wstring(tableInventory[table[i]]));
+			m_slotText[i]->GetComponent<GUIText>()->SetText(std::to_wstring(tableInventory[tableQuickSlot[i]]));
 		}
 	}
 }

@@ -111,6 +111,11 @@ void AuthenticPlayer::SetPlayerInventoryGUI(PlayerInventoryGUI* playerInventoryG
 	m_playerInventoryGUI = playerInventoryGUI;
 }
 
+void AuthenticPlayer::SetPlayerCraftGUI(PlayerCraftGUI* playerCraftGUI) noexcept
+{
+	m_playerCraftGUI = playerCraftGUI;
+}
+
 void AuthenticPlayer::OnHit(int afterHP)
 {
 	m_iCurHP = afterHP;

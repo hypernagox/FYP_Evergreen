@@ -24,9 +24,11 @@
 #include "NaviCell.h"
 #include "Navigator.h"
 #include "ServerTimeMgr.h"
+
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
 #include "PlayerInventoryGUI.h"
+#include "PlayerCraftGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -285,6 +287,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         auto inventoryRenderer = inventoryObj->AddComponent<PlayerInventoryGUI>();
         scene->AddObject(inventoryObj);
         g_heroComponent->SetPlayerInventoryGUI(inventoryRenderer);
+
+        auto craftObj = std::make_shared<SceneObject>();
+        auto craftComp = craftObj->AddComponent<PlayerCraftGUI>();
+        scene->AddObject(craftObj);
+        g_heroComponent->SetPlayerCraftGUI(craftComp);
     }
 
     {

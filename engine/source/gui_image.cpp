@@ -18,15 +18,16 @@ namespace udsdx
 		Vector3 position = GetTransform()->GetWorldPosition() * Vector3(ratio, -ratio, 1.0f) + Vector3(param.Viewport.Width / 2.0f, param.Viewport.Height / 2.0f, 0.0f);
 		if (m_texture != nullptr)
 		{
+			Vector2Int textureSize = m_texture->GetSize();
 			param.SpriteBatchNonPremultipliedAlpha->Draw(
 				m_texture->GetSrvGpu(),
-				XMUINT2(static_cast<UINT>(m_size.x), static_cast<UINT>(m_size.y)),
+				XMUINT2(textureSize.x, textureSize.y),
 				position,
 				nullptr,
 				Colors::White,
 				0.0f,
-				Vector2(m_size.x, m_size.y) * 0.5f,
-				Vector2::One * ratio
+				Vector2(textureSize.x, textureSize.y) * 0.5f,
+				Vector2(m_size.x / textureSize.x, m_size.y / textureSize.y) * ratio
 			);
 		}
 	}

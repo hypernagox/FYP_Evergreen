@@ -201,6 +201,9 @@
     <ClCompile Include="PlayerInventoryGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerCraftGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -315,6 +318,9 @@
       <Filter>Gui</Filter>
     </ClInclude>
     <ClInclude Include="PlayerInventoryGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerCraftGUI.h">
       <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
