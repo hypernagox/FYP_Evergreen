@@ -104,7 +104,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_USE_QUICK_SLOT_ITEM(
     const uint8_t quick_slot_idx,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
-NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_COMBINE_ITEM(
-    const uint8_t combine_item_id,
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CRAFT_ITEM(
+    const uint8_t recipe_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;

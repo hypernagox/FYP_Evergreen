@@ -16,7 +16,7 @@ PlayerCraftGUI::PlayerCraftGUI(const std::shared_ptr<SceneObject>& object) : Com
 	// TODO: 1 is a magic number
 	for (int i = 0; i < 1; i++)
 	{
-		const auto& combine_list = GET_RECIPE("C");
+		const auto& combine_list = GET_RECIPE("Recipe_1");
 
 		float y = i * -130.0f + 250.0f;
 		auto& recipeGUI = m_recipePanels.emplace_back();
@@ -60,7 +60,7 @@ PlayerCraftGUI::PlayerCraftGUI(const std::shared_ptr<SceneObject>& object) : Com
 		recipeGUI.Panel->AddChild(recipeGUI.CraftButton);
 
 		int j = 0;
-		for (const auto& combine : combine_list)
+		for (const auto& combine : combine_list.itemElements)
 		{
 			float x = j * 65.0f - 65.0f;
 			auto iconPath = GET_DATA(std::wstring, combine.itemName, "Icon");
@@ -95,16 +95,18 @@ PlayerCraftGUI::PlayerCraftGUI(const std::shared_ptr<SceneObject>& object) : Com
 
 void PlayerCraftGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table)
 {
+	int recipe_id = -1;
 	for (int i = 0; i < m_recipePanels.size(); i++)
 	{
-		const auto& combine_list = GET_RECIPE("C");
+		const auto& combine_list = GET_RECIPE("Recipe_1");
 		bool available = true;
-		for (const auto& [itemName, numOfRequire] : combine_list)
+		for (const auto& [itemName, numOfRequire] : combine_list.itemElements)
 		{
 			const auto item_id = DATA_TABLE->GetDropItemID(itemName);
 			const auto diff = table[item_id] - numOfRequire;
 			if (diff < 0)
 			{
+				recipe_id = combine_list.recipeID;
 				available = false;
 				break;
 			}
@@ -112,9 +114,14 @@ void PlayerCraftGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vect
 
 		auto buttonComponent = m_recipePanels[i].CraftButton->GetComponent<GUIButton>();
 		buttonComponent->SetInteractable(available);
-		buttonComponent->SetClickCallback([target]() {
-			// TODO: need to specity the recipe ID
-			target->CraftItem(0);
-			});
+		// TODO: 불값 보고 보내는거 맞지?
+		if (available)
+		{
+			buttonComponent->SetClickCallback([recipe_id, target]() {
+				// TODO: need to specity the recipe ID
+				//Send(Create_c2s_COMBINE_ITEM())
+				target->CraftItem(recipe_id);
+				});
+		}
 	}
 }

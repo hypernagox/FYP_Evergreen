@@ -100,11 +100,11 @@ struct c2s_USE_QUICK_SLOT_ITEMBuilder;
 struct s2c_USE_QUICK_SLOT_ITEM;
 struct s2c_USE_QUICK_SLOT_ITEMBuilder;
 
-struct c2s_COMBINE_ITEM;
-struct c2s_COMBINE_ITEMBuilder;
+struct c2s_CRAFT_ITEM;
+struct c2s_CRAFT_ITEMBuilder;
 
-struct s2c_COMBINE_ITEM;
-struct s2c_COMBINE_ITEMBuilder;
+struct s2c_CRAFT_ITEM;
+struct s2c_CRAFT_ITEMBuilder;
 
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
@@ -1742,91 +1742,91 @@ inline ::flatbuffers::Offset<s2c_USE_QUICK_SLOT_ITEM> Creates2c_USE_QUICK_SLOT_I
   return builder_.Finish();
 }
 
-struct c2s_COMBINE_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
-  typedef c2s_COMBINE_ITEMBuilder Builder;
+struct c2s_CRAFT_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_CRAFT_ITEMBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_COMBINE_ITEM_ID = 4
+    VT_RECIPE_ID = 4
   };
-  uint8_t combine_item_id() const {
-    return GetField<uint8_t>(VT_COMBINE_ITEM_ID, 0);
+  uint8_t recipe_id() const {
+    return GetField<uint8_t>(VT_RECIPE_ID, 0);
   }
-  bool mutate_combine_item_id(uint8_t _combine_item_id = 0) {
-    return SetField<uint8_t>(VT_COMBINE_ITEM_ID, _combine_item_id, 0);
+  bool mutate_recipe_id(uint8_t _recipe_id = 0) {
+    return SetField<uint8_t>(VT_RECIPE_ID, _recipe_id, 0);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<uint8_t>(verifier, VT_COMBINE_ITEM_ID, 1) &&
+           VerifyField<uint8_t>(verifier, VT_RECIPE_ID, 1) &&
            verifier.EndTable();
   }
 };
 
-struct c2s_COMBINE_ITEMBuilder {
-  typedef c2s_COMBINE_ITEM Table;
+struct c2s_CRAFT_ITEMBuilder {
+  typedef c2s_CRAFT_ITEM Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_combine_item_id(uint8_t combine_item_id) {
-    fbb_.AddElement<uint8_t>(c2s_COMBINE_ITEM::VT_COMBINE_ITEM_ID, combine_item_id, 0);
+  void add_recipe_id(uint8_t recipe_id) {
+    fbb_.AddElement<uint8_t>(c2s_CRAFT_ITEM::VT_RECIPE_ID, recipe_id, 0);
   }
-  explicit c2s_COMBINE_ITEMBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+  explicit c2s_CRAFT_ITEMBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  ::flatbuffers::Offset<c2s_COMBINE_ITEM> Finish() {
+  ::flatbuffers::Offset<c2s_CRAFT_ITEM> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = ::flatbuffers::Offset<c2s_COMBINE_ITEM>(end);
+    auto o = ::flatbuffers::Offset<c2s_CRAFT_ITEM>(end);
     return o;
   }
 };
 
-inline ::flatbuffers::Offset<c2s_COMBINE_ITEM> Createc2s_COMBINE_ITEM(
+inline ::flatbuffers::Offset<c2s_CRAFT_ITEM> Createc2s_CRAFT_ITEM(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint8_t combine_item_id = 0) {
-  c2s_COMBINE_ITEMBuilder builder_(_fbb);
-  builder_.add_combine_item_id(combine_item_id);
+    uint8_t recipe_id = 0) {
+  c2s_CRAFT_ITEMBuilder builder_(_fbb);
+  builder_.add_recipe_id(recipe_id);
   return builder_.Finish();
 }
 
-struct s2c_COMBINE_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
-  typedef s2c_COMBINE_ITEMBuilder Builder;
+struct s2c_CRAFT_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_CRAFT_ITEMBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_COMBINE_ITEM_ID = 4
+    VT_RECIPE_ID = 4
   };
-  uint8_t combine_item_id() const {
-    return GetField<uint8_t>(VT_COMBINE_ITEM_ID, 0);
+  uint8_t recipe_id() const {
+    return GetField<uint8_t>(VT_RECIPE_ID, 0);
   }
-  bool mutate_combine_item_id(uint8_t _combine_item_id = 0) {
-    return SetField<uint8_t>(VT_COMBINE_ITEM_ID, _combine_item_id, 0);
+  bool mutate_recipe_id(uint8_t _recipe_id = 0) {
+    return SetField<uint8_t>(VT_RECIPE_ID, _recipe_id, 0);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<uint8_t>(verifier, VT_COMBINE_ITEM_ID, 1) &&
+           VerifyField<uint8_t>(verifier, VT_RECIPE_ID, 1) &&
            verifier.EndTable();
   }
 };
 
-struct s2c_COMBINE_ITEMBuilder {
-  typedef s2c_COMBINE_ITEM Table;
+struct s2c_CRAFT_ITEMBuilder {
+  typedef s2c_CRAFT_ITEM Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_combine_item_id(uint8_t combine_item_id) {
-    fbb_.AddElement<uint8_t>(s2c_COMBINE_ITEM::VT_COMBINE_ITEM_ID, combine_item_id, 0);
+  void add_recipe_id(uint8_t recipe_id) {
+    fbb_.AddElement<uint8_t>(s2c_CRAFT_ITEM::VT_RECIPE_ID, recipe_id, 0);
   }
-  explicit s2c_COMBINE_ITEMBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+  explicit s2c_CRAFT_ITEMBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  ::flatbuffers::Offset<s2c_COMBINE_ITEM> Finish() {
+  ::flatbuffers::Offset<s2c_CRAFT_ITEM> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = ::flatbuffers::Offset<s2c_COMBINE_ITEM>(end);
+    auto o = ::flatbuffers::Offset<s2c_CRAFT_ITEM>(end);
     return o;
   }
 };
 
-inline ::flatbuffers::Offset<s2c_COMBINE_ITEM> Creates2c_COMBINE_ITEM(
+inline ::flatbuffers::Offset<s2c_CRAFT_ITEM> Creates2c_CRAFT_ITEM(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint8_t combine_item_id = 0) {
-  s2c_COMBINE_ITEMBuilder builder_(_fbb);
-  builder_.add_combine_item_id(combine_item_id);
+    uint8_t recipe_id = 0) {
+  s2c_CRAFT_ITEMBuilder builder_(_fbb);
+  builder_.add_recipe_id(recipe_id);
   return builder_.Finish();
 }
 

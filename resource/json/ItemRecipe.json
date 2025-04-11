@@ -1,10 +1,8 @@
 {
-  "C": {
+  "Recipe_1": {
     "Fox Tail": 1,
-    "Meat": 2
-  },
-  "D": {
-    "Fox Tail": 2,
-    "Meat": 1
+    "Meat": 2,
+    "Result Item": "C",
+    "Result Num Of Item": 1
   }
 }

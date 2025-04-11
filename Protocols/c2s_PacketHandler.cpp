@@ -313,8 +313,11 @@ const bool Handle_c2s_USE_QUICK_SLOT_ITEM(const NagiocpX::S_ptr<NagiocpX::Packet
 	return true;
 }
 
-const bool Handle_c2s_COMBINE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_COMBINE_ITEM& pkt_)
+const bool Handle_c2s_CRAFT_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CRAFT_ITEM& pkt_)
 {
+	// TODO: 인벤토리에서 아이템 삭제
+	pSession_->SendAsync(Create_s2c_CRAFT_ITEM(pkt_.recipe_id()));
 	return true;
 }
+
 

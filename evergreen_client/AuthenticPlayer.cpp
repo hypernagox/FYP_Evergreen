@@ -174,6 +174,7 @@ void AuthenticPlayer::UseQuickSlotItem(int index)
 void AuthenticPlayer::CraftItem(int recipeIndex)
 {
 	// TODO: 아이템을 조합하는 패킷을 서버에 전송
+	Send(Create_c2s_CRAFT_ITEM(recipeIndex));
 	DebugConsole::Log("아이템 조합 요청");
 }
 

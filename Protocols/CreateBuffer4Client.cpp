@@ -192,17 +192,17 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_USE_QUICK_SLOT_ITEM(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_USE_QUICK_SLOT_ITEM);
 }
-NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_COMBINE_ITEM(
-    const uint8_t combine_item_id,
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_CRAFT_ITEM(
+    const uint8_t recipe_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
-    const auto combine_item_id_value = combine_item_id;
-    const auto serializedc2s_COMBINE_ITEM = Nagox::Protocol::Createc2s_COMBINE_ITEM(
+    const auto recipe_id_value = recipe_id;
+    const auto serializedc2s_CRAFT_ITEM = Nagox::Protocol::Createc2s_CRAFT_ITEM(
         builder
-,        combine_item_id_value    );
-    builder.Finish(serializedc2s_COMBINE_ITEM);
+,        recipe_id_value    );
+    builder.Finish(serializedc2s_CRAFT_ITEM);
 
-    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_COMBINE_ITEM);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CRAFT_ITEM);
 }

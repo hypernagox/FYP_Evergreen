@@ -13,6 +13,7 @@ namespace Common
         g_table = &table;
         std::string errStr;
         int category_start_index = 0;
+        int recipe_id = 0;
         for (const auto& entry : std::filesystem::directory_iterator{ RESOURCE_PATH(path) + L"\\json" })
         {
             if (entry.path().extension() == ".json")
@@ -37,18 +38,38 @@ namespace Common
                         // TODO: 이렇게 해야하는 오브젝트 종류가 늘어나면 쌉 하드코딩 각이 보인다.
                         if ("ItemRecipe" == category)
                         {
+                            std::vector<ItemCombineInfo> comb;
+                            bool flag = true;
+                            std::string resultItem;
+                            int numOfItem = 0;
                             for (const auto& [attrName, value] : attributes.items())
                             {
-                                if (nlohmann::json::value_t::number_integer == value.type()
-                                    || nlohmann::json::value_t::number_unsigned == value.type())
+                                if (flag && (nlohmann::json::value_t::number_integer == value.type()
+                                    || nlohmann::json::value_t::number_unsigned == value.type()))
                                 {
-                                    table.m_mapItemRecipe[entityName].emplace_back(attrName, value.get<int>());
+                                    comb.emplace_back(attrName, value.get<int>());
+                                }
+                                else if (!flag || nlohmann::json::value_t::string == value.type())
+                                {
+                                    if (flag)
+                                    {
+                                        resultItem = value.get<std::string>();
+                                        flag = false;
+                                    }
+                                    else
+                                    {
+                                        numOfItem = value.get<int>();
+                                    }
                                 }
                                 else
                                 {
                                     throw std::runtime_error{ "Recipe Value Error" };
                                 }
                             }
+                            table.m_mapItemRecipe.emplace(recipe_id, ItemRepcipeData{ resultItem, recipe_id,numOfItem, std::move(comb) });
+                            table.m_mapRecipeName2Int.emplace(entityName, recipe_id);
+                            table.m_mapInt2RecipeName.emplace(recipe_id, entityName);
+                            ++recipe_id;
                             continue;
                         }
                         if ("Item" == category)

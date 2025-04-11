@@ -6,6 +6,13 @@ struct ItemCombineInfo {
 	int numOfRequire;
 };
 
+struct ItemRepcipeData {
+	std::string resultItem;
+	int recipeID;
+	int numOfResultItem;
+	std::vector<ItemCombineInfo> itemElements;
+};
+
 namespace Common
 {
 	class DataRegistry
@@ -38,10 +45,20 @@ namespace Common
 	public:
 		static const std::wstring& Str2Wstr(const std::string_view str) noexcept;
 	public:
-		const auto& GetItemRecipe(const std::string_view item_name)const noexcept {
+		const int GetRecipeIntID(const std::string_view recipe_name)const noexcept {
+			return m_mapRecipeName2Int.find(recipe_name.data())->second;
+		}
+		const std::string GetRecipeName(const int recipe_id)const noexcept {
+			return m_mapInt2RecipeName.find(recipe_id)->second;
+		}
+		const auto& GetItemRecipe(const std::string_view recipe_name)const noexcept {
 			// TODO: 없으면걍 폭
-			return (const_cast<DataRegistry*>(this))->m_mapItemRecipe[item_name.data()];
-			return m_mapItemRecipe.find(item_name.data())->second;
+			return (const_cast<DataRegistry*>(this))->m_mapItemRecipe[GetRecipeIntID(recipe_name)];
+			return m_mapItemRecipe.find(GetRecipeIntID(recipe_name))->second;
+		}
+		const auto& GetItemRecipe(const int recipe_id)const noexcept {
+			return (const_cast<DataRegistry*>(this))->m_mapItemRecipe[recipe_id];
+			return m_mapItemRecipe.find(recipe_id)->second;
 		}
 		template<typename T>
 		const T& GetObjectData(const std::string_view obj_name, const std::string_view att_name) const {
@@ -96,7 +113,12 @@ namespace Common
 
 		constinit static inline const DataRegistry* g_table = nullptr;
 
-		std::map<std::string, std::vector<ItemCombineInfo>> m_mapItemRecipe;
+
+		// ----------------- 아이템 레시피 테이블 --------------------
+		std::map<int, const ItemRepcipeData> m_mapItemRecipe;
+		std::map<std::string, int> m_mapRecipeName2Int;
+		std::map<int, std::string> m_mapInt2RecipeName;
+		//
 	};
 
 #define DATA_TABLE (Common::DataRegistry::GetDataTable())

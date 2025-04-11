@@ -332,17 +332,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_USE_QUICK_SLOT_ITEM(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_USE_QUICK_SLOT_ITEM);
 }
-NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_COMBINE_ITEM(
-    const uint8_t combine_item_id,
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CRAFT_ITEM(
+    const uint8_t recipe_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
-    const auto combine_item_id_value = combine_item_id;
-    const auto serializeds2c_COMBINE_ITEM = Nagox::Protocol::Creates2c_COMBINE_ITEM(
+    const auto recipe_id_value = recipe_id;
+    const auto serializeds2c_CRAFT_ITEM = Nagox::Protocol::Creates2c_CRAFT_ITEM(
         builder
-,        combine_item_id_value    );
-    builder.Finish(serializeds2c_COMBINE_ITEM);
+,        recipe_id_value    );
+    builder.Finish(serializeds2c_CRAFT_ITEM);
 
-    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_COMBINE_ITEM);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_CRAFT_ITEM);
 }

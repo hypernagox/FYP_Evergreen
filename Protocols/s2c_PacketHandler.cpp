@@ -280,7 +280,13 @@ const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::Pack
 	return true;
 }
 
-const bool Handle_s2c_COMBINE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_COMBINE_ITEM& pkt_)
+const bool Handle_s2c_CRAFT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CRAFT_ITEM& pkt_)
 {
+	const auto& recipe_info = DATA_TABLE->GetItemRecipe(pkt_.recipe_id());
+	const auto recipe_id = recipe_info.recipeID;
+	const auto& item_info = recipe_info.itemElements;
+	std::cout << recipe_id << '\n';
+	std::cout << DATA_TABLE->GetRecipeName(recipe_id) << '\n';
 	return true;
 }
+
