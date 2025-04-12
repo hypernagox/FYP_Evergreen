@@ -49,8 +49,9 @@ void PlayerInventoryGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void PlayerInventoryGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table)
 {
 	int counter = 0;
-	// TODO: 2 is a magic number
-	for (int id = 0; id < 2; id++)
+
+	const int item_count = static_cast<int>(DATA_TABLE->GetItemCount());
+	for (int id = 0; id < item_count; id++)
 	{
 		if (table[id] > 0)
 		{

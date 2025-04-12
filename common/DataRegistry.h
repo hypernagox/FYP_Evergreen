@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 
 struct ItemCombineInfo {
@@ -25,8 +25,12 @@ namespace Common
 		static void Load(const std::wstring_view path = L"")noexcept;
 		static const auto GetDataTable()noexcept { return g_table; }
 	public:
+		// ì•„ì´í…œ ì¢…ë¥˜ ê°œìˆ˜
+		const size_t GetItemCount() const noexcept {
+			return m_dropItemName2Int.size();
+		}
 		const int GetItemID(const std::string_view drop_item_name)const noexcept {
-			// TODO: ¾ø´Â ¾ÆÀÌÅÛÀÌ ¿ø·¡ ÀÖÀ¸¸é ¾ÈµÊ
+			// TODO: ì—†ëŠ” ì•„ì´í…œì´ ì›ë˜ ìˆìœ¼ë©´ ì•ˆë¨
 			const auto iter = m_dropItemName2Int.find(drop_item_name.data());
 			if (m_dropItemName2Int.end() != iter)
 				return iter->second;
@@ -35,7 +39,7 @@ namespace Common
 			return m_dropItemName2Int.find(drop_item_name.data())->second;
 		}
 		std::string GetItemName(const int drop_item_id)const noexcept {
-			// TODO: ¾ø´Â ¾ÆÀÌÅÛÀÌ ¿ø·¡ ÀÖÀ¸¸é ¾ÈµÊ
+			// TODO: ì—†ëŠ” ì•„ì´í…œì´ ì›ë˜ ìˆìœ¼ë©´ ì•ˆë¨
 			const auto iter = m_dropItemID2String.find(drop_item_id);
 			if (m_dropItemID2String.end() != iter)
 				return iter->second;
@@ -59,6 +63,10 @@ namespace Common
 	public:
 		static const std::wstring& Str2Wstr(const std::string_view str) noexcept;
 	public:
+		// ë ˆì‹œí”¼ ì¢…ë¥˜ ê°œìˆ˜
+		const size_t GetRecipeCount() const noexcept {
+			return m_mapItemRecipe.size();
+		}
 		const int GetRecipeIntID(const std::string_view recipe_name)const noexcept {
 			return m_mapRecipeName2Int.find(recipe_name.data())->second;
 		}
@@ -66,7 +74,7 @@ namespace Common
 			return m_mapInt2RecipeName.find(recipe_id)->second;
 		}
 		const auto& GetItemRecipe(const std::string_view recipe_name)const noexcept {
-			// TODO: ¾øÀ¸¸é°Á Æø
+			// TODO: ì—†ìœ¼ë©´ê± í­
 			return (const_cast<DataRegistry*>(this))->m_mapItemRecipe[GetRecipeIntID(recipe_name)];
 			return m_mapItemRecipe.find(GetRecipeIntID(recipe_name))->second;
 		}
@@ -110,14 +118,14 @@ namespace Common
 		using DataTable = std::map<std::string, AttributeMap>;
 		std::map<std::string, DataTable> m_mapDatatable;
 
-		// ¿ÀºêÁ§Æ®ÀÇ ´ëºĞ·ù -> ½ºÆ®¸µ ¿¹) 1 -> Monster
+		// ì˜¤ë¸Œì íŠ¸ì˜ ëŒ€ë¶„ë¥˜ -> ìŠ¤íŠ¸ë§ ì˜ˆ) 1 -> Monster
 		std::map<int, std::string> m_categoryId2str;
 		std::map<std::string, int> m_str2category_id;
-		// Fox´Â ¹«½¼ Ä«Å×°í¸®ÀÎ°¡?
+		// FoxëŠ” ë¬´ìŠ¨ ì¹´í…Œê³ ë¦¬ì¸ê°€?
 		std::map<std::string, std::string> m_detail2category_str;
 
-		// »ó¼¼ºĞ·ù -> ¿¹) 1 -> Fox
-		// ¼­¹ö·Î ºÎÅÍ appear¿ÀºêÁ§Æ®·Î Ä«Å×°í¸®°ª 1, µğÅ×ÀÏ°ª 1 ¿À¸é ÀÌ°Ç Monster->Fox¸¦ ÀÇ¹Ì
+		// ìƒì„¸ë¶„ë¥˜ -> ì˜ˆ) 1 -> Fox
+		// ì„œë²„ë¡œ ë¶€í„° appearì˜¤ë¸Œì íŠ¸ë¡œ ì¹´í…Œê³ ë¦¬ê°’ 1, ë””í…Œì¼ê°’ 1 ì˜¤ë©´ ì´ê±´ Monster->Foxë¥¼ ì˜ë¯¸
 		std::map<std::string, std::map<int, std::string>> m_detailType2str;
 		std::map<std::string, int> m_str2detail_id;
 
@@ -128,7 +136,7 @@ namespace Common
 		constinit static inline const DataRegistry* g_table = nullptr;
 
 
-		// ----------------- ¾ÆÀÌÅÛ ·¹½ÃÇÇ Å×ÀÌºí --------------------
+		// ----------------- ì•„ì´í…œ ë ˆì‹œí”¼ í…Œì´ë¸” --------------------
 		std::map<int, ItemRecipeData> m_mapItemRecipe;
 		std::map<std::string, int> m_mapRecipeName2Int;
 		std::map<int, std::string> m_mapInt2RecipeName;

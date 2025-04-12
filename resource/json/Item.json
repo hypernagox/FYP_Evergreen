@@ -12,5 +12,12 @@
     "Icon": "gui\\itemicon_meat.png",
     "DropitemResource": "item\\meat\\meat.fbx",
     "DropitemResourceDiffuse": "item\\meat\\meat_DefaultMaterial_BaseColor.png"
+  },
+  "Coin": {
+    "Name": "Coin",
+    "Description": "",
+    "Icon": "gui\\itemicon_coin.png",
+    "DropitemResource": "item\\coin\\coin.fbx",
+    "DropitemResourceDiffuse": "item\\coin\\coin_DefaultMaterial_BaseColor.png"
   }
 }

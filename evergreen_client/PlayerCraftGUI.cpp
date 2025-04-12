@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "PlayerCraftGUI.h"
 #include "AuthenticPlayer.h"
 
@@ -13,12 +13,13 @@ PlayerCraftGUI::PlayerCraftGUI(const std::shared_ptr<SceneObject>& object) : Com
 	uiRenderer->SetSize(Vector2(480.0f, 640.0f));
 	object->AddChild(m_panel);
 
-	// TODO: 1 is a magic number
-	for (int i = 0; i < 1; i++)
+	const int recipe_count = static_cast<int>(DATA_TABLE->GetRecipeCount());
+	for (int id = 0; id < recipe_count; id++)
 	{
-		const auto& combine_list = GET_RECIPE("Recipe_1");
+		const auto& combine_list = DATA_TABLE->GetItemRecipe(id);
+		auto iconPath = GET_DATA(std::wstring, combine_list.resultItem, "Icon");
 
-		float y = i * -130.0f + 250.0f;
+		float y = id * -130.0f + 250.0f;
 		auto& recipeGUI = m_recipePanels.emplace_back();
 		recipeGUI.Panel = std::make_shared<SceneObject>();
 		recipeGUI.Panel->GetTransform()->SetLocalPositionY(y);
@@ -37,8 +38,7 @@ PlayerCraftGUI::PlayerCraftGUI(const std::shared_ptr<SceneObject>& object) : Com
 		recipeGUI.OutputSlotContents = std::make_shared<SceneObject>();
 		auto outputContentsRenderer = recipeGUI.OutputSlotContents->AddComponent<GUIImage>();
 		recipeGUI.OutputSlotContents->GetTransform()->SetLocalPosition(Vector3(-160.0f, 0.0f, 0.0f));
-		// TODO: Dynamic texture loading
-		outputContentsRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\itemicon_coin.png")));
+		outputContentsRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(iconPath)));
 		outputContentsRenderer->SetSize(Vector2(100, 100));
 		outputContentsRenderer->SetRaycastTarget(false);
 		recipeGUI.Panel->AddChild(recipeGUI.OutputSlotContents);
@@ -95,12 +95,16 @@ PlayerCraftGUI::PlayerCraftGUI(const std::shared_ptr<SceneObject>& object) : Com
 
 void PlayerCraftGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table)
 {
-	// ����� ������ ���̵�
+	// 골라진 레시피 아이디
 	int recipe_id = -1;
-	for (int i = 0; i < m_recipePanels.size(); i++)
+	for (size_t i = 0; i < m_recipePanels.size(); i++)
 	{
 		const auto& combine_list = GET_RECIPE("Recipe_1");
 		recipe_id = combine_list.recipeID;
+
+		// 해당 레시피가 재료의 개수를 충족하는지 확인
+		// available 이 true면 재료가 충분하다는 뜻
+		// 각각의 재료에 대해서 table(인벤토리)의 개수와 비교
 		bool available = true;
 		for (const auto& [itemName,itemId, numOfRequire] : combine_list.itemElements)
 		{
@@ -114,12 +118,12 @@ void PlayerCraftGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vect
 		}
 
 		auto buttonComponent = m_recipePanels[i].CraftButton->GetComponent<GUIButton>();
+
+		// 조건이 충족될 경우 버튼을 활성화하고 클릭 시 레시피를 제작하는 콜백을 설정
 		buttonComponent->SetInteractable(available);
-		// TODO: �Ұ� ���� �����°� ����?
 		if (available)
 		{
 			buttonComponent->SetClickCallback([recipe_id, target]() {
-				// TODO: need to specity the recipe ID
 				target->CraftItem(recipe_id);
 				});
 		}

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include <flatbuffers/flatbuffers.h>
 #include "s2c_PacketHandler.h"
 #include "../evergreen_client/ServerObjectMgr.h"
@@ -30,7 +30,7 @@ extern std::shared_ptr<SceneObject> g_heroObj;
 const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_)
 {
 	NetMgr(NetworkMgr)->SetSessionID(pkt_.obj_id());
-	// TODO: ¾ÆÀÌµğ ÅëÀÏ
+	// TODO: ì•„ì´ë”” í†µì¼
 	// g_heroObj->GetComponent<ServerObject>()->SetObjID(pkt_.obj_id());
 	NetMgr(ServerTimeMgr)->UpdateServerTimeStamp(pkt_.server_time_stamp());
 	return true;
@@ -46,29 +46,29 @@ const bool Handle_s2c_PING_PONG(const NetHelper::S_ptr<NetHelper::PacketSession>
 static uint32_t g_npcid = 0;
 const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_APPEAR_OBJECT& pkt_)
 {
-	// TODO: ºô´õÆĞÅÏ / ÆÑÅä¸® ÆĞÅÏ Ã³·³
-	// Àû´çÈ÷ enum°ªÀÌ ¿À¸é ¾Ë¾Æ¼­ ¸¸µé¾î¼­ ¾À ¿ÀºêÁ§Æ® ¹ñ´Â ±¸Á¶°¡ ÇÊ¿äÇÏ´Ù.
-	// ¾ÕÀ¸·Îµµ ÀÌ·¸°Ô ÇÏµåÄÚµùÇØ¼­ °´Ã¼¸¦ ¸¸µé ¼ø ¾ø´Ù.
+	// TODO: ë¹Œë”íŒ¨í„´ / íŒ©í† ë¦¬ íŒ¨í„´ ì²˜ëŸ¼
+	// ì ë‹¹íˆ enumê°’ì´ ì˜¤ë©´ ì•Œì•„ì„œ ë§Œë“¤ì–´ì„œ ì”¬ ì˜¤ë¸Œì íŠ¸ ë±‰ëŠ” êµ¬ì¡°ê°€ í•„ìš”í•˜ë‹¤.
+	// ì•ìœ¼ë¡œë„ ì´ë ‡ê²Œ í•˜ë“œì½”ë”©í•´ì„œ ê°ì²´ë¥¼ ë§Œë“¤ ìˆœ ì—†ë‹¤.
 	const auto obj_id = pkt_.obj_id();
 	
-	// ÇØ´ç ¿ÀºêÁ§Æ®ÀÇ HP Á¤º¸.
-	// ÀÌ°Å ±Ùµ¥ HP °³³äÀÌ¾ø´Â ¿¹) NPC°°Àº°Å ÀÖ¾î¼­ ±×·±¾Ö´Â -1 ÁÖ°íÀÖ´Âµ¥ °Á HP ÄÄÆ÷³ÍÆ® ´Ş°í 1¾¿ ³Ö°í °ø°İºÒ°¡·Î ÇÒ±î
+	// í•´ë‹¹ ì˜¤ë¸Œì íŠ¸ì˜ HP ì •ë³´.
+	// ì´ê±° ê·¼ë° HP ê°œë…ì´ì—†ëŠ” ì˜ˆ) NPCê°™ì€ê±° ìˆì–´ì„œ ê·¸ëŸ°ì• ëŠ” -1 ì£¼ê³ ìˆëŠ”ë° ê± HP ì»´í¬ë„ŒíŠ¸ ë‹¬ê³  1ì”© ë„£ê³  ê³µê²©ë¶ˆê°€ë¡œ í• ê¹Œ
 	const auto obj_max_hp = pkt_.obj_max_hp();
 	const auto obj_cur_hp = pkt_.obj_cur_hp();
 
 	if (Mgr(ServerObjectMgr)->GetServerObj(obj_id))
 		return true;
 
-	// if (pkt_.group_type() == 0)return true; // ½ºÆ®·¹½º Å×½ºÆ®¿ë ÁÖ¼® (³Ê¹« ¸¹À¸¸é ·»´õ¸µ ¹ÙÆ²³Ø °¨´çºÒ°¡)
+	// if (pkt_.group_type() == 0)return true; // ìŠ¤íŠ¸ë ˆìŠ¤ í…ŒìŠ¤íŠ¸ìš© ì£¼ì„ (ë„ˆë¬´ ë§ìœ¼ë©´ ë Œë”ë§ ë°”í‹€ë„¥ ê°ë‹¹ë¶ˆê°€)
 
 	if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_NPC)
 	{
 		g_npcid = pkt_.obj_id();
-		std::cout << "NPC µîÀå\n";
+		std::cout << "NPC ë“±ì¥\n";
 	}
 	else if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_DROP_ITEM)
 	{
-		std::cout << "¾ÆÀÌÅÛ µîÀå\n";
+		std::cout << "ì•„ì´í…œ ë“±ì¥\n";
 	}
 	DefaultEntityBuilder b;
 	b.obj_id = pkt_.obj_id();
@@ -84,7 +84,7 @@ const bool Handle_s2c_REMOVE_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 {
 	if (pkt_.obj_id() == g_npcid)
 	{
-		std::cout << "NPC ÅğÀå\n";
+		std::cout << "NPC í‡´ì¥\n";
 	}
 	Mgr(ServerObjectMgr)->RemoveObject(pkt_.obj_id());
 	return true;
@@ -114,7 +114,7 @@ const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 
 const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_ATTACK& pkt_)
 {
-	// ¸ó½ºÅÍ °ø°İ Á¾·ù ¹× ¾Ö´Ï¸ŞÀÌ¼Ç
+	// ëª¬ìŠ¤í„° ê³µê²© ì¢…ë¥˜ ë° ì• ë‹ˆë©”ì´ì…˜
 	const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id());
 	if (nullptr != obj)
 	{
@@ -125,14 +125,14 @@ const bool Handle_s2c_MONSTER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSes
 		}
 	}
 
-	//std::cout << "¿©¿ì°¡ ´ç½Å¿¡°Ô " << pkt_.dmg() << "µ¥¹ÌÁö¸¦ ÁÖ¾ú´Ù !" << std::endl;
+	//std::cout << "ì—¬ìš°ê°€ ë‹¹ì‹ ì—ê²Œ " << pkt_.dmg() << "ë°ë¯¸ì§€ë¥¼ ì£¼ì—ˆë‹¤ !" << std::endl;
 	return true;
 }
 
 const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_HIT_DMG& pkt_)
 {
-	// ¾î¶² ¿ÀºêÁ§Æ®°¡ ¸î µ¥¹ÌÁö ¹Ş¾Ò´Â°¡
-	const auto hit_obj_id = pkt_.hit_obj_id(); // ¸ÂÀº ¾Ö ¾ÆÀÌµğ
+	// ì–´ë–¤ ì˜¤ë¸Œì íŠ¸ê°€ ëª‡ ë°ë¯¸ì§€ ë°›ì•˜ëŠ”ê°€
+	const auto hit_obj_id = pkt_.hit_obj_id(); // ë§ì€ ì•  ì•„ì´ë””
 	const auto hit_after_hp = pkt_.hit_after_hp();
 	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
 	if (!hit_obj_ptr)
@@ -142,8 +142,8 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 	}
 	if (const auto monster = hit_obj_ptr->GetComponent<Monster>())
 	{
-		// TODO: ÇöÀçÃ¼·Â°ú Èı ¾ÖÇÁÅÍÀÇ Â÷ÀÌ°¡ ÇÊ¿ä,
-		// ÀÌ ¼öÄ¡¸¦ ±â·ÏÇÏ°í °ü¸®ÇÒ Å¬·¡½º ÀÖ¾î¾ßÇÔ
+		// TODO: í˜„ì¬ì²´ë ¥ê³¼ í› ì• í”„í„°ì˜ ì°¨ì´ê°€ í•„ìš”,
+		// ì´ ìˆ˜ì¹˜ë¥¼ ê¸°ë¡í•˜ê³  ê´€ë¦¬í•  í´ë˜ìŠ¤ ìˆì–´ì•¼í•¨
 		monster->OnHit(hit_after_hp);
 	}
 	if (const auto player = hit_obj_ptr->GetComponent<PlayerRenderer>())
@@ -161,13 +161,13 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 
 const bool Handle_s2c_MONSTER_AGGRO_START(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_START& pkt_)
 {
-	std::cout << "¿©¿ì°¡ ´ç½ÅÀ» ÁÖ½ÃÇÏ°íÀÖ´Ù ... " << std::endl;
+	std::cout << "ì—¬ìš°ê°€ ë‹¹ì‹ ì„ ì£¼ì‹œí•˜ê³ ìˆë‹¤ ... " << std::endl;
 	return true;
 }
 
 const bool Handle_s2c_MONSTER_AGGRO_END(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_MONSTER_AGGRO_END& pkt_)
 {
-	std::cout << "¾Æ¹«·¡µµ ¿©¿ì´Â ´ç½Å¿¡°Ô Èï¹Ì°¡ ¾ø¾îÁø °Í °°´Ù ..." << std::endl;
+	std::cout << "ì•„ë¬´ë˜ë„ ì—¬ìš°ëŠ” ë‹¹ì‹ ì—ê²Œ í¥ë¯¸ê°€ ì—†ì–´ì§„ ê²ƒ ê°™ë‹¤ ..." << std::endl;
 	return true;
 }
 
@@ -188,7 +188,7 @@ const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSessi
 {
 	if (NetMgr(NetworkMgr)->GetSessionID() == pkt_.player_id())
 	{
-		std::cout << "»ç¸Á\n";
+		std::cout << "ì‚¬ë§\n";
 		g_heroObj->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
 		g_heroObj->GetComponent<PlayerRenderer>()->Death();
 		NetMgr(NetworkMgr)->Send(Create_c2s_PLAYER_DEATH());
@@ -206,7 +206,7 @@ const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSessi
 
 const bool Handle_s2c_REQUEST_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REQUEST_QUEST& pkt_)
 {
-	std::cout << "Äù½ºÆ® ¼ö¶ô !" << std::endl;
+	std::cout << "í€˜ìŠ¤íŠ¸ ìˆ˜ë½ !" << std::endl;
 	return true;
 }
 
@@ -216,20 +216,20 @@ const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSessio
 	if (pkt_.is_clear())
 	{
 		temp_count = 0;
-		std::cout << "Äù½ºÆ® Å¬¸®¾î !" << std::endl;
+		std::cout << "í€˜ìŠ¤íŠ¸ í´ë¦¬ì–´ !" << std::endl;
 	}
 	else
 	{
-		std::cout << "ÀâÀº ¿©¿ì ¼ö: " << ++temp_count << std::endl;
+		std::cout << "ì¡ì€ ì—¬ìš° ìˆ˜: " << ++temp_count << std::endl;
 	}
 	return true;
 }
 
 const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_FIRE_PROJ& pkt_)
 {
-	// TODO: °³ ½Ô ÇÏµåÄÚµù + ¸Å³Ñ
+	// TODO: ê°œ ìŒ‰ í•˜ë“œì½”ë”© + ë§¤ë„˜
 	const auto shoot_obj_id = pkt_.shoot_obj_id();
-	const auto proj_type = pkt_.proj_type(); // TODO: Åõ»çÃ¼ÀÇ Å¸ÀÔ (¾ÆÁ÷ ¾øÀ½)
+	const auto proj_type = pkt_.proj_type(); // TODO: íˆ¬ì‚¬ì²´ì˜ íƒ€ì… (ì•„ì§ ì—†ìŒ)
 	auto s = std::make_shared<SceneObject>();
 	s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
 
@@ -247,12 +247,12 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 
 const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ACQUIRE_ITEM& pkt_)
 {
-	// TODO: ¸¸¾à ³»°¡ ¾Æ´Ñ ´Ù¸¥ ÇÃ·¹ÀÌ¾î°¡ ¾ÆÀÌÅÛ ¸ÔÀº°É ¾Ë¾Æ¾ß ÇÑ´Ù¸é (¿¹: XX´ÔÀÌ YY¸¦ È¹µæ!) ´©°¡ ¸Ô¾ú´ÂÁö IDµµ ÇÊ¿ä
-	// ±âÈ¹ÀÇ ¿µ¿ª..
+	// TODO: ë§Œì•½ ë‚´ê°€ ì•„ë‹Œ ë‹¤ë¥¸ í”Œë ˆì´ì–´ê°€ ì•„ì´í…œ ë¨¹ì€ê±¸ ì•Œì•„ì•¼ í•œë‹¤ë©´ (ì˜ˆ: XXë‹˜ì´ YYë¥¼ íšë“!) ëˆ„ê°€ ë¨¹ì—ˆëŠ”ì§€ IDë„ í•„ìš”
+	// ê¸°íšì˜ ì˜ì—­..
 	
-	// ID´Â Á¤¼öÀÌ³ª, json Å×ÀÌºí¿¡¼­ ÇØ´ç ID¿¡ ´ëÀÀÇÏ´Â ¾ÆÀÌÅÛ Á¤º¸¸¦ È¹µæÇÏ±â À§ÇØ¼± ¹®ÀÚ¿­·ÎÀÇ º¯È¯ÀÌ ÇÊ¿äÇÏ´Ù.
+	// IDëŠ” ì •ìˆ˜ì´ë‚˜, json í…Œì´ë¸”ì—ì„œ í•´ë‹¹ IDì— ëŒ€ì‘í•˜ëŠ” ì•„ì´í…œ ì •ë³´ë¥¼ íšë“í•˜ê¸° ìœ„í•´ì„  ë¬¸ìì—´ë¡œì˜ ë³€í™˜ì´ í•„ìš”í•˜ë‹¤.
 	Mgr(ServerObjectMgr)->RemoveObject(pkt_.item_obj_id());
-	std::cout << std::format("¾ÆÀÌÅÛ È¹µæÇÔ! ¾ÆÀÌÅÛ ID: {} ¸ÔÀº User ID: {} , °³¼ö: {}\n", pkt_.item_detail_id(), pkt_.get_user_id(), pkt_.item_stack_size());
+	std::cout << std::format("ì•„ì´í…œ íšë“í•¨! ì•„ì´í…œ ID: {} ë¨¹ì€ User ID: {} , ê°œìˆ˜: {}\n", pkt_.item_detail_id(), pkt_.get_user_id(), pkt_.item_stack_size());
 
 	if (auto targetObject = Mgr(ServerObjectMgr)->GetServerObj(pkt_.get_user_id()))
 	{
@@ -282,15 +282,25 @@ const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::Pack
 
 const bool Handle_s2c_CRAFT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CRAFT_ITEM& pkt_)
 {
-	// TODO: ·¹½ÃÇÇ »ç¿ë ¿äÃ»¿¡ ´ëÇÑ ´äº¯ÆĞÅ¶ÀÌ ¿©±â·Î ¿È
-	// ¼­¹ö¿¡¼­´Â ÀÌ¹Ì ÀÎº¥Åä¸®¿¡ ÀÌ·±Àú·± ¼öÁ¤»çÇ×ÀÌ ¹İ¿µ µÈ »óÅÂ,
-	// »ç¿ëÇÑ ·¹½ÃÇÇ ¾ÆÀÌµğ ÇÏ³ª¸¸ ÁÖ¸é ±× ·¹½ÃÇÇ¸¦ Ã£¾Æ¼­ ³»°¡ Áö±İ ¹¹°¡ ¸î °³ ¾ø¾îÁö°í
-	// ¹¹°¡ ¸î °³ »ı°Ü¾ß ÇÒ Áö ¾Ë ¼ö ÀÖ¾îÀ×
+	// TODO: ë ˆì‹œí”¼ ì‚¬ìš© ìš”ì²­ì— ëŒ€í•œ ë‹µë³€íŒ¨í‚·ì´ ì—¬ê¸°ë¡œ ì˜´
+	// ì„œë²„ì—ì„œëŠ” ì´ë¯¸ ì¸ë²¤í† ë¦¬ì— ì´ëŸ°ì €ëŸ° ìˆ˜ì •ì‚¬í•­ì´ ë°˜ì˜ ëœ ìƒíƒœ,
+	// ì‚¬ìš©í•œ ë ˆì‹œí”¼ ì•„ì´ë”” í•˜ë‚˜ë§Œ ì£¼ë©´ ê·¸ ë ˆì‹œí”¼ë¥¼ ì°¾ì•„ì„œ ë‚´ê°€ ì§€ê¸ˆ ë­ê°€ ëª‡ ê°œ ì—†ì–´ì§€ê³ 
+	// ë­ê°€ ëª‡ ê°œ ìƒê²¨ì•¼ í•  ì§€ ì•Œ ìˆ˜ ìˆì–´ì‰
 	const auto& recipe_info = DATA_TABLE->GetItemRecipe(pkt_.recipe_id());
 	const auto recipe_id = recipe_info.recipeID;
 	const auto& item_info = recipe_info.itemElements;
 	std::cout << recipe_id << '\n';
 	std::cout << DATA_TABLE->GetRecipeName(recipe_id) << '\n';
+
+	// ë ˆì‹œí”¼ì—ì„œ ì½ì€ ì•„ì´í…œ ë¦¬ìŠ¤íŠ¸ ì •ë³´ë¥¼ í†µí•´ í”Œë ˆì´ì–´ì˜ ì¸ë²¤í† ë¦¬ë¥¼ ìˆ˜ì •í•œë‹¤.
+	if (auto playerComp = g_heroObj->GetComponent<AuthenticPlayer>())
+	{
+		const auto& combine_list = GET_RECIPE(DATA_TABLE->GetRecipeName(recipe_id));
+		for (const auto& [itemName, itemId, numOfRequire] : combine_list.itemElements)
+			playerComp->OnModifyInventory(itemId, -numOfRequire);
+		playerComp->OnModifyInventory(combine_list.resultItemID, combine_list.numOfResultItem);
+	}
+
 	return true;
 }
 
