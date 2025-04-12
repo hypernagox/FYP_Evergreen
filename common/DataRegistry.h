@@ -34,7 +34,7 @@ namespace Common
 				return -1;
 			return m_dropItemName2Int.find(drop_item_name.data())->second;
 		}
-		const std::string& GetItemName(const int drop_item_id)const noexcept {
+		std::string GetItemName(const int drop_item_id)const noexcept {
 			// TODO: 없는 아이템이 원래 있으면 안됨
 			const auto iter = m_dropItemID2String.find(drop_item_id);
 			if (m_dropItemID2String.end() != iter)

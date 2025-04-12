@@ -403,3 +403,4 @@ evergreen_client/UnitiyBuild/Release-Usenet
 test_lab/imgui.ini
 test_lab/AssimpLog.txt
 *.ddscache
+evergreen_client/UnitiyBuild/Debug-Usenet
