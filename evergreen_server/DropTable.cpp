@@ -11,7 +11,7 @@
 
 void DropTable::SetItemType(const std::string_view mon_name)
 {
-	m_itemType = DATA_TABLE->GetDropItemID(GET_DATA(std::string, mon_name, "DropItem"));
+	m_itemType = DATA_TABLE->GetItemID(GET_DATA(std::string, mon_name, "DropItem"));
 }
 
 void DropTable::TryCreateItem() const noexcept

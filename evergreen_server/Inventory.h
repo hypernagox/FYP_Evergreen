@@ -31,6 +31,8 @@ public:
 	const auto GetItemsAll()noexcept { return std::span<Item*>{m_items, m_items + m_curNumOfItems}; }
 	const auto GetItemsAll()const noexcept { return const_cast<Inventory*>(this)->GetItemsAll(); }
 public:
+	bool CraftItem(const ItemRecipeData& recipe_info)noexcept;
+public:
 	const auto GetNumOfItems()const noexcept { return m_curNumOfItems; }
 	void DecItemStack(const int8_t item_type, const int cnt)noexcept;
 public:

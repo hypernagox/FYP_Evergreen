@@ -282,6 +282,10 @@ const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::Pack
 
 const bool Handle_s2c_CRAFT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CRAFT_ITEM& pkt_)
 {
+	// TODO: 레시피 사용 요청에 대한 답변패킷이 여기로 옴
+	// 서버에서는 이미 인벤토리에 이런저런 수정사항이 반영 된 상태,
+	// 사용한 레시피 아이디 하나만 주면 그 레시피를 찾아서 내가 지금 뭐가 몇 개 없어지고
+	// 뭐가 몇 개 생겨야 할 지 알 수 있어잉
 	const auto& recipe_info = DATA_TABLE->GetItemRecipe(pkt_.recipe_id());
 	const auto recipe_id = recipe_info.recipeID;
 	const auto& item_info = recipe_info.itemElements;

@@ -27,6 +27,42 @@ Inventory::~Inventory()
 	}
 }
 
+bool Inventory::CraftItem(const ItemRecipeData& recipe_info) noexcept
+{
+	bool flag = true;
+	XVector<std::pair<Item*, int>> item_and_number;
+	item_and_number.reserve(recipe_info.itemElements.size());
+	for (const auto& item_info : recipe_info.itemElements)
+	{
+		if (const auto item = FindItem(item_info.itemID))
+		{
+			if (item->m_numOfItemStack >= item_info.numOfRequire)
+			{
+				item_and_number.emplace_back(item, item_info.numOfRequire);
+			}
+			else
+			{
+				flag = false;
+				break;
+			}
+		}
+		else
+		{
+			flag = false;
+			break;
+		}
+	}
+	if (flag)
+	{
+		for (const auto [item, number] : item_and_number)
+		{
+			item->m_numOfItemStack -= number;
+			std::cout << (int)item->m_numOfItemStack << std::endl;
+		}
+	}
+	return flag;
+}
+
 void Inventory::DecItemStack(const int8_t item_type, const int cnt) noexcept
 {
 	if (const auto item = FindItem(item_type))

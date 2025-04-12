@@ -315,8 +315,21 @@ const bool Handle_c2s_USE_QUICK_SLOT_ITEM(const NagiocpX::S_ptr<NagiocpX::Packet
 
 const bool Handle_c2s_CRAFT_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CRAFT_ITEM& pkt_)
 {
-	// TODO: 인벤토리에서 아이템 삭제
-	pSession_->SendAsync(Create_s2c_CRAFT_ITEM(pkt_.recipe_id()));
+	const auto recipe_id = pkt_.recipe_id();
+	const auto& recipe_info = DATA_TABLE->GetItemRecipe(recipe_id);
+	if (const auto inv = pSession_->GetOwnerEntity()->GetComp<Inventory>())
+	{
+		if (inv->CraftItem(recipe_info))
+		{
+			pSession_->SendAsync(Create_s2c_CRAFT_ITEM(recipe_id));
+			std::cout << "성공\n";
+		}
+		else
+		{
+			std::cout << "실패\n";
+		}
+	}
+	
 	return true;
 }
 

@@ -7,8 +7,8 @@ namespace Common
 {
     inline thread_local std::wstring wstr = {};
 
-	void DataRegistry::Load(const std::wstring_view path) noexcept
-	{
+    void DataRegistry::Load(const std::wstring_view path) noexcept
+    {
         static DataRegistry table;
         g_table = &table;
         std::string errStr;
@@ -17,7 +17,7 @@ namespace Common
         for (const auto& entry : std::filesystem::directory_iterator{ RESOURCE_PATH(path) + L"\\json" })
         {
             if (entry.path().extension() == ".json")
-            { 
+            {
                 try {
                     std::ifstream file{ entry.path() };
                     if (!file)
@@ -47,7 +47,7 @@ namespace Common
                                 if (flag && (nlohmann::json::value_t::number_integer == value.type()
                                     || nlohmann::json::value_t::number_unsigned == value.type()))
                                 {
-                                    comb.emplace_back(attrName, value.get<int>());
+                                    comb.emplace_back(attrName, -1, value.get<int>());
                                 }
                                 else if (!flag || nlohmann::json::value_t::string == value.type())
                                 {
@@ -66,7 +66,11 @@ namespace Common
                                     throw std::runtime_error{ "Recipe Value Error" };
                                 }
                             }
-                            table.m_mapItemRecipe.emplace(recipe_id, ItemRepcipeData{ resultItem, recipe_id,numOfItem, std::move(comb) });
+                            if (0 == numOfItem)
+                            {
+                                throw std::runtime_error{ "Num of Result Item is Zero" };
+                            }
+                            table.m_mapItemRecipe.emplace(recipe_id, ItemRecipeData{ resultItem,-1, recipe_id,numOfItem, std::move(comb) });
                             table.m_mapRecipeName2Int.emplace(entityName, recipe_id);
                             table.m_mapInt2RecipeName.emplace(recipe_id, entityName);
                             ++recipe_id;
@@ -88,7 +92,7 @@ namespace Common
 
                         for (const auto& [attrName, value] : attributes.items())
                         {
-                            if (attributeMap.contains(attrName)) 
+                            if (attributeMap.contains(attrName))
                             {
                                 throw std::runtime_error("Duplicate attribute: " + std::string(attrName));
                             }
@@ -117,7 +121,7 @@ namespace Common
 
                         auto& categoryMap = table.m_mapDatatable[category];
 
-                        if (categoryMap.contains(entityName)) 
+                        if (categoryMap.contains(entityName))
                         {
                             throw std::runtime_error("Duplicate entity: " + std::string(entityName));
                         }
@@ -131,6 +135,14 @@ namespace Common
                     std::cout << e.what();
                     exit(1);
                 }
+            }
+        }
+        for (auto& [recipe_id, ele] : table.m_mapItemRecipe)
+        {
+            ele.resultItemID = table.GetItemID(ele.resultItem);
+            for (auto& items : ele.itemElements)
+            {
+                items.itemID = table.GetItemID(items.itemName);
             }
         }
 	}

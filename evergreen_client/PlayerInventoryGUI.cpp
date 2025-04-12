@@ -54,7 +54,7 @@ void PlayerInventoryGUI::UpdateSlotContents(AuthenticPlayer* target, const std::
 	{
 		if (table[id] > 0)
 		{
-			const std::string& key = DATA_TABLE->GetDropItemName(id);
+			const std::string& key = DATA_TABLE->GetItemName(id);
 			udsdx::Texture* texture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, key, "Icon")));
 			m_slotBackground[counter]->GetComponent<GUIButton>()->SetClickCallback([target, id]() {
 				target->SetQuickSlotItemOnBlank(id);

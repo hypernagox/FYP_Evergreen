@@ -46,7 +46,7 @@ void PlayerQuickSlotGUI::UpdateSlotContents(const std::vector<int>& tableQuickSl
 		}
 		else
 		{
-			const std::string& key = DATA_TABLE->GetDropItemName(tableQuickSlot[i]);
+			const std::string& key = DATA_TABLE->GetItemName(tableQuickSlot[i]);
 			udsdx::Texture* texture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, key, "Icon")));
 			m_slotContents[i]->GetComponent<GUIImage>()->SetTexture(texture);
 			m_slotText[i]->GetComponent<GUIText>()->SetText(std::to_wstring(tableInventory[tableQuickSlot[i]]));

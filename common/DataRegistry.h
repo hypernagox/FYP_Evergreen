@@ -3,11 +3,13 @@
 
 struct ItemCombineInfo {
 	std::string itemName;
+	int itemID;
 	int numOfRequire;
 };
 
-struct ItemRepcipeData {
+struct ItemRecipeData {
 	std::string resultItem;
+	int resultItemID;
 	int recipeID;
 	int numOfResultItem;
 	std::vector<ItemCombineInfo> itemElements;
@@ -23,10 +25,22 @@ namespace Common
 		static void Load(const std::wstring_view path = L"")noexcept;
 		static const auto GetDataTable()noexcept { return g_table; }
 	public:
-		const int GetDropItemID(const std::string_view drop_item_name)const noexcept {
+		const int GetItemID(const std::string_view drop_item_name)const noexcept {
+			// TODO: 없는 아이템이 원래 있으면 안됨
+			const auto iter = m_dropItemName2Int.find(drop_item_name.data());
+			if (m_dropItemName2Int.end() != iter)
+				return iter->second;
+			else
+				return -1;
 			return m_dropItemName2Int.find(drop_item_name.data())->second;
 		}
-		const std::string& GetDropItemName(const int drop_item_id)const noexcept {
+		const std::string& GetItemName(const int drop_item_id)const noexcept {
+			// TODO: 없는 아이템이 원래 있으면 안됨
+			const auto iter = m_dropItemID2String.find(drop_item_id);
+			if (m_dropItemID2String.end() != iter)
+				return iter->second;
+			else
+				return {};
 			return m_dropItemID2String.find(drop_item_id)->second;
 		}
 	public:
@@ -115,10 +129,10 @@ namespace Common
 
 
 		// ----------------- 아이템 레시피 테이블 --------------------
-		std::map<int, const ItemRepcipeData> m_mapItemRecipe;
+		std::map<int, ItemRecipeData> m_mapItemRecipe;
 		std::map<std::string, int> m_mapRecipeName2Int;
 		std::map<int, std::string> m_mapInt2RecipeName;
-		//
+		// ---------------------------------------------------------
 	};
 
 #define DATA_TABLE (Common::DataRegistry::GetDataTable())

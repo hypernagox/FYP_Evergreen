@@ -95,18 +95,19 @@ PlayerCraftGUI::PlayerCraftGUI(const std::shared_ptr<SceneObject>& object) : Com
 
 void PlayerCraftGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table)
 {
+	// 골라진 레시피 아이디
 	int recipe_id = -1;
 	for (int i = 0; i < m_recipePanels.size(); i++)
 	{
 		const auto& combine_list = GET_RECIPE("Recipe_1");
+		recipe_id = combine_list.recipeID;
 		bool available = true;
-		for (const auto& [itemName, numOfRequire] : combine_list.itemElements)
+		for (const auto& [itemName,itemId, numOfRequire] : combine_list.itemElements)
 		{
-			const auto item_id = DATA_TABLE->GetDropItemID(itemName);
+			const auto item_id = DATA_TABLE->GetItemID(itemName);
 			const auto diff = table[item_id] - numOfRequire;
 			if (diff < 0)
 			{
-				recipe_id = combine_list.recipeID;
 				available = false;
 				break;
 			}
@@ -119,7 +120,6 @@ void PlayerCraftGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vect
 		{
 			buttonComponent->SetClickCallback([recipe_id, target]() {
 				// TODO: need to specity the recipe ID
-				//Send(Create_c2s_COMBINE_ITEM())
 				target->CraftItem(recipe_id);
 				});
 		}
