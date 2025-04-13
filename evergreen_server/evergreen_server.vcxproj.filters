@@ -113,6 +113,9 @@
     <Filter Include="Items\DropTable">
       <UniqueIdentifier>{06cefa0b-1d9a-4268-ac56-53ff99080dc2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="QuestRoom">
+      <UniqueIdentifier>{c16688f1-0485-42d0-8e0e-dd6a15a9243f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -192,6 +195,9 @@
     </ClCompile>
     <ClCompile Include="DropTable.cpp">
       <Filter>Items\DropTable</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestRoom.cpp">
+      <Filter>QuestRoom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -281,6 +287,9 @@
     </ClInclude>
     <ClInclude Include="DropTable.h">
       <Filter>Items\DropTable</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestRoom.h">
+      <Filter>QuestRoom</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

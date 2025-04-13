@@ -82,6 +82,13 @@ Item* Inventory::AddDropItem(const DropItem* const drop_item_info) noexcept
 {
 	const auto item_detail_type = drop_item_info->GetDropItemDetailInfo();
 	const auto item_stack_size = drop_item_info->GetNumOfItemStack();
+	return AddItem(item_detail_type, item_stack_size);
+}
+
+Item* Inventory::AddItem(const int item_id, const int stack_size) noexcept
+{
+	const auto item_detail_type = (int8_t)item_id;
+	const auto item_stack_size = (int8_t)stack_size;
 	if (const auto exist_item = FindItem(item_detail_type))
 	{
 		if (exist_item->m_numOfItemStack < 0) {

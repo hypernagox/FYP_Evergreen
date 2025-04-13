@@ -145,9 +145,10 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 	c->m_offSet = rotatedForward;
 	auto box = c->GetAABB();
 	bool isHit = false;
+	pos_comp->pos = ::ToDxVec(pkt_.atk_pos());
 	Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,8.f };
 	fan.m_offSet = rotatedForward * 2;
-	pos_comp->pos = ::ToDxVec(pkt_.atk_pos());
+
 	//if (const auto sector = pOwner->GetCurCluster())
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
@@ -321,8 +322,9 @@ const bool Handle_c2s_CRAFT_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>&
 	{
 		if (inv->CraftItem(recipe_info))
 		{
+			inv->AddItem(recipe_info.resultItemID, recipe_info.numOfResultItem);
 			pSession_->SendAsync(Create_s2c_CRAFT_ITEM(recipe_id));
-			std::cout << "성공\n";
+			std::cout << "조합 결과 ID: " << recipe_info.resultItemID << " 개수: " << recipe_info.numOfResultItem << '\n';
 		}
 		else
 		{
