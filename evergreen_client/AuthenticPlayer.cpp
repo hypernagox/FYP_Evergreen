@@ -15,8 +15,6 @@ AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
 {
 	m_cameraAnchor = std::make_shared<SceneObject>();
-	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3(0.0f, 3.0f, 0.0f));
-
 	m_cameraObj = std::make_shared<SceneObject>();
 
 	m_pCamera = m_cameraObj->AddComponent<CameraPerspective>();
@@ -48,7 +46,6 @@ bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
 void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
 {
 	Transform* camTrans = m_cameraAnchor->GetTransform();
-
 	if (INSTANCE(Input)->GetMouseMode() == Mouse::Mode::MODE_RELATIVE)
 	{
 		float mouse_dx = static_cast<float>(INSTANCE(Input)->GetMouseX());
@@ -70,7 +67,6 @@ void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 	m_vCurState.x += (int)temp.x;
 	m_vCurState.y += (int)temp.y;
 	m_vCurState.z += (int)temp.z;
-
 
 	Vector3 vWorldDelta = Vector3::Transform(vDelta, Quaternion::CreateFromYawPitchRoll(Vector3(0.0f, m_cameraAngleAxis.y * DEG2RAD, 0.0f)));
 	
@@ -180,14 +176,30 @@ void AuthenticPlayer::CraftItem(int recipeIndex)
 
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
-	Vector3 wv = GetSceneObject()->GetTransform()->GetLocalPosition() + m_cameraAnchor->GetTransform()->GetLocalPosition();
-	const float fMaxDist = 3.0f;
-	float target = -fMaxDist;
-	float zPos = std::max(target, std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f));
+	// Region: Mouse Scrolling Control
+	int mouseScroll = INSTANCE(Input)->GetMouseScroll();
+	if (m_lastMouseScroll != mouseScroll)
+	{
+		m_cameraDistance += static_cast<float>(mouseScroll - m_lastMouseScroll) * -0.01f;
+		m_cameraDistance = std::clamp(m_cameraDistance, 0.5f, 10.0f);
+	}
+	m_lastMouseScroll = mouseScroll;
+
+	// Region: Camera Anchor Position Control
+	Vector3 playerPosition = GetSceneObject()->GetTransform()->GetLocalPosition();
+	Vector3 anchorPosition = playerPosition + Vector3::Up * 3.0f;
+	Vector3 interpolatedAnchorPosition = Vector3::Lerp(m_cameraAnchorLastPosition, anchorPosition, deltaTime * 8.0f);
+	m_cameraAnchor->GetTransform()->SetLocalPosition(interpolatedAnchorPosition - playerPosition);
+	m_cameraAnchorLastPosition = m_cameraAnchor->GetTransform()->GetWorldPosition();
+
+	// Region: Camera Z Distance / Screen Offset Control
+	float target = -m_cameraDistance;
+	float zPos = std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f);
 	float tParam = m_fMoveTime * 0.5f;
 	float mParam = 0.04f;
-	pCameraTransfrom->SetLocalPosition(Vector3(1.5f + sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, zPos));
-	pCameraTransfrom->SetLocalRotation(Quaternion::Identity);
+	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, zPos));
+
+	// Region: Camera FOV Control
 	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), m_fovBase + (INSTANCE(Input)->GetMouseRightButton() ? -30.0f * DEG2RAD : 0.0f), deltaTime * 8.0f));
 }
 
@@ -288,8 +300,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 
 	UpdatePlayerCamFpsMode(time.deltaTime);
 	UpdateCameraTransform(m_cameraObj->GetTransform(), time.deltaTime);
-
-	float rotationFactor = Vector2(velocity.x, velocity.z).Length() * 0.15f * sin(m_fMoveTime * 1.5f) * PIDIV4;
 
 	// m_rendererBodyAngleY = std::clamp(m_rendererBodyAngleY, m_cameraAngleAxisSmooth.y - 30.0f, m_cameraAngleAxisSmooth.y + 30.0f);
 	m_playerRenderer->SetRotation(Quaternion::CreateFromYawPitchRoll(m_rendererBodyAngleY * DEG2RAD + PI, 0.0f, 0.0f));
