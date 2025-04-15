@@ -1043,6 +1043,11 @@ namespace udsdx
 		return m_deferredRenderer.get();
 	}
 
+	ShadowMap* Core::GetShadowMap() const
+	{
+		return m_shadowMap.get();
+	}
+
 	ID3D12RootSignature* Core::GetRootSignature() const
 	{
 		return m_rootSignature.Get();

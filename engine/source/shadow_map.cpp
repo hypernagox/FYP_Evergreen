@@ -146,51 +146,54 @@ namespace udsdx
 
 		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerShadowCBV, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
 
-		param.UseFrustumCulling = false;
+		if (m_drawShadow)
+		{
+			param.UseFrustumCulling = false;
 
-		D3D12_VIEWPORT tempViewport{};
-		D3D12_RECT tempScissorRect{};
+			D3D12_VIEWPORT tempViewport{};
+			D3D12_RECT tempScissorRect{};
 
-		int halfWidth = m_mapWidth / 2;
-		int halfHeight = m_mapHeight / 2;
+			int halfWidth = m_mapWidth / 2;
+			int halfHeight = m_mapHeight / 2;
 
-		tempViewport = { 0.0f, (float)halfHeight, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
-		tempScissorRect = { 0, halfHeight, halfWidth, halfHeight * 2 };
+			tempViewport = { 0.0f, (float)halfHeight, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
+			tempScissorRect = { 0, halfHeight, halfWidth, halfHeight * 2 };
 
-		param.ViewFrustumWorld = cameraBounds[0].get();
-		param.CommandList->RSSetViewports(1, &tempViewport);
-		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
-		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][0]->Resource()->GetGPUVirtualAddress());
-		target->RenderShadowSceneObjects(param, 1);
+			param.ViewFrustumWorld = cameraBounds[0].get();
+			param.CommandList->RSSetViewports(1, &tempViewport);
+			param.CommandList->RSSetScissorRects(1, &tempScissorRect);
+			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][0]->Resource()->GetGPUVirtualAddress());
+			target->RenderShadowSceneObjects(param, 1);
 
-		tempViewport = { (float)halfWidth, (float)halfHeight, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
-		tempScissorRect = { halfWidth, halfHeight, halfWidth * 2, halfHeight * 2 };
+			tempViewport = { (float)halfWidth, (float)halfHeight, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
+			tempScissorRect = { halfWidth, halfHeight, halfWidth * 2, halfHeight * 2 };
 
-		param.ViewFrustumWorld = cameraBounds[1].get();
-		param.CommandList->RSSetViewports(1, &tempViewport);
-		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
-		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][1]->Resource()->GetGPUVirtualAddress());
-		target->RenderShadowSceneObjects(param, 1);
+			param.ViewFrustumWorld = cameraBounds[1].get();
+			param.CommandList->RSSetViewports(1, &tempViewport);
+			param.CommandList->RSSetScissorRects(1, &tempScissorRect);
+			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][1]->Resource()->GetGPUVirtualAddress());
+			target->RenderShadowSceneObjects(param, 1);
 
-		tempViewport = { 0.0f, 0.0f, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
-		tempScissorRect = { 0, 0, halfWidth, halfHeight };
+			tempViewport = { 0.0f, 0.0f, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
+			tempScissorRect = { 0, 0, halfWidth, halfHeight };
 
-		param.ViewFrustumWorld = cameraBounds[2].get();
-		param.CommandList->RSSetViewports(1, &tempViewport);
-		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
-		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][2]->Resource()->GetGPUVirtualAddress());
-		target->RenderShadowSceneObjects(param, 1);
+			param.ViewFrustumWorld = cameraBounds[2].get();
+			param.CommandList->RSSetViewports(1, &tempViewport);
+			param.CommandList->RSSetScissorRects(1, &tempScissorRect);
+			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][2]->Resource()->GetGPUVirtualAddress());
+			target->RenderShadowSceneObjects(param, 1);
 
-		tempViewport = { (float)halfWidth, 0.0f, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
-		tempScissorRect = { halfWidth, 0, halfWidth * 2, halfHeight };
+			tempViewport = { (float)halfWidth, 0.0f, (float)halfWidth, (float)halfHeight, 0.0f, 1.0f };
+			tempScissorRect = { halfWidth, 0, halfWidth * 2, halfHeight };
 
-		param.ViewFrustumWorld = cameraBounds[3].get();
-		param.CommandList->RSSetViewports(1, &tempViewport);
-		param.CommandList->RSSetScissorRects(1, &tempScissorRect);
-		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][3]->Resource()->GetGPUVirtualAddress());
-		target->RenderShadowSceneObjects(param, 1);
+			param.ViewFrustumWorld = cameraBounds[3].get();
+			param.CommandList->RSSetViewports(1, &tempViewport);
+			param.CommandList->RSSetScissorRects(1, &tempScissorRect);
+			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, m_lightCameraBuffers[param.FrameResourceIndex][3]->Resource()->GetGPUVirtualAddress());
+			target->RenderShadowSceneObjects(param, 1);
 
-		param.UseFrustumCulling = true;
+			param.UseFrustumCulling = true;
+		}
 
 		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_shadowMap.Get(),
 			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
