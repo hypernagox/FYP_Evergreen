@@ -4,12 +4,25 @@
 #include "ClientSession.h"
 #include "Cluster.h"
 
-void PartyQuestSystem::MissionStart()
+bool PartyQuestSystem::MissionStart()
 {
 	std::lock_guard<std::mutex> lock{ m_partyLock };
-	if (m_started)return;
-	if (-1 == m_curQuestID)return;
+	const auto cur_time = ::GetTickCount64();
+	const auto diff = cur_time - m_time_stamp;
+	if (diff < PARTY_COMMAND_COOL_TIME)return false;
+	m_time_stamp = cur_time;
+	if (m_curQuestRoomInstance) {
+		return false;
+	}
+	if (m_started)return false;
+	if (m_runFlag)return false;
+	if (-1 == m_curQuestID)return false;
+	if (m_member[0]->GetOwnerEntity()->IsPendingClusterEntry()) {
+		std::cout << "Now Pending ...\n";
+		return false;
+	}
 	StartFlag();
+	m_runFlag = true;
 	m_curQuestRoomInstance = NagiocpX::MakeShared<QuestRoom>();
 	m_curQuestRoomInstance->tempid = m_curQuestID;
 	m_curQuestRoomInstance->InitQuestField();
@@ -26,12 +39,24 @@ void PartyQuestSystem::MissionStart()
 			owner
 		);
 	}
+	return true;
 }
 
 void PartyQuestSystem::MissionEnd()
 {
-	m_curQuestRoomInstance->FinishField();
 	std::lock_guard<std::mutex> lock{ m_partyLock };
+	const auto cur_time = ::GetTickCount64();
+	const auto diff = cur_time - m_time_stamp;
+	if (diff < PARTY_COMMAND_COOL_TIME)return;
+	//m_time_stamp = cur_time;
+	if (!m_runFlag)return;
+	m_runFlag = false;
+	if (!m_curQuestRoomInstance)return;
+	if (m_member[0]->GetOwnerEntity()->IsPendingClusterEntry()) {
+		std::cout << "Now Pending ...\n";
+		return;
+	}
+	m_curQuestRoomInstance->FinishField();
 	for (auto& session : m_member)
 	{
 		if (!session)continue;
@@ -44,7 +69,7 @@ void PartyQuestSystem::MissionEnd()
 	m_curQuestRoomInstance.reset();
 }
 
-void PartyQuestSystem::ResetPartyQuestSystem()
+void PartyQuestSystem::ResetPartyQuestSystem()	
 {
 	m_curQuestID = -1;
 	for (auto& m : m_member)

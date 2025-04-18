@@ -479,8 +479,15 @@ const bool Handle_c2s_PARTY_JOIN_REQUEST_RESULT(const NagiocpX::S_ptr<NagiocpX::
 const bool Handle_c2s_QUEST_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_QUEST_START& pkt_)
 {
 	const auto party_leader = GetClientSession(pSession_);
-	if (!party_leader->IsPartyLeader())return true;
-	party_leader->m_party_quest_system.MissionStart();
+	if (!party_leader->IsPartyLeader()) {
+		return true;
+	}
+	
+	if (!party_leader->m_party_quest_system.MissionStart()) {
+		std::cout << party_leader->m_party_quest_system.m_started << std::endl;
+		std::cout << party_leader->m_party_quest_system.m_runFlag << std::endl;
+		std::cout << party_leader->m_party_quest_system.m_curQuestRoomInstance.UseCount() << std::endl;
+	}
 	return true;
 }
 

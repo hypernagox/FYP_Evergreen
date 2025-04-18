@@ -18,7 +18,7 @@ public:
 	void ResetQuestID() { SetTargetQuest(-1); }
 
 	// TODO: 레디 상태 등등 확인 후 인스턴스 생성과 함께 시작
-	void MissionStart();
+	bool MissionStart();
 
 	// TODO: 퀘스트 종료시 원래 월드로 보내고 기존월드의 레퍼런스 카운터를 깐다.
 	void MissionEnd();
@@ -51,9 +51,13 @@ public:
 	std::mutex m_partyLock;
 	int m_curQuestID = -1;
 	bool m_started = false;
+	bool m_runFlag = false;
 	NagiocpX::Field* m_prev_field = nullptr;
 	S_ptr<QuestRoom> m_curQuestRoomInstance = nullptr;
 	// 0번이 반드시 파티장
 	S_ptr<ClientSession> m_member[NUM_OF_MAX_PARTY_MEMBER]{ nullptr };
+	uint64_t m_time_stamp = ::GetTickCount64();
+
+	static constexpr const uint64_t PARTY_COMMAND_COOL_TIME = 5000;
 };
 

@@ -1,154 +1,131 @@
 
 Thread 1 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 47, TotalCallTime: 15ms, Avg: 0.319149 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 46, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 76, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 58, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 91, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 6, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerFSM::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 1 Func Log End----- 
 
 
 Thread 2 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 52, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 6, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 53, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 95, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 65, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 77, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerFSM::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 2 Func Log End----- 
 
 
 Thread 3 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 56, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 9, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 45, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 85, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 53, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 87, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerFSM::TimerUpdate, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 3 Func Log End----- 
 
 
 Thread 4 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 65, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 8, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 36, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 95, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 56, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 67, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 4 Func Log End----- 
 
 
 Thread 5 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 62, TotalCallTime: 16ms, Avg: 0.258065 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 10, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 51, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 90, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 51, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 87, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 5 Func Log End----- 
 
 
 Thread 6 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 56, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 43, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 89, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 58, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 93, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerFSM::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 6 Func Log End----- 
 
 
 Thread 7 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 49, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 7, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 49, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 91, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 70, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 93, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerFSM::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 7 Func Log End----- 
 
 
 Thread 8 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 62, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 48, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 92, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 64, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 85, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerFSM::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 8 Func Log End----- 
 
 
 Thread 9 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 51, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 44, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 87, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 57, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 93, TotalCallTime: 16ms, Avg: 0.172043 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 9 Func Log End----- 
 
 
 Thread 10 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 53, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 8, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 38, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 84, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 55, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 101, TotalCallTime: 15ms, Avg: 0.148515 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 7, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 9, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerFSM::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 10 Func Log End----- 
 
 
 Thread 11 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 64, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 6, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 42, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 80, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 61, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 68, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 11 Func Log End----- 
 
 
 Thread 12 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 48, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 34, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 68, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 59, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 60, TotalCallTime: 16ms, Avg: 0.266667 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 12 Func Log End----- 
 
 
 Thread 13 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 62, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 7, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 51, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 79, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 62, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 81, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerFSM::TimerUpdate, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 13 Func Log End----- 
 
 
 Thread 14 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 62, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 10, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 40, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 91, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 71, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 85, TotalCallTime: 15ms, Avg: 0.176471 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 14 Func Log End----- 
 
 
 Total Result 
 
-FuncName: Handle_c2s_MOVE, CallCount: 789, TotalCallTime: 31ms, Avg: 0.039290 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 92, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Projectile::Routine, CallCount: 620, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 1202, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerFSM::TimerUpdate, CallCount: 840, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 1168, TotalCallTime: 62ms, Avg: 0.053082 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 50, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 38, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerFSM::TimerUpdate, CallCount: 17, TotalCallTime: 0ms, Avg: 0.000000 ms
 
 
-Server Running Time: 187.39 seconds, Total Func Acc Time: 0.03 seconds / 31 ms
+Server Running Time: 166.25 seconds, Total Func Acc Time: 0.06 seconds / 62 ms
 
 
 
@@ -156,6 +133,5 @@ Total Percentage
 
 FuncName: Handle_c2s_MOVE, 100.00% 
 FuncName: Handle_c2s_PLAYER_ATTACK, 0.00% 
-FuncName: Projectile::Routine, 0.00% 
 FuncName: TickTimerBT::TimerUpdate, 0.00% 
 FuncName: TickTimerFSM::TimerUpdate, 0.00% 

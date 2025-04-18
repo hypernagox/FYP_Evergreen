@@ -33,6 +33,7 @@ QuestRoom::~QuestRoom() noexcept
 	}
 	std::cout << "Äù½ºÆ®·ë ¼Ò¸ê\n";
 	std::cout << --aaaa << std::endl;
+	m_ownerPartrySystem->EndFlag();
 }
 
 void QuestRoom::InitQuestField() noexcept
@@ -114,6 +115,6 @@ void QuestRoom::DecMemberCount() noexcept
 	{
 		std::cout << "»èÁ¦½ÃÀÛ\n";
 		DestroyFieldTLS();
-		m_ownerPartrySystem->EndFlag();
+		m_ownerPartrySystem->m_curQuestRoomInstance.reset();
 	}
 }
