@@ -46,8 +46,11 @@ private:
 	// y가 -1일 경우 아무 아이템도 등록되지 않았음을 의미
 	std::vector<int> m_quickSlot;
 
+	Vector3 m_cameraAnchorLastPosition = Vector3::Zero;
 	Vector3 m_cameraAngleAxis = Vector3::Zero;
 	Vector3 m_cameraAngleAxisSmooth = Vector3::Zero;
+	int m_lastMouseScroll = 0;
+	float m_cameraDistance = 3.0f;
 
 	CameraPerspective* m_pCamera;
 

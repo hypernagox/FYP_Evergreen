@@ -24,10 +24,14 @@ namespace udsdx
 	public:
 		D3D12_GPU_VIRTUAL_ADDRESS GetConstantBuffer(int frameResourceIndex) const;
 		D3D12_GPU_DESCRIPTOR_HANDLE GetSrvGpu() const;
+		bool GetDrawShadow() const { return m_drawShadow; }
 
 		void SetShadowRange(UINT index, float value);
+		void SetDrawShadow(bool draw) { m_drawShadow = draw; }
 
 	protected:
+		bool m_drawShadow = true;
+
 		DXGI_FORMAT m_shadowMapFormat = DXGI_FORMAT_R24G8_TYPELESS;
 
 		UINT m_mapWidth;

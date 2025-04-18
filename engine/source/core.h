@@ -56,6 +56,7 @@ namespace udsdx
 		ID3D12GraphicsCommandList* GetCommandList() const;
 		ID3D12RootSignature* GetRootSignature() const;
 		DeferredRenderer* GetRenderer() const;
+		ShadowMap* GetShadowMap() const;
 
 		FrameResource* CurrentFrameResource() const;
 		ID3D12Resource* CurrentBackBuffer() const;
