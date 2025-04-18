@@ -97,7 +97,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         if constexpr (true == g_bUseDefaultIP)
         {
             // L"3.39.255.229"
-            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(L"210.90.254.101", 7777, s2c_PacketHandler::GetPacketHandlerList()));
+            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(L"127.0.0.1", 7777, s2c_PacketHandler::GetPacketHandlerList()));
         }
         else
         {
