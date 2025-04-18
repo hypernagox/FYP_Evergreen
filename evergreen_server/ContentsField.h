@@ -9,9 +9,9 @@ public:
 public:
 	~ContentsField();
 public:
-	virtual void InitFieldGlobal()noexcept;
-	virtual void InitFieldTLS()noexcept;
-	virtual void DestroyFieldTLS()noexcept;
+	virtual void InitFieldGlobal()noexcept override;
+	virtual void InitFieldTLS()noexcept override;
+	virtual void MigrationAfterBehavior(Field* const prev_field)noexcept override;
 private:
 
 };

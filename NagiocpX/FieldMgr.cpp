@@ -61,7 +61,11 @@ namespace NagiocpX
 	}
 	void FieldMgr::DestroyTLSinField()
 	{
-		for (const auto field : m_mapField | std::views::values)field->DestroyFieldTLS();
+		for (const auto field : m_mapField | std::views::values)
+		{ 
+			field->FinishField();
+			field->DestroyFieldTLS();
+		}
 	}
 	void FieldMgr::ShrinkToFitBeforeStart() noexcept
 	{

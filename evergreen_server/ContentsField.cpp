@@ -6,6 +6,8 @@
 #include "Timer.h"
 #include "Field.h"
 #include "Cluster.h"
+#include "QuestRoom.h"
+#include "ClientSession.h"
 
 void UPDATE()
 {
@@ -23,22 +25,28 @@ void ContentsField::InitFieldGlobal() noexcept
 	//	m_vecClusters[i][0].emplace_back(NagiocpX::xnew<NagiocpX::Cluster>(NUM_OF_GROUPS, NagiocpX::ClusterInfo{0, 0, 0}));
 	//}
 	m_numOfClusters = 1;
+	m_fieldID = 0;
 	//UPDATE();
 }
 
 void ContentsField::InitFieldTLS() noexcept
 {
 	const auto clusters = NagiocpX::CreateJEMallocArray<XVector<NagiocpX::Cluster*>>(m_numOfClusters);
-	tl_vecClusters = clusters.data();
+	tl_vecClusters[NagiocpX::GetCurThreadIdx()] = clusters.data();
 	
-	tl_vecClusters[0].emplace_back(NagiocpX::xnew<NagiocpX::Cluster>(NUM_OF_GROUPS, NagiocpX::ClusterInfo{ 0, 0, 0 }));
+	{
+		tl_vecClusters[NagiocpX::GetCurThreadIdx()][0].emplace_back(NagiocpX::xnew<NagiocpX::Cluster>(NUM_OF_GROUPS, NagiocpX::ClusterInfo{ m_fieldID, 0, 0 }, this));
+	}
 }
 
-void ContentsField::DestroyFieldTLS() noexcept
+void ContentsField::MigrationAfterBehavior(Field* const prev_field) noexcept
 {
-	const std::span< XVector<NagiocpX::Cluster*>> clusters{ tl_vecClusters,m_numOfClusters };
-	for (const auto cluster : clusters | std::views::join)NagiocpX::xdelete<NagiocpX::Cluster>(cluster);
-	NagiocpX::DeleteJEMallocArray(clusters);
+	if (-1 == prev_field->GetFieldID())
+	{
+		const auto q = static_cast<QuestRoom*>(prev_field);
+		q->DecMemberCount();
+	}
+	std::cout << "이주 성공\n";
 }
 
 ContentsField::~ContentsField()

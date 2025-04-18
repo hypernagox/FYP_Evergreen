@@ -49,7 +49,7 @@ public:
 	template<typename T = uint8_t> requires (std::is_enum_v<T> || std::same_as<T, uint8_t>) && (sizeof(T) == sizeof(uint8_t))
 	constexpr inline const T GetOwnerPrimaryGroup()const noexcept { return m_pOwnerEntity->GetPrimaryGroupType<T>(); }
 	constexpr inline const uint32_t GetOwnerObjectID()const noexcept { return m_pOwnerEntity->GetObjectID(); }
-	NagiocpX::ClusterInfo GetOwnerClusterInfo()const noexcept { return m_pOwnerEntity->GetClusterInfo(); }
+	NagiocpX::ClusterFieldInfo GetOwnerClusterInfo()const noexcept { return m_pOwnerEntity->GetClusterFieldInfo(); }
 private:
 	NagiocpX::ContentsEntity* const m_pOwnerEntity;
 };

@@ -29,6 +29,9 @@ flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 	return &buillder;
 }
 
+static inline ClientSession* GetClientSession(const S_ptr<PacketSession>& session)noexcept {
+	return static_cast<ClientSession*>(session.get());
+}
 const bool Handle_c2s_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
 {
 	pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp());
@@ -54,7 +57,7 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	//Mgr(WorldMgr)->GetWorld(0) ->GetStartSector()->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER));
 	//Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
 	
-	Mgr(FieldMgr)->GetField(0)->EnterField(entity);
+	Field::GetField(0)->EnterField(entity);
 
 	//g_sector->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER)
 	//	, s
@@ -128,6 +131,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 {
 	DO_BENCH_GLOBAL_THIS_FUNC;
 	
+	// TODO: 월드가 달라졌다면 뷰리스트의 갱신이 필요
 	// TODO: 생포인터로 개기지 말자
 	// 정수값 아이디만 쓰거나 쉐어드를 쓰자
 	const auto pOwner = pSession_->GetOwnerEntity();
@@ -152,6 +156,38 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 	//if (const auto sector = pOwner->GetCurCluster())
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
+		const auto& player_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListSession();
+		for (const auto session : player_list)
+		{
+			//if (const auto pmon = Mgr(FieldMgr)->GetNPC(mon_id))
+			{
+				const auto session_ptr = GetSessionEntity(session.first);
+				if (!session_ptr)continue;
+				if (const auto pCol = session_ptr->GetComp<Collider>())
+				{
+					const auto owner = pCol->GetOwnerEntity();
+					if (fan.IsIntersect(pCol->GetCollider()))
+					{
+						if (!pOwner->GetClientSession()->HasParty())continue;
+						std::cout << "Player Hit\n";
+						//if (!owner->GetClientSession()->HasParty())
+						{
+							auto pkt = Create_s2c_INVITE_PARTY_RESULT(pOwner->GetObjectID()
+								, owner->GetObjectID(), !owner->GetClientSession()->HasParty());
+							if (!owner->GetClientSession()->HasParty())
+							{
+								pOwner->GetClientSession()->AcceptNewPlayer(
+									session_ptr->GetClientSession());
+							}
+							pOwner->GetClientSession()->SendAsync(pkt);
+							session_ptr->GetClientSession()->SendAsync(pkt);
+						}
+						break;
+					}
+				}
+
+			}
+		}
 		//std::cout << std::format("Session ID: {}, Num Of Mon in Viewlist: {}\n", pOwner->GetObjectID(), mon_list.size());
 		for (const auto pmon : mon_list)
 		{
@@ -332,6 +368,156 @@ const bool Handle_c2s_CRAFT_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>&
 		}
 	}
 	
+	return true;
+}
+
+const bool Handle_c2s_REGISTER_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REGISTER_PARTY_QUEST& pkt_)
+{
+	// 클라의 파티 생성 요청 또는 파티는 있는데 퀘 변경
+	const auto session = GetClientSession(pSession_);
+	session->CreatePartySystem();
+	if (session->IsPartyLeader())
+	{
+		session->GetCurPartySystem()->m_curQuestID = pkt_.quest_id();
+		session->SendAsync(Create_s2c_REGISTER_PARTY_QUEST(pkt_.quest_id()));
+	}
+	else
+	{
+		// 파티장이 아님
+	}
+	return true;
+}
+
+const bool Handle_c2s_ACQUIRE_PARTY_LIST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_ACQUIRE_PARTY_LIST& pkt_)
+{
+	const auto pOwner = pSession_->GetOwnerEntity();
+	const auto& player_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListSession();
+	XVector<uint32_t> quest_leaders;
+	// 근처에 있는 사람들 중 파티장이면서 지금 퀘스트 아이디가 요청한거랑 같은사람의 아이디를 모아서 보낸다
+	for (const auto session : player_list)
+	{
+		const auto session_ptr = GetSessionEntity(session.first);
+		if (!session_ptr)continue;
+		if (const auto s = session_ptr->GetClientSession())
+		{
+			if (s->IsPartyLeader() && s->m_party_quest_system.m_curQuestID == pkt_.target_quest_id())
+			{
+				quest_leaders.emplace_back(session_ptr->GetObjectID());
+			}
+		}
+	}
+	if (GetClientSession(pSession_)->IsPartyLeader())
+	{
+		quest_leaders.emplace_back(pSession_->GetSessionID());
+	}
+	pSession_->SendAsync(Create_s2c_ACQUIRE_PARTY_LIST(std::move(quest_leaders), pkt_.target_quest_id()));
+	return true;
+}
+
+const bool Handle_c2s_INVITE_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_INVITE_PARTY_QUEST& pkt_)
+{
+	const auto target_user_id = pkt_.target_user_id();
+	const auto target_user = GetSessionEntity(target_user_id);
+	const auto session = GetClientSession(pSession_);
+	if (!target_user)return true;
+	if (!session->IsPartyLeader())return true;
+	// 파티장이 타겟 유저에게 자신의 아이디와 현재 퀘스트 아이디를 보낸다
+	target_user->GetSession()->SendAsync(Create_s2c_INVITE_PARTY_QUEST(pSession_->GetSessionID(), session->m_party_quest_system.m_curQuestID));
+	return true;
+}
+
+const bool Handle_c2s_INVITE_PARTY_RESULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_INVITE_PARTY_RESULT& pkt_)
+{
+	const auto party_leader = GetSessionEntity(pkt_.target_party_leader_id());
+	auto pkt = Create_s2c_INVITE_PARTY_RESULT(pkt_.target_party_leader_id(), pSession_->GetSessionID(), pkt_.is_accept());
+	if (party_leader->GetClientSession()->IsPartyLeader())
+	{
+		// 파티장에겐 ok / no 무조건 보냄
+		party_leader->GetClientSession()->SendAsync(pkt);
+		if (pkt_.is_accept())
+		{
+			// 수락했다면 타겟에게도 보냄 + 파티에넣음
+			party_leader->GetClientSession()->AcceptNewPlayer(GetClientSession(pSession_));
+			pSession_->SendAsync(pkt);
+		}
+	}
+	return true;
+}
+
+const bool Handle_c2s_PARTY_JOIN_REQUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_JOIN_REQUEST& pkt_)
+{
+	const auto party_leader = GetSessionEntity(pkt_.target_party_leader_id());
+	if (!party_leader)return true;
+	if (party_leader->GetClientSession()->IsPartyLeader())
+	{
+		auto pkt = Create_s2c_INVITE_PARTY_QUEST(party_leader->GetObjectID(), party_leader->GetClientSession()->m_party_quest_system.m_curQuestID);
+		pSession_->SendAsync(pkt);
+	}
+	return true;
+}
+
+const bool Handle_c2s_PARTY_JOIN_REQUEST_RESULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_JOIN_REQUEST_RESULT& pkt_)
+{
+	const auto party_leader = GetSessionEntity(pkt_.target_party_leader_id());
+	if (!party_leader)return true;
+	if (GetClientSession(pSession_)->HasParty())return true;
+	if (party_leader->GetClientSession()->IsPartyLeader())
+	{
+		auto pkt = Create_s2c_INVITE_PARTY_RESULT(pkt_.target_party_leader_id(), pSession_->GetSessionID(),pkt_.request_result());
+		pSession_->SendAsync(pkt);
+		// 파티장님이 수락했다면 파티에 넣고 보낸다.
+		if (pkt_.request_result())
+		{
+			party_leader->GetClientSession()->AcceptNewPlayer(GetClientSession(pSession_));
+			party_leader->GetClientSession()->SendAsync(pkt);
+
+		}
+	}
+	return true;
+}
+
+const bool Handle_c2s_QUEST_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_QUEST_START& pkt_)
+{
+	const auto party_leader = GetClientSession(pSession_);
+	if (!party_leader->IsPartyLeader())return true;
+	party_leader->m_party_quest_system.MissionStart();
+	return true;
+}
+
+const bool Handle_c2s_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_QUEST_END& pkt_)
+{
+	const auto party_leader = GetClientSession(pSession_);
+	if (!party_leader->IsPartyLeader())return true;
+	party_leader->m_party_quest_system.MissionEnd();
+	return true;
+}
+
+const bool Handle_c2s_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_OUT& pkt_)
+{
+	const auto session = GetClientSession(pSession_);
+	if (!session->HasParty())return true;
+	const auto cur_party = session->GetCurPartySystem();
+	if (!cur_party) {
+		return true;
+	}
+	if (cur_party->m_started) {
+		// TODO: 현재 게임 진행중임, 함부로 못나간다.
+		return true;
+	}
+	auto pkt = Create_s2c_PARTY_OUT(pSession_->GetSessionID(), session->IsPartyLeader());
+	session->SendAsync(pkt);
+	if (session->IsPartyLeader())
+	{
+		session->m_party_quest_system.ResetPartyQuestSystem();
+	}
+	else
+	{
+		if (const auto p = session->GetCurPartySystem())
+		{
+			p->GetPartyLeader()->SendAsync(pkt);
+			p->KickMember(session->GetSessionID());
+		}
+	}
 	return true;
 }
 

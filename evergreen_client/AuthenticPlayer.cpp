@@ -317,7 +317,43 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 			//std::cout << "공격 시도\n";
 		}
 	}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::B))
+	{
+		// 퀘 시작 요청
+		Send(Create_c2s_QUEST_START());
+	}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::N))
+	{
+		// TODO: 퀘 클리어 판정이 아직 없어서 클라의 중단 요청
+		Send(Create_c2s_QUEST_END());
+	}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::L))
+	{
+		// TODO: 파티 리셋, 또는 탈퇴 패킷, 다만 현재 파퀘 진행중이라면 여기서도 좀 검증 필요
+		Send(Create_c2s_PARTY_OUT());
+	}
 
+	// 퀘스트 아이디 0번에 대한 목록 요청 및 개설
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::F9))
+	{
+		// TODO: 퀘스트 0번 고블린 소탕 작전 퀘 개설 요청
+		// + 매직넘버  , 그리고 클라에서도 나의 파티 상태 알아야함
+		Send(Create_c2s_ACQUIRE_PARTY_LIST(0));
+	}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::F10))
+	{
+		Send(Create_c2s_REGISTER_PARTY_QUEST(0));
+	}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::F11))
+	{
+		Send(Create_c2s_ACQUIRE_PARTY_LIST(1));
+	}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::F12))
+	{
+		// TODO: 퀘스트 1번 여우 소탕 작전 퀘 개설 요청
+		// + 매직넘버  , 그리고 클라에서도 나의 파티 상태 알아야함
+		Send(Create_c2s_REGISTER_PARTY_QUEST(1));
+	}
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::D1))
 		UseQuickSlotItem(0);
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::D2))

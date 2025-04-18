@@ -106,6 +106,54 @@ struct c2s_CRAFT_ITEMBuilder;
 struct s2c_CRAFT_ITEM;
 struct s2c_CRAFT_ITEMBuilder;
 
+struct c2s_REGISTER_PARTY_QUEST;
+struct c2s_REGISTER_PARTY_QUESTBuilder;
+
+struct s2c_REGISTER_PARTY_QUEST;
+struct s2c_REGISTER_PARTY_QUESTBuilder;
+
+struct c2s_ACQUIRE_PARTY_LIST;
+struct c2s_ACQUIRE_PARTY_LISTBuilder;
+
+struct s2c_ACQUIRE_PARTY_LIST;
+struct s2c_ACQUIRE_PARTY_LISTBuilder;
+
+struct c2s_INVITE_PARTY_QUEST;
+struct c2s_INVITE_PARTY_QUESTBuilder;
+
+struct s2c_INVITE_PARTY_QUEST;
+struct s2c_INVITE_PARTY_QUESTBuilder;
+
+struct c2s_INVITE_PARTY_RESULT;
+struct c2s_INVITE_PARTY_RESULTBuilder;
+
+struct s2c_INVITE_PARTY_RESULT;
+struct s2c_INVITE_PARTY_RESULTBuilder;
+
+struct c2s_PARTY_JOIN_REQUEST;
+struct c2s_PARTY_JOIN_REQUESTBuilder;
+
+struct s2c_PARTY_JOIN_REQUEST;
+struct s2c_PARTY_JOIN_REQUESTBuilder;
+
+struct c2s_PARTY_JOIN_REQUEST_RESULT;
+struct c2s_PARTY_JOIN_REQUEST_RESULTBuilder;
+
+struct s2c_PARTY_JOIN_REQUEST_RESULT;
+struct s2c_PARTY_JOIN_REQUEST_RESULTBuilder;
+
+struct c2s_QUEST_START;
+struct c2s_QUEST_STARTBuilder;
+
+struct c2s_QUEST_END;
+struct c2s_QUEST_ENDBuilder;
+
+struct c2s_PARTY_OUT;
+struct c2s_PARTY_OUTBuilder;
+
+struct s2c_PARTY_OUT;
+struct s2c_PARTY_OUTBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -1827,6 +1875,807 @@ inline ::flatbuffers::Offset<s2c_CRAFT_ITEM> Creates2c_CRAFT_ITEM(
     uint8_t recipe_id = 0) {
   s2c_CRAFT_ITEMBuilder builder_(_fbb);
   builder_.add_recipe_id(recipe_id);
+  return builder_.Finish();
+}
+
+struct c2s_REGISTER_PARTY_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_REGISTER_PARTY_QUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_QUEST_ID = 4
+  };
+  int32_t quest_id() const {
+    return GetField<int32_t>(VT_QUEST_ID, 0);
+  }
+  bool mutate_quest_id(int32_t _quest_id = 0) {
+    return SetField<int32_t>(VT_QUEST_ID, _quest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_QUEST_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_REGISTER_PARTY_QUESTBuilder {
+  typedef c2s_REGISTER_PARTY_QUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_quest_id(int32_t quest_id) {
+    fbb_.AddElement<int32_t>(c2s_REGISTER_PARTY_QUEST::VT_QUEST_ID, quest_id, 0);
+  }
+  explicit c2s_REGISTER_PARTY_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_REGISTER_PARTY_QUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_REGISTER_PARTY_QUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_REGISTER_PARTY_QUEST> Createc2s_REGISTER_PARTY_QUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t quest_id = 0) {
+  c2s_REGISTER_PARTY_QUESTBuilder builder_(_fbb);
+  builder_.add_quest_id(quest_id);
+  return builder_.Finish();
+}
+
+struct s2c_REGISTER_PARTY_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_REGISTER_PARTY_QUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_QUEST_ID = 4
+  };
+  int32_t quest_id() const {
+    return GetField<int32_t>(VT_QUEST_ID, 0);
+  }
+  bool mutate_quest_id(int32_t _quest_id = 0) {
+    return SetField<int32_t>(VT_QUEST_ID, _quest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_QUEST_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_REGISTER_PARTY_QUESTBuilder {
+  typedef s2c_REGISTER_PARTY_QUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_quest_id(int32_t quest_id) {
+    fbb_.AddElement<int32_t>(s2c_REGISTER_PARTY_QUEST::VT_QUEST_ID, quest_id, 0);
+  }
+  explicit s2c_REGISTER_PARTY_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_REGISTER_PARTY_QUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_REGISTER_PARTY_QUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_REGISTER_PARTY_QUEST> Creates2c_REGISTER_PARTY_QUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t quest_id = 0) {
+  s2c_REGISTER_PARTY_QUESTBuilder builder_(_fbb);
+  builder_.add_quest_id(quest_id);
+  return builder_.Finish();
+}
+
+struct c2s_ACQUIRE_PARTY_LIST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_ACQUIRE_PARTY_LISTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_QUEST_ID = 4
+  };
+  int32_t target_quest_id() const {
+    return GetField<int32_t>(VT_TARGET_QUEST_ID, 0);
+  }
+  bool mutate_target_quest_id(int32_t _target_quest_id = 0) {
+    return SetField<int32_t>(VT_TARGET_QUEST_ID, _target_quest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_TARGET_QUEST_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_ACQUIRE_PARTY_LISTBuilder {
+  typedef c2s_ACQUIRE_PARTY_LIST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_quest_id(int32_t target_quest_id) {
+    fbb_.AddElement<int32_t>(c2s_ACQUIRE_PARTY_LIST::VT_TARGET_QUEST_ID, target_quest_id, 0);
+  }
+  explicit c2s_ACQUIRE_PARTY_LISTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_ACQUIRE_PARTY_LIST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_ACQUIRE_PARTY_LIST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_ACQUIRE_PARTY_LIST> Createc2s_ACQUIRE_PARTY_LIST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t target_quest_id = 0) {
+  c2s_ACQUIRE_PARTY_LISTBuilder builder_(_fbb);
+  builder_.add_target_quest_id(target_quest_id);
+  return builder_.Finish();
+}
+
+struct s2c_ACQUIRE_PARTY_LIST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_ACQUIRE_PARTY_LISTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_PARTY_LEADER_IDS = 4,
+    VT_TARGET_QUEST_ID = 6
+  };
+  const ::flatbuffers::Vector<uint32_t> *party_leader_ids() const {
+    return GetPointer<const ::flatbuffers::Vector<uint32_t> *>(VT_PARTY_LEADER_IDS);
+  }
+  ::flatbuffers::Vector<uint32_t> *mutable_party_leader_ids() {
+    return GetPointer<::flatbuffers::Vector<uint32_t> *>(VT_PARTY_LEADER_IDS);
+  }
+  int32_t target_quest_id() const {
+    return GetField<int32_t>(VT_TARGET_QUEST_ID, 0);
+  }
+  bool mutate_target_quest_id(int32_t _target_quest_id = 0) {
+    return SetField<int32_t>(VT_TARGET_QUEST_ID, _target_quest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_PARTY_LEADER_IDS) &&
+           verifier.VerifyVector(party_leader_ids()) &&
+           VerifyField<int32_t>(verifier, VT_TARGET_QUEST_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_ACQUIRE_PARTY_LISTBuilder {
+  typedef s2c_ACQUIRE_PARTY_LIST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_party_leader_ids(::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> party_leader_ids) {
+    fbb_.AddOffset(s2c_ACQUIRE_PARTY_LIST::VT_PARTY_LEADER_IDS, party_leader_ids);
+  }
+  void add_target_quest_id(int32_t target_quest_id) {
+    fbb_.AddElement<int32_t>(s2c_ACQUIRE_PARTY_LIST::VT_TARGET_QUEST_ID, target_quest_id, 0);
+  }
+  explicit s2c_ACQUIRE_PARTY_LISTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_ACQUIRE_PARTY_LIST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_ACQUIRE_PARTY_LIST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_ACQUIRE_PARTY_LIST> Creates2c_ACQUIRE_PARTY_LIST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> party_leader_ids = 0,
+    int32_t target_quest_id = 0) {
+  s2c_ACQUIRE_PARTY_LISTBuilder builder_(_fbb);
+  builder_.add_target_quest_id(target_quest_id);
+  builder_.add_party_leader_ids(party_leader_ids);
+  return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_ACQUIRE_PARTY_LIST> Creates2c_ACQUIRE_PARTY_LISTDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const std::vector<uint32_t> *party_leader_ids = nullptr,
+    int32_t target_quest_id = 0) {
+  auto party_leader_ids__ = party_leader_ids ? _fbb.CreateVector<uint32_t>(*party_leader_ids) : 0;
+  return Nagox::Protocol::Creates2c_ACQUIRE_PARTY_LIST(
+      _fbb,
+      party_leader_ids__,
+      target_quest_id);
+}
+
+struct c2s_INVITE_PARTY_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_INVITE_PARTY_QUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_USER_ID = 4
+  };
+  uint32_t target_user_id() const {
+    return GetField<uint32_t>(VT_TARGET_USER_ID, 0);
+  }
+  bool mutate_target_user_id(uint32_t _target_user_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_USER_ID, _target_user_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_INVITE_PARTY_QUESTBuilder {
+  typedef c2s_INVITE_PARTY_QUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_user_id(uint32_t target_user_id) {
+    fbb_.AddElement<uint32_t>(c2s_INVITE_PARTY_QUEST::VT_TARGET_USER_ID, target_user_id, 0);
+  }
+  explicit c2s_INVITE_PARTY_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_INVITE_PARTY_QUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_INVITE_PARTY_QUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_INVITE_PARTY_QUEST> Createc2s_INVITE_PARTY_QUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_user_id = 0) {
+  c2s_INVITE_PARTY_QUESTBuilder builder_(_fbb);
+  builder_.add_target_user_id(target_user_id);
+  return builder_.Finish();
+}
+
+struct s2c_INVITE_PARTY_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_INVITE_PARTY_QUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_PARTY_LEADER_ID = 4,
+    VT_TARGET_PARTY_QUEST_ID = 6
+  };
+  uint32_t target_party_leader_id() const {
+    return GetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, 0);
+  }
+  bool mutate_target_party_leader_id(uint32_t _target_party_leader_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, _target_party_leader_id, 0);
+  }
+  int32_t target_party_quest_id() const {
+    return GetField<int32_t>(VT_TARGET_PARTY_QUEST_ID, 0);
+  }
+  bool mutate_target_party_quest_id(int32_t _target_party_quest_id = 0) {
+    return SetField<int32_t>(VT_TARGET_PARTY_QUEST_ID, _target_party_quest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_PARTY_LEADER_ID, 4) &&
+           VerifyField<int32_t>(verifier, VT_TARGET_PARTY_QUEST_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_INVITE_PARTY_QUESTBuilder {
+  typedef s2c_INVITE_PARTY_QUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_party_leader_id(uint32_t target_party_leader_id) {
+    fbb_.AddElement<uint32_t>(s2c_INVITE_PARTY_QUEST::VT_TARGET_PARTY_LEADER_ID, target_party_leader_id, 0);
+  }
+  void add_target_party_quest_id(int32_t target_party_quest_id) {
+    fbb_.AddElement<int32_t>(s2c_INVITE_PARTY_QUEST::VT_TARGET_PARTY_QUEST_ID, target_party_quest_id, 0);
+  }
+  explicit s2c_INVITE_PARTY_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_INVITE_PARTY_QUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_INVITE_PARTY_QUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_INVITE_PARTY_QUEST> Creates2c_INVITE_PARTY_QUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_party_leader_id = 0,
+    int32_t target_party_quest_id = 0) {
+  s2c_INVITE_PARTY_QUESTBuilder builder_(_fbb);
+  builder_.add_target_party_quest_id(target_party_quest_id);
+  builder_.add_target_party_leader_id(target_party_leader_id);
+  return builder_.Finish();
+}
+
+struct c2s_INVITE_PARTY_RESULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_INVITE_PARTY_RESULTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_PARTY_LEADER_ID = 4,
+    VT_IS_ACCEPT = 6
+  };
+  uint32_t target_party_leader_id() const {
+    return GetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, 0);
+  }
+  bool mutate_target_party_leader_id(uint32_t _target_party_leader_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, _target_party_leader_id, 0);
+  }
+  bool is_accept() const {
+    return GetField<uint8_t>(VT_IS_ACCEPT, 0) != 0;
+  }
+  bool mutate_is_accept(bool _is_accept = 0) {
+    return SetField<uint8_t>(VT_IS_ACCEPT, static_cast<uint8_t>(_is_accept), 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_PARTY_LEADER_ID, 4) &&
+           VerifyField<uint8_t>(verifier, VT_IS_ACCEPT, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_INVITE_PARTY_RESULTBuilder {
+  typedef c2s_INVITE_PARTY_RESULT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_party_leader_id(uint32_t target_party_leader_id) {
+    fbb_.AddElement<uint32_t>(c2s_INVITE_PARTY_RESULT::VT_TARGET_PARTY_LEADER_ID, target_party_leader_id, 0);
+  }
+  void add_is_accept(bool is_accept) {
+    fbb_.AddElement<uint8_t>(c2s_INVITE_PARTY_RESULT::VT_IS_ACCEPT, static_cast<uint8_t>(is_accept), 0);
+  }
+  explicit c2s_INVITE_PARTY_RESULTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_INVITE_PARTY_RESULT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_INVITE_PARTY_RESULT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_INVITE_PARTY_RESULT> Createc2s_INVITE_PARTY_RESULT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_party_leader_id = 0,
+    bool is_accept = false) {
+  c2s_INVITE_PARTY_RESULTBuilder builder_(_fbb);
+  builder_.add_target_party_leader_id(target_party_leader_id);
+  builder_.add_is_accept(is_accept);
+  return builder_.Finish();
+}
+
+struct s2c_INVITE_PARTY_RESULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_INVITE_PARTY_RESULTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_PARTY_LEADER_ID = 4,
+    VT_TARGET_USER_ID = 6,
+    VT_INVITE_RESULT = 8
+  };
+  uint32_t target_party_leader_id() const {
+    return GetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, 0);
+  }
+  bool mutate_target_party_leader_id(uint32_t _target_party_leader_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, _target_party_leader_id, 0);
+  }
+  uint32_t target_user_id() const {
+    return GetField<uint32_t>(VT_TARGET_USER_ID, 0);
+  }
+  bool mutate_target_user_id(uint32_t _target_user_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_USER_ID, _target_user_id, 0);
+  }
+  bool invite_result() const {
+    return GetField<uint8_t>(VT_INVITE_RESULT, 0) != 0;
+  }
+  bool mutate_invite_result(bool _invite_result = 0) {
+    return SetField<uint8_t>(VT_INVITE_RESULT, static_cast<uint8_t>(_invite_result), 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_PARTY_LEADER_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
+           VerifyField<uint8_t>(verifier, VT_INVITE_RESULT, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_INVITE_PARTY_RESULTBuilder {
+  typedef s2c_INVITE_PARTY_RESULT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_party_leader_id(uint32_t target_party_leader_id) {
+    fbb_.AddElement<uint32_t>(s2c_INVITE_PARTY_RESULT::VT_TARGET_PARTY_LEADER_ID, target_party_leader_id, 0);
+  }
+  void add_target_user_id(uint32_t target_user_id) {
+    fbb_.AddElement<uint32_t>(s2c_INVITE_PARTY_RESULT::VT_TARGET_USER_ID, target_user_id, 0);
+  }
+  void add_invite_result(bool invite_result) {
+    fbb_.AddElement<uint8_t>(s2c_INVITE_PARTY_RESULT::VT_INVITE_RESULT, static_cast<uint8_t>(invite_result), 0);
+  }
+  explicit s2c_INVITE_PARTY_RESULTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_INVITE_PARTY_RESULT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_INVITE_PARTY_RESULT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_INVITE_PARTY_RESULT> Creates2c_INVITE_PARTY_RESULT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_party_leader_id = 0,
+    uint32_t target_user_id = 0,
+    bool invite_result = false) {
+  s2c_INVITE_PARTY_RESULTBuilder builder_(_fbb);
+  builder_.add_target_user_id(target_user_id);
+  builder_.add_target_party_leader_id(target_party_leader_id);
+  builder_.add_invite_result(invite_result);
+  return builder_.Finish();
+}
+
+struct c2s_PARTY_JOIN_REQUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_PARTY_JOIN_REQUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_PARTY_LEADER_ID = 4,
+    VT_TARGET_PARTY_QUEST_ID = 6
+  };
+  uint32_t target_party_leader_id() const {
+    return GetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, 0);
+  }
+  bool mutate_target_party_leader_id(uint32_t _target_party_leader_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, _target_party_leader_id, 0);
+  }
+  int32_t target_party_quest_id() const {
+    return GetField<int32_t>(VT_TARGET_PARTY_QUEST_ID, 0);
+  }
+  bool mutate_target_party_quest_id(int32_t _target_party_quest_id = 0) {
+    return SetField<int32_t>(VT_TARGET_PARTY_QUEST_ID, _target_party_quest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_PARTY_LEADER_ID, 4) &&
+           VerifyField<int32_t>(verifier, VT_TARGET_PARTY_QUEST_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_PARTY_JOIN_REQUESTBuilder {
+  typedef c2s_PARTY_JOIN_REQUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_party_leader_id(uint32_t target_party_leader_id) {
+    fbb_.AddElement<uint32_t>(c2s_PARTY_JOIN_REQUEST::VT_TARGET_PARTY_LEADER_ID, target_party_leader_id, 0);
+  }
+  void add_target_party_quest_id(int32_t target_party_quest_id) {
+    fbb_.AddElement<int32_t>(c2s_PARTY_JOIN_REQUEST::VT_TARGET_PARTY_QUEST_ID, target_party_quest_id, 0);
+  }
+  explicit c2s_PARTY_JOIN_REQUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_PARTY_JOIN_REQUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_PARTY_JOIN_REQUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_PARTY_JOIN_REQUEST> Createc2s_PARTY_JOIN_REQUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_party_leader_id = 0,
+    int32_t target_party_quest_id = 0) {
+  c2s_PARTY_JOIN_REQUESTBuilder builder_(_fbb);
+  builder_.add_target_party_quest_id(target_party_quest_id);
+  builder_.add_target_party_leader_id(target_party_leader_id);
+  return builder_.Finish();
+}
+
+struct s2c_PARTY_JOIN_REQUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PARTY_JOIN_REQUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_USER_ID = 4
+  };
+  uint32_t target_user_id() const {
+    return GetField<uint32_t>(VT_TARGET_USER_ID, 0);
+  }
+  bool mutate_target_user_id(uint32_t _target_user_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_USER_ID, _target_user_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PARTY_JOIN_REQUESTBuilder {
+  typedef s2c_PARTY_JOIN_REQUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_user_id(uint32_t target_user_id) {
+    fbb_.AddElement<uint32_t>(s2c_PARTY_JOIN_REQUEST::VT_TARGET_USER_ID, target_user_id, 0);
+  }
+  explicit s2c_PARTY_JOIN_REQUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST> Creates2c_PARTY_JOIN_REQUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_user_id = 0) {
+  s2c_PARTY_JOIN_REQUESTBuilder builder_(_fbb);
+  builder_.add_target_user_id(target_user_id);
+  return builder_.Finish();
+}
+
+struct c2s_PARTY_JOIN_REQUEST_RESULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_PARTY_JOIN_REQUEST_RESULTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_PARTY_LEADER_ID = 4,
+    VT_TARGET_USER_ID = 6,
+    VT_REQUEST_RESULT = 8
+  };
+  uint32_t target_party_leader_id() const {
+    return GetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, 0);
+  }
+  bool mutate_target_party_leader_id(uint32_t _target_party_leader_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, _target_party_leader_id, 0);
+  }
+  uint32_t target_user_id() const {
+    return GetField<uint32_t>(VT_TARGET_USER_ID, 0);
+  }
+  bool mutate_target_user_id(uint32_t _target_user_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_USER_ID, _target_user_id, 0);
+  }
+  bool request_result() const {
+    return GetField<uint8_t>(VT_REQUEST_RESULT, 0) != 0;
+  }
+  bool mutate_request_result(bool _request_result = 0) {
+    return SetField<uint8_t>(VT_REQUEST_RESULT, static_cast<uint8_t>(_request_result), 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_PARTY_LEADER_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
+           VerifyField<uint8_t>(verifier, VT_REQUEST_RESULT, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_PARTY_JOIN_REQUEST_RESULTBuilder {
+  typedef c2s_PARTY_JOIN_REQUEST_RESULT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_party_leader_id(uint32_t target_party_leader_id) {
+    fbb_.AddElement<uint32_t>(c2s_PARTY_JOIN_REQUEST_RESULT::VT_TARGET_PARTY_LEADER_ID, target_party_leader_id, 0);
+  }
+  void add_target_user_id(uint32_t target_user_id) {
+    fbb_.AddElement<uint32_t>(c2s_PARTY_JOIN_REQUEST_RESULT::VT_TARGET_USER_ID, target_user_id, 0);
+  }
+  void add_request_result(bool request_result) {
+    fbb_.AddElement<uint8_t>(c2s_PARTY_JOIN_REQUEST_RESULT::VT_REQUEST_RESULT, static_cast<uint8_t>(request_result), 0);
+  }
+  explicit c2s_PARTY_JOIN_REQUEST_RESULTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_PARTY_JOIN_REQUEST_RESULT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_PARTY_JOIN_REQUEST_RESULT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_PARTY_JOIN_REQUEST_RESULT> Createc2s_PARTY_JOIN_REQUEST_RESULT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_party_leader_id = 0,
+    uint32_t target_user_id = 0,
+    bool request_result = false) {
+  c2s_PARTY_JOIN_REQUEST_RESULTBuilder builder_(_fbb);
+  builder_.add_target_user_id(target_user_id);
+  builder_.add_target_party_leader_id(target_party_leader_id);
+  builder_.add_request_result(request_result);
+  return builder_.Finish();
+}
+
+struct s2c_PARTY_JOIN_REQUEST_RESULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PARTY_JOIN_REQUEST_RESULTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_USER_ID = 4,
+    VT_REQUEST_RESULT = 6
+  };
+  uint32_t target_user_id() const {
+    return GetField<uint32_t>(VT_TARGET_USER_ID, 0);
+  }
+  bool mutate_target_user_id(uint32_t _target_user_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_USER_ID, _target_user_id, 0);
+  }
+  bool request_result() const {
+    return GetField<uint8_t>(VT_REQUEST_RESULT, 0) != 0;
+  }
+  bool mutate_request_result(bool _request_result = 0) {
+    return SetField<uint8_t>(VT_REQUEST_RESULT, static_cast<uint8_t>(_request_result), 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
+           VerifyField<uint8_t>(verifier, VT_REQUEST_RESULT, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PARTY_JOIN_REQUEST_RESULTBuilder {
+  typedef s2c_PARTY_JOIN_REQUEST_RESULT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_user_id(uint32_t target_user_id) {
+    fbb_.AddElement<uint32_t>(s2c_PARTY_JOIN_REQUEST_RESULT::VT_TARGET_USER_ID, target_user_id, 0);
+  }
+  void add_request_result(bool request_result) {
+    fbb_.AddElement<uint8_t>(s2c_PARTY_JOIN_REQUEST_RESULT::VT_REQUEST_RESULT, static_cast<uint8_t>(request_result), 0);
+  }
+  explicit s2c_PARTY_JOIN_REQUEST_RESULTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST_RESULT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST_RESULT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST_RESULT> Creates2c_PARTY_JOIN_REQUEST_RESULT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_user_id = 0,
+    bool request_result = false) {
+  s2c_PARTY_JOIN_REQUEST_RESULTBuilder builder_(_fbb);
+  builder_.add_target_user_id(target_user_id);
+  builder_.add_request_result(request_result);
+  return builder_.Finish();
+}
+
+struct c2s_QUEST_START FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_QUEST_STARTBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_QUEST_STARTBuilder {
+  typedef c2s_QUEST_START Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit c2s_QUEST_STARTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_QUEST_START> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_QUEST_START>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_QUEST_START> Createc2s_QUEST_START(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  c2s_QUEST_STARTBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct c2s_QUEST_END FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_QUEST_ENDBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_QUEST_ENDBuilder {
+  typedef c2s_QUEST_END Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit c2s_QUEST_ENDBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_QUEST_END> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_QUEST_END>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_QUEST_END> Createc2s_QUEST_END(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  c2s_QUEST_ENDBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct c2s_PARTY_OUT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_PARTY_OUTBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_PARTY_OUTBuilder {
+  typedef c2s_PARTY_OUT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit c2s_PARTY_OUTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_PARTY_OUT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_PARTY_OUT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_PARTY_OUT> Createc2s_PARTY_OUT(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  c2s_PARTY_OUTBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct s2c_PARTY_OUT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PARTY_OUTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_OUT_USER_ID = 4,
+    VT_IS_LEADER = 6
+  };
+  uint32_t out_user_id() const {
+    return GetField<uint32_t>(VT_OUT_USER_ID, 0);
+  }
+  bool mutate_out_user_id(uint32_t _out_user_id = 0) {
+    return SetField<uint32_t>(VT_OUT_USER_ID, _out_user_id, 0);
+  }
+  bool is_leader() const {
+    return GetField<uint8_t>(VT_IS_LEADER, 0) != 0;
+  }
+  bool mutate_is_leader(bool _is_leader = 0) {
+    return SetField<uint8_t>(VT_IS_LEADER, static_cast<uint8_t>(_is_leader), 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_OUT_USER_ID, 4) &&
+           VerifyField<uint8_t>(verifier, VT_IS_LEADER, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PARTY_OUTBuilder {
+  typedef s2c_PARTY_OUT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_out_user_id(uint32_t out_user_id) {
+    fbb_.AddElement<uint32_t>(s2c_PARTY_OUT::VT_OUT_USER_ID, out_user_id, 0);
+  }
+  void add_is_leader(bool is_leader) {
+    fbb_.AddElement<uint8_t>(s2c_PARTY_OUT::VT_IS_LEADER, static_cast<uint8_t>(is_leader), 0);
+  }
+  explicit s2c_PARTY_OUTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PARTY_OUT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PARTY_OUT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PARTY_OUT> Creates2c_PARTY_OUT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t out_user_id = 0,
+    bool is_leader = false) {
+  s2c_PARTY_OUTBuilder builder_(_fbb);
+  builder_.add_out_user_id(out_user_id);
+  builder_.add_is_leader(is_leader);
   return builder_.Finish();
 }
 

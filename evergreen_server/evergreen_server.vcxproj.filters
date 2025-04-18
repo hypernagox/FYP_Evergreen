@@ -113,7 +113,10 @@
     <Filter Include="Items\DropTable">
       <UniqueIdentifier>{06cefa0b-1d9a-4268-ac56-53ff99080dc2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="QuestRoom">
+    <Filter Include="ClientSession\PartryQuestSystem">
+      <UniqueIdentifier>{0243258b-ec7b-46b3-b491-65d5b28a7b19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ClientSession\QuestRoom">
       <UniqueIdentifier>{c16688f1-0485-42d0-8e0e-dd6a15a9243f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -197,7 +200,10 @@
       <Filter>Items\DropTable</Filter>
     </ClCompile>
     <ClCompile Include="QuestRoom.cpp">
-      <Filter>QuestRoom</Filter>
+      <Filter>ClientSession\QuestRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="PartyQuestSystem.cpp">
+      <Filter>ClientSession\PartryQuestSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,7 +295,10 @@
       <Filter>Items\DropTable</Filter>
     </ClInclude>
     <ClInclude Include="QuestRoom.h">
-      <Filter>QuestRoom</Filter>
+      <Filter>ClientSession\QuestRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="PartyQuestSystem.h">
+      <Filter>ClientSession\PartryQuestSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -51,7 +51,7 @@ static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendB
     {% for field in table.fields %}
     {% if field.type == "std::string_view" %}
     const auto {{ field.name }}_offset = builder.CreateString({{ field.name }});
-    {% elif "std::vector" in field.type %}
+    {% elif "Vector" in field.type %}
     {% if "::Struct::" in field.type %}
     const auto {{ field.name }}_offset = builder.CreateVectorOfStructs({{ field.name }});
     {% else %}
@@ -68,7 +68,7 @@ static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendB
         {% if table.fields|length > 0 %},{% endif %}
         {% for field in table.fields %}
         {% if field.type == "std::string_view" %}
-        {{ field.name }}_offset{% elif "std::vector" in field.type %}
+        {{ field.name }}_offset{% elif "Vector" in field.type %}
         {{ field.name }}_offset{% elif "::Struct" in field.type %}
         {{ field.name }}_offset{% else %}
         {{ field.name }}_value{% endif %}{% if not loop.last %},

@@ -118,7 +118,7 @@
       <Filter>Json\DataRegistry</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
-      <Filter>Json\Data</Filter>
+      <Filter>Json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

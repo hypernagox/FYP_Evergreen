@@ -28,18 +28,6 @@ namespace NagiocpX
 			m_mapField.emplace(fieldID, temp);
 			return temp;
 		}
-
-		template <typename T = Field>
-		inline T* GetField(const uint8_t fieldID)noexcept {
-			return static_cast<T* const>(m_mapField[fieldID]);
-		}
-
-		template <typename T = Cluster>
-		inline T* GetCluster(const ClusterInfo info)noexcept {
-			if (!m_mapField.contains(info.fieldID))return nullptr;
-			return GetField(info.fieldID)->GetCluster(info.clusterID);
-		}
-
 		S_ptr<ContentsEntity> GetNPC(const uint32_t npc_id)const noexcept;
 		void ClearField()const noexcept;
 	public:
@@ -60,6 +48,8 @@ namespace NagiocpX
 		void RegisterNPC(S_ptr<ContentsEntity>& pNPC)noexcept;
 		void RegisterNPC(S_ptr<ContentsEntity>&& pNPC)noexcept { RegisterNPC(pNPC); }
 		void ReleaseNPC(const ContentsEntity* const pNPC)noexcept;
+	public:
+		const auto& GetFieldTable()const noexcept { return m_mapField; }
 	private:
 		void InitTLSinField();
 		void DestroyTLSinField();

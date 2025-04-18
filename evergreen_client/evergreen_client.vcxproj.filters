@@ -64,9 +64,6 @@
     <Filter Include="Entity">
       <UniqueIdentifier>{fa78d7cf-eb35-467b-b500-6667d59c56a0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EventTimer">
-      <UniqueIdentifier>{155dc9df-ac89-4351-8343-63e5a1e3c79d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="InputHandler">
       <UniqueIdentifier>{8bdac965-f7c3-4e93-90a7-66d5c9c42ee6}</UniqueIdentifier>
     </Filter>
@@ -96,6 +93,9 @@
     </Filter>
     <Filter Include="NetEntity\ContentsEntity\DropItem">
       <UniqueIdentifier>{c5bc0980-ef3f-4bdc-9e7e-9bce198f04ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityBuilder\EventTimer">
+      <UniqueIdentifier>{155dc9df-ac89-4351-8343-63e5a1e3c79d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -130,7 +130,7 @@
       <Filter>Entity</Filter>
     </ClCompile>
     <ClCompile Include="EventTimer.cpp">
-      <Filter>EventTimer</Filter>
+      <Filter>EntityBuilder\EventTimer</Filter>
     </ClCompile>
     <ClCompile Include="InputHandler.cpp">
       <Filter>InputHandler</Filter>
@@ -249,7 +249,7 @@
       <Filter>Entity</Filter>
     </ClInclude>
     <ClInclude Include="EventTimer.h">
-      <Filter>EventTimer</Filter>
+      <Filter>EntityBuilder\EventTimer</Filter>
     </ClInclude>
     <ClInclude Include="InputHandler.h">
       <Filter>InputHandler</Filter>

@@ -96,9 +96,9 @@ const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 	{
 		constinit static uint64_t e_cnt = 0;
 		++e_cnt;
-		const auto et = NetMgr(ServerTimeMgr)->GetElapsedTime("MOVE_PKT");
-		if (e_cnt % 10 == 0)
-			std::cout << std::format("Delay: {}ms\n", et);
+		//const auto et = NetMgr(ServerTimeMgr)->GetElapsedTime("MOVE_PKT");
+		//if (e_cnt % 10 == 0)
+		//	std::cout << std::format("Delay: {}ms\n", et);
 		return true;
 	}
 	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id()))
@@ -301,6 +301,90 @@ const bool Handle_s2c_CRAFT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession
 		playerComp->OnModifyInventory(combine_list.resultItemID, combine_list.numOfResultItem);
 	}
 
+	return true;
+}
+
+const bool Handle_s2c_REGISTER_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REGISTER_PARTY_QUEST& pkt_)
+{
+	// 클라이언트의 파티퀘스트 생성 또는 파티는 있는데 대상 퀘스트를 바꾸는 시도에 대한 답변
+	std::cout << "현재 파티퀘스트 ID: " << pkt_.quest_id() << std::endl;
+	return true;
+}
+
+const bool Handle_s2c_ACQUIRE_PARTY_LIST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ACQUIRE_PARTY_LIST& pkt_)
+{
+	std::cout << "파티퀘스트 ID: " << pkt_.target_quest_id() << " 의 목록들\n";
+	for (const auto v : *pkt_.party_leader_ids())
+	{
+		std::cout << "파티장 ID: " << v << std::endl;
+	}
+	return true;
+}
+
+const bool Handle_s2c_INVITE_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_INVITE_PARTY_QUEST& pkt_)
+{
+	// 다른 사람으로부터 온 파티 초대
+
+	// TODO: 여기서 다른 파티장으로 부터 파티 초대가 온다.
+	// 클라이언트 업데이트 루프 어딘가에서 이거에 대한 처리가 필요
+	return true;
+}
+
+const bool Handle_s2c_INVITE_PARTY_RESULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_INVITE_PARTY_RESULT& pkt_)
+{
+	// TODO: 내가 파티장이면 수락 여부에 대한 정보가,
+	// 내가 초대 당한 사람이면 거절하면 안옴
+	// 아직은 그냥 가서 떄리면 무조건 신청이고, 신청당한 사람은 무조건 수락
+	if (pSession_->GetSessionID() == pkt_.target_party_leader_id())
+	{
+		if (pkt_.invite_result())
+		{
+			std::cout << "아이디 " << pkt_.target_user_id() << "가 수락" << std::endl;
+		}
+		else
+		{
+			std::cout << "아이디 " << pkt_.target_user_id() << "가 거절" << std::endl;
+		}
+	}
+	else
+	{
+		if(pkt_.invite_result())
+			std::cout << "파티장 ID " << pkt_.target_party_leader_id() << " 인 파티 신청을 내가 받아줌\n";
+		else
+			std::cout << "파티장 ID " << pkt_.target_party_leader_id() << " 인 파티 신청 안받아줌 ㅅㄱ\n";
+	}
+	return true;
+}
+
+const bool Handle_s2c_PARTY_JOIN_REQUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_REQUEST& pkt_)
+{
+	// TODO: 내가 파티장 일 때 다른 사람의 파티요청이 여기로 온다
+	// 클라이언트 업데이트 루프 어딘가에서 이거에 대한 처리가 필요
+	return true;
+}
+
+const bool Handle_s2c_PARTY_JOIN_REQUEST_RESULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_REQUEST_RESULT& pkt_)
+{
+	// TODO: 내가 파티장이라면, 이전 파티 가입 요청에 대해서 승인 했을 경우 그 사람을 알려주기 위해 패킷이온다
+	// 내가 파티 지원자라면 파티장님의 수락 여부가 온다.
+	return true;
+}
+
+const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_)
+{
+	if (pSession_->GetSessionID() == pkt_.out_user_id())
+	{
+		std::cout << "파티 폭파\n";
+	}
+	else
+	{
+		if (pkt_.is_leader())
+		{
+			std::cout << "ID " << pkt_.out_user_id() << " 님이 파티 나감\n";
+		}
+		else
+			std::cout << "파티 탈퇴함\n";
+	}
 	return true;
 }
 

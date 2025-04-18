@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -213,6 +213,7 @@
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NaviAgent_Common.cpp" />
+    <ClCompile Include="PartyQuestSystem.cpp" />
     <ClCompile Include="QuestRoom.cpp" />
     <ClCompile Include="PathFinder_Common.cpp" />
     <ClCompile Include="pch.cpp">
@@ -251,6 +252,7 @@
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="NaviAgent_Common.h" />
+    <ClInclude Include="PartyQuestSystem.h" />
     <ClInclude Include="QuestRoom.h" />
     <ClInclude Include="PathFinder_Common.h" />
     <ClInclude Include="pch.h" />

@@ -12,6 +12,7 @@ namespace NagiocpX
 	class IocpEvent;
 	class Sector;
 	class PacketSession;
+	class Field;
 
 	/*--------------
 		IocpCore
@@ -47,17 +48,23 @@ namespace NagiocpX
 
 	struct alignas(4) ClusterInfo
 	{
-		uint8_t fieldID;
+		int8_t fieldID;
 		Point2D clusterID;
 		ClusterInfo()noexcept = default;
-		ClusterInfo(const uint8_t fieldID_,const uint8_t x_,const uint8_t y_)noexcept
+		ClusterInfo(const int8_t fieldID_,const uint8_t x_,const uint8_t y_)noexcept
 			: fieldID{fieldID_}
 			, clusterID{ x_,y_ }
 		{}
-		ClusterInfo(const uint8_t fieldID_, const Point2D clusterID_)noexcept
+		ClusterInfo(const int8_t fieldID_, const Point2D clusterID_)noexcept
 			: fieldID{ fieldID_ }
 			, clusterID{ clusterID_ }
 		{}
+	};
+
+	struct alignas(8) ClusterFieldInfo
+	{
+		ClusterInfo clusterInfo;
+		Field* curFieldPtr;
 	};
 
 	class alignas(8) EntityInfo
@@ -87,7 +94,7 @@ namespace NagiocpX
 		mutable uint64_t m_obj_detail_type : 8;
 	};
 
-	extern Cluster* const GetCluster(const ClusterInfo info)noexcept;
+	extern Cluster* const GetCluster(const ClusterInfo info, Field* const field)noexcept;
 
 	class ContentsEntity final
 		:public IocpObject
@@ -121,7 +128,7 @@ namespace NagiocpX
 		inline bool IsNPC()noexcept { return 0 != m_entity_info.GetPrimaryGroupType(); }
 	public:
 		constexpr inline const PacketSession* const GetSession()const noexcept { return m_pSession; }
-		inline const ClientSession* const GetClientSession()const noexcept { return reinterpret_cast<const ClientSession* const>(m_pSession); }
+		inline ClientSession* const GetClientSession()const noexcept { return reinterpret_cast<ClientSession* const>(m_pSession); }
 	public:
 		inline const bool IsValid()const noexcept { return m_bIsValid.load(); }
 		const bool TryOnDestroy()noexcept {
@@ -173,11 +180,24 @@ namespace NagiocpX
 		constexpr inline T* const GetComp()const noexcept { return m_componentSystem->GetComp<T>(); }
 		inline const class ComponentSystem* const GetComponentSystem()const noexcept { return m_componentSystem; }
 	public:
-		void SetClusterInfo(const ClusterInfo info)noexcept { m_clusterInfo.store(info); }
-		void SetClusterInfoUnsafe(const ClusterInfo info)noexcept { m_clusterInfo.store_relaxed(info); }
+		void SetClusterFieldInfo(const ClusterInfo info, Field* const field)noexcept { 
+			m_clusterInfo.store(info);
+			m_curField.store(field);
+		}
+		void SetClusterFieldInfo(const ClusterFieldInfo info)noexcept { SetClusterFieldInfo(info.clusterInfo, info.curFieldPtr); }
+		void SetClusterFieldInfoUnsafe(const ClusterInfo info, Field* const field)noexcept {
+			m_clusterInfo.store_relaxed(info);
+			m_curField.store_relaxed(field);
+		}
+		void SetOnlyClusterInfo(const ClusterInfo info)noexcept { m_clusterInfo.store(info); }
 
-		ClusterInfo GetClusterInfo()const noexcept { return m_clusterInfo.load(); }
-		Cluster* const GetCurCluster()const noexcept { return NagiocpX::GetCluster(m_clusterInfo); }
+		void SetClusterFieldInfoUnsafe(const ClusterFieldInfo info)noexcept { SetClusterFieldInfoUnsafe(info.clusterInfo, info.curFieldPtr); }
+
+		ClusterFieldInfo GetClusterFieldInfo()const noexcept { 
+			return { m_clusterInfo.load(),m_curField };
+		}
+		Cluster* const GetCurCluster()const noexcept { return NagiocpX::GetCluster(m_clusterInfo, m_curField); }
+		const auto GetCurField()const noexcept { return m_curField.load(); }
 
 		const bool IsPendingClusterEntry()const noexcept { return 0 != m_clusterEnterCount; }
 		const bool RegisterEnterCount()noexcept { return 0 == InterlockedDecrement16(&m_clusterEnterCount); }
@@ -209,7 +229,10 @@ namespace NagiocpX
 		IocpComponent* m_arrIocpComponents[etoi(IOCP_COMPONENT::END)] = {};
 		NagoxAtomic::Atomic<bool> m_bIsValid{ true };
 		volatile SHORT m_clusterEnterCount = static_cast<SHORT>(ThreadMgr::NUM_OF_THREADS);
+		// TODO: 정보가 둘로 쪼개져서 스레드 세이프 주의관찰필요
 		NagoxAtomic::Atomic<ClusterInfo> m_clusterInfo;
+		//S_ptr<Field> m_curField{ nullptr };
+		NagoxAtomic::Atomic<Field*> m_curField{ nullptr };
 		//std::atomic_bool m_bNowUpdateFlag = false;
 	};
 
@@ -232,7 +255,7 @@ namespace NagiocpX
 		template<typename T = uint8_t> requires (std::is_enum_v<T> || std::same_as<T, uint8_t>) && (sizeof(T) == sizeof(uint8_t))
 		constexpr inline const T GetOwnerPrimaryGroup()const noexcept { return m_pOwnerEntity->GetPrimaryGroupType<T>(); }
 		constexpr inline const uint32_t GetOwnerObjectID()const noexcept { return m_pOwnerEntity->GetObjectID(); }
-		const ClusterInfo GetOwnerClusterInfo()const noexcept { return m_pOwnerEntity->GetClusterInfo(); }
+		const ClusterFieldInfo GetOwnerClusterFieldInfo()const noexcept { return m_pOwnerEntity->GetClusterFieldInfo(); }
 	protected:
 		virtual void Dispatch(S_ptr<ContentsEntity>* const owner_entity)noexcept = 0;
 		void PostIocpEvent(S_ptr<ContentsEntity>* const owner_entity = nullptr)noexcept;

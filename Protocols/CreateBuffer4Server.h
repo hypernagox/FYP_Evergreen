@@ -108,3 +108,37 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CRAFT_ITEM(
     const uint8_t recipe_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_REGISTER_PARTY_QUEST(
+    const int32_t quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ACQUIRE_PARTY_LIST(
+    const Vector<uint32_t> party_leader_ids,
+    const int32_t target_quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_INVITE_PARTY_QUEST(
+    const uint32_t target_party_leader_id,
+    const int32_t target_party_quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_INVITE_PARTY_RESULT(
+    const uint32_t target_party_leader_id,
+    const uint32_t target_user_id,
+    const bool invite_result,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_REQUEST(
+    const uint32_t target_user_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_REQUEST_RESULT(
+    const uint32_t target_user_id,
+    const bool request_result,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_OUT(
+    const uint32_t out_user_id,
+    const bool is_leader,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

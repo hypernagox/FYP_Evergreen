@@ -20,6 +20,15 @@ enum class HANDLE_PKT_ID : uint16_t {
     c2s_REQUEST_QUICK_SLOT = 1009,
     c2s_USE_QUICK_SLOT_ITEM = 1010,
     c2s_CRAFT_ITEM = 1011,
+    c2s_REGISTER_PARTY_QUEST = 1012,
+    c2s_ACQUIRE_PARTY_LIST = 1013,
+    c2s_INVITE_PARTY_QUEST = 1014,
+    c2s_INVITE_PARTY_RESULT = 1015,
+    c2s_PARTY_JOIN_REQUEST = 1016,
+    c2s_PARTY_JOIN_REQUEST_RESULT = 1017,
+    c2s_QUEST_START = 1018,
+    c2s_QUEST_END = 1019,
+    c2s_PARTY_OUT = 1020,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -40,6 +49,13 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_ACQUIRE_ITEM = 1014,
     s2c_USE_QUICK_SLOT_ITEM = 1015,
     s2c_CRAFT_ITEM = 1016,
+    s2c_REGISTER_PARTY_QUEST = 1017,
+    s2c_ACQUIRE_PARTY_LIST = 1018,
+    s2c_INVITE_PARTY_QUEST = 1019,
+    s2c_INVITE_PARTY_RESULT = 1020,
+    s2c_PARTY_JOIN_REQUEST = 1021,
+    s2c_PARTY_JOIN_REQUEST_RESULT = 1022,
+    s2c_PARTY_OUT = 1023,
 };
 
 class NagiocpX::PacketSession;
@@ -61,6 +77,15 @@ const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession
 const bool Handle_c2s_REQUEST_QUICK_SLOT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUICK_SLOT& pkt_);
 const bool Handle_c2s_USE_QUICK_SLOT_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_USE_QUICK_SLOT_ITEM& pkt_);
 const bool Handle_c2s_CRAFT_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CRAFT_ITEM& pkt_);
+const bool Handle_c2s_REGISTER_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REGISTER_PARTY_QUEST& pkt_);
+const bool Handle_c2s_ACQUIRE_PARTY_LIST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_ACQUIRE_PARTY_LIST& pkt_);
+const bool Handle_c2s_INVITE_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_INVITE_PARTY_QUEST& pkt_);
+const bool Handle_c2s_INVITE_PARTY_RESULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_INVITE_PARTY_RESULT& pkt_);
+const bool Handle_c2s_PARTY_JOIN_REQUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_JOIN_REQUEST& pkt_);
+const bool Handle_c2s_PARTY_JOIN_REQUEST_RESULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_JOIN_REQUEST_RESULT& pkt_);
+const bool Handle_c2s_QUEST_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_QUEST_START& pkt_);
+const bool Handle_c2s_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_QUEST_END& pkt_);
+const bool Handle_c2s_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_OUT& pkt_);
 
 class c2s_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -79,6 +104,15 @@ public:
         RegisterHandler<HANDLE_PKT_ID::c2s_REQUEST_QUICK_SLOT, Nagox::Protocol::c2s_REQUEST_QUICK_SLOT, Handle_c2s_REQUEST_QUICK_SLOT>();
         RegisterHandler<HANDLE_PKT_ID::c2s_USE_QUICK_SLOT_ITEM, Nagox::Protocol::c2s_USE_QUICK_SLOT_ITEM, Handle_c2s_USE_QUICK_SLOT_ITEM>();
         RegisterHandler<HANDLE_PKT_ID::c2s_CRAFT_ITEM, Nagox::Protocol::c2s_CRAFT_ITEM, Handle_c2s_CRAFT_ITEM>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_REGISTER_PARTY_QUEST, Nagox::Protocol::c2s_REGISTER_PARTY_QUEST, Handle_c2s_REGISTER_PARTY_QUEST>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_ACQUIRE_PARTY_LIST, Nagox::Protocol::c2s_ACQUIRE_PARTY_LIST, Handle_c2s_ACQUIRE_PARTY_LIST>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_INVITE_PARTY_QUEST, Nagox::Protocol::c2s_INVITE_PARTY_QUEST, Handle_c2s_INVITE_PARTY_QUEST>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_INVITE_PARTY_RESULT, Nagox::Protocol::c2s_INVITE_PARTY_RESULT, Handle_c2s_INVITE_PARTY_RESULT>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_PARTY_JOIN_REQUEST, Nagox::Protocol::c2s_PARTY_JOIN_REQUEST, Handle_c2s_PARTY_JOIN_REQUEST>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_PARTY_JOIN_REQUEST_RESULT, Nagox::Protocol::c2s_PARTY_JOIN_REQUEST_RESULT, Handle_c2s_PARTY_JOIN_REQUEST_RESULT>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_QUEST_START, Nagox::Protocol::c2s_QUEST_START, Handle_c2s_QUEST_START>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_QUEST_END, Nagox::Protocol::c2s_QUEST_END, Handle_c2s_QUEST_END>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_PARTY_OUT, Nagox::Protocol::c2s_PARTY_OUT, Handle_c2s_PARTY_OUT>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

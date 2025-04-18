@@ -6,6 +6,7 @@ namespace NagiocpX
 
 	class NagoxDeleter {
 	public:
+		virtual ~NagoxDeleter()noexcept = default;
 		virtual void ProcessDestroy(S_ptr<ContentsEntity> entity)noexcept = 0;
 	};
 }

@@ -25,6 +25,13 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_ACQUIRE_ITEM = 1014,
     s2c_USE_QUICK_SLOT_ITEM = 1015,
     s2c_CRAFT_ITEM = 1016,
+    s2c_REGISTER_PARTY_QUEST = 1017,
+    s2c_ACQUIRE_PARTY_LIST = 1018,
+    s2c_INVITE_PARTY_QUEST = 1019,
+    s2c_INVITE_PARTY_RESULT = 1020,
+    s2c_PARTY_JOIN_REQUEST = 1021,
+    s2c_PARTY_JOIN_REQUEST_RESULT = 1022,
+    s2c_PARTY_OUT = 1023,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -40,6 +47,15 @@ enum class CREATE_PKT_ID : uint16_t {
     c2s_REQUEST_QUICK_SLOT = 1009,
     c2s_USE_QUICK_SLOT_ITEM = 1010,
     c2s_CRAFT_ITEM = 1011,
+    c2s_REGISTER_PARTY_QUEST = 1012,
+    c2s_ACQUIRE_PARTY_LIST = 1013,
+    c2s_INVITE_PARTY_QUEST = 1014,
+    c2s_INVITE_PARTY_RESULT = 1015,
+    c2s_PARTY_JOIN_REQUEST = 1016,
+    c2s_PARTY_JOIN_REQUEST_RESULT = 1017,
+    c2s_QUEST_START = 1018,
+    c2s_QUEST_END = 1019,
+    c2s_PARTY_OUT = 1020,
 };
 
 class NetHelper::PacketSession;
@@ -66,6 +82,13 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ACQUIRE_ITEM& pkt_);
 const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_USE_QUICK_SLOT_ITEM& pkt_);
 const bool Handle_s2c_CRAFT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CRAFT_ITEM& pkt_);
+const bool Handle_s2c_REGISTER_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REGISTER_PARTY_QUEST& pkt_);
+const bool Handle_s2c_ACQUIRE_PARTY_LIST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ACQUIRE_PARTY_LIST& pkt_);
+const bool Handle_s2c_INVITE_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_INVITE_PARTY_QUEST& pkt_);
+const bool Handle_s2c_INVITE_PARTY_RESULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_INVITE_PARTY_RESULT& pkt_);
+const bool Handle_s2c_PARTY_JOIN_REQUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_REQUEST& pkt_);
+const bool Handle_s2c_PARTY_JOIN_REQUEST_RESULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_REQUEST_RESULT& pkt_);
+const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_);
 
 class s2c_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const BYTE* const, const int32_t);
@@ -89,6 +112,13 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_ACQUIRE_ITEM, Nagox::Protocol::s2c_ACQUIRE_ITEM, Handle_s2c_ACQUIRE_ITEM>();
         RegisterHandler<HANDLE_PKT_ID::s2c_USE_QUICK_SLOT_ITEM, Nagox::Protocol::s2c_USE_QUICK_SLOT_ITEM, Handle_s2c_USE_QUICK_SLOT_ITEM>();
         RegisterHandler<HANDLE_PKT_ID::s2c_CRAFT_ITEM, Nagox::Protocol::s2c_CRAFT_ITEM, Handle_s2c_CRAFT_ITEM>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_REGISTER_PARTY_QUEST, Nagox::Protocol::s2c_REGISTER_PARTY_QUEST, Handle_s2c_REGISTER_PARTY_QUEST>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_ACQUIRE_PARTY_LIST, Nagox::Protocol::s2c_ACQUIRE_PARTY_LIST, Handle_s2c_ACQUIRE_PARTY_LIST>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_INVITE_PARTY_QUEST, Nagox::Protocol::s2c_INVITE_PARTY_QUEST, Handle_s2c_INVITE_PARTY_QUEST>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_INVITE_PARTY_RESULT, Nagox::Protocol::s2c_INVITE_PARTY_RESULT, Handle_s2c_INVITE_PARTY_RESULT>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_JOIN_REQUEST, Nagox::Protocol::s2c_PARTY_JOIN_REQUEST, Handle_s2c_PARTY_JOIN_REQUEST>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_JOIN_REQUEST_RESULT, Nagox::Protocol::s2c_PARTY_JOIN_REQUEST_RESULT, Handle_s2c_PARTY_JOIN_REQUEST_RESULT>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_OUT, Nagox::Protocol::s2c_PARTY_OUT, Handle_s2c_PARTY_OUT>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

@@ -1,5 +1,6 @@
 #include "NagiocpXPch.h"
 #include "Cluster.h"
+#include "Field.h"
 
 namespace NagiocpX
 {
@@ -16,37 +17,53 @@ namespace NagiocpX
 		while (e != b) { (*b++)->GetSession()->SendAsync(pkt_); }
 	}
 
-	void Cluster::Enter(const uint8_t group_type, const uint32_t obj_id, ContentsEntity* const pEntity_) noexcept
+	Cluster::EntityState Cluster::Enter(const uint8_t group_type, const uint32_t obj_id, ContentsEntity* const pEntity_) noexcept
 	{
 		auto& target_vecHash = *(m_vectorHashMapForEntity.data() + group_type);
 		
 		if (false == pEntity_->IsValid())
 		{
 			pEntity_->DecRef();
-			return;
+			return Cluster::EntityState::FAIL;
 		}
-
 		if (!target_vecHash.AddItem(obj_id, pEntity_))
 		{
 			// TODO: 이미 방에 있는데 또 들어오려한거임
 			PrintLogEndl("Alread Exist in Space");
-			return;
+			return Cluster::EntityState::FAIL;
 		}
 
-		pEntity_->RegisterEnterCount();
+		m_parentField->IncRef();
+
+		return (Cluster::EntityState)pEntity_->RegisterEnterCount();
 	}
 	void Cluster::LeaveAndDestroy(const uint8_t group_type, const uint32_t obj_id) noexcept
 	{
 		if (const auto entity = m_vectorHashMapForEntity[group_type].ExtractItem(obj_id))
 		{
 			entity->DecRef();
+			m_parentField->DecRef<Field>();
 		}
 	}
 	void Cluster::Migration(const ClusterInfo info, const uint8_t group_type, const uint32_t obj_id) noexcept
 	{
 		if (const auto entity = m_vectorHashMapForEntity[group_type].ExtractItem(obj_id))
 		{
-			GetCluster(info)->Enter(group_type, obj_id, entity);
+			//entity->SetOnlyClusterInfo(info);
+			GetCluster(info, m_parentField)->Enter(group_type, obj_id, entity);
+		}
+	}
+	void Cluster::MigrationOtherField(Field* const other_field, const uint8_t group_type, const uint32_t obj_id) noexcept
+	{
+		const auto other_cluster = other_field->GetStartCluster();
+		if (const auto entity = m_vectorHashMapForEntity[group_type].ExtractItem(obj_id))
+		{
+			if (Cluster::EntityState::ENTER == other_cluster->Enter(group_type, obj_id, entity))
+			{
+				entity->SetClusterFieldInfoUnsafe(other_cluster->GetClusterFieldInfo());
+				other_field->MigrationAfterBehavior(m_parentField);
+			}
+			m_parentField->DecRef<Field>();
 		}
 	}
 }

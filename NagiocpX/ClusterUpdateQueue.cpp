@@ -6,14 +6,14 @@
 
 namespace NagiocpX
 {
-	Cluster* const GetCluster(const ClusterInfo info) noexcept
+	Cluster* const GetCluster(const ClusterInfo info, Field* const field) noexcept
 	{
-		return Mgr(FieldMgr)->GetCluster(info);
+		return field->GetCluster(info.clusterID.x, info.clusterID.y);
 	}
 
 	bool ClusterUpdateTask::Execute() noexcept
 	{
-		m_invoker.InvokeTask(GetCluster(m_info));
+		m_invoker.InvokeTask(GetCluster(m_info, m_field));
 		return 0 == InterlockedDecrement(&m_refCount);
 	}
 

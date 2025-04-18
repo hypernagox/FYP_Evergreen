@@ -3,26 +3,25 @@
 
 namespace NagiocpX
 {
-	Cluster* const GetCluster(const ClusterInfo info)noexcept;
-	static inline Cluster* const GetCluster(const uint8_t fieldID, const uint8_t x, const uint8_t y)noexcept {
-		return GetCluster({ fieldID,x,y });
-	}
+	Cluster* const GetCluster(const ClusterInfo info, Field* const field)noexcept;
 
 	class ClusterUpdateTask
 	{
 		friend class ClusterUpdateQueue;
 	public:
 		template<typename... Args>
-		ClusterUpdateTask(const ClusterInfo info,Args&&... args)noexcept
+		ClusterUpdateTask(const ClusterInfo info, Field* const field, Args&&... args)noexcept
 			: m_info{ info }
 			, m_invoker{ std::forward<Args>(args)... }
 			, m_refCount{ ThreadMgr::NUM_OF_THREADS }
+			, m_field{ field }
 		{}
 	private:
 		bool Execute()noexcept;
 	private:
 		volatile LONG m_refCount = ThreadMgr::NUM_OF_THREADS;
 		const ClusterInfo m_info;
+		Field* const m_field;
 		const TaskInvoker m_invoker;
 	};
 

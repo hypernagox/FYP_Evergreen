@@ -32,7 +32,7 @@ namespace NagiocpX
 	
 	ContentsEntity::~ContentsEntity() noexcept
 	{
-		PrintLogEndl("DESTROY");
+		//PrintLogEndl("DESTROY");
 		auto b = m_arrIocpComponents;
 		const auto e = m_arrIocpComponents + static_cast<int>(IOCP_COMPONENT::END);
 		if (m_deleter)

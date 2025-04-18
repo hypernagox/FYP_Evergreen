@@ -30,7 +30,7 @@ void DropTable::TryCreateItem() const noexcept
 	auto item = EntityFactory::CreateDropItem(b);
 	const auto temp_ptr = item.get();
 	ClusterPredicate p;
-	Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(
+	owner->GetCurField()->EnterFieldNPC(
 		std::move(item)
 	);
 	owner->GetCurCluster()->Broadcast(p.CreateAddPacket(temp_ptr));
