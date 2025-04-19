@@ -462,3 +462,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_OUT(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_OUT);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_CLEAR(
+    const int32_t party_quest_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto party_quest_id_value = party_quest_id;
+    const auto serializeds2c_PARTY_QUEST_CLEAR = Nagox::Protocol::Creates2c_PARTY_QUEST_CLEAR(
+        builder
+,        party_quest_id_value    );
+    builder.Finish(serializeds2c_PARTY_QUEST_CLEAR);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_QUEST_CLEAR);
+}

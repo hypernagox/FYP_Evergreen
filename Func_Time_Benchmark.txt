@@ -1,104 +1,122 @@
 
 Thread 1 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 16, TotalCallTime: 32ms, Avg: 2.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 151, TotalCallTime: 31ms, Avg: 0.205298 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 1 Func Log End----- 
 
 
 Thread 2 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 13, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 108, TotalCallTime: 16ms, Avg: 0.148148 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 6, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 2 Func Log End----- 
 
 
 Thread 3 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 9, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 142, TotalCallTime: 15ms, Avg: 0.105634 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 7, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 3 Func Log End----- 
 
 
 Thread 4 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 23, TotalCallTime: 15ms, Avg: 0.652174 ms
+FuncName: Handle_c2s_MOVE, CallCount: 139, TotalCallTime: 15ms, Avg: 0.107914 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 4 Func Log End----- 
 
 
 Thread 5 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 7, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 83, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 13, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 5 Func Log End----- 
 
 
 Thread 6 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 11, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 137, TotalCallTime: 15ms, Avg: 0.109489 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 6 Func Log End----- 
 
 
 Thread 7 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 13, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 135, TotalCallTime: 16ms, Avg: 0.118519 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 7 Func Log End----- 
 
 
 Thread 8 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 9, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 117, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 8 Func Log End----- 
 
 
 Thread 9 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 146, TotalCallTime: 15ms, Avg: 0.102740 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 9, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 9 Func Log End----- 
 
 
 Thread 10 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 16, TotalCallTime: 16ms, Avg: 1.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 145, TotalCallTime: 16ms, Avg: 0.110345 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 7, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 10 Func Log End----- 
 
 
 Thread 11 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 12, TotalCallTime: 16ms, Avg: 1.333333 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 108, TotalCallTime: 16ms, Avg: 0.148148 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 11 Func Log End----- 
 
 
 Thread 12 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 9, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 156, TotalCallTime: 15ms, Avg: 0.096154 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 14, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 12 Func Log End----- 
 
 
 Thread 13 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 13, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 140, TotalCallTime: 16ms, Avg: 0.114286 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 13 Func Log End----- 
 
 
 Thread 14 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 12, TotalCallTime: 16ms, Avg: 1.333333 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 111, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 2, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 7, TotalCallTime: 0ms, Avg: 0.000000 ms
 
  -----ID 14 Func Log End----- 
 
 
 Total Result 
 
-FuncName: Handle_c2s_MOVE, CallCount: 167, TotalCallTime: 95ms, Avg: 0.568862 ms
-FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 1818, TotalCallTime: 186ms, Avg: 0.102310 ms
+FuncName: Handle_c2s_PLAYER_ATTACK, CallCount: 25, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 88, TotalCallTime: 0ms, Avg: 0.000000 ms
 
 
-Server Running Time: 54.81 seconds, Total Func Acc Time: 0.10 seconds / 95 ms
+Server Running Time: 267.59 seconds, Total Func Acc Time: 0.19 seconds / 186 ms
 
 
 

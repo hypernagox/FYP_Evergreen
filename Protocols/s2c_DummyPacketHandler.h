@@ -32,6 +32,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_PARTY_JOIN_REQUEST = 1021,
     s2c_PARTY_JOIN_REQUEST_RESULT = 1022,
     s2c_PARTY_OUT = 1023,
+    s2c_PARTY_QUEST_CLEAR = 1024,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -89,6 +90,7 @@ const bool Handle_s2c_INVITE_PARTY_RESULT(const NagiocpX::S_ptr<NagiocpX::Packet
 const bool Handle_s2c_PARTY_JOIN_REQUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_REQUEST& pkt_);
 const bool Handle_s2c_PARTY_JOIN_REQUEST_RESULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_REQUEST_RESULT& pkt_);
 const bool Handle_s2c_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_);
+const bool Handle_s2c_PARTY_QUEST_CLEAR(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_CLEAR& pkt_);
 
 class s2c_DummyPacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -119,6 +121,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_JOIN_REQUEST, Nagox::Protocol::s2c_PARTY_JOIN_REQUEST, Handle_s2c_PARTY_JOIN_REQUEST>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_JOIN_REQUEST_RESULT, Nagox::Protocol::s2c_PARTY_JOIN_REQUEST_RESULT, Handle_s2c_PARTY_JOIN_REQUEST_RESULT>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_OUT, Nagox::Protocol::s2c_PARTY_OUT, Handle_s2c_PARTY_OUT>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_QUEST_CLEAR, Nagox::Protocol::s2c_PARTY_QUEST_CLEAR, Handle_s2c_PARTY_QUEST_CLEAR>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

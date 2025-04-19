@@ -154,6 +154,9 @@ struct c2s_PARTY_OUTBuilder;
 struct s2c_PARTY_OUT;
 struct s2c_PARTY_OUTBuilder;
 
+struct s2c_PARTY_QUEST_CLEAR;
+struct s2c_PARTY_QUEST_CLEARBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -2676,6 +2679,50 @@ inline ::flatbuffers::Offset<s2c_PARTY_OUT> Creates2c_PARTY_OUT(
   s2c_PARTY_OUTBuilder builder_(_fbb);
   builder_.add_out_user_id(out_user_id);
   builder_.add_is_leader(is_leader);
+  return builder_.Finish();
+}
+
+struct s2c_PARTY_QUEST_CLEAR FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PARTY_QUEST_CLEARBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_PARTY_QUEST_ID = 4
+  };
+  int32_t party_quest_id() const {
+    return GetField<int32_t>(VT_PARTY_QUEST_ID, 0);
+  }
+  bool mutate_party_quest_id(int32_t _party_quest_id = 0) {
+    return SetField<int32_t>(VT_PARTY_QUEST_ID, _party_quest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_PARTY_QUEST_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PARTY_QUEST_CLEARBuilder {
+  typedef s2c_PARTY_QUEST_CLEAR Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_party_quest_id(int32_t party_quest_id) {
+    fbb_.AddElement<int32_t>(s2c_PARTY_QUEST_CLEAR::VT_PARTY_QUEST_ID, party_quest_id, 0);
+  }
+  explicit s2c_PARTY_QUEST_CLEARBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PARTY_QUEST_CLEAR> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PARTY_QUEST_CLEAR>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PARTY_QUEST_CLEAR> Creates2c_PARTY_QUEST_CLEAR(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t party_quest_id = 0) {
+  s2c_PARTY_QUEST_CLEARBuilder builder_(_fbb);
+  builder_.add_party_quest_id(party_quest_id);
   return builder_.Finish();
 }
 

@@ -14,6 +14,7 @@
 #include "PositionComponent.h"
 #include "ClusterPredicate.h"
 #include "DropTable.h"
+#include "QuestRoom.h"
 
 void MonsterDeath::ProcessDeath() noexcept
 {
@@ -23,6 +24,10 @@ void MonsterDeath::ProcessDeath() noexcept
 	if (const auto item_table = owner->GetComp<DropTable>())
 	{
 		item_table->TryCreateItem();
+	}
+	if (owner->GetClusterFieldInfo().clusterInfo.fieldID == -1)
+	{
+		static_cast<QuestRoom*>(owner->GetClusterFieldInfo().curFieldPtr)->CheckPartyQuestState();
 	}
 	owner->TryOnDestroy();
 }

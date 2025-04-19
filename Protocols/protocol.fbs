@@ -272,3 +272,8 @@ table s2c_PARTY_OUT
     out_user_id : uint32;
     is_leader : bool;
 }
+
+table s2c_PARTY_QUEST_CLEAR
+{
+    party_quest_id : int32;
+}

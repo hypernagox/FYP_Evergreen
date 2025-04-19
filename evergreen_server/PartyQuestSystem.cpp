@@ -14,8 +14,14 @@ bool PartyQuestSystem::MissionStart()
 	if (!CanMissionStart())return false;
 	StartFlag();
 	m_runFlag = true;
-	m_curQuestRoomInstance = NagiocpX::MakeShared<QuestRoom>();
-	m_curQuestRoomInstance->tempid = m_curQuestID;
+	if (0 == m_curQuestID)
+	{
+		m_curQuestRoomInstance = NagiocpX::MakeShared<FoxQuest>();
+	}
+	else
+	{
+		m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
+	}
 	m_curQuestRoomInstance->InitQuestField();
 	m_prev_field =
 		m_member[0]->GetOwnerEntity()->GetClusterFieldInfo().curFieldPtr;
@@ -67,6 +73,7 @@ void PartyQuestSystem::MissionEnd()
 
 void PartyQuestSystem::ResetPartyQuestSystem()	
 {
+	std::lock_guard<std::mutex> lock{ m_partyLock };
 	m_curQuestID = -1;
 	for (auto& m : m_member)
 	{
