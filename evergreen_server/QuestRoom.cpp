@@ -3,6 +3,7 @@
 #include "EntityFactory.h"
 #include "Regenerator.h"
 #include "PartyQuestSystem.h"
+#include "ClientSession.h"
 
 std::atomic_int aaaa;
 QuestRoom::QuestRoom() noexcept
@@ -36,32 +37,15 @@ QuestRoom::~QuestRoom() noexcept
 	m_ownerPartrySystem->EndFlag();
 }
 
-void QuestRoom::InitQuestField() noexcept
+void QuestRoom::NotifyQuestClear(NagiocpX::ContentsEntity* const entity) const noexcept
 {
-	if (1 == tempid)
-	{
-		for (int i = 0; i < 500; ++i)
-		{
-			EntityBuilder b;
-			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
-			b.obj_type = 0;
-			const auto m = EntityFactory::CreateRangeMonster(b);
-			static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
-			EnterFieldNPC(m);
-		}
-	}
-	else
-	{
-		for (int i = 0; i < 500; ++i)
-		{
-			EntityBuilder b;
-			b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
-			b.obj_type = MONSTER_TYPE_INFO::FOX;
-			const auto m = EntityFactory::CreateMonster(b);
-			static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
-			EnterFieldNPC(m);
-		}
-	}
+	entity->GetSession()->SendAsync(Create_s2c_PARTY_QUEST_CLEAR(m_ownerPartrySystem->m_curQuestID));
+}
+
+void QuestRoom::NotifyQuestFail(NagiocpX::ContentsEntity* const entity) const noexcept
+{
+	// TODO: 알리기
+
 }
 
 void QuestRoom::InitFieldGlobal() noexcept
@@ -116,5 +100,59 @@ void QuestRoom::DecMemberCount() noexcept
 		std::cout << "삭제시작\n";
 		DestroyFieldTLS();
 		m_ownerPartrySystem->m_curQuestRoomInstance.reset();
+	}
+}
+
+void QuestRoom::CheckPartyQuestState()noexcept
+{
+	// TODO: 락 고려
+	if (ProcessPartyQuest())
+	{
+		// TODO 근본적인 해결책
+		Mgr(TaskTimerMgr)->ReserveAsyncTask(1000,[this, owner = m_ownerPartrySystem->m_member[0]]() {
+			for (const auto& players : owner->m_party_quest_system.m_member)
+			{
+				if (!players)continue;
+				NotifyQuestClear(players->GetOwnerEntity());
+			}
+			m_isClear.store(true);
+			//m_ownerPartrySystem->GetPartyLeader()->m_cur_my_party_system.load()->MissionEnd();
+			});
+		return;
+	}
+	else if (IsFailPartyQuest())
+	{
+		for (const auto& players : m_ownerPartrySystem->m_member)
+		{
+			if (!players)continue;
+			NotifyQuestFail(players->GetOwnerEntity());
+		}
+		return;
+	}
+}
+
+void FoxQuest::InitQuestField() noexcept
+{
+	for (int i = 0; i < 500; ++i)
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
+		b.obj_type = MONSTER_TYPE_INFO::FOX;
+		const auto m = EntityFactory::CreateMonster(b);
+		static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+		EnterFieldNPC(m);
+	}
+}
+
+void GoblinQuest::InitQuestField() noexcept
+{
+	for (int i = 0; i < 500; ++i)
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+		b.obj_type = 0;
+		const auto m = EntityFactory::CreateRangeMonster(b);
+		static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+		EnterFieldNPC(m);
 	}
 }

@@ -11,18 +11,60 @@ private:
 	virtual void InitFieldGlobal()noexcept override;
 	virtual void InitFieldTLS()noexcept override;
 	virtual void DestroyFieldTLS()noexcept override;
+
+	virtual bool ProcessPartyQuest()noexcept = 0;
+	// TODO: 실패조건
+	virtual bool IsFailPartyQuest()const noexcept { return false; }
+
+	virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept;
+	virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept;
+protected:
 public:
-	virtual void InitQuestField()noexcept;
+	virtual void InitQuestField()noexcept = 0;
 	virtual void MigrationAfterBehavior(Field* const prev_field)noexcept override;
 	void DecMemberCount()noexcept;
 	void IncMemberCount()noexcept { m_numOfMember.fetch_add(1); }
 	const auto GetMemberCount()const noexcept { return m_numOfMember.load(); }
 	void SetOwnerSystem(class PartyQuestSystem* sys) { m_ownerPartrySystem = sys; }
 	const auto GetOwnerSystem()const noexcept { return m_ownerPartrySystem; }
-
-	int tempid = 0;
+public:
+	void CheckPartyQuestState()noexcept;
+	bool IsClear()const noexcept { return m_isClear.load(); }
+protected:
+	NagoxAtomic::Atomic<int8_t> m_monKillCount{ 0 };
 private:
+	NagoxAtomic::Atomic<bool> m_isClear{ false };
 	NagoxAtomic::Atomic<int8_t> m_numOfMember{ 0 };
 	class PartyQuestSystem* m_ownerPartrySystem = nullptr;
 };
 
+class FoxQuest
+	:public QuestRoom
+{
+public:
+	// TODO: 락 고려
+	virtual bool ProcessPartyQuest()noexcept override{
+		return 1 == m_monKillCount.fetch_add(1);
+	}
+	virtual bool IsFailPartyQuest()const noexcept { return false; }
+
+	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	virtual void InitQuestField()noexcept override;
+private:
+};
+
+class GoblinQuest
+	:public QuestRoom
+{
+public:
+	virtual bool ProcessPartyQuest()noexcept override {
+		return 1 == m_monKillCount.fetch_add(1);
+	}
+	virtual bool IsFailPartyQuest()const noexcept { return false; }
+
+	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	virtual void InitQuestField()noexcept override;
+private:
+};

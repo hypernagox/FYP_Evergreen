@@ -508,6 +508,14 @@ const bool Handle_c2s_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 		std::cout << "No party\n";
 		return true;
 	}
+	if (pSession_->GetOwnerEntity()->GetClusterFieldInfo().clusterInfo.fieldID != -1) {
+		std::cout << "Not Party Quest\n";
+		return true;
+	}
+	if (!cur_party->m_curQuestRoomInstance->IsClear()) {
+		std::cout << "Not Clear \n";
+		return true;
+	}
 	party_leader->m_party_quest_system.MissionEnd();
 	return true;
 }
@@ -520,7 +528,7 @@ const bool Handle_c2s_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 		return true;
 	}
 	const auto cur_party = session->GetCurPartySystem();
-	if (!cur_party) {
+	if (!cur_party) { 
 		std::cout << "No party\n";
 		return true;
 	}
