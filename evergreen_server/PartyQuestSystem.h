@@ -42,6 +42,8 @@ private:
 		}
 		return false;
 	}
+	bool CanMissionStart()const noexcept;
+	bool CanMissionEnd()const noexcept;
 	// TODO: 강퇴인지 자발적 퇴장인지 및, 해당 패킷필요함
 public:
 	S_ptr<ClientSession> FindMember(const uint32_t obj_id);
@@ -56,8 +58,5 @@ public:
 	S_ptr<QuestRoom> m_curQuestRoomInstance = nullptr;
 	// 0번이 반드시 파티장
 	S_ptr<ClientSession> m_member[NUM_OF_MAX_PARTY_MEMBER]{ nullptr };
-	uint64_t m_time_stamp = ::GetTickCount64();
-
-	static constexpr const uint64_t PARTY_COMMAND_COOL_TIME = 5000;
 };
 

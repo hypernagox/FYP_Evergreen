@@ -32,6 +32,9 @@ public:
 		other->m_cur_my_party_system.store(&m_party_quest_system);
 		return m_party_quest_system.AcceptNewMember(other->SharedFromThis<ClientSession>());
 	}
+	bool AcceptNewPlayer(const S_ptr<PacketSession>& session) {
+		return AcceptNewPlayer(static_cast<ClientSession*>(session.get()));
+	}
 	bool IsPartyLeader()const noexcept { return m_cur_my_party_system.load() == &m_party_quest_system; }
 public:
 	NagoxAtomic::Atomic<PartyQuestSystem*> m_cur_my_party_system{ nullptr };

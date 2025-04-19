@@ -11,9 +11,16 @@ namespace NagiocpX
 		return field->GetCluster(info.clusterID.x, info.clusterID.y);
 	}
 
+	Field* const FieldIncRef(Field* const field) noexcept
+	{
+		field->IncRef(NUM_OF_THREADS);
+		return field;
+	}
+
 	bool ClusterUpdateTask::Execute() noexcept
 	{
 		m_invoker.InvokeTask(GetCluster(m_info, m_field));
+		m_field->DecRef<Field>();
 		return 0 == InterlockedDecrement(&m_refCount);
 	}
 

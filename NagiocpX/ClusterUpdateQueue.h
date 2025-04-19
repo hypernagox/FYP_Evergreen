@@ -4,7 +4,7 @@
 namespace NagiocpX
 {
 	Cluster* const GetCluster(const ClusterInfo info, Field* const field)noexcept;
-
+	Field* const FieldIncRef(Field* const field)noexcept;
 	class ClusterUpdateTask
 	{
 		friend class ClusterUpdateQueue;
@@ -14,7 +14,7 @@ namespace NagiocpX
 			: m_info{ info }
 			, m_invoker{ std::forward<Args>(args)... }
 			, m_refCount{ ThreadMgr::NUM_OF_THREADS }
-			, m_field{ field }
+			, m_field{ FieldIncRef(field) }
 		{}
 	private:
 		bool Execute()noexcept;

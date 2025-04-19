@@ -1,12 +1,14 @@
-0: ServerCore::LogStackTrace - 0x7ff6396f18c0
-1: ServerCore::ThreadMgr::InitTLS - 0x7ff63973da10
-2: ServerCore::ThreadMgr::ThreadMgr - 0x7ff6396aa620
-3: ServerCore::Singleton<ServerCore::ThreadMgr>::SingletonBlock::SingletonBlock - 0x7ff639615220
-4: `dynamic initializer for 'ServerCore::Singleton<ServerCore::ThreadMgr>::g_singleton_block'' - 0x7ff63960d200
-5: initterm - 0x7ff8a4cf2240
-6: __scrt_common_main_seh - 0x7ff6397fa750
-7: __scrt_common_main - 0x7ff6397fa730
-8: mainCRTStartup - 0x7ff6397faa20
-9: BaseThreadInitThunk - 0x7ff94fbe7360
-10: RtlUserThreadStart - 0x7ff9509dcc70
-  2025-01-21 20:41:07 [LOG]: 
+0: NagiocpX::LogStackTrace - 0x7ff62c824f50
+1: NagiocpX::RefCountable::DecRef<NagiocpX::Field> - 0x7ff62c6b1100
+2: NagiocpX::Cluster::MigrationOtherField - 0x7ff62c8787f0
+3: NagiocpX::Task::CallFunctionWithTuple<void (__cdecl NagiocpX::Cluster::*)(NagiocpX::Field *,unsigned char,unsigned int),NagiocpX::Cluster *,std::tuple<NagiocpX::Field *,unsigned char,unsigned int> const &,0,1,2> - 08: NagiocpX::Ta4: NagiocpX::Task::invokeMemberFunction<9: NagiocpX::ClusterUpdateTask::Execute - 0x7ff62c7b7750
+10: NagiocpX::ClusterUpdateQueue::UpdateCluster - 0x7ff62c7b78d0
+11: NagiocpX::ThreadMgr::IocpRoutine - 0x7ff62c6bd440
+12: NagiocpX::ThreadMgr::WorkerThreadFunc - 0x7ff62c6f8970
+ NagiocpX::TaskInvoker::CallBack<NagiocpX::Cluster,void,1613: std::invoke<void (__cdecl*)(void) no17: RtlUserThreadStart - 0x7ffc6: `Nagioc  2025-04-19 00:29:35 [LOG]: 
+giocpX::Cluster,void,NagiocpX::Field *,unsigned char,unsigned int>'::`1'::<lambda_6_>::operator() - 0x7ff62c6e0880
+oker<NagiocpX::Cluster,void,NagiocpX::Field *,unsigned char,unsigned int>'::`1'::<lambda_6_>::<lambda_invoker_cdecl> - 0x7ff62c6dd240
+NagiocpX::ClusterUpdateTask::Execute - 0x7ff62c7b7750
+10: NagiocpX::ClusterUpdateQueue::UpdateCluster - 0x7ff62c7b78d0
+11: NagiocpX::ThreadMgr::IocpRoutine - 0x7ff62c6bd440
+12: NagiocpX::ThreadMgr::WorkerThreadFunc - 0x7ff62c6f8970

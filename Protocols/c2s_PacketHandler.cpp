@@ -494,7 +494,20 @@ const bool Handle_c2s_QUEST_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>
 const bool Handle_c2s_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_QUEST_END& pkt_)
 {
 	const auto party_leader = GetClientSession(pSession_);
-	if (!party_leader->IsPartyLeader())return true;
+	if (!party_leader->IsPartyLeader()) {
+		std::cout << "Not leader\n";
+		return true;
+	}
+	const auto session = GetClientSession(pSession_);
+	if (!session->HasParty()) {
+		std::cout << "No party\n";
+		return true;
+	}
+	const auto cur_party = session->GetCurPartySystem();
+	if (!cur_party) {
+		std::cout << "No party\n";
+		return true;
+	}
 	party_leader->m_party_quest_system.MissionEnd();
 	return true;
 }
@@ -502,13 +515,18 @@ const bool Handle_c2s_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 const bool Handle_c2s_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_OUT& pkt_)
 {
 	const auto session = GetClientSession(pSession_);
-	if (!session->HasParty())return true;
+	if (!session->HasParty()) { 
+		std::cout << "No party\n";
+		return true;
+	}
 	const auto cur_party = session->GetCurPartySystem();
 	if (!cur_party) {
+		std::cout << "No party\n";
 		return true;
 	}
 	if (cur_party->m_started) {
 		// TODO: 현재 게임 진행중임, 함부로 못나간다.
+		std::cout << "run \n";
 		return true;
 	}
 	auto pkt = Create_s2c_PARTY_OUT(pSession_->GetSessionID(), session->IsPartyLeader());
