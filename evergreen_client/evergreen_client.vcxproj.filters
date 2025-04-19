@@ -204,6 +204,12 @@
     <ClCompile Include="PlayerCraftGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="TerrainDetailRenderer.cpp">
+      <Filter>Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainDetail.cpp">
+      <Filter>Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -322,6 +328,12 @@
     </ClInclude>
     <ClInclude Include="PlayerCraftGUI.h">
       <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainDetailRenderer.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainDetail.h">
+      <Filter>Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

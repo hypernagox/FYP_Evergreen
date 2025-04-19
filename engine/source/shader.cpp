@@ -43,7 +43,6 @@ namespace udsdx
 		ComPtr<IDxcBlob> dsByteCode = nullptr;
 		try
 		{
-			
 			hsByteCode = udsdx::CompileShader(m_path, {}, L"HS", L"hs_6_0");
 			dsByteCode = udsdx::CompileShader(m_path, {}, L"DS", L"ds_6_0");
 
@@ -71,6 +70,19 @@ namespace udsdx
 				m_vsByteCode->GetBufferSize()
 			};
 
+			ComPtr<IDxcBlob> gsByteCode = nullptr;
+			try
+			{
+				gsByteCode = udsdx::CompileShader(m_path, {}, L"GS", L"gs_6_0");
+				psoDesc.GS =
+				{
+					reinterpret_cast<BYTE*>(gsByteCode->GetBufferPointer()),
+					gsByteCode->GetBufferSize()
+				};
+				psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+			}
+			catch (const DxException&) {}
+
 			ThrowIfFailed(pDevice->CreateGraphicsPipelineState(
 				&psoDesc,
 				IID_PPV_ARGS(m_defaultPipelineState.GetAddressOf())
@@ -80,6 +92,7 @@ namespace udsdx
 			DebugConsole::Log("\tDefault shader compiled");
 		}
 
+		if (psoDesc.GS.BytecodeLength == 0)
 		{
 			std::wstring defines[] = {
 				L"RIGGED"
@@ -129,6 +142,20 @@ namespace udsdx
 				reinterpret_cast<BYTE*>(m_psByteCode->GetBufferPointer()),
 				m_psByteCode->GetBufferSize()
 			};
+			psoDesc.GS = {};
+
+			ComPtr<IDxcBlob> gsByteCode = nullptr;
+			try
+			{
+				gsByteCode = udsdx::CompileShader(m_path, defines, L"GS", L"gs_6_0");
+				psoDesc.GS =
+				{
+					reinterpret_cast<BYTE*>(gsByteCode->GetBufferPointer()),
+					gsByteCode->GetBufferSize()
+				};
+				psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+			}
+			catch (const DxException&) {}
 
 			// if HS and DS shaders exist, compile and set them
 			ComPtr<IDxcBlob> hsByteCode = nullptr;
@@ -161,6 +188,7 @@ namespace udsdx
 			DebugConsole::Log("\tShadow shader compiled");
 		}
 
+		if (psoDesc.GS.BytecodeLength == 0)
 		{
 			std::wstring defines[] = {
 				L"RIGGED", L"GENERATE_SHADOWS"
@@ -181,6 +209,7 @@ namespace udsdx
 				reinterpret_cast<BYTE*>(m_psByteCode->GetBufferPointer()),
 				m_psByteCode->GetBufferSize()
 			};
+			psoDesc.GS = {};
 
 			// if HS and DS shaders exist, compile and set them
 			ComPtr<IDxcBlob> hsByteCode = nullptr;

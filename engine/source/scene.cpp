@@ -67,6 +67,7 @@ namespace udsdx
 
 		for (size_t i = 0; i < m_renderCameraQueue.size(); ++i)
 		{
+			param.TargetCamera = m_renderCameraQueue[i];
 			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerCameraCBV, cameraCbvs[i]);
 			PassRenderMain(param, m_renderCameraQueue[i], cameraCbvs[i]);
 		}

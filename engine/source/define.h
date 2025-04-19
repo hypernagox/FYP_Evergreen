@@ -21,6 +21,7 @@ namespace udsdx
 		float totalTime;
 	};
 
+	class Camera;
 	class ShadowMap;
 	class ScreenSpaceAO;
 	class DeferredRenderer;
@@ -44,6 +45,7 @@ namespace udsdx
 		const D3D12_VIEWPORT& Viewport;
 		const D3D12_RECT& ScissorRect;
 
+		Camera* TargetCamera;
 		BoundingCamera* ViewFrustumWorld;
 		bool UseFrustumCulling;
 

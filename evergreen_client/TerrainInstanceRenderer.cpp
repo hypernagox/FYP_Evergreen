@@ -47,8 +47,8 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 
 	D3D12_VERTEX_BUFFER_VIEW vibv;
 	vibv.BufferLocation = buffer->Resource()->GetGPUVirtualAddress();
-	vibv.StrideInBytes = sizeof(udsdx::Matrix4x4);
 	vibv.SizeInBytes = instanceCount * sizeof(udsdx::Matrix4x4);
+	vibv.StrideInBytes = sizeof(udsdx::Matrix4x4);
 
 	D3D12_VERTEX_BUFFER_VIEW vbv = m_mesh->VertexBufferView();
 	D3D12_INDEX_BUFFER_VIEW ibv = m_mesh->IndexBufferView();

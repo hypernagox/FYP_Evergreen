@@ -17,6 +17,8 @@
 #include "PlayerRenderer.h"
 #include "MovePacketSender.h"
 #include "EntityMovement.h"
+#include "TerrainDetail.h"
+#include "TerrainDetailRenderer.h"
 #include <regex>
 #include "InputHandler.h"
 #include "ServerObjectMgr.h"
@@ -49,11 +51,13 @@ std::shared_ptr<SceneObject> terrainObj;
 AuthenticPlayer* g_heroComponent;
 
 std::shared_ptr<udsdx::Material> terrainMaterial;
+std::shared_ptr<udsdx::Material> terrainDetailMaterial;
 std::shared_ptr<udsdx::Material> playerMaterial;
 std::shared_ptr<udsdx::Material> g_skyboxMaterial;
 std::shared_ptr<udsdx::Material> g_gizmoMaterial;
 std::shared_ptr<udsdx::Mesh> terrainMesh;
 
+std::unique_ptr<TerrainDetail> terrainDetail;
 std::unique_ptr<HeightMap> heightMap;
 std::unique_ptr<TerrainData> terrainData;
 
@@ -192,6 +196,27 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 128, 128, 1.0f);
     terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
+    const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
+    const Vector3 terrainPos = Vector3(-TerrainSize * 0.5f, 0, -TerrainSize * 0.5f);
+    const Vector3 terrainScale = Vector3::One * TerrainSize;
+
+    {
+        terrainDetailMaterial = std::make_shared<udsdx::Material>();
+        terrainDetailMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Grass.tga")), 0);
+
+        terrainDetail = std::make_unique<TerrainDetail>(heightMap.get(), RESOURCE_PATH(L"environment\\Terrain_Detail.raw"), 512, 512, 16, INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
+        std::shared_ptr<SceneObject> terrainDetailObj = std::make_shared<SceneObject>();
+        auto terrainDetailRenderer = terrainDetailObj->AddComponent<TerrainDetailRenderer>();
+        terrainDetailRenderer->SetTerrainDetail(terrainDetail.get());
+        terrainDetailRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"detailbillboard.hlsl")));
+        terrainDetailRenderer->SetMaterial(terrainDetailMaterial.get());
+
+        terrainDetailObj->GetTransform()->SetLocalPosition(terrainPos);
+        terrainDetailObj->GetTransform()->SetLocalScale(terrainScale);
+
+        scene->AddObject(terrainDetailObj);
+    }
+
     terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
 
     std::map<std::string, udsdx::Texture*> textureMap;
@@ -244,10 +269,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     {
-        const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
         terrainObj = std::make_shared<SceneObject>();
-        terrainObj->GetTransform()->SetLocalPosition(Vector3(-TerrainSize * 0.5f, 0, -TerrainSize * 0.5f));
-        terrainObj->GetTransform()->SetLocalScale(Vector3::One * TerrainSize);
+        terrainObj->GetTransform()->SetLocalPosition(terrainPos);
+        terrainObj->GetTransform()->SetLocalScale(terrainScale);
         auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
         terrainRenderer->SetMesh(terrainMesh.get());
         terrainRenderer->SetMaterial(terrainMaterial.get());
