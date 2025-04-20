@@ -18,8 +18,9 @@ DropItemRenderer::DropItemRenderer(std::shared_ptr<udsdx::SceneObject> owner) : 
 
 void DropItemRenderer::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
+	float scale = GET_DATA(float, "DropitemScale", "Value");
 	m_rendererObject->GetTransform()->SetLocalRotation(udsdx::Quaternion::CreateFromYawPitchRoll(time.totalTime * 2.0f + m_rotationOffset, XM_PIDIV4, 0.0f));
-	m_rendererObject->GetTransform()->SetLocalPositionY(1.0f + sin(time.totalTime * 2.0f) * 0.1f);
+	m_rendererObject->GetTransform()->SetLocalPositionY(scale / 8.0f + sin(time.totalTime * 2.0f) * scale / 80.0f);
 }
 
 void DropItemRenderer::SetDropItem(uint8_t item_id)

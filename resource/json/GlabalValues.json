@@ -3,9 +3,9 @@
     "Value": 1024.0
   },
   "CharacterScale": {
-    "Value": 0.05
+    "Value": 0.025
   },
   "DropitemScale": {
-    "Value": 8.0
+    "Value": 4.0
   }
 }

@@ -28,7 +28,7 @@ private:
 
 	std::unique_ptr<SoundEffectInstance> soundEffectInstance;
 
-	float m_fMoveSpeed = 100.f;
+	float m_fMoveSpeed = 50.0f;
 	float m_fMoveTime = 0.0f;
 	float m_fCamSensivity = 0.1f;
 
@@ -50,7 +50,7 @@ private:
 	Vector3 m_cameraAngleAxis = Vector3::Zero;
 	Vector3 m_cameraAngleAxisSmooth = Vector3::Zero;
 	int m_lastMouseScroll = 0;
-	float m_cameraDistance = 3.0f;
+	float m_cameraDistance = 2.0f;
 
 	CameraPerspective* m_pCamera;
 

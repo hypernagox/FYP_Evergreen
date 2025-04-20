@@ -9,7 +9,7 @@ MonsterRenderer::MonsterRenderer(std::shared_ptr<udsdx::SceneObject> owner) : Co
 {
 	m_rendererObject = std::make_shared<udsdx::SceneObject>();
 	m_rendererObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromAxisAngle(Vector3::Right, PI));
-	m_rendererObject->GetTransform()->SetLocalScale(Vector3::One * 0.03f);
+	m_rendererObject->GetTransform()->SetLocalScale(Vector3::One * 0.015f);
 
 	auto renderer = m_rendererObject->AddComponent<udsdx::RiggedMeshRenderer>();
 	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"goblin\\Goblin(Wizard)\\Goblin(Wizard).fbx")));

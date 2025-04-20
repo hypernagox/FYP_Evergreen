@@ -39,6 +39,6 @@ private:
 	float m_friction = 20.0f;
 
 	// Max values must be positive
-	float m_velocityHMax = 7.5f * 2;
+	float m_velocityHMax = 7.5f;
 	float m_velocityVMax = 20.0f;
 };

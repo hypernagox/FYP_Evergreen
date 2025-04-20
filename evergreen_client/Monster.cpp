@@ -22,7 +22,7 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	m_riggedMeshRenderer->SetShader(shader);
 	m_riggedMeshRenderer->SetMaterial(m_monsterMaterial.get());
 
-	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 24.0f);
+	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 48.0f);
 
 	m_entityMovement = object->AddComponent<EntityMovement>();
 

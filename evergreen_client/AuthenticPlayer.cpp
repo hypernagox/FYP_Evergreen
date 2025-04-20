@@ -52,7 +52,7 @@ void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
 		float mouse_dy = static_cast<float>(INSTANCE(Input)->GetMouseY());
 		Vector3 delta = Vector3(mouse_dy, mouse_dx, 0.0f);
 		m_cameraAngleAxis += delta * m_fCamSensivity;
-		m_cameraAngleAxis.x = std::clamp(m_cameraAngleAxis.x, -89.0f, 89.0f);
+		m_cameraAngleAxis.x = std::clamp(m_cameraAngleAxis.x, -80.0f, 80.0f);
 	}
 
 	m_cameraAngleAxisSmooth = Vector3::Lerp(m_cameraAngleAxisSmooth, m_cameraAngleAxis, std::min(deltaTime * 16.0f, 1.0f));
@@ -187,7 +187,7 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 
 	// Region: Camera Anchor Position Control
 	Vector3 playerPosition = GetSceneObject()->GetTransform()->GetLocalPosition();
-	Vector3 anchorPosition = playerPosition + Vector3::Up * 3.0f;
+	Vector3 anchorPosition = playerPosition + Vector3::Up * 1.5f;
 	Vector3 interpolatedAnchorPosition = Vector3::Lerp(m_cameraAnchorLastPosition, anchorPosition, deltaTime * 8.0f);
 	m_cameraAnchor->GetTransform()->SetLocalPosition(interpolatedAnchorPosition - playerPosition);
 	m_cameraAnchorLastPosition = m_cameraAnchor->GetTransform()->GetWorldPosition();
@@ -281,27 +281,12 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	const Vector3Int vPrevState = m_vCurState;
 	m_vCurState = {};
 
-	if (INSTANCE(Input)->GetKey(Keyboard::LeftShift))
-	{
-		MoveByView(Vector3::Down * 10.0f);
-	}
-
-	// TODO 하드코딩
-	//static float cool_down = 0.f;
-	//cool_down -= DT;
-	//if (INSTANCE(Input)->GetMouseLeftButtonDown() && 0.f >= cool_down)
-	//{
-	//	cool_down = 1.f;
-	//	DoAttack();
-	//}
-
 	const Vector3 velocity = m_entityMovement->GetVelocity();
 	m_fMoveTime += Vector2(velocity.x, velocity.z).Length() * time.deltaTime;
 
 	UpdatePlayerCamFpsMode(time.deltaTime);
 	UpdateCameraTransform(m_cameraObj->GetTransform(), time.deltaTime);
 
-	// m_rendererBodyAngleY = std::clamp(m_rendererBodyAngleY, m_cameraAngleAxisSmooth.y - 30.0f, m_cameraAngleAxisSmooth.y + 30.0f);
 	m_playerRenderer->SetRotation(Quaternion::CreateFromYawPitchRoll(m_rendererBodyAngleY * DEG2RAD + PI, 0.0f, 0.0f));
 
 	const bool vec3int_equal = vPrevState.x == m_vCurState.x && vPrevState.y == m_vCurState.y && vPrevState.z == m_vCurState.z;
