@@ -22,10 +22,18 @@ namespace udsdx
 			}
 			else
 			{
+				// node is guaranteed to have an instance
 				node = s.top();
 				s.pop();
-				callback(node);
-				node = node->m_child;
+				if (node->m_active)
+				{
+					callback(node);
+					node = node->m_child;
+				}
+				else
+				{
+					node = nullptr;
+				}
 			}
 		}
 	}
@@ -53,6 +61,8 @@ namespace udsdx
 			{
 				node = s.top();
 				s.pop();
+
+				// SceneObject::PostUpdate() returns true if the node is still valid and active
 				if (node.first->PostUpdate(time, scene, node.second))
 				{
 					node = std::make_pair(node.first->m_child, node.second);
@@ -87,6 +97,8 @@ namespace udsdx
 
 	void SceneObject::DetachFromHierarchy()
 	{
+		INSTANCE(Core)->FlushCommandQueue();
+
 		if (m_sibling != nullptr)
 		{
 			m_sibling->m_parent = m_parent;
@@ -124,6 +136,10 @@ namespace udsdx
 			DetachFromHierarchy();
 			return false;
 		}
+		if (!m_active)
+		{
+			return false;
+		}
 
 		// Validate SRT matrix
 		forceValidate |= m_transform.ValidateLocalSRTMatrix();
@@ -158,12 +174,34 @@ namespace udsdx
 	void SceneObject::RemoveFromParent()
 	{
 		m_detachDirty = true;
-
-		INSTANCE(Core)->FlushCommandQueue();
 	}
 
-	std::shared_ptr<SceneObject> SceneObject::GetParent() const
+	const SceneObject* SceneObject::GetParent() const
 	{
-		return m_parent->shared_from_this();
+		return m_parent;
+	}
+
+	bool SceneObject::GetActive() const
+	{
+		return m_active;
+	}
+
+	bool SceneObject::GetActiveInHierarchy() const
+	{
+		const SceneObject* node = this;
+		while (node != nullptr)
+		{
+			if (!node->m_active)
+			{
+				return false;
+			}
+			node = node->m_parent;
+		}
+		return true;
+	}
+
+	void SceneObject::SetActive(bool active)
+	{
+		m_active = active;
 	}
 }

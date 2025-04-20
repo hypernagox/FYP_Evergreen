@@ -61,7 +61,12 @@ std::unique_ptr<TerrainDetail> terrainDetail;
 std::unique_ptr<HeightMap> heightMap;
 std::unique_ptr<TerrainData> terrainData;
 
+std::shared_ptr<SceneObject> g_inventoryObj;
+std::shared_ptr<SceneObject> g_craftObj;
+
 std::vector<std::shared_ptr<udsdx::Material>> g_instanceMaterials;
+
+std::unique_ptr<SoundEffectInstance> g_menuSound;
 
 Vector3 moveDirection = Vector3::Zero;
 Vector3 g_curPos = {};
@@ -188,7 +193,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     playerLightObj = std::make_shared<SceneObject>();
     auto playerLight = playerLightObj->AddComponent<LightDirectional>();
-    playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PI / 4.0f, PI / 4.0f, 0.0f));
+    Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
+    playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PI / 4.0f, 0) * Quaternion::CreateFromAxisAngle(n, g_lightAngle));
 
     scene->AddObject(playerLightObj);
 
@@ -307,14 +313,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         scene->AddObject(quickSlotObj);
         g_heroComponent->SetPlayerQuickSlotGUI(quickSlotRenderer);
 
-        auto inventoryObj = std::make_shared<SceneObject>();
-        auto inventoryRenderer = inventoryObj->AddComponent<PlayerInventoryGUI>();
-        scene->AddObject(inventoryObj);
+        g_inventoryObj = std::make_shared<SceneObject>();
+        auto inventoryRenderer = g_inventoryObj->AddComponent<PlayerInventoryGUI>();
+        scene->AddObject(g_inventoryObj);
         g_heroComponent->SetPlayerInventoryGUI(inventoryRenderer);
 
-        auto craftObj = std::make_shared<SceneObject>();
-        auto craftComp = craftObj->AddComponent<PlayerCraftGUI>();
-        scene->AddObject(craftObj);
+        g_craftObj = std::make_shared<SceneObject>();
+        auto craftComp = g_craftObj->AddComponent<PlayerCraftGUI>();
+        scene->AddObject(g_craftObj);
         g_heroComponent->SetPlayerCraftGUI(craftComp);
     }
 
@@ -377,6 +383,26 @@ void Update(const Time& time)
 			});
 	}
 
+    auto audioAction = [](bool isOpen) {
+		if (isOpen)
+            g_menuSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uiopen.wav"))->CreateInstance();
+		else
+            g_menuSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uiclose.wav"))->CreateInstance();
+        g_menuSound->SetVolume(0.5f);
+        g_menuSound->Play();
+	};
+
+    if (INSTANCE(Input)->GetKeyDown(Keyboard::E))
+    {
+        g_inventoryObj->SetActive(!g_inventoryObj->GetActive());
+        audioAction(g_inventoryObj->GetActive());
+    }
+    if (INSTANCE(Input)->GetKeyDown(Keyboard::C))
+    {
+        g_craftObj->SetActive(!g_craftObj->GetActive());
+        audioAction(g_craftObj->GetActive());
+    }
+
     Vector3 terrainPos = g_heroObj->GetTransform()->GetLocalPosition() / terrainObj->GetTransform()->GetLocalScale();
     terrainPos.x = fmod(terrainPos.x + 1.0f, 1.0f);
     terrainPos.z = fmod(terrainPos.z + 1.0f, 1.0f);
@@ -387,8 +413,6 @@ void Update(const Time& time)
    // SetTerrainPos(g_heroObj);
     // g_lightAngle += DT * 0.5f;
     float theta = 105.0f * DEG2RAD;
-    Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
-    playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PI / 4.0f, 0) * Quaternion::CreateFromAxisAngle(n, g_lightAngle));
 }
 
 std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* heightMap, LONG segmentWidth, LONG segmentHeight, float heightScale)

@@ -29,7 +29,12 @@ namespace udsdx
 	public:
 		void AddChild(std::shared_ptr<SceneObject> child);
 		void RemoveFromParent();
-		std::shared_ptr<SceneObject> GetParent() const;
+		const SceneObject* GetParent() const;
+
+	public:
+		bool GetActive() const;
+		bool GetActiveInHierarchy() const;
+		void SetActive(bool active);
 
 	public:
 		template <typename Component_T>
@@ -74,6 +79,7 @@ namespace udsdx
 		void DetachFromHierarchy();
 
 	protected:
+		bool m_active = true;
 		Transform m_transform = Transform();
 		std::vector<std::unique_ptr<Component>> m_components;
 
