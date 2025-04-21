@@ -402,6 +402,7 @@
     <ClCompile Include="EventTimer.cpp" />
     <ClCompile Include="FocusAgentGUI.cpp" />
     <ClCompile Include="func.cpp" />
+    <ClCompile Include="GameGUIFacade.cpp" />
     <ClCompile Include="GizmoBoxRenderer.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
@@ -424,6 +425,7 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</IncludeInUnityFile>
     </ClCompile>
     <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="LogFloatGUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterHPPanel.cpp" />
@@ -431,6 +433,7 @@
     <ClCompile Include="MoveInterpolator.cpp" />
     <ClCompile Include="MovePacketSender.cpp" />
     <ClCompile Include="ObjectIdentifier.cpp" />
+    <ClCompile Include="PartyListGUI.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">Create</PrecompiledHeader>
@@ -445,6 +448,7 @@
     <ClCompile Include="PlayerStatusGUI.cpp" />
     <ClCompile Include="PositionSetter.cpp" />
     <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="RequestPopupGUI.cpp" />
     <ClCompile Include="ServerComponent.cpp" />
     <ClCompile Include="ServerObject.cpp" />
     <ClCompile Include="ServerObjectMgr.cpp" />
@@ -481,16 +485,19 @@
     <ClInclude Include="EventTimer.h" />
     <ClInclude Include="FocusAgentGUI.h" />
     <ClInclude Include="func.h" />
+    <ClInclude Include="GameGUIFacade.h" />
     <ClInclude Include="GizmoBoxRenderer.h" />
     <ClInclude Include="GizmoCylinderRenderer.h" />
     <ClInclude Include="GizmoSphereRenderer.h" />
     <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="LogFloatGUI.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterHPPanel.h" />
     <ClInclude Include="MonsterRenderer.h" />
     <ClInclude Include="MoveInterpolator.h" />
     <ClInclude Include="MovePacketSender.h" />
     <ClInclude Include="ObjectIdentifier.h" />
+    <ClInclude Include="PartyListGUI.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerCraftGUI.h" />
     <ClInclude Include="PlayerInventoryGUI.h" />
@@ -499,6 +506,7 @@
     <ClInclude Include="PlayerStatusGUI.h" />
     <ClInclude Include="PositionSetter.h" />
     <ClInclude Include="Projectile.h" />
+    <ClInclude Include="RequestPopupGUI.h" />
     <ClInclude Include="ServerComponent.h" />
     <ClInclude Include="ServerObject.h" />
     <ClInclude Include="ServerObjectMgr.h" />

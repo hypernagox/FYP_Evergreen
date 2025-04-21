@@ -406,7 +406,9 @@ const bool Handle_c2s_ACQUIRE_PARTY_LIST(const NagiocpX::S_ptr<NagiocpX::PacketS
 			}
 		}
 	}
-	if (GetClientSession(pSession_)->IsPartyLeader())
+
+	const auto session = GetClientSession(pSession_);
+	if (session->IsPartyLeader() && session->m_party_quest_system.m_curQuestID == pkt_.target_quest_id())
 	{
 		quest_leaders.emplace_back(pSession_->GetSessionID());
 	}
@@ -450,8 +452,9 @@ const bool Handle_c2s_PARTY_JOIN_REQUEST(const NagiocpX::S_ptr<NagiocpX::PacketS
 	if (!party_leader)return true;
 	if (party_leader->GetClientSession()->IsPartyLeader())
 	{
-		auto pkt = Create_s2c_INVITE_PARTY_QUEST(party_leader->GetObjectID(), party_leader->GetClientSession()->m_party_quest_system.m_curQuestID);
-		pSession_->SendAsync(pkt);
+		
+		auto pkt = Create_s2c_PARTY_JOIN_REQUEST(pSession_->GetSessionID());
+		party_leader->GetClientSession()->SendAsync(pkt);
 	}
 	return true;
 }
