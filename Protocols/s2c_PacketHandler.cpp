@@ -370,6 +370,12 @@ const bool Handle_s2c_PARTY_JOIN_REQUEST_RESULT(const NetHelper::S_ptr<NetHelper
 	return true;
 }
 
+const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_NEW_PLAYER& pkt_)
+{
+	// 내가 파티원 일 때, 다른 파티원 참여 시 그 사실을 알림
+	return true;
+}
+
 const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_)
 {
 	if (pSession_->GetSessionID() == pkt_.out_user_id())
