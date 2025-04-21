@@ -31,6 +31,10 @@
 #include "PlayerQuickSlotGUI.h"
 #include "PlayerInventoryGUI.h"
 #include "PlayerCraftGUI.h"
+#include "PartyListGUI.h"
+#include "LogFloatGUI.h"
+#include "GameGUIFacade.h"
+#include "RequestPopupGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -322,6 +326,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         auto craftComp = g_craftObj->AddComponent<PlayerCraftGUI>();
         scene->AddObject(g_craftObj);
         g_heroComponent->SetPlayerCraftGUI(craftComp);
+
+        auto partyListObj = std::make_shared<SceneObject>();
+        auto partyListComp = partyListObj->AddComponent<PartyListGUI>();
+        scene->AddObject(partyListObj);
+
+        auto logFloatObj = std::make_shared<SceneObject>();
+        auto logFloatComp = logFloatObj->AddComponent<LogFloatGUI>();
+        scene->AddObject(logFloatObj);
+
+        auto requestPopupObj = std::make_shared<SceneObject>();
+        auto requestPopupComp = requestPopupObj->AddComponent<RequestPopupGUI>();
+        scene->AddObject(requestPopupObj);
+
+        INSTANCE(GameGUIFacade)->PartyList = partyListComp;
+        INSTANCE(GameGUIFacade)->LogFloat = logFloatComp;
+        INSTANCE(GameGUIFacade)->RequestPopup = requestPopupComp;
     }
 
     {

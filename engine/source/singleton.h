@@ -2,40 +2,43 @@
 
 #include "pch.h"
 
-#define INSTANCE(T) Singleton<T>::GetInstance()
+#define INSTANCE(T) udsdx::Singleton<T>::GetInstance()
 
-template <typename T> requires std::default_initializable<T>
-class Singleton
+namespace udsdx
 {
-private:
-	static std::unique_ptr<T> instance;
-
-public:
-	static T* GetInstance()
+	template <typename T> requires std::default_initializable<T>
+	class Singleton
 	{
-		if (!HasInstance())
-			CreateInstance<T>();
+	private:
+		static std::unique_ptr<T> instance;
 
-		return instance.get();
-	}
+	public:
+		static T* GetInstance()
+		{
+			if (!HasInstance())
+				CreateInstance<T>();
 
-	template <typename Derived_T = T> requires std::derived_from<Derived_T, T>
-	static T* CreateInstance()
-	{
-		instance = std::make_unique<Derived_T>();
-		return instance.get();
-	}
+			return instance.get();
+		}
 
-	static void ReleaseInstance()
-	{
-		instance.release();
-	}
+		template <typename Derived_T = T> requires std::derived_from<Derived_T, T>
+		static T* CreateInstance()
+		{
+			instance = std::make_unique<Derived_T>();
+			return instance.get();
+		}
 
-	static bool HasInstance()
-	{
-		return static_cast<bool>(instance);
-	}
-};
+		static void ReleaseInstance()
+		{
+			instance.release();
+		}
 
-template <typename T> requires std::default_initializable<T>
-std::unique_ptr<T> Singleton<T>::instance;
+		static bool HasInstance()
+		{
+			return static_cast<bool>(instance);
+		}
+	};
+
+	template <typename T> requires std::default_initializable<T>
+	std::unique_ptr<T> Singleton<T>::instance;
+}

@@ -12,6 +12,20 @@ namespace udsdx
 	class GUIText : public GUIElement
 	{
 	public:
+		enum class Alignment
+		{
+			UpperLeft,
+			UpperCenter,
+			UpperRight,
+			Left,
+			Center,
+			Right,
+			LowerLeft,
+			LowerCenter,
+			LowerRight
+		};
+
+	public:
 		GUIText(const std::shared_ptr<SceneObject>& object);
 
 	public:
@@ -24,8 +38,12 @@ namespace udsdx
 		Font* GetFont() const { return m_font; }
 		void SetFont(Font* value) { m_font = value; }
 
+		Alignment GetAlignment() const { return m_alignment; }
+		void SetAlignment(Alignment value) { m_alignment = value; }
+
 	private:
 		Font* m_font = nullptr;
 		std::wstring m_text;
+		Alignment m_alignment = Alignment::Center;
 	};
 }

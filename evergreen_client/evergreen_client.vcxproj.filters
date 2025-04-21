@@ -210,6 +210,18 @@
     <ClCompile Include="TerrainDetail.cpp">
       <Filter>Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="GameGUIFacade.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="PartyListGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="LogFloatGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestPopupGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -334,6 +346,18 @@
     </ClInclude>
     <ClInclude Include="TerrainDetail.h">
       <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="GameGUIFacade.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="PartyListGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="LogFloatGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestPopupGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
