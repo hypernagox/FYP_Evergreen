@@ -445,6 +445,20 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_REQUEST_RESULT(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_JOIN_REQUEST_RESULT);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_NEW_PLAYER(
+    const uint32_t target_user_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto target_user_id_value = target_user_id;
+    const auto serializeds2c_PARTY_JOIN_NEW_PLAYER = Nagox::Protocol::Creates2c_PARTY_JOIN_NEW_PLAYER(
+        builder
+,        target_user_id_value    );
+    builder.Finish(serializeds2c_PARTY_JOIN_NEW_PLAYER);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_JOIN_NEW_PLAYER);
+}
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_OUT(
     const uint32_t out_user_id,
     const bool is_leader,

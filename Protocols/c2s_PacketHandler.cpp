@@ -459,17 +459,37 @@ const bool Handle_c2s_PARTY_JOIN_REQUEST(const NagiocpX::S_ptr<NagiocpX::PacketS
 const bool Handle_c2s_PARTY_JOIN_REQUEST_RESULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_JOIN_REQUEST_RESULT& pkt_)
 {
 	const auto party_leader = GetSessionEntity(pkt_.target_party_leader_id());
-	if (!party_leader)return true;
-	if (GetClientSession(pSession_)->HasParty())return true;
+	const auto target_member = GetSessionEntity(pkt_.target_user_id());
+	if (!party_leader) {
+		// 파티장이 나간 경우
+		return true;
+	}
+	if (!target_member) {
+		// 지원자가 신청만하고 나가버린경우
+		return true;
+	}
+	const auto party_leader_session = party_leader->GetClientSession();
+	const auto target_member_session = target_member->GetClientSession();
+	if (target_member_session->HasParty()) {
+		// 지원자가 이미 파티에 들어가있는 상태일 경우
+		return true;
+	}
 	if (party_leader->GetClientSession()->IsPartyLeader())
 	{
-		auto pkt = Create_s2c_INVITE_PARTY_RESULT(pkt_.target_party_leader_id(), pSession_->GetSessionID(),pkt_.request_result());
-		pSession_->SendAsync(pkt);
-		// 파티장님이 수락했다면 파티에 넣고 보낸다.
+		auto pkt = Create_s2c_PARTY_JOIN_REQUEST_RESULT(target_member->GetObjectID(), pkt_.request_result());
+
+		// 지원자에게는 어쨋거나 그 결과를 무조건 보낸다.
+		target_member_session->SendAsync(pkt);
+
+		// 파티장님이 수락했다면 파티에 넣고 파티장에게도 해당 사실을 알린다.
 		if (pkt_.request_result())
 		{
-			party_leader->GetClientSession()->AcceptNewPlayer(GetClientSession(pSession_));
-			party_leader->GetClientSession()->SendAsync(pkt);
+			// + 파티장과, 해당 지원자 말고도 다른 녀석에게 신참 왔다를 알리는 것 추가
+			// + 만약 자리가 없다던지 뭔가 문제가 있어서 파티에 넣는 것에 실패했다면 따로 처리 ..
+			if (PARTY_ACCEPT_RESULT::INVALID != party_leader_session->AcceptNewPlayer(GetClientSession(pSession_)))
+			{
+				party_leader_session->SendAsync(std::move(pkt));
+			}
 
 		}
 	}

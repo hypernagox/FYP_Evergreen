@@ -142,6 +142,9 @@ struct c2s_PARTY_JOIN_REQUEST_RESULTBuilder;
 struct s2c_PARTY_JOIN_REQUEST_RESULT;
 struct s2c_PARTY_JOIN_REQUEST_RESULTBuilder;
 
+struct s2c_PARTY_JOIN_NEW_PLAYER;
+struct s2c_PARTY_JOIN_NEW_PLAYERBuilder;
+
 struct c2s_QUEST_START;
 struct c2s_QUEST_STARTBuilder;
 
@@ -2535,6 +2538,50 @@ inline ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST_RESULT> Creates2c_PARTY_JOIN
   s2c_PARTY_JOIN_REQUEST_RESULTBuilder builder_(_fbb);
   builder_.add_target_user_id(target_user_id);
   builder_.add_request_result(request_result);
+  return builder_.Finish();
+}
+
+struct s2c_PARTY_JOIN_NEW_PLAYER FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PARTY_JOIN_NEW_PLAYERBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_USER_ID = 4
+  };
+  uint32_t target_user_id() const {
+    return GetField<uint32_t>(VT_TARGET_USER_ID, 0);
+  }
+  bool mutate_target_user_id(uint32_t _target_user_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_USER_ID, _target_user_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PARTY_JOIN_NEW_PLAYERBuilder {
+  typedef s2c_PARTY_JOIN_NEW_PLAYER Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_user_id(uint32_t target_user_id) {
+    fbb_.AddElement<uint32_t>(s2c_PARTY_JOIN_NEW_PLAYER::VT_TARGET_USER_ID, target_user_id, 0);
+  }
+  explicit s2c_PARTY_JOIN_NEW_PLAYERBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PARTY_JOIN_NEW_PLAYER> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PARTY_JOIN_NEW_PLAYER>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PARTY_JOIN_NEW_PLAYER> Creates2c_PARTY_JOIN_NEW_PLAYER(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_user_id = 0) {
+  s2c_PARTY_JOIN_NEW_PLAYERBuilder builder_(_fbb);
+  builder_.add_target_user_id(target_user_id);
   return builder_.Finish();
 }
 

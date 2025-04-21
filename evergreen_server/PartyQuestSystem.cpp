@@ -83,6 +83,32 @@ void PartyQuestSystem::ResetPartyQuestSystem()
 	}
 }
 
+PARTY_ACCEPT_RESULT PartyQuestSystem::AcceptNewMember(S_ptr<ClientSession> new_member)
+{
+	XVector<S_ptr<ClientSession>> sessions; sessions.reserve(NUM_OF_MAX_PARTY_MEMBER - 1);
+	PARTY_ACCEPT_RESULT res = PARTY_ACCEPT_RESULT::PARTY_IS_FULL;
+	const auto target_user_id = new_member->GetSessionID();
+	{
+		std::lock_guard<std::mutex> lock{ m_partyLock };
+		if (m_started)return PARTY_ACCEPT_RESULT::INVALID;
+		for (int i = 1; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
+		{
+			if (m_member[i]) 
+			{
+				sessions.emplace_back(m_member[i]);
+				continue;
+			}
+			m_member[i].swap(new_member);
+			res = PARTY_ACCEPT_RESULT::ACCEPT_SUCCESS;
+		}
+	}
+	for (const auto& other_player : sessions)
+	{
+		other_player->SendAsync(Create_s2c_PARTY_JOIN_NEW_PLAYER(target_user_id));
+	}
+	return res;
+}
+
 bool PartyQuestSystem::CanMissionStart() const noexcept
 {
 	for (const auto& session : m_member)

@@ -26,13 +26,13 @@ public:
 		if (!party)return nullptr;
 		return party->GetPartyLeader();
 	}
-	bool AcceptNewPlayer(ClientSession* const other) {
-		if (!IsPartyLeader())return false;
-		if (other->HasParty())return false;
+	PARTY_ACCEPT_RESULT AcceptNewPlayer(ClientSession* const other) {
+		if (!IsPartyLeader())return PARTY_ACCEPT_RESULT::INVALID;
+		if (other->HasParty())return PARTY_ACCEPT_RESULT::INVALID;
 		other->m_cur_my_party_system.store(&m_party_quest_system);
 		return m_party_quest_system.AcceptNewMember(other->SharedFromThis<ClientSession>());
 	}
-	bool AcceptNewPlayer(const S_ptr<PacketSession>& session) {
+	PARTY_ACCEPT_RESULT AcceptNewPlayer(const S_ptr<PacketSession>& session) {
 		return AcceptNewPlayer(static_cast<ClientSession*>(session.get()));
 	}
 	bool IsPartyLeader()const noexcept { return m_cur_my_party_system.load() == &m_party_quest_system; }

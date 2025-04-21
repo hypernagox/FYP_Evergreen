@@ -254,6 +254,11 @@ table s2c_PARTY_JOIN_REQUEST_RESULT
     request_result : bool;
 }
 
+table s2c_PARTY_JOIN_NEW_PLAYER
+{
+    target_user_id : uint32;
+}
+
 table c2s_QUEST_START
 {
 }

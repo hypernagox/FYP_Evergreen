@@ -8,7 +8,11 @@ struct PartyQuestInfo {
 	int32_t quest_id;
 };
 
-// TODO: 걍 읽기만 하는건 일단 락 안걸어봄
+enum class PARTY_ACCEPT_RESULT :int8_t {
+	INVALID = -1,
+	PARTY_IS_FULL = 0,
+	ACCEPT_SUCCESS = 1
+};
 
 class PartyQuestSystem
 {
@@ -29,19 +33,7 @@ public:
 	void StartFlag() { m_started = true; }
 	void EndFlag() { m_started = false; }
 private:
-	bool AcceptNewMember(S_ptr<ClientSession> new_member) {
-		{
-			std::lock_guard<std::mutex> lock{ m_partyLock };
-			if (m_started)return false;
-			for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
-			{
-				if (m_member[i])continue;
-				m_member[i].swap(new_member);
-				return true;
-			}
-		}
-		return false;
-	}
+	PARTY_ACCEPT_RESULT AcceptNewMember(S_ptr<ClientSession> new_member);
 	bool CanMissionStart()const noexcept;
 	bool CanMissionEnd()const noexcept;
 	// TODO: 강퇴인지 자발적 퇴장인지 및, 해당 패킷필요함
