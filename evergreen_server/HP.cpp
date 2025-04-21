@@ -5,6 +5,7 @@
 #include "Death.h"
 #include "Cluster.h"
 #include "QuestSystem.h"
+#include "StatusSystem.h"
 
 void HP::PostDoDmg(const int dmg_, NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject) noexcept
 {
@@ -21,15 +22,32 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 	const auto owner = GetOwnerEntityRaw();
 	if (0 >= m_hp)return;
 	if (!owner->IsValid())return;
-	m_hp -= dmg_;
-	if (atkObject->GetSession())
+
 	{
-		atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - dmg_));
+		// TOOD: 공격시 로직
+		//m_hp -= dmg_;
+		if (atkObject->GetSession())
+		{
+			const int origin_hp = m_hp;
+			const int result_dmg = atkObject->GetComp<StatusSystem>()->ApplyAtk(
+				origin_hp,
+				m_hp,
+				owner
+			);
+			std::cout << "데미지 :" << result_dmg << "!!\n";
+			atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), GetCurHP() - result_dmg));
+		}
+		else if (owner->GetSession())
+		{
+			m_hp -= dmg_;
+			owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - dmg_));
+		}
+		else
+		{
+			m_hp -= dmg_;
+		}
 	}
-	else if (owner->GetSession())
-	{
-		owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - dmg_));
-	}
+
 	if (0 < m_hp)return;
 	if (const auto death = owner->GetComp<Death>())
 	{

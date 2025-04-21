@@ -10,6 +10,7 @@
 #include "QuestSystem.h"
 #include "TimerRoutine.h"
 #include "Inventory.h"
+#include "StatusSystem.h"
 
 std::atomic_int cnt = 0;
 static NagoxAtomic::Atomic<int> g_connect_count{ 0 };
@@ -36,7 +37,10 @@ void ClientSession::OnConnected()
 	pOwner->AddComp<QuestSystem>();
 	pOwner->AddComp<NagiocpX::TimerHandler>();
 
-	pOwner->AddComp<Inventory>();
+	const auto inv = pOwner->AddComp<Inventory>();
+
+	pOwner->AddComp<StatusSystem>()->m_equipSystem = inv->GetEquipmentSystem();
+
 	std::cout << ++g_connect_count << '\n';
 	NagiocpX::PrintKoreaRealTime("Connect !", GetAddress().GetIpAddress());
 }

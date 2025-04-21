@@ -119,6 +119,12 @@
     <Filter Include="ClientSession\QuestRoom">
       <UniqueIdentifier>{c16688f1-0485-42d0-8e0e-dd6a15a9243f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BattleComponent\Status\Stat">
+      <UniqueIdentifier>{d215fc51-0afb-4bfd-8878-49db5fe5ccb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EquipmentSystem">
+      <UniqueIdentifier>{18f65908-b3c1-443a-bfba-70c2bb02a9ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -204,6 +210,12 @@
     </ClCompile>
     <ClCompile Include="PartyQuestSystem.cpp">
       <Filter>ClientSession\PartryQuestSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="StatusSystem.cpp">
+      <Filter>BattleComponent\Status\Stat</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentSystem.cpp">
+      <Filter>EquipmentSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -299,6 +311,12 @@
     </ClInclude>
     <ClInclude Include="PartyQuestSystem.h">
       <Filter>ClientSession\PartryQuestSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="StatusSystem.h">
+      <Filter>BattleComponent\Status\Stat</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentSystem.h">
+      <Filter>EquipmentSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
