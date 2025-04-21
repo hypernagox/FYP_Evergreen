@@ -174,15 +174,17 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 						{
 							auto pkt = Create_s2c_INVITE_PARTY_QUEST(pOwner->GetObjectID(), pOwner->GetClientSession()->m_party_quest_system.m_curQuestID
 							);
-							if (!owner->GetClientSession()->HasParty())
+							if (pOwner != owner.get() && !owner->GetClientSession()->HasParty())
 							{
-								pOwner->GetClientSession()->AcceptNewPlayer(
-									session_ptr->GetClientSession());
+								///pOwner->GetClientSession()->AcceptNewPlayer(
+								///	session_ptr->GetClientSession());
+								 owner->GetClientSession()->SendAsync(pkt);
+								 break;
 							}
 							//pOwner->GetClientSession()->SendAsync(pkt);
-							session_ptr->GetClientSession()->SendAsync(pkt);
+							//session_ptr->GetClientSession()->SendAsync(pkt);
 						}
-						break;
+						
 					}
 				}
 

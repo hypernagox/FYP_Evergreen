@@ -93,7 +93,7 @@ PARTY_ACCEPT_RESULT PartyQuestSystem::AcceptNewMember(S_ptr<ClientSession> new_m
 	{
 		std::lock_guard<std::mutex> lock{ m_partyLock };
 		if (m_started)return PARTY_ACCEPT_RESULT::INVALID;
-		for (int i = 1; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
+		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
 		{
 			if (m_member[i]) 
 			{
@@ -168,7 +168,7 @@ S_ptr<ClientSession> PartyQuestSystem::FindMember(const uint32_t obj_id)
 
 void PartyQuestSystem::OutMember(const uint32_t obj_id)
 {
-	XVector<S_ptr<ClientSession>> sessions; sessions.reserve(NUM_OF_MAX_PARTY_MEMBER - 1);
+	XVector<S_ptr<ClientSession>> sessions; sessions.reserve(NUM_OF_MAX_PARTY_MEMBER);
 	bool is_leader = false;
 	{
 		std::lock_guard<std::mutex> lock{ m_partyLock };
