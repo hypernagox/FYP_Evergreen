@@ -418,7 +418,6 @@ const bool Handle_s2c_PARTY_JOIN_REQUEST_RESULT(const NetHelper::S_ptr<NetHelper
 {
 	// TODO: 내가 파티장이라면, 이전 파티 가입 요청에 대해서 승인 했을 경우 그 사람을 알려주기 위해 패킷이온다
 	// 내가 파티 지원자라면 파티장님의 수락 여부가 온다.
-
 	std::wstring name = std::to_wstring(pkt_.target_user_id());
 	// 요청한 유저일 경우
 	if (pSession_->GetSessionID() == pkt_.target_user_id())
@@ -442,43 +441,52 @@ const bool Handle_s2c_PARTY_JOIN_REQUEST_RESULT(const NetHelper::S_ptr<NetHelper
 
 const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_NEW_PLAYER& pkt_)
 {
+	std::wstring name = std::to_wstring(pkt_.target_user_id());
+	INSTANCE(GameGUIFacade)->LogFloat->AddText(L"ID " + name + L" 님이 파티에 참여하였습니다.");
 	return true;
 }
 
 const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_)
 {
-	if (pSession_->GetSessionID() == pkt_.out_user_id())
+	const bool is_my_id = pSession_->GetSessionID() == pkt_.out_user_id();
+	std::wstring output_msg = {};
+	if (pkt_.is_leader())
 	{
-		std::cout << "파티 탈퇴함\n";
+		if (is_my_id) // 파티장인데 나일경우
+		{
+			output_msg = L"파티를 해체하였습니다.";
+		}
+		else // 파티장이 쫑낸경우
+		{
+			output_msg = L"파티장이 파티를 탈퇴하여 파티가 해체되었습니다.";
+		}
+	}
+	else if (is_my_id)
+	{
+		// 내가 파티장이 아니고 걍 자발적으로 나온경우
+		output_msg = L"파티를 탈퇴하였습니다.";
 	}
 	else
 	{
-		if (pkt_.is_leader())
-		{
-			std::cout << "파티 폭파\n";
-		}
-		else
-		{
-			std::cout << "ID " << pkt_.out_user_id() << " 님이 파티 나감\n";
-		}
+		output_msg = L"ID " + std::to_wstring(pkt_.out_user_id()) + L" 님이 파티를 탈퇴하였습니다.";
 	}
-
-	// 나간 유저일 경우
-	if (pSession_->GetSessionID() == pkt_.out_user_id())
-		INSTANCE(GameGUIFacade)->LogFloat->AddText(L"파티를 탈퇴하였습니다.");
-	// 파티장이 나간 경우
-	else if (pkt_.is_leader())
-		INSTANCE(GameGUIFacade)->LogFloat->AddText(L"파티장이 파티를 탈퇴하여 파티가 해체되었습니다.");
-	// 나머지의 경우
-	else
-		INSTANCE(GameGUIFacade)->LogFloat->AddText(L"ID " + std::to_wstring(pkt_.out_user_id()) + L" 님이 파티를 탈퇴하였습니다.");
-
+	if(!output_msg.empty())
+		INSTANCE(GameGUIFacade)->LogFloat->AddText(output_msg);
 	return true;
 }
 
 const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_CLEAR& pkt_)
 {
 	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
+	return true;
+}
+
+const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION& pkt_)
+{
+	for (const auto other_members : *pkt_.party_member_ids())
+	{
+		std::cout << "파티원들 ID: " << other_members << '\n';
+	}
 	return true;
 }
 

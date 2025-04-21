@@ -36,10 +36,9 @@ private:
 	PARTY_ACCEPT_RESULT AcceptNewMember(S_ptr<ClientSession> new_member);
 	bool CanMissionStart()const noexcept;
 	bool CanMissionEnd()const noexcept;
-	// TODO: 강퇴인지 자발적 퇴장인지 및, 해당 패킷필요함
 public:
 	S_ptr<ClientSession> FindMember(const uint32_t obj_id);
-	void KickMember(const uint32_t obj_id);
+	void OutMember(const uint32_t obj_id);
 public:
 	// -1은 퀘스트가 없는 상태
 	std::mutex m_partyLock;

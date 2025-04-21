@@ -160,6 +160,9 @@ struct s2c_PARTY_OUTBuilder;
 struct s2c_PARTY_QUEST_CLEAR;
 struct s2c_PARTY_QUEST_CLEARBuilder;
 
+struct s2c_PARTY_MEMBERS_INFORMATION;
+struct s2c_PARTY_MEMBERS_INFORMATIONBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -2771,6 +2774,60 @@ inline ::flatbuffers::Offset<s2c_PARTY_QUEST_CLEAR> Creates2c_PARTY_QUEST_CLEAR(
   s2c_PARTY_QUEST_CLEARBuilder builder_(_fbb);
   builder_.add_party_quest_id(party_quest_id);
   return builder_.Finish();
+}
+
+struct s2c_PARTY_MEMBERS_INFORMATION FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PARTY_MEMBERS_INFORMATIONBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_PARTY_MEMBER_IDS = 4
+  };
+  const ::flatbuffers::Vector<uint32_t> *party_member_ids() const {
+    return GetPointer<const ::flatbuffers::Vector<uint32_t> *>(VT_PARTY_MEMBER_IDS);
+  }
+  ::flatbuffers::Vector<uint32_t> *mutable_party_member_ids() {
+    return GetPointer<::flatbuffers::Vector<uint32_t> *>(VT_PARTY_MEMBER_IDS);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_PARTY_MEMBER_IDS) &&
+           verifier.VerifyVector(party_member_ids()) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PARTY_MEMBERS_INFORMATIONBuilder {
+  typedef s2c_PARTY_MEMBERS_INFORMATION Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_party_member_ids(::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> party_member_ids) {
+    fbb_.AddOffset(s2c_PARTY_MEMBERS_INFORMATION::VT_PARTY_MEMBER_IDS, party_member_ids);
+  }
+  explicit s2c_PARTY_MEMBERS_INFORMATIONBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PARTY_MEMBERS_INFORMATION> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PARTY_MEMBERS_INFORMATION>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PARTY_MEMBERS_INFORMATION> Creates2c_PARTY_MEMBERS_INFORMATION(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> party_member_ids = 0) {
+  s2c_PARTY_MEMBERS_INFORMATIONBuilder builder_(_fbb);
+  builder_.add_party_member_ids(party_member_ids);
+  return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_PARTY_MEMBERS_INFORMATION> Creates2c_PARTY_MEMBERS_INFORMATIONDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const std::vector<uint32_t> *party_member_ids = nullptr) {
+  auto party_member_ids__ = party_member_ids ? _fbb.CreateVector<uint32_t>(*party_member_ids) : 0;
+  return Nagox::Protocol::Creates2c_PARTY_MEMBERS_INFORMATION(
+      _fbb,
+      party_member_ids__);
 }
 
 }  // namespace Protocol

@@ -18,8 +18,21 @@ ClusterPredicate::~ClusterPredicate()
 
 bool ClusterPredicate::Filter4Session(const ContentsEntity* const a, const ContentsEntity* const b) const noexcept
 {
-	if (!a->IsValid() || !b->IsValid())return false;
-	// if (a->IsPendingClusterEntry() || b->IsPendingClusterEntry())return false;// 이거는 상황보고 다시 해야할수도있음 일단 패킷핸들러에서만 체크해봄
+	if (!a->IsValid() || !b->IsValid()) 
+	{
+		//std::cout << "Invalid at\n";
+		//std::cout << "A: " << a->GetObjectID() << std::endl;
+		//std::cout << "B: " << b->GetObjectID() << std::endl;
+		return false;
+	}
+	if (a->IsPendingClusterEntry() || b->IsPendingClusterEntry())
+	{
+		//std::cout << "Pending at\n";
+		//std::cout << "A: " << a->GetObjectID() << std::endl;
+		//std::cout << "B: " << b->GetObjectID() << std::endl;
+		return false;
+	}
+	// 이거는 상황보고 다시 해야할수도있음 일단 패킷핸들러에서만 체크해봄
 
 	const auto a_pos = a->GetComp<PositionComponent>()->pos;
 	const auto b_pos = b->GetComp<PositionComponent>()->pos;
@@ -27,8 +40,14 @@ bool ClusterPredicate::Filter4Session(const ContentsEntity* const a, const Conte
 	//const int dx = (int)(a_pos.x - b_pos.x);
 	//const int dy = (int)(a_pos.y - b_pos.y);
 	//const int dz = (int)(a_pos.z - b_pos.z);
-	//return true;
-	return CommonMath::IsInDistanceDX(a_pos, b_pos, 50);
+	//return true;4
+	const auto res = CommonMath::IsInDistanceDX(a_pos, b_pos, 50);
+	if (!res)
+	{
+		std::cout << "TTTTTTTTTTTTTTTTTTTTTTTTt\n";
+		std::cout << CommonMath::GetDistPowDX(a_pos, b_pos) << std::endl;
+	}
+	return res;
 	//return ((50 * 50) >= (dx * dx + dy * dy + dz * dz));
 }
 

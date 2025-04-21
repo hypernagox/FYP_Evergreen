@@ -282,3 +282,8 @@ table s2c_PARTY_QUEST_CLEAR
 {
     party_quest_id : int32;
 }
+
+table s2c_PARTY_MEMBERS_INFORMATION
+{
+     party_member_ids : [uint32];
+}

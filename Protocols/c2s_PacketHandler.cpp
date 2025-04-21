@@ -172,14 +172,14 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 						std::cout << "Player Hit\n";
 						//if (!owner->GetClientSession()->HasParty())
 						{
-							auto pkt = Create_s2c_INVITE_PARTY_RESULT(pOwner->GetObjectID()
-								, owner->GetObjectID(), !owner->GetClientSession()->HasParty());
+							auto pkt = Create_s2c_INVITE_PARTY_QUEST(pOwner->GetObjectID(), pOwner->GetClientSession()->m_party_quest_system.m_curQuestID
+							);
 							if (!owner->GetClientSession()->HasParty())
 							{
 								pOwner->GetClientSession()->AcceptNewPlayer(
 									session_ptr->GetClientSession());
 							}
-							pOwner->GetClientSession()->SendAsync(pkt);
+							//pOwner->GetClientSession()->SendAsync(pkt);
 							session_ptr->GetClientSession()->SendAsync(pkt);
 						}
 						break;
@@ -560,20 +560,21 @@ const bool Handle_c2s_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 		std::cout << "run \n";
 		return true;
 	}
-	auto pkt = Create_s2c_PARTY_OUT(pSession_->GetSessionID(), session->IsPartyLeader());
-	session->SendAsync(pkt);
-	if (session->IsPartyLeader())
+	if (const auto p = session->GetCurPartySystem())
 	{
-		session->m_party_quest_system.ResetPartyQuestSystem();
+		p->OutMember(session->GetSessionID());
 	}
-	else
-	{
-		if (const auto p = session->GetCurPartySystem())
-		{
-			p->GetPartyLeader()->SendAsync(pkt);
-			p->KickMember(session->GetSessionID());
-		}
-	}
+	//if (session->IsPartyLeader())
+	//{
+	//	session->m_party_quest_system.ResetPartyQuestSystem();
+	//}
+	//else
+	//{
+	//	if (const auto p = session->GetCurPartySystem())
+	//	{
+	//		p->OutMember(session->GetSessionID());
+	//	}
+	//}
 	return true;
 }
 

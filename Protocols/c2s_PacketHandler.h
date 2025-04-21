@@ -58,6 +58,7 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_PARTY_JOIN_NEW_PLAYER = 1023,
     s2c_PARTY_OUT = 1024,
     s2c_PARTY_QUEST_CLEAR = 1025,
+    s2c_PARTY_MEMBERS_INFORMATION = 1026,
 };
 
 class NagiocpX::PacketSession;

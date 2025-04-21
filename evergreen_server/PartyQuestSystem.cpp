@@ -86,6 +86,8 @@ void PartyQuestSystem::ResetPartyQuestSystem()
 PARTY_ACCEPT_RESULT PartyQuestSystem::AcceptNewMember(S_ptr<ClientSession> new_member)
 {
 	XVector<S_ptr<ClientSession>> sessions; sessions.reserve(NUM_OF_MAX_PARTY_MEMBER - 1);
+	XVector<uint32_t> other_member_ids; sessions.reserve(NUM_OF_MAX_PARTY_MEMBER - 1);
+	const auto new_mem = new_member;
 	PARTY_ACCEPT_RESULT res = PARTY_ACCEPT_RESULT::PARTY_IS_FULL;
 	const auto target_user_id = new_member->GetSessionID();
 	{
@@ -102,9 +104,14 @@ PARTY_ACCEPT_RESULT PartyQuestSystem::AcceptNewMember(S_ptr<ClientSession> new_m
 			res = PARTY_ACCEPT_RESULT::ACCEPT_SUCCESS;
 		}
 	}
-	for (const auto& other_player : sessions)
+	if (!sessions.empty())
 	{
-		other_player->SendAsync(Create_s2c_PARTY_JOIN_NEW_PLAYER(target_user_id));
+		for (const auto& other_player : sessions)
+		{
+			other_player->SendAsync(Create_s2c_PARTY_JOIN_NEW_PLAYER(target_user_id));
+			other_member_ids.emplace_back(other_player->GetSessionID());
+		}
+		new_mem->SendAsync(Create_s2c_PARTY_MEMBERS_INFORMATION(std::move(other_member_ids)));
 	}
 	return res;
 }
@@ -159,17 +166,37 @@ S_ptr<ClientSession> PartyQuestSystem::FindMember(const uint32_t obj_id)
 	return {};
 }
 
-void PartyQuestSystem::KickMember(const uint32_t obj_id)
+void PartyQuestSystem::OutMember(const uint32_t obj_id)
 {
-	std::lock_guard<std::mutex> lock{ m_partyLock };
-	for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
+	XVector<S_ptr<ClientSession>> sessions; sessions.reserve(NUM_OF_MAX_PARTY_MEMBER - 1);
+	bool is_leader = false;
 	{
-		if (!m_member[i])continue;
-		if (m_member[i]->GetSessionID() == obj_id)
+		std::lock_guard<std::mutex> lock{ m_partyLock };
+		if (m_started)return;
+		if (m_runFlag)return;	
+		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
 		{
-			m_member[i]->m_cur_my_party_system.store_relaxed(nullptr);
-			m_member[i].reset();
-			return;
+			if (!m_member[i])continue;
+			if (m_member[i]->GetSessionID() == obj_id)
+			{
+				if (0 == i)is_leader = true;
+				m_member[i]->m_cur_my_party_system.store_relaxed(nullptr);
+				sessions.emplace_back(m_member[i]);
+				m_member[i].reset();
+			}
+			else
+			{
+				sessions.emplace_back(m_member[i]);
+			}
 		}
+	}
+	auto pkt = Create_s2c_PARTY_OUT(obj_id, is_leader);
+	if (is_leader)
+	{
+		ResetPartyQuestSystem();
+	}
+	for (const auto& remain_player : sessions)
+	{
+		remain_player->SendAsync(pkt);
 	}
 }

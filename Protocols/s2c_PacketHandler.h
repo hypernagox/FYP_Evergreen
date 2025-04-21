@@ -34,6 +34,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_PARTY_JOIN_NEW_PLAYER = 1023,
     s2c_PARTY_OUT = 1024,
     s2c_PARTY_QUEST_CLEAR = 1025,
+    s2c_PARTY_MEMBERS_INFORMATION = 1026,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -93,6 +94,7 @@ const bool Handle_s2c_PARTY_JOIN_REQUEST_RESULT(const NetHelper::S_ptr<NetHelper
 const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_NEW_PLAYER& pkt_);
 const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_);
 const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_CLEAR& pkt_);
+const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION& pkt_);
 
 class s2c_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const BYTE* const, const int32_t);
@@ -125,6 +127,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_JOIN_NEW_PLAYER, Nagox::Protocol::s2c_PARTY_JOIN_NEW_PLAYER, Handle_s2c_PARTY_JOIN_NEW_PLAYER>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_OUT, Nagox::Protocol::s2c_PARTY_OUT, Handle_s2c_PARTY_OUT>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_QUEST_CLEAR, Nagox::Protocol::s2c_PARTY_QUEST_CLEAR, Handle_s2c_PARTY_QUEST_CLEAR>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_MEMBERS_INFORMATION, Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION, Handle_s2c_PARTY_MEMBERS_INFORMATION>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

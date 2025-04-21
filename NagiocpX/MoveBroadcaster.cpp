@@ -144,7 +144,7 @@ namespace NagiocpX
 		auto& view_list_session = m_view_list_session.GetItemListRef();
 		for (auto iter = view_list_session.begin(); iter != view_list_session.end();)
 		{
-			const auto& id_ptr = *iter;
+			const auto id_ptr = *iter;
 
 			if (!new_view_list_session.TryEraseItem(id_ptr))
 			{
