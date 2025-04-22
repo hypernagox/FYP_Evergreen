@@ -322,11 +322,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		// TODO: 퀘 클리어 판정이 아직 없어서 클라의 중단 요청
 		Send(Create_c2s_QUEST_END());
 	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::L))
-	{
-		// TODO: 파티 리셋, 또는 탈퇴 패킷, 다만 현재 파퀘 진행중이라면 여기서도 좀 검증 필요
-		Send(Create_c2s_PARTY_OUT());
-	}
 
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::D1))
 		UseQuickSlotItem(0);

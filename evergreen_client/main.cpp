@@ -35,6 +35,7 @@
 #include "LogFloatGUI.h"
 #include "GameGUIFacade.h"
 #include "RequestPopupGUI.h"
+#include "PartyStatusGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -339,9 +340,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         auto requestPopupComp = requestPopupObj->AddComponent<RequestPopupGUI>();
         scene->AddObject(requestPopupObj);
 
+        auto partyStatusObj = std::make_shared<SceneObject>();
+        auto partyStatusComp = partyStatusObj->AddComponent<PartyStatusGUI>();
+        scene->AddObject(partyStatusObj);
+
         INSTANCE(GameGUIFacade)->PartyList = partyListComp;
         INSTANCE(GameGUIFacade)->LogFloat = logFloatComp;
         INSTANCE(GameGUIFacade)->RequestPopup = requestPopupComp;
+        INSTANCE(GameGUIFacade)->PartyStatus = partyStatusComp;
     }
 
     {

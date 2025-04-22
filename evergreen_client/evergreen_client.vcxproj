@@ -434,6 +434,7 @@
     <ClCompile Include="MovePacketSender.cpp" />
     <ClCompile Include="ObjectIdentifier.cpp" />
     <ClCompile Include="PartyListGUI.cpp" />
+    <ClCompile Include="PartyStatusGUI.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">Create</PrecompiledHeader>
@@ -498,6 +499,7 @@
     <ClInclude Include="MovePacketSender.h" />
     <ClInclude Include="ObjectIdentifier.h" />
     <ClInclude Include="PartyListGUI.h" />
+    <ClInclude Include="PartyStatusGUI.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerCraftGUI.h" />
     <ClInclude Include="PlayerInventoryGUI.h" />

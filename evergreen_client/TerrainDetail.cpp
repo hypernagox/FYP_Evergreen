@@ -46,7 +46,7 @@ TerrainDetail::TerrainDetail(HeightMap* heightMap, std::wstring_view filename, L
 		CloseHandle(file);
 	}
 
-	const int sampleCount = (1 << 24) / (segmentation * segmentation);
+	const int sampleCount = (1 << 22) / (segmentation * segmentation);
 	std::vector<udsdx::Vector2> positions;
 	positions.reserve(sampleCount);
 	for (int i = 0; i < sampleCount; i++)

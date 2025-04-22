@@ -18,6 +18,7 @@
 #include "PartyListGUI.h"
 #include "LogFloatGUI.h"
 #include "RequestPopupGUI.h"
+#include "PartyStatusGUI.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -312,6 +313,11 @@ const bool Handle_s2c_REGISTER_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::Pac
 {
 	// 클라이언트의 파티퀘스트 생성 또는 파티는 있는데 대상 퀘스트를 바꾸는 시도에 대한 답변
 	std::cout << "현재 파티퀘스트 ID: " << pkt_.quest_id() << std::endl;
+
+	std::vector<uint32_t> partyMemberIDs;
+	partyMemberIDs.emplace_back(pSession_->GetSessionID());
+	INSTANCE(GameGUIFacade)->PartyStatus->InitializeContents(partyMemberIDs);
+
 	return true;
 }
 
@@ -443,6 +449,7 @@ const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NetHelper::S_ptr<NetHelper::Pa
 {
 	std::wstring name = std::to_wstring(pkt_.target_user_id());
 	INSTANCE(GameGUIFacade)->LogFloat->AddText(L"ID " + name + L" 님이 파티에 참여하였습니다.");
+	INSTANCE(GameGUIFacade)->PartyStatus->AddPartyMember(pkt_.target_user_id());
 	return true;
 }
 
@@ -450,6 +457,7 @@ const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>
 {
 	const bool is_my_id = pSession_->GetSessionID() == pkt_.out_user_id();
 	std::wstring output_msg = {};
+	auto partyStatusGUI = INSTANCE(GameGUIFacade)->PartyStatus;
 	if (pkt_.is_leader())
 	{
 		if (is_my_id) // 파티장인데 나일경우
@@ -460,15 +468,18 @@ const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>
 		{
 			output_msg = L"파티장이 파티를 탈퇴하여 파티가 해체되었습니다.";
 		}
+		partyStatusGUI->DisablePartyPanel();
 	}
 	else if (is_my_id)
 	{
 		// 내가 파티장이 아니고 걍 자발적으로 나온경우
 		output_msg = L"파티를 탈퇴하였습니다.";
+		partyStatusGUI->DisablePartyPanel();
 	}
 	else
 	{
 		output_msg = L"ID " + std::to_wstring(pkt_.out_user_id()) + L" 님이 파티를 탈퇴하였습니다.";
+		partyStatusGUI->RemovePartyMember(pkt_.out_user_id());
 	}
 	if(!output_msg.empty())
 		INSTANCE(GameGUIFacade)->LogFloat->AddText(output_msg);
@@ -487,6 +498,10 @@ const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NetHelper::S_ptr<NetHelper
 	{
 		std::cout << "파티원들 ID: " << other_members << '\n';
 	}
+
+	std::vector<uint32_t> partyMemberIDs(pkt_.party_member_ids()->cbegin(), pkt_.party_member_ids()->cend());
+	partyMemberIDs.emplace_back(pSession_->GetSessionID());
+	INSTANCE(GameGUIFacade)->PartyStatus->InitializeContents(partyMemberIDs);
 	return true;
 }
 
