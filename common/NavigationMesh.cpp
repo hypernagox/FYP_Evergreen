@@ -362,4 +362,62 @@ namespace Common
 		}
 		return 1;
 	}
+
+	thread_local std::vector<DirectX::SimpleMath::Vector3> path_result = {};
+
+	const std::vector<DirectX::SimpleMath::Vector3>& NavigationMesh::GetPathVertices(
+		const DirectX::SimpleMath::Vector3& start,
+		const DirectX::SimpleMath::Vector3& end,
+		const int segmentation
+	)
+	{
+		constexpr const int MAX_PATH_COUNT = 256;
+		extern thread_local std::vector<DirectX::SimpleMath::Vector3> path_result;
+		path_result.clear();
+
+		const dtNavMeshQuery* const navQuery = GetNavMeshQuery();
+		const dtQueryFilter& filter = *m_filter;
+		constexpr const float EXTENTS[3] = { 2.0f, 1000.0f, 2.0f };
+
+		const float startPos[3] = { start.x, start.y, -start.z };
+		const float endPos[3] = { end.x, end.y, -end.z };
+
+		dtPolyRef startRef, endRef;
+		float closestStart[3], closestEnd[3];
+
+		if (dtStatusFailed(navQuery->findNearestPoly(startPos, EXTENTS, &filter, &startRef, closestStart)))
+			return path_result;
+
+		if (dtStatusFailed(navQuery->findNearestPoly(endPos, EXTENTS, &filter, &endRef, closestEnd)))
+			return path_result;
+
+		dtPolyRef path[MAX_PATH_COUNT];
+		int pathCount = 0;
+
+		if (dtStatusFailed(navQuery->findPath(startRef, endRef, closestStart, closestEnd, &filter, path, &pathCount, MAX_PATH_COUNT)))
+			return path_result;
+
+		float straightPath[MAX_PATH_COUNT * 3];
+		unsigned char flags[MAX_PATH_COUNT];
+		dtPolyRef polys[MAX_PATH_COUNT];
+		int straightPathCount = 0;
+
+		if (dtStatusFailed(navQuery->findStraightPath(closestStart, closestEnd, path, pathCount,
+			straightPath, flags, polys, &straightPathCount, 256)))
+			return path_result;
+
+		for (int i = 0; i < straightPathCount - 1; ++i)
+		{
+			const Vector3& p1 = reinterpret_cast<const Vector3&>(straightPath[i * 3]);
+			const Vector3& p2 = reinterpret_cast<const Vector3&>(straightPath[(i + 1) * 3]);
+			const auto diff = (p2 - p1) / (float)segmentation;
+			for (int j = 0; j <= segmentation; ++j)
+			{
+				const auto v = p1 + diff * (float)j;
+				path_result.emplace_back(v.x, v.y, -v.z);
+			}
+		}
+
+		return path_result;
+	}
 }

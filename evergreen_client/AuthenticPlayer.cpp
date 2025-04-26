@@ -10,6 +10,8 @@
 #include "PlayerQuickSlotGUI.h"
 #include "PlayerInventoryGUI.h"
 #include "PlayerCraftGUI.h"
+#include "Navigator.h"
+#include "GizmoSphereRenderer.h"
 
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
@@ -321,6 +323,26 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	{
 		// TODO: 퀘 클리어 판정이 아직 없어서 클라의 중단 요청
 		Send(Create_c2s_QUEST_END());
+	}
+
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
+	{
+		const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();
+		const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
+		{
+			const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetPathVertices(pos, end);
+			for (int i = 0; i < v.size(); ++i) {
+				const auto vv = v[i];
+				auto s = std::make_shared<SceneObject>();
+
+				auto gizmoRenderer = s->AddComponent<GizmoSphereRenderer>();
+				gizmoRenderer->SetRadius(1.0f);
+
+				extern std::shared_ptr<Scene> scene;
+				s->GetTransform()->SetLocalPosition(vv);
+				scene->AddObject(s);
+			}
+		}
 	}
 
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::D1))

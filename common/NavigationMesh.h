@@ -16,6 +16,11 @@ namespace Common
 	public:
 		void GetRandomPos(Vector3& out_pos, NaviCell& outCell)const noexcept;
 	public:
+		const std::vector<DirectX::SimpleMath::Vector3>& GetPathVertices(
+			const DirectX::SimpleMath::Vector3& start,
+			const DirectX::SimpleMath::Vector3& end,
+			const int segmentation = 10
+		);
 		int findRandomPointAroundCircle(float* pos, float radius, float* outPos);
 		static dtNavMesh* LoadNavMesh(const std::wstring_view path);
 		static void SaveNavMesh(const std::wstring_view savePath, const dtNavMesh* mesh);
@@ -51,6 +56,5 @@ namespace Common
 		dtQueryFilter* m_filter;
 		dtCrowd* m_crowd = nullptr;
 		static constexpr float m_polyPickExt[3]{ 2,4,2 };
-
 	};
 }
