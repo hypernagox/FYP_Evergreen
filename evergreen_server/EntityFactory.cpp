@@ -106,4 +106,10 @@ namespace NagiocpX
 		item->SetItemStack(b_.item_stack_size);
 		return entity;
 	}
+	S_ptr<ContentsEntity> EntityFactory::CreateHarvest(const EntityBuilder& b) noexcept
+	{
+		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
+		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
+		return entity;
+	}
 }

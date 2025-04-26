@@ -21,33 +21,36 @@ enum GROUP_TYPE : uint8_t {
   GROUP_TYPE_MONSTER = 1,
   GROUP_TYPE_NPC = 2,
   GROUP_TYPE_DROP_ITEM = 3,
+  GROUP_TYPE_HARVEST = 4,
   GROUP_TYPE_MIN = GROUP_TYPE_PLAYER,
-  GROUP_TYPE_MAX = GROUP_TYPE_DROP_ITEM
+  GROUP_TYPE_MAX = GROUP_TYPE_HARVEST
 };
 
-inline const GROUP_TYPE (&EnumValuesGROUP_TYPE())[4] {
+inline const GROUP_TYPE (&EnumValuesGROUP_TYPE())[5] {
   static const GROUP_TYPE values[] = {
     GROUP_TYPE_PLAYER,
     GROUP_TYPE_MONSTER,
     GROUP_TYPE_NPC,
-    GROUP_TYPE_DROP_ITEM
+    GROUP_TYPE_DROP_ITEM,
+    GROUP_TYPE_HARVEST
   };
   return values;
 }
 
 inline const char * const *EnumNamesGROUP_TYPE() {
-  static const char * const names[5] = {
+  static const char * const names[6] = {
     "PLAYER",
     "MONSTER",
     "NPC",
     "DROP_ITEM",
+    "HARVEST",
     nullptr
   };
   return names;
 }
 
 inline const char *EnumNameGROUP_TYPE(GROUP_TYPE e) {
-  if (::flatbuffers::IsOutRange(e, GROUP_TYPE_PLAYER, GROUP_TYPE_DROP_ITEM)) return "";
+  if (::flatbuffers::IsOutRange(e, GROUP_TYPE_PLAYER, GROUP_TYPE_HARVEST)) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesGROUP_TYPE()[index];
 }

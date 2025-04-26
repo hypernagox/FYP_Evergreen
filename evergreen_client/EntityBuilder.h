@@ -48,6 +48,11 @@ private:
 	static std::shared_ptr<udsdx::SceneObject> Create_DropItem(EntityBuilderBase* builder);
 #pragma endregion
 
+#pragma region HARVEST
+	// 드랍아이템을 여기에 추가
+	static std::shared_ptr<udsdx::SceneObject> Create_Harvest(EntityBuilderBase* builder);
+#pragma endregion
+
 #pragma endregion
 
 
@@ -59,30 +64,43 @@ private:
 
 		// 실수방지를 위해 한번 참조로 받고 시작하였음
 #pragma region PLAEYER
-		auto& player_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_PLAYER];
+		{
+			auto& player_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_PLAYER];
 
-		player_func_table[PLAYER_TYPE_INFO::WARRIOR] = Create_Warrior;
-
+			player_func_table[PLAYER_TYPE_INFO::WARRIOR] = Create_Warrior;
+		}
 #pragma endregion
 
 #pragma region MONSTER
-		auto& monster_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER];
+		{
+			auto& monster_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER];
 
-		monster_func_table[MONSTER_TYPE_INFO::FOX] = Create_Monster;
-
-
+			monster_func_table[MONSTER_TYPE_INFO::FOX] = Create_Monster;
+		}
 #pragma endregion
 
 #pragma region NPC
-		auto& npc_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_NPC];
+		{
+			auto& npc_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_NPC];
 
-		npc_func_table[0] = Create_NPC;
+			npc_func_table[0] = Create_NPC;
+		}
 #pragma endregion
 
 #pragma region DROP_ITEM
-		auto& drop_item_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_DROP_ITEM];
+		{
+			auto& drop_item_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_DROP_ITEM];
 
-		drop_item_func_table[0] = Create_DropItem;
+			drop_item_func_table[0] = Create_DropItem;
+		}
+#pragma endregion
+
+#pragma region HARVEST
+		{
+			auto& harvest_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_HARVEST];
+
+			harvest_table[0] = Create_Harvest;
+		}
 #pragma endregion
 
 #pragma endregion

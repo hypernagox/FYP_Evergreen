@@ -125,6 +125,9 @@
     <Filter Include="EquipmentSystem">
       <UniqueIdentifier>{18f65908-b3c1-443a-bfba-70c2bb02a9ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Harvest">
+      <UniqueIdentifier>{bea68d7c-676d-4a0c-b10d-3d3c47579dd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -216,6 +219,9 @@
     </ClCompile>
     <ClCompile Include="EquipmentSystem.cpp">
       <Filter>EquipmentSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="HarvestSystem.cpp">
+      <Filter>Harvest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -317,6 +323,9 @@
     </ClInclude>
     <ClInclude Include="EquipmentSystem.h">
       <Filter>EquipmentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="HarvestSystem.h">
+      <Filter>Harvest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

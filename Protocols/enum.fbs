@@ -5,5 +5,7 @@ enum GROUP_TYPE: ubyte
     PLAYER = 0,
     MONSTER = 1,
     NPC = 2,
-    DROP_ITEM = 3
+    DROP_ITEM = 3,
+
+    HARVEST = 4
 }

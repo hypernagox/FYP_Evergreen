@@ -11,6 +11,7 @@
 #include "MoveBroadcaster.h"
 #include "DataRegistry.h"
 #include "QuestRoom.h"
+#include "HarvestSystem.h"
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 100001;
@@ -40,7 +41,19 @@ public:
 		//	const auto m = EntityFactory::CreateRangeMonster(b);
 		//	Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
 		//}
-		
+		const auto& h = HarvestSystem::GetHarvestPos();
+		for (const auto& pos : h)
+		{
+			EntityBuilder b;
+			b.group_type = Nagox::Enum::GROUP_TYPE_HARVEST;
+			b.obj_type = 0;
+			b.x = pos.x;
+			b.y = pos.y;
+			b.z = pos.z;
+			const auto m = EntityFactory::CreateHarvest(b);
+			
+			Field::GetField(0)->EnterFieldNPC(m);
+		}
 		{
 			EntityBuilder b;
 			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
@@ -83,7 +96,8 @@ int main()
 	ContentsInitiator con_init;
 	ClusterPredicate broad_helper;
 	Common::DataRegistry::Load();
-	
+	HarvestSystem::LoadHarvest({"Tree"}, L"environment\\ExportedInstance.json");
+
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	
 	GET_DATA(std::string, "Warrior", "name");

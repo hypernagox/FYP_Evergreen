@@ -9,6 +9,7 @@
 #include "DropItemRenderer.h"
 #include "../common/json.hpp"
 #include "MonsterRenderer.h"
+#include "GizmoCylinderRenderer.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 extern std::shared_ptr<SceneObject> g_heroObj;
@@ -87,4 +88,17 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 	renderer->SetDropItem(b->obj_type);
 
 	return instance;
+}
+
+std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Harvest(EntityBuilderBase* builder)
+{
+	// TODO: 종류 / 크기 ..
+	const auto b = static_cast<DefaultEntityBuilder*>(builder);
+	auto s = std::make_shared<SceneObject>();
+	auto gizmoRenderer = s->AddComponent<GizmoCylinderRenderer>();
+	gizmoRenderer->SetRadius(3.f);
+	gizmoRenderer->SetHeight(10.f);
+	s->GetTransform()->SetLocalPosition(b->obj_pos);
+	std::cout << "!";
+	return s;
 }
