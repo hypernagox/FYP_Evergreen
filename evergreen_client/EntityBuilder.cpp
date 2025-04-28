@@ -22,7 +22,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Warrior(EntityBuil
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
 	auto movement = instance->AddComponent<EntityMovement>();
-	movement->SetFriction(100.0f);
+	movement->SetFriction(0.0f);
 	auto playerComponent = instance->AddComponent<PlayerRenderer>();
 	auto serverComponent = instance->AddComponent<ServerObject>();
 	serverComponent->SetObjID(builder->obj_id);
