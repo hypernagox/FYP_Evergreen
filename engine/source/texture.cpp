@@ -44,8 +44,18 @@ namespace udsdx
 			}
 
 			ScratchImage compressedImage;
-			// BC2 Compression
-			ThrowIfFailed(::Compress(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DXGI_FORMAT_BC2_UNORM, TEX_COMPRESS_DEFAULT, 1.0f, compressedImage));
+			CompressOptions compressOptions = {};
+			compressOptions.flags = TEX_COMPRESS_DEFAULT;
+			compressOptions.threshold = TEX_THRESHOLD_DEFAULT;
+			compressOptions.alphaWeight = TEX_ALPHA_WEIGHT_DEFAULT;
+
+			ScratchImage mipChain;
+			const int mipChainLevels = std::log2<int>(std::max<int>(image.GetMetadata().width, image.GetMetadata().height)) + 1;
+			// Generate MipMaps
+			ThrowIfFailed(::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_DEFAULT, mipChainLevels, mipChain));
+			// BC3 Compression
+			ThrowIfFailed(::CompressEx(mipChain.GetImages(), mipChain.GetImageCount(), mipChain.GetMetadata(), DXGI_FORMAT_BC3_UNORM, compressOptions, compressedImage, [&](size_t, size_t) { return true; }));
+
 			ThrowIfFailed(::SaveToDDSFile(compressedImage.GetImages(), compressedImage.GetImageCount(), compressedImage.GetMetadata(), DDS_FLAGS_NONE, pathDds.c_str()));
 			std::filesystem::last_write_time(pathDds, std::filesystem::last_write_time(path));
 
