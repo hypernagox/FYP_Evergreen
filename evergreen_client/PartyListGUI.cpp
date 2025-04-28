@@ -123,11 +123,11 @@ PartyListGUI::PartyListGUI(const std::shared_ptr<udsdx::SceneObject>& object) : 
 	});
 
 	m_incrementQuestButton->GetComponent<GUIButton>()->SetClickCallback([this]() {
-		m_currentQuestID = (m_currentQuestID + 1) % NumQuests;
+		m_currentQuestID = (m_currentQuestID + 1) % NUM_OF_PARTYQUEST;
 		UpdateQuestID(m_currentQuestID);
 	});
 	m_decrementQuestButton->GetComponent<GUIButton>()->SetClickCallback([this]() {
-		m_currentQuestID = (m_currentQuestID - 1 + NumQuests) % NumQuests;
+		m_currentQuestID = (m_currentQuestID - 1 + NUM_OF_PARTYQUEST) % NUM_OF_PARTYQUEST;
 		UpdateQuestID(m_currentQuestID);
 	});
 	m_refreshQuestButton->GetComponent<GUIButton>()->SetClickCallback([this]() {
