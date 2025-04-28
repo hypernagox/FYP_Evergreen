@@ -21,7 +21,8 @@ public:
 public:
 	void SetCellPos(const Vector3& prev_pos, const Vector3& post_pos)noexcept;
 	const auto GetAgentConcreate()noexcept { return &m_agent; }
-
+public:
+	float ApplyPostPosition(const Vector3& dir, const float speed, const float dt)noexcept;
 	int m_my_idx = -1;
 public:
 	virtual void ProcessCleanUp()noexcept override;

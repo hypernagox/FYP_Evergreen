@@ -4,6 +4,16 @@
 #include "ClientSession.h"
 #include "Cluster.h"
 
+PartyQuestSystem::~PartyQuestSystem() noexcept
+{
+	for (auto& m : m_member)
+	{
+		if (!m)continue;
+		m->DecRef();
+		m = nullptr;
+	}
+}
+
 bool PartyQuestSystem::MissionStart()
 {
 	std::lock_guard<std::mutex> lock{ m_partyLock };
@@ -18,14 +28,18 @@ bool PartyQuestSystem::MissionStart()
 	{
 		m_curQuestRoomInstance = NagiocpX::MakeShared<FoxQuest>();
 	}
+	else if (2 == m_curQuestID)
+	{
+		m_curQuestRoomInstance = NagiocpX::MakeShared<NPCGuardQuest>();
+	}
 	else
 	{
 		m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
 	}
+	m_curQuestRoomInstance->SetOwnerSystem(this);
 	m_curQuestRoomInstance->InitQuestField();
 	m_prev_field =
 		m_member[0]->GetOwnerEntity()->GetClusterFieldInfo().curFieldPtr;
-	m_curQuestRoomInstance->SetOwnerSystem(this);
 	for (const auto& session : m_member)
 	{
 		if (!session)continue;
@@ -79,7 +93,8 @@ void PartyQuestSystem::ResetPartyQuestSystem()
 	{
 		if (!m)continue;
 		m->m_cur_my_party_system.store(nullptr);
-		m.reset();
+		m->DecRef();
+		m = nullptr;
 	}
 }
 
@@ -100,7 +115,8 @@ PARTY_ACCEPT_RESULT PartyQuestSystem::AcceptNewMember(S_ptr<ClientSession> new_m
 				sessions.emplace_back(m_member[i]);
 				continue;
 			}
-			m_member[i].swap(new_member);
+			std::swap(new_member.m_count_ptr, m_member[i]);
+			//m_member[i].swap(new_member);
 			res = PARTY_ACCEPT_RESULT::ACCEPT_SUCCESS;
 		}
 	}
@@ -160,7 +176,7 @@ S_ptr<ClientSession> PartyQuestSystem::FindMember(const uint32_t obj_id)
 		if (!m_member[i])continue;
 		if (m_member[i]->GetSessionID() == obj_id)
 		{
-			return m_member[i];
+			return S_ptr<ClientSession>{m_member[i]};
 		}
 	}
 	return {};
@@ -182,7 +198,9 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 				if (0 == i)is_leader = true;
 				m_member[i]->m_cur_my_party_system.store_relaxed(nullptr);
 				sessions.emplace_back(m_member[i]);
-				m_member[i].reset();
+				m_member[i]->DecRef();
+				m_member[i] = nullptr;
+				//m_member[i].reset();
 			}
 			else
 			{

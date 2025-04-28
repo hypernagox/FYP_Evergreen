@@ -57,6 +57,15 @@ void NaviAgent::SetCellPos(const Vector3& prev_pos, const Vector3& post_pos) noe
 	m_agent.SetCellPos(prev_pos, post_pos, m_posComp->pos);
 }
 
+float NaviAgent::ApplyPostPosition(const Vector3& dir, const float speed, const float dt) noexcept
+{
+	const auto dir_ = CommonMath::Normalized(dir) * speed * dt;
+	const auto& prev_pos = m_posComp->pos;
+	const auto post_pos = prev_pos + dir_;
+	SetCellPos(prev_pos, post_pos);
+	return dir_.Length();
+}
+
 void NaviAgent::ProcessCleanUp() noexcept
 {
 }

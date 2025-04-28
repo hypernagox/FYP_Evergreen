@@ -328,6 +328,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	{
 		const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();
+		std::cout << std::format("x: {}, y: {}, z: {} \n", pos.x, pos.y, pos.z);
 		const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
 		{
 			const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetPathVertices(pos, end);

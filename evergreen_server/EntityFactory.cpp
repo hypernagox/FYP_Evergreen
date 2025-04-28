@@ -13,6 +13,7 @@
 #include "RangeMonState.h"
 #include "DropItem.h"
 #include "DropTable.h"
+#include "PathNPC.h"
 
 namespace NagiocpX
 {
@@ -110,6 +111,26 @@ namespace NagiocpX
 	{
 		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
+		return entity;
+	}
+	S_ptr<ContentsEntity> EntityFactory::CreatePathNPC(const EntityBuilder& b) noexcept
+	{
+		const auto entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
+
+		
+		entity->AddComp<PositionComponent>();
+
+		const auto agent = entity->AddComp<NaviAgent>();
+		agent->SetPosComp(entity->GetComp<PositionComponent>());
+		agent->Init(Vector3{ -19.601448f,  72.97739f,  0.74976814f }, NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+		
+		const auto path_npc = entity->AddComp<PathNPC>();
+		path_npc->m_navAgent = agent;
+		
+		//entity->AddComp<HP>()->InitHP(GET_DATA(int, "Fox", "hp")); // TODO 매직넘버
+		//entity->AddComp<MonsterDeath>();
+
+		
 		return entity;
 	}
 }

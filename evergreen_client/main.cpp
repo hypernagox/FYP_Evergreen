@@ -203,8 +203,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     scene->AddObject(playerLightObj);
 
-    heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta.raw"), 513, 513);
-    terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 128, 128, 1.0f);
+    {
+        // 수정한 곳
+        heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta_04_28.raw"), 2049, 2049);
+        terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 128 * 4, 128 * 4, 1.0f);
+    }
+    //heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta.raw"), 513, 513);
+    //terrainMesh = CreateMeshFromHeightMap(heightMap.get(), 128, 128, 1.0f);
+
     terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
     const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");

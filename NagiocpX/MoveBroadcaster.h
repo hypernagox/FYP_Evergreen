@@ -45,7 +45,7 @@ namespace NagiocpX
 			return g_global_helper->CreateAddPacket(pEntity_.get());
 		}
 		static S_ptr<SendBuffer> CreateMovePacket(const S_ptr<ContentsEntity>& pEntity_)noexcept {
-			return g_global_helper->CreateAddPacket(pEntity_.get());
+			return g_global_helper->CreateMovePacket(pEntity_.get());
 		}
 		static S_ptr<SendBuffer> CreateRemovePacket(const uint32_t obj_id)noexcept {
 			return g_global_helper->CreateRemovePacket(obj_id);

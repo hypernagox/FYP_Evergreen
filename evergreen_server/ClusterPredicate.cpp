@@ -44,8 +44,8 @@ bool ClusterPredicate::Filter4Session(const ContentsEntity* const a, const Conte
 	const auto res = CommonMath::IsInDistanceDX(a_pos, b_pos, 50);
 	if (!res)
 	{
-		std::cout << "TTTTTTTTTTTTTTTTTTTTTTTTt\n";
-		std::cout << CommonMath::GetDistPowDX(a_pos, b_pos) << std::endl;
+		//std::cout << "TTTTTTTTTTTTTTTTTTTTTTTTt\n";
+		//std::cout << CommonMath::GetDistPowDX(a_pos, b_pos) << std::endl;
 	}
 	return res;
 	//return ((50 * 50) >= (dx * dx + dy * dy + dz * dz));

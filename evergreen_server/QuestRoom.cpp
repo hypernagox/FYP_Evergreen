@@ -4,6 +4,10 @@
 #include "Regenerator.h"
 #include "PartyQuestSystem.h"
 #include "ClientSession.h"
+#include "TaskTimerMgr.h"
+#include "Navigator.h"
+#include "NavigationMesh.h"
+#include "PathNPC.h"
 
 std::atomic_int aaaa;
 QuestRoom::QuestRoom() noexcept
@@ -110,7 +114,7 @@ void QuestRoom::CheckPartyQuestState()noexcept
 	{
 		// TODO 근본적인 해결책
 		Mgr(TaskTimerMgr)->ReserveAsyncTask(1000,[this, owner = m_ownerPartrySystem->m_member[0]]() {
-			for (const auto& players : owner->m_party_quest_system.m_member)
+			for (const auto& players : owner->m_party_quest_system->m_member)
 			{
 				if (!players)continue;
 				NotifyQuestClear(players->GetOwnerEntity());
@@ -156,3 +160,17 @@ void GoblinQuest::InitQuestField() noexcept
 		EnterFieldNPC(m);
 	}
 }
+
+void NPCGuardQuest::InitQuestField() noexcept
+{
+	EntityBuilder b;
+	b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
+	b.obj_type = 0;
+	const auto m = EntityFactory::CreatePathNPC(b);
+	const auto m2 = m;
+	EnterFieldNPC(m);
+	// TODO: 위험
+	m2->GetComp<PathNPC>()->m_owner_system = GetOwnerSystem();
+	m2->GetComp<PathNPC>()->InitPathNPC();
+}
+

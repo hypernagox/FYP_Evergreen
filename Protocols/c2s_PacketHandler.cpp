@@ -19,6 +19,7 @@
 #include "Inventory.h"
 #include "DropItem.h"
 #include "Item.h"
+#include "PartyQuestSystem.h"
 
 using namespace NagiocpX;
 
@@ -172,7 +173,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 						std::cout << "Player Hit\n";
 						//if (!owner->GetClientSession()->HasParty())
 						{
-							auto pkt = Create_s2c_INVITE_PARTY_QUEST(pOwner->GetObjectID(), pOwner->GetClientSession()->m_party_quest_system.m_curQuestID
+							auto pkt = Create_s2c_INVITE_PARTY_QUEST(pOwner->GetObjectID(), pOwner->GetClientSession()->m_party_quest_system->m_curQuestID
 							);
 							if (pOwner != owner.get() && !owner->GetClientSession()->HasParty())
 							{
@@ -402,7 +403,7 @@ const bool Handle_c2s_ACQUIRE_PARTY_LIST(const NagiocpX::S_ptr<NagiocpX::PacketS
 		if (!session_ptr)continue;
 		if (const auto s = session_ptr->GetClientSession())
 		{
-			if (s->IsPartyLeader() && s->m_party_quest_system.m_curQuestID == pkt_.target_quest_id())
+			if (s->IsPartyLeader() && s->m_party_quest_system->m_curQuestID == pkt_.target_quest_id())
 			{
 				quest_leaders.emplace_back(session_ptr->GetObjectID());
 			}
@@ -410,7 +411,7 @@ const bool Handle_c2s_ACQUIRE_PARTY_LIST(const NagiocpX::S_ptr<NagiocpX::PacketS
 	}
 
 	const auto session = GetClientSession(pSession_);
-	if (session->IsPartyLeader() && session->m_party_quest_system.m_curQuestID == pkt_.target_quest_id())
+	if (session->IsPartyLeader() && session->m_party_quest_system->m_curQuestID == pkt_.target_quest_id())
 	{
 		quest_leaders.emplace_back(pSession_->GetSessionID());
 	}
@@ -426,7 +427,7 @@ const bool Handle_c2s_INVITE_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketS
 	if (!target_user)return true;
 	if (!session->IsPartyLeader())return true;
 	// 파티장이 타겟 유저에게 자신의 아이디와 현재 퀘스트 아이디를 보낸다
-	target_user->GetSession()->SendAsync(Create_s2c_INVITE_PARTY_QUEST(pSession_->GetSessionID(), session->m_party_quest_system.m_curQuestID));
+	target_user->GetSession()->SendAsync(Create_s2c_INVITE_PARTY_QUEST(pSession_->GetSessionID(), session->m_party_quest_system->m_curQuestID));
 	return true;
 }
 
@@ -507,10 +508,10 @@ const bool Handle_c2s_QUEST_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>
 		return true;
 	}
 	
-	if (!party_leader->m_party_quest_system.MissionStart()) {
-		std::cout << party_leader->m_party_quest_system.m_started << std::endl;
-		std::cout << party_leader->m_party_quest_system.m_runFlag << std::endl;
-		std::cout << party_leader->m_party_quest_system.m_curQuestRoomInstance.UseCount() << std::endl;
+	if (!party_leader->m_party_quest_system->MissionStart()) {
+		std::cout << party_leader->m_party_quest_system->m_started << std::endl;
+		std::cout << party_leader->m_party_quest_system->m_runFlag << std::endl;
+		std::cout << party_leader->m_party_quest_system->m_curQuestRoomInstance.UseCount() << std::endl;
 	}
 	return true;
 }
@@ -540,7 +541,7 @@ const bool Handle_c2s_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 		std::cout << "Not Clear \n";
 		return true;
 	}
-	party_leader->m_party_quest_system.MissionEnd();
+	party_leader->m_party_quest_system->MissionEnd();
 	return true;
 }
 

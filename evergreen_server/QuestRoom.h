@@ -1,6 +1,17 @@
 #pragma once
 #include "Field.h"
 
+struct PartyQuestInfo {
+	uint32_t leader_id;
+	int32_t quest_id;
+};
+
+enum class PARTY_ACCEPT_RESULT :int8_t {
+	INVALID = -1,
+	PARTY_IS_FULL = 0,
+	ACCEPT_SUCCESS = 1
+};
+
 class QuestRoom
 	:public NagiocpX::Field
 {
@@ -67,4 +78,18 @@ public:
 	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
 	virtual void InitQuestField()noexcept override;
 private:
+};
+
+class NPCGuardQuest
+	:public QuestRoom
+{
+public:
+	virtual bool ProcessPartyQuest()noexcept override {
+		return true;
+	}
+	virtual bool IsFailPartyQuest()const noexcept { return false; }
+
+	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	virtual void InitQuestField()noexcept override;
 };

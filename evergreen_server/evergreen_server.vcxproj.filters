@@ -128,6 +128,9 @@
     <Filter Include="Harvest">
       <UniqueIdentifier>{bea68d7c-676d-4a0c-b10d-3d3c47579dd2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ClientSession\QuestRoom\PathNPC">
+      <UniqueIdentifier>{f77e96e5-80a9-4f2d-ab2a-d8d8d7031311}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -222,6 +225,9 @@
     </ClCompile>
     <ClCompile Include="HarvestSystem.cpp">
       <Filter>Harvest</Filter>
+    </ClCompile>
+    <ClCompile Include="PathNPC.cpp">
+      <Filter>ClientSession\QuestRoom\PathNPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,6 +332,9 @@
     </ClInclude>
     <ClInclude Include="HarvestSystem.h">
       <Filter>Harvest</Filter>
+    </ClInclude>
+    <ClInclude Include="PathNPC.h">
+      <Filter>ClientSession\QuestRoom\PathNPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

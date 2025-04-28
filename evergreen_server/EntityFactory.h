@@ -31,6 +31,8 @@ namespace NagiocpX
 		static S_ptr<ContentsEntity> CreateDropItem(const EntityBuilder& b)noexcept;
 
 		static S_ptr<ContentsEntity> CreateHarvest(const EntityBuilder& b)noexcept;
+
+		static S_ptr<ContentsEntity> CreatePathNPC(const EntityBuilder& b)noexcept;
 	};
 }
 

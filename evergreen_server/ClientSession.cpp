@@ -11,6 +11,7 @@
 #include "TimerRoutine.h"
 #include "Inventory.h"
 #include "StatusSystem.h"
+#include "PartyQuestSystem.h"
 
 std::atomic_int cnt = 0;
 static NagoxAtomic::Atomic<int> g_connect_count{ 0 };
@@ -18,12 +19,14 @@ static NagoxAtomic::Atomic<int> g_connect_count{ 0 };
 ClientSession::ClientSession() noexcept
 {
 	std::cout << ++cnt << '\n';
+	m_party_quest_system = NagiocpX::xnew<PartyQuestSystem>();
 }
 
 ClientSession::~ClientSession()
 {
 	NagiocpX::PrintLogEndl("BYE");
 	std::cout << --cnt << '\n';
+	NagiocpX::xdelete<PartyQuestSystem>(m_party_quest_system);
 }
 
 void ClientSession::OnConnected()
@@ -62,10 +65,34 @@ void ClientSession::OnDisconnected(const NagiocpX::Cluster* const curCluster_)no
 	//	const auto ee = e->UseCount();
 	//	if (ee != 1)std::cout <<"¿Ö?: "<< ee << std::endl;
 	//	});
-	m_party_quest_system.m_curQuestRoomInstance.reset();
-	m_party_quest_system.ResetPartyQuestSystem();
+	m_party_quest_system->m_curQuestRoomInstance.reset();
+	m_party_quest_system->ResetPartyQuestSystem();
 	if (const auto p = m_cur_my_party_system.load())
 	{
 		p->OutMember(GetSessionID());
 	}
+}
+
+bool ClientSession::CreatePartySystem()
+{
+	if (m_cur_my_party_system.load())return false;
+	IncRef();
+	m_party_quest_system->m_member[0] = this;
+	m_cur_my_party_system.store(m_party_quest_system);
+	return true;
+}
+
+ClientSession* ClientSession::GetCurPartySystemLeader() const noexcept
+{
+	const auto party = m_cur_my_party_system.load();
+	if (!party)return nullptr;
+	return party->GetPartyLeader();
+}
+
+PARTY_ACCEPT_RESULT ClientSession::AcceptNewPlayer(ClientSession* const other)
+{
+	if (!IsPartyLeader())return PARTY_ACCEPT_RESULT::INVALID;
+	if (other->HasParty())return PARTY_ACCEPT_RESULT::INVALID;
+	other->m_cur_my_party_system.store(m_party_quest_system);
+	return m_party_quest_system->AcceptNewMember(other->SharedFromThis<ClientSession>());
 }

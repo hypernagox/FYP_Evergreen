@@ -1,22 +1,14 @@
 #pragma once
 #include "QuestRoom.h"
+
 class ClientSession;
 class QuestRoom;
-
-struct PartyQuestInfo {
-	uint32_t leader_id;
-	int32_t quest_id;
-};
-
-enum class PARTY_ACCEPT_RESULT :int8_t {
-	INVALID = -1,
-	PARTY_IS_FULL = 0,
-	ACCEPT_SUCCESS = 1
-};
 
 class PartyQuestSystem
 {
 	friend class ClientSession;
+public:
+	~PartyQuestSystem()noexcept;
 public:
 	void SetTargetQuest(const int quest_id) { m_curQuestID = quest_id; }
 	void ResetQuestID() { SetTargetQuest(-1); }
@@ -29,7 +21,7 @@ public:
 public:
 	void ResetPartyQuestSystem();
 public:
-	const auto GetPartyLeader()const noexcept { return m_member[0].get(); }
+	const auto GetPartyLeader()const noexcept { return m_member[0]; }
 	void StartFlag() { m_started = true; }
 	void EndFlag() { m_started = false; }
 private:
@@ -48,6 +40,6 @@ public:
 	NagiocpX::Field* m_prev_field = nullptr;
 	S_ptr<QuestRoom> m_curQuestRoomInstance = nullptr;
 	// 0번이 반드시 파티장
-	S_ptr<ClientSession> m_member[NUM_OF_MAX_PARTY_MEMBER]{ nullptr };
+	ClientSession* m_member[NUM_OF_MAX_PARTY_MEMBER]{ nullptr };
 };
 

@@ -16,10 +16,12 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_transformBody = pBody->GetTransform();
 	m_rendererObj->AddChild(pBody);
 
+	m_transformBody->SetLocalPositionY(-5.f);
+
 	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.glb")));
 	m_renderer->SetShader(shader);
-
+	
 	for (int i = 0; i < m_playerMaterials.size(); ++i)
 	{
 		m_playerMaterials[i] = std::make_shared<udsdx::Material>();

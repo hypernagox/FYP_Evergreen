@@ -19,7 +19,7 @@ public:
 
 private:
 	// TODO: Replace with actual number of quests
-	static constexpr int NumQuests = 2;
+	static constexpr int NumQuests = 3;
 
 	int m_currentQuestID = 0;
 

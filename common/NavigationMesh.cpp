@@ -403,15 +403,15 @@ namespace Common
 		int straightPathCount = 0;
 
 		if (dtStatusFailed(navQuery->findStraightPath(closestStart, closestEnd, path, pathCount,
-			straightPath, flags, polys, &straightPathCount, 256)))
+			straightPath, flags, polys, &straightPathCount, MAX_PATH_COUNT)))
 			return path_result;
 
-		for (int i = 0; i < straightPathCount - 1; ++i)
+		for (int i = 0; i < straightPathCount; ++i)
 		{
 			const Vector3& p1 = reinterpret_cast<const Vector3&>(straightPath[i * 3]);
 			const Vector3& p2 = reinterpret_cast<const Vector3&>(straightPath[(i + 1) * 3]);
 			const auto diff = (p2 - p1) / (float)segmentation;
-			for (int j = 0; j <= segmentation; ++j)
+			for (int j = 0; j < segmentation; ++j)
 			{
 				const auto v = p1 + diff * (float)j;
 				path_result.emplace_back(v.x, v.y, -v.z);
