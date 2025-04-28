@@ -15,7 +15,6 @@
 #include "ServerObject.h"
 #include "NaviCell.h"
 #include "Navigator.h"
-#include "ServerTimeMgr.h"
 
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
@@ -27,6 +26,8 @@
 #include "RequestPopupGUI.h"
 #include "PartyStatusGUI.h"
 #include "FocusAgentGUI.h"
+#include "GamePauseGUI.h"
+#include "MainMenuGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -141,79 +142,57 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     auto shader = res->Load<Shader>(RESOURCE_PATH(L"color.hlsl"));
     auto shaderTerrain = res->Load<Shader>(RESOURCE_PATH(L"terrain.hlsl"));
 
-    playerMaterial = std::make_shared<udsdx::Material>();
-    playerMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
+    m_playerMaterial = std::make_shared<udsdx::Material>();
+    m_playerMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
-    terrainMaterial = std::make_shared<udsdx::Material>();
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_0.tga")), 0);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_1.tga")), 1);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_0.png")), 2);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_1.tga")), 3);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_2.png")), 4);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_3.png")), 5);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\T_ground_soil_01_BC_SM.tga")), 6);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\T_ground_moss_01_BC_SM.tga")), 7);
-    terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\Grass_and_Clover.tif")), 8);
+    m_terrainMaterial = std::make_shared<udsdx::Material>();
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_0.tga")), 0);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_1.tga")), 1);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_0.png")), 2);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_1.tga")), 3);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_2.png")), 4);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_3.png")), 5);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\T_ground_soil_01_BC_SM.tga")), 6);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\T_ground_moss_01_BC_SM.tga")), 7);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\Grass_and_Clover.tif")), 8);
 
-    g_heroObj = std::make_shared<SceneObject>();
+    m_heroObj = std::make_shared<SceneObject>();
 
-    ServerObjectMgr::GetInst()->SetMainHero(NetMgr(NetworkMgr)->GetSessionID(), g_heroObj);
-    auto heroServerComponent = g_heroObj->AddComponent<ServerObject>();
+    ServerObjectMgr::GetInst()->SetMainHero(NetMgr(NetworkMgr)->GetSessionID(), m_heroObj);
+    auto heroServerComponent = m_heroObj->AddComponent<ServerObject>();
 
     heroServerComponent->AddComp<MovePacketSender>();
-    g_heroComponent = g_heroObj->AddComponent<AuthenticPlayer>();
+    m_heroComponent = m_heroObj->AddComponent<AuthenticPlayer>();
 
     Vector3 temp = Vector3(-4.345f, 76.17f, 0.0f);
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(temp);
 
-    g_heroObj->GetTransform()->SetLocalPosition(temp);
+    m_heroObj->GetTransform()->SetLocalPosition(temp);
 
-    AddObject(g_heroObj);
-
-    // Region: Focus Agent GUI
-    {
-        auto focusAgentObj = std::make_shared<SceneObject>();
-        auto focusAgent = focusAgentObj->AddComponent<FocusAgentGUI>();
-
-        focusAgent->SetSize(Vector2::One * 8192.0f);
-        focusAgent->SetTryExitCallback([]() {
-            // TODO: 일단 끄기전 서버오브젝트 컨테이너 밀어줌
-            ServerObjectMgr::GetInst()->Clear();
-            // TODO: 이거해야 메모리릭 없는데 왜 터짐?
-           // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
-            UpdownStudio::Quit();
-            });
-        focusAgent->SetTryClickCallback([this]() {
-            g_heroComponent->TryClickScreen();
-            });
-
-        AddObject(focusAgentObj);
-    }
-
-    playerLightObj = std::make_shared<SceneObject>();
-    auto playerLight = playerLightObj->AddComponent<LightDirectional>();
+    m_playerLightObj = std::make_shared<SceneObject>();
+    auto playerLight = m_playerLightObj->AddComponent<LightDirectional>();
     Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
-    playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PI / 4.0f, 0) * Quaternion::CreateFromAxisAngle(n, 0.0f));
+    m_playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PI / 4.0f, 0) * Quaternion::CreateFromAxisAngle(n, 0.0f));
 
-    AddObject(playerLightObj);
+    AddObject(m_playerLightObj);
 
-    terrainMesh = CreateMeshFromHeightMap(heightMap, 128, 128, 1.0f);
-    terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
+    m_terrainMesh = CreateMeshFromHeightMap(heightMap, 128, 128, 1.0f);
+    m_terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
     const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
     const Vector3 terrainPos = Vector3(-TerrainSize * 0.5f, 0, -TerrainSize * 0.5f);
     const Vector3 terrainScale = Vector3::One * TerrainSize;
 
     {
-        terrainDetailMaterial = std::make_shared<udsdx::Material>();
-        terrainDetailMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Grass.tga")), 0);
+        m_terrainDetailMaterial = std::make_shared<udsdx::Material>();
+        m_terrainDetailMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Grass.tga")), 0);
 
         std::shared_ptr<SceneObject> terrainDetailObj = std::make_shared<SceneObject>();
         auto terrainDetailRenderer = terrainDetailObj->AddComponent<TerrainDetailRenderer>();
         terrainDetailRenderer->SetTerrainDetail(terrainDetail);
         terrainDetailRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"detailbillboard.hlsl")));
-        terrainDetailRenderer->SetMaterial(terrainDetailMaterial.get());
+        terrainDetailRenderer->SetMaterial(m_terrainDetailMaterial.get());
 
         terrainDetailObj->GetTransform()->SetLocalPosition(terrainPos);
         terrainDetailObj->GetTransform()->SetLocalScale(terrainScale);
@@ -260,8 +239,8 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
                 material->SetSourceTexture(it->second);
             else
                 material->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
-            g_instanceMaterials.emplace_back(material);
-            terrainInstanceRenderer->SetMaterial(material.get(), i);
+            m_instanceMaterials.emplace_back(material);
+            terrainInstanceRenderer->SetMaterial(material.get(), static_cast<int>(i));
         }
 
         terrainInstanceRenderer->SetTerrainData(terrainData, filename);
@@ -272,16 +251,16 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     }
 
     {
-        terrainObj = std::make_shared<SceneObject>();
-        terrainObj->GetTransform()->SetLocalPosition(terrainPos);
-        terrainObj->GetTransform()->SetLocalScale(terrainScale);
-        auto terrainRenderer = terrainObj->AddComponent<MeshRenderer>();
-        terrainRenderer->SetMesh(terrainMesh.get());
-        terrainRenderer->SetMaterial(terrainMaterial.get());
+        m_terrainObj = std::make_shared<SceneObject>();
+        m_terrainObj->GetTransform()->SetLocalPosition(terrainPos);
+        m_terrainObj->GetTransform()->SetLocalScale(terrainScale);
+        auto terrainRenderer = m_terrainObj->AddComponent<MeshRenderer>();
+        terrainRenderer->SetMesh(m_terrainMesh.get());
+        terrainRenderer->SetMaterial(m_terrainMaterial.get());
         terrainRenderer->SetShader(shaderTerrain);
         terrainRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST);
 
-        AddObject(terrainObj);
+        AddObject(m_terrainObj);
     }
 
     {
@@ -292,49 +271,76 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         skyboxRenderer->SetCastShadow(false);
 
         auto skyboxTexture = res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"));
-        g_skyboxMaterial = std::make_shared<udsdx::Material>();
-        g_skyboxMaterial->SetSourceTexture(skyboxTexture);
-        skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
+        m_skyboxMaterial = std::make_shared<udsdx::Material>();
+        m_skyboxMaterial->SetSourceTexture(skyboxTexture);
+        skyboxRenderer->SetMaterial(m_skyboxMaterial.get());
 
         AddObject(skyboxObj);
     }
 
     {
+        m_playerInterfaceGroup = std::make_shared<SceneObject>();
+
+        m_focusAgentObj = std::make_shared<SceneObject>();
+        auto focusAgent = m_focusAgentObj->AddComponent<FocusAgentGUI>();
+
+        focusAgent->SetSize(Vector2::One * 8192.0f);
+        focusAgent->SetTryExitCallback([this]() {
+            m_pauseMenuObj->GetComponent<GamePauseGUI>()->ToggleActivePanel();
+            });
+        focusAgent->SetTryClickCallback([this]() {
+            m_heroComponent->TryClickScreen();
+            });
+        AddObject(m_focusAgentObj);
+        m_focusAgentObj->SetActive(false);
+
         auto guiObj = std::make_shared<SceneObject>();
         auto guiRenderer = guiObj->AddComponent<PlayerStatusGUI>();
-        AddObject(guiObj);
-        g_heroComponent->SetPlayerStatusGUI(guiRenderer);
+        m_playerInterfaceGroup->AddChild(guiObj);
+        m_heroComponent->SetPlayerStatusGUI(guiRenderer);
 
         auto quickSlotObj = std::make_shared<SceneObject>();
         auto quickSlotRenderer = quickSlotObj->AddComponent<PlayerQuickSlotGUI>();
-        AddObject(quickSlotObj);
-        g_heroComponent->SetPlayerQuickSlotGUI(quickSlotRenderer);
+        m_playerInterfaceGroup->AddChild(quickSlotObj);
+        m_heroComponent->SetPlayerQuickSlotGUI(quickSlotRenderer);
 
-        g_inventoryObj = std::make_shared<SceneObject>();
-        auto inventoryRenderer = g_inventoryObj->AddComponent<PlayerInventoryGUI>();
-        AddObject(g_inventoryObj);
-        g_heroComponent->SetPlayerInventoryGUI(inventoryRenderer);
+        m_inventoryObj = std::make_shared<SceneObject>();
+        auto inventoryRenderer = m_inventoryObj->AddComponent<PlayerInventoryGUI>();
+        m_playerInterfaceGroup->AddChild(m_inventoryObj);
+        m_heroComponent->SetPlayerInventoryGUI(inventoryRenderer);
 
-        g_craftObj = std::make_shared<SceneObject>();
-        auto craftComp = g_craftObj->AddComponent<PlayerCraftGUI>();
-        AddObject(g_craftObj);
-        g_heroComponent->SetPlayerCraftGUI(craftComp);
+        m_craftObj = std::make_shared<SceneObject>();
+        auto craftComp = m_craftObj->AddComponent<PlayerCraftGUI>();
+        m_playerInterfaceGroup->AddChild(m_craftObj);
+        m_heroComponent->SetPlayerCraftGUI(craftComp);
 
         auto partyListObj = std::make_shared<SceneObject>();
         auto partyListComp = partyListObj->AddComponent<PartyListGUI>();
-        AddObject(partyListObj);
+        m_playerInterfaceGroup->AddChild(partyListObj);
 
         auto logFloatObj = std::make_shared<SceneObject>();
         auto logFloatComp = logFloatObj->AddComponent<LogFloatGUI>();
-        AddObject(logFloatObj);
+        m_playerInterfaceGroup->AddChild(logFloatObj);
 
         auto requestPopupObj = std::make_shared<SceneObject>();
         auto requestPopupComp = requestPopupObj->AddComponent<RequestPopupGUI>();
-        AddObject(requestPopupObj);
+        m_playerInterfaceGroup->AddChild(requestPopupObj);
 
         auto partyStatusObj = std::make_shared<SceneObject>();
         auto partyStatusComp = partyStatusObj->AddComponent<PartyStatusGUI>();
-        AddObject(partyStatusObj);
+        m_playerInterfaceGroup->AddChild(partyStatusObj);
+
+        m_pauseMenuObj = std::make_shared<SceneObject>();
+        auto pauseMenuComp = m_pauseMenuObj->AddComponent<GamePauseGUI>();
+        pauseMenuComp->SetExitGameCallback([this]() { ExitGame(); });
+        pauseMenuComp->SetTogglePauseCallback([this](bool isPaused) { OnTogglePause(isPaused); });
+        AddObject(m_pauseMenuObj);
+
+        auto mainMenuObj = std::make_shared<SceneObject>();
+        auto mainMenuComp = mainMenuObj->AddComponent<MainMenuGUI>();
+        mainMenuComp->SetEnterGameCallback([this]() { EnterGame(); });
+        mainMenuComp->SetExitGameCallback([this]() { ExitGame(); });
+        AddObject(mainMenuObj);
 
         INSTANCE(GameGUIFacade)->PartyList = partyListComp;
         INSTANCE(GameGUIFacade)->LogFloat = logFloatComp;
@@ -352,24 +358,34 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         AddObject(textObj);
     }
 
+    {
+        m_mainMenuCameraObject = std::make_shared<SceneObject>();
+        m_mainMenuCameraObject->GetTransform()->SetLocalPosition(Vector3(0.0f, 120.0f, 0.0f));
+        m_mainMenuCameraObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PIDIV4, PIDIV4, 0));
+        auto camera = m_mainMenuCameraObject->AddComponent<CameraOrthographic>();
+        camera->SetRadius(100.0f);
+        AddObject(m_mainMenuCameraObject);
+    }
+
     if (false)
     {
-        g_gizmoMaterial = std::make_shared<udsdx::Material>();
-        g_gizmoMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
+        m_gizmoMaterial = std::make_shared<udsdx::Material>();
+        m_gizmoMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
 
         auto navMeshVisualizer = std::make_shared<SceneObject>();
         auto navMeshRenderer = navMeshVisualizer->AddComponent<MeshRenderer>();
         navMeshRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh.obj")));
         navMeshRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
-        navMeshRenderer->SetMaterial(g_gizmoMaterial.get());
+        navMeshRenderer->SetMaterial(m_gizmoMaterial.get());
 
         AddObject(navMeshVisualizer);
     }
 
-    // 씬을 생성하였을 경우 입장한 것으로 간주
+
+    // TODO: Play Game을 누르면 서버에 접속으로 간주
     if constexpr (true == g_bUseNetWork)
     {
-        Send(Create_c2s_ENTER(ToFlatVec3(g_heroObj->GetTransform()->GetLocalPosition())));
+        Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())));
     }
 }
 
@@ -377,23 +393,46 @@ void GameScene::Update(const Time& time)
 {
     auto audioAction = [this](bool isOpen) {
         if (isOpen)
-            g_menuSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uiopen.wav"))->CreateInstance();
+            m_menuSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uiopen.wav"))->CreateInstance();
         else
-            g_menuSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uiclose.wav"))->CreateInstance();
-        g_menuSound->SetVolume(0.5f);
-        g_menuSound->Play();
+            m_menuSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uiclose.wav"))->CreateInstance();
+        m_menuSound->SetVolume(0.5f);
+        m_menuSound->Play();
         };
 
     if (INSTANCE(Input)->GetKeyDown(Keyboard::E))
     {
-        g_inventoryObj->SetActive(!g_inventoryObj->GetActive());
-        audioAction(g_inventoryObj->GetActive());
+        m_inventoryObj->SetActive(!m_inventoryObj->GetActive());
+        audioAction(m_inventoryObj->GetActive());
     }
     if (INSTANCE(Input)->GetKeyDown(Keyboard::C))
     {
-        g_craftObj->SetActive(!g_craftObj->GetActive());
-        audioAction(g_craftObj->GetActive());
+        m_craftObj->SetActive(!m_craftObj->GetActive());
+        audioAction(m_craftObj->GetActive());
     }
 
     Scene::Update(time);
+}
+
+void GameScene::EnterGame()
+{
+    AddObject(m_heroObj);
+    AddObject(m_playerInterfaceGroup);
+    m_focusAgentObj->SetActive(true);
+    m_mainMenuCameraObject->SetActive(false);
+}
+
+void GameScene::ExitGame()
+{   
+    // TODO: 일단 끄기전 서버오브젝트 컨테이너 밀어줌
+    ServerObjectMgr::GetInst()->Clear();
+    // TODO: 이거해야 메모리릭 없는데 왜 터짐?
+    // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
+    UpdownStudio::Quit();
+}
+
+void GameScene::OnTogglePause(bool isPaused)
+{
+    m_heroObj->GetComponent<InputHandler>()->SetActive(!isPaused);
+    m_playerInterfaceGroup->SetActive(!isPaused);
 }

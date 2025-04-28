@@ -408,6 +408,7 @@
     <ClCompile Include="FocusAgentGUI.cpp" />
     <ClCompile Include="func.cpp" />
     <ClCompile Include="GameGUIFacade.cpp" />
+    <ClCompile Include="GamePauseGUI.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GizmoBoxRenderer.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
@@ -433,6 +434,7 @@
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="LogFloatGUI.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenuGUI.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterHPPanel.cpp" />
     <ClCompile Include="MonsterRenderer.cpp" />
@@ -493,12 +495,14 @@
     <ClInclude Include="FocusAgentGUI.h" />
     <ClInclude Include="func.h" />
     <ClInclude Include="GameGUIFacade.h" />
+    <ClInclude Include="GamePauseGUI.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GizmoBoxRenderer.h" />
     <ClInclude Include="GizmoCylinderRenderer.h" />
     <ClInclude Include="GizmoSphereRenderer.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="LogFloatGUI.h" />
+    <ClInclude Include="MainMenuGUI.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterHPPanel.h" />
     <ClInclude Include="MonsterRenderer.h" />

@@ -231,6 +231,12 @@
     <ClCompile Include="GameScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="GamePauseGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -373,6 +379,12 @@
     </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePauseGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

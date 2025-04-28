@@ -26,6 +26,8 @@ AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	m_inventory = std::vector<int>(16, 0);
 	m_quickSlot = std::vector<int>(MAX_QUICK_SLOT, -1);
 
+	m_cameraAnchorLastPosition = Vector3::Up * 120.0f;
+
 	Start();
 }
 
@@ -176,6 +178,16 @@ void AuthenticPlayer::CraftItem(int recipeIndex)
 	DebugConsole::Log("아이템 조합 요청");
 }
 
+void AuthenticPlayer::RequestQuestStart()
+{
+	Send(Create_c2s_QUEST_START());
+}
+
+void AuthenticPlayer::RequestQuestEnd()
+{
+	Send(Create_c2s_QUEST_END());
+}
+
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
 	// Region: Mouse Scrolling Control
@@ -263,6 +275,15 @@ void AuthenticPlayer::Start()
 	input_handler->AddKeyFunc(Keyboard::W, KEY_STATE::KEY_HOLD, &AuthenticPlayer::MoveByView, this, Vector3(0.0f, 0.0f, 1.0f) * 100.0f);
 	input_handler->AddKeyFunc(Keyboard::S, KEY_STATE::KEY_HOLD, &AuthenticPlayer::MoveByView, this, Vector3(0.0f, 0.0f, -1.0f) * 100.0f);
 	input_handler->AddKeyFunc(Keyboard::D, KEY_STATE::KEY_HOLD, &AuthenticPlayer::MoveByView, this, Vector3(1.0f, 0.0f, 0.0f) * 100.0f);
+	input_handler->AddKeyFunc(Keyboard::D1, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 0);
+	input_handler->AddKeyFunc(Keyboard::D2, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 1);
+	input_handler->AddKeyFunc(Keyboard::D3, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 2);
+
+	// 퀘 시작 요청
+	input_handler->AddKeyFunc(Keyboard::B, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuestStart, this);
+	// TODO: 퀘 클리어 판정이 아직 없어서 클라의 중단 요청
+	input_handler->AddKeyFunc(Keyboard::N, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuestEnd, this);
+
 
 	//input_handler->AddKeyFunc(Keyboard::Space, KEY_STATE::KET_TAP, &AuthenticPlayer::DoAttack, this);
 	input_handler->AddKeyFunc(Keyboard::CapsLock, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuest, this);
@@ -314,16 +335,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 			//std::cout << "공격 시도\n";
 		}
 	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::B))
-	{
-		// 퀘 시작 요청
-		Send(Create_c2s_QUEST_START());
-	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::N))
-	{
-		// TODO: 퀘 클리어 판정이 아직 없어서 클라의 중단 요청
-		Send(Create_c2s_QUEST_END());
-	}
 
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	{
@@ -344,16 +355,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		}
 	}
 
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::D1))
-		UseQuickSlotItem(0);
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::D2))
-		UseQuickSlotItem(1);
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::D3))
-		UseQuickSlotItem(2);
-
-	//
-	//// 무브패킷 센드 업데이트
-
+	// 무브패킷 센드 업데이트
 	m_bSendFlag |=
 		INSTANCE(Input)->GetKeyDown(Keyboard::W)
 		|| INSTANCE(Input)->GetKeyDown(Keyboard::A)
