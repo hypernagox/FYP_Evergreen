@@ -273,6 +273,7 @@
       <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -294,6 +295,7 @@
       <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -317,6 +319,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -342,6 +345,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -367,6 +371,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -403,6 +408,7 @@
     <ClCompile Include="FocusAgentGUI.cpp" />
     <ClCompile Include="func.cpp" />
     <ClCompile Include="GameGUIFacade.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GizmoBoxRenderer.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
@@ -487,6 +493,7 @@
     <ClInclude Include="FocusAgentGUI.h" />
     <ClInclude Include="func.h" />
     <ClInclude Include="GameGUIFacade.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="GizmoBoxRenderer.h" />
     <ClInclude Include="GizmoCylinderRenderer.h" />
     <ClInclude Include="GizmoSphereRenderer.h" />

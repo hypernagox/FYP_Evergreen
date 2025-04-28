@@ -338,9 +338,8 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 				auto gizmoRenderer = s->AddComponent<GizmoSphereRenderer>();
 				gizmoRenderer->SetRadius(1.0f);
 
-				extern std::shared_ptr<Scene> scene;
 				s->GetTransform()->SetLocalPosition(vv);
-				scene->AddObject(s);
+				scene.AddObject(s);
 			}
 		}
 	}
