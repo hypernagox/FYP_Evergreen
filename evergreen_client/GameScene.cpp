@@ -177,7 +177,8 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
     AddObject(m_playerLightObj);
 
-    m_terrainMesh = CreateMeshFromHeightMap(heightMap, 128, 128, 1.0f);
+    // * 4 하는게 좋긴한데 2로 타협
+    m_terrainMesh = CreateMeshFromHeightMap(heightMap, 128 * 2, 128 * 2, 1.0f);
     m_terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
     const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
