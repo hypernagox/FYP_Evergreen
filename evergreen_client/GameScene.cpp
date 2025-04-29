@@ -116,13 +116,13 @@ static std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* hei
     {
         for (LONG x = 0; x < segmentWidth - 2; ++x)
         {
-            for (LONG k = 0; k < 4; ++k)
-            {
-                indices.push_back((y + k) * (segmentWidth + 1) + x);
-                indices.push_back((y + k) * (segmentWidth + 1) + x + 1);
-                indices.push_back((y + k) * (segmentWidth + 1) + x + 2);
-                indices.push_back((y + k) * (segmentWidth + 1) + x + 3);
-            }
+            // clockwise order
+			indices.emplace_back(y * (segmentWidth + 1) + x);
+            indices.emplace_back((y + 1) * (segmentWidth + 1) + x);
+			indices.emplace_back(y * (segmentWidth + 1) + x + 1);
+			indices.emplace_back((y + 1) * (segmentWidth + 1) + x + 1);
+			indices.emplace_back(y * (segmentWidth + 1) + x + 1);
+            indices.emplace_back((y + 1) * (segmentWidth + 1) + x);
         }
     }
 
@@ -177,8 +177,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
     AddObject(m_playerLightObj);
 
-    // * 4 하는게 좋긴한데 2로 타협
-    m_terrainMesh = CreateMeshFromHeightMap(heightMap, 128 * 2, 128 * 2, 1.0f);
+    m_terrainMesh = CreateMeshFromHeightMap(heightMap, 512, 512, 1.0f);
     m_terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
     const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
@@ -259,7 +258,6 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         terrainRenderer->SetMesh(m_terrainMesh.get());
         terrainRenderer->SetMaterial(m_terrainMaterial.get());
         terrainRenderer->SetShader(shaderTerrain);
-        terrainRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST);
 
         AddObject(m_terrainObj);
     }
