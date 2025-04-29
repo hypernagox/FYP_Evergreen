@@ -92,7 +92,13 @@ namespace udsdx
 	void Input::SetRelativeMouse(bool value)
 	{
 		m_mouse->SetMode(value ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
-		m_mouse->SetVisible(value);
+
+		// Force the cursor to be hidden or shown based on the mode
+		// ShowCursor behaviour is based on increment / decrement counting; some operations may not count correctly
+		// So we need to loop until the cursor is in the desired state
+		// This is a bit of a hack, but it works
+		while (value && ShowCursor(FALSE) > 0);
+		while (!value && ShowCursor(TRUE) <= 0);
 	}
 
 	bool Input::GetKey(Keyboard::Keys key) const
