@@ -52,8 +52,8 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Death, m_stateMachine->GetConditionRefBool("Death"), true);
 
 
-	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater_equal<float>>>(AnimationState::Idle, AnimationState::Run, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 10.0f);
-	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less<float>>>(AnimationState::Run, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 10.0f);
+	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::Idle, AnimationState::Run, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
+	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::Run, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
 
 
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Death, AnimationState::Idle, 2.f);
@@ -79,10 +79,10 @@ PlayerRenderer::~PlayerRenderer()
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
-	m_stateMachine->Update(time.deltaTime);
 	const Vector3 velocity = GetComponent<EntityMovement>()->GetVelocity();
 	float mag = Vector2(velocity.x, velocity.z).LengthSquared();
 	*m_stateMachine->GetConditionRefFloat("MoveSpeed") = mag;
+	m_stateMachine->Update(time.deltaTime);
 }
 
 void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)

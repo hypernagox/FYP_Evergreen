@@ -22,7 +22,7 @@ namespace udsdx
 	public:
 		BoundingCameraOrthographic(Matrix4x4 viewMatrix, float width, float height, float nearPlane, float farPlane)
 		{
-			m_cameraOrientedBox = BoundingOrientedBox(Vector3::Forward * (nearPlane + farPlane) * 0.5f, Vector3(width * 0.5f, height * 0.5f, (farPlane - nearPlane) * 0.5f), Quaternion::Identity);
+			m_cameraOrientedBox = BoundingOrientedBox(Vector3::Forward * (nearPlane + farPlane) * 0.5f, Vector3(width * 0.5f, height * 0.5f, (farPlane - nearPlane)), Quaternion::Identity);
 			m_cameraOrientedBox.Transform(m_cameraOrientedBox, viewMatrix.Invert());
 		}
 

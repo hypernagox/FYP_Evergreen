@@ -1,11 +1,11 @@
 ﻿#include "pch.h"
 #include <flatbuffers/flatbuffers.h>
 #include "s2c_PacketHandler.h"
-#include "../evergreen_client/ServerObjectMgr.h"
-#include "../evergreen_client/ServerObject.h"
 #include "../evergreen_client/MoveInterpolator.h"
-#include "func.h"
+#include "../evergreen_client/ServerObjectMgr.h"
 #include "../evergreen_client/EntityBuilder.h"
+#include "../evergreen_client/ServerObject.h"
+#include "func.h"
 #include "PlayerRenderer.h"
 #include "Monster.h"
 #include "ServerTimeMgr.h"
@@ -26,9 +26,6 @@ flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 	extern thread_local flatbuffers::FlatBufferBuilder buillder;
 	return &buillder;
 }
-
-extern std::shared_ptr<Scene> scene;
-extern std::shared_ptr<SceneObject> g_heroObj;
 
 #define Mgr(type)	(type::GetInst())
 
@@ -194,8 +191,9 @@ const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSessi
 	if (NetMgr(NetworkMgr)->GetSessionID() == pkt_.player_id())
 	{
 		std::cout << "사망\n";
-		g_heroObj->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
-		g_heroObj->GetComponent<PlayerRenderer>()->Death();
+		auto heroObject = Mgr(ServerObjectMgr)->GetMainHero();
+		heroObject->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
+		heroObject->GetComponent<PlayerRenderer>()->Death();
 		NetMgr(NetworkMgr)->Send(Create_c2s_PLAYER_DEATH());
 	}
 	else
@@ -298,7 +296,7 @@ const bool Handle_s2c_CRAFT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession
 	std::cout << DATA_TABLE->GetRecipeName(recipe_id) << '\n';
 
 	// 레시피에서 읽은 아이템 리스트 정보를 통해 플레이어의 인벤토리를 수정한다.
-	if (auto playerComp = g_heroObj->GetComponent<AuthenticPlayer>())
+	if (auto playerComp = Mgr(ServerObjectMgr)->GetMainHero()->GetComponent<AuthenticPlayer>())
 	{
 		const auto& combine_list = GET_RECIPE(DATA_TABLE->GetRecipeName(recipe_id));
 		for (const auto& [itemName, itemId, numOfRequire] : combine_list.itemElements)

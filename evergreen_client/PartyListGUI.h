@@ -18,9 +18,6 @@ public:
 	void UpdateQuestID(int questID);
 
 private:
-	// TODO: Replace with actual number of quests
-	static constexpr int NumQuests = 3;
-
 	int m_currentQuestID = 0;
 
 	std::shared_ptr<udsdx::SceneObject> m_panel;

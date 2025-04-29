@@ -10,9 +10,9 @@
 #include "../common/json.hpp"
 #include "MonsterRenderer.h"
 #include "GizmoCylinderRenderer.h"
+#include "ServerObjectMgr.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
-extern std::shared_ptr<SceneObject> g_heroObj;
 
 std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Warrior(EntityBuilderBase* builder)
 {
@@ -22,7 +22,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Warrior(EntityBuil
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
 	auto movement = instance->AddComponent<EntityMovement>();
-	movement->SetFriction(100.0f);
+	movement->SetFriction(0.0f);
 	auto playerComponent = instance->AddComponent<PlayerRenderer>();
 	auto serverComponent = instance->AddComponent<ServerObject>();
 	serverComponent->SetObjID(builder->obj_id);
@@ -81,7 +81,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 
 	const auto item = serverComponent->AddComp<DropItem>();
 	item->SetItemPos(b->obj_pos);
-	item->SetMainHero(g_heroObj); // TODO: g_hero 처형
+	item->SetMainHero(ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject());
 	auto renderer = instance->AddComponent<DropItemRenderer>();
 
 

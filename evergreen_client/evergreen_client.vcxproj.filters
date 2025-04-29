@@ -97,6 +97,9 @@
     <Filter Include="EntityBuilder\EventTimer">
       <UniqueIdentifier>{155dc9df-ac89-4351-8343-63e5a1e3c79d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{cc7599ed-3f6a-4233-80f4-cf0581312334}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -223,6 +226,15 @@
       <Filter>Gui</Filter>
     </ClCompile>
     <ClCompile Include="PartyStatusGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePauseGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -363,6 +375,15 @@
       <Filter>Gui</Filter>
     </ClInclude>
     <ClInclude Include="PartyStatusGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePauseGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuGUI.h">
       <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>

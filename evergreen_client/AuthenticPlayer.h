@@ -24,6 +24,7 @@ private:
 	std::shared_ptr<SceneObject> m_particlePrefab;
 
 	bool m_bGround = false;
+	bool m_bKeyInput = false;
 	float m_rendererBodyAngleY = 0.0f;
 
 	std::unique_ptr<SoundEffectInstance> soundEffectInstance;
@@ -71,6 +72,7 @@ private:
 	void MoveByView(const Vector3& vDelta);
 	void UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime);
 	void RequestQuest();
+
 public:
 	AuthenticPlayer(const std::shared_ptr<SceneObject>& object);
 	~AuthenticPlayer();
@@ -96,6 +98,10 @@ public:
 	void SetQuickSlotItem(int index, uint8_t itemID);
 	void UseQuickSlotItem(int index);
 	void CraftItem(int recipeIndex);
+
+	void RequestQuestStart();
+	void RequestQuestEnd();
+
 public:
 	const auto& GetStatusGUI()const noexcept { return m_playerStatusGUI; }
 };

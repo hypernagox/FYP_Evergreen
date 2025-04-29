@@ -125,7 +125,10 @@ namespace udsdx
 		// Update components
 		for (auto& component : m_components)
 		{
-			component->Update(time, scene);
+			if (component->GetActive())
+			{
+				component->Update(time, scene);
+			}
 		}
 	}
 
@@ -151,7 +154,10 @@ namespace udsdx
 		// Update components
 		for (auto& component : m_components)
 		{
-			component->PostUpdate(time, scene);
+			if (component->GetActive())
+			{
+				component->PostUpdate(time, scene);
+			}
 		}
 
 		return true;
