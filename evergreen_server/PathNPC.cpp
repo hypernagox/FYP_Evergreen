@@ -11,19 +11,19 @@
 
 void PathNPC::UpdateMove()
 {
+	const auto cur_time = GetTickCount64();
 	const auto owner = GetOwnerEntity();
-	const float dt = 1.f;
-	if (m_cur_idx == m_vecPathDir.size())
+	if (m_cur_idx == m_vecDirDists.size())
 	{
 		// µµÂø
 		m_owner_system->m_curQuestRoomInstance->CheckPartyQuestState();
 		std::cout << "Å¬¸®¾î\n";
 		return;
 	}
-	const auto pos_comp = owner->GetComp<PositionComponent>();
+	
+	m_curDistAcc += m_navAgent->ApplyPostPosition(m_vecDirDists[m_cur_idx].first, m_speed, (cur_time - m_last_update_timestamp) * 0.001f);
 
-	m_curDistAcc += m_navAgent->ApplyPostPosition(m_vecPathDir[m_cur_idx], m_speed, dt);
-	if (m_curDistAcc >= m_dists[m_cur_idx])
+	if (m_curDistAcc >= m_vecDirDists[m_cur_idx].second)
 	{
 		m_curDistAcc = 0.f;
 		++m_cur_idx;
@@ -32,6 +32,9 @@ void PathNPC::UpdateMove()
 	owner->GetCurCluster()->Broadcast(
 		NagiocpX::MoveBroadcaster::CreateMovePacket(owner)
 	);
+
+	m_last_update_timestamp = cur_time;
+
 	owner->GetQueueabler()->EnqueueAsyncTimer(
 		1000,
 		&PathNPC::UpdateMove,
@@ -47,13 +50,21 @@ void PathNPC::InitPathNPC()
 		GetNavMesh()->GetPathVertices(begin, end, 1);
 	m_navAgent->SetPos(begin);
 	m_speed = 5.f;
-	const auto num = vecPath.size() - 1;
-	m_vecPathDir.reserve(num);
-	m_dists.reserve(num);
-	for (int i = 0; i < num; ++i)
+	if (auto num = vecPath.size())
 	{
-		m_vecPathDir.emplace_back(CommonMath::Normalized(vecPath[i + 1] - vecPath[i]));
-		m_dists.emplace_back(Vector3::Distance(vecPath[i], vecPath[i + 1]));
+		m_vecDirDists.reserve(--num);
+		for (int i = 0; i < num; ++i)
+		{
+			m_vecDirDists.emplace_back(
+				CommonMath::Normalized(vecPath[i + 1] - vecPath[i]),
+				Vector3::Distance(vecPath[i], vecPath[i + 1])
+			);
+		}
+		m_last_update_timestamp = GetTickCount64();
+		UpdateMove();
 	}
-	UpdateMove();
+	else
+	{
+		// Invalid Path ... 
+	}
 }
