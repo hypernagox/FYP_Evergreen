@@ -196,7 +196,11 @@ namespace NagiocpX
 		ClusterFieldInfo GetClusterFieldInfo()const noexcept { 
 			return { m_clusterInfo.load(),m_curField };
 		}
-		Cluster* const GetCurCluster()const noexcept { return NagiocpX::GetCluster(m_clusterInfo, m_curField); }
+		Cluster* const GetCurCluster()const noexcept { 
+			if (const auto field = m_curField.load())
+				return NagiocpX::GetCluster(m_clusterInfo, field);
+			return nullptr;
+		}
 		const auto GetCurField()const noexcept { return m_curField.load(); }
 
 		const bool IsPendingClusterEntry()const noexcept { return 0 != m_clusterEnterCount; }
