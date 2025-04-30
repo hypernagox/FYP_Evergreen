@@ -97,8 +97,25 @@ namespace udsdx
 		// ShowCursor behaviour is based on increment / decrement counting; some operations may not count correctly
 		// So we need to loop until the cursor is in the desired state
 		// This is a bit of a hack, but it works
-		while (value && ShowCursor(FALSE) > 0);
-		while (!value && ShowCursor(TRUE) <= 0);
+
+		// The maximum number of times to try ShowCursor is restricted due to the potential infinite loop
+		int timeoutCount = 16;
+		while (timeoutCount > 0 && value)
+		{
+			if (ShowCursor(FALSE) < 0)
+			{
+				break;
+			}
+			--timeoutCount;
+		}
+		while (timeoutCount > 0 && !value)
+		{
+			if (ShowCursor(TRUE) >= 0)
+			{
+				break;
+			}
+			--timeoutCount;
+		}
 	}
 
 	bool Input::GetKey(Keyboard::Keys key) const
