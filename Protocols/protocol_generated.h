@@ -163,6 +163,9 @@ struct s2c_PARTY_QUEST_CLEARBuilder;
 struct s2c_PARTY_MEMBERS_INFORMATION;
 struct s2c_PARTY_MEMBERS_INFORMATIONBuilder;
 
+struct s2c_GET_HARVEST;
+struct s2c_GET_HARVESTBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -2828,6 +2831,50 @@ inline ::flatbuffers::Offset<s2c_PARTY_MEMBERS_INFORMATION> Creates2c_PARTY_MEMB
   return Nagox::Protocol::Creates2c_PARTY_MEMBERS_INFORMATION(
       _fbb,
       party_member_ids__);
+}
+
+struct s2c_GET_HARVEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_GET_HARVESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_HARVEST_ID = 4
+  };
+  uint32_t harvest_id() const {
+    return GetField<uint32_t>(VT_HARVEST_ID, 0);
+  }
+  bool mutate_harvest_id(uint32_t _harvest_id = 0) {
+    return SetField<uint32_t>(VT_HARVEST_ID, _harvest_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_HARVEST_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_GET_HARVESTBuilder {
+  typedef s2c_GET_HARVEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_harvest_id(uint32_t harvest_id) {
+    fbb_.AddElement<uint32_t>(s2c_GET_HARVEST::VT_HARVEST_ID, harvest_id, 0);
+  }
+  explicit s2c_GET_HARVESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_GET_HARVEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_GET_HARVEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_GET_HARVEST> Creates2c_GET_HARVEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t harvest_id = 0) {
+  s2c_GET_HARVESTBuilder builder_(_fbb);
+  builder_.add_harvest_id(harvest_id);
+  return builder_.Finish();
 }
 
 }  // namespace Protocol

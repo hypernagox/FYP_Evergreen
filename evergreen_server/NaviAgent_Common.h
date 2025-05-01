@@ -19,7 +19,7 @@ public:
 	void SetPos(const Vector3& pos)noexcept;
 	void InitParams()noexcept;
 public:
-	void SetCellPos(const Vector3& prev_pos, const Vector3& post_pos)noexcept;
+	void SetCellPos(const float dt, const Vector3& prev_pos, const Vector3& post_pos)noexcept;
 	const auto GetAgentConcreate()noexcept { return &m_agent; }
 public:
 	float ApplyPostPosition(const Vector3& dir, const float speed, const float dt)noexcept;

@@ -104,7 +104,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     g_scene = std::make_shared<GameScene>(g_heightMap.get(), g_terrainData.get(), g_terrainDetail.get());
 
-    if constexpr (true == g_bUseNetWork)
+    // Å¸°Ù¾ÀÀº ÀÌ·±Àú·± Å×½ºÆ® ÇÒ ¶§ ´Ã ÇÊ¿ä ..
+   // if constexpr (true == g_bUseNetWork)
     {
         ServerObjectMgr::GetInst()->SetTargetScene(g_scene);
     }

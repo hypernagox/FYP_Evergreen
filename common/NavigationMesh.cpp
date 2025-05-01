@@ -368,16 +368,16 @@ namespace Common
 	const std::vector<DirectX::SimpleMath::Vector3>& NavigationMesh::GetPathVertices(
 		const DirectX::SimpleMath::Vector3& start,
 		const DirectX::SimpleMath::Vector3& end,
-		const int segmentation
+		const float step
 	)
 	{
-		constexpr const int MAX_PATH_COUNT = 256;
+		constexpr const int MAX_PATH_COUNT = 128;
 		extern thread_local std::vector<DirectX::SimpleMath::Vector3> path_result;
 		path_result.clear();
 
 		const dtNavMeshQuery* const navQuery = GetNavMeshQuery();
 		const dtQueryFilter& filter = *m_filter;
-		constexpr const float EXTENTS[3] = { 2.0f, 1000.0f, 2.0f };
+		constexpr const float EXTENTS[3] = { 2.0f, 4.0f, 2.0f };
 
 		const float startPos[3] = { start.x, start.y, -start.z };
 		const float endPos[3] = { end.x, end.y, -end.z };
@@ -406,18 +406,24 @@ namespace Common
 			straightPath, flags, polys, &straightPathCount, MAX_PATH_COUNT)))
 			return path_result;
 
-		for (int i = 0; i < straightPathCount; ++i)
+		for (int i = 0; i < straightPathCount - 1; ++i)
 		{
 			const Vector3& p1 = reinterpret_cast<const Vector3&>(straightPath[i * 3]);
 			const Vector3& p2 = reinterpret_cast<const Vector3&>(straightPath[(i + 1) * 3]);
-			const auto diff = (p2 - p1) / (float)segmentation;
-			for (int j = 0; j < segmentation; ++j)
+			const Vector3 delta = p2 - p1;
+			const float distance = delta.Length();
+			if (distance < 1e-5f) 
+				continue;
+			const int segmentCount = static_cast<int>(distance / step);
+			const Vector3 direction = delta / distance;
+			for (int j = 0; j < segmentCount; ++j)
 			{
-				const auto v = p1 + diff * (float)j;
+				const auto v = p1 + direction * (step * j);
 				path_result.emplace_back(v.x, v.y, -v.z);
 			}
 		}
-
+		const Vector3& p3 = reinterpret_cast<const Vector3&>(straightPath[(straightPathCount - 1) * 3]);
+		path_result.emplace_back(p3.x, p3.y, -p3.z);
 		return path_result;
 	}
 }

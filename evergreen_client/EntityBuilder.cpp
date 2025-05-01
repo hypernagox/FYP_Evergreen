@@ -11,6 +11,7 @@
 #include "MonsterRenderer.h"
 #include "GizmoCylinderRenderer.h"
 #include "ServerObjectMgr.h"
+#include "GuideSystem.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 
@@ -99,6 +100,6 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Harvest(EntityBuil
 	gizmoRenderer->SetRadius(3.f);
 	gizmoRenderer->SetHeight(10.f);
 	s->GetTransform()->SetLocalPosition(b->obj_pos);
-	std::cout << "!";
+	GuideSystem::GetInst()->AddHarvest(builder->obj_id, s);
 	return s;
 }

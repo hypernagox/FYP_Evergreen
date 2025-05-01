@@ -100,6 +100,9 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{cc7599ed-3f6a-4233-80f4-cf0581312334}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Player\GuideSystem">
+      <UniqueIdentifier>{5908c005-81d4-4ecb-b3bc-dcf2ba1c5631}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -236,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="MainMenuGUI.cpp">
       <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="GuideSystem.cpp">
+      <Filter>Player\GuideSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -385,6 +391,9 @@
     </ClInclude>
     <ClInclude Include="MainMenuGUI.h">
       <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="GuideSystem.h">
+      <Filter>Player\GuideSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -44,10 +44,11 @@ void PathNPC::UpdateMove()
 
 void PathNPC::InitPathNPC()
 {
+	const float step = 5.f;
 	const Vector3 begin = { -19.601448f,  72.97739f,  0.74976814f };
 	const Vector3 end = { -119.499115f,75,13.64f }; // ¸¶À» Áß¾Ó
 	const auto& vecPath = m_navAgent->GetAgentConcreate()->
-		GetNavMesh()->GetPathVertices(begin, end, 1);
+		GetNavMesh()->GetPathVertices(begin, end, step);
 	m_navAgent->SetPos(begin);
 	m_speed = 5.f;
 	if (auto num = vecPath.size())
@@ -57,7 +58,7 @@ void PathNPC::InitPathNPC()
 		{
 			m_vecDirDists.emplace_back(
 				CommonMath::Normalized(vecPath[i + 1] - vecPath[i]),
-				Vector3::Distance(vecPath[i], vecPath[i + 1])
+				std::min(Vector3::Distance(vecPath[i], vecPath[i + 1]), step)
 			);
 		}
 		m_last_update_timestamp = GetTickCount64();

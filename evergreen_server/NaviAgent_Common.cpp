@@ -52,9 +52,9 @@ void NaviAgent::InitParams() noexcept
 	m_agent.GetNavMesh()->GetCrowd()->updateAgentParameters(m_my_idx, &param);
 }
 
-void NaviAgent::SetCellPos(const Vector3& prev_pos, const Vector3& post_pos) noexcept
+void NaviAgent::SetCellPos(const float dt, const Vector3& prev_pos, const Vector3& post_pos) noexcept
 {
-	m_agent.SetCellPos(prev_pos, post_pos, m_posComp->pos);
+	m_agent.SetCellPos(dt, prev_pos, post_pos, m_posComp->pos);
 }
 
 float NaviAgent::ApplyPostPosition(const Vector3& dir, const float speed, const float dt) noexcept
@@ -62,7 +62,7 @@ float NaviAgent::ApplyPostPosition(const Vector3& dir, const float speed, const 
 	const auto dir_ = CommonMath::Normalized(dir) * speed * dt;
 	const auto& prev_pos = m_posComp->pos;
 	const auto post_pos = prev_pos + dir_;
-	SetCellPos(prev_pos, post_pos);
+	SetCellPos(dt, prev_pos, post_pos);
 	return dir_.Length();
 }
 

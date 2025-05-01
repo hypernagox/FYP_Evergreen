@@ -111,6 +111,10 @@ namespace NagiocpX
 	{
 		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
+		entity->AddComp<HP>()->InitHP(1); // TODO 매직넘버
+		entity->AddComp<HarvestDeath>();
+		entity->SetDeleter<Regenerator>(5000, Vector3{ b.x, b.y, b.z });
+		entity->AddComp<SphereCollider>()->SetSphere(entity->GetComp<PositionComponent>(), 1);
 		return entity;
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreatePathNPC(const EntityBuilder& b) noexcept
