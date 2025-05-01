@@ -100,10 +100,6 @@
     <Filter Include="Items\Inventory">
       <UniqueIdentifier>{6e728756-72f5-465d-a1d6-bfd26d104c33}</UniqueIdentifier>
     </Filter>
-    <Filter Include="main">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Items\DropItem">
       <UniqueIdentifier>{94310aa3-c43b-488a-9e40-0c8e314a3b83}</UniqueIdentifier>
     </Filter>
@@ -131,10 +127,14 @@
     <Filter Include="ClientSession\QuestRoom\PathNPC">
       <UniqueIdentifier>{f77e96e5-80a9-4f2d-ab2a-d8d8d7031311}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Items\main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>main</Filter>
+      <Filter>Items\main</Filter>
     </ClCompile>
     <ClCompile Include="ClientSession.cpp">
       <Filter>ClientSession</Filter>

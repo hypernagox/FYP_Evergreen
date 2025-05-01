@@ -15,6 +15,7 @@
 #include "ServerObject.h"
 #include "NaviCell.h"
 #include "Navigator.h"
+#include "BezierMovement.h"
 
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
@@ -362,8 +363,14 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         m_mainMenuCameraObject = std::make_shared<SceneObject>();
         m_mainMenuCameraObject->GetTransform()->SetLocalPosition(Vector3(0.0f, 120.0f, 0.0f));
         m_mainMenuCameraObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PIDIV4, PIDIV4, 0));
-        auto camera = m_mainMenuCameraObject->AddComponent<CameraOrthographic>();
-        camera->SetRadius(100.0f);
+
+        auto camera = m_mainMenuCameraObject->AddComponent<CameraPerspective>();
+		camera->SetFov(PI / 4.0f);
+
+		auto bezierMovement = m_mainMenuCameraObject->AddComponent<BezierMovement>();
+		bezierMovement->LoadSpline(RESOURCE_PATH(L"environment\\CameraPathSpline.json"));
+		bezierMovement->SetSpeed(10.0f);
+
         AddObject(m_mainMenuCameraObject);
     }
 
