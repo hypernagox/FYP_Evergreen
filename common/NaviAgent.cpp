@@ -23,10 +23,9 @@ namespace Common
 		m_curCell = GetPostCell(pos);
 	}
 
-	void NaviAgent::SetCellPos(const Vector3& prev_pos, const Vector3& post_pos, Vector3& out_pos) noexcept
+	void NaviAgent::SetCellPos(const float dt, const Vector3& prev_pos, const Vector3& post_pos, Vector3& out_pos) noexcept
 	{
-		// TODO: 매직넘버
-		constexpr const float MAX_HEIGHT_DIFF = .225f;
+		const float MAX_HEIGHT_DIFF = 10.25f * dt;
 		constexpr const float MIN_HEIGHT_VAL = .12f;
 		const auto cur_poly_ref = m_curCell.GetPolyRef();
 		dtPolyRef p[10]{ cur_poly_ref };

@@ -19,7 +19,7 @@ namespace Common
 		const std::vector<DirectX::SimpleMath::Vector3>& GetPathVertices(
 			const DirectX::SimpleMath::Vector3& start,
 			const DirectX::SimpleMath::Vector3& end,
-			const int segmentation = 10
+			const float step = 5.f
 		);
 		int findRandomPointAroundCircle(float* pos, float radius, float* outPos);
 		static dtNavMesh* LoadNavMesh(const std::wstring_view path);

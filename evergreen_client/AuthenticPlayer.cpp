@@ -12,6 +12,7 @@
 #include "PlayerCraftGUI.h"
 #include "Navigator.h"
 #include "GizmoSphereRenderer.h"
+#include "GuideSystem.h"
 
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
@@ -321,7 +322,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->m_pNaviAgent;
 	const auto prev_pos = GetSceneObject()->GetComponent<EntityMovement>()->prev_pos;
 	Vector3 temp;
-	navi->SetCellPos(prev_pos, transform->GetLocalPosition(), temp);
+	navi->SetCellPos(DT, prev_pos, transform->GetLocalPosition(), temp);
 	transform->SetLocalPosition(temp);
 	GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
 
@@ -340,22 +341,25 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	{
 		const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();
 		std::cout << std::format("x: {}, y: {}, z: {} \n", pos.x, pos.y, pos.z);
+		
 		const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
-		{
-			const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetPathVertices(pos, end);
-			for (int i = 0; i < v.size(); ++i) {
-				const auto vv = v[i];
-				auto s = std::make_shared<SceneObject>();
-
-				auto gizmoRenderer = s->AddComponent<GizmoSphereRenderer>();
-				gizmoRenderer->SetRadius(1.0f);
-
-				s->GetTransform()->SetLocalPosition(vv);
-				scene.AddObject(s);
-			}
-		}
+		GuideSystem::GetInst()->ToggleFlag();
+		//GuideSystem::GetInst()->SetGuidePath(end);
+		//{
+		//	const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetPathVertices(pos, end);
+		//	for (int i = 0; i < v.size(); ++i) {
+		//		const auto vv = v[i];
+		//		auto s = std::make_shared<SceneObject>();
+		//
+		//		auto gizmoRenderer = s->AddComponent<GizmoSphereRenderer>();
+		//		gizmoRenderer->SetRadius(1.0f);
+		//
+		//		s->GetTransform()->SetLocalPosition(vv);
+		//		scene.AddObject(s);
+		//	}
+		//}
 	}
-
+	GuideSystem::GetInst()->UpdateGuideSystem();
 	// 무브패킷 센드 업데이트
 	m_bSendFlag |=
 		INSTANCE(Input)->GetKeyDown(Keyboard::W)

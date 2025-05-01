@@ -431,6 +431,7 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</IncludeInUnityFile>
     </ClCompile>
+    <ClCompile Include="GuideSystem.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="LogFloatGUI.cpp" />
     <ClCompile Include="main.cpp" />
@@ -500,6 +501,7 @@
     <ClInclude Include="GizmoBoxRenderer.h" />
     <ClInclude Include="GizmoCylinderRenderer.h" />
     <ClInclude Include="GizmoSphereRenderer.h" />
+    <ClInclude Include="GuideSystem.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="LogFloatGUI.h" />
     <ClInclude Include="MainMenuGUI.h" />

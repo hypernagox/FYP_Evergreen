@@ -195,7 +195,7 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
     const auto dy2 = cur_pos.y + dir.y * 5.2f * dt_;
     const auto dz2 = cur_pos.z + dir.z * 5.2f * dt_;
 
-    pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(cur_pos,Vector3{ dx2,dy2,dz2 });
+    pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(dt_, cur_pos,Vector3{ dx2,dy2,dz2 });
    
     pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
     // 

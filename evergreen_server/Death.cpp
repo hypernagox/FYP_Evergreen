@@ -39,3 +39,9 @@ void PlayerDeath::ProcessDeath() noexcept
 	owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(pkt);
 }
 
+void HarvestDeath::ProcessDeath() noexcept
+{
+	const auto owner = GetOwnerEntityRaw();
+	owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(Create_s2c_GET_HARVEST(owner->GetObjectID()));
+	owner->TryOnDestroy();
+}

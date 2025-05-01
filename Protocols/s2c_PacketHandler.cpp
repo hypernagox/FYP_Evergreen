@@ -19,6 +19,7 @@
 #include "LogFloatGUI.h"
 #include "RequestPopupGUI.h"
 #include "PartyStatusGUI.h"
+#include "GuideSystem.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -139,7 +140,8 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 	const auto hit_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(hit_obj_id);
 	if (!hit_obj_ptr)
 	{
-		std::cout << std::format("Invalid hit Object ID from :{}", __FUNCTION__) << std::endl;
+		// 이제는 빠른삭제조치를 위해 여러번 삭제 패킷이 올 수 있음
+	//	std::cout << std::format("Invalid hit Object ID from :{}", __FUNCTION__) << std::endl;
 		return true;
 	}
 	if (const auto monster = hit_obj_ptr->GetComponent<Monster>())
@@ -503,3 +505,9 @@ const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NetHelper::S_ptr<NetHelper
 	return true;
 }
 
+const bool Handle_s2c_GET_HARVEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_GET_HARVEST& pkt_)
+{
+	std::cout << "채집물 획득 ! ID: " << pkt_.harvest_id() << std::endl;
+	GuideSystem::GetInst()->RemoveHarvest(pkt_.harvest_id());
+	return true;
+}

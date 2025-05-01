@@ -17,7 +17,10 @@ void Regenerator::ProcessDestroy(S_ptr<ContentsEntity> entity) noexcept
 void Regenerator::RegenerateNPC(S_ptr<ContentsEntity> entity) noexcept
 {
 	if (!IsFieldRunning(entity))return;
-	entity->GetComp<NaviAgent>()->SetPos(m_summon_pos);
+	if (const auto navi = entity->GetComp<NaviAgent>())
+		navi->SetPos(m_summon_pos);
+	else
+		entity->GetComp<PositionComponent>()->pos = m_summon_pos;
 	entity->SetActive();
 	entity->GetClusterFieldInfo().curFieldPtr->EnterFieldNPC(std::move(entity));
 }

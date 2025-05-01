@@ -4,6 +4,7 @@
 #include "component.h"
 #include "MoveInterpolator.h"
 #include "EntityBuilder.h"
+#include "GuideSystem.h"
 
 ServerObjectMgr::ServerObjectMgr()
 {
@@ -56,6 +57,9 @@ void ServerObjectMgr::RemoveObject(const uint64_t id)
 	{
 		iter->second->RemoveFromParent();
 		m_mapServerObj.erase(iter);
+
+		// TODO: 채집물들 가이드를 위해 서버오브젝트 매니저처럼 채집물만 Add / Remove
+		GuideSystem::GetInst()->RemoveHarvest(id);
 	}
 
 	// 없는데 지우라고 오면 뭔가 이상한 상황이다.

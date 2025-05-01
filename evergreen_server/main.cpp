@@ -12,6 +12,7 @@
 #include "DataRegistry.h"
 #include "QuestRoom.h"
 #include "HarvestSystem.h"
+#include "Regenerator.h"
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 100001;
@@ -51,7 +52,7 @@ public:
 			b.y = pos.y;
 			b.z = pos.z;
 			const auto m = EntityFactory::CreateHarvest(b);
-			
+			static_cast<Regenerator*>(m->GetDeleter())->m_targetField = Field::GetField(0)->SharedFromThis<Field>();
 			Field::GetField(0)->EnterFieldNPC(m);
 		}
 		{
@@ -96,7 +97,7 @@ int main()
 	ContentsInitiator con_init;
 	ClusterPredicate broad_helper;
 	Common::DataRegistry::Load();
-	HarvestSystem::LoadHarvest({"Tree"}, L"environment\\ExportedInstance.json");
+	HarvestSystem::LoadHarvest({}, L"environment\\ExportedGameSpawns.json");
 
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	

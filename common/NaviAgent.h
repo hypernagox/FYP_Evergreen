@@ -19,7 +19,7 @@ namespace Common
 		void SetCurCell(const NaviCell& cell)noexcept { m_curCell = cell; }
 		auto& GetCurCell()noexcept { return m_curCell; }
 		void SetNavMesh(NavigationMesh* const pNavMesh)noexcept { m_pNavMesh = pNavMesh; }
-		void SetCellPos(const Vector3& prev_pos, const Vector3& post_pos, Vector3& out_pos)noexcept;
+		void SetCellPos(const float dt, const Vector3& prev_pos, const Vector3& post_pos, Vector3& out_pos)noexcept;
 	private:
 		NaviCell m_curCell;
 		NavigationMesh* m_pNavMesh;

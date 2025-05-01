@@ -41,7 +41,7 @@ const State::EntityState RangeMonChase::Update(const float dt, const ComponentSy
     const auto dy2 = cur_pos.y + dir.y * 5.2f * dt;
     const auto dz2 = cur_pos.z + dir.z * 5.2f * dt;
 
-    comp_sys->GetComp<NaviAgent>()->SetCellPos(cur_pos, Vector3{ dx2,dy2,dz2 });
+    comp_sys->GetComp<NaviAgent>()->SetCellPos(dt, cur_pos, Vector3{ dx2,dy2,dz2 });
 
     comp_sys->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / CommonMath::C_PI;
 

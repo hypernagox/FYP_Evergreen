@@ -34,6 +34,7 @@
 #include "GizmoSphereRenderer.h"
 
 #include "ServerObjectMgr.h"
+#include "GuideSystem.h"
 
 using namespace udsdx;
 
@@ -160,7 +161,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
     ServerObjectMgr::GetInst()->SetMainHero(NetMgr(NetworkMgr)->GetSessionID(), m_heroObj);
     auto heroServerComponent = m_heroObj->AddComponent<ServerObject>();
-
+   
     heroServerComponent->AddComp<MovePacketSender>();
     m_heroComponent = m_heroObj->AddComponent<AuthenticPlayer>();
 
@@ -382,10 +383,10 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
 
     // TODO: Play Game을 누르면 서버에 접속으로 간주
-    if constexpr (true == g_bUseNetWork)
-    {
-        Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())));
-    }
+   //if constexpr (true == g_bUseNetWork)
+   //{
+   //    Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())));
+   //}
 }
 
 void GameScene::Update(const Time& time)
@@ -414,11 +415,21 @@ void GameScene::Update(const Time& time)
 }
 
 void GameScene::EnterGame()
-{
+{   
     AddObject(m_heroObj);
     AddObject(m_playerInterfaceGroup);
     m_focusAgentObj->SetActive(true);
     m_mainMenuCameraObject->SetActive(false);
+
+    {
+        extern std::shared_ptr<GameScene> g_scene;
+        GuideSystem::GetInst()->SetMainPlayer(m_heroObj);
+        GuideSystem::GetInst()->SetTargetScene(g_scene);
+    }
+    if constexpr (true == g_bUseNetWork)
+    {
+        Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())));
+    }
 }
 
 void GameScene::ExitGame()

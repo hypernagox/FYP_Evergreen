@@ -12,7 +12,7 @@ void HarvestSystem::LoadHarvest(const std::vector<std::string> key_words, const 
 	for (const auto& prototype : j)
 	{
 		const std::string key_name = prototype["prefab"];
-		bool flag = false;
+		bool flag = key_words.empty();
 		for (const auto& key_word : key_words)
 		{
 			if (key_name.find(key_word) != std::string::npos)
