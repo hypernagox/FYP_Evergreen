@@ -35,6 +35,7 @@ public:
 			ResetGuideObjects();
 		}
 	}
+	Vector3 temp_force_pos = {};
 private:
 	void SetGuidePathInternal(const Vector3& target_pos);
 private:

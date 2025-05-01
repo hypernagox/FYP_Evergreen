@@ -384,7 +384,7 @@ namespace Common
 
 		dtPolyRef startRef, endRef;
 		float closestStart[3], closestEnd[3];
-
+		
 		if (dtStatusFailed(navQuery->findNearestPoly(startPos, EXTENTS, &filter, &startRef, closestStart)))
 			return path_result;
 
@@ -397,7 +397,7 @@ namespace Common
 		if (dtStatusFailed(navQuery->findPath(startRef, endRef, closestStart, closestEnd, &filter, path, &pathCount, MAX_PATH_COUNT)))
 			return path_result;
 
-		float straightPath[MAX_PATH_COUNT * 3];
+		float straightPath[MAX_PATH_COUNT * 3]{ endPos[0],endPos[1],endPos[2] };
 		unsigned char flags[MAX_PATH_COUNT];
 		dtPolyRef polys[MAX_PATH_COUNT];
 		int straightPathCount = 0;
@@ -422,6 +422,7 @@ namespace Common
 				path_result.emplace_back(v.x, v.y, -v.z);
 			}
 		}
+		if (0 == straightPathCount)return path_result;
 		const Vector3& p3 = reinterpret_cast<const Vector3&>(straightPath[(straightPathCount - 1) * 3]);
 		path_result.emplace_back(p3.x, p3.y, -p3.z);
 		return path_result;

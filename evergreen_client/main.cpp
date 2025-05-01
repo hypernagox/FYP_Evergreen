@@ -31,6 +31,7 @@
 #include "ServerObjectMgr.h"
 
 #include "GameScene.h"
+#include "GuideSystem.h"
 
 using namespace udsdx;
 
@@ -59,6 +60,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UpdownStudio::Initialize(hInstance);
     UpdownStudio::RegisterUpdateCallback(Update);
 
+    GuideSystem::GetInst()->Init();
     NAVIGATION->Init();
     NAVIGATION->RegisterDestroy();
     Common::DataRegistry::Load();

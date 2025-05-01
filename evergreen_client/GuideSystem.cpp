@@ -67,6 +67,10 @@ void GuideSystem::UpdateGuideSystem()
 			min_dist = dist;
 		}
 	}
+	if (temp_force_pos != Vector3::Zero)
+	{
+		v1 = temp_force_pos;
+	}
 	if (v1 != Vector3::Zero)
 	{
 		ResetGuideObjects();
@@ -76,14 +80,17 @@ void GuideSystem::UpdateGuideSystem()
 
 void GuideSystem::SetGuidePathInternal(const Vector3& target_pos)
 {
-	m_cur_target_pos = target_pos;
+	if (temp_force_pos == Vector3::Zero)
+		m_cur_target_pos = target_pos;
+	else
+		m_cur_target_pos = temp_force_pos;
 	const auto pos = m_main_hero->GetTransform()->GetLocalPosition();
 	const auto navi = m_main_hero->GetComponent<ServerObject>()->m_pNaviAgent;
 	const auto prev_pos = m_main_hero->GetComponent<EntityMovement>()->prev_pos;
 	Vector3 temp = pos;
-	navi->SetCellPos(DT, prev_pos, pos, temp);
+	navi->SetCellPos(DT, pos, pos, temp);
 	// TODO: 점 사이 사이 간격의 길이가 매직넘버
 	const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetPathVertices(
-		temp, target_pos, 2.f);
+		pos, target_pos, 2.f);
 	m_path_obj_maker(v);
 }

@@ -344,20 +344,14 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		
 		const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
 		GuideSystem::GetInst()->ToggleFlag();
-		//GuideSystem::GetInst()->SetGuidePath(end);
-		//{
-		//	const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetPathVertices(pos, end);
-		//	for (int i = 0; i < v.size(); ++i) {
-		//		const auto vv = v[i];
-		//		auto s = std::make_shared<SceneObject>();
-		//
-		//		auto gizmoRenderer = s->AddComponent<GizmoSphereRenderer>();
-		//		gizmoRenderer->SetRadius(1.0f);
-		//
-		//		s->GetTransform()->SetLocalPosition(vv);
-		//		scene.AddObject(s);
-		//	}
-		//}
+	}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::K))
+	{
+		GuideSystem::GetInst()->ToggleFlag();
+		if (GuideSystem::GetInst()->temp_force_pos == Vector3::Zero)
+			GuideSystem::GetInst()->temp_force_pos = { -119.499115f,75,13.64f };
+		else
+			GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
 	}
 	GuideSystem::GetInst()->UpdateGuideSystem();
 	// 무브패킷 센드 업데이트

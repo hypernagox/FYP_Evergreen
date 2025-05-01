@@ -669,7 +669,8 @@ namespace
 				}
 			}
 		}
-
+		// TODO: NULLPTR????
+		if (!pmin || !pmax)return;
 		dtVlerp(closest, pmin, pmax, tmin);
 	}
 }
