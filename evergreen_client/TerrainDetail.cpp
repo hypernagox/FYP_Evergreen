@@ -70,10 +70,10 @@ TerrainDetail::TerrainDetail(HeightMap* heightMap, std::wstring_view filename, L
 			{
 				for (int i = 0; i < sampleCount; i++)
 				{
-					float x = positions[i].x * (1.0f / segmentation) + (static_cast<float>(segmentX) / segmentation);
-					float y = positions[i].y * (1.0f / segmentation) + (static_cast<float>(segmentY) / segmentation);
+					float x = (positions[i].x + static_cast<float>(segmentX)) / segmentation;
+					float y = (positions[i].y + static_cast<float>(segmentY)) / segmentation;
 
-					float r = GetValue(heightData, sourceWidth, sourceHeight, x * sourceWidth, y * sourceHeight, type);
+					float r = GetValue(heightData, sourceWidth, sourceHeight, x * (sourceWidth - 1), y * (sourceHeight - 1), type);
 					if (r <= distribution(generator))
 						continue;
 
