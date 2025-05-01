@@ -29,6 +29,7 @@ namespace udsdx
 
 	public:
 		Vector2 GetSize() const { return m_size; }
+		Color GetColor() const { return m_color; }
 		RECT GetScreenRect() const;
 		bool GetRaycastTarget() const { return m_raycastTarget; }
 
@@ -37,10 +38,12 @@ namespace udsdx
 
 	public:
 		void SetSize(const Vector2& value) { m_size = value; }
+		void SetColor(const Color& value) { m_color = value; }
 		void SetRaycastTarget(bool value) { m_raycastTarget = value; }
 
 	protected:
 		Vector2 m_size = Vector2(100, 100);
+		Color m_color = Colors::White;
 		bool m_raycastTarget = true;
 
 		bool m_mouseHovering = false;

@@ -42,7 +42,7 @@ PixelOut PS(VertexOut pin)
     float3 normal = normalize(mul(pin.NormalW.xyz, (float3x3)gView));
     float3 delta = normalize(PosW.xyz - gEyePosW.xyz);
 	float2 uv = DirectionToEnvironmentUV(delta);
-    float4 texColor = gMainTex.Sample(gSampler, uv);
+    float4 texColor = gMainTex.SampleLevel(gSampler, uv, 0);
     float4 posDelta = PosNDC - PrevPosH;
 
     pOut.Buffer1 = texColor;

@@ -285,7 +285,7 @@ namespace udsdx
 		ssaoCB.OcclusionRadius = 0.25f;
 		ssaoCB.OcclusionFadeStart = 0.2f;
 		ssaoCB.OcclusionFadeEnd = 1.0f;
-		ssaoCB.SurfaceEpsilon = 0.05f;
+		ssaoCB.SurfaceEpsilon = 0.25f;
 
 		m_constantBuffers[param.FrameResourceIndex]->CopyData(0, ssaoCB);
 	}

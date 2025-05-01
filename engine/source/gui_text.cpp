@@ -47,6 +47,6 @@ namespace udsdx
 			origin = Vector2(1.0f, 1.0f);
 			break;
 		}
-		m_font->GetSpriteFont()->DrawString(param.SpriteBatchNonPremultipliedAlpha, m_text.c_str(), position, Colors::White, 0.0f, size * origin, Vector2::One * ratio);
+		m_font->GetSpriteFont()->DrawString(param.SpriteBatchNonPremultipliedAlpha, m_text.c_str(), position, m_color, 0.0f, size * origin, Vector2::One * ratio);
 	}
 }

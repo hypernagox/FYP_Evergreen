@@ -356,7 +356,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         textRenderer->SetText(GET_DATA(std::wstring, "Intro", "Start"));
         textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 
-        AddObject(textObj);
+        m_playerInterfaceGroup->AddChild(textObj);
     }
 
     {
@@ -366,10 +366,11 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
         auto camera = m_mainMenuCameraObject->AddComponent<CameraPerspective>();
 		camera->SetFov(PI / 4.0f);
+        camera->SetClipOffset(Vector2(1.0f / 3.0f, 0.0f));
 
 		auto bezierMovement = m_mainMenuCameraObject->AddComponent<BezierMovement>();
 		bezierMovement->LoadSpline(RESOURCE_PATH(L"environment\\CameraPathSpline.json"));
-		bezierMovement->SetSpeed(10.0f);
+		bezierMovement->SetSpeed(16.0f);
 
         AddObject(m_mainMenuCameraObject);
     }
@@ -387,13 +388,6 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
         AddObject(navMeshVisualizer);
     }
-
-
-    // TODO: Play Game을 누르면 서버에 접속으로 간주
-   //if constexpr (true == g_bUseNetWork)
-   //{
-   //    Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())));
-   //}
 }
 
 void GameScene::Update(const Time& time)

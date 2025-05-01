@@ -15,7 +15,7 @@ GamePauseGUI::GamePauseGUI(const std::shared_ptr<SceneObject>& object) : Compone
 		m_resumeButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -240.0f, 0.0f));
 
 		auto buttonComponent = m_resumeButton->AddComponent<GUIButton>();
-		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
+		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(200.0f, 50.0f));
 
 		auto resumeText = m_resumeButton->AddComponent<GUIText>();
@@ -30,7 +30,7 @@ GamePauseGUI::GamePauseGUI(const std::shared_ptr<SceneObject>& object) : Compone
 		m_exitButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -300.0f, 0.0f));
 
 		auto buttonComponent = m_exitButton->AddComponent<GUIButton>();
-		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
+		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(200.0f, 50.0f));
 		buttonComponent->SetClickCallback([this]() {
 			if (m_exitGameCallback)

@@ -127,7 +127,7 @@ namespace udsdx
 			XMStoreFloat4x4(&shadowConstants.LightViewProj[i], XMMatrixTranspose(lightViewProj));
 			XMStoreFloat4x4(&shadowConstants.LightViewProjClip[i], XMMatrixTranspose(lightViewProj * lightClip));
 
-			shadowConstants.ShadowBias[i] = f;
+			shadowConstants.ShadowBias[i] = f * 2.0f;
 			shadowConstants.ShadowDistance[i] = f * 0.5f;
 
 			CameraConstants cameraConstants{};

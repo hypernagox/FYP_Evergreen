@@ -2,21 +2,21 @@
   "Fox Tail": {
     "Name": "Fox Tail",
     "Description": "A fox tail.",
-    "Icon": "gui\\itemicon_foxtail.png",
+    "Icon": "gui\\icon_foxtail.png",
     "DropitemResource": "item\\foxtail\\foxtail.fbx",
     "DropitemResourceDiffuse": "item\\foxtail\\foxtail_DefaultMaterial_BaseColor.png"
   },
   "Meat": {
     "Name": "Meat",
     "Description": "A piece of meat.",
-    "Icon": "gui\\itemicon_meat.png",
+    "Icon": "gui\\icon_meat.png",
     "DropitemResource": "item\\meat\\meat.fbx",
     "DropitemResourceDiffuse": "item\\meat\\meat_DefaultMaterial_BaseColor.png"
   },
   "Coin": {
     "Name": "Coin",
     "Description": "",
-    "Icon": "gui\\itemicon_coin.png",
+    "Icon": "gui\\icon_coin.png",
     "DropitemResource": "item\\coin\\coin.fbx",
     "DropitemResourceDiffuse": "item\\coin\\coin_DefaultMaterial_BaseColor.png"
   }

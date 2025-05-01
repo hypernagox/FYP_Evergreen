@@ -66,6 +66,10 @@ void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
 
 void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 {
+	// TODO: 캐릭터의 전반적인 상태 관리 머신에 따른 행동 제어 필요
+	if (m_playerRenderer->GetCurrentState() == PlayerRenderer::AnimationState::Attack)
+		return;
+
 	const float deltaTime = DT;
 	Vector3 temp{};
 	vDelta.Normalize(temp);

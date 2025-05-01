@@ -50,7 +50,7 @@ namespace udsdx
 			compressOptions.alphaWeight = TEX_ALPHA_WEIGHT_DEFAULT;
 
 			ScratchImage mipChain;
-			const int mipChainLevels = std::log2<int>(std::max<int>(image.GetMetadata().width, image.GetMetadata().height)) + 1;
+			const size_t mipChainLevels = static_cast<size_t>(std::log2(std::max(image.GetMetadata().width, image.GetMetadata().height))) + 1;
 			// Generate MipMaps
 			ThrowIfFailed(::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_DEFAULT, mipChainLevels, mipChain));
 			// BC3 Compression
@@ -72,7 +72,7 @@ namespace udsdx
 		ThrowIfFailed(device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize + 3 & ~3),
+			&CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
 			IID_PPV_ARGS(m_textureUpload.GetAddressOf())));

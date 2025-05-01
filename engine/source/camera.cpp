@@ -75,7 +75,9 @@ namespace udsdx
 	Matrix4x4 CameraPerspective::GetProjMatrix(float aspect) const
 	{
 		Matrix4x4 m;
-		XMStoreFloat4x4(&m, XMMatrixPerspectiveFovLH(m_fov, aspect, m_near, m_far));
+		XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(m_fov, aspect, m_near, m_far);
+		projectionMatrix *= XMMatrixTranslation(m_clipOffset.x, m_clipOffset.y, 0.0f);
+		XMStoreFloat4x4(&m, projectionMatrix);
 		return m;
 	}
 

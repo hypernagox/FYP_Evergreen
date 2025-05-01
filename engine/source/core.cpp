@@ -878,7 +878,7 @@ namespace udsdx
 		// the depth buffer.  Therefore, because we need to create two views to the same resource:
 		//   1. SRV format: DXGI_FORMAT_R24_UNORM_X8_TYPELESS
 		//   2. DSV Format: DXGI_FORMAT_D24_UNORM_S8_UINT
-		// we need to create the depth buffer resource with a typeless format.  
+		// we need to create the depth buffer resource with a typeless format.
 		depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 
 		depthStencilDesc.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
