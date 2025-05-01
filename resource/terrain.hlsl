@@ -1,3 +1,4 @@
+#define USE_CUSTOM_SHADOWPS
 #include "common.hlsl"
 
 Texture2D gSrcSplatmap0 : register(t0);
@@ -46,4 +47,8 @@ PixelOut PS(VertexOut pin)
     pOut.Buffer3 = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
 	pOut.Buffer3 /= max(length(pOut.Buffer3), 1.0f);
     return pOut;
+}
+
+void ShadowPS(VertexOut pin)
+{
 }

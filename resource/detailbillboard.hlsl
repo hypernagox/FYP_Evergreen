@@ -106,12 +106,12 @@ void GS(point VertexOut input[1], uint primitiveID : SV_PRIMITIVEID, inout Trian
     float3 right = normalize(cross(up, look));
     float3x3 uvw = float3x3(right, up, look);
 
-    float windOffset = simplex3d_fractal(float3(input[0].PosW.xy * 0.1f + gTime * -0.1f, gTime * 0.01f));
+    float windOffset = simplex3d_fractal(float3(input[0].PosW.xy * 0.1f + gTime * -0.1f, gTime * 0.01f)) * 2.0f;
     float3 offsets[4];
-    offsets[0] = float3(+0.5f, 0.0f, 0.0f);
-    offsets[1] = float3(+0.5f, 1.0f, 0.0f);
-    offsets[2] = float3(-0.5f, 0.0f, 0.0f);
-    offsets[3] = float3(-0.5f, 1.0f, 0.0f);
+    offsets[0] = float3(+0.5f, -0.125f, 0.0f);
+    offsets[1] = float3(+0.5f, 0.875f, 0.0f);
+    offsets[2] = float3(-0.5f, -0.125f, 0.0f);
+    offsets[3] = float3(-0.5f, 0.875f, 0.0f);
     
     input[0].PosW.xyz *= 2.0f;
 

@@ -60,10 +60,10 @@ TerrainDetail::TerrainDetail(HeightMap* heightMap, std::wstring_view filename, L
 	std::vector<UINT> indices;
 
 	m_submeshes.resize(segmentation);
-	for (int segmentX = 0; segmentX < segmentation; ++segmentX)
+	for (UINT segmentX = 0; segmentX < segmentation; ++segmentX)
 	{
 		m_submeshes[segmentX].resize(segmentation);
-		for (int segmentY = 0; segmentY < segmentation; ++segmentY)
+		for (UINT segmentY = 0; segmentY < segmentation; ++segmentY)
 		{
 			m_submeshes[segmentX][segmentY].first = static_cast<UINT>(indices.size());
 			for (int type = 0; type < 3; type++)
@@ -80,7 +80,7 @@ TerrainDetail::TerrainDetail(HeightMap* heightMap, std::wstring_view filename, L
 					float h = heightMap->GetHeight(x * width, y * height);
 					udsdx::Vertex vertex{};
 					vertex.position = Vector3(x, h, y);
-					vertex.uv = udsdx::Vector2(type % 2, type / 2) * 0.5f;
+					vertex.uv = udsdx::Vector2(static_cast<float>(type % 2), static_cast<float>(type / 2)) * 0.5f;
 					vertices.emplace_back(vertex);
 					indices.emplace_back(static_cast<UINT>(indices.size()));
 				}

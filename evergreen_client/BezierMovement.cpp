@@ -38,7 +38,7 @@ void BezierMovement::Update(const Time& time, Scene& scene)
 
 	float length = fmodf(m_currentTime, m_spline.LengthToStep.back());
 	auto targetStep = std::prev(std::upper_bound(m_spline.LengthToStep.begin(), m_spline.LengthToStep.end(), length));
-	int steps = std::distance(m_spline.LengthToStep.begin(), targetStep);
+	int steps = static_cast<int>(std::distance(m_spline.LengthToStep.begin(), targetStep));
 
 	const int numSegments = static_cast<int>(m_spline.ControlPoints.size());
 	const int targetIndex = steps / NumSteps;

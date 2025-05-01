@@ -80,20 +80,9 @@ namespace udsdx
 			return vout;
 		}
 
-		float ShadowValue(float4 posW, float3 normalW, float distanceH)
+		float ShadowValue(float4 posW, float3 normalW, int level)
 		{
-			uint mipLevel = 0;
-			if (distanceH < gShadowDistance[0])
-				mipLevel = 0;
-			else if (distanceH < gShadowDistance[1])
-				mipLevel = 1;
-			else if (distanceH < gShadowDistance[2])
-				mipLevel = 2;
-			else if (distanceH < gShadowDistance[3])
-				mipLevel = 3;
-			else
-				return 1.0f;
-			float4 shadowPosH = mul(mul(posW, gLightViewProjClip[mipLevel]), gTex);
+			float4 shadowPosH = mul(mul(posW, gLightViewProjClip[level]), gTex);
 
 			// Complete projection by doing division by w.
 			shadowPosH.xy /= shadowPosH.w;
@@ -128,6 +117,20 @@ namespace udsdx
 			}
     
 			return percentLit / 9.0f;
+		}
+
+		float ShadowValue(float4 posW, float3 normalW, float distanceH)
+		{
+			if (distanceH < gShadowDistance[0])
+				return lerp(ShadowValue(posW, normalW, 0), ShadowValue(posW, normalW, 1), saturate((distanceH - gShadowDistance[0]) / (0.1f * gShadowDistance[0]) + 1.0f));
+			else if (distanceH < gShadowDistance[1])
+				return lerp(ShadowValue(posW, normalW, 1), ShadowValue(posW, normalW, 2), saturate((distanceH - gShadowDistance[1]) / (0.1f * (gShadowDistance[1] - gShadowDistance[0])) + 1.0f));
+			else if (distanceH < gShadowDistance[2])
+				return lerp(ShadowValue(posW, normalW, 2), ShadowValue(posW, normalW, 3), saturate((distanceH - gShadowDistance[2]) / (0.1f * (gShadowDistance[2] - gShadowDistance[1])) + 1.0f));
+			else if (distanceH < gShadowDistance[3])
+				return lerp(ShadowValue(posW, normalW, 3), 1.0f, saturate((distanceH - gShadowDistance[3]) / (0.1f * (gShadowDistance[3] - gShadowDistance[2])) + 1.0f));
+			else
+				return 1.0f;
 		}
 
 		float3 ReconstructNormal(float2 np)
