@@ -8,23 +8,33 @@ RequestPopupGUI::RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& obje
 	m_panel = std::make_shared<SceneObject>();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(0.0f, -240.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
-	uiRenderer->SetSize(Vector2(240.0f, 160.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_0_entry.png")));
+	uiRenderer->SetSize(Vector2(420.0f, 240.0f));
 	object->AddChild(m_panel);
+
+	m_titleText = std::make_shared<SceneObject>();
+	auto titleTextRenderer = m_titleText->AddComponent<GUIText>();
+	titleTextRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
+	m_titleText->GetTransform()->SetLocalPosition(Vector3(0.0f, 75.0f, 0.0f));
+	titleTextRenderer->SetRaycastTarget(false);
+	titleTextRenderer->SetAlignment(GUIText::Alignment::Center);
+	titleTextRenderer->SetText(L"####");
+	m_panel->AddChild(m_titleText);
 
 	m_text = std::make_shared<SceneObject>();
 	auto textRenderer = m_text->AddComponent<GUIText>();
 	textRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
-	m_text->GetTransform()->SetLocalPosition(Vector3(0.0f, 40.0f, 0.0f));
+	m_text->GetTransform()->SetLocalPosition(Vector3(0.0f, 20.0f, 0.0f));
 	textRenderer->SetRaycastTarget(false);
-	textRenderer->SetAlignment(GUIText::Alignment::Center);
+	textRenderer->SetAlignment(GUIText::Alignment::UpperCenter);
+	textRenderer->SetText(L"####");
 	m_panel->AddChild(m_text);
 
 	m_acceptButton = std::make_shared<SceneObject>();
 	auto acceptButtonRenderer = m_acceptButton->AddComponent<GUIButton>();
-	m_acceptButton->GetTransform()->SetLocalPosition(Vector3(-50.0f, -40.0f, 0.0f));
-	acceptButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_complete.png")));
-	acceptButtonRenderer->SetSize(Vector2(80, 40));
+	m_acceptButton->GetTransform()->SetLocalPosition(Vector3(-100.0f, -80.0f, 0.0f));
+	acceptButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_select.png")));
+	acceptButtonRenderer->SetSize(Vector2(160.0f, 60.0f));
 	acceptButtonRenderer->SetClickCallback([this]() {
 		if (m_onAccept)
 			m_onAccept();
@@ -40,9 +50,9 @@ RequestPopupGUI::RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& obje
 
 	m_cancelButton = std::make_shared<SceneObject>();
 	auto cancelButtonRenderer = m_cancelButton->AddComponent<GUIButton>();
-	m_cancelButton->GetTransform()->SetLocalPosition(Vector3(50.0f, -40.0f, 0.0f));
-	cancelButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_complete.png")));
-	cancelButtonRenderer->SetSize(Vector2(80, 40));
+	m_cancelButton->GetTransform()->SetLocalPosition(Vector3(100.0f, -80.0f, 0.0f));
+	cancelButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_select.png")));
+	cancelButtonRenderer->SetSize(Vector2(160.0f, 60.0f));
 	cancelButtonRenderer->SetClickCallback([this]() {
 		if (m_onCancel)
 			m_onCancel();
@@ -59,10 +69,11 @@ RequestPopupGUI::RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& obje
 	m_panel->SetActive(false);
 }
 
-void RequestPopupGUI::ShowPopup(const std::wstring& text, const std::function<void()>& onAccept, const std::function<void()>& onCancel)
+void RequestPopupGUI::ShowPopup(std::wstring_view title, std::wstring_view contents, const std::function<void()>& onAccept, const std::function<void()>& onCancel)
 {
 	m_panel->SetActive(true);
-	m_text->GetComponent<GUIText>()->SetText(text);
+	m_titleText->GetComponent<GUIText>()->SetText(title.data());
+	m_text->GetComponent<GUIText>()->SetText(contents.data());
 
 	m_onAccept = onAccept;
 	m_onCancel = onCancel;

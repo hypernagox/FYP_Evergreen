@@ -321,6 +321,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
         auto logFloatObj = std::make_shared<SceneObject>();
         auto logFloatComp = logFloatObj->AddComponent<LogFloatGUI>();
+        logFloatComp->AddText(L"Welcome to the game!");
         m_playerInterfaceGroup->AddChild(logFloatObj);
 
         auto requestPopupObj = std::make_shared<SceneObject>();

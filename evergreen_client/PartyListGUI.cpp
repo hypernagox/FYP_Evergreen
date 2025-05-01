@@ -10,10 +10,10 @@ PartyListGUI::PartyListGUI(const std::shared_ptr<udsdx::SceneObject>& object) : 
 	auto font = INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont"));
 
 	m_panel = std::make_shared<SceneObject>();
-	m_panel->GetTransform()->SetLocalPosition(Vector3(-0.0f, 360.0f, 0.0f));
+	m_panel->GetTransform()->SetLocalPosition(Vector3(-480.0f, -160.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
-	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_0_list.png")));
+	uiRenderer->SetSize(Vector2(480.0f, 480.0f));
 	object->AddChild(m_panel);
 
 	m_selectedQuestText = std::make_shared<SceneObject>();
@@ -79,7 +79,7 @@ PartyListGUI::PartyListGUI(const std::shared_ptr<udsdx::SceneObject>& object) : 
 		partyGUI.Panel = std::make_shared<SceneObject>();
 		partyGUI.Panel->GetTransform()->SetLocalPositionY(y);
 		auto panelRenderer = partyGUI.Panel->AddComponent<GUIImage>();
-		panelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
+		panelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_compartment.png")));
 		panelRenderer->SetSize(Vector2(460.0f, 60.0f));
 		m_panel->AddChild(partyGUI.Panel);
 
@@ -94,27 +94,30 @@ PartyListGUI::PartyListGUI(const std::shared_ptr<udsdx::SceneObject>& object) : 
 
 		partyGUI.JoinButton = std::make_shared<SceneObject>();
 		auto joinButtonRenderer = partyGUI.JoinButton->AddComponent<GUIButton>();
-		partyGUI.JoinButton->GetTransform()->SetLocalPosition(Vector3(200.0f, 0.0f, 0.0f));
-		joinButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_complete.png")));
-		joinButtonRenderer->SetSize(Vector2(60, 60));
+		partyGUI.JoinButton->GetTransform()->SetLocalPosition(Vector3(160.0f, 0.0f, 0.0f));
+		joinButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_select.png")));
+		joinButtonRenderer->SetSize(Vector2(120, 40));
 		partyGUI.Panel->AddChild(partyGUI.JoinButton);
+
+		auto joinButtonText = partyGUI.JoinButton->AddComponent<GUIText>();
+		joinButtonText->SetFont(font);
+		joinButtonText->SetRaycastTarget(false);
+		joinButtonText->SetText(L"파티 참가");
 	}
 
 	m_createPartyButton = std::make_shared<SceneObject>();
 	auto createPartyButtonRenderer = m_createPartyButton->AddComponent<GUIButton>();
-	m_createPartyButton->GetTransform()->SetLocalPosition(Vector3(200.0f, -120.0f, 0.0f));
-	createPartyButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_complete.png")));
-	createPartyButtonRenderer->SetSize(Vector2(60, 60));
+	m_createPartyButton->GetTransform()->SetLocalPosition(Vector3(160.0f, -120.0f, 0.0f));
+	createPartyButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_select.png")));
+	createPartyButtonRenderer->SetSize(Vector2(120, 40));
 	m_panel->AddChild(m_createPartyButton);
 
 	m_createPartyText = std::make_shared<SceneObject>();
 	auto createPartyButtonText = m_createPartyText->AddComponent<GUIText>();
-	m_createPartyText->GetTransform()->SetLocalPosition(Vector3(-220.0f, -120.0f, 0.0f));
 	createPartyButtonText->SetFont(font);
 	createPartyButtonText->SetRaycastTarget(false);
-	createPartyButtonText->SetAlignment(GUIText::Alignment::Left);
 	createPartyButtonText->SetText(L"파티 생성");
-	m_panel->AddChild(m_createPartyText);
+	m_createPartyButton->AddChild(m_createPartyText);
 
 	m_createPartyButton->GetComponent<GUIButton>()->SetClickCallback([this]() {
 		Send(Create_c2s_REGISTER_PARTY_QUEST(m_currentQuestID));
@@ -142,10 +145,11 @@ void PartyListGUI::UpdateContents(const std::vector<uint32_t>& table)
 	m_standByText->SetActive(false);
 	for (size_t i = 0; i < m_partyPanels.size(); ++i)
 	{
+		m_partyPanels[i].Panel->SetActive(true);
 		if (i < table.size())
 		{
-			m_partyPanels[i].Panel->SetActive(true);
 			m_partyPanels[i].PartyMemberIDText->GetComponent<GUIText>()->SetText(L"Party Member ID: " + std::to_wstring(table[i]));
+			m_partyPanels[i].JoinButton->SetActive(true);
 			m_partyPanels[i].JoinButton->GetComponent<GUIButton>()->SetClickCallback([this, id = table[i]]() {
 				Send(Create_c2s_PARTY_JOIN_REQUEST(id, m_currentQuestID));
 				INSTANCE(GameGUIFacade)->LogFloat->AddText(std::to_wstring(id) + L" 의 파티에 참가 신청을 보냈습니다.");
@@ -153,7 +157,8 @@ void PartyListGUI::UpdateContents(const std::vector<uint32_t>& table)
 		}
 		else
 		{
-			m_partyPanels[i].Panel->SetActive(false);
+			m_partyPanels[i].PartyMemberIDText->GetComponent<GUIText>()->SetText(L"");
+			m_partyPanels[i].JoinButton->SetActive(false);
 		}
 	}
 }

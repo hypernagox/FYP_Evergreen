@@ -343,6 +343,7 @@ const bool Handle_s2c_INVITE_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::Packe
 
 	// 팝업 메시지 송출
 	INSTANCE(GameGUIFacade)->RequestPopup->ShowPopup(
+		L"파티 초대 알림",
 		L"ID " + std::to_wstring(pkt_.target_party_leader_id()) + L" 님이 파티에 초대하였습니다.",
 		[id = pkt_.target_party_leader_id()]() {
 			Send(Create_c2s_INVITE_PARTY_RESULT(id, true));
@@ -408,6 +409,7 @@ const bool Handle_s2c_PARTY_JOIN_REQUEST(const NetHelper::S_ptr<NetHelper::Packe
 
 	// 팝업 메시지 송출
 	INSTANCE(GameGUIFacade)->RequestPopup->ShowPopup(
+		L"가입 요청 알림",
 		L"ID " + std::to_wstring(pkt_.target_user_id()) + L" 님이 파티에 가입 요청을 하였습니다.",
 		[lid = pSession_->GetSessionID(), id = pkt_.target_user_id()]() {
 			Send(Create_c2s_PARTY_JOIN_REQUEST_RESULT(lid, id, true));

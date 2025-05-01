@@ -21,6 +21,14 @@ LogFloatGUI::LogFloatGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Co
 	m_panel->AddChild(m_floatText);
 }
 
+void LogFloatGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
+{
+	m_elapsedTime += time.deltaTime;
+	Color color = Color(1.0f, 1.0f, 1.0f, std::clamp(5.0f - m_elapsedTime, 0.0f, 1.0f));
+	m_panel->GetComponent<GUIImage>()->SetColor(color);
+	m_floatText->GetComponent<GUIText>()->SetColor(color);
+}
+
 void LogFloatGUI::AddText(const std::wstring& text)
 {
 	auto floatText = m_floatText->GetComponent<GUIText>();
@@ -39,4 +47,6 @@ void LogFloatGUI::AddText(const std::wstring& text)
 	}
 	std::wstring newText = currentText + L"\n" + text;
 	floatText->SetText(newText);
+
+	m_elapsedTime = 0.0f;
 }
