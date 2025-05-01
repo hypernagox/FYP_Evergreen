@@ -100,6 +100,9 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{cc7599ed-3f6a-4233-80f4-cf0581312334}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utility Components">
+      <UniqueIdentifier>{ca4a2874-ba5c-4764-988b-26c64d66843b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Player\GuideSystem">
       <UniqueIdentifier>{5908c005-81d4-4ecb-b3bc-dcf2ba1c5631}</UniqueIdentifier>
     </Filter>
@@ -239,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="MainMenuGUI.cpp">
       <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="BezierMovement.cpp">
+      <Filter>Utility Components</Filter>
     </ClCompile>
     <ClCompile Include="GuideSystem.cpp">
       <Filter>Player\GuideSystem</Filter>
@@ -391,6 +397,9 @@
     </ClInclude>
     <ClInclude Include="MainMenuGUI.h">
       <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="BezierMovement.h">
+      <Filter>Utility Components</Filter>
     </ClInclude>
     <ClInclude Include="GuideSystem.h">
       <Filter>Player\GuideSystem</Filter>

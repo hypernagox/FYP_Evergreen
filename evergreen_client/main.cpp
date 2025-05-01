@@ -100,8 +100,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
     }
 
+    // Height Map: 지형의 (x, z) 좌표에 대한 y 높이를 담는 맵
     g_heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta_04_28.raw"), 2049, 2049);
+
+    // Terrain Detail: 잔디의 위치를 담는 맵, 잔디 위치에 대한 버텍스 / 인덱스 버퍼 포함
     g_terrainDetail = std::make_unique<TerrainDetail>(g_heightMap.get(), RESOURCE_PATH(L"environment\\Terrain_Detail.raw"), 512, 512, 16, INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
+
+	// Terrain Data: 나무, 바위, 건물 등 지형에 배치할 오브젝트의 위치를 담는 자료 구조
     g_terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
 
     g_scene = std::make_shared<GameScene>(g_heightMap.get(), g_terrainData.get(), g_terrainDetail.get());
