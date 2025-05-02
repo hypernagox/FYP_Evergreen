@@ -25,20 +25,6 @@
     "Description": "",
     "Icon": "gui\\icon_herb.png",
     "DropitemResource": "item\\herb\\herb.fbx",
-    "DropitemResourceDiffuse": "item\\herb\\herb_DefaultMaterial_BaseColor.png"
-  },
-  "Timber": {
-    "Name": "Timber",
-    "Description": "",
-    "Icon": "gui\\icon_timber.png",
-    "DropitemResource": "item\\timber\\timber_fbx.fbx",
-    "DropitemResourceDiffuse": "item\\timber\\timber_fbx_DefaultMaterial_BaseColor.png"
-  },
-  "Ironore": {
-    "Name": "Ironore",
-    "Description": "",
-    "Icon": "gui\\icon_ironore.png",
-    "DropitemResource": "item\\ironore\\ironore_fbx.fbx",
-    "DropitemResourceDiffuse": "item\\ironore\\ironore_fbx_DefaultMaterial_BaseColor.png"
+    "DropitemResourceDiffuse": "item\\herb\\herb_BaseColor.png"
   }
 }
