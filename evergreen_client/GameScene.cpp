@@ -309,15 +309,18 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         auto inventoryRenderer = m_inventoryObj->AddComponent<PlayerInventoryGUI>();
         m_playerInterfaceGroup->AddChild(m_inventoryObj);
         m_heroComponent->SetPlayerInventoryGUI(inventoryRenderer);
+		m_inventoryObj->SetActive(false);
 
         m_craftObj = std::make_shared<SceneObject>();
         auto craftComp = m_craftObj->AddComponent<PlayerCraftGUI>();
         m_playerInterfaceGroup->AddChild(m_craftObj);
         m_heroComponent->SetPlayerCraftGUI(craftComp);
+		m_craftObj->SetActive(false);
 
-        auto partyListObj = std::make_shared<SceneObject>();
-        auto partyListComp = partyListObj->AddComponent<PartyListGUI>();
-        m_playerInterfaceGroup->AddChild(partyListObj);
+        m_partyListObj = std::make_shared<SceneObject>();
+        auto partyListComp = m_partyListObj->AddComponent<PartyListGUI>();
+        m_playerInterfaceGroup->AddChild(m_partyListObj);
+		m_partyListObj->SetActive(false);
 
         auto logFloatObj = std::make_shared<SceneObject>();
         auto logFloatComp = logFloatObj->AddComponent<LogFloatGUI>();
@@ -356,6 +359,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         textObj->GetTransform()->SetLocalPosition(Vector3(-640, 480, 0));
         textRenderer->SetText(GET_DATA(std::wstring, "Intro", "Start"));
         textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
+		textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
 
         m_playerInterfaceGroup->AddChild(textObj);
     }
@@ -412,6 +416,11 @@ void GameScene::Update(const Time& time)
         m_craftObj->SetActive(!m_craftObj->GetActive());
         audioAction(m_craftObj->GetActive());
     }
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::Q))
+	{
+		m_partyListObj->SetActive(!m_partyListObj->GetActive());
+		audioAction(m_partyListObj->GetActive());
+	}
 
     Scene::Update(time);
 }

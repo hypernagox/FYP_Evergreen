@@ -2,6 +2,7 @@
 #include "PartyListGUI.h"
 #include "GameGUIFacade.h"
 #include "LogFloatGUI.h"
+#include "NetworkMgr.h"
 
 using namespace udsdx;
 
@@ -142,18 +143,31 @@ PartyListGUI::PartyListGUI(const std::shared_ptr<udsdx::SceneObject>& object) : 
 
 void PartyListGUI::UpdateContents(const std::vector<uint32_t>& table)
 {
+	uint32_t sessionID = NetHelper::NetworkMgr::GetInst()->GetSessionID();
+
 	m_standByText->SetActive(false);
 	for (size_t i = 0; i < m_partyPanels.size(); ++i)
 	{
 		m_partyPanels[i].Panel->SetActive(true);
 		if (i < table.size())
 		{
-			m_partyPanels[i].PartyMemberIDText->GetComponent<GUIText>()->SetText(L"Party Member ID: " + std::to_wstring(table[i]));
-			m_partyPanels[i].JoinButton->SetActive(true);
-			m_partyPanels[i].JoinButton->GetComponent<GUIButton>()->SetClickCallback([this, id = table[i]]() {
-				Send(Create_c2s_PARTY_JOIN_REQUEST(id, m_currentQuestID));
-				INSTANCE(GameGUIFacade)->LogFloat->AddText(std::to_wstring(id) + L" 의 파티에 참가 신청을 보냈습니다.");
-			});
+			GUIText* partyMemberIDText = m_partyPanels[i].PartyMemberIDText->GetComponent<GUIText>();
+			if (table[i] == sessionID)
+			{
+				partyMemberIDText->SetText(L"Party Member ID: " + std::to_wstring(table[i]) + L" (You)");
+				partyMemberIDText->SetColor(Vector4(0.5f, 0.5f, 0.5f, 1.0f));
+				m_partyPanels[i].JoinButton->SetActive(false);
+			}
+			else
+			{
+				partyMemberIDText->GetComponent<GUIText>()->SetText(L"Party Member ID: " + std::to_wstring(table[i]));
+				partyMemberIDText->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+				m_partyPanels[i].JoinButton->SetActive(true);
+				m_partyPanels[i].JoinButton->GetComponent<GUIButton>()->SetClickCallback([this, id = table[i]]() {
+					Send(Create_c2s_PARTY_JOIN_REQUEST(id, m_currentQuestID));
+					INSTANCE(GameGUIFacade)->LogFloat->AddText(std::to_wstring(id) + L" 의 파티에 참가 신청을 보냈습니다.");
+					});
+			}
 		}
 		else
 		{

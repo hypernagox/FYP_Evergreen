@@ -35,6 +35,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_inventoryObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftObj;
 	std::shared_ptr<udsdx::SceneObject> m_pauseMenuObj;
+	std::shared_ptr<udsdx::SceneObject> m_partyListObj;
 
 	AuthenticPlayer* m_heroComponent;
 
