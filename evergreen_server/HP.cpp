@@ -34,7 +34,7 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 				m_hp,
 				owner
 			);
-			std::cout << "데미지 :" << result_dmg << "!!\n";
+			//std::cout << "데미지 :" << result_dmg << "!!\n";
 			atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), GetCurHP() - result_dmg));
 		}
 		else if (owner->GetSession())

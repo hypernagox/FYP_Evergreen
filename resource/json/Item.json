@@ -19,5 +19,12 @@
     "Icon": "gui\\icon_coin.png",
     "DropitemResource": "item\\coin\\coin.fbx",
     "DropitemResourceDiffuse": "item\\coin\\coin_DefaultMaterial_BaseColor.png"
+  },
+  "Herb": {
+    "Name": "Herb",
+    "Description": "",
+    "Icon": "gui\\icon_herb.png",
+    "DropitemResource": "item\\herb\\herb.fbx",
+    "DropitemResourceDiffuse": "item\\herb\\herb_DefaultMaterial_BaseColor.png"
   }
 }

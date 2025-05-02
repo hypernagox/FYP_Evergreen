@@ -8,6 +8,7 @@
 #include "PositionComponent.h"
 #include "PartyQuestSystem.h"
 #include "QuestRoom.h"
+#include "ClientSession.h"
 
 void PathNPC::UpdateMove()
 {
@@ -16,8 +17,12 @@ void PathNPC::UpdateMove()
 	if (m_cur_idx == m_vecDirDists.size())
 	{
 		// 도착
-		m_owner_system->m_curQuestRoomInstance->CheckPartyQuestState();
+		// TODO 릭 가능성
+		if(m_owner_system->m_curQuestRoomInstance)
+			m_owner_system->m_curQuestRoomInstance->CheckPartyQuestState();
 		std::cout << "클리어\n";
+		if(m_owner_system_session)
+			m_owner_system_session->DecRef();
 		return;
 	}
 	
@@ -51,6 +56,11 @@ void PathNPC::InitPathNPC()
 		GetNavMesh()->GetPathVertices(begin, end, step);
 	m_navAgent->SetPos(begin);
 	m_speed = 5.f;
+	if (const auto owner_session = m_owner_system->m_member[0])
+	{
+		owner_session->IncRef();
+		m_owner_system_session = owner_session;
+	}
 	if (auto num = vecPath.size())
 	{
 		m_vecDirDists.reserve(--num);

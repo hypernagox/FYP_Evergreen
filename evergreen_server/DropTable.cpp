@@ -22,16 +22,17 @@ void DropTable::TryCreateItem() const noexcept
 	const auto pos = owner->GetComp<PositionComponent>()->pos;
 	b.group_type = Nagox::Enum::GROUP_TYPE_DROP_ITEM;
 	b.obj_type = m_itemType;
-	b.x = pos.x;
-	b.y = pos.y;
-	b.z = pos.z;
+	b.x = pos.x + m_drop_offset.x;
+	b.y = pos.y + m_drop_offset.y;
+	b.z = pos.z + m_drop_offset.z;
 	b.item_detail_type = m_itemType;
 	b.item_stack_size = 1;
 	auto item = EntityFactory::CreateDropItem(b);
 	const auto temp_ptr = item.get();
 	ClusterPredicate p;
+	auto pkt = p.CreateAddPacket(temp_ptr);
 	owner->GetCurField()->EnterFieldNPC(
 		std::move(item)
 	);
-	owner->GetCurCluster()->Broadcast(p.CreateAddPacket(temp_ptr));
+	owner->GetCurCluster()->Broadcast(std::move(pkt));
 }

@@ -16,7 +16,7 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_transformBody = pBody->GetTransform();
 	m_rendererObj->AddChild(pBody);
 
-	m_transformBody->SetLocalPositionY(-5.f);
+	m_transformBody->SetLocalPositionY(-5.5f);
 
 	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.glb")));

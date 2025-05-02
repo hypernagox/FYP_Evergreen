@@ -115,6 +115,8 @@ namespace NagiocpX
 		entity->AddComp<HarvestDeath>();
 		entity->SetDeleter<Regenerator>(5000, Vector3{ b.x, b.y, b.z });
 		entity->AddComp<SphereCollider>()->SetSphere(entity->GetComp<PositionComponent>(), 1);
+		entity->AddComp<DropTable>()->SetItemTypeByID(DATA_TABLE->GetItemID("Herb"));
+		entity->GetComp<DropTable>()->m_drop_offset.y += 2.f;
 		return entity;
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreatePathNPC(const EntityBuilder& b) noexcept

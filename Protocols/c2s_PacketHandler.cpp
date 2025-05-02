@@ -452,11 +452,12 @@ const bool Handle_c2s_INVITE_PARTY_RESULT(const NagiocpX::S_ptr<NagiocpX::Packet
 const bool Handle_c2s_PARTY_JOIN_REQUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_JOIN_REQUEST& pkt_)
 {
 	const auto party_leader = GetSessionEntity(pkt_.target_party_leader_id());
+	const auto party_leader_session = party_leader->GetClientSession();
 	if (!party_leader)return true;
-	if (party_leader->GetClientSession()->IsPartyLeader())
+	if (party_leader_session->IsPartyLeader() && !GetClientSession(pSession_)->HasParty())
 	{
 		auto pkt = Create_s2c_PARTY_JOIN_REQUEST(pSession_->GetSessionID());
-		party_leader->GetClientSession()->SendAsync(pkt);
+		party_leader_session->SendAsync(std::move(pkt));
 	}
 	return true;
 }
