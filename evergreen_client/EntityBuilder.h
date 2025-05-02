@@ -16,6 +16,10 @@ public:
 		{
 			return g_createObjectFunc[builder->group_type][0](builder);
 		}
+		if (builder->group_type == Nagox::Enum::GROUP_TYPE_HARVEST)
+		{
+			return Create_Harvest(builder);
+		}
 		if (!create_func)
 		{
 			//TODO:: 적당한 예외처리 nullptr 뱉는게 의미가 없고 그냥 터뜨리고 다시 빌드하는게 맞을 것 같음

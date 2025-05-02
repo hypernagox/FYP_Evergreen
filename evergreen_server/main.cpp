@@ -43,11 +43,11 @@ public:
 		//	Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
 		//}
 		const auto& h = HarvestSystem::GetHarvestPos();
-		for (const auto& pos : h)
+		for (const auto& [pos,type] : h)
 		{
 			EntityBuilder b;
 			b.group_type = Nagox::Enum::GROUP_TYPE_HARVEST;
-			b.obj_type = 0;
+			b.obj_type = type;
 			b.x = pos.x;
 			b.y = pos.y;
 			b.z = pos.z;

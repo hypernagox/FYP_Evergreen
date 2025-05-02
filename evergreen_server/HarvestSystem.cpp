@@ -11,6 +11,7 @@ void HarvestSystem::LoadHarvest(const std::vector<std::string> key_words, const 
 	const auto terrain_scale = 1.f;
 	for (const auto& prototype : j)
 	{
+		HARVEST_TYPE type = (HARVEST_TYPE)0;
 		const std::string key_name = prototype["prefab"];
 		bool flag = key_words.empty();
 		for (const auto& key_word : key_words)
@@ -22,10 +23,22 @@ void HarvestSystem::LoadHarvest(const std::vector<std::string> key_words, const 
 			}
 		}
 		if (!flag)continue;
+		if (key_name.find("Lilly") != std::string::npos)
+		{
+			type = HARVEST_TYPE::LILLY;
+		}
+		else if (key_name.find("Bush") != std::string::npos)
+		{
+			type = HARVEST_TYPE::BUSH;
+		}
+		else
+		{
+			type = HARVEST_TYPE::ROCK;
+		}
 		for (const auto& instance : prototype["instances"])
 		{
 			const Vector3 position = Vector3(instance["position"]["x"], instance["position"]["y"], instance["position"]["z"]);
-			g_harvest_pos.emplace_back(position * terrain_scale);
+			g_harvest_pos.emplace_back(position * terrain_scale, type);
 		}
 	}
 }

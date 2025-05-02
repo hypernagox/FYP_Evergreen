@@ -8,3 +8,12 @@ static constexpr const uint8_t NUM_OF_MAX_INVENTORY_ITEM = 30;
 
 static constexpr const int8_t NUM_OF_MAX_PARTY_MEMBER = 3;
 static constexpr const int8_t NUM_OF_PARTYQUEST = 3;
+
+
+enum HARVEST_TYPE
+{
+	LILLY = 0,
+	BUSH = 1,
+	ROCK = 2,
+
+};

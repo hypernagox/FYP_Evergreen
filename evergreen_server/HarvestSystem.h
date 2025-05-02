@@ -1,6 +1,11 @@
 #pragma once
 #include "pch.h"
 
+struct HarvestInfo
+{
+	Vector3 harvest_pos;
+	HARVEST_TYPE harvest_type;
+};
 class HarvestSystem
 {
 
@@ -11,6 +16,6 @@ public:
 public:
 	static const auto& GetHarvestPos()noexcept { return g_harvest_pos; }
 private:
-	static inline XVector<Vector3> g_harvest_pos = {};
+	static inline XVector<HarvestInfo> g_harvest_pos = {};
 };
 
