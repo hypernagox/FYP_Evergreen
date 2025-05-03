@@ -101,3 +101,6 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_QUEST_END(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PARTY_OUT(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_HARVEST_STATE(
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

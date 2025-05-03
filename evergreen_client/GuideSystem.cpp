@@ -6,6 +6,7 @@
 #include "ServerObject.h"
 #include "NaviAgent.h"
 #include "EntityMovement.h"
+#include "GizmoCylinderRenderer.h"
 
 GuideSystem::GuideSystem()
 {
@@ -51,6 +52,55 @@ void GuideSystem::ResetGuideObjects()
 {
 	for (const auto& o : m_guide_objects)o->RemoveFromParent();
 	m_guide_objects.clear();
+}
+
+bool GuideSystem::AddHarvest(uint32_t id, std::shared_ptr<udsdx::SceneObject> obj, bool is_active)
+{
+	m_mapHarvest.emplace(id, obj);
+	if (m_in_active_list.erase(id))
+	{
+		// 만약 이전에 채집물 비활성 패킷을 먼저 받은 기록이 있다면
+		is_active = false;
+	}
+	else if (m_active_list.erase(id))
+	{
+		// 만약 이전에 채집물 활성 패킷을 먼저 받은 기록이 있다면
+		is_active = true;
+	}
+	else
+	{
+		// 그냥 정상적으로 받은 패킷이라면 패킷에 적힌 활성 여부를 그대로 뱉음
+	}
+	return is_active;
+}
+
+const bool GuideSystem::SetHarvestState(const uint32_t id, const bool is_active) noexcept
+{
+	// APPEAR OBJECT 패킷에 액티브상태라고 표시후 보내기직전에
+	// 누군가 채집해서 인액티브가되어서 인액티브사실을 먼저 알리는 패킷이 도착해버림
+	// 아직 이 클라는 채집물이 없는 상황
+	// 채집물 인액티브 패킷은 무시되고, 어피어오브젝트를 받았을 때 패킷 제작 시 넣은 정보가 액티브여서 오차 발생
+	// 만약 내가 모르는 채집물인데 채집물 상태변화 패킷이 와버렸다면 버리지말고 기억
+	if (const auto harvest = GetHarvest(id))
+	{
+		// TODO: 상태를 바꾼다.
+		harvest->GetComponent<GizmoCylinderRenderer>()->SetActive(is_active);
+		return true;
+	}
+	else
+	{
+		// 채집물이 아직 이 클라에 안보이지만 누가 건드려서 상태변경 패킷이 먼저 온 경우
+		// 그 히스토리를 저장함
+		if (is_active)
+		{
+			m_active_list.emplace(id);
+		}
+		else
+		{
+			m_in_active_list.emplace(id);
+		}
+		return false;
+	}
 }
 
 void GuideSystem::UpdateGuideSystem()

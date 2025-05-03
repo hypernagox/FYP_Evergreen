@@ -22,12 +22,26 @@ public:
 
 public:
 
-	void AddHarvest(uint64_t id, std::shared_ptr<udsdx::SceneObject> obj) {
-		m_mapHarvest.emplace(id, obj);
-	}
-	void RemoveHarvest(uint64_t id) {
+	bool AddHarvest(uint32_t id, std::shared_ptr<udsdx::SceneObject> obj, bool is_active);
+
+	void RemoveHarvest(uint32_t id) {
+		// 채집물이 내 시야에서 사라질 땐 그냥 관련정보 다 날리고 다시 시작
 		m_mapHarvest.erase(id);
+		m_active_list.erase(id);
+		m_in_active_list.erase(id);
 	}
+
+	udsdx::SceneObject*  GetHarvest(const uint32_t id)const noexcept {
+		const auto iter = m_mapHarvest.find(id);
+		return m_mapHarvest.end() != iter ? iter->second.get() : nullptr;
+	}
+
+	udsdx::SceneObject* GetHarvest(const uint32_t id)noexcept {
+		const auto iter = m_mapHarvest.find(id);
+		return m_mapHarvest.end() != iter ? iter->second.get() : nullptr;
+	}
+
+	const bool SetHarvestState(const uint32_t id, const bool is_active)noexcept;
 
 	void UpdateGuideSystem();
 	void ToggleFlag() {
@@ -49,5 +63,7 @@ private:
 	Vector3 m_cur_target_pos = {};
 	bool m_guide_active_flag = false;
 	std::map<uint32_t, std::shared_ptr<udsdx::SceneObject>> m_mapHarvest;
+	std::set<uint32_t> m_in_active_list;
+	std::set<uint32_t> m_active_list;
 };
 

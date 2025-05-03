@@ -163,8 +163,11 @@ struct s2c_PARTY_QUEST_CLEARBuilder;
 struct s2c_PARTY_MEMBERS_INFORMATION;
 struct s2c_PARTY_MEMBERS_INFORMATIONBuilder;
 
-struct s2c_GET_HARVEST;
-struct s2c_GET_HARVESTBuilder;
+struct c2s_CHANGE_HARVEST_STATE;
+struct c2s_CHANGE_HARVEST_STATEBuilder;
+
+struct s2c_CHANGE_HARVEST_STATE;
+struct s2c_CHANGE_HARVEST_STATEBuilder;
 
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
@@ -2833,10 +2836,40 @@ inline ::flatbuffers::Offset<s2c_PARTY_MEMBERS_INFORMATION> Creates2c_PARTY_MEMB
       party_member_ids__);
 }
 
-struct s2c_GET_HARVEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
-  typedef s2c_GET_HARVESTBuilder Builder;
+struct c2s_CHANGE_HARVEST_STATE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_CHANGE_HARVEST_STATEBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_CHANGE_HARVEST_STATEBuilder {
+  typedef c2s_CHANGE_HARVEST_STATE Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit c2s_CHANGE_HARVEST_STATEBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_CHANGE_HARVEST_STATE> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_CHANGE_HARVEST_STATE>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_CHANGE_HARVEST_STATE> Createc2s_CHANGE_HARVEST_STATE(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  c2s_CHANGE_HARVEST_STATEBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct s2c_CHANGE_HARVEST_STATE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_CHANGE_HARVEST_STATEBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_HARVEST_ID = 4
+    VT_HARVEST_ID = 4,
+    VT_IS_ACTIVE = 6
   };
   uint32_t harvest_id() const {
     return GetField<uint32_t>(VT_HARVEST_ID, 0);
@@ -2844,36 +2877,48 @@ struct s2c_GET_HARVEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_harvest_id(uint32_t _harvest_id = 0) {
     return SetField<uint32_t>(VT_HARVEST_ID, _harvest_id, 0);
   }
+  bool is_active() const {
+    return GetField<uint8_t>(VT_IS_ACTIVE, 0) != 0;
+  }
+  bool mutate_is_active(bool _is_active = 0) {
+    return SetField<uint8_t>(VT_IS_ACTIVE, static_cast<uint8_t>(_is_active), 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_HARVEST_ID, 4) &&
+           VerifyField<uint8_t>(verifier, VT_IS_ACTIVE, 1) &&
            verifier.EndTable();
   }
 };
 
-struct s2c_GET_HARVESTBuilder {
-  typedef s2c_GET_HARVEST Table;
+struct s2c_CHANGE_HARVEST_STATEBuilder {
+  typedef s2c_CHANGE_HARVEST_STATE Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
   void add_harvest_id(uint32_t harvest_id) {
-    fbb_.AddElement<uint32_t>(s2c_GET_HARVEST::VT_HARVEST_ID, harvest_id, 0);
+    fbb_.AddElement<uint32_t>(s2c_CHANGE_HARVEST_STATE::VT_HARVEST_ID, harvest_id, 0);
   }
-  explicit s2c_GET_HARVESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+  void add_is_active(bool is_active) {
+    fbb_.AddElement<uint8_t>(s2c_CHANGE_HARVEST_STATE::VT_IS_ACTIVE, static_cast<uint8_t>(is_active), 0);
+  }
+  explicit s2c_CHANGE_HARVEST_STATEBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  ::flatbuffers::Offset<s2c_GET_HARVEST> Finish() {
+  ::flatbuffers::Offset<s2c_CHANGE_HARVEST_STATE> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = ::flatbuffers::Offset<s2c_GET_HARVEST>(end);
+    auto o = ::flatbuffers::Offset<s2c_CHANGE_HARVEST_STATE>(end);
     return o;
   }
 };
 
-inline ::flatbuffers::Offset<s2c_GET_HARVEST> Creates2c_GET_HARVEST(
+inline ::flatbuffers::Offset<s2c_CHANGE_HARVEST_STATE> Creates2c_CHANGE_HARVEST_STATE(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint32_t harvest_id = 0) {
-  s2c_GET_HARVESTBuilder builder_(_fbb);
+    uint32_t harvest_id = 0,
+    bool is_active = false) {
+  s2c_CHANGE_HARVEST_STATEBuilder builder_(_fbb);
   builder_.add_harvest_id(harvest_id);
+  builder_.add_is_active(is_active);
   return builder_.Finish();
 }
 

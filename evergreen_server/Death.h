@@ -31,14 +31,3 @@ public:
 private:
 
 };
-
-class HarvestDeath
-	:public Death
-{
-public:
-	HarvestDeath(const auto pOwner) :Death{ pOwner } {}
-
-	void ProcessDeath()noexcept override;
-private:
-};
-

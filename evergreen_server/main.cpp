@@ -47,23 +47,23 @@ public:
 		{
 			EntityBuilder b;
 			b.group_type = Nagox::Enum::GROUP_TYPE_HARVEST;
-			b.obj_type = type;
+			b.obj_type = (uint8_t)type;
 			b.x = pos.x;
 			b.y = pos.y;
 			b.z = pos.z;
 			const auto m = EntityFactory::CreateHarvest(b);
-			static_cast<Regenerator*>(m->GetDeleter())->m_targetField = Field::GetField(0)->SharedFromThis<Field>();
+			m->SetDetailType(HARVEST_STATE::AVAILABLE);
 			Field::GetField(0)->EnterFieldNPC(m);
 		}
-		{
-			EntityBuilder b;
-			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
-			b.obj_type = 0;
-			b.x = -10.0f;
-			b.y = 0.f;
-			b.z = -10.0f;
-			Field::GetField(0)->EnterFieldNPC(EntityFactory::CreateNPC(b));
-		}
+		//{
+		//	EntityBuilder b;
+		//	b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+		//	b.obj_type = 0;
+		//	b.x = -10.0f;
+		//	b.y = 0.f;
+		//	b.z = -10.0f;
+		//	Field::GetField(0)->EnterFieldNPC(EntityFactory::CreateNPC(b));
+		//}
 	}
 
 	virtual void TLSInitialize()noexcept override

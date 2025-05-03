@@ -101,3 +101,6 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_QUEST_END(
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PARTY_OUT(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_CHANGE_HARVEST_STATE(
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

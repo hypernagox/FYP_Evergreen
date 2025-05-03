@@ -338,3 +338,15 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PARTY_OUT(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PARTY_OUT);
 }
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_CHANGE_HARVEST_STATE(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto serializedc2s_CHANGE_HARVEST_STATE = Nagox::Protocol::Createc2s_CHANGE_HARVEST_STATE(
+        builder
+    );
+    builder.Finish(serializedc2s_CHANGE_HARVEST_STATE);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_HARVEST_STATE);
+}

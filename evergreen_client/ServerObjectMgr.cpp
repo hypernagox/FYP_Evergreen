@@ -59,7 +59,7 @@ void ServerObjectMgr::RemoveObject(const uint64_t id)
 		m_mapServerObj.erase(iter);
 
 		// TODO: 채집물들 가이드를 위해 서버오브젝트 매니저처럼 채집물만 Add / Remove
-		GuideSystem::GetInst()->RemoveHarvest(id);
+		GuideSystem::GetInst()->RemoveHarvest((uint32_t)id);
 	}
 
 	// 없는데 지우라고 오면 뭔가 이상한 상황이다.

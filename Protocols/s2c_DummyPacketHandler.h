@@ -35,7 +35,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_PARTY_OUT = 1024,
     s2c_PARTY_QUEST_CLEAR = 1025,
     s2c_PARTY_MEMBERS_INFORMATION = 1026,
-    s2c_GET_HARVEST = 1027,
+    s2c_CHANGE_HARVEST_STATE = 1027,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -60,6 +60,7 @@ enum class CREATE_PKT_ID : uint16_t {
     c2s_QUEST_START = 1018,
     c2s_QUEST_END = 1019,
     c2s_PARTY_OUT = 1020,
+    c2s_CHANGE_HARVEST_STATE = 1021,
 };
 
 class NagiocpX::PacketSession;
@@ -96,7 +97,7 @@ const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NagiocpX::S_ptr<NagiocpX::Pack
 const bool Handle_s2c_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_);
 const bool Handle_s2c_PARTY_QUEST_CLEAR(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_CLEAR& pkt_);
 const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION& pkt_);
-const bool Handle_s2c_GET_HARVEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_GET_HARVEST& pkt_);
+const bool Handle_s2c_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHANGE_HARVEST_STATE& pkt_);
 
 class s2c_DummyPacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -130,7 +131,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_OUT, Nagox::Protocol::s2c_PARTY_OUT, Handle_s2c_PARTY_OUT>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_QUEST_CLEAR, Nagox::Protocol::s2c_PARTY_QUEST_CLEAR, Handle_s2c_PARTY_QUEST_CLEAR>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_MEMBERS_INFORMATION, Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION, Handle_s2c_PARTY_MEMBERS_INFORMATION>();
-        RegisterHandler<HANDLE_PKT_ID::s2c_GET_HARVEST, Nagox::Protocol::s2c_GET_HARVEST, Handle_s2c_GET_HARVEST>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_CHANGE_HARVEST_STATE, Nagox::Protocol::s2c_CHANGE_HARVEST_STATE, Handle_s2c_CHANGE_HARVEST_STATE>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

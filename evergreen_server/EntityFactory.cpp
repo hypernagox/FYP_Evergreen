@@ -14,6 +14,7 @@
 #include "DropItem.h"
 #include "DropTable.h"
 #include "PathNPC.h"
+#include "Interaction.h"
 
 namespace NagiocpX
 {
@@ -111,15 +112,12 @@ namespace NagiocpX
 	{
 		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
-		entity->AddComp<HP>()->InitHP(1); // TODO 매직넘버
-		entity->AddComp<HarvestDeath>();
-		entity->SetDeleter<Regenerator>(5000, Vector3{ b.x, b.y, b.z });
-		entity->AddComp<SphereCollider>()->SetSphere(entity->GetComp<PositionComponent>(), 1);
-		if (HARVEST_TYPE::LILLY == b.obj_type)
+		
+		if (HARVEST_TYPE::LILLY == (HARVEST_TYPE)b.obj_type)
 		{
 			entity->AddComp<DropTable>()->SetItemTypeByID(DATA_TABLE->GetItemID("Herb"));
 		}
-		else if (HARVEST_TYPE::BUSH == b.obj_type)
+		else if (HARVEST_TYPE::BUSH == (HARVEST_TYPE)b.obj_type)
 		{
 			entity->AddComp<DropTable>()->SetItemTypeByID(DATA_TABLE->GetItemID("Timber"));
 		}
@@ -127,7 +125,7 @@ namespace NagiocpX
 		{
 			entity->AddComp<DropTable>()->SetItemTypeByID(DATA_TABLE->GetItemID("Ironore"));
 		}
-
+		entity->AddComp<HarvestInteraction>();
 		//entity->GetComp<DropTable>()->m_drop_offset.y += 2.f;
 
 		return entity;

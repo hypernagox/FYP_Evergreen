@@ -20,6 +20,7 @@
 #include "DropItem.h"
 #include "Item.h"
 #include "PartyQuestSystem.h"
+#include "Interaction.h"
 
 using namespace NagiocpX;
 
@@ -578,6 +579,23 @@ const bool Handle_c2s_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 	//		p->OutMember(session->GetSessionID());
 	//	}
 	//}
+	return true;
+}
+
+const bool Handle_c2s_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CHANGE_HARVEST_STATE& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+	const auto& harvests = pSession_->GetCurCluster()->GetEntities(Nagox::Enum::GROUP_TYPE_HARVEST);
+	const auto player_pos = owner->GetComp<PositionComponent>()->pos;
+	for (const auto& h : harvests)
+	{
+		const auto& harvest_pos = h->GetComp<PositionComponent>()->pos;
+		if (CommonMath::IsInDistanceDX(player_pos, harvest_pos, HARVEST_INTERACTION_DIST))
+		{
+			h->GetComp<Interaction>()->DoInteraction(owner);
+			break;
+		}
+	}
 	return true;
 }
 

@@ -99,7 +99,14 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Harvest(EntityBuil
 	auto gizmoRenderer = s->AddComponent<GizmoCylinderRenderer>();
 	gizmoRenderer->SetRadius(3.f);
 	gizmoRenderer->SetHeight(10.f);
+
+	// 함수 정의 참조.
+	// 간발의 차이로 어피어 오브젝트보다 채집물 상태변경 패킷이 먼저 와버린 경우에 대한 대처
+	const bool is_active = GuideSystem::GetInst()->AddHarvest(builder->obj_id, s, HARVEST_STATE::AVAILABLE == static_cast<HARVEST_STATE>(b->obj_type));
+
+	gizmoRenderer->SetActive(is_active);
+
 	s->GetTransform()->SetLocalPosition(b->obj_pos);
-	GuideSystem::GetInst()->AddHarvest(builder->obj_id, s);
+	
 	return s;
 }

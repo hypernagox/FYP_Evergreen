@@ -288,7 +288,12 @@ table s2c_PARTY_MEMBERS_INFORMATION
      party_member_ids : [uint32];
 }
 
-table s2c_GET_HARVEST
+table c2s_CHANGE_HARVEST_STATE
+{
+}
+
+table s2c_CHANGE_HARVEST_STATE
 {
      harvest_id : uint32;
+     is_active : bool;
 }

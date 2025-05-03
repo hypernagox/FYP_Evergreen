@@ -504,17 +504,20 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_MEMBERS_INFORMATION(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_MEMBERS_INFORMATION);
 }
-NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_GET_HARVEST(
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHANGE_HARVEST_STATE(
     const uint32_t harvest_id,
+    const bool is_active,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto harvest_id_value = harvest_id;
-    const auto serializeds2c_GET_HARVEST = Nagox::Protocol::Creates2c_GET_HARVEST(
+    const auto is_active_value = is_active;
+    const auto serializeds2c_CHANGE_HARVEST_STATE = Nagox::Protocol::Creates2c_CHANGE_HARVEST_STATE(
         builder
-,        harvest_id_value    );
-    builder.Finish(serializeds2c_GET_HARVEST);
+,        harvest_id_value,
+        is_active_value    );
+    builder.Finish(serializeds2c_CHANGE_HARVEST_STATE);
 
-    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_GET_HARVEST);
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_CHANGE_HARVEST_STATE);
 }
