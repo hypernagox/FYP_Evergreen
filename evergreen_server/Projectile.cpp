@@ -26,6 +26,7 @@ NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 
 	for (const auto& [obj,col] : m_obj_list)
 	{
+		if (obj->GetPrimaryGroupType() == Nagox::Enum::GROUP_TYPE_HARVEST)continue;
 		if (col->GetCollider()->IsIntersect(s))
 		{
 			obj->GetComp<HP>()->PostDoDmg(1, owner);

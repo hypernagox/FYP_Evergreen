@@ -39,6 +39,6 @@
     "Description": "",
     "Icon": "gui\\icon_ironore.png",
     "DropitemResource": "item\\ironore\\ironore_fbx.fbx",
-    "DropitemResourceDiffuse": "item\\ironore\\ironore_fbx_DefaultMaterial_BaseColor.png"
+    "DropitemResourceDiffuse": "item\\herb\\herb_BaseColor.png"
   }
 }
