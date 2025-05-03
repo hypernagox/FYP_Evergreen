@@ -22,10 +22,10 @@ public:
 
 public:
 
-	void AddHarvest(uint32_t id, std::shared_ptr<udsdx::SceneObject> obj) {
+	void AddHarvest(uint64_t id, std::shared_ptr<udsdx::SceneObject> obj) {
 		m_mapHarvest.emplace(id, obj);
 	}
-	void RemoveHarvest(uint32_t id) {
+	void RemoveHarvest(uint64_t id) {
 		m_mapHarvest.erase(id);
 	}
 
