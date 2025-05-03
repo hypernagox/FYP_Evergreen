@@ -56,7 +56,7 @@ namespace udsdx
 				XMMATRIX vertexTransform = XMLoadFloat4x4(&nodeTransformMatrixGlobal);
 
 				Submesh submesh{};
-				submesh.Name = mesh->mName.C_Str();
+				submesh.Name = node->mName.C_Str();
 				submesh.IndexCount = mesh->mNumFaces * 3;
 				submesh.StartIndexLocation = static_cast<UINT>(indices.size());
 				submesh.BaseVertexLocation = static_cast<UINT>(vertices.size());

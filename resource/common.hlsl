@@ -161,12 +161,14 @@ float SpecularValue(float posW, float3 normalW)
 
 float3 NormalSampleToWorldSpace(float3 normalSample, float3 normalW, float3 tangentW)
 {
+    float3 normalT = normalize(normalSample * 2.0f - 1.0f);
+
     float3 N = normalW;
     float3 T = normalize(tangentW - dot(tangentW, N) * N);
     float3 B = cross(N, T);
 
     float3x3 TBN = float3x3(T, B, N);
-    return mul(normalSample * 2.0f - 1.0f, TBN);
+    return mul(normalT, TBN);
 }
 
 float2 PackNormal(float3 n)

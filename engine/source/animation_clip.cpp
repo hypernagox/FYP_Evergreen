@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "animation_clip.h"
 #include "rigged_mesh.h"
+#include "debug_console.h"
 
 // Assimp Library
 #include <assimp/Importer.hpp>
@@ -108,6 +109,11 @@ namespace udsdx
 			}
 
 			int channelIndex = GetBoneIndex(channel.Name);
+			if (channelIndex == -1)
+			{
+				DebugConsole::LogWarning("Channel " + channel.Name + " not found in bone list.");
+				continue;
+			}
 			m_animation.Channels[channelIndex] = channel;
 		}
 	}

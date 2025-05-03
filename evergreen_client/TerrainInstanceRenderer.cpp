@@ -61,6 +61,7 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 	const auto& submeshes = m_mesh->GetSubmeshes();
 	for (size_t index = 0; index < submeshes.size(); ++index)
 	{
+		const auto& submesh = submeshes[index];
 		if (index < m_materials.size() && m_materials[index] != nullptr)
 		{
 			for (UINT textureSrcIndex = 0; textureSrcIndex < m_materials[index]->GetTextureCount(); ++textureSrcIndex)
@@ -72,7 +73,6 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 				}
 			}
 		}
-		const auto& submesh = submeshes[index];
 		param.CommandList->DrawIndexedInstanced(submesh.IndexCount, instanceCount, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 	}
 }

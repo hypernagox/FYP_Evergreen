@@ -154,9 +154,16 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_1.tga")), 3);
     m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_2.png")), 4);
     m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_3.png")), 5);
-    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\T_ground_soil_01_BC_SM.tga")), 6);
-    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\T_ground_moss_01_BC_SM.tga")), 7);
-    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Maps\\Grass_and_Clover.tif")), 8);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_soil_01_BC_SM.tga")), 6);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_moss_01_BC_SM.tga")), 7);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Grass_and_Clover.tif")), 8);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_0.png")), 9);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_1.png")), 10);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_2.png")), 11);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_3.png")), 12);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_soil_01_N.png")), 13);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_5.png")), 14);
+    m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_6.tif")), 15);
 
     m_heroObj = std::make_shared<SceneObject>();
 
@@ -175,7 +182,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     m_playerLightObj = std::make_shared<SceneObject>();
     auto playerLight = m_playerLightObj->AddComponent<LightDirectional>();
     Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
-    m_playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PI / 4.0f, 0) * Quaternion::CreateFromAxisAngle(n, 0.0f));
+    m_playerLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PIDIV4, 0) * Quaternion::CreateFromAxisAngle(n, 0.0f));
 
     AddObject(m_playerLightObj);
 
@@ -230,17 +237,26 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         for (size_t i = 0; i < subMeshes.size(); ++i)
         {
             auto material = std::make_shared<udsdx::Material>();
-            std::string key = subMeshes[i].DiffuseTexturePath;
-            std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+            std::string aKey = subMeshes[i].DiffuseTexturePath;
+            std::string nKey = subMeshes[i].NormalTexturePath;
+            std::transform(aKey.begin(), aKey.end(), aKey.begin(), ::tolower);
+            std::transform(nKey.begin(), nKey.end(), nKey.begin(), ::tolower);
 
             // if the extension is .psd, replace it with .tga
-            if (key.ends_with(".psd"))
-                key.replace(key.end() - 4, key.end(), ".tga");
+            if (aKey.ends_with(".psd"))
+                aKey.replace(aKey.end() - 4, aKey.end(), ".tga");
+            if (nKey.ends_with(".psd"))
+                nKey.replace(nKey.end() - 4, nKey.end(), ".tga");
 
-            if (auto it = textureMap.find(key); it != textureMap.end())
+            if (auto it = textureMap.find(aKey); it != textureMap.end())
                 material->SetSourceTexture(it->second);
             else
                 material->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
+            if (auto it = textureMap.find(nKey); it != textureMap.end())
+                material->SetSourceTexture(it->second, 1);
+			else
+				material->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")), 1);
+
             m_instanceMaterials.emplace_back(material);
             terrainInstanceRenderer->SetMaterial(material.get(), static_cast<int>(i));
         }

@@ -1,5 +1,7 @@
 #include "common.hlsl"
 
+Texture2D gNormalTex : register(t1);
+
 VertexOut VS(VertexIn vin)
 {
     VertexOut vout;
@@ -19,7 +21,14 @@ VertexOut VS(VertexIn vin)
 PixelOut PS(VertexOut pin)
 {
 	PixelOut pOut;
-    float3 normal = normalize(mul(pin.NormalW.xyz, (float3x3)gView));
+
+    float3 normalW = normalize(pin.NormalW);
+
+    // Normal mapping
+    float4 normalMapSample = gNormalTex.Sample(gSampler, pin.Tex);
+    float3 normal = NormalSampleToWorldSpace(normalMapSample.rgb, normalW, pin.TangentW.xyz);
+    normal = mul(normal, (float3x3)gView);
+
     float4 texColor = gMainTex.Sample(gSampler, pin.Tex);
     float4 posH = mul(pin.PosW, gViewProj);
     posH /= posH.w;

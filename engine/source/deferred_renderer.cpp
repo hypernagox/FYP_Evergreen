@@ -156,7 +156,7 @@ namespace udsdx
 
 			// Sky color. #142743
 			float4 skyColor = float4(0.178f, 0.257f, 0.363f, 1.0f);
-			float diffuse = pow(saturate(dot(normalW, -gDirLight) * 1.1f - 0.1f), 0.3f);
+			float diffuse = saturate(dot(normalW, -gDirLight) * 1.5f);
 			float shadowValue = ShadowValue(PosW, normalW, distanceH);
 			float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
 			gBuffer1Color.rgb = gBuffer1Color.rgb * lerp(skyColor, 1.0f.xxxx, min(shadowValue, diffuse)) * AOFactor;
