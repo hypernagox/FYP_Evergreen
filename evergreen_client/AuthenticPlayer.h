@@ -54,6 +54,7 @@ private:
 	int m_lastMouseScroll = 0;
 	float m_cameraDistance = 2.0f;
 	float m_cameraDistanceSmooth = m_cameraDistance;
+	bool m_bDebugCamera = false;
 
 	CameraPerspective* m_pCamera;
 
@@ -71,9 +72,9 @@ private:
 	PlayerCraftGUI* m_playerCraftGUI = nullptr;
 
 private:
-	void UpdatePlayerCamFpsMode(float deltaTime);
 	void MoveByView(const Vector3& vDelta);
 	void UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime);
+	void UpdateCameraTransformDebug(Transform* pCameraTransfrom, float deltaTime);
 	void RequestQuest();
 
 public:
@@ -87,9 +88,11 @@ public:
 	void TryClickScreen();
 
 	Vector3 GetPlayerLook() const noexcept;
-	void InitCamDirection();
+	Camera* GetCameraComponent() const noexcept { return m_pCamera; }
 	bool& GetSendFlag()noexcept { return m_bSendFlag; }
 	const float GetYAngle()const noexcept { return m_rendererBodyAngleY; }
+
+	void InitCamDirection();
 	void SetHeightMap(HeightMap* terrainData) noexcept { m_heightMap = terrainData; }
 	void SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexcept;
 	void SetPlayerQuickSlotGUI(PlayerQuickSlotGUI* playerQuickSlotGUI) noexcept;
@@ -97,6 +100,7 @@ public:
 	void SetPlayerCraftGUI(PlayerCraftGUI* playerCraftGUI) noexcept;
 	void OnHit(int damage);
 	void OnModifyInventory(uint8_t itemID, int delta);
+	void ToggleDebugCamera();
 
 	void SetQuickSlotItemOnBlank(uint8_t itemID);
 	void SetQuickSlotItem(int index, uint8_t itemID);

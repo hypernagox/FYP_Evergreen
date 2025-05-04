@@ -5,6 +5,7 @@
 #include "TerrainData.h"
 #include "TerrainInstanceRenderer.h"
 #include "AuthenticPlayer.h"
+#include "SpectatorPlayer.h"
 #include "PlayerRenderer.h"
 #include "MovePacketSender.h"
 #include "EntityMovement.h"
@@ -178,6 +179,9 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(temp);
 
     m_heroObj->GetTransform()->SetLocalPosition(temp);
+
+    m_spectatorObj = std::make_shared<SceneObject>();
+    m_spectatorObj->AddComponent<SpectatorPlayer>();
 
     m_playerLightObj = std::make_shared<SceneObject>();
     auto playerLight = m_playerLightObj->AddComponent<LightDirectional>();
@@ -437,6 +441,10 @@ void GameScene::Update(const Time& time)
 		m_partyListObj->SetActive(!m_partyListObj->GetActive());
 		audioAction(m_partyListObj->GetActive());
 	}
+    if (INSTANCE(Input)->GetKeyDown(Keyboard::Tab))
+    {
+        OnTogglePlayerMode(!m_bSpectatorMode);
+	}
 
     Scene::Update(time);
 }
@@ -444,9 +452,13 @@ void GameScene::Update(const Time& time)
 void GameScene::EnterGame()
 {   
     AddObject(m_heroObj);
+    AddObject(m_spectatorObj);
     AddObject(m_playerInterfaceGroup);
     m_focusAgentObj->SetActive(true);
     m_mainMenuCameraObject->SetActive(false);
+
+    OnTogglePause(false);
+    OnTogglePlayerMode(false);
 
     {
         extern std::shared_ptr<GameScene> g_scene;
@@ -470,6 +482,24 @@ void GameScene::ExitGame()
 
 void GameScene::OnTogglePause(bool isPaused)
 {
-    m_heroObj->GetComponent<InputHandler>()->SetActive(!isPaused);
+    m_heroObj->GetComponent<InputHandler>()->SetActive(!isPaused && !m_bSpectatorMode);
+    m_spectatorObj->GetComponent<InputHandler>()->SetActive(!isPaused && m_bSpectatorMode);
     m_playerInterfaceGroup->SetActive(!isPaused);
+}
+
+void GameScene::OnTogglePlayerMode(bool spectatorMode)
+{
+    m_bSpectatorMode = spectatorMode;
+    m_heroObj->GetComponent<InputHandler>()->SetActive(!spectatorMode);
+    m_spectatorObj->GetComponent<InputHandler>()->SetActive(spectatorMode);
+    auto heroCamera = m_heroObj->GetComponent<AuthenticPlayer>()->GetCameraComponent();
+    auto spectatorCamera = m_spectatorObj->GetComponent<SpectatorPlayer>()->GetCameraComponent();
+    heroCamera->SetActive(!spectatorMode);
+    spectatorCamera->SetActive(spectatorMode);
+
+    if (spectatorMode)
+    {
+        m_spectatorObj->GetTransform()->SetLocalPosition(heroCamera->GetTransform()->GetWorldPosition());
+        m_spectatorObj->GetTransform()->SetLocalRotation(heroCamera->GetTransform()->GetWorldRotation());
+    }
 }
