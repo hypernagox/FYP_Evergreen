@@ -13,6 +13,7 @@
 #include "Navigator.h"
 #include "GizmoSphereRenderer.h"
 #include "GuideSystem.h"
+#include "HeightMap.h"
 
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
@@ -212,11 +213,26 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	m_cameraAnchorLastPosition = m_cameraAnchor->GetTransform()->GetWorldPosition();
 
 	// Region: Camera Z Distance / Screen Offset Control
-	float target = -m_cameraDistance;
-	float zPos = std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f);
+	m_cameraDistanceSmooth = std::lerp(m_cameraDistanceSmooth, -m_cameraDistance, deltaTime * 8.0f);
 	float tParam = m_fMoveTime * 0.5f;
 	float mParam = 0.04f;
-	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, zPos));
+	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, m_cameraDistanceSmooth));
+
+	// Region: Camera Anchor Position Postprocess
+	if (m_heightMap)
+	{
+		Transform* pAnchorTransform = m_cameraAnchor->GetTransform();
+		const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
+		pAnchorTransform->ValidateMatrixRecursive();
+		Matrix4x4 cameraWorldMatrix = pAnchorTransform->GetWorldSRTMatrix();
+		Matrix4x4 terrainWorldMatrix = Matrix4x4::CreateScale(TerrainSize) * Matrix4x4::CreateTranslation(Vector3(-0.5f, 0.0f, -0.5f) * TerrainSize);
+		Matrix4x4 cameraToTerrain = cameraWorldMatrix * terrainWorldMatrix.Invert();
+
+		Vector3 terrainPos = Vector3::Transform(pCameraTransfrom->GetLocalPosition(), cameraToTerrain);
+		float height = m_heightMap->GetHeight(terrainPos.x * m_heightMap->GetPixelWidth(), terrainPos.z * m_heightMap->GetPixelHeight());
+		terrainPos.y = std::max(terrainPos.y, height + 0.1f / TerrainSize);
+		pCameraTransfrom->SetLocalPosition(Vector3::Transform(terrainPos, cameraToTerrain.Invert()));
+	}
 
 	// Region: Camera FOV Control
 	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), m_fovBase + (INSTANCE(Input)->GetMouseRightButton() ? -30.0f * DEG2RAD : 0.0f), deltaTime * 8.0f));

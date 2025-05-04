@@ -142,7 +142,6 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 {
     auto res = INSTANCE(Resource);
     auto shader = res->Load<Shader>(RESOURCE_PATH(L"color.hlsl"));
-    auto shaderTerrain = res->Load<Shader>(RESOURCE_PATH(L"terrain.hlsl"));
 
     m_playerMaterial = std::make_shared<udsdx::Material>();
     m_playerMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
@@ -172,6 +171,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
    
     heroServerComponent->AddComp<MovePacketSender>();
     m_heroComponent = m_heroObj->AddComponent<AuthenticPlayer>();
+    m_heroComponent->SetHeightMap(heightMap);
 
     Vector3 temp = Vector3(-4.345f, 76.17f, 0.0f);
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
@@ -275,7 +275,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         auto terrainRenderer = m_terrainObj->AddComponent<MeshRenderer>();
         terrainRenderer->SetMesh(m_terrainMesh.get());
         terrainRenderer->SetMaterial(m_terrainMaterial.get());
-        terrainRenderer->SetShader(shaderTerrain);
+        terrainRenderer->SetShader(res->Load<Shader>(RESOURCE_PATH(L"terrain.hlsl")));
 
         AddObject(m_terrainObj);
     }

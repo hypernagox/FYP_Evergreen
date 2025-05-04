@@ -4,6 +4,7 @@
 
 using namespace udsdx;
 
+class HeightMap;
 class ServerObject;
 class EntityMovement;
 class PlayerRenderer;
@@ -52,12 +53,14 @@ private:
 	Vector3 m_cameraAngleAxisSmooth = Vector3::Zero;
 	int m_lastMouseScroll = 0;
 	float m_cameraDistance = 2.0f;
+	float m_cameraDistanceSmooth = m_cameraDistance;
 
 	CameraPerspective* m_pCamera;
 
 	bool m_bSendFlag = false;
 	Vector3Int m_vCurState = {};
 
+	HeightMap* m_heightMap = nullptr;
 	PlayerRenderer* m_playerRenderer = nullptr;
 	EntityMovement* m_entityMovement = nullptr;
 	ServerObject* m_pServerObject = nullptr;
@@ -87,6 +90,7 @@ public:
 	void InitCamDirection();
 	bool& GetSendFlag()noexcept { return m_bSendFlag; }
 	const float GetYAngle()const noexcept { return m_rendererBodyAngleY; }
+	void SetHeightMap(HeightMap* terrainData) noexcept { m_heightMap = terrainData; }
 	void SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexcept;
 	void SetPlayerQuickSlotGUI(PlayerQuickSlotGUI* playerQuickSlotGUI) noexcept;
 	void SetPlayerInventoryGUI(PlayerInventoryGUI* playerInventoryGUI) noexcept;
