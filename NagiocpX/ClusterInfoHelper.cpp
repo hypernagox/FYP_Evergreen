@@ -3,11 +3,13 @@
 #include "Service.h"
 #include "Cluster.h"
 #include "MoveBroadcaster.h"
+#include "Field.h"
 
 namespace NagiocpX
 {
 	void ClusterInfoHelper::FillterSessionEntities(XVector<const ContentsEntity*>& vec_, const ContentsEntity* const pEntity_) noexcept
 	{
+		// TODO: 몹의 시야
 		vec_.clear();
 		const auto clusters = ClusterInfoHelper::GetAdjClusters(pEntity_);
 		
@@ -34,6 +36,7 @@ namespace NagiocpX
 				session->GetSession()->SendAsync(pkt_);
 		}
 	}
+
 	void ClusterInfoHelper::BroadcastCluster(const S_ptr<SendBuffer>& pkt_) noexcept
 	{
 		const auto clusters = ClusterInfoHelper::GetAdjClusters(GetOwnerEntityRaw());
@@ -42,8 +45,31 @@ namespace NagiocpX
 			cluster->Broadcast(pkt_);
 		}
 	}
+
 	const XVector<Cluster*> ClusterInfoHelper::GetAdjClusters(const ContentsEntity* const pEntity_) noexcept
 	{
-		return XVector<Cluster*>{pEntity_->GetCurCluster()};
+		// TODO: 몹의 시야, 객체별 시야 (float 인자 하나 더주기)
+		return g_clusterFillterFunc(pEntity_, pEntity_->GetCurField());
+	}
+
+	bool ClusterInfoHelper::AdjustCluster(const float new_x, const float new_z) noexcept
+	{
+		const auto owner = GetOwnerEntityRaw();
+		if (owner->IsPendingClusterEntry())return false;
+		const auto cur_field = owner->GetCurField();
+		const auto cluster_field_info = owner->GetClusterFieldInfo();
+		const auto cur_xy = cur_field->CalculateClusterXY(new_x, new_z);
+		if (cluster_field_info.clusterInfo.clusterID == cur_xy)
+		{
+			return false;
+		}
+		else
+		{
+			const auto info = ClusterInfo{ cur_field->GetFieldID() ,cur_xy };
+			const auto cluster = owner->GetCurCluster();
+			owner->SetOnlyClusterInfo(info);
+			cluster->MigrationEnqueue(info, owner);
+			return true;
+		}
 	}
 }

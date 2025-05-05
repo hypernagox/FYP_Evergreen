@@ -9,6 +9,7 @@
 #include "PartyQuestSystem.h"
 #include "QuestRoom.h"
 #include "ClientSession.h"
+#include "ClusterInfoHelper.h"
 
 void PathNPC::UpdateMove()
 {
@@ -28,12 +29,16 @@ void PathNPC::UpdateMove()
 	
 	m_curDistAcc += m_navAgent->ApplyPostPosition(m_vecDirDists[m_cur_idx].first, m_speed, (cur_time - m_last_update_timestamp) * 0.001f);
 
+	//owner->GetComp<PositionComponent>()->vel = m_vecDirDists[m_cur_idx].first;
+	//owner->GetComp<PositionComponent>()->accel = {};
+
 	if (m_curDistAcc >= m_vecDirDists[m_cur_idx].second)
 	{
 		m_curDistAcc = 0.f;
 		++m_cur_idx;
 	}
 	
+	//owner->GetComp<NagiocpX::ClusterInfoHelper>()->AdjustCluster()
 	owner->GetCurCluster()->Broadcast(
 		NagiocpX::MoveBroadcaster::CreateMovePacket(owner)
 	);
@@ -56,6 +61,7 @@ void PathNPC::InitPathNPC()
 		GetNavMesh()->GetPathVertices(begin, end, step);
 	m_navAgent->SetPos(begin);
 	m_speed = 5.f;
+
 	if (const auto owner_session = m_owner_system->m_member[0])
 	{
 		owner_session->IncRef();

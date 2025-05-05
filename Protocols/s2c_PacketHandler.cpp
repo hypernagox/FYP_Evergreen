@@ -111,7 +111,6 @@ const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 			comp->UpdateNewMoveData(pkt_);
 		}
 	}
-
     return true;
 }
 

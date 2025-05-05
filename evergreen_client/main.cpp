@@ -42,6 +42,7 @@ std::unique_ptr<HeightMap> g_heightMap;
 std::unique_ptr<TerrainData> g_terrainData;
 
 void Update(const Time& time);
+void ProcessLogin();
 
 bool isValidIPAddress(std::wstring_view ipAddress) {
     const std::wregex ipRegex(L"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
@@ -65,6 +66,40 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     NAVIGATION->RegisterDestroy();
     Common::DataRegistry::Load();
     s2c_PacketHandler::Init();
+
+    // Height Map: 지형의 (x, z) 좌표에 대한 y 높이를 담는 맵
+    g_heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta_04_28.raw"), 2049, 2049);
+
+    // Terrain Detail: 잔디의 위치를 담는 맵, 잔디 위치에 대한 버텍스 / 인덱스 버퍼 포함
+    g_terrainDetail = std::make_unique<TerrainDetail>(g_heightMap.get(), RESOURCE_PATH(L"environment\\Terrain_Detail.raw"), 512, 512, 16, INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
+
+	// Terrain Data: 나무, 바위, 건물 등 지형에 배치할 오브젝트의 위치를 담는 자료 구조
+    g_terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
+
+    g_scene = std::make_shared<GameScene>(g_heightMap.get(), g_terrainData.get(), g_terrainDetail.get());
+
+    // 타겟씬은 이런저런 테스트 할 때 늘 필요 ..
+   // if constexpr (true == g_bUseNetWork)
+    {
+        ServerObjectMgr::GetInst()->SetTargetScene(g_scene);
+    }
+
+    if constexpr (true == g_bUseNetWork)
+    {
+        NetMgr(NetworkMgr)->RegisterLoginRoutine(ProcessLogin);
+    }
+
+    return UpdownStudio::Run(g_scene, nCmdShow);
+}
+
+void Update(const Time& time)
+{
+    INSTANCE(EventTimer)->Update(time.deltaTime);
+}
+
+void ProcessLogin()
+{
+    UpdownStudio::RegisterIOUpdateCallback(std::bind_front(&NetHelper::NetworkMgr::DoNetworkIO, NetMgr(NetworkMgr), 0));
 
     if constexpr (true == g_bUseNetWork)
     {
@@ -93,46 +128,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             } while (!NetMgr(NetworkMgr)->Connect<ServerSession>(inputIP, 7777, s2c_PacketHandler::GetPacketHandlerList()));
         }
     }
-    
+
     if constexpr (true == g_bUseNetWork)
     {
         Send(Create_c2s_LOGIN("Hello"));
         NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
     }
 
-    // Height Map: 지형의 (x, z) 좌표에 대한 y 높이를 담는 맵
-    g_heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta_04_28.raw"), 2049, 2049);
-
-    // Terrain Detail: 잔디의 위치를 담는 맵, 잔디 위치에 대한 버텍스 / 인덱스 버퍼 포함
-    g_terrainDetail = std::make_unique<TerrainDetail>(g_heightMap.get(), RESOURCE_PATH(L"environment\\Terrain_Detail.raw"), 512, 512, 16, INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
-
-	// Terrain Data: 나무, 바위, 건물 등 지형에 배치할 오브젝트의 위치를 담는 자료 구조
-    g_terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
-
-    g_scene = std::make_shared<GameScene>(g_heightMap.get(), g_terrainData.get(), g_terrainDetail.get());
-
-    // 타겟씬은 이런저런 테스트 할 때 늘 필요 ..
-   // if constexpr (true == g_bUseNetWork)
-    {
-        ServerObjectMgr::GetInst()->SetTargetScene(g_scene);
-    }
-
     if constexpr (true == g_bUseNetWork)
     {
-		NetMgr(NetworkMgr)->DoNetworkIO();
-	}
-
-    if constexpr (true == g_bUseNetWork)
-    {
-        UpdownStudio::RegisterIOUpdateCallback([]()noexcept {
-            NetMgr(NetworkMgr)->DoNetworkIO();
-            });
+        NetMgr(NetworkMgr)->DoNetworkIO();
     }
-
-    return UpdownStudio::Run(g_scene, nCmdShow);
-}
-
-void Update(const Time& time)
-{
-    INSTANCE(EventTimer)->Update(time.deltaTime);
 }

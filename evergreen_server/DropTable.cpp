@@ -31,7 +31,8 @@ void DropTable::TryCreateItem() const noexcept
 	const auto temp_ptr = item.get();
 	ClusterPredicate p;
 	auto pkt = p.CreateAddPacket(temp_ptr);
-	owner->GetCurField()->EnterFieldNPC(
+	owner->GetCurField()->EnterFieldWithFloatXYNPC(
+		PositionComponent::GetXZWithOffsetGlobal(temp_ptr),
 		std::move(item)
 	);
 	owner->GetCurCluster()->Broadcast(std::move(pkt));

@@ -3,6 +3,7 @@
 #include "QuestRoom.h"
 #include "ClientSession.h"
 #include "Cluster.h"
+#include "PositionComponent.h"
 
 PartyQuestSystem::~PartyQuestSystem() noexcept
 {
@@ -42,12 +43,15 @@ bool PartyQuestSystem::MissionStart()
 		m_member[0]->GetOwnerEntity()->GetClusterFieldInfo().curFieldPtr;
 	for (const auto& session : m_member)
 	{
+		// TODO: 시작위치
 		if (!session)continue;
 		m_curQuestRoomInstance->IncMemberCount();
 		const auto owner = session->GetOwnerEntity();
+		const auto pos = owner->GetComp<PositionComponent>()->pos;
 		owner->GetCurCluster()->MigrationOtherFieldEnqueue(
 			m_curQuestRoomInstance.get(),
-			owner
+			owner,
+			m_curQuestRoomInstance->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 		);
 	}
 	return true;
@@ -74,11 +78,14 @@ void PartyQuestSystem::MissionEnd()
 	m_curQuestRoomInstance->FinishField();
 	for (auto& session : m_member)
 	{
+		// TODO: 귀환위치
 		if (!session)continue;
 		const auto owner = session->GetOwnerEntity();
+		const auto pos = owner->GetComp<PositionComponent>()->pos;
 		owner->GetCurCluster()->MigrationOtherFieldEnqueue(
 			m_prev_field,
-			owner
+			owner,
+			m_prev_field->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 		);
 	}
 	m_curQuestRoomInstance.reset();

@@ -11,6 +11,11 @@ static constexpr const int8_t NUM_OF_PARTYQUEST = 3;
 
 constexpr const float HARVEST_INTERACTION_DIST = 5.f;
 
+constexpr const float TERRAIN_OFFSET = 512.f;
+
+constexpr const uint16_t DISTANCE_FILTER = 32;
+
+
 enum class HARVEST_TYPE: int8_t
 {
 	LILLY = 0,

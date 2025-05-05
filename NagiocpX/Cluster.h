@@ -30,13 +30,10 @@ namespace NagiocpX
 		void LeaveAndDestroyEnqueue(const uint8_t group_type, const uint32_t obj_id)noexcept {
 			PostClusterTask(&Cluster::LeaveAndDestroy, uint8_t{ group_type }, c_uint32{ obj_id });
 		}
-		void MigrationEnqueue(const ClusterInfo other_info, const ContentsEntity* const pEntity_)noexcept {
-			PostClusterTask(&Cluster::Migration,rcast(other_info), pEntity_->GetPrimaryGroupType(), pEntity_->GetObjectID());
-		}
-		void MigrationOtherFieldEnqueue(Field* const other_field, ContentsEntity* const pEntity_)noexcept {
-			pEntity_->ResetClusterCount();
-			PostClusterTask(&Cluster::MigrationOtherField, rcast(other_field), pEntity_->GetPrimaryGroupType(), pEntity_->GetObjectID());
-		}
+
+		void MigrationEnqueue(const ClusterInfo other_info, const ContentsEntity* const pEntity_)noexcept;
+			
+		void MigrationOtherFieldEnqueue(Field* const other_field, ContentsEntity* const pEntity_, const Point2D other_field_xy)noexcept;
 	public:
 		void Broadcast(const S_ptr<SendBuffer>& pkt_)const noexcept;
 	public:
@@ -53,7 +50,8 @@ namespace NagiocpX
 		EntityState Enter(const uint8_t group_type, const uint32_t obj_id, ContentsEntity* const pEntity_)noexcept;
 		void LeaveAndDestroy(const uint8_t group_type, const uint32_t obj_id)noexcept;
 		void Migration(const ClusterInfo info, const uint8_t group_type, const uint32_t obj_id) noexcept;
-		void MigrationOtherField(Field* const other_field, const uint8_t group_type, const uint32_t obj_id)noexcept;
+		void MigrationOtherField(Field* const other_field, const Point2D other_field_xy,  const uint8_t group_type, const uint32_t obj_id)noexcept;
+		void ProcessMigration(const uint8_t group_type, const uint32_t obj_id, ContentsEntity* const pEntity_)noexcept;
 	protected:
 		template <typename MemFunc, typename... Args>
 		void PostClusterTask(const MemFunc memFunc, Args&&... args)noexcept

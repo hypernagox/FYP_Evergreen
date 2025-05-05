@@ -9,6 +9,19 @@ namespace NagiocpX
 		DeleteJEMallocArray(m_vectorHashMapForEntity);
 	}
 
+	void Cluster::MigrationEnqueue(const ClusterInfo other_info, const ContentsEntity* const pEntity_) noexcept
+	{
+		PostClusterTask(&Cluster::Migration, rcast(other_info), pEntity_->GetPrimaryGroupType(), pEntity_->GetObjectID());
+	}
+
+	void Cluster::MigrationOtherFieldEnqueue(Field* const other_field, ContentsEntity* const pEntity_, const Point2D other_field_xy) noexcept
+	{
+		pEntity_->ResetClusterCount();
+		const auto info = ClusterFieldInfo{ ClusterInfo{other_field->GetFieldID(),other_field_xy},other_field };
+		pEntity_->SetClusterFieldInfo(info);
+		PostClusterTask(&Cluster::MigrationOtherField, rcast(other_field), rcast(other_field_xy), pEntity_->GetPrimaryGroupType(), pEntity_->GetObjectID());
+	}
+
 	void Cluster::Broadcast(const S_ptr<SendBuffer>& pkt_)const noexcept
 	{
 		const auto& sessions = m_vectorHashMapForEntity.data()->GetItemListRef();
@@ -49,21 +62,37 @@ namespace NagiocpX
 	{
 		if (const auto entity = m_vectorHashMapForEntity[group_type].ExtractItem(obj_id))
 		{
-			//entity->SetOnlyClusterInfo(info);
-			GetCluster(info, m_parentField)->Enter(group_type, obj_id, entity);
+			GetCluster(info, m_parentField)->ProcessMigration(group_type, obj_id, entity);
 		}
 	}
-	void Cluster::MigrationOtherField(Field* const other_field, const uint8_t group_type, const uint32_t obj_id) noexcept
+	void Cluster::MigrationOtherField(Field* const other_field, const Point2D other_field_xy, const uint8_t group_type, const uint32_t obj_id) noexcept
 	{
-		const auto other_cluster = other_field->GetStartCluster();
+		const auto other_cluster = other_field->GetCluster(other_field_xy);
 		if (const auto entity = m_vectorHashMapForEntity[group_type].ExtractItem(obj_id))
 		{
 			if (Cluster::EntityState::ENTER == other_cluster->Enter(group_type, obj_id, entity))
 			{
-				entity->SetClusterFieldInfoUnsafe(other_cluster->GetClusterFieldInfo());
+				// 그냥 인큐하자마자 바꿔야 딜리트된거 참조할일이없을것같다
+				//entity->SetClusterFieldInfoUnsafe(other_cluster->GetClusterFieldInfo());
 				other_field->MigrationAfterBehavior(m_parentField);
 			}
 			m_parentField->DecRef<Field>();
+		}
+	}
+
+	void Cluster::ProcessMigration(const uint8_t group_type, const uint32_t obj_id, ContentsEntity* const pEntity_) noexcept
+	{
+		auto& target_vecHash = *(m_vectorHashMapForEntity.data() + group_type);
+
+		if (false == pEntity_->IsValid())
+		{
+			pEntity_->DecRef();
+			return;
+		}
+		if (!target_vecHash.AddItem(obj_id, pEntity_))
+		{
+			PrintLogEndl("Alread Exist in Space");
+			return;
 		}
 	}
 }

@@ -22,7 +22,8 @@ void Regenerator::RegenerateNPC(S_ptr<ContentsEntity> entity) noexcept
 	else
 		entity->GetComp<PositionComponent>()->pos = m_summon_pos;
 	entity->SetActive();
-	entity->GetClusterFieldInfo().curFieldPtr->EnterFieldNPC(std::move(entity));
+	const auto pos = entity->GetComp<PositionComponent>()->pos;
+	entity->GetClusterFieldInfo().curFieldPtr->EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, std::move(entity));
 }
 
 bool Regenerator::IsFieldRunning(S_ptr<ContentsEntity>& entity) noexcept

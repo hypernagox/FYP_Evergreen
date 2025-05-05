@@ -11,9 +11,6 @@ namespace NagiocpX
 	public:
 		CONSTRUCTOR_CONTENTS_COMPONENT(ClusterInfoHelper)
 	public:
-		void SetClusterXY(const uint8_t x, const uint8_t y)noexcept { m_cur_sectorXY = { x,y }; }
-		const Point2D GetCurXY()const noexcept { return m_cur_sectorXY; }
-	public:
 		static void FillterSessionEntities(XVector<const ContentsEntity*>& vec_, const ContentsEntity* const pEntity_)noexcept;
 		static void BroadcastWithID(const XVector<uint32_t>& id, const S_ptr<SendBuffer>& pkt_)noexcept;
 		void BroadcastCluster(const S_ptr<SendBuffer>& pkt_)noexcept;
@@ -21,13 +18,16 @@ namespace NagiocpX
 		// TODO: 함수포인터 등록을 고려하자
 		static const XVector<Cluster*> GetAdjClusters(const ContentsEntity* const pEntity_)noexcept;
 		//static void SetSectorFillterHeuristic(const auto fp)noexcept { g_sectorFillterFunc = fp; }
-	private:
-		Point2D m_cur_sectorXY;
+	public:
+		bool AdjustCluster(const float new_x, const float new_z)noexcept;
+		bool AdjustCluster(const std::pair<float, float> xy)noexcept { return AdjustCluster(xy.first, xy.second); }
 
 	private:
-		//using SectorFillter = XVector<Sector*>(*)(const ContentsEntity* const)noexcept;
+		using ClusterFillter = XVector<Cluster*>(*)(const ContentsEntity* const, const Field* const)noexcept;
+		constinit static inline ClusterFillter g_clusterFillterFunc = {};
 
-		//static inline SectorFillter g_sectorFillterFunc = {};
+	public:
+		static void RegisterClusterFilter(const ClusterFillter filter)noexcept { g_clusterFillterFunc = filter; }
 	};
 }
 

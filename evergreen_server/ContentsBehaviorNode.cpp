@@ -200,6 +200,8 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
     pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
     // 
    // NagiocpX::Vector<NagiocpX::Sector*> sectors{ pOwnerEntity->GetCurSector() };
+
+    owner_comp_sys->GetOwnerEntity()->GetComp<ClusterInfoHelper>()->AdjustCluster(pOwnerEntity->GetComp<PositionComponent>()->GetXZWithOffset());
     bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
     //pOwnerEntity->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
    // NagiocpX::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));

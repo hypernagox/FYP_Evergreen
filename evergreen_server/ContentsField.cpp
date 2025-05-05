@@ -24,18 +24,33 @@ void ContentsField::InitFieldGlobal() noexcept
 	//	m_vecClusters[i].resize(1);
 	//	m_vecClusters[i][0].emplace_back(NagiocpX::xnew<NagiocpX::Cluster>(NUM_OF_GROUPS, NagiocpX::ClusterInfo{0, 0, 0}));
 	//}
-	m_numOfClusters = 1;
 	m_fieldID = 0;
+
+	m_field_x_scale = 1024;
+	m_field_y_scale = 1024;
+
+	m_cluster_x_scale = DISTANCE_FILTER;
+	m_cluster_y_scale = DISTANCE_FILTER;
+
 	//UPDATE();
 }
 
 void ContentsField::InitFieldTLS() noexcept
 {
-	const auto clusters = NagiocpX::CreateJEMallocArray<XVector<NagiocpX::Cluster*>>(m_numOfClusters);
-	tl_vecClusters[NagiocpX::GetCurThreadIdx()] = clusters.data();
+	const auto row = GetNumOfClusterRow();
+	const auto col = GetNumOfClusterCol();
 	
+	const auto th_idx = NagiocpX::GetCurThreadIdx();
+	const auto clusters = NagiocpX::CreateJEMallocArray<XVector<NagiocpX::Cluster*>>(row);
+	tl_vecClusters[th_idx] = clusters.data();
+
+	for (int i = 0; i < row; ++i)
 	{
-		tl_vecClusters[NagiocpX::GetCurThreadIdx()][0].emplace_back(NagiocpX::xnew<NagiocpX::Cluster>(NUM_OF_GROUPS, NagiocpX::ClusterInfo{ m_fieldID, 0, 0 }, this));
+		tl_vecClusters[th_idx][i].reserve(col);
+		for (int j = 0; j < col; ++j)
+		{
+			tl_vecClusters[th_idx][i].emplace_back(NagiocpX::xnew<NagiocpX::Cluster>(NUM_OF_GROUPS, NagiocpX::ClusterInfo{m_fieldID, (uint8)j, (uint8)i}, this));
+		}
 	}
 }
 
@@ -47,6 +62,35 @@ void ContentsField::MigrationAfterBehavior(Field* const prev_field) noexcept
 		q->DecMemberCount();
 	}
 	std::cout << "이주 성공\n";
+}
+
+ContentsField::ContentsField()
+{
+	m_fieldID = 0;
+
+	m_field_x_scale = 1024;
+	m_field_y_scale = 1024;
+
+	m_cluster_x_scale = (int)DISTANCE_FILTER;
+	m_cluster_y_scale = (int)DISTANCE_FILTER;
+
+	//const auto row = GetNumOfClusterRow();
+	//const auto col = GetNumOfClusterCol();
+	//
+	//
+	//
+	//for (int t = 0; t < NagiocpX::NUM_OF_THREADS; ++t)
+	//{
+	//	const auto clusters = NagiocpX::CreateJEMallocArray<XVector<NagiocpX::Cluster*>>(1);
+	//	tl_vecClusters[t] = clusters.data();
+	//	for (int i = 0; i < row; ++i)
+	//	{
+	//		for (int j = 0; j < col; ++j)
+	//		{
+	//			tl_vecClusters[t][i].emplace_back(NagiocpX::xnew<NagiocpX::Cluster>(NUM_OF_GROUPS, NagiocpX::ClusterInfo{ m_fieldID, (uint8)j, (uint8)i }, this));
+	//		}
+	//	}
+	//}
 }
 
 ContentsField::~ContentsField()

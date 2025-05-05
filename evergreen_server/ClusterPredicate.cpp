@@ -20,35 +20,16 @@ bool ClusterPredicate::Filter4Session(const ContentsEntity* const a, const Conte
 {
 	if (!a->IsValid() || !b->IsValid()) 
 	{
-		//std::cout << "Invalid at\n";
-		//std::cout << "A: " << a->GetObjectID() << std::endl;
-		//std::cout << "B: " << b->GetObjectID() << std::endl;
 		return false;
 	}
 	if (a->IsPendingClusterEntry() || b->IsPendingClusterEntry())
 	{
-		//std::cout << "Pending at\n";
-		//std::cout << "A: " << a->GetObjectID() << std::endl;
-		//std::cout << "B: " << b->GetObjectID() << std::endl;
 		return false;
 	}
-	// 이거는 상황보고 다시 해야할수도있음 일단 패킷핸들러에서만 체크해봄
-
 	const auto a_pos = a->GetComp<PositionComponent>()->pos;
 	const auto b_pos = b->GetComp<PositionComponent>()->pos;
 
-	//const int dx = (int)(a_pos.x - b_pos.x);
-	//const int dy = (int)(a_pos.y - b_pos.y);
-	//const int dz = (int)(a_pos.z - b_pos.z);
-	//return true;4
-	const auto res = CommonMath::IsInDistanceDX(a_pos, b_pos, 50);
-	if (!res)
-	{
-		//std::cout << "TTTTTTTTTTTTTTTTTTTTTTTTt\n";
-		//std::cout << CommonMath::GetDistPowDX(a_pos, b_pos) << std::endl;
-	}
-	return res;
-	//return ((50 * 50) >= (dx * dx + dy * dy + dz * dz));
+	return  CommonMath::IsInDistanceDX(a_pos, b_pos, DISTANCE_FILTER);
 }
 
 bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsEntity* const b) const noexcept
@@ -64,7 +45,7 @@ bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsE
 	//
 	//const uint32_t dist = ((dx * dx + dy * dy + dz * dz));
 	const auto dist = Vector3::DistanceSquared(a_pos, b_pos);
-	const bool bRes = (50 * 50) >= dist;
+	const bool bRes = (DISTANCE_FILTER * DISTANCE_FILTER) >= dist;
 	if (bRes)
 	{
 		if (const auto npc_timer = b->GetIocpComponent<NagiocpX::TickTimer>())

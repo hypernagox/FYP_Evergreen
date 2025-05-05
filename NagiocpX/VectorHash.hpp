@@ -624,7 +624,7 @@ namespace NagiocpX
     };
 
 
-    template<typename Value, template<typename, typename> class TableBase = XMap>
+    template<typename Value, template<typename, typename> class TableBase = XHashMap>
     class VectorSetUnsafe
     {
         using IndexType = uint32_t;

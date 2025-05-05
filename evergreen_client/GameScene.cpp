@@ -167,7 +167,6 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
     m_heroObj = std::make_shared<SceneObject>();
 
-    ServerObjectMgr::GetInst()->SetMainHero(NetMgr(NetworkMgr)->GetSessionID(), m_heroObj);
     auto heroServerComponent = m_heroObj->AddComponent<ServerObject>();
    
     heroServerComponent->AddComp<MovePacketSender>();
@@ -453,6 +452,13 @@ void GameScene::EnterGame()
         GuideSystem::GetInst()->SetMainPlayer(m_heroObj);
         GuideSystem::GetInst()->SetTargetScene(g_scene);
     }
+
+    // 만약 여기서 와일루프 돌면, 서버로부터 아직 ID발급을 못받았다는 이야기
+    NetMgr(NetworkMgr)->ProcessLogin();
+
+    // 서버오브젝트 매니저는 뭐 테스트 할 때 필요 할수도있음..
+    ServerObjectMgr::GetInst()->SetMainHero(NetMgr(NetworkMgr)->GetSessionID(), m_heroObj);
+
     if constexpr (true == g_bUseNetWork)
     {
         Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())));

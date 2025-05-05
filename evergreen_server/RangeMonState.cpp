@@ -6,6 +6,7 @@
 #include "MoveBroadcaster.h"
 #include "Projectile.h"
 #include "TimerRoutine.h"
+#include "ClusterInfoHelper.h"
 
 const State::EntityState RangeMonIdle::Update(const float dt, const ComponentSystemNPC* const comp_sys, const S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
@@ -45,8 +46,7 @@ const State::EntityState RangeMonChase::Update(const float dt, const ComponentSy
 
     comp_sys->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / CommonMath::C_PI;
 
-   
-
+    comp_sys->GetOwnerEntity()->GetComp<NagiocpX::ClusterInfoHelper>()->AdjustCluster(comp_sys->GetComp<PositionComponent>()->GetXZWithOffset());
     NagiocpX::TickTimer::BroadcastObjInSight(NagiocpX::TickTimer::GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(comp_sys->GetOwnerEntity()));
 
     return RANGE_MON_STATE::CHASE;

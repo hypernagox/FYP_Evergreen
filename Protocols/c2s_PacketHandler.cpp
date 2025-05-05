@@ -21,6 +21,7 @@
 #include "Item.h"
 #include "PartyQuestSystem.h"
 #include "Interaction.h"
+#include "ClusterInfoHelper.h"
 
 using namespace NagiocpX;
 
@@ -58,8 +59,9 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 
 	//Mgr(WorldMgr)->GetWorld(0) ->GetStartSector()->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER));
 	//Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
-	
-	Field::GetField(0)->EnterField(entity);
+	const auto pos = entity->GetComp<PositionComponent>()->pos;
+
+	Field::GetField(0)->EnterFieldWithFloatXY(pos.x + 512.f, pos.z + 512.f, entity);
 
 	//g_sector->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER)
 	//	, s
@@ -102,8 +104,8 @@ const bool Handle_c2s_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSess
 	//if(pSession_->GetObjectID()!=1)
 	
 	//std::cout << "move" << std::endl;
-	const auto& pEntity = pSession_->GetOwnerEntity()->GetComp<PositionComponent>();
-	pEntity->SetMovementInfo(pkt_);
+	const auto& pos_comp = pSession_->GetOwnerEntity()->GetComp<PositionComponent>();
+	pos_comp->SetMovementInfo(pkt_);
 	//pEntity->pos = ToDxVec(pkt_.pos());
 	//pEntity->vel = ToDxVec(pkt_.vel());
 	//pEntity->accel = ToDxVec(pkt_.accel());
@@ -122,6 +124,9 @@ const bool Handle_c2s_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSess
 	//pSession_->SendAsync(MoveBroadcaster::CreateMovePacket(pSession_->GetOwnerEntity()));
 	pSession_->SendAsync(helper.CreateMovePacket(pSession_->GetOwnerEntity()));
 	pSession_->GetOwnerEntity()->GetComp<NagiocpX::MoveBroadcaster>()->BroadcastMove(helper);
+	pSession_->GetOwnerEntity()->GetComp<NagiocpX::ClusterInfoHelper>()->AdjustCluster(
+		pos_comp->GetXZWithOffset()
+	);
 	//pSession_->GetOwnerEntity()->GetComp<NagiocpX::SectorInfoHelper>()->ImmigrationSector(0, 0);
 	//const auto en = pSession_->GetOwnerEntity();
 	//g_sector->BroadCastParallel(MoveBroadcaster::CreateMovePacket(en), s, en);

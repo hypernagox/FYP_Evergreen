@@ -16,32 +16,23 @@ namespace NagiocpX
 		virtual void DestroyFieldTLS()noexcept;
 		virtual void MigrationAfterBehavior(Field* const prev_field)noexcept = 0;
 	public:
-		void EnterFieldNPC(const S_ptr<ContentsEntity>& pEntity_)noexcept {
-			const auto entity_ptr = pEntity_.get();
-			Mgr(FieldMgr)->RegisterNPC(const_cast<S_ptr<ContentsEntity>&>(pEntity_));
-			if (pEntity_)return;
-			EnterField(entity_ptr);
+		//void EnterFieldNPC(const S_ptr<ContentsEntity>& pEntity_)noexcept;
+		void EnterFieldWithXYNPC(const uint8_t start_x, const uint8_t start_y, const S_ptr<ContentsEntity>& pEntity_)noexcept;
+		void EnterFieldWithFloatXYNPC(const float start_x, const float start_y, const S_ptr<ContentsEntity>& pEntity_)noexcept;
+
+		//void EnterField(ContentsEntity* const pEntity_)noexcept;
+		void EnterFieldWithXY(const uint8_t start_x, const uint8_t start_y, ContentsEntity* const pEntity_)noexcept;
+
+		void EnterFieldWithFloatXY(const float start_x, const float start_y, ContentsEntity* const pEntity_)noexcept;
+
+
+		void EnterFieldWithFloatXYNPC(const std::pair<float,float> xy, const S_ptr<ContentsEntity>& pEntity_)noexcept {
+			EnterFieldWithFloatXYNPC(xy.first, xy.second, pEntity_);
 		}
-		void EnterFieldWithXYNPC(const uint8_t start_x, const uint8_t start_y, const S_ptr<ContentsEntity>& pEntity_)noexcept {
-			const auto entity_ptr = pEntity_.get();
-			Mgr(FieldMgr)->RegisterNPC(const_cast<S_ptr<ContentsEntity>&>(pEntity_));
-			if (pEntity_)return;
-			EnterFieldWithXY(start_x, start_y, entity_ptr);
+		void EnterFieldWithFloatXY(const std::pair<float, float> xy, ContentsEntity* const pEntity_)noexcept {
+			EnterFieldWithFloatXY(xy.first, xy.second, pEntity_);
 		}
-		void EnterField(ContentsEntity* const pEntity_)noexcept {
-			const auto cluster = GetCluster(m_start_x, m_start_y);
-			pEntity_->IncRefEnterCluster();
-			pEntity_->SetClusterFieldInfoUnsafe(cluster->GetClusterFieldInfo());
-			std::atomic_thread_fence(std::memory_order_release);
-			cluster->EnterEnqueue(pEntity_);
-		}
-		void EnterFieldWithXY(const uint8_t start_x, const uint8_t start_y, ContentsEntity* const pEntity_)noexcept {
-			const auto cluster = GetCluster(start_x, start_y);
-			pEntity_->IncRefEnterCluster();
-			pEntity_->SetClusterFieldInfoUnsafe(cluster->GetClusterFieldInfo());
-			std::atomic_thread_fence(std::memory_order_release);
-			cluster->EnterEnqueue(pEntity_);
-		}
+
 	public:
 		template <typename T = Cluster>
 		T* const GetCluster(const Point2D sectorXY)const noexcept { 
@@ -51,15 +42,13 @@ namespace NagiocpX
 		T* const GetCluster(const uint8_t x, const uint8_t y)const noexcept { 
 			return static_cast<T* const>(tl_vecClusters[GetCurThreadIdx()][y][x]);
 		}
-		template <typename T = Cluster>
-		T* const GetStartCluster()const noexcept {
-			return GetCluster<T>(m_start_x, m_start_y);
-		}
 		inline const Point2D CalculateClusterXY(const float x, const float y)const noexcept {
-			return Point2D{ static_cast<const uint8_t>(static_cast<const int32_t>(x) / cluster_x)
-				, static_cast<const uint8_t>(static_cast<const int32_t>(y) / cluster_y) };
+			return Point2D{ static_cast<const uint8_t>(static_cast<const int32_t>(x) / m_cluster_x_scale)
+				, static_cast<const uint8_t>(static_cast<const int32_t>(y) / m_cluster_y_scale) };
 		}
-		const auto GetNumOfClustersInField()const noexcept { return m_numOfClusters; }
+		const uint8_t GetNumOfClusterRow()const noexcept { return static_cast<uint8_t>(m_field_y_scale / m_cluster_y_scale); }
+		const uint8_t GetNumOfClusterCol()const noexcept { return static_cast<uint8_t>(m_field_x_scale / m_cluster_x_scale); }
+
 		const auto GetFieldID()const noexcept { return m_fieldID; }
 		const bool IsRunning()const noexcept { return m_bIsRunning; }
 		void FinishField()noexcept { m_bIsRunning = false; }	
@@ -70,16 +59,15 @@ namespace NagiocpX
 		static inline T* GetField(const uint8_t fieldID)noexcept {
 			return static_cast<T* const>(Field::GetFieldInternal(fieldID));
 		}
+		const auto GetClusterXScale()const noexcept { return m_cluster_x_scale; }
+		const auto GetClusterYScale()const noexcept { return m_cluster_y_scale; }
 	protected:
 		XVector<Cluster*>* tl_vecClusters[NUM_OF_THREADS] = { nullptr };
-		uint32_t m_numOfClusters = 0;
 		int8_t m_fieldID = 0;
 		bool m_bIsRunning = true;
-		const uint8_t m_start_x = 0;
-		const uint8_t m_start_y = 0;
-		int field_x = 1;
-		int field_y = 1;
-		int cluster_x = 1;
-		int cluster_y = 1;
+		uint16_t m_field_x_scale = 1;
+		uint16_t m_field_y_scale = 1;
+		uint16_t m_cluster_x_scale = UINT16_MAX;
+		uint16_t m_cluster_y_scale = UINT16_MAX;
 	};
 }

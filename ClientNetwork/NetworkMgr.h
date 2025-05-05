@@ -31,6 +31,14 @@ namespace NetHelper
 		void SetSessionID(const uint32_t sessionID_)const noexcept;
 		c_uint32 GetSessionID()const noexcept;
 		void FinishNetwork()noexcept;
+
+		void RegisterLoginRoutine(std::function<void(void)> routine) { m_processLogin.swap(routine); }
+		void ProcessLogin()noexcept {
+			if (m_processLogin) {
+				m_processLogin();
+				while (0 == GetSessionID()) { DoNetworkIO(); }
+			}
+		}
 	private:
 		bool Connect(std::wstring_view ip, uint16 port, const PacketHandleFunc* const handler)noexcept;
 	private:
@@ -39,6 +47,7 @@ namespace NetHelper
 	private:
 		static inline std::function<void(void)> m_disconnectCallback = nullptr;
 		static inline std::function<S_ptr<PacketSession>(void)> m_sessionFactory = nullptr;
+		static inline std::function<void(void)> m_processLogin = nullptr;
 		static inline NetAddress m_serverAddr = {};
 	};
 }

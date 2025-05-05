@@ -8,27 +8,37 @@
 #include "Navigator.h"
 #include "NavigationMesh.h"
 #include "PathNPC.h"
+#include "PositionComponent.h"
 
 std::atomic_int aaaa;
 QuestRoom::QuestRoom() noexcept
 {
+	m_field_x_scale = 1024;
+	m_field_y_scale = 1024;
+
+	m_cluster_x_scale = m_field_x_scale;
+	m_cluster_y_scale = m_field_y_scale;
+
 	InitFieldGlobal();
 	InitFieldTLS();
 	std::cout << ++aaaa << std::endl;
+
 }
 
 QuestRoom::~QuestRoom() noexcept
 {
+	const auto row = (size_t)GetNumOfClusterRow();
+
 	for (int i = 0; i < NagiocpX::NUM_OF_THREADS; ++i)
 	{
-		const std::span< XVector<NagiocpX::Cluster*>> clusters{ tl_vecClusters[i],m_numOfClusters };
+		const std::span<XVector<NagiocpX::Cluster*>> clusters{ tl_vecClusters[i], row };
+
 		for (const auto cluster : clusters | std::views::join)
 		{
-			for (auto& entities : cluster->GetAllEntites())
+			for (auto& entities : cluster->GetEntitesExceptSession())
 			{
-				for (const auto entity : entities.GetItemListRef())
+				for (auto* entity : entities.GetItemListRef())
 				{
-					entity->ResetDeleter();
 					entity->TryOnDestroy();
 				}
 			}
@@ -54,38 +64,51 @@ void QuestRoom::NotifyQuestFail(NagiocpX::ContentsEntity* const entity) const no
 
 void QuestRoom::InitFieldGlobal() noexcept
 {
-	m_numOfClusters = 1;
 	m_fieldID = -1;
 }
 
 void QuestRoom::InitFieldTLS() noexcept
 {
-	for (int i = 0; i < NagiocpX::NUM_OF_THREADS; ++i) 
+	const auto row = GetNumOfClusterRow();
+	const auto col = GetNumOfClusterCol();
+
+	for (int i = 0; i < NagiocpX::NUM_OF_THREADS; ++i)
 	{
-		const auto clusters = NagiocpX::CreateJEMallocArray<XVector<NagiocpX::Cluster*>>(m_numOfClusters);
+		const auto clusters = NagiocpX::CreateJEMallocArray<XVector<NagiocpX::Cluster*>>(row);
 		tl_vecClusters[i] = clusters.data();
-		tl_vecClusters[i][0].emplace_back(NagiocpX::xnew<NagiocpX::Cluster>(NUM_OF_GROUPS, NagiocpX::ClusterInfo{ m_fieldID, 0, 0 }, this));
+		for (uint8 r = 0; r < row; ++r)
+		{
+			tl_vecClusters[i][r].reserve(col);
+			for (uint8 c = 0; c < col; ++c)
+			{
+				tl_vecClusters[i][r].emplace_back(NagiocpX::xnew<NagiocpX::Cluster>(
+					NUM_OF_GROUPS,
+					NagiocpX::ClusterInfo{ m_fieldID, c, r },
+					this
+				));
+			}
+		}
 	}
 }
 
 void QuestRoom::DestroyFieldTLS() noexcept
 {
-	//for (int i = 0; i < NagiocpX::NUM_OF_THREADS; ++i)
+	const auto row = (size_t)GetNumOfClusterRow();
+
+	for (int i = 0; i < NagiocpX::NUM_OF_THREADS; ++i)
 	{
-		const std::span< XVector<NagiocpX::Cluster*>> clusters{ tl_vecClusters[NagiocpX::GetCurThreadIdx()],m_numOfClusters};
-		for (const auto cluster : clusters | std::views::join)
+		const std::span<XVector<NagiocpX::Cluster*>> clusters{ tl_vecClusters[i], row };
+
+		for (const auto  cluster : clusters | std::views::join)
 		{
 			for (auto& entities : cluster->GetEntitesExceptSession())
 			{
-				for (const auto entity : entities.GetItemListRef())
+				for (auto* entity : entities.GetItemListRef())
 				{
 					entity->TryOnDestroy();
 				}
 			}
-			// 이전 필드에서는 겜 끝나기 직전 지웠었다.
-			//NagiocpX::xdelete<NagiocpX::Cluster>(cluster);
 		}
-		//NagiocpX::DeleteJEMallocArray(clusters);
 	}
 }
 
@@ -144,7 +167,9 @@ void FoxQuest::InitQuestField() noexcept
 		b.obj_type = MONSTER_TYPE_INFO::FOX;
 		const auto m = EntityFactory::CreateMonster(b);
 		static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
-		EnterFieldNPC(m);
+		const auto pos = m->GetComp<PositionComponent>()->pos;
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+		//EnterFieldNPC(m);
 	}
 }
 
@@ -157,7 +182,10 @@ void GoblinQuest::InitQuestField() noexcept
 		b.obj_type = 0;
 		const auto m = EntityFactory::CreateRangeMonster(b);
 		static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
-		EnterFieldNPC(m);
+
+		const auto pos = m->GetComp<PositionComponent>()->pos;
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+		//EnterFieldNPC(m);
 	}
 }
 
@@ -168,7 +196,12 @@ void NPCGuardQuest::InitQuestField() noexcept
 	b.obj_type = 0;
 	const auto m = EntityFactory::CreatePathNPC(b);
 	const auto m2 = m;
-	EnterFieldNPC(m);
+
+	const Vector3 begin = { -19.601448f,  72.97739f,  0.74976814f };
+	const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
+
+	EnterFieldWithFloatXYNPC(begin.x + 512.f, begin.z + 512.f, m);
+	//EnterFieldNPC(m);
 	// TODO: 위험
 	m2->GetComp<PathNPC>()->m_owner_system = GetOwnerSystem();
 	m2->GetComp<PathNPC>()->InitPathNPC();

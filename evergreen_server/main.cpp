@@ -13,6 +13,8 @@
 #include "QuestRoom.h"
 #include "HarvestSystem.h"
 #include "Regenerator.h"
+#include "PositionComponent.h"
+#include "ClusterInfoHelper.h"
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 100001;
@@ -32,8 +34,11 @@ public:
 		//	b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		//	b.obj_type = MONSTER_TYPE_INFO::FOX;
 		//	const auto m = EntityFactory::CreateMonster(b);
-		//	Field::GetField(0)->EnterFieldNPC(m);
+		//	const auto pos = m->GetComp<PositionComponent>()->pos;
+		//	const auto m2 = m.get();
+		//	Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
 		//}
+
 		//for (int i = 0; i < 200; ++i)
 		//{
 		//	EntityBuilder b;
@@ -42,6 +47,7 @@ public:
 		//	const auto m = EntityFactory::CreateRangeMonster(b);
 		//	Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
 		//}
+
 		const auto& h = HarvestSystem::GetHarvestPos();
 		for (const auto& [pos,type] : h)
 		{
@@ -53,8 +59,11 @@ public:
 			b.z = pos.z;
 			const auto m = EntityFactory::CreateHarvest(b);
 			m->SetDetailType(HARVEST_STATE::AVAILABLE);
-			Field::GetField(0)->EnterFieldNPC(m);
+			const auto m2 = m.get();
+			Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
+			//Field::GetField(0)->EnterFieldNPCWithFloatXY(,m);
 		}
+
 		//{
 		//	EntityBuilder b;
 		//	b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
@@ -92,6 +101,9 @@ public:
 	}
 };
 
+XVector<Cluster*> GlobalClusterFilter(const ContentsEntity* const entity, const Field* const field)noexcept;
+XVector<Cluster*> GlobalClusterFilterForTest(const ContentsEntity* const entity, const Field* const field)noexcept;
+
 int main()
 {
 	ContentsInitiator con_init;
@@ -101,7 +113,7 @@ int main()
 
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	
-	GET_DATA(std::string, "Warrior", "name");
+	ClusterInfoHelper::RegisterClusterFilter(GlobalClusterFilterForTest);
 
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
@@ -129,4 +141,72 @@ int main()
 		  ThreadMgr::NUM_OF_THREADS
 		, &con_init
 	);
+}
+
+XVector<Cluster*> GlobalClusterFilter(const ContentsEntity* const entity, const Field* const field)noexcept
+{
+	XVector<Cluster*> visibleClusters;
+	visibleClusters.reserve(9);
+
+	const auto [x, z] = PositionComponent::GetXZWithOffsetGlobal(entity);
+
+	const auto view_range = DISTANCE_FILTER;
+
+	const auto row = field->GetNumOfClusterRow();
+	const auto col = field->GetNumOfClusterCol();
+
+	const float tileWidth = field->GetClusterXScale();
+	const float tileHeight = field->GetClusterYScale();
+
+	const int cx = static_cast<int>(x / tileWidth);
+	const int cz = static_cast<int>(z / tileHeight);
+
+	const float viewRangeSq = view_range * view_range;
+
+	for (int dz = -1; dz <= 1; ++dz)
+	{
+		for (int dx = -1; dx <= 1; ++dx)
+		{
+			const int nx = cx + dx;
+			const int nz = cz + dz;
+			if (nx < 0 || nz < 0 || nx >= col || nz >= row)continue;
+
+			const float centerX = (nx + 0.5f) * tileWidth;
+			const float centerZ = (nz + 0.5f) * tileHeight;
+
+			const float dxSq = (centerX - x) * (centerX - x);
+			const float dzSq = (centerZ - z) * (centerZ - z);
+
+			if (dxSq + dzSq <= viewRangeSq)
+			{
+				visibleClusters.emplace_back(field->GetCluster(nx, nz));
+			}
+		}
+	}
+
+	const auto cur_cluster = field->GetCluster(cx, cz);
+
+	if (std::ranges::find(visibleClusters, cur_cluster) == visibleClusters.end())
+	{
+		visibleClusters.emplace_back(cur_cluster);
+	}
+
+	return visibleClusters;
+}
+
+XVector<Cluster*> GlobalClusterFilterForTest(const ContentsEntity* const entity, const Field* const field)noexcept
+{
+	const auto [x, z] = PositionComponent::GetXZWithOffsetGlobal(entity);
+
+	const auto view_range = DISTANCE_FILTER;
+
+	const auto row = field->GetNumOfClusterRow();
+	const auto col = field->GetNumOfClusterCol();
+
+	const float tileWidth = field->GetClusterXScale();
+	const float tileHeight = field->GetClusterYScale();
+
+	const int cx = static_cast<int>(x / tileWidth);
+	const int cz = static_cast<int>(z / tileHeight);
+	return Vector<Cluster*>{field->GetCluster(cx, cz)};
 }
