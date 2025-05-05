@@ -19,6 +19,7 @@ public:
 	// 게임 종료
 	void ExitGame();
 	void OnTogglePause(bool isPaused);
+	void OnTogglePlayerMode(bool spectatorMode);
 
 private:
 	std::vector<std::shared_ptr<udsdx::Material>> m_instanceMaterials;
@@ -27,6 +28,7 @@ private:
 
 	std::shared_ptr<udsdx::SceneObject> m_mainMenuCameraObject;
 	std::shared_ptr<udsdx::SceneObject> m_heroObj;
+	std::shared_ptr<udsdx::SceneObject> m_spectatorObj;
 	std::shared_ptr<udsdx::SceneObject> m_playerLightObj;
 	std::shared_ptr<udsdx::SceneObject> m_terrainObj;
 
@@ -45,5 +47,7 @@ private:
 	std::shared_ptr<udsdx::Material> m_skyboxMaterial;
 	std::shared_ptr<udsdx::Material> m_gizmoMaterial;
 	std::shared_ptr<udsdx::Mesh> m_terrainMesh;
+
+	bool m_bSpectatorMode = false;
 };
 

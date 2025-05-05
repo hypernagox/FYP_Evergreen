@@ -13,6 +13,7 @@
 #include "Navigator.h"
 #include "GizmoSphereRenderer.h"
 #include "GuideSystem.h"
+#include "HeightMap.h"
 
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
@@ -46,22 +47,6 @@ bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
 	const float maxDistanceSquared = distance * distance;
 
 	return distanceSquared <= maxDistanceSquared;
-}
-
-void AuthenticPlayer::UpdatePlayerCamFpsMode(float deltaTime)
-{
-	Transform* camTrans = m_cameraAnchor->GetTransform();
-	if (INSTANCE(Input)->GetMouseMode() == Mouse::Mode::MODE_RELATIVE)
-	{
-		float mouse_dx = static_cast<float>(INSTANCE(Input)->GetMouseX());
-		float mouse_dy = static_cast<float>(INSTANCE(Input)->GetMouseY());
-		Vector3 delta = Vector3(mouse_dy, mouse_dx, 0.0f);
-		m_cameraAngleAxis += delta * m_fCamSensivity;
-		m_cameraAngleAxis.x = std::clamp(m_cameraAngleAxis.x, -80.0f, 80.0f);
-	}
-
-	m_cameraAngleAxisSmooth = Vector3::Lerp(m_cameraAngleAxisSmooth, m_cameraAngleAxis, std::min(deltaTime * 16.0f, 1.0f));
-	camTrans->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(m_cameraAngleAxisSmooth * DEG2RAD));
 }
 
 void AuthenticPlayer::MoveByView(const Vector3& vDelta)
@@ -145,6 +130,11 @@ void AuthenticPlayer::OnModifyInventory(uint8_t itemID, int delta)
 	m_playerCraftGUI->UpdateSlotContents(this, m_inventory);
 }
 
+void AuthenticPlayer::ToggleDebugCamera()
+{
+	m_bDebugCamera = !m_bDebugCamera;
+}
+
 void AuthenticPlayer::SetQuickSlotItemOnBlank(uint8_t itemID)
 {
 	for (int i = 0; i < m_quickSlot.size(); ++i)
@@ -195,6 +185,10 @@ void AuthenticPlayer::RequestQuestEnd()
 
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
+	// Region: Camera Rotation Control
+	m_cameraAngleAxisSmooth = Vector3::Lerp(m_cameraAngleAxisSmooth, m_cameraAngleAxis, std::min(deltaTime * 16.0f, 1.0f));
+	m_cameraAnchor->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(m_cameraAngleAxisSmooth * DEG2RAD));
+
 	// Region: Mouse Scrolling Control
 	int mouseScroll = INSTANCE(Input)->GetMouseScroll();
 	if (m_lastMouseScroll != mouseScroll)
@@ -212,14 +206,36 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	m_cameraAnchorLastPosition = m_cameraAnchor->GetTransform()->GetWorldPosition();
 
 	// Region: Camera Z Distance / Screen Offset Control
-	float target = -m_cameraDistance;
-	float zPos = std::lerp(pCameraTransfrom->GetLocalPosition().z, target, deltaTime * 8.0f);
+	m_cameraDistanceSmooth = std::lerp(m_cameraDistanceSmooth, -m_cameraDistance, deltaTime * 8.0f);
 	float tParam = m_fMoveTime * 0.5f;
 	float mParam = 0.04f;
-	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, zPos));
+	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, m_cameraDistanceSmooth));
+
+	// Region: Camera Position Postprocess
+	if (m_heightMap)
+	{
+		Transform* pAnchorTransform = m_cameraAnchor->GetTransform();
+		const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
+		pAnchorTransform->ValidateMatrixRecursive();
+		Matrix4x4 cameraWorldMatrix = pAnchorTransform->GetWorldSRTMatrix();
+		Matrix4x4 terrainWorldMatrix = Matrix4x4::CreateScale(TerrainSize) * Matrix4x4::CreateTranslation(Vector3(-0.5f, 0.0f, -0.5f) * TerrainSize);
+		Matrix4x4 cameraToTerrain = cameraWorldMatrix * terrainWorldMatrix.Invert();
+
+		Vector3 terrainPos = Vector3::Transform(pCameraTransfrom->GetLocalPosition(), cameraToTerrain);
+		float height = m_heightMap->GetHeight(terrainPos.x * m_heightMap->GetPixelWidth(), terrainPos.z * m_heightMap->GetPixelHeight());
+		terrainPos.y = std::max(terrainPos.y, height + 0.1f / TerrainSize);
+		pCameraTransfrom->SetLocalPosition(Vector3::Transform(terrainPos, cameraToTerrain.Invert()));
+	}
 
 	// Region: Camera FOV Control
 	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), m_fovBase + (INSTANCE(Input)->GetMouseRightButton() ? -30.0f * DEG2RAD : 0.0f), deltaTime * 8.0f));
+}
+
+void AuthenticPlayer::UpdateCameraTransformDebug(Transform* pCameraTransfrom, float deltaTime)
+{
+	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3::Zero);
+	m_cameraAnchor->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, PIDIV2, 0.0f));
+	m_cameraObj->GetTransform()->SetLocalPosition(Vector3::Forward * 64.0f);
 }
 
 void AuthenticPlayer::TryClickScreen()
@@ -283,6 +299,7 @@ void AuthenticPlayer::Start()
 	input_handler->AddKeyFunc(Keyboard::D1, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 0);
 	input_handler->AddKeyFunc(Keyboard::D2, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 1);
 	input_handler->AddKeyFunc(Keyboard::D3, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 2);
+	input_handler->AddKeyFunc(Keyboard::D0, KEY_STATE::KET_TAP, &AuthenticPlayer::ToggleDebugCamera, this);
 
 	// 퀘 시작 요청
 	input_handler->AddKeyFunc(Keyboard::B, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuestStart, this);
@@ -312,8 +329,19 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	const Vector3 velocity = m_entityMovement->GetVelocity();
 	m_fMoveTime += Vector2(velocity.x, velocity.z).Length() * time.deltaTime;
 
-	UpdatePlayerCamFpsMode(time.deltaTime);
-	UpdateCameraTransform(m_cameraObj->GetTransform(), time.deltaTime);
+	if (INSTANCE(Input)->GetMouseMode() == Mouse::Mode::MODE_RELATIVE)
+	{
+		float mouse_dx = static_cast<float>(INSTANCE(Input)->GetMouseX());
+		float mouse_dy = static_cast<float>(INSTANCE(Input)->GetMouseY());
+		Vector3 delta = Vector3(mouse_dy, mouse_dx, 0.0f);
+		m_cameraAngleAxis += delta * m_fCamSensivity;
+		m_cameraAngleAxis.x = std::clamp(m_cameraAngleAxis.x, -80.0f, 80.0f);
+	}
+
+	if (m_bDebugCamera)
+		UpdateCameraTransformDebug(m_cameraObj->GetTransform(), time.deltaTime);
+	else
+		UpdateCameraTransform(m_cameraObj->GetTransform(), time.deltaTime);
 
 	m_playerRenderer->SetRotation(Quaternion::CreateFromYawPitchRoll(m_rendererBodyAngleY * DEG2RAD + PI, 0.0f, 0.0f));
 

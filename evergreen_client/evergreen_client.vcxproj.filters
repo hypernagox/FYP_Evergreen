@@ -249,6 +249,9 @@
     <ClCompile Include="GuideSystem.cpp">
       <Filter>Player\GuideSystem</Filter>
     </ClCompile>
+    <ClCompile Include="SpectatorPlayer.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -403,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="GuideSystem.h">
       <Filter>Player\GuideSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SpectatorPlayer.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

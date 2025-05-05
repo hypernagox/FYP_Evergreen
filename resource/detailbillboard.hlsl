@@ -98,7 +98,7 @@ VertexOut VS(VertexIn vin)
 [maxvertexcount(4)]
 void GS(point VertexOut input[1], uint primitiveID : SV_PRIMITIVEID, inout TriangleStream<GeometryOut> outStream)
 {
-    const float viewDepth = length(input[0].PosW - gEyePosW);
+    const float viewDepth = length(input[0].PosW.xz - gEyePosW.xz);
     const float scale = saturate(8.0f - viewDepth * 0.125f) * 2.0f;
 
     float3 up = normalize(float3(gView[0].y, gView[1].y, gView[2].y) + float3(0.0f, 1.0f, 0.0f));
