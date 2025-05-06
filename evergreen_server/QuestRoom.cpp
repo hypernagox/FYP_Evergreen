@@ -46,6 +46,11 @@ QuestRoom::~QuestRoom() noexcept
 		}
 		NagiocpX::DeleteJEMallocArray(clusters);
 	}
+	for (const auto entity : m_members)
+	{
+		if (!entity)continue;
+		entity->DecRef();
+	}
 	std::cout << "Äù½ºÆ®·ë ¼Ò¸ê\n";
 	std::cout << --aaaa << std::endl;
 	m_ownerPartrySystem->EndFlag();
@@ -156,6 +161,14 @@ void QuestRoom::CheckPartyQuestState()noexcept
 		}
 		return;
 	}
+}
+
+void QuestRoom::RegisterMember(const uint32_t idx, ContentsEntity* const entity) noexcept
+{
+	const auto id = entity->GetObjectID();
+	m_id2idx_table.try_emplace(id, idx);
+	m_members[idx] = entity;
+	entity->IncRef();
 }
 
 void FoxQuest::InitQuestField() noexcept

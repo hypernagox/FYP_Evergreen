@@ -41,13 +41,15 @@ bool PartyQuestSystem::MissionStart()
 	m_curQuestRoomInstance->InitQuestField();
 	m_prev_field =
 		m_member[0]->GetOwnerEntity()->GetClusterFieldInfo().curFieldPtr;
-	for (const auto& session : m_member)
+	for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
 	{
+		const auto session = m_member[i];
 		// TODO: 시작위치
 		if (!session)continue;
 		m_curQuestRoomInstance->IncMemberCount();
 		const auto owner = session->GetOwnerEntity();
 		const auto pos = owner->GetComp<PositionComponent>()->pos;
+		m_curQuestRoomInstance->RegisterMember(i, owner);
 		owner->GetCurCluster()->MigrationOtherFieldEnqueue(
 			m_curQuestRoomInstance.get(),
 			owner,
