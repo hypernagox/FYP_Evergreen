@@ -66,7 +66,7 @@ void ClientSession::OnDisconnected(const NagiocpX::Cluster* const curCluster_)no
 	//	if (ee != 1)std::cout <<"¿Ö?: "<< ee << std::endl;
 	//	});
 	m_party_quest_system->m_curQuestRoomInstance.reset();
-	m_party_quest_system->ResetPartyQuestSystem();
+	//m_party_quest_system->ResetPartyQuestSystem();
 	if (const auto p = m_cur_my_party_system.load())
 	{
 		p->OutMember(GetSessionID());

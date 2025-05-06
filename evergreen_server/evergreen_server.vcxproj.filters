@@ -226,7 +226,7 @@
     <ClCompile Include="EquipmentSystem.cpp">
       <Filter>EquipmentSystem</Filter>
     </ClCompile>
-    <ClCompile Include="HarvestSystem.cpp">
+    <ClCompile Include="HarvestLoader.cpp">
       <Filter>Harvest</Filter>
     </ClCompile>
     <ClCompile Include="PathNPC.cpp">
@@ -336,7 +336,7 @@
     <ClInclude Include="EquipmentSystem.h">
       <Filter>EquipmentSystem</Filter>
     </ClInclude>
-    <ClInclude Include="HarvestSystem.h">
+    <ClInclude Include="HarvestLoader.h">
       <Filter>Harvest</Filter>
     </ClInclude>
     <ClInclude Include="PathNPC.h">

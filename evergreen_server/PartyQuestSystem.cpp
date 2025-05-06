@@ -103,6 +103,10 @@ void PartyQuestSystem::ResetPartyQuestSystem()
 		m->DecRef();
 		m = nullptr;
 	}
+	m_curQuestID = -1;
+	m_prev_field = nullptr;
+	m_curQuestRoomInstance.reset();
+	m_started = m_runFlag = false;
 }
 
 PARTY_ACCEPT_RESULT PartyQuestSystem::AcceptNewMember(S_ptr<ClientSession> new_member)

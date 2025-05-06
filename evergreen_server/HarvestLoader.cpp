@@ -1,13 +1,14 @@
 #include "pch.h"
-#include "HarvestSystem.h"
+#include "HarvestLoader.h"
 #include "DataRegistry.h"
 
-void HarvestSystem::LoadHarvest(const std::vector<std::string> key_words, const std::wstring_view path) noexcept
+void HarvestLoader::LoadHarvest(const std::vector<std::string> key_words, const std::wstring_view path) noexcept
 {
 	std::ifstream file{ RESOURCE_PATH(path) };
 	nlohmann::json j;
 	file >> j;
 	//const auto terrain_scale = GET_DATA(float, "TerrainSize", "Value");
+	g_harvest_pos = NagiocpX::xnew<XVector<HarvestInfo>>();
 	const auto terrain_scale = 1.f;
 	for (const auto& prototype : j)
 	{
@@ -38,7 +39,14 @@ void HarvestSystem::LoadHarvest(const std::vector<std::string> key_words, const 
 		for (const auto& instance : prototype["instances"])
 		{
 			const Vector3 position = Vector3(instance["position"]["x"], instance["position"]["y"], instance["position"]["z"]);
-			g_harvest_pos.emplace_back(position * terrain_scale, type);
+			g_harvest_pos->emplace_back(position * terrain_scale, type);
 		}
 	}
+}
+
+void HarvestLoader::FreeHarvestLoader() noexcept
+{
+	if (!g_harvest_pos)return;
+	NagiocpX::xdelete<XVector<HarvestInfo>>(g_harvest_pos);
+	g_harvest_pos = nullptr;
 }
