@@ -306,8 +306,6 @@ namespace udsdx
 		}
 
 		{
-			auto csByteCode = DX::ReadData(L"compiled_shaders\\cs_motion_blur_pass.cso");
-
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
