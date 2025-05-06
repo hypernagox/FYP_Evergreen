@@ -11,7 +11,7 @@
 #include "MoveBroadcaster.h"
 #include "DataRegistry.h"
 #include "QuestRoom.h"
-#include "HarvestSystem.h"
+#include "HarvestLoader.h"
 #include "Regenerator.h"
 #include "PositionComponent.h"
 #include "ClusterInfoHelper.h"
@@ -48,7 +48,7 @@ public:
 		//	Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
 		//}
 
-		const auto& h = HarvestSystem::GetHarvestPos();
+		const auto& h = HarvestLoader::GetHarvestPos();
 		for (const auto& [pos,type] : h)
 		{
 			EntityBuilder b;
@@ -63,7 +63,7 @@ public:
 			Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
 			//Field::GetField(0)->EnterFieldNPCWithFloatXY(,m);
 		}
-
+		HarvestLoader::FreeHarvestLoader();
 		//{
 		//	EntityBuilder b;
 		//	b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
@@ -109,11 +109,11 @@ int main()
 	ContentsInitiator con_init;
 	ClusterPredicate broad_helper;
 	Common::DataRegistry::Load();
-	HarvestSystem::LoadHarvest({}, L"environment\\ExportedGameSpawns.json");
+	HarvestLoader::LoadHarvest({}, L"environment\\ExportedGameSpawns.json");
 
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	
-	ClusterInfoHelper::RegisterClusterFilter(GlobalClusterFilterForTest);
+	ClusterInfoHelper::RegisterClusterFilter(GlobalClusterFilter);
 
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
