@@ -106,15 +106,23 @@ namespace udsdx
 	{
 		ValidateMatrixRecursive();
 		// Caution: The matrix must be orthogonal to get the correct quaternion.
-		return Quaternion::CreateFromRotationMatrix(Matrix4x4(m_worldSRTMatrix));
+		Vector3 xBasis(m_worldSRTMatrix._11, m_worldSRTMatrix._12, m_worldSRTMatrix._13);
+		Vector3 yBasis(m_worldSRTMatrix._21, m_worldSRTMatrix._22, m_worldSRTMatrix._23);
+		Vector3 zBasis(m_worldSRTMatrix._31, m_worldSRTMatrix._32, m_worldSRTMatrix._33);
+		xBasis.Normalize();
+		yBasis.Normalize();
+		zBasis.Normalize();
+		Matrix4x4 worldRotationMatrix(xBasis, yBasis, zBasis); // Create a rotation matrix from the orthogonal vectors.
+		return Quaternion::CreateFromRotationMatrix(Matrix4x4(worldRotationMatrix));
 	}
 
-	Matrix4x4 Transform::GetLocalSRTMatrix() const
+	Matrix4x4 Transform::GetLocalSRTMatrix()
 	{
+		ValidateLocalSRTMatrix();
 		return m_localSRTMatrix;
 	}
 
-	Matrix4x4 Transform::GetWorldSRTMatrix() const
+	Matrix4x4 Transform::GetWorldSRTMatrix()
 	{
 		return m_worldSRTMatrix;
 	}

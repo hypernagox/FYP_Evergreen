@@ -18,6 +18,7 @@
 #include "screen_space_ao.h"
 #include "deferred_renderer.h"
 #include "motion_blur.h"
+#include "post_process_fxaa.h"
 
 #include <assimp/DefaultLogger.hpp>
 
@@ -182,6 +183,8 @@ namespace udsdx
 		// Create Motion Blur
 		m_motionBlur = std::make_unique<MotionBlur>(m_d3dDevice.Get(), m_commandList.Get());
 		m_motionBlur->BuildPipelineState();
+		m_postProcessFXAA = std::make_unique<PostProcessFXAA>(m_d3dDevice.Get(), m_commandList.Get());
+		m_postProcessFXAA->BuildPipelineState();
 
 		const char tracyQueueName[] = "D3D12 Graphics Queue";
 		m_tracyQueueCtx = TracyD3D12Context(m_d3dDevice.Get(), m_commandQueue.Get());
@@ -335,6 +338,7 @@ namespace udsdx
 		m_shadowMap->BuildDescriptors(descriptorParam, m_d3dDevice.Get());
 		m_screenSpaceAO->BuildDescriptors(descriptorParam, m_depthStencilBuffer.Get());
 		m_motionBlur->BuildDescriptors(descriptorParam);
+		m_postProcessFXAA->BuildDescriptors(descriptorParam);
 
 		for (auto texture : INSTANCE(Resource)->LoadAll<Texture>())
 		{
@@ -597,7 +601,7 @@ namespace udsdx
 
 			.Renderer = m_deferredRenderer.get(),
 
-			.AspectRatio = static_cast<float>(m_clientWidth) / m_clientHeight,
+			.AspectRatio = GetAspectRatio(),
 			.FrameResourceIndex = m_currFrameResourceIndex,
 			.RenderStageIndex = 0,
 			.Time = m_timeMeasure->GetTime(),
@@ -619,6 +623,7 @@ namespace udsdx
 			.RenderShadowMap = m_shadowMap.get(),
 			.RenderScreenSpaceAO = m_screenSpaceAO.get(),
 			.RenderMotionBlur = m_motionBlur.get(),
+			.RenderPostProcessFXAA = m_postProcessFXAA.get(),
 
 			.TracyQueueContext = &m_tracyQueueCtx
 		};
@@ -920,6 +925,8 @@ namespace udsdx
 		m_screenSpaceAO->RebuildDescriptors(m_depthStencilBuffer.Get());
 		m_motionBlur->OnResize(width, height);
 		m_motionBlur->RebuildDescriptors();
+		m_postProcessFXAA->OnResize(width, height);
+		m_postProcessFXAA->RebuildDescriptors();
 
 		// Execute the resize commands.
 		ExecuteCommandList();
@@ -1080,6 +1087,11 @@ namespace udsdx
 	int Core::GetClientHeight() const
 	{
 		return m_clientHeight;
+	}
+
+	float Core::GetAspectRatio() const
+	{
+		return static_cast<float>(m_clientWidth) / m_clientHeight;
 	}
 
 	void Core::SetClearColor(const Color& clearColor)

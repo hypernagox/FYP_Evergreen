@@ -10,238 +10,6 @@
 
 namespace udsdx
 {
-	constexpr char g_psoSSAOResource[] = R"(
-		cbuffer cbSsao : register(b0)
-		{
-			float4x4 gProj;
-			float4x4 gInvProj;
-			float4x4 gProjTex;
-			float4   gOffsetVectors[KERNEL_SIZE];
-
-			// Coordinates given in view space.
-			float    gOcclusionRadius;
-			float    gOcclusionFadeStart;
-			float    gOcclusionFadeEnd;
-			float    gSurfaceEpsilon;
-		};
- 
-		// Nonnumeric values cannot be added to a cbuffer.
-		Texture2D gNormalMap    : register(t0);
-		Texture2D gDepthMap     : register(t1);
-
-		SamplerState gsamPointClamp : register(s0);
-		SamplerState gsamLinearClamp : register(s1);
-		SamplerState gsamDepthMap : register(s2);
-		SamplerState gsamLinearWrap : register(s3);
- 
-		static const float2 gTexCoords[6] =
-		{
-			float2(0.0f, 1.0f),
-			float2(0.0f, 0.0f),
-			float2(1.0f, 0.0f),
-			float2(0.0f, 1.0f),
-			float2(1.0f, 0.0f),
-			float2(1.0f, 1.0f)
-		};
- 
-		struct VertexOut
-		{
-			float4 PosH : SV_POSITION;
-			float3 PosV : POSITION;
-			float2 TexC : TEXCOORD;
-		};
-
-		VertexOut VS(uint vid : SV_VertexID)
-		{
-			VertexOut vout;
-
-			vout.TexC = gTexCoords[vid];
-
-			// Quad covering screen in NDC space.
-			vout.PosH = float4(2.0f * vout.TexC.x - 1.0f, 1.0f - 2.0f * vout.TexC.y, 0.0f, 1.0f);
- 
-			// Transform quad corners to view space near plane.
-			float4 ph = mul(vout.PosH, gInvProj);
-			vout.PosV = ph.xyz / ph.w;
-
-			return vout;
-		}
-
-		// discontinuous pseudorandom uniformly distributed in [-0.5, +0.5]^3
-		float3 rand3(float3 c) {
-			float j = 4096.0f * sin(dot(c, float3(17.0f, 59.4f, 15.0f)));
-			float3 r;
-			r.z = frac(512.0f * j);
-			j *= 0.125f;
-			r.x = frac(512.0f * j);
-			j *= 0.125f;
-			r.y = frac(512.0f * j);
-			return r - 0.5f;
-		}	
-
-		// Determines how much the sample point q occludes the point p as a function
-		// of distZ.
-		float OcclusionFunction(float distZ)
-		{
-			float occlusion = 0.0f;
-			if(distZ > gSurfaceEpsilon)
-			{
-				float fadeLength = gOcclusionFadeEnd - gOcclusionFadeStart;
-				occlusion = saturate( (gOcclusionFadeEnd-distZ)/fadeLength );
-			}
-	
-			return occlusion;	
-		}
-
-		float NdcDepthToViewDepth(float z_ndc)
-		{
-			float viewZ = gProj[3][2] / (z_ndc - gProj[2][2]);
-			return viewZ;
-		}
-
-		float3 ReconstructNormal(float2 np)
-		{
-			float3 n;
-			n.z = dot(np, np) * 2.0f - 1.0f;
-			n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
-			return n;
-		}
- 
-		float4 PS(VertexOut pin) : SV_Target
-		{
-			// Extract random vector and map from [0,1] --> [-1, +1].
-			float3 randVec = 2.0f * rand3(float3(pin.TexC, 0.0f));
-
-			float3 n = ReconstructNormal(gNormalMap.Sample(gsamPointClamp, pin.TexC).xy);
-			float pz = gDepthMap.Sample(gsamDepthMap, pin.TexC).r;
-			pz = NdcDepthToViewDepth(pz);
-
-			float3 p = (pz / pin.PosV.z) * pin.PosV;
-
-			float occlusionSum = 0.0f;
-			for (int i = 0; i < KERNEL_SIZE; ++i)
-			{
-				float3 offset = reflect(gOffsetVectors[i].xyz, randVec);
-				float flip = sign(dot(offset, n));
-
-                float3 q = p + gOcclusionRadius * offset * flip;
-				float4 projQ = mul(float4(q, 1.0f), gProjTex);
-				projQ /= projQ.w;
-
-				float rz = gDepthMap.Sample(gsamDepthMap, projQ.xy).r;
-				rz = NdcDepthToViewDepth(rz);
-
-				float3 r = (rz / q.z) * q;
-		
-				float distZ = p.z - r.z;
-				float dp = max(dot(n, normalize(r - p)), 0.0f);
-
-				float occlusion = dp * OcclusionFunction(distZ);
-				occlusionSum += occlusion;
-			}
-	
-			occlusionSum /= KERNEL_SIZE;
-			float access = 1.0f - occlusionSum;
-
-			return saturate(pow(access, 6.0f));
-		}
-	)";
-
-	constexpr char g_psoBlurResource[] = R"(
-		cbuffer cbSsao : register(b0)
-		{
-			float4x4 gProj;
-			float4x4 gInvProj;
-			float4x4 gProjTex;
-			float4   gOffsetVectors[KERNEL_SIZE];
-
-			// Coordinates given in view space.
-			float    gOcclusionRadius;
-			float    gOcclusionFadeStart;
-			float    gOcclusionFadeEnd;
-			float    gSurfaceEpsilon;
-		};
-
-		cbuffer cbBlurState : register(b1)
-		{
-			bool gOrientation;
-		};
-
-		cbuffer cbBlur : register(b2)
-		{
-			float4 gBlurWeights[BLUR_SAMPLE / 4];
-		};
-
-		Texture2D gSrcTex : register(t0);
-		Texture2D gNormalMap : register(t1);
-		Texture2D gDepthMap : register(t2);
-		RWTexture2D<float> gDstTex : register(u0);
-
-		SamplerState gsamPointClamp : register(s0);
-		SamplerState gsamLinearClamp : register(s1);
-		SamplerState gsamDepthMap : register(s2);
-		SamplerState gsamLinearWrap : register(s3);
-
-		float NdcDepthToViewDepth(float z_ndc)
-		{
-			float viewZ = gProj[3][2] / (z_ndc - gProj[2][2]);
-			return viewZ;
-		}
-
-		float3 ReconstructNormal(float2 np)
-		{
-			float3 n;
-			n.z = dot(np, np) * 2.0f - 1.0f;
-			n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
-			return n;
-		}
-		
-		[numthreads(128, 1, 1)]
-		void CS(int3 id : SV_DispatchThreadID)
-		{
-            uint width, height, srcWidth, srcHeight;
-			gSrcTex.GetDimensions(srcWidth, srcHeight);
-			gDstTex.GetDimensions(width, height);
-
-			int2 dstID = id.xy;
-			float2 texOffset = float2(1.0f, 0.0f) / float(srcWidth);
-			if (gOrientation)
-			{
-				dstID = id.yx;
-				texOffset = float2(0.0f, 1.0f) / float(srcHeight);
-			}
-
-			float2 uv = (float2(dstID) + 0.5f) / float2(width, height);
-			float4 color = gSrcTex.SampleLevel(gsamPointClamp, uv, 0) * gBlurWeights[0][0];
-			float weightSum = gBlurWeights[0][0];
-
-			float3 n = ReconstructNormal(gNormalMap.SampleLevel(gsamPointClamp, uv, 0).xy);
-			float p = NdcDepthToViewDepth(gDepthMap.SampleLevel(gsamPointClamp, uv, 0).x);
-			
-			[unroll]
-			for (int i = 1 - BLUR_SAMPLE; i < BLUR_SAMPLE; ++i)
-			{
-				if (i == 0)
-					continue;
-
-				float2 offset = texOffset * float(i);
-				float4 sample = gSrcTex.SampleLevel(gsamPointClamp, uv + offset, 0);
-
-				float3 np = ReconstructNormal(gNormalMap.SampleLevel(gsamPointClamp, uv + offset, 0).xy);
-				float pp = NdcDepthToViewDepth(gDepthMap.SampleLevel(gsamPointClamp, uv + offset, 0).x);
-
-                if (dot(n, np) > 0.8f && abs(p - pp) < 0.2f)
-				{
-					int wi = abs(i);
-                    float weight = gBlurWeights[wi / 4][wi % 4];
-					color += sample * weight;
-					weightSum += weight;
-				}
-			}
-			gDstTex[dstID.xy] = color / weightSum;
-		}
-	)";
-
 	ScreenSpaceAO::ScreenSpaceAO(ID3D12Device* device, ID3D12GraphicsCommandList* cmdList, float ssaoMapScale)
 	{
 		m_device = device;
@@ -652,23 +420,10 @@ namespace udsdx
 
 	void ScreenSpaceAO::BuildPipelineState(ID3D12Device* pDevice, ID3D12RootSignature* pRootSignature)
 	{
-		auto itos = [](int i) -> std::wstring {
-			std::wstringstream ss;
-			ss << i;
-			return ss.str();
-			};
-
-		std::wstring sKERNEL_SIZE = itos(KERNEL_SIZE);
-		std::wstring sBLUR_SMAPLE = itos(BLUR_SMAPLE);
-		std::wstring defines[] = {
-			L"KERNEL_SIZE=" + sKERNEL_SIZE,
-			L"BLUR_SAMPLE=" + sBLUR_SMAPLE,
-		};
-
 		{
 			// Build the SSAO PSO
-			auto vsByteCode = udsdx::CompileShaderFromMemory(g_psoSSAOResource, defines, L"VS", L"vs_6_0");
-			auto psByteCode = udsdx::CompileShaderFromMemory(g_psoSSAOResource, defines, L"PS", L"ps_6_0");
+			auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_drawscreen.cso");
+			auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_screenspace_ao.cso");
 
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -679,13 +434,13 @@ namespace udsdx
 			psoDesc.pRootSignature = m_ssaoRootSignature.Get();
 			psoDesc.VS =
 			{
-				reinterpret_cast<BYTE*>(vsByteCode->GetBufferPointer()),
-				vsByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(vsByteCode.data()),
+				vsByteCode.size()
 			};
 			psoDesc.PS =
 			{
-				reinterpret_cast<BYTE*>(psByteCode->GetBufferPointer()),
-				psByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(psByteCode.data()),
+				psByteCode.size()
 			};
 			psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 			psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
@@ -708,7 +463,7 @@ namespace udsdx
 
 		{
 			// Build the blur PSO
-			auto csByteCode = udsdx::CompileShaderFromMemory(g_psoBlurResource, defines, L"CS", L"cs_6_0");
+			auto csByteCode = DX::ReadData(L"compiled_shaders\\cs_screenspace_ao_blur.cso");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
@@ -717,8 +472,8 @@ namespace udsdx
 			psoDesc.pRootSignature = m_blurRootSignature.Get();
 			psoDesc.CS =
 			{
-				reinterpret_cast<BYTE*>(csByteCode->GetBufferPointer()),
-				csByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(csByteCode.data()),
+				csByteCode.size()
 			};
 
 			ThrowIfFailed(pDevice->CreateComputePipelineState(

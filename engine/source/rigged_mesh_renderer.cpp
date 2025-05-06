@@ -132,13 +132,27 @@ namespace udsdx
 		{
 			return;
 		}
+
+		// If the animation is not blending
 		if (m_transitionFactor > 1.0f)
 		{
 			m_prevAnimation = m_animation;
 			m_prevAnimationTime = m_animationTime;
+			m_animationTime = 0.0f;
+			m_transitionFactor = 0.0f;
 		}
-		m_animationTime = 0.0f;
-		m_transitionFactor = 0.0f;
+		// If the animation is blending, but the new animation is previous one
+		else if (animationClip == m_prevAnimation)
+		{
+			m_prevAnimation = m_animation;
+			m_transitionFactor = 1.0f - m_transitionFactor;
+			std::swap(m_animationTime, m_prevAnimationTime);
+		}
+		// If the animation is blending, but the new animation is different from previous one
+		else
+		{
+			m_animationTime = 0.0f;
+		}
 		m_animation = animationClip;
 		m_loop = loop;
 	}

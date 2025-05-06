@@ -8,235 +8,6 @@
 
 namespace udsdx
 {
-	constexpr char g_psoRenderResource[] = R"(
-		cbuffer cbPerCamera : register(b0)
-		{
-			float4x4 gView;
-			float4x4 gProj;
-			float4x4 gViewProj;
-			float4x4 gViewInverse;
-			float4x4 gProjInverse;
-			float4x4 gViewProjInverse;
-			float4x4 gPrevViewProj;
-			float4 gEyePosW;
-		}
-
-		cbuffer cbPerShadow : register(b1)
-		{
-			float4x4 gLightViewProj[4];
-			float4x4 gLightViewProjClip[4];
-			float4 gShadowDistance;
-			float4 gShadowBias;
-			float3 gDirLight;
-		};
-
-		// Nonnumeric values cannot be added to a cbuffer.
-		Texture2D gBuffer1    : register(t0);
-		Texture2D gBuffer2    : register(t1);
-		Texture2D gBuffer3    : register(t2);
-		Texture2D gShadowMap  : register(t3);
-		Texture2D gSSAOMap	  : register(t4);
-		Texture2D gBufferDSV  : register(t5);
-
-
-		SamplerState gsamPointClamp : register(s0);
-		SamplerState gsamLinearClamp : register(s1);
-		SamplerState gsamDepthMap : register(s2);
-		SamplerState gsamLinearWrap : register(s3);
-		SamplerComparisonState gSamplerShadow : register(s4);
-
-		static const float4x4 gTex = {
-			0.5f, 0.0f, 0.0f, 0.0f,
-			0.0f, -0.5f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.5f, 0.5f, 0.0f, 1.0f
-		};
- 
-		static const float2 gTexCoords[6] =
-		{
-			float2(0.0f, 1.0f),
-			float2(0.0f, 0.0f),
-			float2(1.0f, 0.0f),
-			float2(0.0f, 1.0f),
-			float2(1.0f, 0.0f),
-			float2(1.0f, 1.0f)
-		};
- 
-		struct VertexOut
-		{
-			float4 PosH : SV_POSITION;
-			float2 TexC : TEXCOORD;
-		};
-
-		VertexOut VS(uint vid : SV_VertexID)
-		{
-			VertexOut vout;
-
-			vout.TexC = gTexCoords[vid];
-
-			// Quad covering screen in NDC space.
-			vout.PosH = float4(2.0f * vout.TexC.x - 1.0f, 1.0f - 2.0f * vout.TexC.y, 0.0f, 1.0f);
-
-			return vout;
-		}
-
-		float ShadowValue(float4 posW, float3 normalW, int level)
-		{
-			float4 shadowPosH = mul(mul(posW, gLightViewProjClip[level]), gTex);
-
-			// Complete projection by doing division by w.
-			shadowPosH.xy /= shadowPosH.w;
-    
-			float percentLit = 0.0f;
-			if (max(shadowPosH.x, shadowPosH.y) < 1.0f && min(shadowPosH.x, shadowPosH.y) > 0.0f)
-			{
-				// Depth in NDC space.
-				float depth = shadowPosH.z;
-
-				uint width, height, numMips;
-				gShadowMap.GetDimensions(0, width, height, numMips);
-
-				// Texel size.
-				float dx = 1.0f / (float)width;
-				float tanLight = abs(length(cross(normalW, -gDirLight)) / dot(normalW, -gDirLight));
-				float bias = 1e-4f;
-
-				const float2 offsets[9] = {
-					float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
-					float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
-					float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
-				};
-
-				[unroll]
-				for (int i = 0; i < 9; ++i)
-					percentLit += gShadowMap.SampleCmpLevelZero(gSamplerShadow, shadowPosH.xy + offsets[i], depth - bias).r;
-			}
-			else
-			{
-				percentLit = 9.0f;
-			}
-    
-			return percentLit / 9.0f;
-		}
-
-		float ShadowValue(float4 posW, float3 normalW, float distanceH)
-		{
-			if (distanceH < gShadowDistance[0])
-				return lerp(ShadowValue(posW, normalW, 0), ShadowValue(posW, normalW, 1), saturate((distanceH - gShadowDistance[0]) / (0.1f * gShadowDistance[0]) + 1.0f));
-			else if (distanceH < gShadowDistance[1])
-				return lerp(ShadowValue(posW, normalW, 1), ShadowValue(posW, normalW, 2), saturate((distanceH - gShadowDistance[1]) / (0.1f * (gShadowDistance[1] - gShadowDistance[0])) + 1.0f));
-			else if (distanceH < gShadowDistance[2])
-				return lerp(ShadowValue(posW, normalW, 2), ShadowValue(posW, normalW, 3), saturate((distanceH - gShadowDistance[2]) / (0.1f * (gShadowDistance[2] - gShadowDistance[1])) + 1.0f));
-			else if (distanceH < gShadowDistance[3])
-				return lerp(ShadowValue(posW, normalW, 3), 1.0f, saturate((distanceH - gShadowDistance[3]) / (0.1f * (gShadowDistance[3] - gShadowDistance[2])) + 1.0f));
-			else
-				return 1.0f;
-		}
-
-		float3 ReconstructNormal(float2 np)
-		{
-			float3 n;
-			n.z = dot(np, np) * 2.0f - 1.0f;
-			n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
-			return n;
-		}
- 
-		float4 PS(VertexOut pin) : SV_Target
-		{
-			float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
-			// Compute world space position from depth value.
-			float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
-            float4 PosW = mul(PosNDC, gViewProjInverse);
-			PosW /= PosW.w;
-
-			float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
-			float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
-			float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
-			float distanceH = length(PosW.xyz - gEyePosW.xyz);
-
-			// Sky color. #142743
-			float4 skyColor = float4(0.178f, 0.257f, 0.363f, 1.0f);
-			float diffuse = saturate(dot(normalW, -gDirLight) * 1.5f);
-			float shadowValue = ShadowValue(PosW, normalW, distanceH);
-			float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
-			gBuffer1Color.rgb = gBuffer1Color.rgb * lerp(skyColor, 1.0f.xxxx, min(shadowValue, diffuse)) * AOFactor;
-			return float4(gBuffer1Color.rgb, 1.0f);
-		}
-	)";
-
-	constexpr char g_psoDebugResource[] = R"(
-		Texture2D gBuffer1    : register(t0);
-		Texture2D gBuffer2    : register(t1);
-		Texture2D gBuffer3    : register(t2);
-		Texture2D gShadowMap  : register(t3);
-		Texture2D gSSAOMap	  : register(t4);
-		Texture2D gBufferDSV  : register(t5);
-		Texture2D gEnvironmentMap : register(t6);
-
-		SamplerState gsamPointClamp : register(s0);
-
-		static const float4x4 gTex = {
-			0.5f, 0.0f, 0.0f, 0.0f,
-			0.0f, -0.5f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.5f, 0.5f, 0.0f, 1.0f
-		};
- 
-		static const float2 gTexCoords[6] =
-		{
-			float2(0.0f, 1.0f),
-			float2(0.0f, 0.0f),
-			float2(1.0f, 0.0f),
-			float2(0.0f, 1.0f),
-			float2(1.0f, 0.0f),
-			float2(1.0f, 1.0f)
-		};
- 
-		struct VertexOut
-		{
-			float4 PosH : SV_POSITION;
-			float2 TexC : TEXCOORD;
-			uint InstanceID : SV_InstanceID;
-		};
-
-		VertexOut VS(uint vid : SV_VertexID, uint iid : SV_InstanceID)
-		{
-			VertexOut vout;
-
-			vout.TexC = gTexCoords[vid];
-
-			// Quad covering screen in NDC space.
-			vout.PosH = float4(vout.TexC.x * 0.5f - 1.0f, 1.0f - vout.TexC.y * 0.5f - (iid * 0.5f), 0.0f, 1.0f);
-			vout.InstanceID = iid;
-
-			return vout;
-		}
-
-		float4 PS(VertexOut pin) : SV_Target
-		{
-			float4 col = 1.0f;
-			switch (pin.InstanceID)
-			{
-			case 0:
-				col = gBuffer1.Sample(gsamPointClamp, pin.TexC);
-				break;
-			case 1:
-				col = float4(gBuffer2.Sample(gsamPointClamp, pin.TexC).rg, 0.0f, 1.0f);
-				break;
-			case 2:
-				{
-					float2 src = gBuffer3.Sample(gsamPointClamp, pin.TexC).rg;
-                    col = float4(saturate(src.x * -0.5f + 0.5f), saturate(src.y * 0.5f + 0.5f), saturate(max(src.y * -0.5f + 0.5f, 0.5f)), 1.0f);
-				}
-				break;
-			case 3:
-				col = float4(gShadowMap.Sample(gsamPointClamp, pin.TexC).rrr, 1.0f);
-				break;
-			}
-			return col;
-		}
-	)";
-
     DeferredRenderer::DeferredRenderer(ID3D12Device* device)
     {
 		m_device = device;
@@ -490,8 +261,8 @@ namespace udsdx
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
-		psoDesc.InputLayout.pInputElementDescs = Vertex::DescriptionTable;
-		psoDesc.InputLayout.NumElements = Vertex::DescriptionTableSize;
+		psoDesc.InputLayout.pInputElementDescs = nullptr;
+		psoDesc.InputLayout.NumElements = 0;
 		psoDesc.pRootSignature = m_renderRootSignature.Get();
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
@@ -506,18 +277,18 @@ namespace udsdx
 		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 		{
-			auto vsByteCode = udsdx::CompileShaderFromMemory(g_psoRenderResource, {}, L"VS", L"vs_6_0");
-			auto psByteCode = udsdx::CompileShaderFromMemory(g_psoRenderResource, {}, L"PS", L"ps_6_0");
+			auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_drawscreen.cso");
+			auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_deferred_pass.cso");
 
 			psoDesc.VS =
 			{
-				reinterpret_cast<BYTE*>(vsByteCode->GetBufferPointer()),
-				vsByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(vsByteCode.data()),
+				vsByteCode.size()
 			};
 			psoDesc.PS =
 			{
-				reinterpret_cast<BYTE*>(psByteCode->GetBufferPointer()),
-				psByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(psByteCode.data()),
+				psByteCode.size()
 			};
 
 			ThrowIfFailed(m_device->CreateGraphicsPipelineState(
@@ -528,18 +299,18 @@ namespace udsdx
 		}
 
 		{
-			auto vsByteCode = udsdx::CompileShaderFromMemory(g_psoDebugResource, {}, L"VS", L"vs_6_0");
-			auto psByteCode = udsdx::CompileShaderFromMemory(g_psoDebugResource, {}, L"PS", L"ps_6_0");
+			auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_drawscreen.cso");
+			auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_deferred_pass_debug.cso");
 
 			psoDesc.VS =
 			{
-				reinterpret_cast<BYTE*>(vsByteCode->GetBufferPointer()),
-				vsByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(vsByteCode.data()),
+				vsByteCode.size()
 			};
 			psoDesc.PS =
 			{
-				reinterpret_cast<BYTE*>(psByteCode->GetBufferPointer()),
-				psByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(psByteCode.data()),
+				psByteCode.size()
 			};
 
 			ThrowIfFailed(m_device->CreateGraphicsPipelineState(
@@ -610,9 +381,9 @@ namespace udsdx
 
 		pCommandList->DrawInstanced(6, 1, 0, 0);
 
-#if defined(DEBUG) || defined(_DEBUG)
-		pCommandList->SetPipelineState(m_debugPipelineState.Get());
-		pCommandList->DrawInstanced(6, 4, 0, 0);
-#endif
+//#if defined(DEBUG) || defined(_DEBUG)
+//		pCommandList->SetPipelineState(m_debugPipelineState.Get());
+//		pCommandList->DrawInstanced(6, 4, 0, 0);
+//#endif
 	}
 }

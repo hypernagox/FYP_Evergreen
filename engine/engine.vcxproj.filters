@@ -134,6 +134,9 @@
     <ClCompile Include="source\gui_button.cpp">
       <Filter>Engine\Runtime\Gui</Filter>
     </ClCompile>
+    <ClCompile Include="source\post_process_fxaa.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -259,9 +262,6 @@
     <ClInclude Include="source\deferred_renderer.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="resource\resource.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\UploadBuffer.h">
       <Filter>Engine\External Sources</Filter>
     </ClInclude>
@@ -304,10 +304,40 @@
     <ClInclude Include="source\gui_button.h">
       <Filter>Engine\Runtime\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="source\ReadData.h">
+      <Filter>Utility Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="source\post_process_fxaa.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="resource\engine.rc">
+    <FxCompile Include="resource\ps_screenspace_ao.hlsl">
       <Filter>Resource Files</Filter>
-    </ResourceCompile>
+    </FxCompile>
+    <FxCompile Include="resource\vs_drawscreen.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\ps_fxaa.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\cs_screenspace_ao_blur.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\cs_motion_blur_neighbormax.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\ps_motion_blur_pass.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\cs_motion_blur_tilemax.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\ps_deferred_pass.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\ps_deferred_pass_debug.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

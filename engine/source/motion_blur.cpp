@@ -6,158 +6,6 @@
 
 namespace udsdx
 {
-	constexpr char g_psoTileMax[] = R"(
-		Texture2D gSource : register(t0);
-		RWTexture2D<float2> gDestination : register(u0);
-
-		[numthreads(16, 16, 1)]
-		void CS(int3 id : SV_DispatchThreadID)
-		{
-			float2 maxSample = 0.0f;
-			for (int y = 0; y < MAX_BLUR_RADIUS; ++y)
-			{
-				for (int x = 0; x < MAX_BLUR_RADIUS; ++x)
-				{
-					float2 sample = gSource.Load(int3(id.xy * MAX_BLUR_RADIUS + int2(x, y), 0));
-					if (dot(sample, sample) > dot(maxSample, maxSample))
-					{
-						maxSample = sample;
-					}
-				}
-			}
-			gDestination[id.xy] = maxSample;
-		}
-	)";
-
-	constexpr char g_psoNeighborMax[] = R"(
-		Texture2D gSource : register(t0);
-		RWTexture2D<float2> gDestination : register(u0);
-
-		[numthreads(16, 16, 1)]
-		void CS(int3 id : SV_DispatchThreadID)
-		{
-			float2 maxSample = 0.0f;
-			[unroll]
-			for (int y = -1; y <= 1; ++y)
-			{
-				[unroll]
-				for (int x = -1; x <= 1; ++x)
-				{
-					float2 sample = gSource.Load(int3(id.xy + int2(x, y), 0));
-					if (dot(sample, sample) > dot(maxSample, maxSample))
-					{
-						maxSample = sample;
-					}
-				}
-			}
-			gDestination[id.xy] = maxSample;
-		}
-	)";
-
-	constexpr char g_psoPass[] = R"(
-		cbuffer cbPerCamera : register(b0)
-		{
-			float4x4 gView;
-			float4x4 gProj;
-			float4x4 gViewProj;
-			float4x4 gViewInverse;
-			float4x4 gProjInverse;
-			float4x4 gViewProjInverse;
-			float4x4 gPrevViewProj;
-			float4 gEyePosW;
-			float2 gRenderTargetSize;
-		};
-
-		Texture2D gSource : register(t0);
-        Texture2D gMotion : register(t1);
-		Texture2D gDepth : register(t2);
-		Texture2D gNeighborMax : register(t3);
-		RWTexture2D<float4> gDestination : register(u0);
-		
-		static const uint gSampleCount = 16;
-
-		// discontinuous pseudorandom uniformly distributed in [-0.5, +0.5]^3
-		float3 rand3(float3 c) {
-			float j = 4096.0f * sin(dot(c, float3(17.0f, 59.4f, 15.0f)));
-			float3 r;
-			r.z = frac(512.0f * j);
-			j *= 0.125f;
-			r.x = frac(512.0f * j);
-			j *= 0.125f;
-			r.y = frac(512.0f * j);
-			return r - 0.5f;
-		}
-
-		float NdcDepthToViewDepth(float z_ndc)
-		{
-			float viewZ = gProj[3][2] / (z_ndc - gProj[2][2]);
-			return viewZ;
-		}
-
-		float Cone(float x, float r)
-		{
-			return saturate(1.0f - abs(x) / r);
-		}
-
-		float Cylinder(float x, float r)
-		{
-			return 1.0f - smoothstep(r * 0.95f, r * 1.05f, abs(x));
-		}
-
-		float SoftDepthComp(float lhs, float rhs)
-		{
-			const float ext = 1e-3f;
-			return saturate(1.0f - (lhs - rhs) / ext);
-		}
-
-		[numthreads(16, 16, 1)]
-		void CS(int3 id : SV_DispatchThreadID)
-		{
-			float2 vn = gNeighborMax.Load(id / MAX_BLUR_RADIUS) * MAX_BLUR_RADIUS;
-			vn.y = -vn.y;
-
-			if (length(vn) < 0.5f)
-			{
-				gDestination[id.xy] = gSource.Load(id);
-				return;
-			}
-
-			float2 vx = gMotion.Load(id) * MAX_BLUR_RADIUS;
-			vx.y = -vx.y;
-
-			float weight = 1.0f / max(length(vx), 1.0f);
-			float4 color = gSource.Load(id) * weight;
-
-			float depthSrc = NdcDepthToViewDepth(gDepth.Load(id).r);
-			float bias = rand3(float3(id.xy / gRenderTargetSize, 0.0f)).x;
-
-			[unroll]
-			for (uint i = 0; i < gSampleCount; ++i)
-			{
-				if (i == (gSampleCount - 1) / 2)
-				{
-					continue;
-				}
-
-				float t = lerp(-1.0f, 1.0f, (i + bias + 1.0f) / (gSampleCount + 1.0f));
-				int3 idDest = int3(id.xy + vn * t, 0);
-				float depthDst = NdcDepthToViewDepth(gDepth.Load(idDest).r);
-
-				float d = length(vn) * t;
-				float2 vy = gMotion.Load(idDest) * MAX_BLUR_RADIUS;
-				vy.y = -vy.y;
-                float y =	SoftDepthComp(depthDst, depthSrc) * Cone(d, length(vy)) +
-							SoftDepthComp(depthSrc, depthDst) * Cone(d, length(vx)) +
-							Cylinder(d, length(vy)) * Cylinder(d, length(vx)) * 2.0f;
-
-				weight += y;
-				color += gSource.Load(idDest) * y; 
-			}
-
-			gDestination[id.xy] = color / weight;
-		}
-	)";
-
 	MotionBlur::MotionBlur(ID3D12Device* device, ID3D12GraphicsCommandList* cmdList)
 	{
 		m_device = device;
@@ -195,33 +43,31 @@ namespace udsdx
 
 		// Copy the render target resource to the source buffer
 		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(param.RenderTargetResource, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE));
-		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_sourceBuffer.Get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST));
+		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_sourceBuffer.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST));
 
 		pCommandList->CopyResource(m_sourceBuffer.Get(), param.RenderTargetResource);
 
-
-		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_sourceBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
+		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(param.RenderTargetResource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_sourceBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 
 		// Set the render target
-		pCommandList->SetComputeRootSignature(m_rootSignature.Get());
+		pCommandList->SetGraphicsRootSignature(m_rootSignature.Get());
+		pCommandList->OMSetRenderTargets(1, &param.RenderTargetView, true, nullptr);
+
+		pCommandList->RSSetViewports(1, &param.Viewport);
+		pCommandList->RSSetScissorRects(1, &param.ScissorRect);
+
+		pCommandList->IASetVertexBuffers(0, 0, nullptr);
+		pCommandList->IASetIndexBuffer(nullptr);
+		pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 		pCommandList->SetPipelineState(m_pso.Get());
-
-		pCommandList->SetComputeRootConstantBufferView(0, cbvGpu);
-		pCommandList->SetComputeRootDescriptorTable(1, m_sourceGpuSrv);
-		pCommandList->SetComputeRootDescriptorTable(2, param.Renderer->GetGBufferSrv(2));
-		pCommandList->SetComputeRootDescriptorTable(3, param.Renderer->GetDepthBufferSrv());
-		pCommandList->SetComputeRootDescriptorTable(4, m_neighborMaxGpuSrv);
-		pCommandList->SetComputeRootDescriptorTable(5, m_destinationGpuUav);
-
-		pCommandList->Dispatch((m_width + 15) / 16, (m_height + 15) / 16, 1);
-
-		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(param.RenderTargetResource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST));
-		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_destinationBuffer.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE));
-
-		pCommandList->CopyResource(param.RenderTargetResource, m_destinationBuffer.Get());
-
-		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(param.RenderTargetResource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET));
-		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_destinationBuffer.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+		pCommandList->SetGraphicsRootConstantBufferView(0, cbvGpu);
+		pCommandList->SetGraphicsRootDescriptorTable(1, m_sourceGpuSrv);
+		pCommandList->SetGraphicsRootDescriptorTable(2, param.Renderer->GetGBufferSrv(2));
+		pCommandList->SetGraphicsRootDescriptorTable(3, param.Renderer->GetDepthBufferSrv());
+		pCommandList->SetGraphicsRootDescriptorTable(4, m_neighborMaxGpuSrv);
+		pCommandList->DrawInstanced(6, 1, 0, 0);
 	}
 
 	void MotionBlur::OnResize(UINT newWidth, UINT newHeight)
@@ -284,19 +130,9 @@ namespace udsdx
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 			D3D12_HEAP_FLAG_NONE,
 			&texDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ,
+			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 			nullptr,
 			IID_PPV_ARGS(m_sourceBuffer.GetAddressOf())));
-
-		texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-
-		ThrowIfFailed(m_device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-			D3D12_HEAP_FLAG_NONE,
-			&texDesc,
-			D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
-			nullptr,
-			IID_PPV_ARGS(m_destinationBuffer.GetAddressOf())));
 	}
 
 	void MotionBlur::BuildDescriptors(DescriptorParam& descriptorParam)
@@ -313,9 +149,6 @@ namespace udsdx
 
 		m_sourceCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_sourceGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
-
-		m_destinationCpuUav = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
-		m_destinationGpuUav = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
 		descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
@@ -351,11 +184,6 @@ namespace udsdx
 
 		m_device->CreateUnorderedAccessView(m_tileMaxBuffer.Get(), nullptr, &uavDesc, m_tileMaxCpuUav);
 		m_device->CreateUnorderedAccessView(m_neighborMaxBuffer.Get(), nullptr, &uavDesc, m_neighborMaxCpuUav);
-
-		uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
-
-		m_device->CreateUnorderedAccessView(m_destinationBuffer.Get(), nullptr, &uavDesc, m_destinationCpuUav);
 	}
 
 	void MotionBlur::BuildRootSignature()
@@ -373,19 +201,24 @@ namespace udsdx
 			CD3DX12_DESCRIPTOR_RANGE texTable4;
 			texTable4.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3);
 
-			CD3DX12_DESCRIPTOR_RANGE texTable5;
-			texTable5.Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
-
-			CD3DX12_ROOT_PARAMETER slotRootParameter[6]{};
+			CD3DX12_ROOT_PARAMETER slotRootParameter[5]{};
 
 			slotRootParameter[0].InitAsConstantBufferView(0);
 			slotRootParameter[1].InitAsDescriptorTable(1, &texTable1);
 			slotRootParameter[2].InitAsDescriptorTable(1, &texTable2);
 			slotRootParameter[3].InitAsDescriptorTable(1, &texTable3);
 			slotRootParameter[4].InitAsDescriptorTable(1, &texTable4);
-			slotRootParameter[5].InitAsDescriptorTable(1, &texTable5);
 
-			CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(_countof(slotRootParameter), slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+			CD3DX12_STATIC_SAMPLER_DESC samplerDesc[] = {
+				CD3DX12_STATIC_SAMPLER_DESC(
+				0,
+				D3D12_FILTER_MIN_MAG_MIP_POINT,
+				D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+				D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+				D3D12_TEXTURE_ADDRESS_MODE_WRAP),
+			};
+
+			CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(_countof(slotRootParameter), slotRootParameter, _countof(samplerDesc), samplerDesc, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 			ComPtr<ID3DBlob> serializedRootSig = nullptr;
 			ComPtr<ID3DBlob> errorBlob = nullptr;
@@ -438,19 +271,8 @@ namespace udsdx
 
 	void MotionBlur::BuildPipelineState()
 	{
-		auto itos = [](int i) -> std::wstring {
-			std::wstringstream ss;
-			ss << i;
-			return ss.str();
-			};
-
-		std::wstring sMAX_BLUR_RADIUS = itos(MaxBlurRadius);
-		std::wstring defines[] = {
-			L"MAX_BLUR_RADIUS=" + sMAX_BLUR_RADIUS,
-		};
-
 		{
-			auto csByteCode = udsdx::CompileShaderFromMemory(g_psoTileMax, defines, L"CS", L"cs_6_0");
+			auto csByteCode = DX::ReadData(L"compiled_shaders\\cs_motion_blur_tilemax.cso");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
@@ -458,8 +280,8 @@ namespace udsdx
 			psoDesc.pRootSignature = m_computeRootSignature.Get();
 			psoDesc.CS =
 			{
-				reinterpret_cast<BYTE*>(csByteCode->GetBufferPointer()),
-				csByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(csByteCode.data()),
+				csByteCode.size()
 			};
 
 			ThrowIfFailed(m_device->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(m_tileMaxPso.GetAddressOf())));
@@ -467,7 +289,7 @@ namespace udsdx
 		}
 
 		{
-			auto csByteCode = udsdx::CompileShaderFromMemory(g_psoNeighborMax, defines, L"CS", L"cs_6_0");
+			auto csByteCode = DX::ReadData(L"compiled_shaders\\cs_motion_blur_neighbormax.cso");
 
 			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
 			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
@@ -475,8 +297,8 @@ namespace udsdx
 			psoDesc.pRootSignature = m_computeRootSignature.Get();
 			psoDesc.CS =
 			{
-				reinterpret_cast<BYTE*>(csByteCode->GetBufferPointer()),
-				csByteCode->GetBufferSize()
+				reinterpret_cast<BYTE*>(csByteCode.data()),
+				csByteCode.size()
 			};
 
 			ThrowIfFailed(m_device->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(m_neighborMaxPso.GetAddressOf())));
@@ -484,19 +306,33 @@ namespace udsdx
 		}
 
 		{
-			auto csByteCode = udsdx::CompileShaderFromMemory(g_psoPass, defines, L"CS", L"cs_6_0");
+			auto csByteCode = DX::ReadData(L"compiled_shaders\\cs_motion_blur_pass.cso");
 
-			D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc;
-			ZeroMemory(&psoDesc, sizeof(D3D12_COMPUTE_PIPELINE_STATE_DESC));
+			D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
+			ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
+			psoDesc.InputLayout.pInputElementDescs = nullptr;
+			psoDesc.InputLayout.NumElements = 0;
 			psoDesc.pRootSignature = m_rootSignature.Get();
-			psoDesc.CS =
-			{
-				reinterpret_cast<BYTE*>(csByteCode->GetBufferPointer()),
-				csByteCode->GetBufferSize()
-			};
+			psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+			psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+			psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+			psoDesc.DepthStencilState.DepthEnable = false;
+			psoDesc.SampleMask = UINT_MAX;
+			psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+			psoDesc.NumRenderTargets = 1;
+			psoDesc.SampleDesc.Count = 1;
+			psoDesc.SampleDesc.Quality = 0;
+			psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+			psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
-			ThrowIfFailed(m_device->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(m_pso.GetAddressOf())));
+			auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_drawscreen.cso");
+			auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_motion_blur_pass.cso");
+
+			psoDesc.VS = { vsByteCode.data(), vsByteCode.size() };
+			psoDesc.PS = { psByteCode.data(), psByteCode.size() };
+
+			ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(m_pso.GetAddressOf())));
 			m_pso->SetName(L"MotionBlur::Pass");
 		}
 	}

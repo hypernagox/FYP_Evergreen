@@ -46,13 +46,9 @@ namespace udsdx
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_sourceCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_sourceGpuSrv;
 
-		CD3DX12_CPU_DESCRIPTOR_HANDLE m_destinationCpuUav;
-		CD3DX12_GPU_DESCRIPTOR_HANDLE m_destinationGpuUav;
-
 		ComPtr<ID3D12Resource> m_tileMaxBuffer;
 		ComPtr<ID3D12Resource> m_neighborMaxBuffer;
 		ComPtr<ID3D12Resource> m_sourceBuffer;
-		ComPtr<ID3D12Resource> m_destinationBuffer;
 
 		ComPtr<ID3D12RootSignature> m_computeRootSignature;
 		ComPtr<ID3D12RootSignature> m_rootSignature;

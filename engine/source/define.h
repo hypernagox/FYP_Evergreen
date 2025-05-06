@@ -26,6 +26,7 @@ namespace udsdx
 	class ScreenSpaceAO;
 	class DeferredRenderer;
 	class MotionBlur;
+	class PostProcessFXAA;
 	class BoundingCamera;
 
 	struct RenderParam
@@ -60,6 +61,7 @@ namespace udsdx
 		ShadowMap* RenderShadowMap;
 		ScreenSpaceAO* RenderScreenSpaceAO;
 		MotionBlur* RenderMotionBlur;
+		PostProcessFXAA* RenderPostProcessFXAA;
 
 		TracyD3D12Ctx* TracyQueueContext;
 	};

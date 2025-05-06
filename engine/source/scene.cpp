@@ -14,6 +14,7 @@
 #include "input.h"
 #include "deferred_renderer.h"
 #include "motion_blur.h"
+#include "post_process_fxaa.h"
 #include "gui_element.h"
 
 namespace udsdx
@@ -178,6 +179,9 @@ namespace udsdx
 		RenderSceneObjects(param, RenderGroup::Forward, 1);
 
 		param.Renderer->PassBufferPostProcess(param);
+
+		// FXAA pass
+		param.RenderPostProcessFXAA->Pass(param);
 
 		// Motion blur pass
 		param.RenderMotionBlur->Pass(param, cameraCbv);

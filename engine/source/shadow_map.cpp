@@ -114,18 +114,21 @@ namespace udsdx
 
 		ShadowConstants shadowConstants;
 		Vector3 lightDirection = light->GetLightDirection();
-		Vector3 cameraPos = Vector3::Transform(Vector3::Zero, camera->GetSceneObject()->GetTransform()->GetWorldSRTMatrix());
-		XMMATRIX lightView = XMMatrixLookAtLH(cameraPos, XMLoadFloat3(&(cameraPos + lightDirection)), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 		std::array<std::unique_ptr<BoundingCamera>, 4> cameraBounds;
+		Vector3 cameraPos = camera->GetTransform()->GetWorldPosition();
+		Vector3 cameraLook = Vector3::TransformNormal(Vector3::Backward, Matrix4x4::CreateFromQuaternion(camera->GetTransform()->GetWorldRotation()));
 
 		for (int i = 0; i < 4; ++i)
 		{
 			float f = m_shadowRanges[i];
+			Vector3 lightPos = cameraPos + cameraLook * f * 0.5f;
+			XMMATRIX lightView = XMMatrixLookAtLH(lightPos, XMLoadFloat3(&(lightPos + lightDirection)), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 			XMMATRIX lightProj = XMMatrixOrthographicLH(f, f, -f * 10.0f, f * 10.0f);
 			XMMATRIX lightClip = XMMatrixScaling(0.5f, 0.5f, 1.0f) * XMMatrixTranslation(static_cast<float>(i % 2) - 0.5f, static_cast<float>(i / 2) - 0.5f, 0.0f);
 			XMMATRIX lightViewProj = lightView * lightProj;
 			XMStoreFloat4x4(&shadowConstants.LightViewProj[i], XMMatrixTranspose(lightViewProj));
 			XMStoreFloat4x4(&shadowConstants.LightViewProjClip[i], XMMatrixTranspose(lightViewProj * lightClip));
+			XMStoreFloat4(&shadowConstants.LightPosition[i], XMVectorSet(lightPos.x, lightPos.y, lightPos.z, 0.0f));
 
 			shadowConstants.ShadowBias[i] = f * 8.0f;
 			shadowConstants.ShadowDistance[i] = f * 0.5f;

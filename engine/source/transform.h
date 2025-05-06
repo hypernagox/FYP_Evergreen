@@ -32,8 +32,8 @@ namespace udsdx
 		Vector3 GetWorldPosition();
 		Quaternion GetWorldRotation();
 
-		Matrix4x4 GetLocalSRTMatrix() const;
-		Matrix4x4 GetWorldSRTMatrix() const;
+		Matrix4x4 GetLocalSRTMatrix();
+		Matrix4x4 GetWorldSRTMatrix();
 
 		bool ValidateLocalSRTMatrix();
 		void ValidateWorldSRTMatrix();

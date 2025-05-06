@@ -12,6 +12,7 @@ namespace udsdx
 	class ScreenSpaceAO;
 	class DeferredRenderer;
 	class MotionBlur;
+	class PostProcessFXAA;
 
 	class Core
 	{
@@ -70,6 +71,7 @@ namespace udsdx
 		int GetClientPosY() const;
 		int GetClientWidth() const;
 		int GetClientHeight() const;
+		float GetAspectRatio() const;
 
 		void SetClearColor(const Color& clearColor);
 		void SetClearColor(float r, float g, float b);
@@ -218,6 +220,7 @@ namespace udsdx
 		std::unique_ptr<ShadowMap> m_shadowMap;
 		std::unique_ptr<ScreenSpaceAO> m_screenSpaceAO;
 		std::unique_ptr<MotionBlur> m_motionBlur;
+		std::unique_ptr<PostProcessFXAA> m_postProcessFXAA;
 
 		std::unique_ptr<GraphicsMemory> m_graphicsMemory;
 
