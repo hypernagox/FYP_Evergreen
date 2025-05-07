@@ -42,12 +42,12 @@ namespace udsdx
 			break;
 		case WM_KEYDOWN:
 		case WM_KEYUP:
+			m_keyboard->ProcessMessage(message, wParam, lParam);
+			break;
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
 			m_keyboard->ProcessMessage(message, wParam, lParam);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			return 0; // Prevent the system from processing this message (It freezes the window if the default WindowProc is returned in this case)
 		}
 
 #if defined(DEBUG) || defined(_DEBUG)
