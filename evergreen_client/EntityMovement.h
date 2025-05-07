@@ -15,6 +15,7 @@ public:
 	void AddVelocity(const Vector3& velocity) { m_velocity += velocity; }
 	void AddAcceleration(const Vector3& acceleration) { m_acceleration += acceleration; }
 
+	void SetForward(const Vector3& forward) { m_forward = forward; }
 	void SetVelocity(const Vector3& velocity) { m_velocity = velocity; }
 	void SetAcceleration(const Vector3& acceleration) { m_acceleration = acceleration; }
 
@@ -23,6 +24,7 @@ public:
 	void SetPosition(const Vector3& position) { GetSceneObject()->GetTransform()->SetLocalPosition(position); }
 	void SetRotation(const Quaternion& rotation) { GetSceneObject()->GetTransform()->SetLocalRotation(rotation); }
 
+	Vector3 GetForward() const { return m_forward; }
 	Vector3 GetVelocity() const { return m_velocity; }
 	Vector3 GetAcceleration() const { return m_acceleration; }
 	float GetFriction() const { return m_friction; }
@@ -33,12 +35,14 @@ public:
 	// TODO: юс╫ц
 	Vector3 prev_pos;
 private:
+	Vector3 m_forward = Vector3::Forward;
 	Vector3 m_velocity = Vector3::Zero;
 	Vector3 m_acceleration = Vector3::Zero;
 
 	float m_friction = 20.0f;
 
 	// Max values must be positive
-	float m_velocityHMax = 7.5f;
+	float m_velocityHForwardMax = 7.5f;
+	float m_velocityHBackMax = 3.0f;
 	float m_velocityVMax = 20.0f;
 };

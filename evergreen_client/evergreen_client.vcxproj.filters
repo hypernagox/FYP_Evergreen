@@ -252,6 +252,9 @@
     <ClCompile Include="SpectatorPlayer.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerTagGUI.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -408,6 +411,9 @@
       <Filter>Player\GuideSystem</Filter>
     </ClInclude>
     <ClInclude Include="SpectatorPlayer.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerTagGUI.h">
       <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>

@@ -40,9 +40,8 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(to); });
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
-	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Run, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
-	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 1.f);
+	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 0.8f);
 	
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 
@@ -51,10 +50,27 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Death, m_stateMachine->GetConditionRefBool("Death"), true);
 
+	const AnimationState runStates[] = {
+		AnimationState::RunBackward,
+		AnimationState::RunRightBackward,
+		AnimationState::RunRight,
+		AnimationState::RunRightForward,
+		AnimationState::RunForward,
+		AnimationState::RunLeftForward,
+		AnimationState::RunLeft,
+		AnimationState::RunLeftBackward
+	};
 
-	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::Idle, AnimationState::Run, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
-	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::Run, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
-
+	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::Idle, AnimationState::RunIntermediate, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
+	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::RunIntermediate, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
+	for (int i = 0; i < 8; ++i)
+	{
+		const AnimationState runState = runStates[i];
+		m_stateMachine->AddTransition<Common::IntStateTransition<AnimationState, std::equal_to<int>>>(AnimationState::RunIntermediate, runState, m_stateMachine->GetConditionRefInt("MoveAngle"), i);
+		m_stateMachine->AddTransition<Common::IntStateTransition<AnimationState, std::not_equal_to<int>>>(runState, AnimationState::RunIntermediate, m_stateMachine->GetConditionRefInt("MoveAngle"), i);
+		m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(runState, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
+		m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(runState, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
+	}
 
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Death, AnimationState::Idle, 2.f);
 
@@ -79,9 +95,18 @@ PlayerRenderer::~PlayerRenderer()
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
-	const Vector3 velocity = GetComponent<EntityMovement>()->GetVelocity();
-	float mag = Vector2(velocity.x, velocity.z).LengthSquared();
-	*m_stateMachine->GetConditionRefFloat("MoveSpeed") = mag;
+	EntityMovement* entityMovement = GetComponent<EntityMovement>();
+	const Vector3 acceleration = entityMovement->GetAcceleration();
+	int moveAngleInt = -1;
+	if (acceleration.LengthSquared() > 0.1f)
+	{
+		const Vector3 forward = Vector3::Transform(Vector3::Forward, m_rendererObj->GetTransform()->GetWorldRotation());
+		const float moveAngle = std::atan2f(forward.x, forward.z) - std::atan2f(acceleration.x, acceleration.z);
+		moveAngleInt = static_cast<int>(moveAngle * 4.0f / PI + 12.5f) % 8;
+	}
+	float magnitude = Vector2(acceleration.x, acceleration.z).LengthSquared();
+	*m_stateMachine->GetConditionRefFloat("MoveSpeed") = magnitude;
+	*m_stateMachine->GetConditionRefInt("MoveAngle") = moveAngleInt;
 	m_stateMachine->Update(time.deltaTime);
 }
 
@@ -93,8 +118,29 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 		m_attackState = 0;
 		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.fbx")), true);
 		break;
-	case AnimationState::Run:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_run.fbx")), true);
+	case AnimationState::RunForward:
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_fast.fbx")), true);
+		break;
+	case AnimationState::RunBackward:
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_slow.fbx")), true);
+		break;
+	case AnimationState::RunLeft:
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_strafe_left.fbx")), true);
+		break;
+	case AnimationState::RunRight:
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_strafe_right.fbx")), true);
+		break;
+	case AnimationState::RunLeftForward:
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_diagonal_left.fbx")), true);
+		break;
+	case AnimationState::RunRightForward:
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_diagonal_right.fbx")), true);
+		break;
+	case AnimationState::RunLeftBackward:
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_diagonal_left.fbx")), true);
+		break;
+	case AnimationState::RunRightBackward:
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_diagonal_right.fbx")), true);
 		break;
 	case AnimationState::Attack:
 		switch (m_attackState)
@@ -124,4 +170,16 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 		*m_stateMachine->GetConditionRefBool("Death") = false;
 		break;
 	}
+}
+
+bool PlayerRenderer::GetIsRunning() const
+{
+	return m_stateMachine->GetCurrentState() == AnimationState::RunForward ||
+		m_stateMachine->GetCurrentState() == AnimationState::RunBackward ||
+		m_stateMachine->GetCurrentState() == AnimationState::RunLeft ||
+		m_stateMachine->GetCurrentState() == AnimationState::RunRight ||
+		m_stateMachine->GetCurrentState() == AnimationState::RunLeftForward ||
+		m_stateMachine->GetCurrentState() == AnimationState::RunRightForward ||
+		m_stateMachine->GetCurrentState() == AnimationState::RunLeftBackward ||
+		m_stateMachine->GetCurrentState() == AnimationState::RunRightBackward;
 }

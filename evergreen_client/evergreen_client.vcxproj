@@ -463,6 +463,7 @@
     <ClCompile Include="PlayerQuickSlotGUI.cpp" />
     <ClCompile Include="PlayerRenderer.cpp" />
     <ClCompile Include="PlayerStatusGUI.cpp" />
+    <ClCompile Include="PlayerTagGUI.cpp" />
     <ClCompile Include="PositionSetter.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="RequestPopupGUI.cpp" />
@@ -528,6 +529,7 @@
     <ClInclude Include="PlayerQuickSlotGUI.h" />
     <ClInclude Include="PlayerRenderer.h" />
     <ClInclude Include="PlayerStatusGUI.h" />
+    <ClInclude Include="PlayerTagGUI.h" />
     <ClInclude Include="PositionSetter.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="RequestPopupGUI.h" />

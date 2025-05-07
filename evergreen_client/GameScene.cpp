@@ -30,6 +30,7 @@
 #include "FocusAgentGUI.h"
 #include "GamePauseGUI.h"
 #include "MainMenuGUI.h"
+#include "PlayerTagGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -167,11 +168,10 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
     m_heroObj = std::make_shared<SceneObject>();
 
-    auto heroServerComponent = m_heroObj->AddComponent<ServerObject>();
-   
-    heroServerComponent->AddComp<MovePacketSender>();
     m_heroComponent = m_heroObj->AddComponent<AuthenticPlayer>();
     m_heroComponent->SetHeightMap(heightMap);
+    auto heroServerComponent = m_heroObj->GetComponent<ServerObject>();
+    heroServerComponent->AddComp<MovePacketSender>();
 
     Vector3 temp = Vector3(-4.345f, 76.17f, 0.0f);
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
@@ -381,6 +381,11 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 		textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
 
         m_playerInterfaceGroup->AddChild(textObj);
+
+        m_playerTagObj = std::make_shared<SceneObject>();
+        auto playerTagRenderer = m_playerTagObj->AddComponent<PlayerTagGUI>();
+
+        m_playerInterfaceGroup->AddChild(m_playerTagObj);
     }
 
     {
@@ -445,6 +450,8 @@ void GameScene::Update(const Time& time)
         OnTogglePlayerMode(!m_bSpectatorMode);
 	}
 
+    m_playerTagObj->GetComponent<PlayerTagGUI>()->SetTargetPosition(m_heroObj->GetTransform()->GetWorldPosition() + Vector3::Up * 1.8f);
+
     Scene::Update(time);
 }
 
@@ -508,4 +515,12 @@ void GameScene::OnTogglePlayerMode(bool spectatorMode)
         m_spectatorObj->GetTransform()->SetLocalPosition(heroCamera->GetTransform()->GetWorldPosition());
         m_spectatorObj->GetTransform()->SetLocalRotation(heroCamera->GetTransform()->GetWorldRotation());
     }
+}
+
+Camera* GameScene::GetMainCamera() const
+{
+    if (m_bSpectatorMode)
+		return m_spectatorObj->GetComponent<SpectatorPlayer>()->GetCameraComponent();
+	else
+		return m_heroObj->GetComponent<AuthenticPlayer>()->GetCameraComponent();
 }

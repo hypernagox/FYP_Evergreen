@@ -35,10 +35,14 @@ void EntityMovement::Update(const Time& time, Scene& scene)
 
 	m_velocity = newVelocity;
 
+	Vector3 velocityHN = Vector3(m_velocity.x, 0.0f, m_velocity.z);
+	velocityHN.Normalize();
+	float velocityHMax = std::lerp(m_velocityHBackMax, m_velocityHForwardMax, velocityHN.Dot(m_forward) * 0.5f + 0.5f);
+
 	// Assuming newVelocityHLength is always positive
-	if (newVelocityHLength > m_velocityHMax)
+	if (newVelocityHLength > velocityHMax)
 	{
-		const float ratio = m_velocityHMax / newVelocityHLength;
+		const float ratio = velocityHMax / newVelocityHLength;
 		m_velocity.x *= ratio;
 		m_velocity.z *= ratio;
 	}

@@ -54,6 +54,7 @@ private:
 	int m_lastMouseScroll = 0;
 	float m_cameraDistance = 2.0f;
 	float m_cameraDistanceSmooth = m_cameraDistance;
+	float m_cameraXOffsetSmooth = 0.0f;
 	bool m_bDebugCamera = false;
 
 	CameraPerspective* m_pCamera;
@@ -93,6 +94,7 @@ public:
 	const float GetYAngle()const noexcept { return m_rendererBodyAngleY; }
 
 	void InitCamDirection();
+	void SetServerObject(ServerObject* serverObject) noexcept { m_pServerObject = serverObject; }
 	void SetHeightMap(HeightMap* terrainData) noexcept { m_heightMap = terrainData; }
 	void SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexcept;
 	void SetPlayerQuickSlotGUI(PlayerQuickSlotGUI* playerQuickSlotGUI) noexcept;

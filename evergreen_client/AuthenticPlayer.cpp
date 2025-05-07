@@ -78,7 +78,6 @@ void AuthenticPlayer::InitCamDirection()
 	m_cameraAngleAxisSmooth = Vector3::Zero;
 
 	m_pCamera->GetSceneObject()->GetTransform()->SetLocalRotation(Quaternion::Identity);
-	GetSceneObject()->GetTransform()->SetLocalRotation(Quaternion::Identity);
 }
 
 void AuthenticPlayer::SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexcept
@@ -110,21 +109,15 @@ void AuthenticPlayer::SetPlayerCraftGUI(PlayerCraftGUI* playerCraftGUI) noexcept
 void AuthenticPlayer::OnHit(int afterHP)
 {
 	m_iCurHP = afterHP;
-
-	if (m_playerStatusGUI)
-	{
-		m_playerStatusGUI->SetCurrentHealth(m_iCurHP);
-	}
 	if (m_iCurHP <= 0)
-	{
 		m_iCurHP = m_iMaxHP;
-	}
+	if (m_playerStatusGUI)
+		m_playerStatusGUI->SetCurrentHealth(m_iCurHP);
 }
 
 void AuthenticPlayer::OnModifyInventory(uint8_t itemID, int delta)
 {
 	m_inventory[itemID] += delta;
-
 	m_playerQuickSlotGUI->UpdateSlotContents(m_quickSlot, m_inventory);
 	m_playerInventoryGUI->UpdateSlotContents(this, m_inventory);
 	m_playerCraftGUI->UpdateSlotContents(this, m_inventory);
@@ -206,10 +199,14 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	m_cameraAnchorLastPosition = m_cameraAnchor->GetTransform()->GetWorldPosition();
 
 	// Region: Camera Z Distance / Screen Offset Control
-	m_cameraDistanceSmooth = std::lerp(m_cameraDistanceSmooth, -m_cameraDistance, deltaTime * 8.0f);
+	bool focused = INSTANCE(Input)->GetMouseRightButton();
+	float distanceTarget = focused ? 1.0f : m_cameraDistance;
+
+	m_cameraDistanceSmooth = std::lerp(m_cameraDistanceSmooth, -distanceTarget, deltaTime * 8.0f);
 	float tParam = m_fMoveTime * 0.5f;
 	float mParam = 0.04f;
-	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam, sin(tParam * 2.0f) * mParam, m_cameraDistanceSmooth));
+	m_cameraXOffsetSmooth = std::lerp(m_cameraXOffsetSmooth, focused ? 0.25f : 0.0f, deltaTime * 8.0f);
+	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam + m_cameraXOffsetSmooth, sin(tParam * 2.0f) * mParam, m_cameraDistanceSmooth));
 
 	// Region: Camera Position Postprocess
 	if (m_heightMap)
@@ -228,7 +225,7 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	}
 
 	// Region: Camera FOV Control
-	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), m_fovBase + (INSTANCE(Input)->GetMouseRightButton() ? -30.0f * DEG2RAD : 0.0f), deltaTime * 8.0f));
+	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), focused ? 30.0f * DEG2RAD : m_fovBase, deltaTime * 8.0f));
 }
 
 void AuthenticPlayer::UpdateCameraTransformDebug(Transform* pCameraTransfrom, float deltaTime)
@@ -240,13 +237,9 @@ void AuthenticPlayer::UpdateCameraTransformDebug(Transform* pCameraTransfrom, fl
 
 void AuthenticPlayer::TryClickScreen()
 {
-	const auto state = m_playerRenderer->GetCurrentState();
-	if (PlayerRenderer::AnimationState::Idle == state || PlayerRenderer::AnimationState::Run == state || PlayerRenderer::AnimationState::Attack == state)
-	{
-		m_playerRenderer->Attack();
-		DoAttack();
-		//std::cout << "공격 시도\n";
-	}
+	m_playerRenderer->Attack();
+	DoAttack();
+	//std::cout << "공격 시도\n";
 }
 
 void AuthenticPlayer::FireProj()
@@ -310,9 +303,9 @@ void AuthenticPlayer::Start()
 	//input_handler->AddKeyFunc(Keyboard::Space, KEY_STATE::KET_TAP, &AuthenticPlayer::DoAttack, this);
 	input_handler->AddKeyFunc(Keyboard::CapsLock, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuest, this);
 
-	m_pServerObject = GetComponent<ServerObject>();
 	m_entityMovement = AddComponent<EntityMovement>();
 	m_playerRenderer = AddComponent<PlayerRenderer>();
+	m_pServerObject = AddComponent<ServerObject>();
 
 	m_entityMovement->SetFriction(40.0f);
 }
@@ -321,6 +314,9 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 {
 	Transform* transform = GetSceneObject()->GetTransform();
 
+	Quaternion playerRotation = Quaternion::CreateFromYawPitchRoll(m_rendererBodyAngleY * DEG2RAD + PI, 0.0f, 0.0f);
+	m_playerRenderer->SetRotation(playerRotation);
+	m_entityMovement->SetForward(Vector3::Transform(Vector3::Forward, playerRotation));
 	m_entityMovement->SetAcceleration(Vector3::Zero);
 
 	const Vector3Int vPrevState = m_vCurState;
@@ -343,8 +339,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	else
 		UpdateCameraTransform(m_cameraObj->GetTransform(), time.deltaTime);
 
-	m_playerRenderer->SetRotation(Quaternion::CreateFromYawPitchRoll(m_rendererBodyAngleY * DEG2RAD + PI, 0.0f, 0.0f));
-
 	const bool vec3int_equal = vPrevState.x == m_vCurState.x && vPrevState.y == m_vCurState.y && vPrevState.z == m_vCurState.z;
 
 	auto sceneObject = GetSceneObject();
@@ -361,7 +355,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	if (INSTANCE(Input)->GetMouseRightButtonDown())
 	{
 		const auto state = m_playerRenderer->GetCurrentState();
-		if (PlayerRenderer::AnimationState::Idle == state || PlayerRenderer::AnimationState::Run == state)
+		if (PlayerRenderer::AnimationState::Attack != state)
 		{
 			// m_playerRenderer->Attack();
 			FireProj();
@@ -397,9 +391,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		|| INSTANCE(Input)->GetKeyDown(Keyboard::A)
 		|| INSTANCE(Input)->GetKeyDown(Keyboard::S)
 		|| INSTANCE(Input)->GetKeyDown(Keyboard::D);
-
-
-	m_pServerObject->ServerCompUpdate<MovePacketSender>();
 }
 
 Vector3 AuthenticPlayer::GetPlayerLook() const noexcept

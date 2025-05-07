@@ -20,6 +20,7 @@ public:
 	void ExitGame();
 	void OnTogglePause(bool isPaused);
 	void OnTogglePlayerMode(bool spectatorMode);
+	udsdx::Camera* GetMainCamera() const;
 
 private:
 	std::vector<std::shared_ptr<udsdx::Material>> m_instanceMaterials;
@@ -38,6 +39,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_craftObj;
 	std::shared_ptr<udsdx::SceneObject> m_pauseMenuObj;
 	std::shared_ptr<udsdx::SceneObject> m_partyListObj;
+	std::shared_ptr<udsdx::SceneObject> m_playerTagObj;
 
 	AuthenticPlayer* m_heroComponent;
 

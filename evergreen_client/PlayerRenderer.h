@@ -10,7 +10,15 @@ public:
 	enum class AnimationState
 	{
 		Idle,
-		Run,
+		RunIntermediate,
+		RunForward,
+		RunBackward,
+		RunLeft,
+		RunRight,
+		RunLeftForward,
+		RunLeftBackward,
+		RunRightForward,
+		RunRightBackward,
 		Attack,
 		Hit,
 		Death,
@@ -40,4 +48,5 @@ public:
 	void Death() { *m_stateMachine->GetConditionRefBool("Death") = true; }
 	bool TrySetState(AnimationState state) { return m_stateMachine->TrySetState(state); }
 	AnimationState GetCurrentState() const { return m_stateMachine->GetCurrentState(); }
+	bool GetIsRunning() const;
 };
