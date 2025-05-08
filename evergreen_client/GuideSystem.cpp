@@ -7,6 +7,7 @@
 #include "NaviAgent.h"
 #include "EntityMovement.h"
 #include "GizmoCylinderRenderer.h"
+#include "InteractiveEntity.h"
 
 GuideSystem::GuideSystem()
 {
@@ -85,6 +86,7 @@ const bool GuideSystem::SetHarvestState(const uint32_t id, const bool is_active)
 	{
 		// TODO: 상태를 바꾼다.
 		harvest->GetComponent<GizmoCylinderRenderer>()->SetActive(is_active);
+		harvest->GetComponent<InteractiveEntity>()->SetActive(is_active);
 		return true;
 	}
 	else

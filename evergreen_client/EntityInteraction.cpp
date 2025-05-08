@@ -44,6 +44,8 @@ InteractiveEntity* EntityInteraction::GetInteractiveEntity()
 	float closestDistanceSqr = std::numeric_limits<float>::max();
 	for (InteractiveEntity* entity : interactiveEntities)
 	{
+		if (!entity->GetActive())
+			continue;
 		float distanceSqr = (GetTransform()->GetLocalPosition() - entity->GetTransform()->GetLocalPosition()).LengthSquared();
 		if (distanceSqr < closestDistanceSqr)
 		{
