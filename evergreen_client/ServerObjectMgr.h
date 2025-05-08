@@ -34,6 +34,7 @@ public:
 	Component* const GetServerObjComp(const uint64_t id) const noexcept;
 	SceneObject* const GetServerObjRoot(const uint64_t id) const noexcept;
 
+	std::shared_ptr<GameScene> GetTargetScene() const noexcept { return targetScene; }
 	void SetTargetScene(const std::shared_ptr<GameScene>& scene) noexcept;
 	void Clear()noexcept { m_mapServerObj.clear(); }
 	void SetMainHero(const uint32_t id, std::shared_ptr<udsdx::SceneObject> hero) {

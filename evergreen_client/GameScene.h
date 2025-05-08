@@ -22,6 +22,7 @@ public:
 	void OnTogglePause(bool isPaused);
 	void OnTogglePlayerMode(bool spectatorMode);
 	void AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj);
+	bool GetSpectatorMode() const { return m_bSpectatorMode; }
 	std::vector<InteractiveEntity*> GetInteractiveEntities() const;
 
 	udsdx::Camera* GetMainCamera() const;
@@ -57,4 +58,3 @@ private:
 
 	bool m_bSpectatorMode = false;
 };
-
