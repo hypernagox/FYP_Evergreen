@@ -49,6 +49,18 @@ static const float4x4 gTex =
 	    0.5f, 0.5f, 0.0f, 1.0f
 };
 
+static const float Bayer8x8[64] =
+{
+    0.0000, 0.7500, 0.1875, 0.9375, 0.0469, 0.7969, 0.2344, 0.9844,
+    0.5000, 0.2500, 0.6875, 0.4375, 0.5469, 0.2969, 0.7344, 0.4844,
+    0.1250, 0.8750, 0.0625, 0.8125, 0.1719, 0.9219, 0.1094, 0.8594,
+    0.6250, 0.3750, 0.5625, 0.3125, 0.6719, 0.4219, 0.6094, 0.3594,
+    0.0312, 0.7812, 0.2188, 0.9688, 0.0156, 0.7656, 0.2031, 0.9531,
+    0.5312, 0.2812, 0.7188, 0.4688, 0.5156, 0.2656, 0.7031, 0.4531,
+    0.1562, 0.9062, 0.0938, 0.8438, 0.1406, 0.8906, 0.0781, 0.8281,
+    0.6562, 0.4062, 0.5938, 0.3438, 0.6406, 0.3906, 0.5781, 0.3281
+};
+
 Texture2D gMainTex : register(t0);
 
 SamplerState gSampler : register(s0);
@@ -175,4 +187,12 @@ float3 NormalSampleToWorldSpace(float3 normalSample, float3 normalW, float3 tang
 float2 PackNormal(float3 n)
 {
 	return normalize(n.xy) * sqrt(n.z * 0.5f + 0.5f);
+}
+
+float GetDitherThreshold(float2 fragCoord)
+{
+    int x = (int)fmod(fragCoord.x, 8.0);
+    int y = (int)fmod(fragCoord.y, 8.0);
+    int index = y * 8 + x;
+    return Bayer8x8[index];
 }

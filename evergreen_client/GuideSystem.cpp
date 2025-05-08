@@ -9,16 +9,34 @@
 #include "GizmoCylinderRenderer.h"
 #include "InteractiveEntity.h"
 
+using namespace udsdx;
+
 GuideSystem::GuideSystem()
 {
 	// 교체 필요
 	SetPathObjMaker([](const std::vector<Vector3>& v) {
+		
 		for (int i = 0; i < v.size(); ++i) {
-			const auto vv = v[i];
+			Vector3 wv = Vector3::Forward;
+			if (i > 0)
+				wv = v[i] - v[i - 1];
+			wv.Normalize();
+			Vector3 vv = Vector3::Up;
+			Vector3 uv = wv.Cross(vv);
+			uv.Normalize();
+			vv = uv.Cross(wv);
+			Matrix4x4 m = Matrix4x4(uv, vv, wv);
+
+			const auto position = v[i];
 			auto s = std::make_shared<udsdx::SceneObject>();
-			auto gizmoRenderer = s->AddComponent<GizmoSphereRenderer>();
-			gizmoRenderer->SetRadius(1.0f);
-			s->GetTransform()->SetLocalPosition(vv);
+			auto meshRenderer = s->AddComponent<udsdx::MeshRenderer>();
+			meshRenderer->SetCastShadow(false);
+			meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"path_arrow.obj")));
+			meshRenderer->SetShader(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotexpath.hlsl")));
+			auto transform = s->GetTransform();
+			transform->SetLocalPosition(position + Vector3::Up * 0.5f);
+			transform->SetLocalRotation(Quaternion::CreateFromRotationMatrix(m));
+			transform->SetLocalScale(Vector3::One * 0.5f);
 			GuideSystem::GetInst()->m_guide_objects.emplace_back(s);
 			GuideSystem::GetInst()->m_targetScene->AddObject(s);
 		}
@@ -143,6 +161,6 @@ void GuideSystem::SetGuidePathInternal(const Vector3& target_pos)
 	navi->SetCellPos(DT, pos, pos, temp);
 	// TODO: 점 사이 사이 간격의 길이가 매직넘버
 	const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetPathVertices(
-		pos, target_pos, 2.f);
+		pos, target_pos, 1.0f);
 	m_path_obj_maker(v);
 }
