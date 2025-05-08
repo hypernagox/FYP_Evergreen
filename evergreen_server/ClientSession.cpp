@@ -50,7 +50,7 @@ void ClientSession::OnConnected()
 
 void ClientSession::OnDisconnected(const NagiocpX::Cluster* const curCluster_)noexcept
 {
-	curCluster_->Broadcast(Create_s2c_REMOVE_OBJECT(GetSessionID()));
+	GetOwnerEntity()->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(Create_s2c_REMOVE_OBJECT(GetSessionID()));
 	//if (const auto sector_ptr = curSectorInfo_.GetPtr())
 	//{
 	//	

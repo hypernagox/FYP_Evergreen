@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClCompile Include="..\Protocols\CreateBuffer4Dummy.cpp" />
     <ClCompile Include="func.cpp" />
+    <ClCompile Include="HarvestLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -187,6 +188,7 @@
     <ClInclude Include="..\Protocols\s2c_DummyPacketHandler.h" />
     <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="func.h" />
+    <ClInclude Include="HarvestLoader.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ServerSession.h" />
   </ItemGroup>

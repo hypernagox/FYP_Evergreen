@@ -8,6 +8,8 @@
 #include "DropItem.h"
 #include "Field.h"
 #include "FieldMgr.h"
+#include "ClusterInfoHelper.h"
+#include "LifeSpanObj.h"
 
 void DropTable::SetItemType(const std::string_view mon_name)
 {
@@ -35,5 +37,7 @@ void DropTable::TryCreateItem() const noexcept
 		PositionComponent::GetXZWithOffsetGlobal(temp_ptr),
 		std::move(item)
 	);
-	owner->GetCurCluster()->Broadcast(std::move(pkt));
+	owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(
+		std::move(pkt)
+	);
 }

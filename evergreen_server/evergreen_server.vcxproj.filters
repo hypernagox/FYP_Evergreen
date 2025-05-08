@@ -134,6 +134,9 @@
     <Filter Include="Items\Interaction">
       <UniqueIdentifier>{4be9cf57-70ff-42b0-9b25-034aa9093ca7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ContentsComponents\LifeSpanObj">
+      <UniqueIdentifier>{6391bdf2-5e00-40cb-8634-baf0395e5f8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -234,6 +237,9 @@
     </ClCompile>
     <ClCompile Include="Interaction.cpp">
       <Filter>Items\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="LifeSpanObj.cpp">
+      <Filter>ContentsComponents\LifeSpanObj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -344,6 +350,9 @@
     </ClInclude>
     <ClInclude Include="Interaction.h">
       <Filter>Items\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="LifeSpanObj.h">
+      <Filter>ContentsComponents\LifeSpanObj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

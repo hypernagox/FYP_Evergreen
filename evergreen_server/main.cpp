@@ -18,7 +18,7 @@
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 100001;
-constexpr const int32_t NUM_OF_MAX_USER = 12;
+constexpr const int32_t NUM_OF_MAX_USER = 5002;
 
 extern std::vector<DirectX::BoundingBox> boxes;
 
@@ -174,8 +174,14 @@ XVector<Cluster*> GlobalClusterFilter(const ContentsEntity* const entity, const 
 			const float centerX = (nx + 0.5f) * tileWidth;
 			const float centerZ = (nz + 0.5f) * tileHeight;
 
-			const float dxSq = (centerX - x) * (centerX - x);
-			const float dzSq = (centerZ - z) * (centerZ - z);
+			const float x_diff = (centerX - x);
+			const float z_diff = (centerZ - z);
+
+			const float dxSq = (x_diff) * (x_diff);
+			const float dzSq = (z_diff) * (z_diff);
+
+			//const float dxSq = (centerX - x) * (centerX - x);
+			//const float dzSq = (centerZ - z) * (centerZ - z);
 
 			if (dxSq + dzSq <= viewRangeSq)
 			{

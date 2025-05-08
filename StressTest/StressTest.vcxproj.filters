@@ -32,6 +32,9 @@
     <Filter Include="predefine\func">
       <UniqueIdentifier>{71c778e5-2db7-448b-8f8b-a292aa094fd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HarvestLoader">
+      <UniqueIdentifier>{de0ac32e-708d-456c-bf1a-db1ddb0017ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -51,6 +54,9 @@
     </ClCompile>
     <ClCompile Include="func.cpp">
       <Filter>predefine\func</Filter>
+    </ClCompile>
+    <ClCompile Include="HarvestLoader.cpp">
+      <Filter>HarvestLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +83,9 @@
     </ClInclude>
     <ClInclude Include="func.h">
       <Filter>predefine\func</Filter>
+    </ClInclude>
+    <ClInclude Include="HarvestLoader.h">
+      <Filter>HarvestLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

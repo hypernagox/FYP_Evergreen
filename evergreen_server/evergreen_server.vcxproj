@@ -193,6 +193,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="LifeSpanObj.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="PathNPC.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -253,6 +257,7 @@
     <ClInclude Include="EquipmentSystem.h" />
     <ClInclude Include="HarvestLoader.h" />
     <ClInclude Include="Interaction.h" />
+    <ClInclude Include="LifeSpanObj.h" />
     <ClInclude Include="PathNPC.h" />
     <ClInclude Include="StatusSystem.h" />
     <ClInclude Include="ClientSession.h" />

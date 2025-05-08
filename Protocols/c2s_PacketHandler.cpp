@@ -287,34 +287,70 @@ const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession
 	// 아이템을 아예 다른 컨테이너에 넣어서 관리하는게 맞을 것같음
 	// 아이템 사라졌단 사실 따로 보내기 << 해야됨
 	
-	const auto cluster = pSession_->GetCurCluster();
-	if (const auto item = cluster->GetAllEntites()[Nagox::Enum::GROUP_TYPE_DROP_ITEM].FindItem((uint32_t)pkt_.item_id()))
+	const auto owner = pSession_->GetOwnerEntity();
+	const auto pos = owner->GetComp<PositionComponent>()->pos;
+	const auto& item_list = pSession_->GetOwnerEntity()->GetComp<NagiocpX::MoveBroadcaster>()->GetViewListNPC();
+	for (const auto item : item_list)
 	{
-		if (!item->IsValid())return true;
+		const auto pos_comp = item->GetComp<PositionComponent>();
+		if (!pos_comp)continue;
+		if (!item->IsValid())continue;
+		const auto item_pos = pos_comp->pos;
 		if (const auto item_ptr = item->GetComp<DropItem>())
 		{
-			cluster->Broadcast(Create_s2c_ACQUIRE_ITEM(pSession_->GetSessionID(), item->GetObjectID(), item->GetDetailType(), item_ptr->GetNumOfItemStack()));
-			item->TryOnDestroy();
+			if (!CommonMath::IsInDistanceDX(pos, item_pos, 5.f))continue;
+			owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(
+				Create_s2c_ACQUIRE_ITEM(pSession_->GetSessionID(), item->GetObjectID(), item->GetDetailType(), item_ptr->GetNumOfItemStack()));
+			const_cast<ContentsEntity*>(item)->TryOnDestroy();
 
 			if (const auto inv = pSession_->GetOwnerEntity()->GetComp<Inventory>())
 			{
 				// inv->AddItem2Inventory()
 				if (const auto add_item = inv->AddDropItem(item_ptr))
 				{
-					std::cout << std::format("획득 아이템 ID:{} , 현재 개수:{}개 \n", add_item->m_itemDetailType, add_item->m_numOfItemStack);
+					//std::cout << std::format("획득 아이템 ID:{} , 현재 개수:{}개 \n", add_item->m_itemDetailType, add_item->m_numOfItemStack);
 				}
 				else
 				{
 					std::cout << "문제 있음\n";
 				}
-				
+
 			}
 			else
 			{
 				std::cout << "문제 있음\n";
 			}
+			break;
 		}
 	}
+	//const auto cluster = pSession_->GetCurCluster();
+	//if (const auto item = cluster->GetAllEntites()[Nagox::Enum::GROUP_TYPE_DROP_ITEM].FindItem((uint32_t)pkt_.item_id()))
+	//{
+	//	if (!item->IsValid())return true;
+	//	if (const auto item_ptr = item->GetComp<DropItem>())
+	//	{
+	//		cluster->Broadcast(Create_s2c_ACQUIRE_ITEM(pSession_->GetSessionID(), item->GetObjectID(), item->GetDetailType(), item_ptr->GetNumOfItemStack()));
+	//		item->TryOnDestroy();
+	//
+	//		if (const auto inv = pSession_->GetOwnerEntity()->GetComp<Inventory>())
+	//		{
+	//			// inv->AddItem2Inventory()
+	//			if (const auto add_item = inv->AddDropItem(item_ptr))
+	//			{
+	//				std::cout << std::format("획득 아이템 ID:{} , 현재 개수:{}개 \n", add_item->m_itemDetailType, add_item->m_numOfItemStack);
+	//			}
+	//			else
+	//			{
+	//				std::cout << "문제 있음\n";
+	//			}
+	//			
+	//		}
+	//		else
+	//		{
+	//			std::cout << "문제 있음\n";
+	//		}
+	//	}
+	//}
 	
 	
 	return true;
@@ -597,8 +633,10 @@ const bool Handle_c2s_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::Packe
 		const auto& harvest_pos = h->GetComp<PositionComponent>()->pos;
 		if (CommonMath::IsInDistanceDX(player_pos, harvest_pos, HARVEST_INTERACTION_DIST))
 		{
-			h->GetComp<Interaction>()->DoInteraction(owner);
-			break;
+			if (h->GetComp<Interaction>()->DoInteraction(owner))
+			{
+				//break;
+			}
 		}
 	}
 	return true;
