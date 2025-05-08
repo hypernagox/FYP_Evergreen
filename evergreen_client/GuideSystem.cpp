@@ -16,15 +16,13 @@ GuideSystem::GuideSystem()
 	// 교체 필요
 	SetPathObjMaker([](const std::vector<Vector3>& v) {
 		
-		for (int i = 0; i < v.size(); ++i) {
-			Vector3 wv = Vector3::Forward;
-			if (i > 0)
-				wv = v[i] - v[i - 1];
+		for (int i = 1; i < v.size(); ++i) {
+			Vector3 wv = wv = v[i] - v[i - 1];
 			wv.Normalize();
 			Vector3 vv = Vector3::Up;
-			Vector3 uv = wv.Cross(vv);
+			Vector3 uv = vv.Cross(wv);
 			uv.Normalize();
-			vv = uv.Cross(wv);
+			vv = wv.Cross(uv);
 			Matrix4x4 m = Matrix4x4(uv, vv, wv);
 
 			const auto position = v[i];
