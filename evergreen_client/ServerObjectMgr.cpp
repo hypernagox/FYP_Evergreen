@@ -5,6 +5,7 @@
 #include "MoveInterpolator.h"
 #include "EntityBuilder.h"
 #include "GuideSystem.h"
+#include "GameScene.h"
 
 ServerObjectMgr::ServerObjectMgr()
 {
@@ -33,7 +34,7 @@ void ServerObjectMgr::AddObject(EntityBuilderBase* b)
 
 		// 빌더에서 만들어진 씬 오브젝트는 '무조건' ServerObject Component를 추가한 상태이어야 한다.
 		m_mapServerObj.emplace(b->obj_id, instance); // 서버 오브젝트를 추가한다.
-		targetScene->AddObject(instance);
+		targetScene->AddActiveObject(instance);
 	}
 }
 
@@ -41,7 +42,7 @@ void ServerObjectMgr::AddObject(std::shared_ptr<SceneObject> scene_obj)
 {
 	const auto so = scene_obj->GetComponent<ServerObject>();
 	m_mapServerObj.emplace(so->GetObjID(), scene_obj);
-	targetScene->AddObject(scene_obj);
+	targetScene->AddActiveObject(scene_obj);
 }
 
 void ServerObjectMgr::RemoveObject(const uint64_t id)
@@ -85,7 +86,7 @@ SceneObject* const ServerObjectMgr::GetServerObjRoot(const uint64_t id) const no
 	return GetServerObj(id)->GetSceneObject().get();
 }
 
-void ServerObjectMgr::SetTargetScene(const std::shared_ptr<Scene>& scene) noexcept
+void ServerObjectMgr::SetTargetScene(const std::shared_ptr<GameScene>& scene) noexcept
 {
 	// ServerObjectMgr에서 AddObject가 되었을 때 추가해야할 씬을 지정해 주어야 한다.
 	// 만약 씬이 지정되어 있지 않다면 AddObject가 실패해야 한다.

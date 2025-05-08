@@ -12,6 +12,7 @@
 #include "GizmoCylinderRenderer.h"
 #include "ServerObjectMgr.h"
 #include "GuideSystem.h"
+#include "InteractiveEntity.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 
@@ -97,6 +98,9 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Harvest(EntityBuil
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
 	auto s = std::make_shared<SceneObject>();
 	auto gizmoRenderer = s->AddComponent<GizmoCylinderRenderer>();
+	auto interactiveEntity = s->AddComponent<InteractiveEntity>();
+	interactiveEntity->SetInteractionText(L"채집하기");
+	interactiveEntity->SetInteractionCallback([]() { Send(Create_c2s_CHANGE_HARVEST_STATE()); });
 	gizmoRenderer->SetRadius(3.f);
 	gizmoRenderer->SetHeight(10.f);
 

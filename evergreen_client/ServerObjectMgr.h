@@ -4,7 +4,7 @@
 #include "EntityBuilder.h"
 
 class ServerObject;
-using udsdx::Scene;
+class GameScene;
 using udsdx::Component;
 using udsdx::SceneObject;
 
@@ -34,7 +34,7 @@ public:
 	Component* const GetServerObjComp(const uint64_t id) const noexcept;
 	SceneObject* const GetServerObjRoot(const uint64_t id) const noexcept;
 
-	void SetTargetScene(const std::shared_ptr<Scene>& scene) noexcept;
+	void SetTargetScene(const std::shared_ptr<GameScene>& scene) noexcept;
 	void Clear()noexcept { m_mapServerObj.clear(); }
 	void SetMainHero(const uint32_t id, std::shared_ptr<udsdx::SceneObject> hero) {
 		if (m_mainHero) {
@@ -46,7 +46,7 @@ public:
 	}
 	const auto GetMainHero()const noexcept { return m_mainHero->GetComponent<ServerObject>(); }
 private:
-	std::shared_ptr<Scene> targetScene;
+	std::shared_ptr<GameScene> targetScene;
 	std::unordered_map<uint64_t, std::shared_ptr<udsdx::SceneObject>> m_mapServerObj;
 	std::shared_ptr<udsdx::SceneObject> m_mainHero;
 	uint64_t m_mainHeroID = 0;
