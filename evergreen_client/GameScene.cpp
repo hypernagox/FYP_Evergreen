@@ -17,6 +17,8 @@
 #include "NaviCell.h"
 #include "Navigator.h"
 #include "BezierMovement.h"
+#include "EntityInteraction.h"
+#include "InteractiveEntity.h"
 
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
@@ -31,6 +33,7 @@
 #include "GamePauseGUI.h"
 #include "MainMenuGUI.h"
 #include "PlayerTagGUI.h"
+#include "InteractionFloatGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -167,15 +170,18 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_6.tif")), 15);
 
     m_heroObj = std::make_shared<SceneObject>();
-
     m_heroComponent = m_heroObj->AddComponent<AuthenticPlayer>();
     m_heroComponent->SetHeightMap(heightMap);
+    auto entityInteraction = m_heroObj->AddComponent<EntityInteraction>();
+	entityInteraction->SetTargetScene(this);
     auto heroServerComponent = m_heroObj->GetComponent<ServerObject>();
     heroServerComponent->AddComp<MovePacketSender>();
 
     Vector3 temp = Vector3(-4.345f, 76.17f, 0.0f);
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(temp);
+
+	m_activeObjectGroup = std::make_shared<SceneObject>();
 
     m_heroObj->GetTransform()->SetLocalPosition(temp);
 
@@ -354,6 +360,11 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         auto partyStatusComp = partyStatusObj->AddComponent<PartyStatusGUI>();
         m_playerInterfaceGroup->AddChild(partyStatusObj);
 
+		auto EntityInteractionObj = std::make_shared<SceneObject>();
+		auto interactionFloatGUI = EntityInteractionObj->AddComponent<InteractionFloatGUI>();
+		entityInteraction->SetInteractionFloatGUI(interactionFloatGUI);
+		m_playerInterfaceGroup->AddChild(EntityInteractionObj);
+
         m_pauseMenuObj = std::make_shared<SceneObject>();
         auto pauseMenuComp = m_pauseMenuObj->AddComponent<GamePauseGUI>();
         pauseMenuComp->SetExitGameCallback([this]() { ExitGame(); });
@@ -430,7 +441,7 @@ void GameScene::Update(const Time& time)
         m_menuSound->Play();
         };
 
-    if (INSTANCE(Input)->GetKeyDown(Keyboard::E))
+    if (INSTANCE(Input)->GetKeyDown(Keyboard::I))
     {
         m_inventoryObj->SetActive(!m_inventoryObj->GetActive());
         audioAction(m_inventoryObj->GetActive());
@@ -456,9 +467,10 @@ void GameScene::Update(const Time& time)
 }
 
 void GameScene::EnterGame()
-{   
+{
     AddObject(m_heroObj);
     AddObject(m_spectatorObj);
+    AddObject(m_activeObjectGroup);
     AddObject(m_playerInterfaceGroup);
     m_focusAgentObj->SetActive(true);
     m_mainMenuCameraObject->SetActive(false);
@@ -515,6 +527,16 @@ void GameScene::OnTogglePlayerMode(bool spectatorMode)
         m_spectatorObj->GetTransform()->SetLocalPosition(heroCamera->GetTransform()->GetWorldPosition());
         m_spectatorObj->GetTransform()->SetLocalRotation(heroCamera->GetTransform()->GetWorldRotation());
     }
+}
+
+void GameScene::AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj)
+{
+	m_activeObjectGroup->AddChild(obj);
+}
+
+std::vector<InteractiveEntity*> GameScene::GetInteractiveEntities() const
+{
+	return m_activeObjectGroup->GetComponentsInChildren<InteractiveEntity>();
 }
 
 Camera* GameScene::GetMainCamera() const

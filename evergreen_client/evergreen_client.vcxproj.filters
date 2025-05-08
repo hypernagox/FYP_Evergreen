@@ -255,6 +255,15 @@
     <ClCompile Include="PlayerTagGUI.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="InteractionFloatGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="InteractiveEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityInteraction.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -415,6 +424,15 @@
     </ClInclude>
     <ClInclude Include="PlayerTagGUI.h">
       <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="InteractionFloatGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="InteractiveEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityInteraction.h">
+      <Filter>Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

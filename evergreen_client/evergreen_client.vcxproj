@@ -410,6 +410,7 @@
     <ClCompile Include="DropItem.cpp" />
     <ClCompile Include="DropItemRenderer.cpp" />
     <ClCompile Include="EntityBuilder.cpp" />
+    <ClCompile Include="EntityInteraction.cpp" />
     <ClCompile Include="EntityMovement.cpp" />
     <ClCompile Include="EventTimer.cpp" />
     <ClCompile Include="FocusAgentGUI.cpp" />
@@ -439,7 +440,9 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</IncludeInUnityFile>
     </ClCompile>
     <ClCompile Include="GuideSystem.cpp" />
+    <ClCompile Include="InteractionFloatGUI.cpp" />
     <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="InteractiveEntity.cpp" />
     <ClCompile Include="LogFloatGUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenuGUI.cpp" />
@@ -501,6 +504,7 @@
     <ClInclude Include="DropItem.h" />
     <ClInclude Include="DropItemRenderer.h" />
     <ClInclude Include="EntityBuilder.h" />
+    <ClInclude Include="EntityInteraction.h" />
     <ClInclude Include="EntityMovement.h" />
     <ClInclude Include="EventTimer.h" />
     <ClInclude Include="FocusAgentGUI.h" />
@@ -512,7 +516,9 @@
     <ClInclude Include="GizmoCylinderRenderer.h" />
     <ClInclude Include="GizmoSphereRenderer.h" />
     <ClInclude Include="GuideSystem.h" />
+    <ClInclude Include="InteractionFloatGUI.h" />
     <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="InteractiveEntity.h" />
     <ClInclude Include="LogFloatGUI.h" />
     <ClInclude Include="MainMenuGUI.h" />
     <ClInclude Include="Monster.h" />

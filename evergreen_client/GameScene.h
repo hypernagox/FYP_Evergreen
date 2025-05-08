@@ -6,6 +6,7 @@ class HeightMap;
 class TerrainData;
 class TerrainDetail;
 class AuthenticPlayer;
+class InteractiveEntity;
 
 class GameScene : public udsdx::Scene
 {
@@ -20,13 +21,17 @@ public:
 	void ExitGame();
 	void OnTogglePause(bool isPaused);
 	void OnTogglePlayerMode(bool spectatorMode);
+	void AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj);
+	std::vector<InteractiveEntity*> GetInteractiveEntities() const;
+
 	udsdx::Camera* GetMainCamera() const;
 
 private:
+	std::shared_ptr<udsdx::SceneObject> m_activeObjectGroup;
+
 	std::vector<std::shared_ptr<udsdx::Material>> m_instanceMaterials;
 
 	std::unique_ptr<SoundEffectInstance> m_menuSound;
-
 	std::shared_ptr<udsdx::SceneObject> m_mainMenuCameraObject;
 	std::shared_ptr<udsdx::SceneObject> m_heroObj;
 	std::shared_ptr<udsdx::SceneObject> m_spectatorObj;

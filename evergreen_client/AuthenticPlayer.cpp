@@ -363,11 +363,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		}
 	}
 
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::Space))
-	{
-		Send(Create_c2s_CHANGE_HARVEST_STATE());
-	}
-
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	{
 		const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();
