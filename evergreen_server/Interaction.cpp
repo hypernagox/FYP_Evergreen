@@ -10,7 +10,7 @@ bool HarvestInteraction::DoInteraction(ContentsEntity* const pEntity_) noexcept
 	{
 		const auto owner = GetOwnerEntity();
 		owner->SetDetailType(HARVEST_STATE::UNAVAILABLE);
-		owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(Create_s2c_CHANGE_HARVEST_STATE(owner->GetObjectID(), false));
+		owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastAllCluster(Create_s2c_CHANGE_HARVEST_STATE(owner->GetObjectID(), false));
 		owner->GetComp<DropTable>()->TryCreateItem();
 
 
@@ -18,7 +18,7 @@ bool HarvestInteraction::DoInteraction(ContentsEntity* const pEntity_) noexcept
 			const auto owner = GetOwnerEntity();
 			owner->SetDetailType(HARVEST_STATE::AVAILABLE);
 			m_isActive.store(true);
-			owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(Create_s2c_CHANGE_HARVEST_STATE(owner->GetObjectID(), true));
+			owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastAllCluster(Create_s2c_CHANGE_HARVEST_STATE(owner->GetObjectID(), true));
 			});
 
 		return true;

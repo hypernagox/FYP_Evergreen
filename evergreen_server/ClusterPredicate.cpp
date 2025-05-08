@@ -26,9 +26,9 @@ bool ClusterPredicate::Filter4Session(const ContentsEntity* const a, const Conte
 	{
 		return false;
 	}
-	auto a_pos = a->GetComp<PositionComponent>()->pos;
-	auto b_pos = b->GetComp<PositionComponent>()->pos;
-	//a_pos.y = b_pos.y = 0.f;
+	const auto a_pos = a->GetComp<PositionComponent>()->pos;
+	const auto b_pos = b->GetComp<PositionComponent>()->pos;
+	
 	return  CommonMath::IsInDistanceDX(a_pos, b_pos, DISTANCE_FILTER);
 }
 

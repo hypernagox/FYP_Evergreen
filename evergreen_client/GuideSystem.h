@@ -63,7 +63,7 @@ private:
 	Vector3 m_cur_target_pos = {};
 	bool m_guide_active_flag = false;
 	std::map<uint32_t, std::shared_ptr<udsdx::SceneObject>> m_mapHarvest;
-	std::set<uint32_t> m_in_active_list;
-	std::set<uint32_t> m_active_list;
+	std::unordered_set<uint32_t> m_in_active_list;
+	std::unordered_set<uint32_t> m_active_list;
 };
 

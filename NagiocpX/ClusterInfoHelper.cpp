@@ -37,19 +37,15 @@ namespace NagiocpX
 		}
 	}
 
-	void ClusterInfoHelper::BroadcastCluster(const S_ptr<SendBuffer>& pkt_) noexcept
-	{
-		const auto clusters = ClusterInfoHelper::GetAdjClusters(GetOwnerEntityRaw());
-		for (const auto cluster : clusters)
-		{
-			cluster->Broadcast(pkt_);
-		}
-	}
-
 	const XVector<Cluster*> ClusterInfoHelper::GetAdjClusters(const ContentsEntity* const pEntity_) noexcept
 	{
 		// TODO: 몹의 시야, 객체별 시야 (float 인자 하나 더주기)
-		return g_clusterFillterFunc(pEntity_, pEntity_->GetCurField());
+		return g_clusterFilterFunc(pEntity_, pEntity_->GetCurField());
+	}
+
+	const XVector<Cluster*> ClusterInfoHelper::GetAllAdjClusters(const ContentsEntity* const pEntity_) noexcept
+	{
+		return g_getAllClusterFunc(pEntity_, pEntity_->GetCurField());
 	}
 
 	bool ClusterInfoHelper::AdjustCluster(const float new_x, const float new_z) noexcept
@@ -70,6 +66,14 @@ namespace NagiocpX
 			owner->SetOnlyClusterInfo(info);
 			cluster->MigrationEnqueue(info, owner);
 			return true;
+		}
+	}
+
+	void ClusterInfoHelper::BroadcastCluster(const S_ptr<SendBuffer>& pkt_, const XVector<Cluster*>&& clusters)noexcept
+	{
+		for (const auto cluster : clusters)
+		{
+			cluster->Broadcast(pkt_);
 		}
 	}
 }

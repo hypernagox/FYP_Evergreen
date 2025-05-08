@@ -32,6 +32,9 @@ void ContentsField::InitFieldGlobal() noexcept
 	m_cluster_x_scale = DISTANCE_FILTER;
 	m_cluster_y_scale = DISTANCE_FILTER;
 
+	const auto row = GetNumOfClusterRow();
+	const auto col = GetNumOfClusterCol();
+	InitMutexForBenchmark(row, col);
 	//UPDATE();
 }
 

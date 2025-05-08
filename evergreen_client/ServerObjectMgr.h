@@ -50,6 +50,7 @@ private:
 	std::shared_ptr<GameScene> targetScene;
 	std::unordered_map<uint64_t, std::shared_ptr<udsdx::SceneObject>> m_mapServerObj;
 	std::shared_ptr<udsdx::SceneObject> m_mainHero;
+	std::unordered_set<uint64_t> m_in_active_list;
 	uint64_t m_mainHeroID = 0;
 };
 

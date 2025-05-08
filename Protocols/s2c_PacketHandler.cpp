@@ -97,8 +97,8 @@ const bool Handle_s2c_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 {
 	if (pSession_->GetSessionID() == pkt_.obj_id()) 
 	{
-		constinit static uint64_t e_cnt = 0;
-		++e_cnt;
+		//constinit static uint64_t e_cnt = 0;
+		//++e_cnt;
 		//const auto et = NetMgr(ServerTimeMgr)->GetElapsedTime("MOVE_PKT");
 		//if (e_cnt % 10 == 0)
 		//	std::cout << std::format("Delay: {}ms\n", et);
@@ -256,7 +256,7 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 	
 	// ID는 정수이나, json 테이블에서 해당 ID에 대응하는 아이템 정보를 획득하기 위해선 문자열로의 변환이 필요하다.
 	Mgr(ServerObjectMgr)->RemoveObject(pkt_.item_obj_id());
-	std::cout << std::format("아이템 획득함! 아이템 ID: {} 먹은 User ID: {} , 개수: {}\n", pkt_.item_detail_id(), pkt_.get_user_id(), pkt_.item_stack_size());
+	//std::cout << std::format("아이템 획득함! 아이템 ID: {} 먹은 User ID: {} , 개수: {}\n", pkt_.item_detail_id(), pkt_.get_user_id(), pkt_.item_stack_size());
 
 	if (auto targetObject = Mgr(ServerObjectMgr)->GetServerObj(pkt_.get_user_id()))
 	{

@@ -34,10 +34,10 @@ namespace NagiocpX
 		if (iocpEvent)
 		{
 			iocpEvent -= 1;
-			if (!bResult)PrintLogEndl(std::format("IOCP Error: {}", ::WSAGetLastError()));
+			//if (!bResult)PrintLogEndl(std::format("IOCP Error: {}", ::WSAGetLastError()));
 			if (curHandleSession)curHandleSession->Session::Dispatch(iocpEvent, numOfBytes);
 			else if (IocpObject* const iocpObject = iocpEvent->GetIocpObject())iocpObject->Dispatch(iocpEvent, numOfBytes);
-			else [[unlikely]] PrintLogEndl(std::format("!! {}, {} !!", (int)iocpEvent->GetEventType<uint8_t>(), numOfBytes));
+			//else [[unlikely]] PrintLogEndl(std::format("!! {}, {} !!", (int)iocpEvent->GetEventType<uint8_t>(), numOfBytes));
 			return true;
 		}
 		else if(bResult)

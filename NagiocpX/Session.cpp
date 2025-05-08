@@ -61,7 +61,7 @@ namespace NagiocpX
 		const int32_t errCode = ::WSAGetLastError();
 		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true);
 		RegisterDisconnect(std::move(move_session));
-		PrintLogEndl(std::format(L"Err: {}, Cd: {}", cause, errCode));
+		//PrintLogEndl(std::format(L"Err: {}, Cd: {}", cause, errCode));
 		return true;
 	}
 
@@ -346,6 +346,8 @@ namespace NagiocpX
 	{
 		m_iLastErrorCode = errorCode;
 		if (false == Disconnect(std::format(L"HErr: {}", errorCode), std::move(move_session)))
-			PrintLogEndl(std::format(L"HErr: {}", errorCode));
+		{
+			//PrintLogEndl(std::format(L"HErr: {}", errorCode));
+		}
 	}
 }

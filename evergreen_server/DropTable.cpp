@@ -9,7 +9,6 @@
 #include "Field.h"
 #include "FieldMgr.h"
 #include "ClusterInfoHelper.h"
-#include "LifeSpanObj.h"
 
 void DropTable::SetItemType(const std::string_view mon_name)
 {

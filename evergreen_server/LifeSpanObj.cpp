@@ -12,6 +12,6 @@ void LifeSpanObj::InitLifeTimer(const uint64_t life_time)
 
 void LifeSpanObj::TryOnDestroyOwner(S_ptr<ContentsEntity> entity)
 {
-	entity->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(Create_s2c_REMOVE_OBJECT(entity->GetObjectID()));
+	entity->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastAllCluster(Create_s2c_REMOVE_OBJECT(entity->GetObjectID()));
 	entity->TryOnDestroy();
 }

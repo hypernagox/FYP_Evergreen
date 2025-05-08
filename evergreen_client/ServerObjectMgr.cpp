@@ -27,7 +27,11 @@ void ServerObjectMgr::AddObject(EntityBuilderBase* b)
 		std::cout << "Target Scene is not set" << std::endl;
 		return;
 	}
-
+	if (m_in_active_list.erase(b->obj_id))
+	{
+	//	std::cout << "InActive Flag\n";
+		return;
+	}
 	if (false == m_mapServerObj.contains(b->obj_id))
 	{
 		auto instance = EntityBuilderBase::CreateObject(b); // 등록된 함수가 알아서 생성해서 뱉는다.
@@ -61,8 +65,12 @@ void ServerObjectMgr::RemoveObject(const uint64_t id)
 
 		// TODO: 채집물들 가이드를 위해 서버오브젝트 매니저처럼 채집물만 Add / Remove
 		GuideSystem::GetInst()->RemoveHarvest((uint32_t)id);
+		m_in_active_list.erase(id);
 	}
-
+	else
+	{
+		m_in_active_list.emplace(id);
+	}
 	// 없는데 지우라고 오면 뭔가 이상한 상황이다.
 	// 뭔가 없는데 지우라고 했다거나 이런 기대하지 않은 동작에 대한 예외처리가
 	// 앞으로의 대부분의 로직 대부분에 필요하다

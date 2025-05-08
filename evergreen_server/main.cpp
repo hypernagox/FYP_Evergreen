@@ -18,7 +18,7 @@
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 100001;
-constexpr const int32_t NUM_OF_MAX_USER = 5002;
+constexpr const int32_t NUM_OF_MAX_USER = 20002;
 
 extern std::vector<DirectX::BoundingBox> boxes;
 
@@ -102,6 +102,7 @@ public:
 };
 
 XVector<Cluster*> GlobalClusterFilter(const ContentsEntity* const entity, const Field* const field)noexcept;
+XVector<Cluster*> GetAllAdjClusterFunc(const ContentsEntity* const entity, const Field* const field)noexcept;
 XVector<Cluster*> GlobalClusterFilterForTest(const ContentsEntity* const entity, const Field* const field)noexcept;
 
 int main()
@@ -114,6 +115,7 @@ int main()
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	
 	ClusterInfoHelper::RegisterClusterFilter(GlobalClusterFilter);
+	ClusterInfoHelper::RegisterAllClusterFunc(GetAllAdjClusterFunc);
 
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
@@ -200,6 +202,35 @@ XVector<Cluster*> GlobalClusterFilter(const ContentsEntity* const entity, const 
 	return visibleClusters;
 }
 
+XVector<Cluster*> GetAllAdjClusterFunc(const ContentsEntity* const entity, const Field* const field)noexcept
+{
+	XVector<Cluster*> visibleClusters;
+	visibleClusters.reserve(9);
+	const auto [x, z] = PositionComponent::GetXZWithOffsetGlobal(entity);
+
+	const auto row = field->GetNumOfClusterRow();
+	const auto col = field->GetNumOfClusterCol();
+
+	const float tileWidth = field->GetClusterXScale();
+	const float tileHeight = field->GetClusterYScale();
+
+	const int cx = static_cast<int>(x / tileWidth);
+	const int cz = static_cast<int>(z / tileHeight);
+
+	for (int dz = -1; dz <= 1; ++dz)
+	{
+		for (int dx = -1; dx <= 1; ++dx)
+		{
+			const int nx = cx + dx;
+			const int nz = cz + dz;
+			if (nx < 0 || nz < 0 || nx >= col || nz >= row)continue;
+			visibleClusters.emplace_back(field->GetCluster(nx, nz));
+		}
+	}
+
+	return visibleClusters;
+}
+
 XVector<Cluster*> GlobalClusterFilterForTest(const ContentsEntity* const entity, const Field* const field)noexcept
 {
 	const auto [x, z] = PositionComponent::GetXZWithOffsetGlobal(entity);
@@ -214,5 +245,6 @@ XVector<Cluster*> GlobalClusterFilterForTest(const ContentsEntity* const entity,
 
 	const int cx = static_cast<int>(x / tileWidth);
 	const int cz = static_cast<int>(z / tileHeight);
+
 	return Vector<Cluster*>{field->GetCluster(cx, cz)};
 }

@@ -6,6 +6,7 @@
 #include "Cluster.h"
 #include "ClusterInfoHelper.h"
 #include "Service.h"
+#include "Field.h"
 
 namespace NagiocpX
 {
@@ -29,6 +30,10 @@ namespace NagiocpX
 		
 		for (const Cluster* const cluster : clusters)
 		{
+#ifdef USE_MUTEX_FOR_BENCHMARK
+			std::scoped_lock lk{ pOwnerEntity->GetCurField()->
+				GetClusterMutexForBenchmark(cluster->GetClusterFieldInfo().clusterInfo.clusterID) };
+#endif
 			const auto& sessions = cluster->GetSessions();
 			auto b = sessions.data();
 			const auto e = b + sessions.size();
@@ -48,6 +53,10 @@ namespace NagiocpX
 
 		for (const Cluster* const cluster : clusters)
 		{
+#ifdef USE_MUTEX_FOR_BENCHMARK
+			std::scoped_lock lk{ pOwnerEntity->GetCurField()->
+				GetClusterMutexForBenchmark(cluster->GetClusterFieldInfo().clusterInfo.clusterID) };
+#endif
 			// TODO: 순회가 필요없는 컨테이너는 걸러내기
 			for (const auto& entities : cluster->GetEntitesExceptSession())
 			{

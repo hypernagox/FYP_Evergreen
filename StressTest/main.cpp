@@ -66,7 +66,7 @@ int main()
 			, NagiocpX::NetAddress{ L"127.0.0.1",7777 }
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 3000
+			, 5000
 		);
 	
 	

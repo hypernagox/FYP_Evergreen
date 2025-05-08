@@ -70,6 +70,10 @@ void QuestRoom::NotifyQuestFail(NagiocpX::ContentsEntity* const entity) const no
 void QuestRoom::InitFieldGlobal() noexcept
 {
 	m_fieldID = -1;
+	const auto row = GetNumOfClusterRow();
+	const auto col = GetNumOfClusterCol();
+
+	InitMutexForBenchmark(row, col);
 }
 
 void QuestRoom::InitFieldTLS() noexcept

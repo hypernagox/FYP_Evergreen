@@ -1,5 +1,6 @@
 #pragma once
 #include "Cluster.h"
+//#define USE_MUTEX_FOR_BENCHMARK
 
 namespace NagiocpX
 {
@@ -52,6 +53,25 @@ namespace NagiocpX
 		const auto GetFieldID()const noexcept { return m_fieldID; }
 		const bool IsRunning()const noexcept { return m_bIsRunning; }
 		void FinishField()noexcept { m_bIsRunning = false; }	
+
+	public:
+#ifdef USE_MUTEX_FOR_BENCHMARK
+		inline auto& GetClusterMutexForBenchmark(const Point2D sectorXY)const noexcept{
+			return *m_cluster_mutext_for_bench[sectorXY.y][sectorXY.x];
+		}
+#endif
+		inline void InitMutexForBenchmark(const auto row, const auto col)noexcept {
+#ifdef USE_MUTEX_FOR_BENCHMARK
+			m_cluster_mutext_for_bench.resize(row);
+			for (int i = 0; i < row; ++i)
+			{
+				for (int j = 0; j < col; ++j)
+				{
+					m_cluster_mutext_for_bench[i].emplace_back(std::make_unique<std::mutex>());
+				}
+			}
+#endif
+		}
 	private:
 		static Field* const GetFieldInternal(const uint8_t fieldID)noexcept;
 	public:
@@ -69,5 +89,9 @@ namespace NagiocpX
 		uint16_t m_field_y_scale = 1;
 		uint16_t m_cluster_x_scale = UINT16_MAX;
 		uint16_t m_cluster_y_scale = UINT16_MAX;
+
+#ifdef USE_MUTEX_FOR_BENCHMARK
+		mutable XVector<XVector<std::unique_ptr<std::mutex>>> m_cluster_mutext_for_bench;
+#endif
 	};
 }
