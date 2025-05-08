@@ -4,6 +4,8 @@
 #include "Service.h"
 #include "CreateBuffer4Dummy.h"
 #include <regex>
+#include "Navigator.h"
+#include "HarvestLoader.h"
 
 std::shared_ptr<HeightMap> g_heightMap;
 bool isValidIPAddress(std::wstring_view ipAddress) {
@@ -51,9 +53,12 @@ public:
 int main()
 {
 	ContentsInitiator con_init;
-	g_heightMap = std::make_shared<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 4096, 4096);
+	//g_heightMap = std::make_shared<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 4096, 4096);
 	Mgr(CoreGlobal)->Init();
+	NAVIGATION->Init();
+	NAVIGATION->RegisterDestroy();
 	s2c_DummyPacketHandler::Init();
+	HarvestLoader::LoadHarvest({}, L"environment\\ExportedGameSpawns.json");
 
 	const auto pClientService = new NagiocpX::ClientService
 		(
@@ -61,15 +66,18 @@ int main()
 			, NagiocpX::NetAddress{ L"127.0.0.1",7777 }
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 2000
+			, 3000
 		);
 	
-	ASSERT_CRASH(pClientService->Start());
+	
+	std::thread t1{ [pClientService]() {ASSERT_CRASH(pClientService->Start()); } };
 	
 	Mgr(ThreadMgr)->Launch(
-		  2
+		  4
 		, &con_init
 	);
+
+	t1.join();
 
 	//std::wstring inputIP;
 	//std::wcout << L"Input IP Address: ";
@@ -117,6 +125,8 @@ int main()
 
 	if (accTime)
 		std::cout << "\n\n\nDelay AVG: " << ((float)accTime) / accCount << std::endl;
+
+	HarvestLoader::FreeHarvestLoader();
 
 	system("pause");
 }

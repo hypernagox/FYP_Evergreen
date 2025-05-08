@@ -52,7 +52,7 @@ namespace NagiocpX
 	}
 	void FieldMgr::InitTLSinField()
 	{
-		NAGOX_ASSERT_LOG(false == m_mapField.empty(), "Cluster Empty");
+		//NAOX_ASSERT_LOG(false == m_mapField.empty(), "Cluster Empty");
 		for (const auto field : m_mapField | std::views::values)
 		{
 			field->InitFieldTLS();

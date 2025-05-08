@@ -13,7 +13,7 @@ constexpr const float HARVEST_INTERACTION_DIST = 5.f;
 
 constexpr const float TERRAIN_OFFSET = 512.f;
 
-constexpr const uint16_t DISTANCE_FILTER = 32;
+constexpr const uint16_t DISTANCE_FILTER = 64;
 
 
 enum class HARVEST_TYPE: int8_t

@@ -15,6 +15,7 @@
 #include "DropTable.h"
 #include "PathNPC.h"
 #include "Interaction.h"
+#include "LifeSpanObj.h"
 
 namespace NagiocpX
 {
@@ -106,6 +107,7 @@ namespace NagiocpX
 		const auto item = entity->AddComp<DropItem>();
 		item->SetDropItemDetailInfo(b_.item_detail_type);
 		item->SetItemStack(b_.item_stack_size);
+		entity->AddComp<LifeSpanObj>()->InitLifeTimer(5000);
 		return entity;
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreateHarvest(const EntityBuilder& b) noexcept
@@ -126,7 +128,7 @@ namespace NagiocpX
 			entity->AddComp<DropTable>()->SetItemTypeByID(DATA_TABLE->GetItemID("Ironore"));
 		}
 		entity->AddComp<HarvestInteraction>();
-		//entity->GetComp<DropTable>()->m_drop_offset.y += 2.f;
+		entity->GetComp<DropTable>()->m_drop_offset.y += 2.f;
 
 		return entity;
 	}

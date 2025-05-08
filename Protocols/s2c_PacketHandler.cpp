@@ -67,11 +67,11 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_NPC)
 	{
 		g_npcid = pkt_.obj_id();
-		std::cout << "NPC 등장\n";
+		//std::cout << "NPC 등장\n";
 	}
 	else if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_DROP_ITEM)
 	{
-		std::cout << "아이템 등장\n";
+		//std::cout << "아이템 등장\n";
 	}
 	DefaultEntityBuilder b;
 	b.obj_id = pkt_.obj_id();
