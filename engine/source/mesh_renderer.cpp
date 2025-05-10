@@ -38,6 +38,7 @@ namespace udsdx
 		param.CommandList->IASetVertexBuffers(0, 1, &m_mesh->VertexBufferView());
 		param.CommandList->IASetIndexBuffer(&m_mesh->IndexBufferView());
 		param.CommandList->IASetPrimitiveTopology(m_topology);
+		param.CommandList->OMSetStencilRef(static_cast<UINT>(m_drawOutline) << 7);
 
 		const auto& submeshes = m_mesh->GetSubmeshes();
 		for (size_t index = 0; index < submeshes.size(); ++index)

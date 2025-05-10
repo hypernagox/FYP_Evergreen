@@ -15,6 +15,7 @@
 #include "deferred_renderer.h"
 #include "motion_blur.h"
 #include "post_process_fxaa.h"
+#include "post_process_outline.h"
 #include "gui_element.h"
 
 namespace udsdx
@@ -185,6 +186,9 @@ namespace udsdx
 
 		// Motion blur pass
 		param.RenderMotionBlur->Pass(param, cameraCbv);
+
+		// Post-process outline pass
+		param.RenderPostProcessOutline->Pass(param);
 	}
 
 	void Scene::PassRenderHUD(RenderParam& param)

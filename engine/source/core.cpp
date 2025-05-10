@@ -19,6 +19,7 @@
 #include "deferred_renderer.h"
 #include "motion_blur.h"
 #include "post_process_fxaa.h"
+#include "post_process_outline.h"
 
 #include <assimp/DefaultLogger.hpp>
 
@@ -185,6 +186,8 @@ namespace udsdx
 		m_motionBlur->BuildPipelineState();
 		m_postProcessFXAA = std::make_unique<PostProcessFXAA>(m_d3dDevice.Get(), m_commandList.Get());
 		m_postProcessFXAA->BuildPipelineState();
+		m_postProcessOutline = std::make_unique<PostProcessOutline>(m_d3dDevice.Get(), m_commandList.Get());
+		m_postProcessOutline->BuildPipelineState();
 
 		const char tracyQueueName[] = "D3D12 Graphics Queue";
 		m_tracyQueueCtx = TracyD3D12Context(m_d3dDevice.Get(), m_commandQueue.Get());
@@ -339,6 +342,7 @@ namespace udsdx
 		m_screenSpaceAO->BuildDescriptors(descriptorParam, m_depthStencilBuffer.Get());
 		m_motionBlur->BuildDescriptors(descriptorParam);
 		m_postProcessFXAA->BuildDescriptors(descriptorParam);
+		m_postProcessOutline->BuildDescriptors(descriptorParam);
 
 		for (auto texture : INSTANCE(Resource)->LoadAll<Texture>())
 		{
@@ -624,6 +628,7 @@ namespace udsdx
 			.RenderScreenSpaceAO = m_screenSpaceAO.get(),
 			.RenderMotionBlur = m_motionBlur.get(),
 			.RenderPostProcessFXAA = m_postProcessFXAA.get(),
+			.RenderPostProcessOutline = m_postProcessOutline.get(),
 
 			.TracyQueueContext = &m_tracyQueueCtx
 		};
@@ -927,6 +932,8 @@ namespace udsdx
 		m_motionBlur->RebuildDescriptors();
 		m_postProcessFXAA->OnResize(width, height);
 		m_postProcessFXAA->RebuildDescriptors();
+		m_postProcessOutline->OnResize(width, height);
+		m_postProcessOutline->RebuildDescriptors();
 
 		// Execute the resize commands.
 		ExecuteCommandList();

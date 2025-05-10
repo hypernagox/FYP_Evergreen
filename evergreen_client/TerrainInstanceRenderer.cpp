@@ -57,6 +57,7 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 	param.CommandList->IASetVertexBuffers(1, 1, &vibv);
 	param.CommandList->IASetIndexBuffer(&ibv);
 	param.CommandList->IASetPrimitiveTopology(m_topology);
+	param.CommandList->OMSetStencilRef(static_cast<UINT>(m_drawOutline) << 7);
 
 	const auto& submeshes = m_mesh->GetSubmeshes();
 	for (size_t index = 0; index < submeshes.size(); ++index)

@@ -20,6 +20,11 @@ namespace udsdx
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		const D3D12_DEPTH_STENCILOP_DESC stencilOp =
+		{ D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_REPLACE, D3D12_COMPARISON_FUNC_ALWAYS };
+		psoDesc.DepthStencilState.StencilEnable = TRUE;
+		psoDesc.DepthStencilState.FrontFace = stencilOp;
+		psoDesc.DepthStencilState.BackFace = stencilOp;
 		psoDesc.SampleMask = UINT_MAX;
 		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		psoDesc.NumRenderTargets = DeferredRenderer::NUM_GBUFFERS;
