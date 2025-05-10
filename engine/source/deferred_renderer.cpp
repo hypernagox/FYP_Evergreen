@@ -42,10 +42,15 @@ namespace udsdx
 
 		m_depthBufferCpuSrv = descriptorParam.SrvCpuHandle;
 		m_depthBufferGpuSrv = descriptorParam.SrvGpuHandle;
-		m_depthBufferCpuDsv = descriptorParam.DsvCpuHandle;
+
+		m_stencilBufferCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		m_stencilBufferGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
 		descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+
+		m_depthBufferCpuDsv = descriptorParam.DsvCpuHandle;
+
 		descriptorParam.DsvCpuHandle.Offset(1, descriptorParam.DsvDescriptorSize);
     }
 
@@ -168,8 +173,14 @@ namespace udsdx
             m_device->CreateRenderTargetView(m_gBuffers[i].Get(), &rtvDesc, m_gBuffersCpuRtv[i]);
 		}
 
+		// Create the depth buffer view
 		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		m_device->CreateShaderResourceView(m_depthBuffer.Get(), &srvDesc, m_depthBufferCpuSrv);
+
+		// Create the stencil buffer view
+		srvDesc.Format = DXGI_FORMAT_X24_TYPELESS_G8_UINT;
+		srvDesc.Texture2D.PlaneSlice = 1;
+		m_device->CreateShaderResourceView(m_depthBuffer.Get(), &srvDesc, m_stencilBufferCpuSrv);
 
 		// Create descriptor to mip level 0 of entire resource using the format of the resource.
 		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;

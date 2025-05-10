@@ -31,6 +31,7 @@ namespace udsdx
 	public:
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetGBufferSrv(UINT index) const { return m_gBuffersGpuSrv[index]; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetDepthBufferSrv() const { return m_depthBufferGpuSrv; }
+		CD3DX12_GPU_DESCRIPTOR_HANDLE GetStencilBufferSrv() const { return m_stencilBufferGpuSrv; }
 		CD3DX12_CPU_DESCRIPTOR_HANDLE GetDepthBufferDsv() const { return m_depthBufferCpuDsv; }
 
 	public:
@@ -70,6 +71,8 @@ namespace udsdx
 		ComPtr<ID3D12Resource> m_depthBuffer;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_depthBufferCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_depthBufferGpuSrv;
+		CD3DX12_CPU_DESCRIPTOR_HANDLE m_stencilBufferCpuSrv;
+		CD3DX12_GPU_DESCRIPTOR_HANDLE m_stencilBufferGpuSrv;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_depthBufferCpuDsv;
 
 		std::array<D3D12_RESOURCE_BARRIER, NUM_GBUFFERS + 1> m_gBufferBeginRenderTransitions;

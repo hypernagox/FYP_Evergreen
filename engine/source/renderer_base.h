@@ -24,14 +24,14 @@ namespace udsdx
 
 		void SetTopology(D3D_PRIMITIVE_TOPOLOGY value);
 		void SetCastShadow(bool value);
-		void SetReceiveShadow(bool value);
+		void SetDrawOutline(bool value) { m_drawOutline = value; }
 
 		D3D_PRIMITIVE_TOPOLOGY GetTopology() const;
 		Shader* GetShader() const;
 		Material* GetMaterial(int index = 0) const;
 
 		bool GetCastShadow() const;
-		bool GetReceiveShadow() const;
+		bool GetDrawOutline() const { return m_drawOutline; }
 
 		virtual ID3D12PipelineState* GetPipelineState() const = 0;
 		virtual ID3D12PipelineState* GetShadowPipelineState() const = 0;
@@ -44,7 +44,7 @@ namespace udsdx
 
 		D3D_PRIMITIVE_TOPOLOGY m_topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		bool m_castShadow = true;
-		bool m_receiveShadow = true;
+		bool m_drawOutline = false;
 		RenderGroup m_renderGroup = RenderGroup::Deferred;
 
 		Matrix4x4 m_transformCache = Matrix4x4::Identity;

@@ -58,11 +58,6 @@ namespace udsdx
 		m_castShadow = value;
 	}
 
-	void RendererBase::SetReceiveShadow(bool value)
-	{
-		m_receiveShadow = value;
-	}
-
 	D3D_PRIMITIVE_TOPOLOGY RendererBase::GetTopology() const
 	{
 		return m_topology;
@@ -71,11 +66,6 @@ namespace udsdx
 	bool RendererBase::GetCastShadow() const
 	{
 		return m_castShadow;
-	}
-
-	bool RendererBase::GetReceiveShadow() const
-	{
-		return m_receiveShadow;
 	}
 
 	void RendererBase::UpdateTransformCache()

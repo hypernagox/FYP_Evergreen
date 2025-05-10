@@ -283,6 +283,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\post_process_fxaa.cpp" />
+    <ClCompile Include="source\post_process_outline.cpp" />
     <ClCompile Include="source\rect_transform.cpp" />
     <ClCompile Include="source\renderer_base.cpp" />
     <ClCompile Include="source\resource_load.cpp" />
@@ -336,6 +337,7 @@
     <ClInclude Include="source\motion_blur.h" />
     <ClInclude Include="source\pch.h" />
     <ClInclude Include="source\post_process_fxaa.h" />
+    <ClInclude Include="source\post_process_outline.h" />
     <ClInclude Include="source\ReadData.h" />
     <ClInclude Include="source\rect_transform.h" />
     <ClInclude Include="source\renderer_base.h" />
@@ -417,6 +419,14 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">FXAA_PC=1;FXAA_HLSL_5=1;FXAA_QUALITY__PRESET=12;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FXAA_PC=1;FXAA_HLSL_5=1;FXAA_QUALITY__PRESET=12;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">FXAA_PC=1;FXAA_HLSL_5=1;FXAA_QUALITY__PRESET=12;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </FxCompile>
+    <FxCompile Include="resource\ps_outline.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">PS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="resource\ps_screenspace_ao.hlsl">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

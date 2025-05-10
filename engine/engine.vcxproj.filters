@@ -137,6 +137,9 @@
     <ClCompile Include="source\post_process_fxaa.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="source\post_process_outline.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -310,6 +313,9 @@
     <ClInclude Include="source\post_process_fxaa.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="source\post_process_outline.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resource\ps_screenspace_ao.hlsl">
@@ -337,6 +343,9 @@
       <Filter>Resource Files</Filter>
     </FxCompile>
     <FxCompile Include="resource\ps_deferred_pass_debug.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="resource\ps_outline.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

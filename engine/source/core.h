@@ -13,6 +13,7 @@ namespace udsdx
 	class DeferredRenderer;
 	class MotionBlur;
 	class PostProcessFXAA;
+	class PostProcessOutline;
 
 	class Core
 	{
@@ -221,6 +222,7 @@ namespace udsdx
 		std::unique_ptr<ScreenSpaceAO> m_screenSpaceAO;
 		std::unique_ptr<MotionBlur> m_motionBlur;
 		std::unique_ptr<PostProcessFXAA> m_postProcessFXAA;
+		std::unique_ptr<PostProcessOutline> m_postProcessOutline;
 
 		std::unique_ptr<GraphicsMemory> m_graphicsMemory;
 
