@@ -28,6 +28,7 @@ void DropTable::TryCreateItem() const noexcept
 	b.z = pos.z + m_drop_offset.z;
 	b.item_detail_type = m_itemType;
 	b.item_stack_size = 1;
+	b.has_life_span = m_bHasLifeSpan;
 	auto item = EntityFactory::CreateDropItem(b);
 	const auto temp_ptr = item.get();
 	ClusterPredicate p;

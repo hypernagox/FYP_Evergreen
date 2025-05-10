@@ -347,7 +347,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 
 	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->m_pNaviAgent;
 	const auto prev_pos = GetSceneObject()->GetComponent<EntityMovement>()->prev_pos;
-	Vector3 temp;
+	Vector3 temp = prev_pos;
 	navi->SetCellPos(DT, prev_pos, transform->GetLocalPosition(), temp);
 	transform->SetLocalPosition(temp);
 	GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
@@ -366,7 +366,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	{
 		const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();
-		std::cout << std::format("x: {}, y: {}, z: {} \n", pos.x, pos.y, pos.z);
+		std::cout << std::format("Vector3( {}F,{}F,{}F ) \n", pos.x, pos.y, pos.z);
 		
 		const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
 		GuideSystem::GetInst()->ToggleFlag();

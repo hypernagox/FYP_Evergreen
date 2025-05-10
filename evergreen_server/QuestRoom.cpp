@@ -9,6 +9,9 @@
 #include "NavigationMesh.h"
 #include "PathNPC.h"
 #include "PositionComponent.h"
+#include "NaviAgent.h"
+#include "NaviAgent_Common.h"
+#include "ClusterPredicate.h"
 
 std::atomic_int aaaa;
 QuestRoom::QuestRoom() noexcept
@@ -144,12 +147,28 @@ void QuestRoom::CheckPartyQuestState()noexcept
 	// TODO: 락 고려
 	if (ProcessPartyQuest())
 	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_HARVEST;
+		b.obj_type = -1;
+		auto p = Vector3(-44.4872F, 74.50986F, -59.177734F);
+		//p = m_ownerPartrySystem->m_member[0]->GetOwnerEntity()->GetComp<PositionComponent>()->pos;
+		b.x = p.x;
+		b.y = p.y;
+		b.z = p.z;
+		const auto m = EntityFactory::CreateClearTree(b);
+		const auto pos = m->GetComp<PositionComponent>()->pos;
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+		for (const auto& players : m_ownerPartrySystem->m_member)
+		{
+			if (!players)continue;
+			NotifyQuestClear(players->GetOwnerEntity());
+		}
 		// TODO 근본적인 해결책
 		Mgr(TaskTimerMgr)->ReserveAsyncTask(1000,[this, owner = m_ownerPartrySystem->m_member[0]]() {
 			for (const auto& players : owner->m_party_quest_system->m_member)
 			{
 				if (!players)continue;
-				NotifyQuestClear(players->GetOwnerEntity());
+				//NotifyQuestClear(players->GetOwnerEntity());
 			}
 			m_isClear.store(true);
 			//m_ownerPartrySystem->GetPartyLeader()->m_cur_my_party_system.load()->MissionEnd();
@@ -214,7 +233,7 @@ void NPCGuardQuest::InitQuestField() noexcept
 	const auto m = EntityFactory::CreatePathNPC(b);
 	const auto m2 = m;
 
-	const Vector3 begin = { -19.601448f,  72.97739f,  0.74976814f };
+	const Vector3 begin = Vector3(-270.50497F, 86.48416F, -23.966377F);
 	const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
 
 	EnterFieldWithFloatXYNPC(begin.x + 512.f, begin.z + 512.f, m);
@@ -222,5 +241,42 @@ void NPCGuardQuest::InitQuestField() noexcept
 	// TODO: 위험
 	m2->GetComp<PathNPC>()->m_owner_system = GetOwnerSystem();
 	m2->GetComp<PathNPC>()->InitPathNPC();
+
+	const Vector3 points[] = {
+	Vector3(-259.22272F,84.94523F,-15.314469F),
+	Vector3(-242.5948F,83.53157F,-20.12327F)  ,
+	Vector3(-244.0131F,83.93936F,-1.8343055F) ,
+	Vector3(-225.44817F,81.969826F,-12.672854F),
+	Vector3(-210.61905F,81.896484F,5.847359F) ,
+	Vector3(-199.39998F,80.16998F,-11.756538F),
+	Vector3(-192.54158F,80.21647F,5.781999F)  ,
+	Vector3(-174.05774F,78.48746F,-9.923426F) ,
+	Vector3(-158.33324F,77.9395F,5.0919523F)  ,
+	};
+	const auto num = sizeof(points) / sizeof(points[0]);
+	for (int i = 0; i < num; ++i)
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
+		b.obj_type = MONSTER_TYPE_INFO::FOX;
+		const auto m = EntityFactory::CreateMonster(b);
+		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+		//m->GetComp<PositionComponent>()->pos = points[i];
+		auto p = points[i];
+		//float f[3]{ 10,10000,10 };
+		//auto p2 = p;
+		//dtPolyRef ref;
+		//NAVIGATION->GetNavMesh(NUM_0)->GetNavMeshQuery()->findNearestPoly(&p.x, f,
+		//	NAVIGATION->GetNavMesh(NUM_0)->GetNavFilter(), &ref, &p2.x
+		//);
+
+		//p.y = NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(p).CalculateHeight(p, NAVIGATION->GetNavMesh(NUM_0));
+		m->GetComp<NaviAgent>()->SetPos(p);
+		m->GetComp<PositionComponent>()->pos = p;
+		const auto pos = p;
+		//m->GetComp<NaviAgent>()->InitCrowd();
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+		//EnterFieldNPC(m);
+	}
 }
 

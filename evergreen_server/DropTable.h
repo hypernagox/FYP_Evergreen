@@ -13,6 +13,7 @@ public:
 	void TryCreateItem()const noexcept;
 public:
 	Vector3 m_drop_offset{ 0,0,0 };
+	bool m_bHasLifeSpan = true;
 private:
 	int8_t m_itemType = -1;
 	// TODO: È®·ü / °¹¼ö

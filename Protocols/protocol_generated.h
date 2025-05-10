@@ -2869,7 +2869,8 @@ struct s2c_CHANGE_HARVEST_STATE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers:
   typedef s2c_CHANGE_HARVEST_STATEBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_HARVEST_ID = 4,
-    VT_IS_ACTIVE = 6
+    VT_IS_ACTIVE = 6,
+    VT_HARVEST_MESH_TYPE = 8
   };
   uint32_t harvest_id() const {
     return GetField<uint32_t>(VT_HARVEST_ID, 0);
@@ -2883,10 +2884,17 @@ struct s2c_CHANGE_HARVEST_STATE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers:
   bool mutate_is_active(bool _is_active = 0) {
     return SetField<uint8_t>(VT_IS_ACTIVE, static_cast<uint8_t>(_is_active), 0);
   }
+  uint16_t harvest_mesh_type() const {
+    return GetField<uint16_t>(VT_HARVEST_MESH_TYPE, 0);
+  }
+  bool mutate_harvest_mesh_type(uint16_t _harvest_mesh_type = 0) {
+    return SetField<uint16_t>(VT_HARVEST_MESH_TYPE, _harvest_mesh_type, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_HARVEST_ID, 4) &&
            VerifyField<uint8_t>(verifier, VT_IS_ACTIVE, 1) &&
+           VerifyField<uint16_t>(verifier, VT_HARVEST_MESH_TYPE, 2) &&
            verifier.EndTable();
   }
 };
@@ -2900,6 +2908,9 @@ struct s2c_CHANGE_HARVEST_STATEBuilder {
   }
   void add_is_active(bool is_active) {
     fbb_.AddElement<uint8_t>(s2c_CHANGE_HARVEST_STATE::VT_IS_ACTIVE, static_cast<uint8_t>(is_active), 0);
+  }
+  void add_harvest_mesh_type(uint16_t harvest_mesh_type) {
+    fbb_.AddElement<uint16_t>(s2c_CHANGE_HARVEST_STATE::VT_HARVEST_MESH_TYPE, harvest_mesh_type, 0);
   }
   explicit s2c_CHANGE_HARVEST_STATEBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -2915,9 +2926,11 @@ struct s2c_CHANGE_HARVEST_STATEBuilder {
 inline ::flatbuffers::Offset<s2c_CHANGE_HARVEST_STATE> Creates2c_CHANGE_HARVEST_STATE(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t harvest_id = 0,
-    bool is_active = false) {
+    bool is_active = false,
+    uint16_t harvest_mesh_type = 0) {
   s2c_CHANGE_HARVEST_STATEBuilder builder_(_fbb);
   builder_.add_harvest_id(harvest_id);
+  builder_.add_harvest_mesh_type(harvest_mesh_type);
   builder_.add_is_active(is_active);
   return builder_.Finish();
 }

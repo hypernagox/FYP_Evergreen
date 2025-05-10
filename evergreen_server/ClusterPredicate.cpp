@@ -5,6 +5,7 @@
 #include "PositionComponent.h"
 #include "TickTimer.h"
 #include "HP.h"
+#include "Interaction.h"
 
 using namespace NagiocpX;
 
@@ -36,14 +37,11 @@ bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsE
 {
 	if (!a->IsReadyAndValid() || !b->IsReadyAndValid())return false;
 	
-	const auto a_pos = a->GetComp<PositionComponent>()->pos;
-	const auto b_pos = b->GetComp<PositionComponent>()->pos;
+	auto a_pos = a->GetComp<PositionComponent>()->pos;
+	auto b_pos = b->GetComp<PositionComponent>()->pos;
 
-	//const int dx = (int)(a_pos.x - b_pos.x);
-	//const int dy = (int)(a_pos.y - b_pos.y);
-	//const int dz = (int)(a_pos.z - b_pos.z);
-	//
-	//const uint32_t dist = ((dx * dx + dy * dy + dz * dz));
+	a_pos.y = b_pos.y = 0.f;
+
 	const auto dist = Vector3::DistanceSquared(a_pos, b_pos);
 	const bool bRes = (DISTANCE_FILTER * DISTANCE_FILTER) >= dist;
 	if (bRes)
@@ -67,6 +65,19 @@ S_ptr<SendBuffer> ClusterPredicate::CreateAddPacket(const ContentsEntity* const 
 		return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()
 			, hp->GetMaxHP(), hp->GetCurHP()
 		);
+	else if (const auto interaction = entity_ptr->GetComp<Interaction>())
+	{
+		if (const auto interaction_type = interaction->GetInteractionType())
+		{
+			return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()
+				, -1, interaction_type);
+		}
+		else
+		{
+			return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()
+				, -1, -1);
+		}
+	}
 	else
 		return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()
 			, -1, -1);

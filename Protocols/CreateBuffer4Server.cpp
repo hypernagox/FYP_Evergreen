@@ -507,16 +507,19 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_MEMBERS_INFORMATION(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHANGE_HARVEST_STATE(
     const uint32_t harvest_id,
     const bool is_active,
+    const uint16_t harvest_mesh_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto harvest_id_value = harvest_id;
     const auto is_active_value = is_active;
+    const auto harvest_mesh_type_value = harvest_mesh_type;
     const auto serializeds2c_CHANGE_HARVEST_STATE = Nagox::Protocol::Creates2c_CHANGE_HARVEST_STATE(
         builder
 ,        harvest_id_value,
-        is_active_value    );
+        is_active_value,
+        harvest_mesh_type_value    );
     builder.Finish(serializeds2c_CHANGE_HARVEST_STATE);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_CHANGE_HARVEST_STATE);

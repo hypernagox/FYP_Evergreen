@@ -377,7 +377,7 @@ namespace Common
 
 		const dtNavMeshQuery* const navQuery = GetNavMeshQuery();
 		const dtQueryFilter& filter = *m_filter;
-		constexpr const float EXTENTS[3] = { 2.0f, 4.0f, 2.0f };
+		constexpr const float EXTENTS[3] = { 2.f, 4.f, 2.f };
 
 		const float startPos[3] = { start.x, start.y, -start.z };
 		const float endPos[3] = { end.x, end.y, -end.z };
@@ -397,7 +397,7 @@ namespace Common
 		if (dtStatusFailed(navQuery->findPath(startRef, endRef, closestStart, closestEnd, &filter, path, &pathCount, MAX_PATH_COUNT)))
 			return path_result;
 
-		float straightPath[MAX_PATH_COUNT * 3]{ endPos[0],endPos[1],endPos[2] };
+		float straightPath[MAX_PATH_COUNT * 3]{ endPos[0],endPos[1],-endPos[2] };
 		unsigned char flags[MAX_PATH_COUNT];
 		dtPolyRef polys[MAX_PATH_COUNT];
 		int straightPathCount = 0;
@@ -419,7 +419,12 @@ namespace Common
 			for (int j = 0; j < segmentCount; ++j)
 			{
 				const auto v = p1 + direction * (step * j);
-				path_result.emplace_back(v.x, v.y, -v.z);
+				Vector3 v2 = {};
+				navQuery->findNearestPoly(
+					&v.x, EXTENTS, &filter, &startRef, &v2.x
+				);
+				if (v2 == Vector3::Zero)break;
+				path_result.emplace_back(v2.x, v2.y, -v2.z);
 			}
 		}
 		if (0 == straightPathCount)return path_result;

@@ -5,6 +5,7 @@ struct HarvestInfo
 {
 	Vector3 harvest_pos;
 	HARVEST_TYPE harvest_type;
+	uint16_t harvest_mesh_type = 1;
 };
 
 class HarvestLoader

@@ -16,6 +16,7 @@ namespace NagiocpX
 	{
 		int8_t item_detail_type = -1;
 		int8_t item_stack_size = -1;
+		bool has_life_span = true;
 	};
 
 	class EntityFactory
@@ -33,6 +34,8 @@ namespace NagiocpX
 		static S_ptr<ContentsEntity> CreateHarvest(const EntityBuilder& b)noexcept;
 
 		static S_ptr<ContentsEntity> CreatePathNPC(const EntityBuilder& b)noexcept;
+
+		static S_ptr<ContentsEntity> CreateClearTree(const EntityBuilder& b)noexcept;
 	};
 }
 

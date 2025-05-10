@@ -73,6 +73,10 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	{
 		//std::cout << "아이템 등장\n";
 	}
+	else if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_HARVEST)
+	{
+		std::cout << "채집 ID: " << pkt_.obj_cur_hp() << '\n';
+	}
 	DefaultEntityBuilder b;
 	b.obj_id = pkt_.obj_id();
 	b.obj_type = pkt_.obj_type_info();
@@ -490,6 +494,8 @@ const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>
 const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_CLEAR& pkt_)
 {
 	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
+	GuideSystem::GetInst()->ToggleFlag();
+	GuideSystem::GetInst()->SetGuidePath(Vector3(-44.4872F, 74.50986F, -59.177734F));
 	return true;
 }
 
@@ -509,6 +515,7 @@ const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NetHelper::S_ptr<NetHelper
 const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHANGE_HARVEST_STATE& pkt_)
 {
 	// TODO: 여기서 대상이 될 채집물을 찾아서 주면 서버오버헤드는 감소
+	std::cout << "채집 ID: " << pkt_.harvest_mesh_type() << '\n';
 	GuideSystem::GetInst()->SetHarvestState(pkt_.harvest_id(), pkt_.is_active());
 	return true;
 }

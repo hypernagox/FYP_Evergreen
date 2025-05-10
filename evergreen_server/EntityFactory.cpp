@@ -23,13 +23,13 @@ namespace NagiocpX
 	{
 		const auto monster_entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
 
-		const auto bt_timer = monster_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>(),300*300);
+		const auto bt_timer = monster_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>(),20*20);
 
 		const auto& bt_root = bt_timer->GetRootNode();
 
 		monster_entity->AddComp<PositionComponent>();
 
-		bt_timer->SetTickInterval(500);
+		bt_timer->SetTickInterval(100);
 		
 		
 		const auto s1 = bt_root->AddChild<SequenceNode>();
@@ -107,7 +107,10 @@ namespace NagiocpX
 		const auto item = entity->AddComp<DropItem>();
 		item->SetDropItemDetailInfo(b_.item_detail_type);
 		item->SetItemStack(b_.item_stack_size);
-		entity->AddComp<LifeSpanObj>()->InitLifeTimer(5000);
+		if (b_.has_life_span)
+		{
+			entity->AddComp<LifeSpanObj>()->InitLifeTimer(5000);
+		}
 		return entity;
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreateHarvest(const EntityBuilder& b) noexcept
@@ -150,6 +153,15 @@ namespace NagiocpX
 		//entity->AddComp<MonsterDeath>();
 
 		
+		return entity;
+	}
+	S_ptr<ContentsEntity> EntityFactory::CreateClearTree(const EntityBuilder& b) noexcept
+	{
+		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
+		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
+		entity->AddComp<DropTable>()->SetItemTypeByID(DATA_TABLE->GetItemID("Herb"));
+		entity->AddComp<ClearTreeInteraction>();
+		entity->GetComp<DropTable>()->m_drop_offset.y += 2.f;
 		return entity;
 	}
 }

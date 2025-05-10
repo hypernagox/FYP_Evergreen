@@ -26,7 +26,21 @@ void PathNPC::UpdateMove()
 			m_owner_system_session->DecRef();
 		return;
 	}
-	
+	if (const auto leader = m_owner_system_session)
+	{
+		const auto leader_pos = leader->GetOwnerEntity()->GetComp<PositionComponent>()->pos;
+		const auto my_pos = owner->GetComp<PositionComponent>()->pos;
+		if (!CommonMath::IsInDistanceDX(leader_pos, my_pos, 6))
+		{
+			m_last_update_timestamp = cur_time;
+			owner->GetQueueabler()->EnqueueAsyncTimer(
+				100,
+				&PathNPC::UpdateMove,
+				this
+			);
+			return;
+		}
+	}
 	m_curDistAcc += m_navAgent->ApplyPostPosition(m_vecDirDists[m_cur_idx].first, m_speed, (cur_time - m_last_update_timestamp) * 0.001f);
 
 	//owner->GetComp<PositionComponent>()->vel = m_vecDirDists[m_cur_idx].first;
@@ -46,7 +60,7 @@ void PathNPC::UpdateMove()
 	m_last_update_timestamp = cur_time;
 
 	owner->GetQueueabler()->EnqueueAsyncTimer(
-		1000,
+		100,
 		&PathNPC::UpdateMove,
 		this
 	);
@@ -54,12 +68,35 @@ void PathNPC::UpdateMove()
 
 void PathNPC::InitPathNPC()
 {
-	const float step = 5.f;
-	const Vector3 begin = { -19.601448f,  72.97739f,  0.74976814f };
-	const Vector3 end = { -119.499115f,75,13.64f }; // ¸¶À» Áß¾Ó
-	const auto& vecPath = m_navAgent->GetAgentConcreate()->
-		GetNavMesh()->GetPathVertices(begin, end, step);
-	m_navAgent->SetPos(begin);
+	const float step = 2.f;
+	const Vector3 begin = Vector3(-270.50497F, 86.48416F, -23.966377F);
+	//const Vector3 end = Vector3(-120.628365, 75.83887, 12.696598); // ¸¶À» Áß¾Ó
+	const Vector3 points[] = {
+	Vector3(-270.50497F,86.48416F,-23.966377F),
+	Vector3(-262.50986F,86.0128F,-23.310076F),
+	Vector3(-248.07124F,84.52976F,-15.239957F),
+	Vector3(-236.64597F,83.31353F,-5.343036F),
+	Vector3(-229.64525F,82.18539F,-2.87825F),
+	Vector3(-209.29497F,81.04176F,-3.3852773F),
+	Vector3(-188.42654F,79.49546F,-3.2104106F),
+	Vector3(-169.08516F,78.3188F,-3.3492434F),
+	Vector3(-149.05505F,78.25525F,-0.90608793F),
+	Vector3(-139.2348F,78.220726F,-0.37422684F),
+	Vector3(-122.58272F,75.91813F,11.575291F),
+	};
+	const auto num = sizeof(points) / sizeof(points[0]);
+	std::vector<Vector3> pvec;
+	for (int i=0;i<num-1;++i)
+	{
+		const auto& vecPath = m_navAgent->GetAgentConcreate()->
+			GetNavMesh()->GetPathVertices(points[i], points[i + 1], step);
+		for (const auto& v : vecPath) {
+			pvec.emplace_back(v);
+		}
+	}
+	//const auto& vecPath = m_navAgent->GetAgentConcreate()->
+	//	GetNavMesh()->GetPathVertices(begin, end, step);
+	m_navAgent->SetPos(points[0]);
 	m_speed = 5.f;
 
 	if (const auto owner_session = m_owner_system->m_member[0])
@@ -67,14 +104,14 @@ void PathNPC::InitPathNPC()
 		owner_session->IncRef();
 		m_owner_system_session = owner_session;
 	}
-	if (auto num = vecPath.size())
+	if (auto num = pvec.size())
 	{
 		m_vecDirDists.reserve(--num);
 		for (int i = 0; i < num; ++i)
 		{
 			m_vecDirDists.emplace_back(
-				CommonMath::Normalized(vecPath[i + 1] - vecPath[i]),
-				std::min(Vector3::Distance(vecPath[i], vecPath[i + 1]), step)
+				CommonMath::Normalized(pvec[i + 1] - pvec[i]),
+				std::min(Vector3::Distance(pvec[i], pvec[i + 1]),step)
 			);
 		}
 		m_last_update_timestamp = GetTickCount64();

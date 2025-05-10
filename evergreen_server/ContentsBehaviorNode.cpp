@@ -194,6 +194,20 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
     const auto dx2 = cur_pos.x + dir.x * 5.2f * dt_;
     const auto dy2 = cur_pos.y + dir.y * 5.2f * dt_;
     const auto dz2 = cur_pos.z + dir.z * 5.2f * dt_;
+    Vector3 dest_pos2{ dx2, dy2, dz2 };
+
+    
+    const Vector3 final_target = path.back();
+
+    const float closeThreshold = 0.5f;  
+    const float pushBackDist = 0.5f;  
+    float distToTarget = (dest_pos - final_target).Length();
+    if (distToTarget < closeThreshold)
+    {
+        Vector3 backDir = final_target - dest_pos2;
+        backDir.Normalize();
+        dest_pos2 = dest_pos2 - backDir * pushBackDist;
+    }
 
     pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(dt_, cur_pos,Vector3{ dx2,dy2,dz2 });
    

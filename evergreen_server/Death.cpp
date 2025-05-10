@@ -21,13 +21,18 @@ void MonsterDeath::ProcessDeath() noexcept
 	// TODO: 매직넘버 0
 	// TODO: 확률
 	const auto owner = GetOwnerEntityRaw();
-	if (const auto item_table = owner->GetComp<DropTable>())
-	{
-		item_table->TryCreateItem();
-	}
-	if (owner->GetClusterFieldInfo().clusterInfo.fieldID == -1)
+	const auto field_id = owner->GetClusterFieldInfo().clusterInfo.fieldID;
+	if (-1 == field_id)
 	{
 		static_cast<QuestRoom*>(owner->GetClusterFieldInfo().curFieldPtr)->CheckPartyQuestState();
+	}
+	if (const auto item_table = owner->GetComp<DropTable>())
+	{
+		if (-1 == field_id)
+		{
+			item_table->m_bHasLifeSpan = false;
+		}
+		item_table->TryCreateItem();
 	}
 	owner->TryOnDestroy();
 }

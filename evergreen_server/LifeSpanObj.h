@@ -7,7 +7,6 @@ class LifeSpanObj
 
 public:
 	void InitLifeTimer(const uint64_t life_time);
-
 private:
 	void TryOnDestroyOwner(S_ptr<ContentsEntity> entity);
 };

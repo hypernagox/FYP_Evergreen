@@ -296,4 +296,5 @@ table s2c_CHANGE_HARVEST_STATE
 {
      harvest_id : uint32;
      is_active : bool;
+     harvest_mesh_type : uint16;
 }

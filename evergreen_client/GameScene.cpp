@@ -177,17 +177,21 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     auto heroServerComponent = m_heroObj->GetComponent<ServerObject>();
     heroServerComponent->AddComp<MovePacketSender>();
 
-    Vector3 temp = Vector3(-4.345f, 76.17f, 0.0f);
+    Vector3 start_pos = Vector3{
+        -315.8432f,
+        84.93234f,
+        -33.050846f
+    };
     auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
-    cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(temp);
+    cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(start_pos);
 
 	m_activeObjectGroup = std::make_shared<SceneObject>();
 
-    m_heroObj->GetTransform()->SetLocalPosition(temp);
+    m_heroObj->GetTransform()->SetLocalPosition(start_pos);
 
     m_spectatorObj = std::make_shared<SceneObject>();
     m_spectatorObj->AddComponent<SpectatorPlayer>();
-
+    
     m_playerLightObj = std::make_shared<SceneObject>();
     auto playerLight = m_playerLightObj->AddComponent<LightDirectional>();
     Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
