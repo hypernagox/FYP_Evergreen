@@ -23,7 +23,6 @@ namespace udsdx
 		param.CommandList->IASetVertexBuffers(0, 0, nullptr);
 		param.CommandList->IASetIndexBuffer(nullptr);
 		param.CommandList->IASetPrimitiveTopology(m_topology);
-		param.CommandList->OMSetStencilRef(static_cast<UINT>(m_drawOutline) << 7);
 
 		param.CommandList->DrawInstanced(m_vertexCount, instances, 0, 0);
 	}
