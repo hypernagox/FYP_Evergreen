@@ -260,7 +260,7 @@ void NPCGuardQuest::InitQuestField() noexcept
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = MONSTER_TYPE_INFO::FOX;
 		const auto m = EntityFactory::CreateMonster(b);
-		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+		static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
 		//m->GetComp<PositionComponent>()->pos = points[i];
 		auto p = points[i];
 		//float f[3]{ 10,10000,10 };
