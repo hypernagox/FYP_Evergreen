@@ -15,8 +15,7 @@ bool HarvestInteraction::DoInteraction(ContentsEntity* const pEntity_) noexcept
 		owner->GetComp<DropTable>()->TryCreateItem();
 
 
-		Mgr(TaskTimerMgr)->ReserveAsyncTask(g_harvest_cool_down, [this]() {
-			const auto owner = GetOwnerEntity();
+		Mgr(TaskTimerMgr)->ReserveAsyncTask(g_harvest_cool_down, [owner = GetOwnerEntity(), this]() {
 			owner->SetDetailType(HARVEST_STATE::AVAILABLE);
 			m_isActive.store(true);
 			owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastAllCluster(Create_s2c_CHANGE_HARVEST_STATE(owner->GetObjectID(), true, m_interaction_type));
