@@ -50,15 +50,15 @@ public:
 	}
 };
 
-//constexpr const static inline wchar_t IP_ADDR[]
-//{
-//	L"3.35.42.176"
-//};
-
 constexpr const static inline wchar_t IP_ADDR[]
 {
-    L"127.0.0.1"
+	L"3.35.42.176"
 };
+
+//constexpr const static inline wchar_t IP_ADDR[]
+//{
+//    L"127.0.0.1"
+//};
 
 int main()
 {
@@ -76,7 +76,7 @@ int main()
 			, NagiocpX::NetAddress{ IP_ADDR,7777 }
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 3000
+			, 700
 		);
 	
 	
