@@ -175,7 +175,8 @@ void QuestRoom::CheckPartyQuestState()noexcept
 			NotifyQuestClear(players->GetOwnerEntity());
 		}
 		// TODO 근본적인 해결책
-		Mgr(TaskTimerMgr)->ReserveAsyncTask(1000,[this, owner = m_ownerPartrySystem->m_member[0]]() {
+		auto owner = m_ownerPartrySystem->m_member[0];
+		Mgr(TaskTimerMgr)->ReserveAsyncTask(1000,[this, owner]() {
 			for (const auto& players : owner->m_party_quest_system->m_member)
 			{
 				if (!players)continue;

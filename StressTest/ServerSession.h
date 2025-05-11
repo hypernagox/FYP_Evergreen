@@ -45,7 +45,7 @@ public:
 	const uint64_t m_print_count = 10 + (rand() % 1000);
 
 	uint64_t dir_count = 0;
-	uint64_t delay_time = 500;
+	uint64_t delay_time = 1000;
 
 public:
 	XVector<std::pair<Vector3, float>> m_vecDirDists;
