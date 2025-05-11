@@ -21,27 +21,32 @@ public:
 	void SetTargetScene(std::shared_ptr<udsdx::Scene> scene) { m_targetScene.swap(scene); }
 
 public:
+	// 클라이언트를 시작했을 때, 메쉬 오브젝트를 추가하는 단계
+	void AddHarvestMeshObject(std::shared_ptr<udsdx::SceneObject> obj);
+	bool AddHarvest(uint32_t server_id, uint32_t harvest_id, bool is_active);
+	void RemoveHarvest(uint32_t server_id);
 
-	bool AddHarvest(uint32_t id, std::shared_ptr<udsdx::SceneObject> obj, bool is_active);
-
-	void RemoveHarvest(uint32_t id) {
-		// 채집물이 내 시야에서 사라질 땐 그냥 관련정보 다 날리고 다시 시작
-		m_mapHarvest.erase(id);
-		m_active_list.erase(id);
-		m_in_active_list.erase(id);
+	udsdx::SceneObject* GetHarvest(const uint32_t server_id)const noexcept {
+		const auto iter = m_mapHarvestID.find(server_id);
+		if (m_mapHarvestID.end() == iter)
+			return nullptr;
+		const auto harvest_id = iter->second;
+		if (0 > harvest_id || m_mapHarvest.size() <= static_cast<size_t>(harvest_id))
+			return nullptr;
+		return m_mapHarvest[harvest_id].get();
 	}
 
-	udsdx::SceneObject*  GetHarvest(const uint32_t id)const noexcept {
-		const auto iter = m_mapHarvest.find(id);
-		return m_mapHarvest.end() != iter ? iter->second.get() : nullptr;
+	udsdx::SceneObject* GetHarvest(const uint32_t server_id)noexcept {
+		const auto iter = m_mapHarvestID.find(server_id);
+		if (m_mapHarvestID.end() == iter)
+			return nullptr;
+		const auto harvest_id = iter->second;
+		if (0 > harvest_id || m_mapHarvest.size() <= static_cast<size_t>(harvest_id))
+			return nullptr;
+		return m_mapHarvest[harvest_id].get();
 	}
 
-	udsdx::SceneObject* GetHarvest(const uint32_t id)noexcept {
-		const auto iter = m_mapHarvest.find(id);
-		return m_mapHarvest.end() != iter ? iter->second.get() : nullptr;
-	}
-
-	const bool SetHarvestState(const uint32_t id, const bool is_active)noexcept;
+	const bool SetHarvestState(const uint32_t harvest_id, const bool is_active)noexcept;
 
 	void UpdateGuideSystem();
 	void ToggleFlag() {
@@ -62,7 +67,12 @@ private:
 	std::shared_ptr<udsdx::Scene> m_targetScene;
 	Vector3 m_cur_target_pos = {};
 	bool m_guide_active_flag = false;
-	std::map<uint32_t, std::shared_ptr<udsdx::SceneObject>> m_mapHarvest;
+
+	// Harvest ID를 맵상의 Harvest Object ID로 매핑 (인덱스가 ID)
+	std::vector<std::shared_ptr<udsdx::SceneObject>> m_mapHarvest;
+	// Mapping Server Object ID to Harvest ID
+	std::map<uint32_t, uint32_t> m_mapHarvestID;
+
 	std::unordered_set<uint32_t> m_in_active_list;
 	std::unordered_set<uint32_t> m_active_list;
 };

@@ -76,6 +76,10 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	else if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_HARVEST)
 	{
 		std::cout << "채집 ID: " << pkt_.obj_cur_hp() << '\n';
+
+		// 함수 정의 참조.
+		// 간발의 차이로 어피어 오브젝트보다 채집물 상태변경 패킷이 먼저 와버린 경우에 대한 대처
+		const bool is_active = GuideSystem::GetInst()->AddHarvest(obj_id, obj_cur_hp, HARVEST_STATE::AVAILABLE == static_cast<HARVEST_STATE>(pkt_.obj_type_info()));
 	}
 	DefaultEntityBuilder b;
 	b.obj_id = pkt_.obj_id();
@@ -264,8 +268,14 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 
 	if (auto targetObject = Mgr(ServerObjectMgr)->GetServerObj(pkt_.get_user_id()))
 	{
+		const auto item_id = pkt_.item_detail_id();
+		const auto item_count = pkt_.item_stack_size();
+		// 획득한 사람이 현재 클라이언트일 경우
 		if (auto playerComp = targetObject->GetComponent<AuthenticPlayer>())
-			playerComp->OnModifyInventory(pkt_.item_detail_id(), pkt_.item_stack_size());
+		{
+			playerComp->OnModifyInventory(item_id, item_count);
+			INSTANCE(GameGUIFacade)->LogFloat->AddText(Common::DataRegistry::Str2Wstr(DATA_TABLE->GetItemName(item_id)) + L"을(를) " + std::to_wstring(item_count) + L"개 획득하였습니다.");
+		}
 	}
 
 	return true;
@@ -516,6 +526,6 @@ const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::Pac
 {
 	// TODO: 여기서 대상이 될 채집물을 찾아서 주면 서버오버헤드는 감소
 	std::cout << "채집 ID: " << pkt_.harvest_mesh_type() << '\n';
-	GuideSystem::GetInst()->SetHarvestState(pkt_.harvest_id(), pkt_.is_active());
+	GuideSystem::GetInst()->SetHarvestState(pkt_.harvest_mesh_type(), pkt_.is_active());
 	return true;
 }

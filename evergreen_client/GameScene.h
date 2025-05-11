@@ -28,9 +28,14 @@ public:
 	udsdx::Camera* GetMainCamera() const;
 
 private:
+	void AddTerrainInstances(std::filesystem::path path, const std::map<std::string, udsdx::Texture*>& textureMap, TerrainData* terrainData);
+	void AddHarvestObjects(std::filesystem::path path, const std::map<std::string, udsdx::Texture*>& textureMap, const nlohmann::json& prototype);
+
+private:
 	std::shared_ptr<udsdx::SceneObject> m_activeObjectGroup;
 
 	std::vector<std::shared_ptr<udsdx::Material>> m_instanceMaterials;
+	std::vector<std::shared_ptr<udsdx::Material>> m_harvestMaterials;
 
 	std::unique_ptr<SoundEffectInstance> m_menuSound;
 	std::shared_ptr<udsdx::SceneObject> m_mainMenuCameraObject;

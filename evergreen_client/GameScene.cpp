@@ -223,62 +223,38 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     }
 
 
-    std::map<std::string, udsdx::Texture*> textureMap;
-    for (auto texture : INSTANCE(Resource)->LoadAll<udsdx::Texture>())
-        textureMap[texture->GetName().data()] = texture;
-
-    for (const auto& directory : std::filesystem::recursive_directory_iterator(RESOURCE_PATH(L"environment")))
     {
-        // if the file is not a regular file(e.g. if it is a directory), skip it
-        if (!directory.is_regular_file())
-            continue;
+        std::map<std::string, udsdx::Texture*> textureMap;
+        for (auto texture : INSTANCE(Resource)->LoadAll<udsdx::Texture>())
+            textureMap[texture->GetName().data()] = texture;
+        std::map<std::string, std::filesystem::path> prefabMap;
 
-        std::string filename = directory.path().filename().stem().string();
-        std::wstring suffix = directory.path().extension().wstring();
-        std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
-
-        if (suffix != L".fbx")
-            continue;
-        if (terrainData->GetPrototypeInstanceCount(filename) == 0)
-            continue;
-
-        auto terrainInstance = std::make_shared<SceneObject>();
-        auto terrainInstanceRenderer = terrainInstance->AddComponent<TerrainInstanceRenderer>();
-        auto mesh = res->Load<udsdx::Mesh>(directory.path().c_str());
-
-        const auto& subMeshes = mesh->GetSubmeshes();
-        for (size_t i = 0; i < subMeshes.size(); ++i)
+        for (const auto& directory : std::filesystem::recursive_directory_iterator(RESOURCE_PATH(L"environment")))
         {
-            auto material = std::make_shared<udsdx::Material>();
-            std::string aKey = subMeshes[i].DiffuseTexturePath;
-            std::string nKey = subMeshes[i].NormalTexturePath;
-            std::transform(aKey.begin(), aKey.end(), aKey.begin(), ::tolower);
-            std::transform(nKey.begin(), nKey.end(), nKey.begin(), ::tolower);
+            // if the file is not a regular file(e.g. if it is a directory), skip it
+            if (!directory.is_regular_file())
+                continue;
 
-            // if the extension is .psd, replace it with .tga
-            if (aKey.ends_with(".psd"))
-                aKey.replace(aKey.end() - 4, aKey.end(), ".tga");
-            if (nKey.ends_with(".psd"))
-                nKey.replace(nKey.end() - 4, nKey.end(), ".tga");
+            std::string filename = directory.path().filename().stem().string();
+            std::wstring suffix = directory.path().extension().wstring();
+            std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
 
-            if (auto it = textureMap.find(aKey); it != textureMap.end())
-                material->SetSourceTexture(it->second);
-            else
-                material->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
-            if (auto it = textureMap.find(nKey); it != textureMap.end())
-                material->SetSourceTexture(it->second, 1);
-			else
-				material->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")), 1);
-
-            m_instanceMaterials.emplace_back(material);
-            terrainInstanceRenderer->SetMaterial(material.get(), static_cast<int>(i));
+            if (suffix != L".fbx")
+                continue;
+            if (terrainData->GetPrototypeInstanceCount(filename) > 0)
+                AddTerrainInstances(directory.path(), textureMap, terrainData);
+            prefabMap[filename] = directory.path();
         }
 
-        terrainInstanceRenderer->SetTerrainData(terrainData, filename);
-        terrainInstanceRenderer->SetMesh(mesh);
-        terrainInstanceRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"colorinstanced.hlsl")));
-
-        AddObject(terrainInstance);
+        std::ifstream file(RESOURCE_PATH(L"environment\\ExportedGameSpawns.json"));
+        nlohmann::json j;
+        file >> j;
+        for (auto& prototype : j)
+        {
+            std::string filename = prototype["prefab"];
+            if (prefabMap.find(filename) != prefabMap.end())
+                AddHarvestObjects(prefabMap[filename], textureMap, prototype);
+        }
     }
 
     {
@@ -549,4 +525,116 @@ Camera* GameScene::GetMainCamera() const
 		return m_spectatorObj->GetComponent<SpectatorPlayer>()->GetCameraComponent();
 	else
 		return m_heroObj->GetComponent<AuthenticPlayer>()->GetCameraComponent();
+}
+
+void GameScene::AddTerrainInstances(std::filesystem::path path, const std::map<std::string, udsdx::Texture*>& textureMap, TerrainData* terrainData)
+{
+    auto terrainInstance = std::make_shared<SceneObject>();
+    auto terrainInstanceRenderer = terrainInstance->AddComponent<TerrainInstanceRenderer>();
+    auto mesh = INSTANCE(Resource)->Load<udsdx::Mesh>(path.c_str());
+
+    const auto& subMeshes = mesh->GetSubmeshes();
+    for (size_t i = 0; i < subMeshes.size(); ++i)
+    {
+        auto material = std::make_shared<udsdx::Material>();
+        std::string aKey = subMeshes[i].DiffuseTexturePath;
+        std::string nKey = subMeshes[i].NormalTexturePath;
+        std::transform(aKey.begin(), aKey.end(), aKey.begin(), ::tolower);
+        std::transform(nKey.begin(), nKey.end(), nKey.begin(), ::tolower);
+
+        // if the extension is .psd, replace it with .tga
+        if (aKey.ends_with(".psd"))
+            aKey.replace(aKey.end() - 4, aKey.end(), ".tga");
+        if (nKey.ends_with(".psd"))
+            nKey.replace(nKey.end() - 4, nKey.end(), ".tga");
+
+        if (auto it = textureMap.find(aKey); it != textureMap.end())
+            material->SetSourceTexture(it->second);
+        else
+            material->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
+        if (auto it = textureMap.find(nKey); it != textureMap.end())
+            material->SetSourceTexture(it->second, 1);
+        else
+            material->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")), 1);
+
+        m_instanceMaterials.emplace_back(material);
+        terrainInstanceRenderer->SetMaterial(material.get(), static_cast<int>(i));
+    }
+
+    terrainInstanceRenderer->SetTerrainData(terrainData, path.filename().stem().string());
+    terrainInstanceRenderer->SetMesh(mesh);
+    terrainInstanceRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colorinstanced.hlsl")));
+
+    AddObject(terrainInstance);
+}
+
+void GameScene::AddHarvestObjects(std::filesystem::path path, const std::map<std::string, udsdx::Texture*>& textureMap, const nlohmann::json& prototype)
+{
+    const float terrainScale = 1.0f;
+    const float instanceScale = 0.01f;
+
+    auto mesh = INSTANCE(Resource)->Load<udsdx::Mesh>(path.c_str());
+    std::vector<std::shared_ptr<udsdx::Material>> materials;
+
+    const auto& subMeshes = mesh->GetSubmeshes();
+    for (size_t i = 0; i < subMeshes.size(); ++i)
+    {
+        auto material = std::make_shared<udsdx::Material>();
+        std::string aKey = subMeshes[i].DiffuseTexturePath;
+        std::string nKey = subMeshes[i].NormalTexturePath;
+        std::transform(aKey.begin(), aKey.end(), aKey.begin(), ::tolower);
+        std::transform(nKey.begin(), nKey.end(), nKey.begin(), ::tolower);
+
+        // if the extension is .psd, replace it with .tga
+        if (aKey.ends_with(".psd"))
+            aKey.replace(aKey.end() - 4, aKey.end(), ".tga");
+        if (nKey.ends_with(".psd"))
+            nKey.replace(nKey.end() - 4, nKey.end(), ".tga");
+
+        if (auto it = textureMap.find(aKey); it != textureMap.end())
+            material->SetSourceTexture(it->second);
+        else
+            material->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
+        if (auto it = textureMap.find(nKey); it != textureMap.end())
+            material->SetSourceTexture(it->second, 1);
+        else
+            material->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")), 1);
+
+        m_instanceMaterials.emplace_back(material);
+        materials.emplace_back(material);
+    }
+
+    for (auto& instance : prototype["instances"])
+    {
+        Vector3 position = Vector3(instance["position"]["x"], instance["position"]["y"], instance["position"]["z"]);
+        Quaternion rotation = Quaternion(instance["rotation"]["x"], instance["rotation"]["y"], instance["rotation"]["z"], instance["rotation"]["w"]);
+        Vector3 scale = Vector3(instance["scale"]["x"], instance["scale"]["y"], instance["scale"]["z"]);
+        scale *= Vector3(-1.0f, 1.0f, -1.0f) * instanceScale;
+        position *= terrainScale;
+
+        std::shared_ptr<SceneObject> harvestObj = std::make_shared<SceneObject>();
+        auto harvestRenderer = harvestObj->AddComponent<MeshRenderer>();
+        harvestRenderer->SetMesh(mesh);
+        harvestRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+        for (size_t i = 0; i < materials.size(); ++i)
+			harvestRenderer->SetMaterial(materials[i].get(), static_cast<int>(i));
+
+        auto interactiveEntity = harvestObj->AddComponent<InteractiveEntity>();
+        interactiveEntity->SetInteractionText(L"채집하기");
+        interactiveEntity->SetInteractionCallback([]() { Send(Create_c2s_CHANGE_HARVEST_STATE()); });
+
+        harvestObj->GetTransform()->SetLocalPosition(position);
+        harvestObj->GetTransform()->SetLocalRotation(rotation);
+        harvestObj->GetTransform()->SetLocalScale(scale);
+        harvestObj->SetActive(false);
+
+        AddActiveObject(harvestObj);
+        static bool flag = false;
+        if (!flag)
+        {
+            GuideSystem::GetInst()->AddHarvestMeshObject(harvestObj); // 1번 오브젝트부터 시작하기 때문에 임시로 넣음
+            flag = true;
+        }
+        GuideSystem::GetInst()->AddHarvestMeshObject(harvestObj);
+    }
 }

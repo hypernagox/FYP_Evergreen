@@ -16,6 +16,27 @@ EntityInteraction::EntityInteraction(const std::shared_ptr<SceneObject>& owner) 
 void EntityInteraction::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	InteractiveEntity* closestEntity = GetInteractiveEntity();
+	InteractiveEntity* lastEntity = nullptr;
+	if (m_lastTargetObject != nullptr)
+	{
+		lastEntity = m_lastTargetObject->GetComponent<InteractiveEntity>();
+	}
+	if (lastEntity != closestEntity)
+	{
+		if (lastEntity != nullptr)
+			lastEntity->OnInteractRange(false);
+		if (closestEntity != nullptr)
+			closestEntity->OnInteractRange(true);
+	}
+	if (closestEntity != nullptr)
+	{
+		m_lastTargetObject = closestEntity->GetSceneObject();
+	}
+	else
+	{
+		m_lastTargetObject.reset();
+	}
+
 	if (closestEntity != nullptr)
 	{
 		m_interactionFloatGUI->GetSceneObject()->SetActive(true);

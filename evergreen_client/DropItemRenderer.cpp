@@ -1,19 +1,18 @@
 #include "pch.h"
 #include "DropItemRenderer.h"
 
+std::default_random_engine DropItemRenderer::randomEngine{};
+
 DropItemRenderer::DropItemRenderer(std::shared_ptr<udsdx::SceneObject> owner) : udsdx::Component(owner)
 {
 	m_rendererObject = std::make_shared<udsdx::SceneObject>();
-	m_rendererObject->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "DropitemScale", "Value"));
-
 	m_meshRenderer = m_rendererObject->AddComponent<udsdx::MeshRenderer>();
-	m_meshRenderer->SetShader(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+	m_meshRenderer->SetShader(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colorhighlight.hlsl")));
 
 	owner->AddChild(m_rendererObject);
 
 	auto urd = std::uniform_real_distribution(0.0f, udsdx::PI2);
-	auto dre = std::default_random_engine(std::clock());
-	m_rotationOffset = urd(dre);
+	m_rotationOffset = urd(randomEngine);
 }
 
 void DropItemRenderer::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -21,6 +20,8 @@ void DropItemRenderer::Update(const udsdx::Time& time, udsdx::Scene& scene)
 	float scale = GET_DATA(float, "DropitemScale", "Value");
 	m_rendererObject->GetTransform()->SetLocalRotation(udsdx::Quaternion::CreateFromYawPitchRoll(time.totalTime * 2.0f + m_rotationOffset, XM_PIDIV4, 0.0f));
 	m_rendererObject->GetTransform()->SetLocalPositionY(scale / 8.0f + sin(time.totalTime * 2.0f) * scale / 80.0f);
+	m_scaleFactor = std::lerp(m_scaleFactor, scale, time.deltaTime * 8.0f);
+	m_rendererObject->GetTransform()->SetLocalScale(Vector3::One * m_scaleFactor);
 }
 
 void DropItemRenderer::SetDropItem(uint8_t item_id)

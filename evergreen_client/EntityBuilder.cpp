@@ -85,7 +85,8 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 	item->SetItemPos(b->obj_pos);
 	item->SetMainHero(ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject());
 	auto renderer = instance->AddComponent<DropItemRenderer>();
-
+	auto interactiveEntity = instance->AddComponent<InteractiveEntity>();
+	interactiveEntity->SetInteractionText(L"획득하기");
 
 	renderer->SetDropItem(b->obj_type);
 
@@ -97,18 +98,6 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Harvest(EntityBuil
 	// TODO: 종류 / 크기 ..
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
 	auto s = std::make_shared<SceneObject>();
-	auto gizmoRenderer = s->AddComponent<GizmoCylinderRenderer>();
-	auto interactiveEntity = s->AddComponent<InteractiveEntity>();
-	interactiveEntity->SetInteractionText(L"채집하기");
-	interactiveEntity->SetInteractionCallback([]() { Send(Create_c2s_CHANGE_HARVEST_STATE()); });
-	gizmoRenderer->SetRadius(3.f);
-	gizmoRenderer->SetHeight(10.f);
-
-	// 함수 정의 참조.
-	// 간발의 차이로 어피어 오브젝트보다 채집물 상태변경 패킷이 먼저 와버린 경우에 대한 대처
-	const bool is_active = GuideSystem::GetInst()->AddHarvest(builder->obj_id, s, HARVEST_STATE::AVAILABLE == static_cast<HARVEST_STATE>(b->obj_type));
-
-	gizmoRenderer->SetActive(is_active);
 
 	s->GetTransform()->SetLocalPosition(b->obj_pos);
 	

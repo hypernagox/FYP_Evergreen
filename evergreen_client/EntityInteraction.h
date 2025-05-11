@@ -18,8 +18,10 @@ public:
 	InteractiveEntity* GetInteractiveEntity();
 
 private:
-	float m_interactionRange = 2.0f;
+	float m_interactionRange = 4.0f;
 
 	InteractionFloatGUI* m_interactionFloatGUI = nullptr;
 	GameScene* m_targetScene = nullptr;
+
+	std::shared_ptr<udsdx::SceneObject> m_lastTargetObject;
 };
