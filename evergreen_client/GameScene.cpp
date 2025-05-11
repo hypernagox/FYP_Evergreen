@@ -511,12 +511,13 @@ void GameScene::EnterGame()
 
     if constexpr (true == g_bUseNetWork)
     {
-        Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())));
+        // TODO: 여기서 캐릭터 종류를 넣어주세요
+        Nagox::Enum::PLAYER_TYPE player_type = Nagox::Enum::PLAYER_TYPE_WARRIOR;
+
+        Send(Create_c2s_ENTER
+        (ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())
+            , player_type));
     }
-
-
-
-
 
     {
         auto tuto = std::make_shared<SceneObject>();

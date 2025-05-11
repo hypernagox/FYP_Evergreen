@@ -356,7 +356,8 @@ inline ::flatbuffers::Offset<s2c_PING_PONG> Creates2c_PING_PONG(
 struct c2s_ENTER FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_ENTERBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_POS = 4
+    VT_POS = 4,
+    VT_PLAYER_TYPE = 6
   };
   const Nagox::Struct::Vec3 *pos() const {
     return GetStruct<const Nagox::Struct::Vec3 *>(VT_POS);
@@ -364,9 +365,16 @@ struct c2s_ENTER FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   Nagox::Struct::Vec3 *mutable_pos() {
     return GetStruct<Nagox::Struct::Vec3 *>(VT_POS);
   }
+  Nagox::Enum::PLAYER_TYPE player_type() const {
+    return static_cast<Nagox::Enum::PLAYER_TYPE>(GetField<uint8_t>(VT_PLAYER_TYPE, 0));
+  }
+  bool mutate_player_type(Nagox::Enum::PLAYER_TYPE _player_type = static_cast<Nagox::Enum::PLAYER_TYPE>(0)) {
+    return SetField<uint8_t>(VT_PLAYER_TYPE, static_cast<uint8_t>(_player_type), 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_POS, 4) &&
+           VerifyField<uint8_t>(verifier, VT_PLAYER_TYPE, 1) &&
            verifier.EndTable();
   }
 };
@@ -377,6 +385,9 @@ struct c2s_ENTERBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_pos(const Nagox::Struct::Vec3 *pos) {
     fbb_.AddStruct(c2s_ENTER::VT_POS, pos);
+  }
+  void add_player_type(Nagox::Enum::PLAYER_TYPE player_type) {
+    fbb_.AddElement<uint8_t>(c2s_ENTER::VT_PLAYER_TYPE, static_cast<uint8_t>(player_type), 0);
   }
   explicit c2s_ENTERBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -391,9 +402,11 @@ struct c2s_ENTERBuilder {
 
 inline ::flatbuffers::Offset<c2s_ENTER> Createc2s_ENTER(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    const Nagox::Struct::Vec3 *pos = nullptr) {
+    const Nagox::Struct::Vec3 *pos = nullptr,
+    Nagox::Enum::PLAYER_TYPE player_type = Nagox::Enum::PLAYER_TYPE_WARRIOR) {
   c2s_ENTERBuilder builder_(_fbb);
   builder_.add_pos(pos);
+  builder_.add_player_type(player_type);
   return builder_.Finish();
 }
 

@@ -50,7 +50,9 @@ const bool Handle_c2s_PING_PONG(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 
 const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_ENTER& pkt_)
 {
-	auto entity = pSession_->GetOwnerEntity();
+	const auto entity = pSession_->GetOwnerEntity();
+
+	entity->SetDetailType(pkt_.player_type());
 
 	//pSession_->SetEntity(entity);
 	//entity->AddIocpComponent<Queueabler>();
@@ -136,7 +138,7 @@ const bool Handle_c2s_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSess
 
 const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_)
 {
-	DO_BENCH_GLOBAL_THIS_FUNC;
+	//DO_BENCH_GLOBAL_THIS_FUNC;
 	
 	// TODO: 월드가 달라졌다면 뷰리스트의 갱신이 필요
 	// TODO: 생포인터로 개기지 말자
@@ -151,53 +153,19 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 	//std::cout << "MY angle: " << pkt_.body_angle() << '\n';
 	//std::cout << "Mypos: ";
 	//PrintLogEndl(&pos_comp->pos.x);
-	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
+	Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
 	auto c = pOwner->GetComp<AABBCollider>()->GetCollider<Common::AABBBox>();
-	c->m_offSet = rotatedForward;
+	//c->m_offSet = rotatedForward;
 	auto box = c->GetAABB();
 	bool isHit = false;
 	pos_comp->pos = ::ToDxVec(pkt_.atk_pos());
-	Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,8.f };
+	rotatedForward.y = 0.f;
+	Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,4.f };
 	fan.m_offSet = rotatedForward * 2;
 
 	//if (const auto sector = pOwner->GetCurCluster())
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
-		const auto& player_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListSession();
-		for (const auto session : player_list)
-		{
-			//if (const auto pmon = Mgr(FieldMgr)->GetNPC(mon_id))
-			{
-				const auto session_ptr = GetSessionEntity(session.first);
-				if (!session_ptr)continue;
-				if (const auto pCol = session_ptr->GetComp<Collider>())
-				{
-					const auto owner = pCol->GetOwnerEntity();
-					if (fan.IsIntersect(pCol->GetCollider()))
-					{
-						if (!pOwner->GetClientSession()->HasParty())continue;
-						std::cout << "Player Hit\n";
-						//if (!owner->GetClientSession()->HasParty())
-						{
-							auto pkt = Create_s2c_INVITE_PARTY_QUEST(pOwner->GetObjectID(), pOwner->GetClientSession()->m_party_quest_system->m_curQuestID
-							);
-							if (pOwner != owner.get() && !owner->GetClientSession()->HasParty())
-							{
-								///pOwner->GetClientSession()->AcceptNewPlayer(
-								///	session_ptr->GetClientSession());
-								 owner->GetClientSession()->SendAsync(pkt);
-								 break;
-							}
-							//pOwner->GetClientSession()->SendAsync(pkt);
-							//session_ptr->GetClientSession()->SendAsync(pkt);
-						}
-						
-					}
-				}
-
-			}
-		}
-		//std::cout << std::format("Session ID: {}, Num Of Mon in Viewlist: {}\n", pOwner->GetObjectID(), mon_list.size());
 		for (const auto pmon : mon_list)
 		{
 			//if (const auto pmon = Mgr(FieldMgr)->GetNPC(mon_id))

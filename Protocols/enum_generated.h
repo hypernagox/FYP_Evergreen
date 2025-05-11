@@ -55,6 +55,36 @@ inline const char *EnumNameGROUP_TYPE(GROUP_TYPE e) {
   return EnumNamesGROUP_TYPE()[index];
 }
 
+enum PLAYER_TYPE : uint8_t {
+  PLAYER_TYPE_WARRIOR = 0,
+  PLAYER_TYPE_PRIEST = 1,
+  PLAYER_TYPE_MIN = PLAYER_TYPE_WARRIOR,
+  PLAYER_TYPE_MAX = PLAYER_TYPE_PRIEST
+};
+
+inline const PLAYER_TYPE (&EnumValuesPLAYER_TYPE())[2] {
+  static const PLAYER_TYPE values[] = {
+    PLAYER_TYPE_WARRIOR,
+    PLAYER_TYPE_PRIEST
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesPLAYER_TYPE() {
+  static const char * const names[3] = {
+    "WARRIOR",
+    "PRIEST",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNamePLAYER_TYPE(PLAYER_TYPE e) {
+  if (::flatbuffers::IsOutRange(e, PLAYER_TYPE_WARRIOR, PLAYER_TYPE_PRIEST)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesPLAYER_TYPE()[index];
+}
+
 }  // namespace Enum
 }  // namespace Nagox
 

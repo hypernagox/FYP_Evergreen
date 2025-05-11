@@ -33,7 +33,7 @@ void ClientSession::OnConnected()
 {
 	//std::cout << "Connect !" << std::endl;
 	const auto pOwner = GetOwnerEntity();
-	pOwner->SetDetailType(PLAYER_TYPE_INFO::WARRIOR);
+
 	pOwner->AddIocpComponent<NagiocpX::Queueabler>();
 	pOwner->AddComp<HP>()->InitHP(5); // TODO 매직넘버
 	pOwner->AddComp<PlayerDeath>();

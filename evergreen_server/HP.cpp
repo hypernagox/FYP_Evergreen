@@ -36,11 +36,12 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 			);
 			//std::cout << "µ¥¹ÌÁö :" << result_dmg << "!!\n";
 			atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), GetCurHP() - result_dmg));
+			m_hp -= result_dmg;
 		}
 		else if (owner->GetSession())
 		{
-			m_hp -= dmg_;
 			owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - dmg_));
+			m_hp -= dmg_;
 		}
 		else
 		{

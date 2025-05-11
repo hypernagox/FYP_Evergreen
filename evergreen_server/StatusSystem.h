@@ -18,7 +18,7 @@ public:
 		ContentsEntity* const victim
 	);
 public:
-	int m_defaultATK = 2;
+	int m_defaultATK = 1;
 	int m_defaultDEF = 1;
 	EquipmentSystem* m_equipSystem = nullptr;
 	BuffSystem* m_buffSystem = nullptr;

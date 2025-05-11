@@ -20,6 +20,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PING_PONG(
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ENTER(
     const Nagox::Struct::Vec3& pos,
+    const Nagox::Enum::PLAYER_TYPE& player_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_MOVE(

@@ -76,7 +76,7 @@ int main()
 			, NagiocpX::NetAddress{ IP_ADDR,7777 }
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 700
+			, 300
 		);
 	
 	

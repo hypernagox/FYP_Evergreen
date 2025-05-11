@@ -49,14 +49,17 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PING_PONG(
 }
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_ENTER(
     const Nagox::Struct::Vec3& pos,
+    const Nagox::Enum::PLAYER_TYPE& player_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto pos_offset = &pos;
+    const auto player_type_value = player_type;
     const auto serializedc2s_ENTER = Nagox::Protocol::Createc2s_ENTER(
         builder
-,        pos_offset    );
+,        pos_offset,
+        player_type_value    );
     builder.Finish(serializedc2s_ENTER);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ENTER);

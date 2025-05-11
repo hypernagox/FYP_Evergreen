@@ -11,7 +11,7 @@ struct EntityBuilderBase
 
 public:
 	static inline std::shared_ptr<udsdx::SceneObject> CreateObject(EntityBuilderBase* builder)noexcept {
-		const auto create_func = g_createObjectFunc[builder->group_type][builder->obj_type];
+		const auto create_func = g_createObjectFunc[builder->group_type][0];
 		if (builder->group_type == Nagox::Enum::GROUP_TYPE_DROP_ITEM) 
 		{
 			return g_createObjectFunc[builder->group_type][0](builder);

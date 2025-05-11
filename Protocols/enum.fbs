@@ -9,3 +9,9 @@ enum GROUP_TYPE: ubyte
 
     HARVEST = 4
 }
+
+enum PLAYER_TYPE : ubyte
+{
+    WARRIOR = 0,
+    PRIEST = 1
+}

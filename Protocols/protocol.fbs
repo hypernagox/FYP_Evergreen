@@ -26,6 +26,7 @@ table s2c_PING_PONG
 table c2s_ENTER
 {
     pos:Nagox.Struct.Vec3;
+    player_type : Nagox.Enum.PLAYER_TYPE;
 }
 
 table s2c_APPEAR_OBJECT
