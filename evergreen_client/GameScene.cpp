@@ -291,6 +291,8 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
             if (prefabMap.find(filename) != prefabMap.end())
                 AddHarvestObjects(prefabMap[filename], textureMap, prototype);
         }
+
+        GuideSystem::GetInst()->AddHarvestMeshObject(treeObj);
     }
 
     {
