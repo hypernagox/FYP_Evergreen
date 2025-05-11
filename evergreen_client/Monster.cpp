@@ -31,7 +31,12 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
 	m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.fbx")), true);
 
+	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::Idle, AnimationState::Run, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
+	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::Run, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
+
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Run, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
+
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 0.365f);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(from, to); });
 
@@ -47,6 +52,9 @@ Monster::~Monster()
 
 void Monster::Update(const Time& time, Scene& scene)
 {
+	float distance = (m_lastPosition - m_entityMovement->GetPosition()).Length();
+	*m_stateMachine->GetConditionRefFloat("Speed") = distance;
+	m_lastPosition = m_entityMovement->GetPosition();
 	m_stateMachine->Update(time.deltaTime);
 }
 
@@ -61,6 +69,9 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 	{
 	case AnimationState::Idle:
 		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.fbx")), true);
+		break;
+	case AnimationState::Run:
+		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_run_animation.fbx")), true);
 		break;
 	case AnimationState::Attack:
 		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_attack.fbx")), false, true);
