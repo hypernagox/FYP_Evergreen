@@ -35,6 +35,16 @@
 
 using namespace udsdx;
 
+constexpr const static inline wchar_t IP_ADDR[]
+{
+    L"3.35.42.176"
+};
+
+//constexpr const static inline wchar_t IP_ADDR[]
+//{
+//    L"127.0.0.1"
+//};
+
 std::shared_ptr<GameScene> g_scene;
 
 std::unique_ptr<TerrainDetail> g_terrainDetail;
@@ -106,7 +116,7 @@ void ProcessLogin()
         if constexpr (true == g_bUseDefaultIP)
         {
             // L"3.39.255.229"
-            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(L"127.0.0.1", 7777, s2c_PacketHandler::GetPacketHandlerList()));
+            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(IP_ADDR, 7777, s2c_PacketHandler::GetPacketHandlerList()));
         }
         else
         {
