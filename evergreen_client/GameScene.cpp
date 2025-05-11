@@ -222,12 +222,48 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         AddObject(terrainDetailObj);
     }
 
-
     {
         std::map<std::string, udsdx::Texture*> textureMap;
         for (auto texture : INSTANCE(Resource)->LoadAll<udsdx::Texture>())
             textureMap[texture->GetName().data()] = texture;
         std::map<std::string, std::filesystem::path> prefabMap;
+
+        std::shared_ptr<SceneObject> treeObj = std::make_shared<SceneObject>();
+        auto treeRenderer = treeObj->AddComponent<MeshRenderer>();
+
+        treeObj->GetTransform()->SetLocalScale(Vector3::One * 0.01f);
+        treeObj->GetTransform()->SetLocalPosition(Vector3(-42.968254f, 74.610634f, -87.984f));
+        treeObj->SetActive(true);
+
+        treeRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"goldentree\\tree.fbx")));
+        treeRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+
+        {
+            std::shared_ptr<udsdx::Material> treeMaterial = std::make_shared<udsdx::Material>();
+            treeMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\leaves_color.png")), 0);
+            treeMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\leaves_nm.png")), 1);
+
+            treeRenderer->SetMaterial(treeMaterial.get(), 0);
+            m_harvestMaterials.emplace_back(treeMaterial);
+        }
+
+        {
+            std::shared_ptr<udsdx::Material> treeMaterial = std::make_shared<udsdx::Material>();
+            treeMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\trunk_Base_color.png")), 0);
+            treeMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\trunk_Normal_OpenGL.png")), 1);
+
+            treeRenderer->SetMaterial(treeMaterial.get(), 1);
+            m_harvestMaterials.emplace_back(treeMaterial);
+        }
+
+        {
+            auto interactiveEntity = treeObj->AddComponent<InteractiveEntity>();
+            interactiveEntity->SetInteractionText(L"보상 얻기");
+            interactiveEntity->SetInteractionCallback([]() { Send(Create_c2s_CHANGE_HARVEST_STATE()); });
+        }
+
+        AddActiveObject(treeObj);
+        GuideSystem::GetInst()->AddHarvestMeshObject(treeObj);
 
         for (const auto& directory : std::filesystem::recursive_directory_iterator(RESOURCE_PATH(L"environment")))
         {
@@ -629,12 +665,6 @@ void GameScene::AddHarvestObjects(std::filesystem::path path, const std::map<std
         harvestObj->SetActive(false);
 
         AddActiveObject(harvestObj);
-        static bool flag = false;
-        if (!flag)
-        {
-            GuideSystem::GetInst()->AddHarvestMeshObject(harvestObj); // 1번 오브젝트부터 시작하기 때문에 임시로 넣음
-            flag = true;
-        }
         GuideSystem::GetInst()->AddHarvestMeshObject(harvestObj);
     }
 }
