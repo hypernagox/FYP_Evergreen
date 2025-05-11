@@ -27,6 +27,11 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Warrior(EntityBuil
 	movement->SetFriction(0.0f);
 	auto playerComponent = instance->AddComponent<PlayerRenderer>();
 	auto serverComponent = instance->AddComponent<ServerObject>();
+	auto interactiveEntity = instance->AddComponent<InteractiveEntity>();
+	interactiveEntity->SetInteractionText(L"상호작용 (파티초대)");
+	interactiveEntity->SetInteractionCallback([id = builder->obj_id]() {
+		Send(Create_c2s_INVITE_PARTY_QUEST(id));
+		});
 	serverComponent->SetObjID(builder->obj_id);
 
 	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
