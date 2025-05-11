@@ -294,14 +294,15 @@ const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession
 	{
 		const auto pos_comp = item->GetComp<PositionComponent>();
 		if (!pos_comp)continue;
-		if (!item->IsValid())continue;
+		//if (!item->IsValid())continue;
 		const auto item_pos = pos_comp->pos;
 		if (const auto item_ptr = item->GetComp<DropItem>())
 		{
 			if (!CommonMath::IsInDistanceDX(pos, item_pos, 5.f))continue;
+			if (!const_cast<ContentsEntity*>(item)->TryOnDestroy())continue;
 			owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastAllCluster(
 				Create_s2c_ACQUIRE_ITEM(pSession_->GetSessionID(), item->GetObjectID(), item->GetDetailType(), item_ptr->GetNumOfItemStack()));
-			const_cast<ContentsEntity*>(item)->TryOnDestroy();
+			//const_cast<ContentsEntity*>(item)->TryOnDestroy();
 
 			if (const auto inv = pSession_->GetOwnerEntity()->GetComp<Inventory>())
 			{

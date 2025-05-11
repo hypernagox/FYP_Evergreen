@@ -32,12 +32,26 @@ void DropTable::TryCreateItem() const noexcept
 	auto item = EntityFactory::CreateDropItem(b);
 	const auto temp_ptr = item.get();
 	ClusterPredicate p;
+	//auto pkt = p.CreateAddPacket(temp_ptr);
+	//owner->GetCurField()->EnterFieldWithFloatXYNPC(
+	//	PositionComponent::GetXZWithOffsetGlobal(temp_ptr),
+	//	std::move(item)
+	//);
+	//owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(
+	//	std::move(pkt)
+	//);
+	//
+	// 필드에 먼저 넣으면, 필드 클러스터 컨테이너에 삽입과 무브패킷 때문에 Add 발생
+	// 근데 바로 누가먹어서 바로 Remove
+	// 이후 브로드캐스트하니 Add가 가고 이후 아무일X
+
 	auto pkt = p.CreateAddPacket(temp_ptr);
+	owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(
+		std::move(pkt)
+	);
 	owner->GetCurField()->EnterFieldWithFloatXYNPC(
 		PositionComponent::GetXZWithOffsetGlobal(temp_ptr),
 		std::move(item)
 	);
-	owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(
-		std::move(pkt)
-	);
+	
 }

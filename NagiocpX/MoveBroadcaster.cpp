@@ -49,8 +49,6 @@ namespace NagiocpX
 
 		ProcessTryEraseSession(helper, thisSession);
 
-		new_view_list_session.GetItemListRef().clear();
-
 		new_view_list_npc.GetItemListRef().clear();
 
 		for (const Cluster* const cluster : clusters)
@@ -77,8 +75,6 @@ namespace NagiocpX
 		}
 
 		ProcessTryEraseNPC(helper, thisSession);
-
-		new_view_list_npc.GetItemListRef().clear();
 	}
 
 	void MoveBroadcaster::BroadcastPacket(const S_ptr<SendBuffer>& pSendBuff_) const noexcept
