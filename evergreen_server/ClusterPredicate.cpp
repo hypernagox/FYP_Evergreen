@@ -67,16 +67,8 @@ S_ptr<SendBuffer> ClusterPredicate::CreateAddPacket(const ContentsEntity* const 
 		);
 	else if (const auto interaction = entity_ptr->GetComp<Interaction>())
 	{
-		if (const auto interaction_type = interaction->GetInteractionType())
-		{
-			return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()
-				, -1, interaction_type);
-		}
-		else
-		{
-			return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()
-				, -1, -1);
-		}
+		return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()
+			, -1, interaction->GetInteractionType());
 	}
 	else
 		return Create_s2c_APPEAR_OBJECT(pEntity->GetOwnerObjectID(), (Nagox::Enum::GROUP_TYPE)entity_ptr->GetPrimaryGroupType<Nagox::Enum::GROUP_TYPE>(), entity_ptr->GetDetailType(), pEntity->GetPktPos()

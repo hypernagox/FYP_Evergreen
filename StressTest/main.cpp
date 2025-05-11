@@ -76,14 +76,14 @@ int main()
 			, NagiocpX::NetAddress{ IP_ADDR,7777 }
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 500
+			, 700
 		);
 	
 	
 	std::thread t1{ [pClientService]() {ASSERT_CRASH(pClientService->Start()); } };
 	
 	Mgr(ThreadMgr)->Launch(
-		  4
+		  8
 		, &con_init
 	);
 

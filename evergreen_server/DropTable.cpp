@@ -46,9 +46,11 @@ void DropTable::TryCreateItem() const noexcept
 	// 이후 브로드캐스트하니 Add가 가고 이후 아무일X
 
 	auto pkt = p.CreateAddPacket(temp_ptr);
-	owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(
-		std::move(pkt)
-	);
+
+	//owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(
+	//	std::move(pkt)
+	//);
+
 	owner->GetCurField()->EnterFieldWithFloatXYNPC(
 		PositionComponent::GetXZWithOffsetGlobal(temp_ptr),
 		std::move(item)

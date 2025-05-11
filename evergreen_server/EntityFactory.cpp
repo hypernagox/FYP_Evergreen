@@ -162,7 +162,7 @@ namespace NagiocpX
 		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
 		entity->AddComp<DropTable>()->SetItemTypeByID(DATA_TABLE->GetItemID("Herb"));
-		entity->AddComp<ClearTreeInteraction>();
+		entity->AddComp<ClearTreeInteraction>()->SetInteractionType(0);
 		entity->GetComp<DropTable>()->m_drop_offset.y += 2.f;
 		return entity;
 	}

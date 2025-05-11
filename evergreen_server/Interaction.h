@@ -14,7 +14,7 @@ public:
 	const uint16_t GetInteractionType()const noexcept { return m_interaction_type; }
 	void SetInteractionType(const uint16_t type)noexcept { m_interaction_type = type; }
 protected:
-	uint16_t m_interaction_type = 0;
+	uint16_t m_interaction_type = -1;
 private:
 
 };

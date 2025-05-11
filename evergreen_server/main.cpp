@@ -156,7 +156,8 @@ int main()
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	
 	ClusterInfoHelper::RegisterClusterFilter(GlobalClusterFilter);
-	ClusterInfoHelper::RegisterAllClusterFunc(GetAllAdjClusterFunc);
+	//ClusterInfoHelper::RegisterAllClusterFunc(GetAllAdjClusterFunc);
+	ClusterInfoHelper::RegisterAllClusterFunc(GlobalClusterFilter);
 
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
