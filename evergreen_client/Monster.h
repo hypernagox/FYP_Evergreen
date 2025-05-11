@@ -12,6 +12,7 @@ class Monster : public Component
 	enum class AnimationState
 	{
 		Idle,
+		Run,
 		Attack,
 		Size
 	};
@@ -27,6 +28,7 @@ protected:
 	MonsterHPPanel* m_hpPanel;
 
 	int m_hp = GET_DATA(int,"Fox", "hp");
+	Vector3 m_lastPosition = Vector3::Zero;
 
 public:
 	Transform* m_transformBody;

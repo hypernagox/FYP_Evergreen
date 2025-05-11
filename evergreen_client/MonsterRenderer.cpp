@@ -8,16 +8,14 @@ using namespace udsdx;
 MonsterRenderer::MonsterRenderer(std::shared_ptr<udsdx::SceneObject> owner) : Component(owner)
 {
 	m_rendererObject = std::make_shared<udsdx::SceneObject>();
-	m_rendererObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromAxisAngle(Vector3::Right, PI));
 	m_rendererObject->GetTransform()->SetLocalScale(Vector3::One * 0.015f);
 
-	auto renderer = m_rendererObject->AddComponent<udsdx::RiggedMeshRenderer>();
-	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"goblin\\Goblin(Wizard)\\Goblin(Wizard).fbx")));
+	auto renderer = m_rendererObject->AddComponent<udsdx::MeshRenderer>();
+	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"sheep\\sheep_max.obj")));
 	renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
-	renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"goblin\\Goblin(Wizard)\\Goblin(Wizard)_Idle.fbx")), true);
 
 	m_materials[0] = std::make_shared<udsdx::Material>();
-	m_materials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"goblin\\Goblin(Wizard)\\goblin_wand_basecolor.png")));
+	m_materials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"sheep\\sheep_BaseColor.png")));
 	m_materials[1] = std::make_shared<udsdx::Material>();
 	m_materials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"goblin\\Goblin(Wizard)\\goblin_notex_DefaultMaterial_BaseColor.png")));
 
