@@ -19,8 +19,12 @@ void PathNPC::UpdateMove()
 	{
 		// 도착
 		// TODO 릭 가능성
-		if(m_owner_system->m_curQuestRoomInstance)
+		if (m_owner_system->m_curQuestRoomInstance) {
+			static_cast<NPCGuardQuest*>(
+				m_owner_system->m_curQuestRoomInstance.get()
+				)->m_clear.store(true);
 			m_owner_system->m_curQuestRoomInstance->CheckPartyQuestState();
+		}
 		std::cout << "클리어\n";
 		if(m_owner_system_session)
 			m_owner_system_session->DecRef();
@@ -30,7 +34,7 @@ void PathNPC::UpdateMove()
 	{
 		const auto leader_pos = leader->GetOwnerEntity()->GetComp<PositionComponent>()->pos;
 		const auto my_pos = owner->GetComp<PositionComponent>()->pos;
-		if (!CommonMath::IsInDistanceDX(leader_pos, my_pos, 6))
+		if (!CommonMath::IsInDistanceDX(leader_pos, my_pos, 10))
 		{
 			m_last_update_timestamp = cur_time;
 			owner->GetQueueabler()->EnqueueAsyncTimer(

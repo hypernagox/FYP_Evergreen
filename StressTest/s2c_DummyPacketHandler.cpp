@@ -44,7 +44,7 @@ const bool Handle_s2c_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	//const auto vv = Vector3{ -30.0f, 0.0f, -30.0f } + dir[NagiocpX::my_rand() % 4] * 10.f;
 	//const auto vv = Vector3{ -30.0f, 0.0f, -30.0f } + dir[NagiocpX::my_rand() % 4] * 10.f;
 	//const auto v = Nagox::Struct::Vec3{ 75.0f, 0.0f, 25.0f };
-	pSession_ << Create_c2s_ENTER(F_VEC3(pos));
+	pSession_ << Create_c2s_ENTER(F_VEC3(pos),Nagox::Enum::PLAYER_TYPE_WARRIOR);
 	session->m_id = pkt_.obj_id();
 	session->pos = pos;
 

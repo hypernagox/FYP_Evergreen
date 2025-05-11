@@ -6,6 +6,8 @@
 
 using namespace udsdx;
 
+bool g_first_clear = false;
+
 TutorialUI::TutorialUI(const std::shared_ptr<udsdx::SceneObject>& object)
 	:Component{ object }
 {
@@ -78,8 +80,14 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 		{
 			const auto prev_type = m_cur_gui->m_type;
 			const auto cur_type = m_cur_gui->Update(time, scene);
+			if (UI_TYPE::END == cur_type)
+			{
+				m_cur_gui->m_gui->SetActive(false);
+				return;
+			}
 			if (prev_type != cur_type && !m_waitFlag)
 			{
+				// TODO: 여기가 튜토리얼 클리어시점
 				m_nextType = cur_type;
 				m_waitFlag = true;
 			}
@@ -94,6 +102,8 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 				m_cur_gui->m_gui->SetActive(false);
 				m_cur_gui = m_tutorialUIs[(int)m_nextType];
 				m_cur_gui->m_gui->SetActive(true);
+				// TODO: 여기가 튜토리얼 넘어가는시점
+			
 			}
 		}
 	}
@@ -156,7 +166,11 @@ void InventoryTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 }
 
 UI_TYPE InventoryTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
-{
+{	
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::I))
+	{
+		return UI_TYPE::NAVI_VILLAGE;
+	}
 	return m_type;
 }
 
@@ -174,6 +188,10 @@ void NaviItemTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 
 UI_TYPE NaviItemTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
+	{
+		return UI_TYPE::INVENTORY;
+	}
 	return m_type;
 }
 
@@ -193,6 +211,18 @@ void NaviVillageTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object
 
 UI_TYPE NaviVillageTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::K))
+	{
+		m_flag = true;
+	}
+	if (m_flag)
+	{
+		m_accTime += DT;
+		if (TutorialUI::TUTORIAL_UI_REMAIN_TIME <= m_accTime)
+		{
+			return UI_TYPE::END;
+		}
+	}
 	return m_type;
 }
 
@@ -211,6 +241,10 @@ void QuestTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 
 UI_TYPE QuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
+	if (g_first_clear)
+	{
+		return UI_TYPE::NAVI_ITEM;
+	}
 	return m_type;
 }
 
@@ -229,6 +263,10 @@ void PartyTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 
 UI_TYPE PartyTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::Q))
+	{
+		return UI_TYPE::QUEST_1;
+	}
 	return m_type;
 }
 
@@ -249,7 +287,7 @@ UI_TYPE AttackTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	if (INSTANCE(Input)->GetMouseLeftButtonDown())
 	{
-		return UI_TYPE::WASD;
+		return UI_TYPE::PARTY;
 	}
 	else return m_type;
 }

@@ -201,7 +201,7 @@ const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSessi
 	{
 		std::cout << "사망\n";
 		auto heroObject = Mgr(ServerObjectMgr)->GetMainHero();
-		heroObject->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
+		//heroObject->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
 		heroObject->GetComponent<PlayerRenderer>()->Death();
 		NetMgr(NetworkMgr)->Send(Create_c2s_PLAYER_DEATH());
 	}
@@ -210,7 +210,7 @@ const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSessi
 		if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.player_id()))
 		{
 			obj->GetComponent<PlayerRenderer>()->Death();
-			obj->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
+			//obj->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.rebirth_pos()));
 		}
 	}
 	return true;
@@ -225,6 +225,7 @@ const bool Handle_s2c_REQUEST_QUEST(const NetHelper::S_ptr<NetHelper::PacketSess
 const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CLEAR_QUEST& pkt_)
 {
 	static int temp_count = 0;
+
 	if (pkt_.is_clear())
 	{
 		temp_count = 0;
@@ -274,7 +275,7 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 		if (auto playerComp = targetObject->GetComponent<AuthenticPlayer>())
 		{
 			playerComp->OnModifyInventory(item_id, item_count);
-			INSTANCE(GameGUIFacade)->LogFloat->AddText(Common::DataRegistry::Str2Wstr(DATA_TABLE->GetItemName(item_id)) + L"을(를) " + std::to_wstring(item_count) + L"개 획득하였습니다.");
+			INSTANCE(GameGUIFacade)->LogFloat->AddText(GET_DATA(std::wstring, DATA_TABLE->GetItemName(item_id), "Name") + L"을(를) " + std::to_wstring(item_count) + L"개 획득하였습니다.");
 		}
 	}
 
@@ -503,6 +504,8 @@ const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>
 
 const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_CLEAR& pkt_)
 {
+	extern bool g_first_clear;
+	g_first_clear = true;
 	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
 	GuideSystem::GetInst()->ToggleFlag();
 	GuideSystem::GetInst()->SetGuidePath(Vector3(-44.4872F, 74.50986F, -59.177734F));

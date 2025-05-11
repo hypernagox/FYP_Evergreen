@@ -87,8 +87,9 @@ class NPCGuardQuest
 	:public QuestRoom
 {
 public:
+	std::atomic_bool m_clear{ false };
 	virtual bool ProcessPartyQuest()noexcept override {
-		return true;
+		return m_clear.load();
 	}
 	virtual bool IsFailPartyQuest()const noexcept { return false; }
 

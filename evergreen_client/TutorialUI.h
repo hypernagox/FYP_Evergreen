@@ -107,6 +107,9 @@ class NaviVillageTutorial
 public:
 	virtual void Init(const std::shared_ptr<udsdx::SceneObject>& object) override;
 	virtual UI_TYPE Update(const udsdx::Time& time, udsdx::Scene& scene)override;
+
+	float m_accTime = 0.f;
+	bool m_flag = false;
 };
 
 class QuestTutorial

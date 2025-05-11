@@ -35,15 +35,15 @@
 
 using namespace udsdx;
 
-//constexpr const static inline wchar_t IP_ADDR[]
-//{
-//    L"3.35.42.176"
-//};
-
 constexpr const static inline wchar_t IP_ADDR[]
 {
-    L"127.0.0.1"
+    L"3.35.42.176"
 };
+
+//constexpr const static inline wchar_t IP_ADDR[]
+//{
+//    L"127.0.0.1"
+//};
 
 std::shared_ptr<GameScene> g_scene;
 
