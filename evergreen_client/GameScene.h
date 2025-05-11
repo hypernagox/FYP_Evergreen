@@ -43,6 +43,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_spectatorObj;
 	std::shared_ptr<udsdx::SceneObject> m_playerLightObj;
 	std::shared_ptr<udsdx::SceneObject> m_terrainObj;
+	std::shared_ptr<udsdx::SceneObject> m_craftTableObj;
 
 	std::shared_ptr<udsdx::SceneObject> m_playerInterfaceGroup;
 	std::shared_ptr<udsdx::SceneObject> m_focusAgentObj;
@@ -59,6 +60,8 @@ private:
 	std::shared_ptr<udsdx::Material> m_playerMaterial;
 	std::shared_ptr<udsdx::Material> m_skyboxMaterial;
 	std::shared_ptr<udsdx::Material> m_gizmoMaterial;
+	std::shared_ptr<udsdx::Material> m_craftTableMaterial;
+
 	std::shared_ptr<udsdx::Mesh> m_terrainMesh;
 
 	bool m_bSpectatorMode = false;

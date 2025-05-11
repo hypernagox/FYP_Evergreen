@@ -224,6 +224,28 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     }
 
     {
+        m_craftTableObj = std::make_shared<SceneObject>();
+		m_craftTableObj->GetTransform()->SetLocalPosition(Vector3(-123.22470092773438f, 75.68199920654297f, 16.593002319335939));
+		m_craftTableObj->GetTransform()->SetLocalRotation(Quaternion(0.0f, 1.0f, 0.0f, 0.0f));
+		m_craftTableObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 0.01f);
+
+		m_craftTableMaterial = std::make_shared<udsdx::Material>();
+		m_craftTableMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_D.tga")), 0);
+		m_craftTableMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_N.tga")), 1);
+
+		auto craftTableRenderer = m_craftTableObj->AddComponent<MeshRenderer>();
+		craftTableRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Village\\O_Table_B.fbx")));
+		craftTableRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+        craftTableRenderer->SetMaterial(m_craftTableMaterial.get(), 0);
+
+        auto interactiveEntity = m_craftTableObj->AddComponent<InteractiveEntity>();
+        interactiveEntity->SetInteractionText(L"제작하기");
+        interactiveEntity->SetInteractionCallback([this]() { m_craftObj->SetActive(true); });
+
+		AddActiveObject(m_craftTableObj);
+    }
+
+    {
         std::map<std::string, udsdx::Texture*> textureMap;
         for (auto texture : INSTANCE(Resource)->LoadAll<udsdx::Texture>())
             textureMap[texture->GetName().data()] = texture;
