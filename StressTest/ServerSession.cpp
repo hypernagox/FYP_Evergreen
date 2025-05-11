@@ -159,7 +159,7 @@ void ServerSession::UpdateMove() noexcept
 		accel = {};
 		NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(pos);
 		SendAsync(Create_c2s_CHANGE_HARVEST_STATE());
-		SendAsync(Create_c2s_ACQUIRE_ITEM(0));
+		//SendAsync(Create_c2s_ACQUIRE_ITEM(0));
 		SetPath();
 		return;
 	}

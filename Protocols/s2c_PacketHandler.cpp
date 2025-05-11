@@ -75,7 +75,7 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	}
 	else if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_HARVEST)
 	{
-		std::cout << "채집 ID: " << pkt_.obj_cur_hp() << '\n';
+		//std::cout << "채집 ID: " << pkt_.obj_cur_hp() << '\n';
 
 		// 함수 정의 참조.
 		// 간발의 차이로 어피어 오브젝트보다 채집물 상태변경 패킷이 먼저 와버린 경우에 대한 대처

@@ -11,7 +11,7 @@ void HarvestLoader::LoadHarvest(const std::vector<std::string> key_words, const 
 	g_harvest_pos = NagiocpX::xnew<XVector<HarvestInfo>>();
 	const auto terrain_scale = 1.f;
 	// 반드시 1로시작
-	uint16_t harvest_mesh_type = 1;
+	g_harvest_type_number;
 	for (const auto& prototype : j)
 	{
 		HARVEST_TYPE type = (HARVEST_TYPE)0;
@@ -41,7 +41,7 @@ void HarvestLoader::LoadHarvest(const std::vector<std::string> key_words, const 
 		for (const auto& instance : prototype["instances"])
 		{
 			const Vector3 position = Vector3(instance["position"]["x"], instance["position"]["y"], instance["position"]["z"]);
-			g_harvest_pos->emplace_back(position * terrain_scale, type, harvest_mesh_type++);
+			g_harvest_pos->emplace_back(position * terrain_scale, type, g_harvest_type_number++);
 		}
 	}
 }

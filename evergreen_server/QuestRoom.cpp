@@ -160,20 +160,21 @@ void QuestRoom::CheckPartyQuestState()noexcept
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_HARVEST;
-		b.obj_type = -1;
-		auto p = Vector3(-44.4872F, 74.50986F, -59.177734F);
+		b.obj_type = 0;
+		auto p = Vector3(-42.968254F, 75.610634F, -87.984F);
 		//p = m_ownerPartrySystem->m_member[0]->GetOwnerEntity()->GetComp<PositionComponent>()->pos;
 		b.x = p.x;
 		b.y = p.y;
 		b.z = p.z;
 		const auto m = EntityFactory::CreateClearTree(b);
+		m->SetDetailType(HARVEST_STATE::AVAILABLE);
 		const auto pos = m->GetComp<PositionComponent>()->pos;
-		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 		for (const auto& players : m_ownerPartrySystem->m_member)
 		{
 			if (!players)continue;
 			NotifyQuestClear(players->GetOwnerEntity());
 		}
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 		// TODO 근본적인 해결책
 		auto owner = m_ownerPartrySystem->m_member[0];
 		Mgr(TaskTimerMgr)->ReserveAsyncTask(1000,[this, owner]() {

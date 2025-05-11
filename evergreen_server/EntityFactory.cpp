@@ -16,6 +16,7 @@
 #include "PathNPC.h"
 #include "Interaction.h"
 #include "LifeSpanObj.h"
+#include "HarvestLoader.h"
 
 namespace NagiocpX
 {
@@ -162,7 +163,7 @@ namespace NagiocpX
 		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
 		entity->AddComp<DropTable>()->SetItemTypeByID(DATA_TABLE->GetItemID("Herb"));
-		entity->AddComp<ClearTreeInteraction>()->SetInteractionType(0);
+		entity->AddComp<ClearTreeInteraction>()->SetInteractionType(HarvestLoader::GetHarvestMaxType());
 		entity->GetComp<DropTable>()->m_drop_offset.y += 2.f;
 		return entity;
 	}
