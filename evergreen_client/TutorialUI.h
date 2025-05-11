@@ -33,6 +33,8 @@ public:
 	bool m_waitFlag = false;
 	UI_TYPE m_nextType;
 	std::shared_ptr<TutorialUIElementBase> m_tutorialUIs[(int)UI_TYPE::END] = {};
+	std::shared_ptr<udsdx::SceneObject> m_tutorialMark;
+	std::unique_ptr<SoundEffectInstance> m_tickSound;
 
 	float m_accTime = 0.f;
 

@@ -348,6 +348,18 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     {
         m_playerInterfaceGroup = std::make_shared<SceneObject>();
 
+        auto textObj = std::make_shared<SceneObject>();
+        auto textRenderer = textObj->AddComponent<GUIText>();
+        textObj->GetTransform()->SetLocalPosition(Vector3(-640, 480, 0));
+        textRenderer->SetText(GET_DATA(std::wstring, "Intro", "Start"));
+        textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
+        textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
+        m_playerInterfaceGroup->AddChild(textObj);
+
+        m_playerTagObj = std::make_shared<SceneObject>();
+        auto playerTagRenderer = m_playerTagObj->AddComponent<PlayerTagGUI>();
+        m_playerInterfaceGroup->AddChild(m_playerTagObj);
+
         m_focusAgentObj = std::make_shared<SceneObject>();
         auto focusAgent = m_focusAgentObj->AddComponent<FocusAgentGUI>();
 
@@ -422,22 +434,6 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         INSTANCE(GameGUIFacade)->LogFloat = logFloatComp;
         INSTANCE(GameGUIFacade)->RequestPopup = requestPopupComp;
         INSTANCE(GameGUIFacade)->PartyStatus = partyStatusComp;
-    }
-
-    {
-        auto textObj = std::make_shared<SceneObject>();
-        auto textRenderer = textObj->AddComponent<GUIText>();
-        textObj->GetTransform()->SetLocalPosition(Vector3(-640, 480, 0));
-        textRenderer->SetText(GET_DATA(std::wstring, "Intro", "Start"));
-        textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
-		textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
-
-        m_playerInterfaceGroup->AddChild(textObj);
-
-        m_playerTagObj = std::make_shared<SceneObject>();
-        auto playerTagRenderer = m_playerTagObj->AddComponent<PlayerTagGUI>();
-
-        m_playerInterfaceGroup->AddChild(m_playerTagObj);
     }
 
     {
@@ -543,10 +539,9 @@ void GameScene::EnterGame()
 
     {
         auto tuto = std::make_shared<SceneObject>();
-
         tuto->AddComponent<TutorialUI>();
       
-        AddObject(tuto);
+        m_playerInterfaceGroup->AddChild(tuto);
     }
 }
 

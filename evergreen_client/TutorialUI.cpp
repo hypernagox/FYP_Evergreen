@@ -70,6 +70,14 @@ TutorialUI::TutorialUI(const std::shared_ptr<udsdx::SceneObject>& object)
 
 	m_tutorialUIs[(int)UI_TYPE::WASD]->m_gui->SetActive(true);
 	m_cur_gui = m_tutorialUIs[(int)UI_TYPE::WASD];
+
+	m_tutorialMark = std::make_shared<SceneObject>();
+	m_tutorialMark->GetTransform()->SetLocalPosition(Vector3(0, 450.0f, 0.0f));
+
+	auto uiRenderer = m_tutorialMark->AddComponent<GUIImage>();
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\qmark.png")), true);
+	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
+	object->AddChild(m_tutorialMark);
 }
 
 void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -83,6 +91,7 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 			if (UI_TYPE::END == cur_type)
 			{
 				m_cur_gui->m_gui->SetActive(false);
+				m_tutorialMark->SetActive(false);
 				return;
 			}
 			if (prev_type != cur_type && !m_waitFlag)
@@ -102,8 +111,11 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 				m_cur_gui->m_gui->SetActive(false);
 				m_cur_gui = m_tutorialUIs[(int)m_nextType];
 				m_cur_gui->m_gui->SetActive(true);
+				m_tutorialMark->SetActive(true);
 				// TODO: 여기가 튜토리얼 넘어가는시점
-			
+
+				m_tickSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\tutorial_tick.wav"))->CreateInstance();
+				m_tickSound->Play();
 			}
 		}
 	}
@@ -112,14 +124,13 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void WASDTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
 	m_gui = std::make_shared<SceneObject>();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 360.0f, 0.0f));
+	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 320.0f, 0.0f));
 	m_type = UI_TYPE::WASD;
 
 	auto uiRenderer = m_gui->AddComponent<GUIImage>();
 
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\WASD.png")));
-
-	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\WASD.png")), true);
+	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 }
 
 UI_TYPE WASDTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -156,13 +167,12 @@ UI_TYPE WASDTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void InventoryTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
 	m_gui = std::make_shared<SceneObject>();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 360.0f, 0.0f));
+	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 320.0f, 0.0f));
 	m_type = UI_TYPE::INVENTORY;
 	auto uiRenderer = m_gui->AddComponent<GUIImage>();
 
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Inventory.png")));
-
-	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Inventory.png")), true);
+	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 }
 
 UI_TYPE InventoryTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -177,13 +187,12 @@ UI_TYPE InventoryTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void NaviItemTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
 	m_gui = std::make_shared<SceneObject>();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 360.0f, 0.0f));
+	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 320.0f, 0.0f));
 	m_type = UI_TYPE::NAVI_ITEM;
 	auto uiRenderer = m_gui->AddComponent<GUIImage>();
 
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Navi_item.png")));
-
-	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Navi_item.png")), true);
+	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 }
 
 UI_TYPE NaviItemTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -198,14 +207,13 @@ UI_TYPE NaviItemTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void NaviVillageTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
 	m_gui = std::make_shared<SceneObject>();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 360.0f, 0.0f));
+	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 320.0f, 0.0f));
 	m_type = UI_TYPE::NAVI_VILLAGE;
 
 	auto uiRenderer = m_gui->AddComponent<GUIImage>();
 
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Navi_village.png")));
-
-	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Navi_village.png")), true);
+	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 }
 
 
@@ -229,14 +237,13 @@ UI_TYPE NaviVillageTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene
 void QuestTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
 	m_gui = std::make_shared<SceneObject>();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 360.0f, 0.0f));
+	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 320.0f, 0.0f));
 	m_type = UI_TYPE::QUEST_1;
 
 	auto uiRenderer = m_gui->AddComponent<GUIImage>();
 
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Quest_1.png")));
-
-	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Quest_1.png")), true);
+	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 }
 
 UI_TYPE QuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -251,14 +258,13 @@ UI_TYPE QuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void PartyTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
 	m_gui = std::make_shared<SceneObject>();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 360.0f, 0.0f));
+	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 320.0f, 0.0f));
 	m_type = UI_TYPE::PARTY;
 
 	auto uiRenderer = m_gui->AddComponent<GUIImage>();
 
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Party.png")));
-
-	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Party.png")), true);
+	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 }
 
 UI_TYPE PartyTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -273,14 +279,13 @@ UI_TYPE PartyTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void AttackTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
 	m_gui = std::make_shared<SceneObject>();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 360.0f, 0.0f));
+	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 320.0f, 0.0f));
 	m_type = UI_TYPE::ATTACK;
 
 	auto uiRenderer = m_gui->AddComponent<GUIImage>();
 
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Attack.png")));
-
-	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Attack.png")), true);
+	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 }
 
 UI_TYPE AttackTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
