@@ -43,7 +43,7 @@ public:
 	bool IsClear()const noexcept { return m_isClear.load(); }
 	void RegisterMember(const uint32_t idx, ContentsEntity* const entity)noexcept;
 protected:
-	NagoxAtomic::Atomic<int8_t> m_monKillCount{ 0 };
+	NagoxAtomic::Atomic<int8_t> m_mon_count{ 0 };
 private:
 	NagoxAtomic::Atomic<bool> m_isClear{ false };
 	NagoxAtomic::Atomic<int8_t> m_numOfMember{ 0 };
@@ -58,7 +58,7 @@ class FoxQuest
 public:
 	// TODO: ¶ô °í·Á
 	virtual bool ProcessPartyQuest()noexcept override{
-		return 1 == m_monKillCount.fetch_add(1);
+		return 1 == m_mon_count.fetch_sub(1);
 	}
 	virtual bool IsFailPartyQuest()const noexcept { return false; }
 
@@ -73,7 +73,7 @@ class GoblinQuest
 {
 public:
 	virtual bool ProcessPartyQuest()noexcept override {
-		return 1 == m_monKillCount.fetch_add(1);
+		return 1 == m_mon_count.fetch_sub(1);
 	}
 	virtual bool IsFailPartyQuest()const noexcept { return false; }
 

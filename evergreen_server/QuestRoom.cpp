@@ -28,6 +28,17 @@ QuestRoom::QuestRoom() noexcept
 
 }
 
+const Vector3 mon_quest_pos[]
+{
+	Vector3(-95.737885F,75.60237F,0.45216048F),
+	Vector3(-84.906555F,74.91477F,1.8365619F),
+	Vector3(-76.985535F,75.653595F,-2.3457224F),
+	Vector3(-63.27754F,74.19354F,8.34514F),
+	Vector3(-51.666164F,73.28497F,18.615622F),
+	Vector3(-70.57306F,74.45939F,26.04673F),
+	Vector3(-58.571342F,74.35416F,31.72524F),
+};
+
 QuestRoom::~QuestRoom() noexcept
 {
 	const auto row = (size_t)GetNumOfClusterRow();
@@ -196,13 +207,32 @@ void QuestRoom::RegisterMember(const uint32_t idx, ContentsEntity* const entity)
 
 void FoxQuest::InitQuestField() noexcept
 {
-	for (int i = 0; i < 500; ++i)
+	//for (int i = 0; i < 500; ++i)
+	//{
+	//	EntityBuilder b;
+	//	b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
+	//	b.obj_type = MONSTER_TYPE_INFO::FOX;
+	//	const auto m = EntityFactory::CreateMonster(b);
+	//	static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+	//	const auto pos = m->GetComp<PositionComponent>()->pos;
+	//	EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+	//	//EnterFieldNPC(m);
+	//}
+
+	const auto num = (int)(sizeof(mon_quest_pos) / sizeof(mon_quest_pos[0]));
+
+	m_mon_count.store_relaxed(num);
+
+	for (int i = 0; i < num; ++i)
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = MONSTER_TYPE_INFO::FOX;
 		const auto m = EntityFactory::CreateMonster(b);
-		static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+
+		m->GetComp<PositionComponent>()->pos = mon_quest_pos[i];
+		m->GetComp<NaviAgent>()->SetPos(mon_quest_pos[i]);
 		const auto pos = m->GetComp<PositionComponent>()->pos;
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 		//EnterFieldNPC(m);
@@ -211,17 +241,34 @@ void FoxQuest::InitQuestField() noexcept
 
 void GoblinQuest::InitQuestField() noexcept
 {
-	for (int i = 0; i < 500; ++i)
+	//for (int i = 0; i < 500; ++i)
+	//{
+	//	EntityBuilder b;
+	//	b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+	//	b.obj_type = 0;
+	//	const auto m = EntityFactory::CreateRangeMonster(b);
+	//	static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+	//
+	//	const auto pos = m->GetComp<PositionComponent>()->pos;
+	//	EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+	//	//EnterFieldNPC(m);
+	//}
+
+	const auto num = (int)(sizeof(mon_quest_pos) / sizeof(mon_quest_pos[0]));
+
+	m_mon_count.store_relaxed(num);
+
+	for (int i = 0; i < num; ++i)
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
 		b.obj_type = 0;
 		const auto m = EntityFactory::CreateRangeMonster(b);
-		static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
-
+		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+		m->GetComp<PositionComponent>()->pos = mon_quest_pos[i];
+		m->GetComp<NaviAgent>()->SetPos(mon_quest_pos[i]);
 		const auto pos = m->GetComp<PositionComponent>()->pos;
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
-		//EnterFieldNPC(m);
 	}
 }
 
@@ -260,7 +307,7 @@ void NPCGuardQuest::InitQuestField() noexcept
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = MONSTER_TYPE_INFO::FOX;
 		const auto m = EntityFactory::CreateMonster(b);
-		static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
 		//m->GetComp<PositionComponent>()->pos = points[i];
 		auto p = points[i];
 		//float f[3]{ 10,10000,10 };

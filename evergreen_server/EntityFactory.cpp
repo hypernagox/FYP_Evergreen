@@ -55,7 +55,8 @@ namespace NagiocpX
 		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int,"Fox","hp")); // TODO 매직넘버
 		monster_entity->AddComp<MonsterDeath>();
 
-		monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
+		// TODO: 필요할때만 딜리터 설정하기
+		//monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
 
 		monster_entity->AddComp<DropTable>()->SetItemType("Fox");
 
@@ -93,7 +94,8 @@ namespace NagiocpX
 		monster_entity->AddComp<HP>()->InitHP(3);
 		monster_entity->AddComp<MonsterDeath>();
 
-		monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
+		// TODO: 필요할때만 딜리터 설정하기
+		//monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
 
 		monster_entity->AddComp<DropTable>()->SetItemType("Bear");
 
