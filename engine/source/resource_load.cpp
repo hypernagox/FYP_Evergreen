@@ -151,7 +151,13 @@ namespace udsdx
 		importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 		auto assimpScene = importer.ReadFile(
 			pathString.string(),
-			aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights
+			aiProcess_ConvertToLeftHanded |
+			aiProcess_Triangulate |
+			aiProcess_GenNormals |
+			aiProcess_CalcTangentSpace |
+			aiProcess_LimitBoneWeights |
+			aiProcess_OptimizeMeshes |
+			aiProcess_RemoveRedundantMaterials
 		);
 
 		assert(assimpScene != nullptr);
