@@ -219,6 +219,7 @@ namespace udsdx
 		for (const auto& object : m_renderObjectQueues[group])
 		{
 			param.CommandList->SetPipelineState(object->GetPipelineState());
+			param.CommandList->OMSetStencilRef(static_cast<UINT>(object->GetDrawOutline()) << 7);
 			object->Render(param, instances);
 		}
 		param.RenderStageIndex++;

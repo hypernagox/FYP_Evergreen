@@ -53,7 +53,6 @@ namespace udsdx
 		param.CommandList->IASetVertexBuffers(0, 1, &m_riggedMesh->VertexBufferView());
 		param.CommandList->IASetIndexBuffer(&m_riggedMesh->IndexBufferView());
 		param.CommandList->IASetPrimitiveTopology(m_topology);
-		param.CommandList->OMSetStencilRef(static_cast<UINT>(m_drawOutline) << 7);
 
 		auto& uploaders = m_constantBuffers[param.FrameResourceIndex];
 		auto& prevUploaders = m_prevConstantBuffers[param.FrameResourceIndex];
