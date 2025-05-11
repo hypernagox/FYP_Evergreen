@@ -24,7 +24,10 @@ namespace NagiocpX
 				return ::CreateIoCompletionPort(handleObject_->GetHandle(), m_iocpHandle, (ULONG_PTR)(iocpKey_), 0);
 		}
 		static const bool Dispatch(const HANDLE iocpHandle_)noexcept;
-		static inline const bool IsTimeOut(const uint64_t endTick)noexcept { return ::GetTickCount64() >= endTick; }
+		static inline const bool IsTimeOut(const uint64_t endTick)noexcept {
+			return false;
+			return ::GetTickCount64() >= endTick;
+		}
 	private:
 		const HANDLE m_iocpHandle;
 

@@ -106,6 +106,9 @@
     <Filter Include="Player\GuideSystem">
       <UniqueIdentifier>{5908c005-81d4-4ecb-b3bc-dcf2ba1c5631}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Gui\Tutorial">
+      <UniqueIdentifier>{193aaa7c-c082-4e16-9dc4-84f621cbb0f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -263,6 +266,9 @@
     </ClCompile>
     <ClCompile Include="EntityInteraction.cpp">
       <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="TutorialUI.cpp">
+      <Filter>Gui\Tutorial</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -433,6 +439,9 @@
     </ClInclude>
     <ClInclude Include="EntityInteraction.h">
       <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="TutorialUI.h">
+      <Filter>Gui\Tutorial</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

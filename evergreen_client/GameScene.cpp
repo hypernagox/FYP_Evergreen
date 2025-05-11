@@ -41,6 +41,7 @@
 
 #include "ServerObjectMgr.h"
 #include "GuideSystem.h"
+#include "TutorialUI.h"
 
 using namespace udsdx;
 
@@ -511,6 +512,18 @@ void GameScene::EnterGame()
     if constexpr (true == g_bUseNetWork)
     {
         Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())));
+    }
+
+
+
+
+
+    {
+        auto tuto = std::make_shared<SceneObject>();
+
+        tuto->AddComponent<TutorialUI>();
+      
+        AddObject(tuto);
     }
 }
 

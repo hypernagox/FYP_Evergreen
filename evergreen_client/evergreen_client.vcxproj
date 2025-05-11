@@ -479,6 +479,7 @@
     <ClCompile Include="TerrainDetail.cpp" />
     <ClCompile Include="TerrainDetailRenderer.cpp" />
     <ClCompile Include="TerrainInstanceRenderer.cpp" />
+    <ClCompile Include="TutorialUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientNetwork\ClientNetwork.vcxproj">
@@ -548,6 +549,7 @@
     <ClInclude Include="TerrainDetail.h" />
     <ClInclude Include="TerrainDetailRenderer.h" />
     <ClInclude Include="TerrainInstanceRenderer.h" />
+    <ClInclude Include="TutorialUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\create_packet_handler.h.j2" />
