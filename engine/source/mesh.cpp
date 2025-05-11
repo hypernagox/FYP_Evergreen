@@ -31,7 +31,7 @@ namespace udsdx
 		std::queue<aiNode*> bfsSearch;
 		bfsSearch.push(model->mRootNode);
 
-		std::vector<std::tuple<aiMaterial*, aiMesh*, std::string>> meshData;
+		std::vector<std::tuple<unsigned int, aiMesh*, std::string>> meshData;
 		
 		while (!bfsSearch.empty())
 		{
@@ -55,7 +55,7 @@ namespace udsdx
 			for (UINT i = 0; i < node->mNumMeshes; ++i)
 			{
 				auto mesh = model->mMeshes[node->mMeshes[i]];
-				meshData.emplace_back(model->mMaterials[mesh->mMaterialIndex], mesh, nodeName);
+				meshData.emplace_back(mesh->mMaterialIndex, mesh, nodeName);
 			}
 
 			for (UINT i = 0; i < node->mNumChildren; ++i)
@@ -68,11 +68,11 @@ namespace udsdx
 
 		for (size_t index = 0; index < meshData.size(); ++index)
 		{
-			const auto& [material, mesh, nodeName] = meshData[index];
+			const auto& [materialIndex, mesh, nodeName] = meshData[index];
 			XMMATRIX vertexTransform = XMLoadFloat4x4(&boneTransforms[nodeName]);
 			UINT baseVertexLocation = 0;
 
-			if (index == 0 || std::get<0>(meshData[index - 1]) != material)
+			if (index == 0 || std::get<0>(meshData[index - 1]) != materialIndex)
 			{
 				Submesh& submeshRef = m_submeshes.emplace_back();
 
@@ -81,7 +81,7 @@ namespace udsdx
 				submeshRef.StartIndexLocation = static_cast<UINT>(indices.size());
 				submeshRef.BaseVertexLocation = static_cast<UINT>(vertices.size());
 
-				aiMaterial* material = model->mMaterials[mesh->mMaterialIndex];
+				aiMaterial* material = model->mMaterials[materialIndex];
 				if (material != nullptr)
 				{
 					aiString texturePath;
