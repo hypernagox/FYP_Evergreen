@@ -21,7 +21,7 @@ namespace Common
 			const DirectX::SimpleMath::Vector3& end,
 			const float step = 5.f
 		);
-		int findRandomPointAroundCircle(float* pos, float radius, float* outPos);
+		int findRandomPointAroundCircle(const float* pos, float radius, float* outPos);
 		static dtNavMesh* LoadNavMesh(const std::wstring_view path);
 		static void SaveNavMesh(const std::wstring_view savePath, const dtNavMesh* mesh);
 		static int ConvertJsonToNavBinFile(const std::string_view  jsonContent, const std::wstring_view savePath);

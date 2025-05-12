@@ -35,15 +35,14 @@
 
 using namespace udsdx;
 
-constexpr const static inline wchar_t IP_ADDR[]
-{
-    L"3.35.42.176"
-};
+//constexpr const bool USE_AWS_FLAG = false;
+constexpr const bool USE_AWS_FLAG = true;
 
-//constexpr const static inline wchar_t IP_ADDR[]
-//{
-//    L"127.0.0.1"
-//};
+constexpr const static inline wchar_t IP_ADDR[][256]
+{
+     L"127.0.0.1",
+    L"43.203.153.176"
+};
 
 std::shared_ptr<GameScene> g_scene;
 
@@ -116,7 +115,7 @@ void ProcessLogin()
         if constexpr (true == g_bUseDefaultIP)
         {
             // L"3.39.255.229"
-            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(IP_ADDR, 7777, s2c_PacketHandler::GetPacketHandlerList()));
+            NET_NAGOX_ASSERT(NetMgr(NetworkMgr)->Connect<ServerSession>(IP_ADDR[USE_AWS_FLAG], 7777, s2c_PacketHandler::GetPacketHandlerList()));
         }
         else
         {

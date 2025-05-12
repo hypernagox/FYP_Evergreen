@@ -50,15 +50,15 @@ public:
 	}
 };
 
-constexpr const static inline wchar_t IP_ADDR[]
+constexpr const bool USE_AWS_FLAG = true;
+//constexpr const bool USE_AWS_FLAG = false;
+
+constexpr const static inline wchar_t IP_ADDR[][256]
 {
-	L"3.35.42.176"
+	 L"127.0.0.1",
+	L"43.203.153.176"
 };
 
-//constexpr const static inline wchar_t IP_ADDR[]
-//{
-//    L"127.0.0.1"
-//};
 
 int main()
 {
@@ -73,7 +73,7 @@ int main()
 	const auto pClientService = new NagiocpX::ClientService
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
-			, NagiocpX::NetAddress{ IP_ADDR,7777 }
+			, NagiocpX::NetAddress{ IP_ADDR[USE_AWS_FLAG],7777}
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
 			, 300
