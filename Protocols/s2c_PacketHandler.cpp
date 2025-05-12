@@ -533,7 +533,7 @@ const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NetHelper::S_ptr<NetHelper
 const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHANGE_HARVEST_STATE& pkt_)
 {
 	// TODO: 여기서 대상이 될 채집물을 찾아서 주면 서버오버헤드는 감소
-	std::cout << "채집 ID: " << pkt_.harvest_mesh_type() << '\n';
+	//std::cout << "채집 ID: " << pkt_.harvest_mesh_type() << '\n';
 	GuideSystem::GetInst()->SetHarvestState(pkt_.harvest_mesh_type(), pkt_.is_active());
 	return true;
 }
