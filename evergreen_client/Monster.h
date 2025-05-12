@@ -27,7 +27,7 @@ protected:
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
 	MonsterHPPanel* m_hpPanel;
 
-	int m_hp = GET_DATA(int,"Fox", "hp");
+	int m_hp = GET_DATA(int, "Fox", "hp");
 	Vector3 m_lastPosition = Vector3::Zero;
 
 public:

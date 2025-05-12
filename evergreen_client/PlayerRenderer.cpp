@@ -9,31 +9,9 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 {
 	m_rendererObj = std::make_shared<SceneObject>();
 
-	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
+	InitializePriest();
 
-	auto shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl"));
-
-	m_transformBody = pBody->GetTransform();
-	m_rendererObj->AddChild(pBody);
-
-	m_transformBody->SetLocalPositionY(-5.5f);
-
-	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
-	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.glb")));
-	m_renderer->SetShader(shader);
-	
-	for (int i = 0; i < m_playerMaterials.size(); ++i)
-	{
-		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
-		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
-	}
-	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
-	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
-	m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_body_BaseColor.png")));
-	m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
-
-	auto sceneObject = GetSceneObject();
-	sceneObject->AddChild(m_rendererObj);
+	GetSceneObject()->AddChild(m_rendererObj);
 
 	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "CharacterScale", "Value"));
 
@@ -73,30 +51,76 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	}
 
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Death, AnimationState::Idle, 2.f);
-
-	{
-		m_toolMaterial = std::make_shared<udsdx::Material>();
-		m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword_albedo.jpg")));
-
-		auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
-		toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword.obj")));
-		toolRenderer->SetShader(shader);
-		toolRenderer->SetMaterial(m_toolMaterial.get());
-		toolRenderer->SetBoneName("Bip001 R Hand");
-		toolRenderer->SetPropLocalTransform(Matrix4x4::CreateScale(16.0f) * Matrix4x4::CreateFromYawPitchRoll(0.0f, -PIDIV2, 0.0f) * Matrix4x4::CreateTranslation(3.0f, 1.0f, -12.0f));
-	}
 	
 	OnAnimationStateChange(AnimationState::Idle);
 }
 
-PlayerRenderer::~PlayerRenderer()
+void PlayerRenderer::InitializeWarrior()
 {
+	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
+
+	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
+	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.glb")));
+	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+
+	m_transformBody = pBody->GetTransform();
+	m_rendererObj->AddChild(pBody);
+
+	m_transformBody->SetLocalPositionY(-5.5f);
+
+	m_toolMaterial = std::make_shared<udsdx::Material>();
+	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword_albedo.jpg")));
+
+	auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
+	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword.obj")));
+	toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+	toolRenderer->SetMaterial(m_toolMaterial.get());
+	toolRenderer->SetBoneName("Bip001 R Hand");
+	toolRenderer->SetPropLocalTransform(Matrix4x4::CreateScale(16.0f) * Matrix4x4::CreateFromYawPitchRoll(0.0f, -PIDIV2, 0.0f) * Matrix4x4::CreateTranslation(3.0f, 1.0f, -12.0f));
+
+	for (int i = 0; i < m_playerMaterials.size(); ++i)
+	{
+		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
+		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
+	}
+	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
+	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
+	m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_body_BaseColor.png")));
+	m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
+}
+
+void PlayerRenderer::InitializePriest()
+{
+	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
+
+	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
+	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"priest\\priest.fbx")));
+	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+
+	m_transformBody = pBody->GetTransform();
+	m_rendererObj->AddChild(pBody);
+
+	m_transformBody->SetLocalPositionY(-5.5f);
+
+	m_toolMaterial = std::make_shared<udsdx::Material>();
+	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\Weapon\\saber excalibur\\saberexcalibur_albedo.png")));
+
+	auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
+	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\Weapon\\saber excalibur\\saberexcalibur.obj")));
+	toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+	toolRenderer->SetMaterial(m_toolMaterial.get());
+	toolRenderer->SetBoneName("Bip001 R Hand");
+	toolRenderer->SetPropLocalTransform(Matrix4x4::CreateScale(0.1f) * Matrix4x4::CreateFromYawPitchRoll(0.0f, -PIDIV2, 0.0f) * Matrix4x4::CreateTranslation(3.0f, 1.0f, -12.0f));
 }
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
 	EntityMovement* entityMovement = GetComponent<EntityMovement>();
-	const Vector3 acceleration = entityMovement->GetAcceleration();
+	Vector3 acceleration = Vector3::Zero;
+	if (entityMovement != nullptr)
+	{
+		acceleration = entityMovement->GetAcceleration();
+	}
 	int moveAngleInt = -1;
 	if (acceleration.LengthSquared() > 0.1f)
 	{
