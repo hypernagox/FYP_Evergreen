@@ -38,10 +38,11 @@ void PlayerSelect::Update(const Time& time, Scene& scene)
 	for (size_t i = 0; i < m_characterObjects.size(); ++i)
 	{
 		float angle = (i - targetRotaitonPivot) * 2.0f * PI / m_characterObjects.size();
-		Vector3 characterPosition = Vector3(sinf(angle), -0.75f, -cosf(angle));
-		characterPosition += Vector3::Backward * 4.0f;
+		Vector3 characterPosition = Vector3(sinf(angle), -0.75f, -cosf(angle)) * 5.0f;
+		characterPosition += Vector3::Backward * 20.0f;
 		m_characterObjects[i]->GetTransform()->SetLocalPosition(characterPosition);
 		m_characterObjects[i]->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-angle, 0.0f, 0.0f));
+		m_characterObjects[i]->GetTransform()->SetLocalScale(Vector3::One * 5.0f);
 	}
 }
 
