@@ -24,6 +24,7 @@ private:
 	std::shared_ptr<SceneObject> m_cameraObj;
 	std::shared_ptr<SceneObject> m_particlePrefab;
 
+	unsigned int m_playerType = 0;
 	bool m_bGround = false;
 	bool m_bKeyInput = false;
 	float m_rendererBodyAngleY = 0.0f;
@@ -82,7 +83,6 @@ public:
 	AuthenticPlayer(const std::shared_ptr<SceneObject>& object);
 	~AuthenticPlayer();
 
-	void FireProj();
 	void DoAttack();
 	void Start();
 	void Update(const Time& time, Scene& scene) override;
@@ -93,6 +93,7 @@ public:
 	bool& GetSendFlag()noexcept { return m_bSendFlag; }
 	const float GetYAngle()const noexcept { return m_rendererBodyAngleY; }
 
+	void SetPlayerType(unsigned int playerType) noexcept { m_playerType = playerType; }
 	void InitCamDirection();
 	void SetServerObject(ServerObject* serverObject) noexcept { m_pServerObject = serverObject; }
 	void SetHeightMap(HeightMap* terrainData) noexcept { m_heightMap = terrainData; }

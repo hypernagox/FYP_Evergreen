@@ -242,27 +242,26 @@ void AuthenticPlayer::TryClickScreen()
 	//std::cout << "공격 시도\n";
 }
 
-void AuthenticPlayer::FireProj()
-{
-	if constexpr (g_bUseNetWork)
-	{
-		const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
-		m_bSendFlag = true;
-		Send(
-			Create_c2s_FIRE_PROJ(ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()), rad)
-		);
-	}
-}
-
 void AuthenticPlayer::DoAttack()
 {
 	if constexpr (g_bUseNetWork)
 	{
-		const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
-		m_bSendFlag = true;
-		Send(
-			Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
-		);
+		if (m_playerType == 0)
+		{
+			const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
+			m_bSendFlag = true;
+			Send(
+				Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
+			);
+		}
+		else if (m_playerType == 1)
+		{
+			const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
+			m_bSendFlag = true;
+			Send(
+				Create_c2s_FIRE_PROJ(ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()), rad)
+			);
+		}
 	}
 }
 
@@ -351,17 +350,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	navi->SetCellPos(DT, prev_pos, transform->GetLocalPosition(), temp);
 	transform->SetLocalPosition(temp);
 	GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
-
-	if (INSTANCE(Input)->GetMouseRightButtonDown())
-	{
-		const auto state = m_playerRenderer->GetCurrentState();
-		if (PlayerRenderer::AnimationState::Attack != state)
-		{
-			// m_playerRenderer->Attack();
-			FireProj();
-			//std::cout << "공격 시도\n";
-		}
-	}
 
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	{

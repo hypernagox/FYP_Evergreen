@@ -35,6 +35,8 @@
 #include "PlayerTagGUI.h"
 #include "InteractionFloatGUI.h"
 #include "DamageCountGUI.h"
+#include "PlayerSelect.h"
+#include "MainMenuCharacterGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -431,9 +433,18 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
         auto mainMenuObj = std::make_shared<SceneObject>();
         auto mainMenuComp = mainMenuObj->AddComponent<MainMenuGUI>();
-        mainMenuComp->SetEnterGameCallback([this]() { EnterGame(); });
+        mainMenuComp->SetEnterGameCallback([this]() { EnterCharacterSelection(); });
         mainMenuComp->SetExitGameCallback([this]() { ExitGame(); });
         AddObject(mainMenuObj);
+
+        m_playerSelectObj = std::make_shared<SceneObject>();
+        m_playerSelectObj->SetActive(false);
+        auto mainMenuCharacterComp = m_playerSelectObj->AddComponent<MainMenuCharacterGUI>();
+        mainMenuCharacterComp->SetCharacterShowCallback([this](unsigned int character) {
+            m_mainMenuCameraObject->GetComponent<PlayerSelect>()->SetShowingCharacter(character);
+            });
+        mainMenuCharacterComp->SetEnterGameCallback([this](unsigned int character) { EnterGame(character); });
+        AddObject(m_playerSelectObj);
 
         INSTANCE(GameGUIFacade)->PartyList = partyListComp;
         INSTANCE(GameGUIFacade)->LogFloat = logFloatComp;
@@ -509,8 +520,31 @@ void GameScene::Update(const Time& time)
     Scene::Update(time);
 }
 
-void GameScene::EnterGame()
+void GameScene::EnterCharacterSelection()
 {
+    m_mainMenuCameraObject->GetComponent<CameraPerspective>()->SetClipOffset(Vector2::Zero);
+    m_mainMenuCameraObject->GetComponent<BezierMovement>()->SetActive(false);
+    m_mainMenuCameraObject->AddComponent<PlayerSelect>();
+    m_playerSelectObj->SetActive(true);
+}
+
+void GameScene::EnterGame(unsigned int character)
+{
+    m_heroComponent->SetPlayerType(character);
+    PlayerRenderer* playerRenderer = m_heroObj->GetComponent<PlayerRenderer>();
+    switch (character)
+    {
+        case 0:
+			playerRenderer->InitializeWarrior();
+			break;
+        case 1:
+            playerRenderer->InitializePriest();
+            break;
+        default:
+            playerRenderer->InitializePriest();
+			break;
+    }
+
     AddObject(m_heroObj);
     AddObject(m_spectatorObj);
     AddObject(m_activeObjectGroup);
@@ -536,7 +570,7 @@ void GameScene::EnterGame()
     if constexpr (true == g_bUseNetWork)
     {
         // TODO: 여기서 캐릭터 종류를 넣어주세요
-        Nagox::Enum::PLAYER_TYPE player_type = Nagox::Enum::PLAYER_TYPE_WARRIOR;
+        Nagox::Enum::PLAYER_TYPE player_type = character ? Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_PRIEST : Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_WARRIOR;
 
         Send(Create_c2s_ENTER
         (ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())
