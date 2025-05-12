@@ -39,5 +39,6 @@ public:
 	const auto& GetRenderObjTransform()const noexcept { return m_rendererObj->GetTransform(); }
 	void OnAttackToPlayer();
 	void OnAnimationStateChange(AnimationState from, AnimationState to);
+	int GetHP() const { return m_hp; }
 	void OnHit(int afterHealth);
 };

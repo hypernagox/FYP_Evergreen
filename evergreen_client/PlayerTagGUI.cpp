@@ -6,16 +6,11 @@ using namespace udsdx;
 
 PlayerTagGUI::PlayerTagGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
 {
-	m_panelObject = std::make_shared<SceneObject>();
-	auto panelRenderer = m_panelObject->AddComponent<GUIImage>();
-	panelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tag_background.png")), true);
-
 	m_nameObject = std::make_shared<SceneObject>();
 	auto nameRenderer = m_nameObject->AddComponent<GUIText>();
 	nameRenderer->SetText(L"Player Name");
 	nameRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 
-	object->AddChild(m_panelObject);
 	object->AddChild(m_nameObject);
 }
 
