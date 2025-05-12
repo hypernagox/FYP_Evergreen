@@ -273,6 +273,12 @@
     <ClCompile Include="PlayerTagGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="MainMenuCharacterGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerSelect.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -448,6 +454,12 @@
     </ClInclude>
     <ClInclude Include="PlayerTagGUI.h">
       <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuCharacterGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSelect.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

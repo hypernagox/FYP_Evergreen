@@ -26,6 +26,19 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Warrior(EntityBuil
 	auto movement = instance->AddComponent<EntityMovement>();
 	movement->SetFriction(0.0f);
 	auto playerComponent = instance->AddComponent<PlayerRenderer>();
+	switch (builder->obj_type)
+	{
+	case 0:
+		playerComponent->InitializeWarrior();
+		break;
+	case 1:
+		playerComponent->InitializePriest();
+		break;
+	default:
+		playerComponent->InitializePriest();
+		break;
+	}
+
 	auto serverComponent = instance->AddComponent<ServerObject>();
 	auto interactiveEntity = instance->AddComponent<InteractiveEntity>();
 	interactiveEntity->SetInteractionText(L"상호작용 (파티초대)");

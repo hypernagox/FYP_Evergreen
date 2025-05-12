@@ -42,7 +42,7 @@ public:
 
 	Transform* const GetRenderObjTransform() const noexcept { return m_rendererObj->GetTransform(); }
 	void SetRotation(const Quaternion& rotation) { m_rendererObj->GetTransform()->SetLocalRotation(rotation); }
-	void SetAnimation(AnimationClip* animationClip) { m_renderer->SetAnimation(animationClip); }
+	void SetAnimation(AnimationClip* animationClip, bool loop, bool forcePlay) { m_renderer->SetAnimation(animationClip, loop, forcePlay); }
 	void OnAnimationStateChange(const AnimationState& state);
 	void Attack() { *m_stateMachine->GetConditionRefBool("Attack") = true; }
 	void Hit() { *m_stateMachine->GetConditionRefBool("Hit") = true; }

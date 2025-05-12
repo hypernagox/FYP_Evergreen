@@ -15,8 +15,10 @@ public:
 
 public:
 	void Update(const udsdx::Time& time) override;
+	// 게임 시작 시 캐릭터를 선택하는 단계
+	void EnterCharacterSelection();
 	// 플레이어를 생성하고 월드에 추가하는 단계
-	void EnterGame();
+	void EnterGame(unsigned int character);
 	// 게임 종료
 	void ExitGame();
 	void OnTogglePause(bool isPaused);
@@ -53,6 +55,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_pauseMenuObj;
 	std::shared_ptr<udsdx::SceneObject> m_partyListObj;
 	std::shared_ptr<udsdx::SceneObject> m_playerTagObj;
+	std::shared_ptr<udsdx::SceneObject> m_playerSelectObj;
 
 	AuthenticPlayer* m_heroComponent;
 
@@ -66,4 +69,5 @@ private:
 	std::shared_ptr<udsdx::Mesh> m_terrainMesh;
 
 	bool m_bSpectatorMode = false;
+	bool m_bCharacterSelect = false;
 };

@@ -446,6 +446,7 @@
     <ClCompile Include="InteractiveEntity.cpp" />
     <ClCompile Include="LogFloatGUI.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenuCharacterGUI.cpp" />
     <ClCompile Include="MainMenuGUI.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterHPPanel.cpp" />
@@ -466,6 +467,7 @@
     <ClCompile Include="PlayerInventoryGUI.cpp" />
     <ClCompile Include="PlayerQuickSlotGUI.cpp" />
     <ClCompile Include="PlayerRenderer.cpp" />
+    <ClCompile Include="PlayerSelect.cpp" />
     <ClCompile Include="PlayerStatusGUI.cpp" />
     <ClCompile Include="PlayerTagGUI.cpp" />
     <ClCompile Include="PositionSetter.cpp" />
@@ -523,6 +525,7 @@
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="InteractiveEntity.h" />
     <ClInclude Include="LogFloatGUI.h" />
+    <ClInclude Include="MainMenuCharacterGUI.h" />
     <ClInclude Include="MainMenuGUI.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterHPPanel.h" />
@@ -537,6 +540,7 @@
     <ClInclude Include="PlayerInventoryGUI.h" />
     <ClInclude Include="PlayerQuickSlotGUI.h" />
     <ClInclude Include="PlayerRenderer.h" />
+    <ClInclude Include="PlayerSelect.h" />
     <ClInclude Include="PlayerStatusGUI.h" />
     <ClInclude Include="PlayerTagGUI.h" />
     <ClInclude Include="PositionSetter.h" />

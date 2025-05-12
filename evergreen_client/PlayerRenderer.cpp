@@ -9,8 +9,6 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 {
 	m_rendererObj = std::make_shared<SceneObject>();
 
-	InitializePriest();
-
 	GetSceneObject()->AddChild(m_rendererObj);
 
 	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "CharacterScale", "Value"));
@@ -51,8 +49,6 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	}
 
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Death, AnimationState::Idle, 2.f);
-	
-	OnAnimationStateChange(AnimationState::Idle);
 }
 
 void PlayerRenderer::InitializeWarrior()
@@ -83,10 +79,12 @@ void PlayerRenderer::InitializeWarrior()
 		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
 		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
 	}
-	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
-	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
 	m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_body_BaseColor.png")));
 	m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
+	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
+	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
+
+	OnAnimationStateChange(AnimationState::Idle);
 }
 
 void PlayerRenderer::InitializePriest()
@@ -94,7 +92,7 @@ void PlayerRenderer::InitializePriest()
 	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
 
 	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
-	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"priest\\priest.fbx")));
+	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"priest\\priest.glb")));
 	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
 
 	m_transformBody = pBody->GetTransform();
@@ -103,14 +101,26 @@ void PlayerRenderer::InitializePriest()
 	m_transformBody->SetLocalPositionY(-5.5f);
 
 	m_toolMaterial = std::make_shared<udsdx::Material>();
-	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\Weapon\\saber excalibur\\saberexcalibur_albedo.png")));
+	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_staff_diffuse.png")));
 
 	auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
-	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\Weapon\\saber excalibur\\saberexcalibur.obj")));
+	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"priest\\priest_staff.obj")));
 	toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
 	toolRenderer->SetMaterial(m_toolMaterial.get());
 	toolRenderer->SetBoneName("Bip001 R Hand");
-	toolRenderer->SetPropLocalTransform(Matrix4x4::CreateScale(0.1f) * Matrix4x4::CreateFromYawPitchRoll(0.0f, -PIDIV2, 0.0f) * Matrix4x4::CreateTranslation(3.0f, 1.0f, -12.0f));
+	toolRenderer->SetPropLocalTransform(Matrix4x4::CreateScale(0.25f) * Matrix4x4::CreateFromYawPitchRoll(0.0f, PIDIV2, 0.0f) * Matrix4x4::CreateTranslation(3.0f, 1.0f, -22.0f));
+
+	for (int i = 0; i < m_playerMaterials.size(); ++i)
+	{
+		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
+		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
+	}
+	m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_body_BaseColor.png")));
+	m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
+	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
+	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
+
+	OnAnimationStateChange(AnimationState::Idle);
 }
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
