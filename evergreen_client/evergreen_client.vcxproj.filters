@@ -255,9 +255,6 @@
     <ClCompile Include="SpectatorPlayer.cpp">
       <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerTagGUI.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
     <ClCompile Include="InteractionFloatGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
@@ -269,6 +266,12 @@
     </ClCompile>
     <ClCompile Include="TutorialUI.cpp">
       <Filter>Gui\Tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageCountGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerTagGUI.cpp">
+      <Filter>Gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -428,9 +431,6 @@
     <ClInclude Include="SpectatorPlayer.h">
       <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerTagGUI.h">
-      <Filter>Player</Filter>
-    </ClInclude>
     <ClInclude Include="InteractionFloatGUI.h">
       <Filter>Gui</Filter>
     </ClInclude>
@@ -442,6 +442,12 @@
     </ClInclude>
     <ClInclude Include="TutorialUI.h">
       <Filter>Gui\Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageCountGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerTagGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

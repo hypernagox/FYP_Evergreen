@@ -35,7 +35,8 @@ public:
 	int m_attackState = 0;
 	Transform* m_transformBody;
 	PlayerRenderer(const std::shared_ptr<SceneObject>& object);
-	~PlayerRenderer();
+	void InitializeWarrior();
+	void InitializePriest();
 
 	void Update(const Time& time, Scene& scene) override;
 

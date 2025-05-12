@@ -34,6 +34,7 @@
 #include "MainMenuGUI.h"
 #include "PlayerTagGUI.h"
 #include "InteractionFloatGUI.h"
+#include "DamageCountGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -356,6 +357,10 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
         m_playerInterfaceGroup->AddChild(textObj);
 
+        auto damageCountObj = std::make_shared<SceneObject>();
+        auto damageCountRenderer = damageCountObj->AddComponent<DamageCountGUI>();
+        m_playerInterfaceGroup->AddChild(damageCountObj);
+
         m_playerTagObj = std::make_shared<SceneObject>();
         auto playerTagRenderer = m_playerTagObj->AddComponent<PlayerTagGUI>();
         m_playerInterfaceGroup->AddChild(m_playerTagObj);
@@ -383,6 +388,11 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         m_playerInterfaceGroup->AddChild(quickSlotObj);
         m_heroComponent->SetPlayerQuickSlotGUI(quickSlotRenderer);
 
+        auto logFloatObj = std::make_shared<SceneObject>();
+        auto logFloatComp = logFloatObj->AddComponent<LogFloatGUI>();
+        logFloatComp->AddText(L"Welcome to the game!");
+        m_playerInterfaceGroup->AddChild(logFloatObj);
+
         m_inventoryObj = std::make_shared<SceneObject>();
         auto inventoryRenderer = m_inventoryObj->AddComponent<PlayerInventoryGUI>();
         m_playerInterfaceGroup->AddChild(m_inventoryObj);
@@ -399,11 +409,6 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         auto partyListComp = m_partyListObj->AddComponent<PartyListGUI>();
         m_playerInterfaceGroup->AddChild(m_partyListObj);
 		m_partyListObj->SetActive(false);
-
-        auto logFloatObj = std::make_shared<SceneObject>();
-        auto logFloatComp = logFloatObj->AddComponent<LogFloatGUI>();
-        logFloatComp->AddText(L"Welcome to the game!");
-        m_playerInterfaceGroup->AddChild(logFloatObj);
 
         auto requestPopupObj = std::make_shared<SceneObject>();
         auto requestPopupComp = requestPopupObj->AddComponent<RequestPopupGUI>();
@@ -434,6 +439,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         INSTANCE(GameGUIFacade)->LogFloat = logFloatComp;
         INSTANCE(GameGUIFacade)->RequestPopup = requestPopupComp;
         INSTANCE(GameGUIFacade)->PartyStatus = partyStatusComp;
+        INSTANCE(GameGUIFacade)->DamageCount = damageCountRenderer;
     }
 
     {
@@ -581,6 +587,11 @@ void GameScene::OnTogglePlayerMode(bool spectatorMode)
 void GameScene::AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj)
 {
 	m_activeObjectGroup->AddChild(obj);
+}
+
+void GameScene::AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj)
+{
+	m_playerInterfaceGroup->AddChild(obj);
 }
 
 std::vector<InteractiveEntity*> GameScene::GetInteractiveEntities() const

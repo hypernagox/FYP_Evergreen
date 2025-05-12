@@ -36,7 +36,7 @@ void InteractionFloatGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 	if (gameScene != nullptr)
 	{
 		auto camera = gameScene->GetMainCamera();
-		Vector3 viewPos = Vector3::Transform(m_targetPos, camera->GetViewMatrix());
+		Vector3 viewPos = Vector3::Transform(m_targetPos + Vector3::Up, camera->GetViewMatrix());
 		if (viewPos.z > 0.0f)
 		{
 			m_panel->SetActive(true);

@@ -41,7 +41,7 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(from, to); });
 
 	auto hpPanelObj = std::make_shared<SceneObject>();
-	hpPanelObj->GetTransform()->SetLocalPosition(Vector3::Up * 3.0f);
+	hpPanelObj->GetTransform()->SetLocalPosition(Vector3::Up * 1.5f);
 	m_hpPanel = hpPanelObj->AddComponent<MonsterHPPanel>();
 	GetSceneObject()->AddChild(hpPanelObj);
 }
@@ -83,5 +83,5 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 void Monster::OnHit(int afterHealth)
 {
 	m_hp = afterHealth;
-	m_hpPanel->SetHPFraction(m_hp / 3.0f);
+	m_hpPanel->SetHPFraction(static_cast<float>(afterHealth) / GET_DATA(int, "Fox", "hp"));
 }

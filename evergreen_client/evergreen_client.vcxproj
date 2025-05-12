@@ -407,6 +407,7 @@
     </ClCompile>
     <ClCompile Include="AuthenticPlayer.cpp" />
     <ClCompile Include="BezierMovement.cpp" />
+    <ClCompile Include="DamageCountGUI.cpp" />
     <ClCompile Include="DropItem.cpp" />
     <ClCompile Include="DropItemRenderer.cpp" />
     <ClCompile Include="EntityBuilder.cpp" />
@@ -501,6 +502,7 @@
     <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="AuthenticPlayer.h" />
     <ClInclude Include="BezierMovement.h" />
+    <ClInclude Include="DamageCountGUI.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DropItem.h" />
     <ClInclude Include="DropItemRenderer.h" />

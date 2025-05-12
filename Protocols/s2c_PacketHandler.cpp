@@ -20,6 +20,7 @@
 #include "RequestPopupGUI.h"
 #include "PartyStatusGUI.h"
 #include "GuideSystem.h"
+#include "DamageCountGUI.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -155,7 +156,11 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 	{
 		// TODO: 현재체력과 힛 애프터의 차이가 필요,
 		// 이 수치를 기록하고 관리할 클래스 있어야함
+		int before_hp = monster->GetHP();
 		monster->OnHit(hit_after_hp);
+
+		auto damageCount = INSTANCE(GameGUIFacade)->DamageCount;
+		damageCount->AddCountObject(hit_obj_ptr->GetTransform()->GetLocalPosition(), static_cast<unsigned int>(before_hp) - hit_after_hp);
 	}
 	if (const auto player = hit_obj_ptr->GetComponent<PlayerRenderer>())
 	{
