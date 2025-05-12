@@ -322,7 +322,7 @@ namespace NagiocpX
 				PrintLogEndl("Retry Send As Error");
 			}
 		}
-		PrintLogEndl(std::format(L"Send Error: {}", errCode));
+		//PrintLogEndl(std::format(L"Send Error: {}", errCode));
 	}
 
 	void Session::RetrySend() const noexcept
