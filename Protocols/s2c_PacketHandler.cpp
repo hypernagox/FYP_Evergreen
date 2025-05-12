@@ -96,7 +96,7 @@ const bool Handle_s2c_REMOVE_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 {
 	if (pkt_.obj_id() == g_npcid)
 	{
-		std::cout << "NPC 퇴장\n";
+		//std::cout << "NPC 퇴장\n";
 	}
 	Mgr(ServerObjectMgr)->RemoveObject(pkt_.obj_id());
 	return true;

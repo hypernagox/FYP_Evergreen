@@ -66,7 +66,7 @@ namespace Common
 		CommonMath::InverseZ(out_pos);
 	}
 
-	int NavigationMesh::findRandomPointAroundCircle(float* pos, float radius, float* outPos)
+	int NavigationMesh::findRandomPointAroundCircle(const float* pos, float radius, float* outPos)
 	{
 		dtPolyRef ref;
 		dtPolyRef m_startRef = 0;

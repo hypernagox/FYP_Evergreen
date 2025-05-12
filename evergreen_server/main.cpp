@@ -42,14 +42,16 @@ public:
 		//	Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
 		//}
 
-		//for (int i = 0; i < 200; ++i)
-		//{
-		//	EntityBuilder b;
-		//	b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
-		//	b.obj_type = 0;
-		//	const auto m = EntityFactory::CreateRangeMonster(b);
-		//	Mgr(FieldMgr)->GetField(0)->EnterFieldNPC(m);
-		//}
+		for (int i = 0; i < 100; ++i)
+		{
+			EntityBuilder b;
+			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+			b.obj_type = 0;
+			const auto m = EntityFactory::CreateSheep(b);
+			const auto m2 = m.get();
+			static_cast<Regenerator*>(m->GetDeleter())->m_targetField = Field::GetField(0)->SharedFromThis<Field>();
+			Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
+		}
 
 		const auto& h = HarvestLoader::GetHarvestPos();
 		for (const auto& [pos,type,mesh_type] : h)
@@ -65,55 +67,8 @@ public:
 			m->GetComp<HarvestInteraction>()->SetInteractionType(mesh_type);
 			const auto m2 = m.get();
 			Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
-			//Field::GetField(0)->EnterFieldNPCWithFloatXY(,m);
 		}
-		const Vector3 points[] = {
-	Vector3(-259.22272F,84.94523F,-15.314469F),
-	Vector3(-242.5948F,83.53157F,-20.12327F)  ,
-	Vector3(-244.0131F,83.93936F,-1.8343055F) ,
-	Vector3(-225.44817F,81.969826F,-12.672854F),
-	Vector3(-210.61905F,81.896484F,5.847359F) ,
-	Vector3(-199.39998F,80.16998F,-11.756538F),
-	Vector3(-192.54158F,80.21647F,5.781999F)  ,
-	Vector3(-174.05774F,78.48746F,-9.923426F) ,
-	Vector3(-158.33324F,77.9395F,5.0919523F)  ,
-		};
-		//const auto num = sizeof(points) / sizeof(points[0]);
-		//for (int i = 0; i < num; ++i)
-		//{
-		//	EntityBuilder b;
-		//	b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
-		//	b.obj_type = MONSTER_TYPE_INFO::FOX;
-		//	const auto m = EntityFactory::CreateMonster(b);
-		//	//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
-		//	//m->GetComp<PositionComponent>()->pos = points[i];
-		//	auto p = points[i];
-		//	//float f[3]{ 10,10000,10 };
-		//	//auto p2 = p;
-		//	//dtPolyRef ref;
-		//	//NAVIGATION->GetNavMesh(NUM_0)->GetNavMeshQuery()->findNearestPoly(&p.x, f,
-		//	//	NAVIGATION->GetNavMesh(NUM_0)->GetNavFilter(), &ref, &p2.x
-		//	//);
-		//
-		//	//p.y = NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(p).CalculateHeight(p, NAVIGATION->GetNavMesh(NUM_0));
-		//	m->GetComp<NaviAgent>()->SetPos(p);
-		//	m->GetComp<PositionComponent>()->pos = p;
-		//	const auto pos = p;
-		//	//m->GetComp<NaviAgent>()->InitCrowd();
-		//	Field::GetField(0)->EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
-		//	//EnterFieldNPC(m);
-		//}
-
 		HarvestLoader::FreeHarvestLoader();
-		//{
-		//	EntityBuilder b;
-		//	b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
-		//	b.obj_type = 0;
-		//	b.x = -10.0f;
-		//	b.y = 0.f;
-		//	b.z = -10.0f;
-		//	Field::GetField(0)->EnterFieldNPC(EntityFactory::CreateNPC(b));
-		//}
 	}
 
 	virtual void TLSInitialize()noexcept override
