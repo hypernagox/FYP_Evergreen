@@ -404,3 +404,4 @@ test_lab/imgui.ini
 test_lab/AssimpLog.txt
 *.ddscache
 evergreen_client/UnitiyBuild/Debug-Usenet
+!resource/**/*.obj
