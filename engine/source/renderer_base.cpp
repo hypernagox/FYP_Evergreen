@@ -71,6 +71,6 @@ namespace udsdx
 	void RendererBase::UpdateTransformCache()
 	{
 		m_prevTransformCache = std::move(m_transformCache);
-		m_transformCache = GetSceneObject()->GetTransform()->GetWorldSRTMatrix();
+		m_transformCache = GetSceneObject()->GetTransform()->GetWorldSRTMatrix(false);
 	}
 }

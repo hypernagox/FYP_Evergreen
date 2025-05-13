@@ -5,10 +5,6 @@ namespace Common
 {
 	using namespace DirectX;
 
-	Transform::Transform()
-	{
-	}
-
 	void Transform::SetParent(Transform* parent)
 	{
 		m_parent = parent;
@@ -22,19 +18,74 @@ namespace Common
 	void Transform::SetLocalPosition(const Vector3& position)
 	{
 		m_position = position;
-		m_matrixDirty = true;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::SetLocalPosition(float x, float y, float z)
+	{
+		m_position.x = x;
+		m_position.y = y;
+		m_position.z = z;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalRotation(const Quaternion& rotation)
 	{
 		m_rotation = rotation;
-		m_matrixDirty = true;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalScale(const Vector3& scale)
 	{
 		m_scale = scale;
-		m_matrixDirty = true;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::SetLocalScale(float x, float y, float z)
+	{
+		m_scale.x = x;
+		m_scale.y = y;
+		m_scale.z = z;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::SetLocalScale(float scale)
+	{
+		m_scale.x = scale;
+		m_scale.y = scale;
+		m_scale.z = scale;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::SetLocalPositionX(float x)
+	{
+		m_position.x = x;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::SetLocalPositionY(float y)
+	{
+		m_position.y = y;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::SetLocalPositionZ(float z)
+	{
+		m_position.z = z;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::Translate(const Vector3& translation)
+	{
+		m_position += translation;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::Rotate(const Quaternion& rotation)
+	{
+		m_rotation = Quaternion::Concatenate(m_rotation, rotation);
+		m_rotation.Normalize();
+		m_isLocalMatrixDirty = true;
 	}
 
 	Vector3 Transform::GetLocalPosition() const
@@ -55,13 +106,22 @@ namespace Common
 	Vector3 Transform::GetWorldPosition()
 	{
 		ValidateMatrixRecursive();
-		return Vector3::Transform(Vector3::Zero, m_worldSRTMatrix);
+		// Get the translation part of the world matrix.
+		return Vector3(m_worldSRTMatrix._41, m_worldSRTMatrix._42, m_worldSRTMatrix._43);
 	}
 
 	Quaternion Transform::GetWorldRotation()
 	{
 		ValidateMatrixRecursive();
-		return Quaternion::CreateFromRotationMatrix(m_worldSRTMatrix);
+		// Caution: The matrix must be orthogonal to get the correct quaternion.
+		Vector3 xBasis(m_worldSRTMatrix._11, m_worldSRTMatrix._12, m_worldSRTMatrix._13);
+		Vector3 yBasis(m_worldSRTMatrix._21, m_worldSRTMatrix._22, m_worldSRTMatrix._23);
+		Vector3 zBasis(m_worldSRTMatrix._31, m_worldSRTMatrix._32, m_worldSRTMatrix._33);
+		xBasis.Normalize();
+		yBasis.Normalize();
+		zBasis.Normalize();
+		Matrix worldRotationMatrix(xBasis, yBasis, zBasis); // Create a rotation matrix from the orthogonal vectors.
+		return Quaternion::CreateFromRotationMatrix(Matrix(worldRotationMatrix));
 	}
 
 	Matrix Transform::GetLocalSRTMatrix()
@@ -70,18 +130,19 @@ namespace Common
 		return m_localSRTMatrix;
 	}
 
-	Matrix Transform::GetWorldSRTMatrix()
+	Matrix Transform::GetWorldSRTMatrix(bool forceValidate)
 	{
-		ValidateMatrixRecursive();
+		if (forceValidate)
+		{
+			ValidateMatrixRecursive();
+		}
+
 		return m_worldSRTMatrix;
 	}
 
-	// Validate the local SRT matrix.
-	// If the local matrix is dirty, the local SRT matrix is recalculated.
-	// The return value is true if the local matrix was dirty; you can use the return value to determine whether the children need to be recalculated.
 	bool Transform::ValidateLocalSRTMatrix()
 	{
-		if (!m_matrixDirty)
+		if (!m_isLocalMatrixDirty)
 		{
 			return false;
 		}
@@ -95,7 +156,7 @@ namespace Common
 		// Apply the local SRT matrix.
 		XMStoreFloat4x4(&m_localSRTMatrix, m);
 
-		m_matrixDirty = false;
+		m_isLocalMatrixDirty = false;
 		return true;
 	}
 
@@ -118,11 +179,26 @@ namespace Common
 
 	void Transform::ValidateMatrixRecursive()
 	{
-		if (m_parent != nullptr)
+		static std::stack<Transform*> stack;
+		Transform* current = this;
+		while (current != nullptr)
 		{
-			m_parent->ValidateMatrixRecursive();
+			stack.emplace(current);
+			current = current->m_parent;
 		}
-		ValidateLocalSRTMatrix();
-		ValidateWorldSRTMatrix();
+
+		bool forceValidate = false;
+		while (!stack.empty())
+		{
+			current = stack.top();
+			stack.pop();
+
+			// Validate the local SRT matrix.
+			forceValidate |= current->ValidateLocalSRTMatrix();
+			if (forceValidate)
+			{
+				current->ValidateWorldSRTMatrix();
+			}
+		}
 	}
 }

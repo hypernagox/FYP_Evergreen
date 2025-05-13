@@ -213,7 +213,6 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	{
 		Transform* pAnchorTransform = m_cameraAnchor->GetTransform();
 		const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
-		pAnchorTransform->ValidateMatrixRecursive();
 		Matrix4x4 cameraWorldMatrix = pAnchorTransform->GetWorldSRTMatrix();
 		Matrix4x4 terrainWorldMatrix = Matrix4x4::CreateScale(TerrainSize) * Matrix4x4::CreateTranslation(Vector3(-0.5f, 0.0f, -0.5f) * TerrainSize);
 		Matrix4x4 cameraToTerrain = cameraWorldMatrix * terrainWorldMatrix.Invert();

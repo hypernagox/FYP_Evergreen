@@ -19,7 +19,7 @@ namespace udsdx
 
 	Vector3 LightDirectional::GetLightDirection() const
 	{
-		XMMATRIX worldSRTMatrix = XMLoadFloat4x4(&GetSceneObject()->GetTransform()->GetWorldSRTMatrix());
+		XMMATRIX worldSRTMatrix = XMLoadFloat4x4(&GetSceneObject()->GetTransform()->GetWorldSRTMatrix(false));
 		XMVECTOR lightDir = XMVector4Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), worldSRTMatrix);
 		Vector3 v;
 		XMStoreFloat3(&v, lightDir);

@@ -26,7 +26,7 @@ namespace udsdx
 		float aspect = width / height;
 
 		CameraConstants constants;
-		Matrix4x4 worldMat = GetTransform()->GetWorldSRTMatrix();
+		Matrix4x4 worldMat = GetTransform()->GetWorldSRTMatrix(false);
 		Matrix4x4 viewMat = GetViewMatrix();
 		Matrix4x4 projMat = GetProjMatrix(aspect);
 		Matrix4x4 viewProjMat = viewMat * projMat;
@@ -49,7 +49,7 @@ namespace udsdx
 
 	Matrix4x4 Camera::GetViewMatrix() const
 	{
-		XMMATRIX worldSRTMatrix = XMLoadFloat4x4(&GetSceneObject()->GetTransform()->GetWorldSRTMatrix());
+		XMMATRIX worldSRTMatrix = XMLoadFloat4x4(&GetSceneObject()->GetTransform()->GetWorldSRTMatrix(false));
 		XMVECTOR eye = XMVector4Transform(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), worldSRTMatrix);
 		XMVECTOR at = XMVector4Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), worldSRTMatrix) + eye;
 		XMVECTOR up = XMVector4Transform(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), worldSRTMatrix);

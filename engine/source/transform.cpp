@@ -3,25 +3,6 @@
 
 namespace udsdx
 {
-	Transform::Transform()
-	{
-		m_parent = nullptr;
-
-		m_position = Vector3::Zero;
-		m_rotation = Quaternion::Identity;
-		m_scale = Vector3::One;
-
-		m_localSRTMatrix = Matrix4x4::Identity;
-		m_worldSRTMatrix = Matrix4x4::Identity;
-
-		m_isLocalMatrixDirty = true;
-	}
-
-	Transform::~Transform()
-	{
-
-	}
-
 	void Transform::SetParent(Transform* parent)
 	{
 		m_parent = parent;
@@ -38,6 +19,14 @@ namespace udsdx
 		m_isLocalMatrixDirty = true;
 	}
 
+	void Transform::SetLocalPosition(float x, float y, float z)
+	{
+		m_position.x = x;
+		m_position.y = y;
+		m_position.z = z;
+		m_isLocalMatrixDirty = true;
+	}
+
 	void Transform::SetLocalRotation(const Quaternion& rotation)
 	{
 		m_rotation = rotation;
@@ -47,6 +36,22 @@ namespace udsdx
 	void Transform::SetLocalScale(const Vector3& scale)
 	{
 		m_scale = scale;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::SetLocalScale(float x, float y, float z)
+	{
+		m_scale.x = x;
+		m_scale.y = y;
+		m_scale.z = z;
+		m_isLocalMatrixDirty = true;
+	}
+
+	void Transform::SetLocalScale(float scale)
+	{
+		m_scale.x = scale;
+		m_scale.y = scale;
+		m_scale.z = scale;
 		m_isLocalMatrixDirty = true;
 	}
 
@@ -76,7 +81,8 @@ namespace udsdx
 
 	void Transform::Rotate(const Quaternion& rotation)
 	{
-		m_rotation *= rotation;
+		m_rotation = Quaternion::Concatenate(m_rotation, rotation);
+		m_rotation.Normalize();
 		m_isLocalMatrixDirty = true;
 	}
 
@@ -122,14 +128,16 @@ namespace udsdx
 		return m_localSRTMatrix;
 	}
 
-	Matrix4x4 Transform::GetWorldSRTMatrix()
+	Matrix4x4 Transform::GetWorldSRTMatrix(bool forceValidate)
 	{
+		if (forceValidate)
+		{
+			ValidateMatrixRecursive();
+		}
+
 		return m_worldSRTMatrix;
 	}
 
-	// Validate the local SRT matrix.
-	// If the local matrix is dirty, the local SRT matrix is recalculated.
-	// The return value is true if the local matrix was dirty; you can use the return value to determine whether the children need to be recalculated.
 	bool Transform::ValidateLocalSRTMatrix()
 	{
 		if (!m_isLocalMatrixDirty)
@@ -169,11 +177,26 @@ namespace udsdx
 
 	void Transform::ValidateMatrixRecursive()
 	{
-		if (m_parent != nullptr)
+		static std::stack<Transform*> stack;
+		Transform* current = this;
+		while (current != nullptr)
 		{
-			m_parent->ValidateMatrixRecursive();
+			stack.emplace(current);
+			current = current->m_parent;
 		}
-		ValidateLocalSRTMatrix();
-		ValidateWorldSRTMatrix();
+
+		bool forceValidate = false;
+		while (!stack.empty())
+		{
+			current = stack.top();
+			stack.pop();
+
+			// Validate the local SRT matrix.
+			forceValidate |= current->ValidateLocalSRTMatrix();
+			if (forceValidate)
+			{
+				current->ValidateWorldSRTMatrix();
+			}
+		}
 	}
 }

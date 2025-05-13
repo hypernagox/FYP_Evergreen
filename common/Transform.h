@@ -1,4 +1,5 @@
 #pragma once
+
 #include "pch.h"
 
 namespace Common
@@ -8,15 +9,26 @@ namespace Common
 	class Transform
 	{
 	public:
-		Transform();
+		Transform() = default;
+		~Transform() = default;
 
 	public:
 		void SetParent(Transform* parent);
 		Transform* GetParent() const;
 
 		void SetLocalPosition(const Vector3& position);
+		void SetLocalPosition(float x, float y, float z);
 		void SetLocalRotation(const Quaternion& rotation);
 		void SetLocalScale(const Vector3& scale);
+		void SetLocalScale(float x, float y, float z);
+		void SetLocalScale(float scale);
+
+		void SetLocalPositionX(float x);
+		void SetLocalPositionY(float y);
+		void SetLocalPositionZ(float z);
+
+		void Translate(const Vector3& translation);
+		void Rotate(const Quaternion& rotation);
 
 		Vector3 GetLocalPosition() const;
 		Quaternion GetLocalRotation() const;
@@ -26,10 +38,22 @@ namespace Common
 		Quaternion GetWorldRotation();
 
 		Matrix GetLocalSRTMatrix();
-		Matrix GetWorldSRTMatrix();
+		Matrix GetWorldSRTMatrix(bool forceValidate = true);
 
+		// Validate the local SRT matrix.
+		// If the local matrix is dirty, the local SRT matrix is recalculated.
+		// The return value is true if the local matrix was dirty; you can use the return value to determine whether the children need to be recalculated.
 		bool ValidateLocalSRTMatrix();
+
+		// Validate the world SRT matrix.
+		// If the world matrix is dirty, the world SRT matrix is recalculated.
+		// Calling this function assumes the world SRT matrix of the parent is already calculated.
 		void ValidateWorldSRTMatrix();
+
+		// Validate both the local and the world SRT matrices.
+		// This function traverses the all parents of the transform and validates the world SRT matrix of each parent.
+		// This provides the most accurate result, but may be slow in some cases.
+		// It is recommended to use this function only when you want to know the world transform of the other Transform once.
 		void ValidateMatrixRecursive();
 
 	protected:
@@ -42,6 +66,6 @@ namespace Common
 		Matrix		m_localSRTMatrix = Matrix::Identity;
 		Matrix		m_worldSRTMatrix = Matrix::Identity;
 
-		bool		m_matrixDirty = true;
+		bool		m_isLocalMatrixDirty = true;
 	};
 }

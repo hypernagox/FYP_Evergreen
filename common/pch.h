@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <Windows.h>
 #include <array>
+#include <stack>
 #include <unordered_set>
 #include <span>
 #include <format>
