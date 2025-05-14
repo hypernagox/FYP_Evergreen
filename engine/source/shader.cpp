@@ -127,6 +127,9 @@ namespace udsdx
 			psoDesc.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
 		}
 
+		psoDesc.RasterizerState.DepthBias = 1024;
+		psoDesc.RasterizerState.SlopeScaledDepthBias = 1.5f;
+
 		{	
 			std::wstring defines[] = {
 				L"GENERATE_SHADOWS"

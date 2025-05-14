@@ -29,7 +29,6 @@ cbuffer cbPerShadow : register(b3)
     float4x4 gLightViewProjClip[4];
 	float4 gLightPosW[4];
     float4 gShadowDistance;
-    float4 gShadowBias;
     float3 gDirLight;
 };
 

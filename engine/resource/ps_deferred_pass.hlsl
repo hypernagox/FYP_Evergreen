@@ -18,7 +18,6 @@ cbuffer cbPerShadow : register(b1)
 	float4x4 gLightViewProjClip[4];
 	float4 gLightPosW[4];
 	float4 gShadowDistance;
-	float4 gShadowBias;
 	float3 gDirLight;
 };
 
@@ -61,9 +60,6 @@ float ShadowValue(float4 posW, float3 normalW, int level)
 
 		// Texel size.
 		float dx = 1.0f / (float)width;
-		float tanLight = abs(length(cross(normalW, -gDirLight)) / dot(normalW, -gDirLight));
-		float bias = 1e-4f;
-
 		const float2 offsets[9] = {
 			float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
 			float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
@@ -72,7 +68,7 @@ float ShadowValue(float4 posW, float3 normalW, int level)
 
 		[unroll]
 		for (int i = 0; i < 9; ++i)
-			percentLit += gShadowMap.SampleCmpLevelZero(gSamplerShadow, shadowPosH.xy + offsets[i], depth - bias).r;
+			percentLit += gShadowMap.SampleCmpLevelZero(gSamplerShadow, shadowPosH.xy + offsets[i], depth).r;
 	}
 	else
 	{

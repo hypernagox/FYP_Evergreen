@@ -123,14 +123,14 @@ namespace udsdx
 			float f = m_shadowRanges[i];
 			Vector3 lightPos = cameraPos + cameraLook * f * 0.5f;
 			XMMATRIX lightView = XMMatrixLookAtLH(lightPos, XMLoadFloat3(&(lightPos + lightDirection)), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+			XMVECTOR texelUnit = XMVectorSet(f * 2.0f / static_cast<float>(m_mapWidth), f * 2.0f / static_cast<float>(m_mapHeight), 1.0f, 1.0f);
+			lightView.r[3] = XMVectorSelect(lightView.r[3], XMVectorFloor(lightView.r[3] / texelUnit) * texelUnit, XMVectorSelectControl(true, true, false, false));
 			XMMATRIX lightProj = XMMatrixOrthographicLH(f, f, -f * 10.0f, f * 10.0f);
 			XMMATRIX lightClip = XMMatrixScaling(0.5f, 0.5f, 1.0f) * XMMatrixTranslation(static_cast<float>(i % 2) - 0.5f, static_cast<float>(i / 2) - 0.5f, 0.0f);
 			XMMATRIX lightViewProj = lightView * lightProj;
 			XMStoreFloat4x4(&shadowConstants.LightViewProj[i], XMMatrixTranspose(lightViewProj));
 			XMStoreFloat4x4(&shadowConstants.LightViewProjClip[i], XMMatrixTranspose(lightViewProj * lightClip));
 			XMStoreFloat4(&shadowConstants.LightPosition[i], XMVectorSet(lightPos.x, lightPos.y, lightPos.z, 0.0f));
-
-			shadowConstants.ShadowBias[i] = f * 8.0f;
 			shadowConstants.ShadowDistance[i] = f * 0.5f;
 
 			CameraConstants cameraConstants{};
