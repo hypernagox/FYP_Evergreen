@@ -319,7 +319,7 @@ namespace NagiocpX
 				false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			{
 				RegisterSend(std::move(temp_session));
-				PrintLogEndl("Retry Send As Error");
+				//PrintLogEndl("Retry Send As Error");
 			}
 		}
 		//PrintLogEndl(std::format(L"Send Error: {}", errCode));

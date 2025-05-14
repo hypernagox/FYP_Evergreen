@@ -244,6 +244,7 @@ const bool Handle_c2s_FIRE_PROJ(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 	proj.timer->m_speed = rotatedForward * 40.f;
 	proj.timer->SelectObjList(pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC());
 	proj.timer->m_owner = pOwner->SharedFromThis();
+	pOwner->GetComp<MoveBroadcaster>()->BroadcastPacket(Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), pos_comp->GetPktPos()));
 
 	return true;
 }
