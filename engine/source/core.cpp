@@ -123,12 +123,27 @@ namespace udsdx
 #endif
 		// Create DXGI Factory
 		ThrowIfFailed(::CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&m_dxgiFactory)));
-		// Create hardware device
-		HRESULT hr = ::D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_d3dDevice));
 
-		// Fallback to WARP device
-		if (FAILED(hr))
+		// Enumerate adapters and select the one with the most dedicated video memory.
+		IDXGIAdapter* adapter = nullptr;
+		IDXGIAdapter* selectedAdapter = nullptr;
+		SIZE_T maxDedicatedVideoMemory = 0;
+		for (UINT i = 0; m_dxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND; ++i)
 		{
+			DXGI_ADAPTER_DESC desc;
+			adapter->GetDesc(&desc);
+
+			if (desc.DedicatedVideoMemory > maxDedicatedVideoMemory)
+			{
+				maxDedicatedVideoMemory = desc.DedicatedVideoMemory;
+				selectedAdapter = adapter;
+			}
+		}
+
+		// Create hardware device
+		if (selectedAdapter == nullptr || FAILED(::D3D12CreateDevice(selectedAdapter, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&m_d3dDevice))))
+		{
+			// Fallback to WARP device
 			ComPtr<IDXGIAdapter> adapter = nullptr;
 			ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&adapter)));
 
