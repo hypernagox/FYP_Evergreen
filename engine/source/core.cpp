@@ -124,12 +124,20 @@ namespace udsdx
 		// Create DXGI Factory
 		ThrowIfFailed(::CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&m_dxgiFactory)));
 
+		// Before creating the device, log the adapter information.
+		LogAdapterInfo();
+
 		// Enumerate adapters and select the one with the most dedicated video memory.
-		IDXGIAdapter* adapter = nullptr;
-		IDXGIAdapter* selectedAdapter = nullptr;
+		ComPtr<IDXGIAdapter1> selectedAdapter = nullptr;
 		SIZE_T maxDedicatedVideoMemory = 0;
-		for (UINT i = 0; m_dxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND; ++i)
+		for (UINT i = 0; ; ++i)
 		{
+			ComPtr<IDXGIAdapter1> adapter = nullptr;
+			if (m_dxgiFactory->EnumAdapters1(i, &adapter) == DXGI_ERROR_NOT_FOUND)
+			{
+				break;
+			}
+
 			DXGI_ADAPTER_DESC desc;
 			adapter->GetDesc(&desc);
 
@@ -141,9 +149,9 @@ namespace udsdx
 		}
 
 		// Create hardware device
-		if (selectedAdapter == nullptr || FAILED(::D3D12CreateDevice(selectedAdapter, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&m_d3dDevice))))
+		if (selectedAdapter == nullptr || FAILED(::D3D12CreateDevice(selectedAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_d3dDevice))))
 		{
-			// Fallback to WARP device
+			// Fallback to WARP(Windows Advanced Rasterization Platform) device
 			ComPtr<IDXGIAdapter> adapter = nullptr;
 			ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&adapter)));
 
@@ -178,9 +186,6 @@ namespace udsdx
 		m_4xMsaaQuality = msQualityLevels.NumQualityLevels;
 		assert(m_4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
 
-#if defined(DEBUG) || defined(_DEBUG)
-		LogAdapterInfo();
-#endif
 		CreateCommandObjects();
 		CreateSwapChain();
 		BuildRootSignature();
