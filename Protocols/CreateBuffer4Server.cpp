@@ -461,17 +461,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_NEW_PLAYER(
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_OUT(
     const uint32_t out_user_id,
-    const bool is_leader,
+    const uint32_t cur_leader_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto out_user_id_value = out_user_id;
-    const auto is_leader_value = is_leader;
+    const auto cur_leader_id_value = cur_leader_id;
     const auto serializeds2c_PARTY_OUT = Nagox::Protocol::Creates2c_PARTY_OUT(
         builder
 ,        out_user_id_value,
-        is_leader_value    );
+        cur_leader_id_value    );
     builder.Finish(serializeds2c_PARTY_OUT);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_OUT);

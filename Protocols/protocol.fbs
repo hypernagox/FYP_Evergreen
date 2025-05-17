@@ -276,7 +276,7 @@ table c2s_PARTY_OUT
 table s2c_PARTY_OUT
 {
     out_user_id : uint32;
-    is_leader : bool;
+    cur_leader_id : uint32;
 }
 
 table s2c_PARTY_QUEST_CLEAR

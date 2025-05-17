@@ -217,10 +217,10 @@ S_ptr<ContentsEntity> PartyQuestSystem::FindMember(const uint32_t obj_id)
 void PartyQuestSystem::OutMember(const uint32_t obj_id)
 {
 	XVector<S_ptr<ContentsEntity>> sessions; sessions.reserve(NUM_OF_MAX_PARTY_MEMBER);
-	bool is_leader = false;
 	ContentsEntity* target_entity = nullptr;
 	S_ptr<QuestRoom> room{ nullptr };
 	int mem_num = 0;
+	uint32_t cur_leader_id = 0;
 	{
 		NagiocpX::SRWLockGuardEx lock{ m_partyLock };
 		//if (m_started)return;
@@ -231,7 +231,6 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 			if (!m_member[i])continue;
 			if (m_member[i]->GetObjectID() == obj_id)
 			{
-				if (0 == i)is_leader = true;
 				m_member[i]->GetClientSession()
 					->m_cur_my_party_system.store(nullptr);
 				sessions.emplace_back(m_member[i]);
@@ -254,6 +253,10 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 			m_curQuestRoomInstance->FinishField();
 			m_curQuestRoomInstance.reset();
 		}
+		if (m_member[0])
+		{
+			cur_leader_id = m_member[0]->GetObjectID();
+		}
 	}
 	if (target_entity)
 	{
@@ -268,7 +271,7 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 			);
 		}
 	}
-	auto pkt = Create_s2c_PARTY_OUT(obj_id, is_leader);
+	auto pkt = Create_s2c_PARTY_OUT(obj_id, cur_leader_id);
 	for (const auto& remain_player : sessions)
 	{
 		remain_player->GetSession()->SendAsync(pkt);

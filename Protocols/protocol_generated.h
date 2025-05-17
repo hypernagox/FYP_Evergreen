@@ -2698,7 +2698,7 @@ struct s2c_PARTY_OUT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_PARTY_OUTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_OUT_USER_ID = 4,
-    VT_IS_LEADER = 6
+    VT_CUR_LEADER_ID = 6
   };
   uint32_t out_user_id() const {
     return GetField<uint32_t>(VT_OUT_USER_ID, 0);
@@ -2706,16 +2706,16 @@ struct s2c_PARTY_OUT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_out_user_id(uint32_t _out_user_id = 0) {
     return SetField<uint32_t>(VT_OUT_USER_ID, _out_user_id, 0);
   }
-  bool is_leader() const {
-    return GetField<uint8_t>(VT_IS_LEADER, 0) != 0;
+  uint32_t cur_leader_id() const {
+    return GetField<uint32_t>(VT_CUR_LEADER_ID, 0);
   }
-  bool mutate_is_leader(bool _is_leader = 0) {
-    return SetField<uint8_t>(VT_IS_LEADER, static_cast<uint8_t>(_is_leader), 0);
+  bool mutate_cur_leader_id(uint32_t _cur_leader_id = 0) {
+    return SetField<uint32_t>(VT_CUR_LEADER_ID, _cur_leader_id, 0);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_OUT_USER_ID, 4) &&
-           VerifyField<uint8_t>(verifier, VT_IS_LEADER, 1) &&
+           VerifyField<uint32_t>(verifier, VT_CUR_LEADER_ID, 4) &&
            verifier.EndTable();
   }
 };
@@ -2727,8 +2727,8 @@ struct s2c_PARTY_OUTBuilder {
   void add_out_user_id(uint32_t out_user_id) {
     fbb_.AddElement<uint32_t>(s2c_PARTY_OUT::VT_OUT_USER_ID, out_user_id, 0);
   }
-  void add_is_leader(bool is_leader) {
-    fbb_.AddElement<uint8_t>(s2c_PARTY_OUT::VT_IS_LEADER, static_cast<uint8_t>(is_leader), 0);
+  void add_cur_leader_id(uint32_t cur_leader_id) {
+    fbb_.AddElement<uint32_t>(s2c_PARTY_OUT::VT_CUR_LEADER_ID, cur_leader_id, 0);
   }
   explicit s2c_PARTY_OUTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -2744,10 +2744,10 @@ struct s2c_PARTY_OUTBuilder {
 inline ::flatbuffers::Offset<s2c_PARTY_OUT> Creates2c_PARTY_OUT(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t out_user_id = 0,
-    bool is_leader = false) {
+    uint32_t cur_leader_id = 0) {
   s2c_PARTY_OUTBuilder builder_(_fbb);
+  builder_.add_cur_leader_id(cur_leader_id);
   builder_.add_out_user_id(out_user_id);
-  builder_.add_is_leader(is_leader);
   return builder_.Finish();
 }
 

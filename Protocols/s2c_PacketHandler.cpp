@@ -479,29 +479,33 @@ const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>
 	const bool is_my_id = pSession_->GetSessionID() == pkt_.out_user_id();
 	std::wstring output_msg = {};
 	auto partyStatusGUI = INSTANCE(GameGUIFacade)->PartyStatus;
-	if (pkt_.is_leader())
-	{
-		if (is_my_id) // 파티장인데 나일경우
-		{
-			output_msg = L"파티를 해체하였습니다.";
-		}
-		else // 파티장이 쫑낸경우
-		{
-			output_msg = L"파티장이 파티를 탈퇴하여 파티가 해체되었습니다.";
-		}
-		partyStatusGUI->DisablePartyPanel();
-	}
-	else if (is_my_id)
-	{
-		// 내가 파티장이 아니고 걍 자발적으로 나온경우
-		output_msg = L"파티를 탈퇴하였습니다.";
-		partyStatusGUI->DisablePartyPanel();
-	}
-	else
-	{
-		output_msg = L"ID " + std::to_wstring(pkt_.out_user_id()) + L" 님이 파티를 탈퇴하였습니다.";
-		partyStatusGUI->RemovePartyMember(pkt_.out_user_id());
-	}
+	const auto cur_leader_id = pkt_.cur_leader_id();
+	// TODO: 현재 결과적으로 파티장이 누구인지가 온다.
+	// 0이라면 파티에 멤버가 더 이상 남아있지 않은 경우
+
+	//if (pkt_.is_leader())
+	//{
+	//	if (is_my_id) // 파티장인데 나일경우
+	//	{
+	//		output_msg = L"파티를 해체하였습니다.";
+	//	}
+	//	else // 파티장이 쫑낸경우
+	//	{
+	//		output_msg = L"파티장이 파티를 탈퇴하여 파티가 해체되었습니다.";
+	//	}
+	//	partyStatusGUI->DisablePartyPanel();
+	//}
+	//else if (is_my_id)
+	//{
+	//	// 내가 파티장이 아니고 걍 자발적으로 나온경우
+	//	output_msg = L"파티를 탈퇴하였습니다.";
+	//	partyStatusGUI->DisablePartyPanel();
+	//}
+	//else
+	//{
+	//	output_msg = L"ID " + std::to_wstring(pkt_.out_user_id()) + L" 님이 파티를 탈퇴하였습니다.";
+	//	partyStatusGUI->RemovePartyMember(pkt_.out_user_id());
+	//}
 	if(!output_msg.empty())
 		INSTANCE(GameGUIFacade)->LogFloat->AddText(output_msg);
 	return true;
