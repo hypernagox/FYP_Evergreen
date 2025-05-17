@@ -123,6 +123,8 @@ int main()
 	Mgr(FieldMgr)->SetNumOfNPC<NUM_OF_NPC>();
 	Mgr(FieldMgr)->RegisterField<ContentsField>(0);
 	
+	NagiocpX::ServerService::SetSessionDeleter([](Session* session)noexcept {return NagiocpX::Memory::AlignedFree(session, alignof(ClientSession)); });
+
 	const auto pServerService = new NagiocpX::ServerService
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()

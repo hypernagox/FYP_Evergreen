@@ -5,6 +5,7 @@ class ClientSession;
 class QuestRoom;
 
 class PartyQuestSystem
+	:public std::enable_shared_from_this<PartyQuestSystem>
 {
 	friend class ClientSession;
 public:
@@ -38,6 +39,26 @@ public:
 	void OutMember(const uint32_t obj_id);
 	bool QueryPartyLeader(ContentsEntity* const owner)const noexcept;
 public:
+	const auto GetCurPartyQuestID()const noexcept { return m_curQuestID; }
+	void SetPartyQuestID(const int id)noexcept { m_curQuestID = id; }
+	const bool IsStarted()const noexcept { return m_started; }
+	XVector<S_ptr<ContentsEntity>> GetPartyMembers()const noexcept;
+	S_ptr<QuestRoom> GetCurRoomInstance()const noexcept;
+	void SetCurRoomInstance(S_ptr<QuestRoom> room_ptr)noexcept {
+		NagiocpX::SRWLockGuard lock{ m_partyLock };
+		if (m_curQuestRoomInstance)return;
+		m_curQuestRoomInstance.swap(room_ptr);
+	}
+	const bool IsEmptySystem()const noexcept {
+		{
+			NagiocpX::SRWLockGuard lock{ m_partyLock };
+			for (const auto& ptr : m_member) {
+				if (ptr)return false;
+			}
+		}
+		return true;
+	}
+private:
 	// -1은 퀘스트가 없는 상태
 	mutable NagiocpX::SRWLock m_partyLock;
 	int m_curQuestID = -1;

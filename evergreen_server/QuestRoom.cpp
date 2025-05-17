@@ -67,7 +67,7 @@ QuestRoom::~QuestRoom() noexcept
 
 void QuestRoom::NotifyQuestClear(NagiocpX::ContentsEntity* const entity) const noexcept
 {
-	entity->GetSession()->SendAsync(Create_s2c_PARTY_QUEST_CLEAR(m_ownerPartrySystem->m_curQuestID));
+	entity->GetSession()->SendAsync(Create_s2c_PARTY_QUEST_CLEAR(m_ownerPartrySystem->GetCurPartyQuestID()));
 }
 
 void QuestRoom::NotifyQuestFail(NagiocpX::ContentsEntity* const entity) const noexcept
@@ -132,20 +132,25 @@ void QuestRoom::DestroyFieldTLS() noexcept
 
 void QuestRoom::MigrationAfterBehavior(Field* const prev_field) noexcept
 {
-	std::cout << "멤버카운트 " << (int)m_numOfMember << std::endl;
+	//std::cout << "멤버카운트 " << (int)m_numOfMember << std::endl;
 	std::cout << "성공\n";
 }
 
 void QuestRoom::DecMemberCount() noexcept
 {
 	const auto count = m_numOfMember.fetch_sub(1);
-	std::cout << (int)count << std::endl;
+	//std::cout << (int)count << std::endl;
 	if (1 == count)
 	{
 		std::cout << "삭제시작\n";
 		DestroyFieldTLS();
-		m_ownerPartrySystem->m_curQuestRoomInstance.reset();
+		m_ownerPartrySystem->SetCurRoomInstance(nullptr);
 	}
+}
+
+std::shared_ptr<PartyQuestSystem> QuestRoom::GetOwnerSystem() const noexcept
+{
+	return m_ownerPartrySystem;
 }
 
 void QuestRoom::CheckPartyQuestState()noexcept
@@ -164,28 +169,29 @@ void QuestRoom::CheckPartyQuestState()noexcept
 		const auto m = EntityFactory::CreateClearTree(b);
 		m->SetDetailType(HARVEST_STATE::AVAILABLE);
 		const auto pos = m->GetComp<PositionComponent>()->pos;
-		for (const auto& players : m_ownerPartrySystem->m_member)
+		for (const auto& players : m_ownerPartrySystem->GetPartyMembers())
 		{
 			if (!players)continue;
 			NotifyQuestClear(players.get());
 		}
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 		// TODO 근본적인 해결책
-		auto owner = m_ownerPartrySystem->m_member[0];
-		Mgr(TaskTimerMgr)->ReserveAsyncTask(1000,[this, owner]() {
-			//for (const auto& players : owner->m_party_quest_system->m_member)
-			//{
-			//	if (!players)continue;
-			//	//NotifyQuestClear(players->GetOwnerEntity());
-			//}
-			m_isClear.store(true);
-			//m_ownerPartrySystem->GetPartyLeader()->m_cur_my_party_system.load()->MissionEnd();
-			});
+		//auto owner = m_ownerPartrySystem->m_member[0];
+		m_isClear.store(true);
+		//Mgr(TaskTimerMgr)->ReserveAsyncTask(1000,[this, owner]() {
+		//	//for (const auto& players : owner->m_party_quest_system->m_member)
+		//	//{
+		//	//	if (!players)continue;
+		//	//	//NotifyQuestClear(players->GetOwnerEntity());
+		//	//}
+		//	m_isClear.store(true);
+		//	//m_ownerPartrySystem->GetPartyLeader()->m_cur_my_party_system.load()->MissionEnd();
+		//	});
 		return;
 	}
 	else if (IsFailPartyQuest())
 	{
-		for (const auto& players : m_ownerPartrySystem->m_member)
+		for (const auto& players : m_ownerPartrySystem->GetPartyMembers())
 		{
 			if (!players)continue;
 			NotifyQuestFail(players.get());

@@ -7,49 +7,66 @@
 
 PartyQuestSystem::~PartyQuestSystem() noexcept
 {
+	std::cout << "Destroy Party\n";
 }
 
 bool PartyQuestSystem::MissionStart()
 {
-	NagiocpX::SRWLockGuardEx lock{ m_partyLock };
-	if (m_curQuestRoomInstance)return false;
-	if (m_started)return false;
-	if (m_runFlag)return false;
-	if (-1 == m_curQuestID)return false;
-	if (!CanMissionStart())return false;
-	StartFlag();
-	m_runFlag = true;
-	if (0 == m_curQuestID)
+	S_ptr<QuestRoom> room;
 	{
-		m_curQuestRoomInstance = NagiocpX::MakeShared<FoxQuest>();
+		NagiocpX::SRWLockGuardEx lock{ m_partyLock };
+		if (m_curQuestRoomInstance)return false;
+		if (m_started)return false;
+		if (m_runFlag)return false;
+		if (-1 == m_curQuestID)return false;
+		if (!CanMissionStart())return false;
+		StartFlag();
+		m_runFlag = true;
+		if (0 == m_curQuestID)
+		{
+			m_curQuestRoomInstance = NagiocpX::MakeShared<FoxQuest>();
+		}
+		else if (2 == m_curQuestID)
+		{
+			m_curQuestRoomInstance = NagiocpX::MakeShared<NPCGuardQuest>();
+		}
+		else
+		{
+			m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
+		}
+		m_curQuestRoomInstance->SetOwnerSystem(shared_from_this());
+		m_prev_field =
+			m_member[0]->GetClusterFieldInfo().curFieldPtr;
+		room = m_curQuestRoomInstance;
 	}
-	else if (2 == m_curQuestID)
+
+	// TODO: 한번에 원자적으로 초기화하기
+
+	if (!room)
 	{
-		m_curQuestRoomInstance = NagiocpX::MakeShared<NPCGuardQuest>();
+		return false;
 	}
-	else
+
+	room->InitQuestField();
+
 	{
-		m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
-	}
-	m_curQuestRoomInstance->SetOwnerSystem(this);
-	m_curQuestRoomInstance->InitQuestField();
-	m_prev_field =
-		m_member[0]->GetClusterFieldInfo().curFieldPtr;
-	for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
-	{
-		const auto owner = m_member[i].get();
-		// TODO: 시작위치
-		if (!owner)continue;
-		const auto session = owner->GetClientSession();
-		if (!session)continue;
-		m_curQuestRoomInstance->IncMemberCount();
-		const auto pos = owner->GetComp<PositionComponent>()->pos;
-		//m_curQuestRoomInstance->RegisterMember(i, owner);
-		owner->GetCurCluster()->MigrationOtherFieldEnqueue(
-			m_curQuestRoomInstance.get(),
-			owner,
-			m_curQuestRoomInstance->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
-		);
+		NagiocpX::SRWLockGuardEx lock{ m_partyLock };
+		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
+		{
+			const auto owner = m_member[i].get();
+			// TODO: 시작위치
+			if (!owner)continue;
+			const auto session = owner->GetClientSession();
+			if (!session)continue;
+			m_curQuestRoomInstance->IncMemberCount();
+			const auto pos = owner->GetComp<PositionComponent>()->pos;
+			//m_curQuestRoomInstance->RegisterMember(i, owner);
+			owner->GetCurCluster()->MigrationOtherFieldEnqueue(
+				m_curQuestRoomInstance.get(),
+				owner,
+				m_curQuestRoomInstance->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
+			);
+		}
 	}
 	return true;
 }
@@ -73,6 +90,7 @@ void PartyQuestSystem::MissionEnd()
 	// ... 과거 여기에 if 펜딩검사 있었다.
 	if (!CanMissionEnd())return;
 	m_curQuestRoomInstance->FinishField();
+	m_curQuestRoomInstance.reset();
 	for (const auto& mem : m_member)
 	{
 		// TODO: 귀환위치
@@ -86,7 +104,6 @@ void PartyQuestSystem::MissionEnd()
 			m_prev_field->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 		);
 	}
-	m_curQuestRoomInstance.reset();
 	m_runFlag = false;
 }
 
@@ -201,10 +218,14 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 {
 	XVector<S_ptr<ContentsEntity>> sessions; sessions.reserve(NUM_OF_MAX_PARTY_MEMBER);
 	bool is_leader = false;
+	ContentsEntity* target_entity = nullptr;
+	S_ptr<QuestRoom> room{ nullptr };
+	int mem_num = 0;
 	{
 		NagiocpX::SRWLockGuardEx lock{ m_partyLock };
 		//if (m_started)return;
 		//if (m_runFlag)return;	
+		room = m_curQuestRoomInstance;
 		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
 		{
 			if (!m_member[i])continue;
@@ -214,11 +235,13 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 				m_member[i]->GetClientSession()
 					->m_cur_my_party_system.store(nullptr);
 				sessions.emplace_back(m_member[i]);
+				target_entity = m_member[i].get();
 				m_member[i] = nullptr;
 				//m_member[i].reset();
 			}
 			else
 			{
+				++mem_num;
 				sessions.emplace_back(m_member[i]);
 				if (!m_member[0] && 0 != i)
 				{
@@ -226,19 +249,23 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 				}
 			}
 		}
-		if (is_leader)
+		if (0 == mem_num && room)
 		{
-			// 파티장을바꾼다.
-			//ResetPartyQuestSystem();
-			if (sessions.size() <= 1)
-			{
-				// 폭파
-
-			}
-			//else
-			//{
-			//	m_member[0] = sessions[1];
-			//}
+			m_curQuestRoomInstance->FinishField();
+			m_curQuestRoomInstance.reset();
+		}
+	}
+	if (target_entity)
+	{
+		const auto owner = target_entity;
+		if (owner->IsValid() && owner->GetCurCluster()->GetClusterFieldInfo().curFieldPtr->GetFieldID() == -1)
+		{
+			const auto pos = owner->GetComp<PositionComponent>()->pos;
+			owner->GetCurCluster()->MigrationOtherFieldEnqueue(
+				m_prev_field,
+				owner,
+				m_prev_field->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
+			);
 		}
 	}
 	auto pkt = Create_s2c_PARTY_OUT(obj_id, is_leader);
@@ -252,4 +279,27 @@ bool PartyQuestSystem::QueryPartyLeader(ContentsEntity* const owner) const noexc
 {
 	NagiocpX::SRWLockGuard lock{ m_partyLock };
 	return m_member[0].get() == owner;
+}
+
+XVector<S_ptr<ContentsEntity>> PartyQuestSystem::GetPartyMembers() const noexcept
+{
+	XVector<S_ptr<ContentsEntity>> temp; temp.reserve(NUM_OF_MAX_PARTY_MEMBER);
+	{
+		NagiocpX::SRWLockGuard lock{ m_partyLock };
+		for (const auto& ptr : m_member) {
+			if (!ptr)continue;
+			temp.emplace_back(ptr);
+		}
+	}
+	return temp;
+}
+
+S_ptr<QuestRoom> PartyQuestSystem::GetCurRoomInstance() const noexcept
+{
+	S_ptr<QuestRoom> room;
+	{
+		NagiocpX::SRWLockGuard lock{ m_partyLock };
+		room = m_curQuestRoomInstance;
+	}
+	return room;
 }

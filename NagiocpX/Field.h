@@ -51,6 +51,7 @@ namespace NagiocpX
 		const uint8_t GetNumOfClusterCol()const noexcept { return static_cast<uint8_t>(m_field_x_scale / m_cluster_x_scale); }
 
 		const auto GetFieldID()const noexcept { return m_fieldID; }
+		const bool IsDynamicField()const noexcept { return -1 == m_fieldID; }
 		const bool IsRunning()const noexcept { return m_bIsRunning; }
 		void FinishField()noexcept { m_bIsRunning = false; }	
 

@@ -12,6 +12,8 @@ enum class PARTY_ACCEPT_RESULT :int8_t {
 	ACCEPT_SUCCESS = 1
 };
 
+class PartyQuestSystem;
+
 class QuestRoom
 	:public NagiocpX::Field
 {
@@ -36,8 +38,8 @@ public:
 	void DecMemberCount()noexcept;
 	void IncMemberCount()noexcept { m_numOfMember.fetch_add(1); }
 	const auto GetMemberCount()const noexcept { return m_numOfMember.load(); }
-	void SetOwnerSystem(class PartyQuestSystem* sys) { m_ownerPartrySystem = sys; }
-	const auto GetOwnerSystem()const noexcept { return m_ownerPartrySystem; }
+	void SetOwnerSystem(std::shared_ptr<PartyQuestSystem> sys) { m_ownerPartrySystem.swap(sys); }
+	std::shared_ptr<PartyQuestSystem> GetOwnerSystem()const noexcept;
 public:
 	void CheckPartyQuestState()noexcept;
 	bool IsClear()const noexcept { return m_isClear.load(); }
@@ -46,7 +48,7 @@ protected:
 private:
 	NagoxAtomic::Atomic<bool> m_isClear{ false };
 	NagoxAtomic::Atomic<int8_t> m_numOfMember{ 0 };
-	class PartyQuestSystem* m_ownerPartrySystem = nullptr;
+	std::shared_ptr<PartyQuestSystem> m_ownerPartrySystem;
 	XMap<uint32_t, uint32_t> m_id2idx_table;
 };
 
@@ -91,7 +93,9 @@ public:
 	}
 	virtual bool IsFailPartyQuest()const noexcept { return false; }
 
+	//virtual void MigrationAfterBehavior(Field* const prev_field)noexcept override;
+
+	virtual void InitQuestField()noexcept override;
 	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
 	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
-	virtual void InitQuestField()noexcept override;
 };

@@ -8,6 +8,8 @@
 
 namespace NagiocpX
 {
+	Service::SessionDeleter Service::g_session_deleter = [](Session* session)noexcept {Memory::Free(session); };
+
 	Service::Service(
 		  const IocpCore& iocpCore_
 		, SERVICE_TYPE eServiceType_
@@ -51,7 +53,7 @@ namespace NagiocpX
 			const auto session = (Session*)entity->GetSession();
 			entity->DecRef();
 			session->~Session();
-			Memory::Free(session);
+			g_session_deleter(session);
 		}
 	}
 

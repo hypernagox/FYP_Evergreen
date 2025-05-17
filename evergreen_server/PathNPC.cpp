@@ -15,24 +15,26 @@ void PathNPC::UpdateMove()
 {
 	const auto cur_time = GetTickCount64();
 	const auto owner = GetOwnerEntity();
-	if (m_cur_idx == m_vecDirDists.size())
+	const auto members = m_owner_system->GetPartyMembers();
+	const auto room = m_owner_system->GetCurRoomInstance();
+
+	if (m_cur_idx == m_vecDirDists.size() || members.empty())
 	{
 		// 도착
 		// TODO 릭 가능성
-		if (m_owner_system->m_curQuestRoomInstance) {
+		if (room) {
 			static_cast<NPCGuardQuest*>(
-				m_owner_system->m_curQuestRoomInstance.get()
+				room.get()
 				)->m_clear.store(true);
-			m_owner_system->m_curQuestRoomInstance->CheckPartyQuestState();
+			room->CheckPartyQuestState();
 		}
 		std::cout << "클리어\n";
-		if(m_owner_system_session)
-			m_owner_system_session->DecRef();
+		//m_owner_system;
 		return;
 	}
-	if (const auto leader = m_owner_system_session)
+	if (!members.empty())
 	{
-		const auto leader_pos = leader->GetComp<PositionComponent>()->pos;
+		const auto leader_pos = members[0]->GetComp<PositionComponent>()->pos;
 		const auto my_pos = owner->GetComp<PositionComponent>()->pos;
 		if (!CommonMath::IsInDistanceDX(leader_pos, my_pos, 10))
 		{
@@ -45,6 +47,17 @@ void PathNPC::UpdateMove()
 			return;
 		}
 	}
+	else
+	{
+		//m_owner_system.reset();
+		return;
+	}
+
+	if (!room)
+	{
+		return;
+	}
+
 	m_curDistAcc += m_navAgent->ApplyPostPosition(m_vecDirDists[m_cur_idx].first, m_speed, (cur_time - m_last_update_timestamp) * 0.001f);
 
 	//owner->GetComp<PositionComponent>()->vel = m_vecDirDists[m_cur_idx].first;
@@ -103,10 +116,6 @@ void PathNPC::InitPathNPC()
 	m_navAgent->SetPos(points[0]);
 	m_speed = 5.f;
 
-	if (const auto owner_session = m_owner_system->GetPartyLeader())
-	{
-		m_owner_system_session = owner_session;
-	}
 	if (auto num = pvec.size())
 	{
 		m_vecDirDists.reserve(--num);

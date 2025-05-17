@@ -31,6 +31,8 @@ namespace NagiocpX
 		constinit static inline const Service* g_mainService;
 	public:
 		static inline constexpr const Service* const GetMainService()noexcept { return g_mainService; }
+		using SessionDeleter = void(*)(Session*)noexcept;
+		static inline void SetSessionDeleter(const SessionDeleter del)noexcept { g_session_deleter = del; }
 	public:
 		Service(
 			  const IocpCore& iocpCore_
@@ -96,6 +98,8 @@ namespace NagiocpX
 			for (auto b = arr_ptr; e != b;)std::destroy_at<T>(b++);
 			::_aligned_free(arr_ptr);
 		}
+
+		static SessionDeleter g_session_deleter;
 	};
 
 

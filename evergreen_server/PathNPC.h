@@ -1,6 +1,8 @@
 #pragma once
 #include "ContentsComponent.h"
 
+class PartyQuestSystem;
+
 class PathNPC
 	:public ContentsComponent
 {
@@ -14,8 +16,7 @@ public:
 	int m_cur_idx = 0;
 	float m_speed = 1.f;
 	float m_curDistAcc = 0.f;
-	class PartyQuestSystem* m_owner_system = nullptr;
+	std::shared_ptr<PartyQuestSystem> m_owner_system = nullptr;
 	uint64_t m_last_update_timestamp = ::GetTickCount64();
-	S_ptr<ContentsEntity> m_owner_system_session = nullptr;
 };
 

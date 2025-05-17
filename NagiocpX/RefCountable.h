@@ -17,9 +17,9 @@ namespace NagiocpX
 		RefCountable(RefCountable&&)noexcept = delete;
 		RefCountable& operator=(RefCountable&&)noexcept = delete;
 	public:
-		friend static inline RefCountable* const IncAndGetPtrExternal(const RefCountable* const ref_ptr)noexcept;
-		friend static inline void DecRefExternal(const RefCountable* const ref_ptr)noexcept;
-		friend static inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept;
+		friend inline RefCountable* const IncAndGetPtrExternal(const RefCountable* const ref_ptr)noexcept;
+		friend inline void DecRefExternal(const RefCountable* const ref_ptr)noexcept;
+		friend inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept;
 	protected:
 		RefCountable()noexcept = default;
 		~RefCountable()noexcept = default;
@@ -62,11 +62,11 @@ namespace NagiocpX
 		mutable volatile LONG m_refCount = 1;
 	};
 
-	static inline RefCountable* const IncAndGetPtrExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->IncAndGetPtr(); }
+	inline RefCountable* const IncAndGetPtrExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->IncAndGetPtr(); }
 	
 	template<typename T> requires (false == std::same_as<std::decay_t<T>, RefCountable>)
-	static inline void DecRefExternal(const RefCountable* const ref_ptr) noexcept { ref_ptr->DecRef<T>(); }
-	static inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->m_refCount; }
+	inline void DecRefExternal(const RefCountable* const ref_ptr) noexcept { ref_ptr->DecRef<T>(); }
+	inline volatile LONG& GetRefCountExternal(const RefCountable* const ref_ptr) noexcept { return ref_ptr->m_refCount; }
 
 	template <typename T>
 	class S_ptr

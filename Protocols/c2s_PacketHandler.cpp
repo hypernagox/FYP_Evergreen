@@ -395,7 +395,7 @@ const bool Handle_c2s_REGISTER_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::Packe
 	const auto sys = session->GetCurPartySystem();
 	if (const auto leader = sys->QueryPartyLeader(session->GetOwnerEntity()))
 	{
-		session->GetCurPartySystem()->m_curQuestID = pkt_.quest_id();
+		sys->SetPartyQuestID(pkt_.quest_id());
 		session->SendAsync(Create_s2c_REGISTER_PARTY_QUEST(pkt_.quest_id()));
 	}
 	else
@@ -419,7 +419,7 @@ const bool Handle_c2s_ACQUIRE_PARTY_LIST(const NagiocpX::S_ptr<NagiocpX::PacketS
 		{
 			if (const auto leader = s->QueryPartyLeader())
 			{
-				if (leader ->m_curQuestID == pkt_.target_quest_id())
+				if (leader->GetCurPartyQuestID() == pkt_.target_quest_id())
 				{
 					quest_leaders.emplace_back(session_ptr->GetObjectID());
 				}
@@ -428,7 +428,7 @@ const bool Handle_c2s_ACQUIRE_PARTY_LIST(const NagiocpX::S_ptr<NagiocpX::PacketS
 	}
 	const auto session = GetClientSession(pSession_);
 	const auto leader = session->QueryPartyLeader();
-	if (leader && leader->m_curQuestID == pkt_.target_quest_id())
+	if (leader && leader->GetCurPartyQuestID() == pkt_.target_quest_id())
 	{
 		quest_leaders.emplace_back(pSession_->GetSessionID());
 	}
@@ -446,7 +446,7 @@ const bool Handle_c2s_INVITE_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketS
 	const auto leader = session->QueryPartyLeader();
 	if (!leader)return true;
 	// 파티장이 타겟 유저에게 자신의 아이디와 현재 퀘스트 아이디를 보낸다
-	target_user->GetSession()->SendAsync(Create_s2c_INVITE_PARTY_QUEST(pSession_->GetSessionID(), leader->m_curQuestID));
+	target_user->GetSession()->SendAsync(Create_s2c_INVITE_PARTY_QUEST(pSession_->GetSessionID(), leader->GetCurPartyQuestID()));
 	return true;
 }
 
@@ -575,11 +575,12 @@ const bool Handle_c2s_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 		std::cout << "No party\n";
 		return true;
 	}
-	if (cur_party->m_started) {
-		// TODO: 현재 게임 진행중임, 함부로 못나간다.
-		std::cout << "run \n";
-		return true;
-	}
+	// TODO: 미클인채로 나갈때 어쩔까?
+	//if (cur_party->m_started) {
+	//	// TODO: 현재 게임 진행중임, 함부로 못나간다.
+	//	std::cout << "run \n";
+	//	return true;
+	//}
 	if (cur_party)
 	{
 		cur_party->OutMember(session->GetSessionID());
