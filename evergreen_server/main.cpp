@@ -21,7 +21,7 @@
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 100001;
-constexpr const int32_t NUM_OF_MAX_USER = 5005;
+constexpr const int32_t NUM_OF_MAX_USER = 55;
 
 extern std::vector<DirectX::BoundingBox> boxes;
 
@@ -127,7 +127,7 @@ int main()
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
 			, NagiocpX::NetAddress{ L"0.0.0.0",7777 }
-			, NagiocpX::xnew<ClientSession>
+			, []() {return NagiocpX::aligned_xnew<ClientSession>(); }
 			, c2s_PacketHandler::GetPacketHandlerList()
 			, NUM_OF_MAX_USER
 		);

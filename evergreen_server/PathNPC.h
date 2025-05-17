@@ -16,6 +16,6 @@ public:
 	float m_curDistAcc = 0.f;
 	class PartyQuestSystem* m_owner_system = nullptr;
 	uint64_t m_last_update_timestamp = ::GetTickCount64();
-	ClientSession* m_owner_system_session = nullptr;
+	S_ptr<ContentsEntity> m_owner_system_session = nullptr;
 };
 

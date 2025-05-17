@@ -60,11 +60,6 @@ QuestRoom::~QuestRoom() noexcept
 		}
 		NagiocpX::DeleteJEMallocArray(clusters);
 	}
-	for (const auto entity : m_members)
-	{
-		if (!entity)continue;
-		entity->DecRef();
-	}
 	std::cout << "Äù½ºÆ®·ë ¼Ò¸ê\n";
 	std::cout << --aaaa << std::endl;
 	m_ownerPartrySystem->EndFlag();
@@ -172,17 +167,17 @@ void QuestRoom::CheckPartyQuestState()noexcept
 		for (const auto& players : m_ownerPartrySystem->m_member)
 		{
 			if (!players)continue;
-			NotifyQuestClear(players->GetOwnerEntity());
+			NotifyQuestClear(players.get());
 		}
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 		// TODO ±Ùº»ÀûÀÎ ÇØ°áÃ¥
 		auto owner = m_ownerPartrySystem->m_member[0];
 		Mgr(TaskTimerMgr)->ReserveAsyncTask(1000,[this, owner]() {
-			for (const auto& players : owner->m_party_quest_system->m_member)
-			{
-				if (!players)continue;
-				//NotifyQuestClear(players->GetOwnerEntity());
-			}
+			//for (const auto& players : owner->m_party_quest_system->m_member)
+			//{
+			//	if (!players)continue;
+			//	//NotifyQuestClear(players->GetOwnerEntity());
+			//}
 			m_isClear.store(true);
 			//m_ownerPartrySystem->GetPartyLeader()->m_cur_my_party_system.load()->MissionEnd();
 			});
@@ -193,19 +188,12 @@ void QuestRoom::CheckPartyQuestState()noexcept
 		for (const auto& players : m_ownerPartrySystem->m_member)
 		{
 			if (!players)continue;
-			NotifyQuestFail(players->GetOwnerEntity());
+			NotifyQuestFail(players.get());
 		}
 		return;
 	}
 }
 
-void QuestRoom::RegisterMember(const uint32_t idx, ContentsEntity* const entity) noexcept
-{
-	const auto id = entity->GetObjectID();
-	m_id2idx_table.try_emplace(id, idx);
-	m_members[idx] = entity;
-	entity->IncRef();
-}
 
 void FoxQuest::InitQuestField() noexcept
 {

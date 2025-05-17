@@ -35,8 +35,8 @@
 
 using namespace udsdx;
 
-//constexpr const bool USE_AWS_FLAG = false;
-constexpr const bool USE_AWS_FLAG = true;
+constexpr const bool USE_AWS_FLAG = false;
+//constexpr const bool USE_AWS_FLAG = true;
 
 constexpr const static inline wchar_t IP_ADDR[][256]
 {

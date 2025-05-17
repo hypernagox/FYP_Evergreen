@@ -19,14 +19,12 @@ static NagoxAtomic::Atomic<int> g_connect_count{ 0 };
 ClientSession::ClientSession() noexcept
 {
 	std::cout << ++cnt << '\n';
-	m_party_quest_system = NagiocpX::xnew<PartyQuestSystem>();
 }
 
 ClientSession::~ClientSession()
 {
 	NagiocpX::PrintLogEndl("BYE");
 	std::cout << --cnt << '\n';
-	NagiocpX::xdelete<PartyQuestSystem>(m_party_quest_system);
 }
 
 void ClientSession::OnConnected()
@@ -65,34 +63,72 @@ void ClientSession::OnDisconnected(const NagiocpX::Cluster* const curCluster_)no
 	//	const auto ee = e->UseCount();
 	//	if (ee != 1)std::cout <<"왜?: "<< ee << std::endl;
 	//	});
-	m_party_quest_system->m_curQuestRoomInstance.reset();
+	
 	//m_party_quest_system->ResetPartyQuestSystem();
 	if (const auto p = m_cur_my_party_system.load())
 	{
+		const auto q_room = p->m_curQuestRoomInstance;
 		p->OutMember(GetSessionID());
+		if (q_room)
+		{
+			q_room->DecMemberCount();
+		}
 	}
 }
 
-bool ClientSession::CreatePartySystem()
+std::shared_ptr<PartyQuestSystem> ClientSession::CreatePartySystem()
 {
-	if (m_cur_my_party_system.load())return false;
-	IncRef();
-	m_party_quest_system->m_member[0] = this;
-	m_cur_my_party_system.store(m_party_quest_system);
-	return true;
+	if (m_cur_my_party_system.load())return {};
+	auto sys = NagiocpX::MakeSharedSTD<PartyQuestSystem>();
+	m_cur_my_party_system.store(
+		sys
+	);
+	sys->m_member[0] = GetOwnerEntity()->SharedFromThis();
+	return sys;
 }
 
-ClientSession* ClientSession::GetCurPartySystemLeader() const noexcept
+std::shared_ptr<PartyQuestSystem> ClientSession::QueryPartyLeader() const noexcept
+{
+	const auto owner = GetOwnerEntity();
+	auto sys = m_cur_my_party_system.load();
+	if (!sys)return {};
+	if (sys->QueryPartyLeader(owner))
+	{
+		return sys;
+	}
+	else
+	{
+		return {};
+	}
+}
+
+S_ptr<ContentsEntity> ClientSession::GetCurPartySystemLeader() const noexcept
 {
 	const auto party = m_cur_my_party_system.load();
 	if (!party)return nullptr;
 	return party->GetPartyLeader();
 }
 
-PARTY_ACCEPT_RESULT ClientSession::AcceptNewPlayer(ClientSession* const other)
+PARTY_ACCEPT_RESULT ClientSession::AcceptNewPlayer(const S_ptr<PacketSession>& session)
 {
-	if (!IsPartyLeader())return PARTY_ACCEPT_RESULT::INVALID;
-	if (other->HasParty())return PARTY_ACCEPT_RESULT::INVALID;
-	other->m_cur_my_party_system.store(m_party_quest_system);
-	return m_party_quest_system->AcceptNewMember(other->SharedFromThis<ClientSession>());
+	return AcceptNewPlayer(session->GetOwnerEntity());
+}
+
+PARTY_ACCEPT_RESULT ClientSession::AcceptNewPlayer(ContentsEntity* const other)
+{
+	const auto cur_party = m_cur_my_party_system.load();
+	if(!cur_party)return PARTY_ACCEPT_RESULT::INVALID;
+	const auto leader = cur_party->GetPartyLeader();
+	if(GetOwnerEntity() != leader.get())return PARTY_ACCEPT_RESULT::INVALID;
+	const auto other_session = other->GetClientSession();
+	std::shared_ptr<PartyQuestSystem> expected{ nullptr };
+	if (!other_session->m_cur_my_party_system.compare_exchange_strong(
+		expected,
+		cur_party
+	)) {
+		// 2개의 동시 신청 건에 대하여 동시승인 할 경우 CAS로 승부를가린다.
+		// + 이미 파티에있을경우도 실패
+		return PARTY_ACCEPT_RESULT::INVALID;
+	}
+	return cur_party->AcceptNewMember(other->SharedFromThis());
 }

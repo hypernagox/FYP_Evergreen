@@ -41,14 +41,12 @@ public:
 public:
 	void CheckPartyQuestState()noexcept;
 	bool IsClear()const noexcept { return m_isClear.load(); }
-	void RegisterMember(const uint32_t idx, ContentsEntity* const entity)noexcept;
 protected:
 	NagoxAtomic::Atomic<int8_t> m_mon_count{ 0 };
 private:
 	NagoxAtomic::Atomic<bool> m_isClear{ false };
 	NagoxAtomic::Atomic<int8_t> m_numOfMember{ 0 };
 	class PartyQuestSystem* m_ownerPartrySystem = nullptr;
-	ContentsEntity* m_members[NUM_OF_MAX_PARTY_MEMBER]{ nullptr };
 	XMap<uint32_t, uint32_t> m_id2idx_table;
 };
 

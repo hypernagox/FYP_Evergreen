@@ -32,7 +32,7 @@ void PathNPC::UpdateMove()
 	}
 	if (const auto leader = m_owner_system_session)
 	{
-		const auto leader_pos = leader->GetOwnerEntity()->GetComp<PositionComponent>()->pos;
+		const auto leader_pos = leader->GetComp<PositionComponent>()->pos;
 		const auto my_pos = owner->GetComp<PositionComponent>()->pos;
 		if (!CommonMath::IsInDistanceDX(leader_pos, my_pos, 10))
 		{
@@ -103,9 +103,8 @@ void PathNPC::InitPathNPC()
 	m_navAgent->SetPos(points[0]);
 	m_speed = 5.f;
 
-	if (const auto owner_session = m_owner_system->m_member[0])
+	if (const auto owner_session = m_owner_system->GetPartyLeader())
 	{
-		owner_session->IncRef();
 		m_owner_system_session = owner_session;
 	}
 	if (auto num = pvec.size())
