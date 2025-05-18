@@ -32,6 +32,8 @@ namespace NagiocpX
 	void DeadLockDetector::AcquireLock(const int32_t lock_id, const char* const name)noexcept
 	{
 		extern thread_local XVector<int32_t> LLockStack;
+		const bool flag = (LLockStack.end() !=
+			std::ranges::find(LLockStack, lock_id));
 		{
 			LockGuard guard{ m_lock };
 
@@ -43,8 +45,7 @@ namespace NagiocpX
 				m_idToName[lock_id].emplace_back(name);
 			}
 			
-			if (LLockStack.end() !=
-				std::ranges::find(LLockStack, lock_id))
+			if (flag)
 			{
 				printf("===== CURRENT LOCK HISTORY =====\n");
 
@@ -71,14 +72,13 @@ namespace NagiocpX
 
 			if (!LLockStack.empty())
 			{
-				const int32_t prevId = LLockStack.back();
-
-				if (m_lockHistory[prevId].emplace(lock_id).second)
+				if (m_lockHistory[LLockStack.back()].emplace(lock_id).second)
 				{
 					CheckCycle();
 				}
 			}
 		}
+
 		LLockStack.emplace_back(lock_id);
 	}
 
@@ -89,7 +89,7 @@ namespace NagiocpX
 		if (LLockStack.empty())
 			NAGOX_ASSERT_LOG(0, "MULTIPLE_UNLOCK");
 
-		if (LLockStack.back() != lock_id)
+		if (lock_id != LLockStack.back())
 			NAGOX_ASSERT_LOG(0, "UNLOCK_ORDER_MISTAKE");
 
 		LLockStack.pop_back();
