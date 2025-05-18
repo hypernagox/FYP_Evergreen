@@ -45,13 +45,13 @@ public:
 	XVector<S_ptr<ContentsEntity>> GetPartyMembers()const noexcept;
 	S_ptr<QuestRoom> GetCurRoomInstance()const noexcept;
 	void SetCurRoomInstance(S_ptr<QuestRoom> room_ptr)noexcept {
-		NagiocpX::SRWLockGuard lock{ m_partyLock };
+		SHARED_LOCK(m_partyLock);
 		if (m_curQuestRoomInstance)return;
 		m_curQuestRoomInstance.swap(room_ptr);
 	}
 	const bool IsEmptySystem()const noexcept {
 		{
-			NagiocpX::SRWLockGuard lock{ m_partyLock };
+			SHARED_LOCK(m_partyLock);
 			for (const auto& ptr : m_member) {
 				if (ptr)return false;
 			}

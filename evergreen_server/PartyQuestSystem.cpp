@@ -14,7 +14,7 @@ bool PartyQuestSystem::MissionStart()
 {
 	S_ptr<QuestRoom> room;
 	{
-		NagiocpX::SRWLockGuardEx lock{ m_partyLock };
+		EXCLUSIVE_LOCK(m_partyLock);
 		if (m_curQuestRoomInstance)return false;
 		if (m_started)return false;
 		if (m_runFlag)return false;
@@ -50,7 +50,7 @@ bool PartyQuestSystem::MissionStart()
 	room->InitQuestField();
 
 	{
-		NagiocpX::SRWLockGuardEx lock{ m_partyLock };
+		EXCLUSIVE_LOCK(m_partyLock);
 		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
 		{
 			const auto owner = m_member[i].get();
@@ -73,7 +73,7 @@ bool PartyQuestSystem::MissionStart()
 
 void PartyQuestSystem::MissionEnd()
 {
-	NagiocpX::SRWLockGuardEx lock{ m_partyLock };
+	EXCLUSIVE_LOCK(m_partyLock);
 	if (!m_runFlag) {
 		std::cout << "Now not run\n";
 		return;
@@ -109,7 +109,7 @@ void PartyQuestSystem::MissionEnd()
 
 void PartyQuestSystem::ResetPartyQuestSystem()	
 {
-	NagiocpX::SRWLockGuardEx lock{ m_partyLock };
+	EXCLUSIVE_LOCK(m_partyLock);
 	m_curQuestID = -1;
 	for (auto& m : m_member)
 	{
@@ -131,7 +131,7 @@ PARTY_ACCEPT_RESULT PartyQuestSystem::AcceptNewMember(S_ptr<ContentsEntity> new_
 	PARTY_ACCEPT_RESULT res = PARTY_ACCEPT_RESULT::PARTY_IS_FULL;
 	const auto target_user_id = new_member->GetObjectID();
 	{
-		NagiocpX::SRWLockGuardEx lock{ m_partyLock };
+		EXCLUSIVE_LOCK(m_partyLock);
 		if (m_started)return PARTY_ACCEPT_RESULT::INVALID;
 		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
 		{
@@ -201,7 +201,7 @@ bool PartyQuestSystem::CanMissionEnd() const noexcept
 S_ptr<ContentsEntity> PartyQuestSystem::FindMember(const uint32_t obj_id)
 {
 	{
-		NagiocpX::SRWLockGuard lock{ m_partyLock };
+		SHARED_LOCK(m_partyLock);
 		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
 		{
 			if (!m_member[i])continue;
@@ -222,7 +222,7 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 	int mem_num = 0;
 	uint32_t cur_leader_id = 0;
 	{
-		NagiocpX::SRWLockGuardEx lock{ m_partyLock };
+		EXCLUSIVE_LOCK(m_partyLock);
 		//if (m_started)return;
 		//if (m_runFlag)return;	
 		room = m_curQuestRoomInstance;
@@ -280,7 +280,7 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 
 bool PartyQuestSystem::QueryPartyLeader(ContentsEntity* const owner) const noexcept
 {
-	NagiocpX::SRWLockGuard lock{ m_partyLock };
+	SHARED_LOCK(m_partyLock);
 	return m_member[0].get() == owner;
 }
 
@@ -288,7 +288,7 @@ XVector<S_ptr<ContentsEntity>> PartyQuestSystem::GetPartyMembers() const noexcep
 {
 	XVector<S_ptr<ContentsEntity>> temp; temp.reserve(NUM_OF_MAX_PARTY_MEMBER);
 	{
-		NagiocpX::SRWLockGuard lock{ m_partyLock };
+		SHARED_LOCK(m_partyLock);
 		for (const auto& ptr : m_member) {
 			if (!ptr)continue;
 			temp.emplace_back(ptr);
@@ -301,7 +301,7 @@ S_ptr<QuestRoom> PartyQuestSystem::GetCurRoomInstance() const noexcept
 {
 	S_ptr<QuestRoom> room;
 	{
-		NagiocpX::SRWLockGuard lock{ m_partyLock };
+		SHARED_LOCK(m_partyLock);
 		room = m_curQuestRoomInstance;
 	}
 	return room;

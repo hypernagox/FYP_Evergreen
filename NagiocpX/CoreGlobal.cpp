@@ -2,7 +2,7 @@
 #include "CoreGlobal.h"
 #include "ThreadMgr.h"
 #include "MemoryMgr.h"
-#include "DeadLockProfiler.h"
+#include "DeadLockDetector.h"
 #include "SocketUtils.h"
 #include "SendBufferMgr.h"
 #include "TaskTimerMgr.h"
@@ -42,7 +42,7 @@ namespace NagiocpX
 		Mgr(TimeMgr)->RegisterDestroy();
 		Mgr(Logger)->RegisterDestroy();
 		Mgr(ThreadMgr)->RegisterDestroy();
-		Mgr(DeadLockProfiler)->RegisterDestroy();
+		Mgr(DeadLockDetector)->RegisterDestroy();
 		Mgr(TaskTimerMgr)->RegisterDestroy();
 		//Mgr(DBMgr)->RegisterDestroy();
 		Mgr(FieldMgr)->RegisterDestroy();
@@ -53,7 +53,7 @@ namespace NagiocpX
 		Mgr(Logger)->Init();
 		//Mgr(MemoryMgr)->Init();
 		Mgr(ThreadMgr)->Init();
-		Mgr(DeadLockProfiler)->Init();
+		Mgr(DeadLockDetector)->Init();
 		Mgr(TaskTimerMgr)->Init();
 		//Mgr(SendBufferMgr)->Init();
 		//Mgr(DBMgr)->Init();

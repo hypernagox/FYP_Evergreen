@@ -11,36 +11,26 @@
 
 #define PAGE_SIZE (0x1000)
 
-/*---------------
-	  Lock
----------------*/
+#define USE_DEADLOCK_DETECTOR
 
-#define USE_MANY_LOCKS(count)	Lock _locks[count];
-#define USE_LOCK				USE_MANY_LOCKS(1)
-#define	READ_LOCK_IDX(idx)		ReadLockGuard readLockGuard_##idx(_locks[idx], typeid(this).name());
-#define READ_LOCK				READ_LOCK_IDX(0)
-#define	WRITE_LOCK_IDX(idx)		WriteLockGuard writeLockGuard_##idx(_locks[idx], typeid(this).name());
-#define WRITE_LOCK				WRITE_LOCK_IDX(0)
+#ifdef USE_DEADLOCK_DETECTOR
 
-/*---------------
-	  Crash
----------------*/
+#define SHARED_LOCK(valName) \
+	NagiocpX::SRWLockGuard srw_lock_guard_##valName { valName, __FUNCTION__ }
 
-#define CRASH(cause)						\
-{											\
-	uint32* crash = nullptr;				\
-	__analysis_assume(crash != nullptr);	\
-	*crash = 0xDEADBEEF;					\
-}
+#define EXCLUSIVE_LOCK(valName) \
+	NagiocpX::SRWLockGuardEx srw_lock_guard_ex_##valName { valName,  __FUNCTION__ }
 
-#define ASSERT_CRASH(expr)			\
-{									\
-	if (!(expr)) [[unlikely]]		\
-	{								\
-		CRASH("ASSERT_CRASH");		\
-		__analysis_assume(expr);	\
-	}								\
-}
+#else
+
+#define SHARED_LOCK_GUARD(name) \
+	NagiocpX::SRWLockGuard srw_lock_guard_##name { name }
+
+#define EXCLUSIVE_LOCK_GUARD(name) \
+	NagiocpX::SRWLockGuardEx srw_lock_guard_ex_##name { name }
+
+#endif
+
 
 
 // #define TRACK_FUNC_LOG

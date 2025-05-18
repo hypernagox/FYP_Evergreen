@@ -125,7 +125,7 @@ namespace NagiocpX
 		AllocateSharedSizeTrait<T> dummyAllocator;
 		dummyAllocator.actual_size_ptr = &temp;
 		const auto dummy = std::allocate_shared<T>(dummyAllocator);
-		ASSERT_CRASH(0 != temp);
+		NAGOX_ASSERT(0 != temp);
 		return temp;
 	}
 

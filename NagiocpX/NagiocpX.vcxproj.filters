@@ -73,12 +73,6 @@
     <Filter Include="Manager\DeadLockProfiler">
       <UniqueIdentifier>{b37477d9-fe30-4340-b44b-2b9a1311c9c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Locks">
-      <UniqueIdentifier>{7f43475c-75fa-4c90-9191-38576b1eb7a8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Locks\Lock">
-      <UniqueIdentifier>{7c907f03-48a6-4984-8530-f55c89f080be}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Memory\AtomicNonTemplate">
       <UniqueIdentifier>{35e601fe-34f4-44bd-b758-f4d74e161692}</UniqueIdentifier>
     </Filter>
@@ -162,6 +156,9 @@
     </Filter>
     <Filter Include="Network\IocpCore\IocpEvent\GlobalEventQueue">
       <UniqueIdentifier>{c305936b-04b2-43c4-8e43-31025b125d91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lock">
+      <UniqueIdentifier>{7f43475c-75fa-4c90-9191-38576b1eb7a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -264,23 +261,17 @@
     <ClInclude Include="ThreadMgr.h">
       <Filter>Manager\ThreadMgr</Filter>
     </ClInclude>
-    <ClInclude Include="DeadLockProfiler.h">
+    <ClInclude Include="DeadLockDetector.h">
       <Filter>Manager\DeadLockProfiler</Filter>
     </ClInclude>
-    <ClInclude Include="Lock.h">
-      <Filter>Locks\Lock</Filter>
-    </ClInclude>
     <ClInclude Include="SRWLock.hpp">
-      <Filter>Locks</Filter>
+      <Filter>Lock</Filter>
     </ClInclude>
     <ClInclude Include="SpinLock.hpp">
-      <Filter>Locks</Filter>
+      <Filter>Lock</Filter>
     </ClInclude>
     <ClInclude Include="AtomicMemoryPool.hpp">
       <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="TypeCast.h">
-      <Filter>Utils\predefine</Filter>
     </ClInclude>
     <ClInclude Include="Logger.h">
       <Filter>Manager\Logger</Filter>
@@ -479,11 +470,8 @@
     <ClCompile Include="ThreadMgr.cpp">
       <Filter>Manager\ThreadMgr</Filter>
     </ClCompile>
-    <ClCompile Include="DeadLockProfiler.cpp">
+    <ClCompile Include="DeadLockDetector.cpp">
       <Filter>Manager\DeadLockProfiler</Filter>
-    </ClCompile>
-    <ClCompile Include="Lock.cpp">
-      <Filter>Locks\Lock</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Manager\Logger</Filter>

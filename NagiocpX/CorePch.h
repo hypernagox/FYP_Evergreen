@@ -54,9 +54,7 @@
 
 #include "NetAddress.h"
 #include "IDGenerator.hpp"
-#include "Lock.h"
 #include "ObjectPool.hpp"
-#include "TypeCast.h"
 #include "SendBufferChunk.h"
 #include "MemoryMgr.h"
 #include "MemoryHeader.hpp"
