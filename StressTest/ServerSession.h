@@ -12,7 +12,7 @@ public:
 	virtual void OnSend(c_int32 len)noexcept override;
 	virtual void OnDisconnected(const NagiocpX::Cluster* const curCluster_)noexcept override;
 
-	const auto GetDelayAvg()const noexcept { return ((float)m_accDelayMs / (float)m_moveCount); }
+	const auto GetDelayAvg()const noexcept { return (float)((double)m_accDelayMs / (double)m_moveCount); }
 	void UpdateTimeStamp(const uint64_t old_time_stamp)noexcept { m_accDelayMs += (::GetTickCount64() - old_time_stamp); }
 public:
 	void StartMovePacket()noexcept;

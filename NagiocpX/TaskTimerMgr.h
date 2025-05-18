@@ -56,6 +56,7 @@ namespace NagiocpX
 		}
 		void ReserveAsyncTask(c_uint64 tickAfter, IocpEvent* const pTimerEvent_)noexcept;
 		void DistributeTask()noexcept;
+		void Init()noexcept;
 	private:
 		tbb::concurrent_priority_queue <TimerTask, TimerCompare, StlAllocator64<TimerTask>> m_timerTaskQueue;
 		int64_t pad[7];

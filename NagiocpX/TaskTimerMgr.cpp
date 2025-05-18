@@ -9,15 +9,19 @@ namespace NagiocpX
 {
 	TaskTimerMgr::TaskTimerMgr()
 	{
+	}
+
+	TaskTimerMgr::~TaskTimerMgr()
+	{
+	}
+
+	void TaskTimerMgr::Init()noexcept
+	{
 		for (int i = 0; i < 1024 * 1024 * 2; ++i)
 		{
 			m_timerTaskQueue.emplace(TimerTask{});
 		}
 		m_timerTaskQueue.clear();
-	}
-
-	TaskTimerMgr::~TaskTimerMgr()
-	{
 	}
 
 	void TaskTimerMgr::ReserveAsyncTask(c_uint64 tickAfter, S_ptr<TaskQueueable>&& memfuncInstance, Task&& task)noexcept

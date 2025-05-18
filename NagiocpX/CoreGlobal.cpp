@@ -19,6 +19,18 @@ namespace NagiocpX
 	CoreGlobal::CoreGlobal()
 		:m_iocpCore{ SocketUtils::Init() }
 	{
+		ULONG HeapFragValue = 2;
+		HANDLE hHeaps[1024] = {};
+		const DWORD dwHeapCount = GetProcessHeaps(sizeof(hHeaps) / sizeof(hHeaps[0]), hHeaps);
+		for (DWORD i = 0; i < dwHeapCount; ++i)
+		{
+			HeapSetInformation(
+				hHeaps[i],
+				HeapCompatibilityInformation,
+				&HeapFragValue,
+				sizeof(HeapFragValue)
+			);
+		}
 	}
 
 	CoreGlobal::~CoreGlobal()

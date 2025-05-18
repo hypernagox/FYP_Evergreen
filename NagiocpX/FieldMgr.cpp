@@ -38,7 +38,7 @@ namespace NagiocpX
 		int32 idx;
 		if (!m_idxQueue.try_pop(idx))
 			return;
-		m_id2Index.emplace(static_cast<c_uint32>(obj_id), static_cast<c_uint16>(idx));
+		m_id2Index.emplace(static_cast<c_uint32>(obj_id), static_cast<c_uint32>(idx));
 		m_arrNPC[idx].ptr.store(std::move(pNPC));
 	}
 	void FieldMgr::ReleaseNPC(const ContentsEntity* const pNPC) noexcept
@@ -75,7 +75,7 @@ namespace NagiocpX
 	}
 	S_ptr<ContentsEntity> FieldMgr::GetNPC(const uint32_t npc_id) const noexcept
 	{
-		const uint16_t idx = m_id2Index[static_cast<c_uint32>(npc_id)];
+		const uint32_t idx = m_id2Index[static_cast<c_uint32>(npc_id)];
 		auto target = m_arrNPC[idx].ptr.load();
 		if (target && target->GetObjectID() == npc_id)
 			return target;

@@ -50,8 +50,8 @@ public:
 	}
 };
 
-constexpr const bool USE_AWS_FLAG = true;
-//constexpr const bool USE_AWS_FLAG = false;
+//constexpr const bool USE_AWS_FLAG = true;
+constexpr const bool USE_AWS_FLAG = false;
 
 constexpr const static inline wchar_t IP_ADDR[][256]
 {
@@ -76,11 +76,11 @@ int main()
 			, NagiocpX::NetAddress{ IP_ADDR[USE_AWS_FLAG],7777}
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 300
+			, 5000
 		);
 	
 	
-	std::thread t1{ [pClientService]() {ASSERT_CRASH(pClientService->Start()); } };
+	std::thread t1{ [pClientService]() {NAGOX_ASSERT(pClientService->Start()); } };
 	
 	Mgr(ThreadMgr)->Launch(
 		  8

@@ -26,10 +26,11 @@ namespace NagiocpX
 			return temp + ')';
 		}
 	private:
+		std::mutex m_lock;
 		std::map<const char*, int32_t>	m_nameToId;
 		std::map<int32, std::vector<const char*>> m_idToName;
 		std::map<int32_t, std::set<int32_t>> m_lockHistory;
-		std::mutex m_lock;
+	
 
 		std::vector<int32_t> m_discoveredOrder;
 		int32_t m_discoveredCount = 0;

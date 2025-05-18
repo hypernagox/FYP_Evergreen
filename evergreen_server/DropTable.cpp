@@ -9,6 +9,7 @@
 #include "Field.h"
 #include "FieldMgr.h"
 #include "ClusterInfoHelper.h"
+#include "LifeSpanObj.h"
 
 void DropTable::SetItemType(const std::string_view mon_name)
 {
@@ -53,7 +54,16 @@ void DropTable::TryCreateItem() const noexcept
 
 	owner->GetCurField()->EnterFieldWithFloatXYNPC(
 		PositionComponent::GetXZWithOffsetGlobal(temp_ptr),
-		std::move(item)
+		(item)
 	);
-	
+
+	if (b.has_life_span && !item)
+	{
+		temp_ptr->AddComp<LifeSpanObj>()->InitLifeTimer(5000);
+	}
+
+	else if (item)
+	{
+		std::cout << "Fail to add field item\n";
+	}
 }

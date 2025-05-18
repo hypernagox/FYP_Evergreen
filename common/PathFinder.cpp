@@ -43,7 +43,7 @@ namespace Common
 
         if (dtStatusFailed(status))
         {
-            std::cout << "못 찾음\n";
+           // std::cout << "못 찾음\n";
             return {};
         }
 
@@ -59,7 +59,7 @@ namespace Common
         status = nav_q->findStraightPath(&start_z_pos.x, &dest_z_pos.x, path, pathCount, &straightPath[0].x, straightPathFlags, straightPathPolys, &straightPathCount, 10);
         if (dtStatusFailed(status))
         {
-            std::cout << "못 찾음\n";
+            //std::cout << "못 찾음\n";
             return {};
         }
 

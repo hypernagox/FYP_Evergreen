@@ -58,7 +58,7 @@ namespace NagiocpX
 	private:
 		std::unordered_map<uint8_t, Field*> m_mapField;
 
-		mutable tbb::concurrent_unordered_map<uint32_t, uint16_t, std::hash<uint32_t>, std::equal_to<uint32_t>> m_id2Index;
+		mutable tbb::concurrent_unordered_map<uint32_t, uint32_t, std::hash<uint32_t>, std::equal_to<uint32_t>> m_id2Index;
 		std::span<AtomicNPCPtr> m_arrNPC;
 		tbb::concurrent_bounded_queue<int32> m_idxQueue;
 	};

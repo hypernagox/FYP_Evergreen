@@ -110,10 +110,6 @@ namespace NagiocpX
 		const auto item = entity->AddComp<DropItem>();
 		item->SetDropItemDetailInfo(b_.item_detail_type);
 		item->SetItemStack(b_.item_stack_size);
-		if (b_.has_life_span)
-		{
-			entity->AddComp<LifeSpanObj>()->InitLifeTimer(5000);
-		}
 		return entity;
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreateHarvest(const EntityBuilder& b) noexcept
