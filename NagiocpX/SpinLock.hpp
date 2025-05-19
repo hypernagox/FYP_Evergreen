@@ -1,5 +1,6 @@
 #pragma once
 #include "NagiocpXPch.h"
+#include "DeadLockDetector.h"
 
 namespace NagiocpX
 {
@@ -22,14 +23,50 @@ namespace NagiocpX
         }
     private:
         alignas(4) mutable volatile BOOL lockFlag = FALSE;
+
+#ifdef USE_DEADLOCK_DETECTOR
+    public:
+        const int32_t m_lock_id = NagiocpX::DeadLockDetector::GenerateLockID();
+#else
+
+#endif
     };
 
     class SpinLockGuard
     {
     public:
-        inline explicit SpinLockGuard(SpinLock& spinLock_)noexcept :m_spinLock{ spinLock_ } { m_spinLock.lock(); }
-        inline ~SpinLockGuard()noexcept { m_spinLock.unlock(); }
+        SpinLockGuard(const SpinLockGuard&) = delete;
+        SpinLockGuard(SpinLockGuard&&) noexcept = delete;
+        SpinLockGuard& operator=(const SpinLockGuard&) = delete;
+        SpinLockGuard& operator=(SpinLockGuard&&) noexcept = delete;
+
+#ifdef USE_DEADLOCK_DETECTOR
+        inline explicit SpinLockGuard(const SpinLock& spinLock_, const char* const lockName) noexcept
+            : m_spinLock{ spinLock_ }, m_lockName{ lockName }
+        {
+            NagiocpX::DeadLockDetector::GetInst()->AcquireLock(m_spinLock.m_lock_id, m_lockName);
+            m_spinLock.lock();
+        }
+#else
+        inline explicit SpinLockGuard(const SpinLock& spinLock_) noexcept
+            : m_spinLock{ spinLock_ }
+        {
+            m_spinLock.lock();
+        }
+#endif
+
+        inline ~SpinLockGuard() noexcept
+        {
+#ifdef USE_DEADLOCK_DETECTOR
+            NagiocpX::DeadLockDetector::GetInst()->ReleaseLock(m_spinLock.m_lock_id, m_lockName);
+#endif
+            m_spinLock.unlock();
+        }
+
     private:
         const SpinLock& m_spinLock;
+#ifdef USE_DEADLOCK_DETECTOR
+        const char* const m_lockName;
+#endif
     };
 }

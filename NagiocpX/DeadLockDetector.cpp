@@ -35,20 +35,21 @@ namespace NagiocpX
 		const bool flag = (LLockStack.end() !=
 			std::ranges::find(LLockStack, lock_id));
 		{
-			LockGuard guard{ m_lock };
+			std::lock_guard<std::mutex> lock{ m_lock };
 
-			const auto it = m_nameToId.find(name);
+			const auto it = m_idToName.find(lock_id);
 
-			if (it == m_nameToId.end())
+			if (m_idToName.end() == it)
 			{
-				m_nameToId[name] = lock_id;
-				m_idToName[lock_id].emplace_back(name);
+				auto lock_name = name + std::to_string(lock_id);
+				m_nameToId.try_emplace(lock_name, lock_id);
+				m_idToName[lock_id].emplace_back(std::move(lock_name));
 			}
 			
 			if (flag)
 			{
 				printf("===== CURRENT LOCK HISTORY =====\n");
-
+			
 				for (const auto& [fromId, toSet] : m_lockHistory)
 				{
 					const auto fromName = GetLockUsedPosition(fromId);
@@ -58,7 +59,7 @@ namespace NagiocpX
 						printf("%s    ->    %s\n", fromName.c_str(), toName.c_str());
 					}
 				}
-
+			
 				printf("\n\n===== CURRENT LOCK STACK (THIS THREAD) =====\n");
 				for (int i = 0; i < (int)LLockStack.size(); ++i)
 				{
@@ -66,7 +67,7 @@ namespace NagiocpX
 					printf("[%d]: %s\n", i, log.c_str());
 				}
 				
-
+			
 				NAGOX_ASSERT_LOG(0, "RE_ENTRANT_LOCK_DETECTED (detailed)\n\n");
 			}
 
@@ -99,17 +100,9 @@ namespace NagiocpX
 	{
 		extern thread_local XVector<int32_t> LLockStack;
 
-		const int32_t lockCount = std::max(m_idToName.rbegin()->first, (int)m_idToName.size() + 1) + 1;
 		m_discoveredCount = 0;
 
-		for (int32_t i = 0; i < lockCount; ++i)
-		{
-			m_discoveredOrder.emplace_back(-1);
-			m_finished.emplace_back(false);
-			m_parent.emplace_back(-1);
-		}
-
-		for (int32_t lockId = 0; lockId < lockCount; ++lockId) 
+		for (const auto lockId: m_idToName | std::ranges::views::keys)
 		{
 			DFS(lockId);
 		}
@@ -123,16 +116,19 @@ namespace NagiocpX
 	{
 		extern thread_local XVector<int32_t> LLockStack;
 
-		if (-1 != m_discoveredOrder[here])
-			return;
+		const auto iter = m_discoveredOrder.find(here);
 
-		m_discoveredOrder[here] = m_discoveredCount++;
+		if (m_discoveredOrder.end() != iter)return;
 
+		const auto hereOrder = m_discoveredCount++;
+
+		m_discoveredOrder.emplace_hint(iter, here, hereOrder);
+		
 		const auto findIt = m_lockHistory.find(here);
 
 		if (m_lockHistory.end() == findIt)
 		{
-			m_finished[here] = true;
+			m_finished.emplace(here);
 			return;
 		}
 
@@ -140,38 +136,50 @@ namespace NagiocpX
 
 		for (const auto there : nextSet)
 		{
-			if (-1 == m_discoveredOrder[there])
+			const auto thereIt = m_discoveredOrder.find(there);
+			
+			if (m_discoveredOrder.end() == thereIt)
 			{
-				m_parent[there] = here;
+				m_parent.try_emplace(there, here);
 				DFS(there);
 				continue;
 			}
-
-			if (m_discoveredOrder[here] < m_discoveredOrder[there])
-				continue;
-
-			if (false == m_finished[there])
+			else
 			{
-				const auto here_id = GetLockUsedPosition(here);
-				const auto there_id = GetLockUsedPosition(there);
+				if (hereOrder < thereIt->second)
+					continue;
 
-				printf("%s    ->    %s\n", here_id.c_str(), there_id.c_str());
-
-				int32_t now = here;
-				for(;;)
+				if (false == m_finished.contains(there))
 				{
-					const auto parent_ids = GetLockUsedPosition(m_parent[now]);
-					const auto now_ids = GetLockUsedPosition(now);
+					const auto here_id = GetLockUsedPosition(here);
+					const auto there_id = GetLockUsedPosition(there);
 
-					printf("%s    ->    %s\n", parent_ids.c_str(), now_ids.c_str());
-					now = m_parent[now];
-					if (now == there)break;
+					printf("%s    ->    %s\n", here_id.c_str(), there_id.c_str());
+
+					int32_t now = here;
+					for (;;)
+					{
+						const auto parent_ids = GetLockUsedPosition(m_parent[now]);
+						const auto now_ids = GetLockUsedPosition(now);
+
+						printf("%s    ->    %s\n", parent_ids.c_str(), now_ids.c_str());
+						now = m_parent[now];
+						if (now == there)break;
+					}
+
+					NAGOX_ASSERT_LOG(0, "DEADLOCK_DETECTED");
 				}
-
-				NAGOX_ASSERT_LOG(0, "DEADLOCK_DETECTED");
 			}
 		}
 
-		m_finished[here] = true;
+		m_finished.emplace(here);
+	}
+	std::string DeadLockDetector::GetLockUsedPosition(const int32_t id) noexcept
+	{
+		std::string temp{ '(' };
+		for (const auto& str : m_idToName[id]) {
+			temp += str + std::string{ ", " };
+		}
+		return temp + ')';
 	}
 }

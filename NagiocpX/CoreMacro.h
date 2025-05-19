@@ -16,20 +16,27 @@
 #ifdef USE_DEADLOCK_DETECTOR
 
 #define SHARED_LOCK(valName) \
-	NagiocpX::SRWLockGuard srw_lock_guard_##valName { valName, __FUNCTION__ }
+    NagiocpX::SRWLockGuard     srw_lock_guard_##valName { valName, __FUNCTION__ }
 
 #define EXCLUSIVE_LOCK(valName) \
-	NagiocpX::SRWLockGuardEx srw_lock_guard_ex_##valName { valName,  __FUNCTION__ }
+    NagiocpX::SRWLockGuardEx   srw_lock_guard_ex_##valName { valName, __FUNCTION__ }
+
+#define SPIN_LOCK(valName) \
+    NagiocpX::SpinLockGuard    spin_lock_guard_##valName { valName, __FUNCTION__ }
 
 #else
 
-#define SHARED_LOCK_GUARD(name) \
-	NagiocpX::SRWLockGuard srw_lock_guard_##name { name }
+#define SHARED_LOCK(name) \
+    NagiocpX::SRWLockGuard     srw_lock_guard_##name { name }
 
-#define EXCLUSIVE_LOCK_GUARD(name) \
-	NagiocpX::SRWLockGuardEx srw_lock_guard_ex_##name { name }
+#define EXCLUSIVE_LOCK(name) \
+    NagiocpX::SRWLockGuardEx   srw_lock_guard_ex_##name { name }
+
+#define SPIN_LOCK(name) \
+    NagiocpX::SpinLockGuard    spin_lock_guard_##name { name }
 
 #endif
+
 
 
 

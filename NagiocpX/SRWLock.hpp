@@ -23,10 +23,8 @@ namespace NagiocpX
         mutable SRWLOCK SRW_lock = SRWLOCK_INIT;
 
 #ifdef USE_DEADLOCK_DETECTOR
-	private:
-		static inline constinit std::atomic_int32_t g_lock_id = 0;
 	public:
-		const int32_t m_lock_id = g_lock_id.fetch_add(1);
+		const int32_t m_lock_id = NagiocpX::DeadLockDetector::GenerateLockID();
 #else
 		
 #endif
