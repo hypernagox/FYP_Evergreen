@@ -63,6 +63,13 @@ PartyStatusGUI::PartyStatusGUI(const std::shared_ptr<SceneObject>& object) : Com
 		partyMemberIDText->SetText(L"Member ID");
 		partyMemberIDText->SetAlignment(GUIText::Alignment::Left);
 		partyGUI.Panel->AddChild(partyGUI.PartyMemberIDText);
+
+		partyGUI.PartyLeaderIcon = std::make_shared<SceneObject>();
+		partyGUI.PartyLeaderIcon->GetTransform()->SetLocalPositionX(200.0f);
+		auto partyLeaderIcon = partyGUI.PartyLeaderIcon->AddComponent<GUIImage>();
+		partyLeaderIcon->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\leader.png")));
+		partyLeaderIcon->SetSize(Vector2(40.0f, 40.0f));
+		partyGUI.Panel->AddChild(partyGUI.PartyLeaderIcon);
 	}
 
 	m_panel->SetActive(false);
@@ -71,6 +78,7 @@ PartyStatusGUI::PartyStatusGUI(const std::shared_ptr<SceneObject>& object) : Com
 void PartyStatusGUI::InitializeContents(const std::vector<uint32_t>& table)
 {
 	m_partyMemberIDsCache = table;
+	m_partyLeaderIndexCache = 0;
 	UpdatePartyPanels();
 	m_panel->SetActive(true);
 }
@@ -91,6 +99,20 @@ void PartyStatusGUI::RemovePartyMember(uint32_t partyMemberID)
 	}
 }
 
+void PartyStatusGUI::SetPartyLeader(uint32_t partyLeaderID)
+{
+	auto it = std::find(m_partyMemberIDsCache.begin(), m_partyMemberIDsCache.end(), partyLeaderID);
+	if (it != m_partyMemberIDsCache.end())
+	{
+		uint32_t index = std::distance(m_partyMemberIDsCache.begin(), it);
+		if (index != m_partyLeaderIndexCache)
+		{
+			m_partyLeaderIndexCache = index;
+			UpdatePartyPanels();
+		}
+	}
+}
+
 void PartyStatusGUI::DisablePartyPanel()
 {
 	m_panel->SetActive(false);
@@ -105,9 +127,11 @@ void PartyStatusGUI::UpdatePartyPanels()
 			m_partyPanels[i].PartyMemberIDText->SetActive(true);
 			auto partyMemberIDText = m_partyPanels[i].PartyMemberIDText->GetComponent<GUIText>();
 			partyMemberIDText->SetText(L"Member ID: " + std::to_wstring(m_partyMemberIDsCache[i]));
+			m_partyPanels[i].PartyLeaderIcon->SetActive(i == m_partyLeaderIndexCache);
 		}
 		else
 		{
+			m_partyPanels[i].PartyLeaderIcon->SetActive(false);
 			m_partyPanels[i].PartyMemberIDText->SetActive(false);
 		}
 	}
