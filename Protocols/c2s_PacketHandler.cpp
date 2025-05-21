@@ -512,7 +512,7 @@ const bool Handle_c2s_PARTY_JOIN_REQUEST_RESULT(const NagiocpX::S_ptr<NagiocpX::
 		{
 			// + 파티장과, 해당 지원자 말고도 다른 녀석에게 신참 왔다를 알리는 것 추가
 			// + 만약 자리가 없다던지 뭔가 문제가 있어서 파티에 넣는 것에 실패했다면 따로 처리 ..
-			if (PARTY_ACCEPT_RESULT::INVALID != target_member_session->AcceptNewPlayer(target_member.get()))
+			if (PARTY_ACCEPT_RESULT::INVALID != party_leader_session->AcceptNewPlayer(target_member.get()))
 			{
 				party_leader_session->SendAsync(std::move(pkt));
 			}
