@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "MonsterRenderer.h"
+#include "GizmoSphereRenderer.h"
 
 using namespace udsdx;
 
@@ -23,6 +24,13 @@ MonsterRenderer::MonsterRenderer(std::shared_ptr<udsdx::SceneObject> owner) : Co
 	renderer->SetMaterial(m_materials[1].get(), 1);
 
 	owner->AddChild(m_rendererObject);
+
+
+
+	auto gizmoRenderer = GetSceneObject()->AddComponent<GizmoSphereRenderer>();
+	gizmoRenderer->SetRadius(1.5f);
+
+
 }
 
 void MonsterRenderer::Update(const udsdx::Time& time, udsdx::Scene& scene)

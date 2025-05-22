@@ -156,14 +156,21 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 	Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
 	auto c = pOwner->GetComp<AABBCollider>()->GetCollider<Common::AABBBox>();
 	//c->m_offSet = rotatedForward;
-	auto box = c->GetAABB();
+	//auto box = c->GetAABB();
 	bool isHit = false;
-	pos_comp->pos = ::ToDxVec(pkt_.atk_pos());
+	//pos_comp->pos = ::ToDxVec(pkt_.atk_pos());
 	rotatedForward.y = 0.f;
-	Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,4.f };
-	fan.m_offSet = rotatedForward * 2;
+	auto ppp = pos_comp->pos;
+	ppp.y += 2.f;
+	Common::Sphere sp{ &ppp ,1.2f };
+	//std::cout << "Player Pos: ";
+	//PrintVector3(pos_comp->pos);
+	//Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,4.f };
+
+	//fan.m_offSet = rotatedForward * 2;
 
 	//if (const auto sector = pOwner->GetCurCluster())
+	XVector<Vector3> vvv;
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
 		for (const auto pmon : mon_list)
@@ -173,17 +180,21 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 				if (const auto pCol = pmon->GetComp<Collider>())
 				{
 					const auto owner = pCol->GetOwnerEntity();
-					if(fan.IsIntersect(pCol->GetCollider()))
+				
+					if(sp.IsCollision(pCol->GetCollider()))
 					//if (pCol->IsCollision(box))
 					{
 						//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
 						//
 						//owner->TryOnDestroy();
+						std::cout << "Hit Pos: ";
+						PrintVector3(pCol->GetPosComp()->pos);
 						owner->GetComp<HP>()->PostDoDmg(1, pOwner->SharedFromThis());
 						isHit = true;
 					}
 					else
 					{
+						vvv.emplace_back(pCol->GetPosComp()->pos);
 						//const auto ppp = pCol->GetCollider()->GetPosWithOffset();
 						//PrintLogEndl(&ppp.x);
 					}
@@ -195,10 +206,18 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 	{
 		pOwner->GetComp<MoveBroadcaster>()->BroadcastPacket(Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pkt_.body_angle(), *pkt_.atk_pos()));
 	}
+	//std::cout << "\n\n\n";
+	//std::ranges::sort(vvv, [player_pos = pos_comp->pos](const Vector3& a, const Vector3& b) {
+	//	const auto aa = CommonMath::GetDistPowDX(a, player_pos);
+	//	const auto bb = CommonMath::GetDistPowDX(b, player_pos);
+	//	return aa < bb;
+	//	});
+	//for (const auto& v : vvv)PrintVector3(v);
 	if (isHit)
 	{
 		//std::cout << "Hit!\n";
 	}
+	//std::cout << "\n\n\n";
 	return true;
 }
 

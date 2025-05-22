@@ -13,6 +13,18 @@ EntityMovement::~EntityMovement()
 
 void EntityMovement::Update(const Time& time, Scene& scene)
 {
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::OemPlus))
+	{
+		m_factor = std::min(m_factor + 1.f, 5.f);
+	}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::OemMinus))
+	{
+		m_factor = std::max(m_factor - 1.f, 1.f);
+	}
+	m_velocityHForwardMax = 7.5f * m_factor;
+	m_velocityHBackMax = 3.0f * m_factor;
+	m_velocityVMax = 20.0f * m_factor;
+
 	Transform* transform = GetSceneObject()->GetTransform();
 	const Vector3 position = transform->GetLocalPosition();
 	const Quaternion rotation = transform->GetLocalRotation();

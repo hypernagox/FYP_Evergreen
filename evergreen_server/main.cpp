@@ -42,7 +42,7 @@ public:
 		//	Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
 		//}
 
-		for (int i = 0; i < 10000; ++i)
+		for (int i = 0; i < 1000; ++i)
 		{
 			EntityBuilder b;
 			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;

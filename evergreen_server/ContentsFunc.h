@@ -17,3 +17,16 @@ float GetDistPow(const ContentsEntity* const a, const ContentsEntity* const b)no
 inline bool IsInDistEntity(const ContentsEntity* const a, const ContentsEntity* const b, const float dist)noexcept {
 	return GetDistPow(a, b) <= (dist * dist);
 }
+
+static inline void PrintVector3(const float v[3])noexcept {
+	printf("%f, %f, %f\n", v[0], v[1], v[2]);
+}
+
+static inline void PrintVector3(const Vector3& v)noexcept {
+	PrintVector3(&v.x);
+}
+
+static inline void PrintVector3(const Nagox::Struct::Vec3* const v)noexcept {
+	PrintVector3(&ToDxVec((const float*)v).x);
+}
+

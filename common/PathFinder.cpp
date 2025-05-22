@@ -35,11 +35,16 @@ namespace Common
         dtPolyRef dest_poly;
 
 
-        nav_q->findNearestPoly(&dest_z_pos.x, NaviCell::g_extent, nav_f, &dest_poly, &dest_z_pos.x);
+        dtStatus status =  nav_q->findNearestPoly(&dest_z_pos.x, NaviCell::g_extent, nav_f, &dest_poly, &dest_z_pos.x);
         
+        if (dtStatusFailed(status))
+        {
+            // std::cout << "못 찾음\n";
+            return {};
+        }
        // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveTarget(idx, dest_poly, &dest_z_pos.x);
 
-        dtStatus status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
+       status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
 
         if (dtStatusFailed(status))
         {
@@ -49,6 +54,7 @@ namespace Common
 
         // TODO: 매직넘버
         constinit thread_local float straightPathRaw[10 * 3] = {};
+
        // thread_local DirectX::SimpleMath::Vector3 straightPath[10];
         const auto straightPath = (Vector3*)straightPathRaw;
         unsigned char straightPathFlags[10];

@@ -35,7 +35,7 @@ namespace NetHelper
 		}
 	public:
 		const int64_t GetDtForDeadReckoningMs(const uint64_t other_move_time_stamp)const noexcept {
-			return  std::max((int64_t)GetServerTimeStamp() - (int64_t)other_move_time_stamp, 16LL);
+			return  std::max((int64_t)GetServerTimeStamp() - (int64_t)other_move_time_stamp, 0LL);
 		}
 		const float GetDtForDeadReckoningSeconds(const uint64_t other_move_time_stamp)const noexcept { return (float)GetDtForDeadReckoningMs(other_move_time_stamp) / 1000.f; }
 	private:

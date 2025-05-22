@@ -16,7 +16,8 @@ namespace NetHelper
             // TODO: 값조절 (렌더링바틀넥인지 서버레이턴시인지 판단)
             const auto cur_time = GetTimeStampMilliseconds();
             const auto cur_param = GetInterpolationParam(cur_time);
-            m_fCurInterpolationParam = (16 <= cur_time - m_prevUpdatedTimeForDT) ? std::min(cur_param, m_fPrevInterpolationParam + 0.016f) : std::min(cur_param, m_fPrevInterpolationParam + 0.016f);
+            const auto diff = (float)(cur_time - m_prevUpdatedTimeForDT);
+            m_fCurInterpolationParam = std::min(cur_param, m_fPrevInterpolationParam + 0.016f * (((diff / 16.f)) + 1.f));
             m_fCurSmoothInterpolationParam = SmoothStep(0.f, 1.f, m_fCurInterpolationParam);
             m_fPrevInterpolationParam = m_fCurInterpolationParam;
             m_prevUpdatedTimeForDT = cur_time;
