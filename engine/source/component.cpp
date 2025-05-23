@@ -11,17 +11,38 @@ namespace udsdx
 
 	Component::~Component()
 	{
+	}
 
+	void Component::OnAttach()
+	{
+	}
+
+	void Component::OnActive()
+	{
+	}
+
+	void Component::Begin()
+	{
 	}
 
 	void Component::Update(const Time& time, Scene& scene)
 	{
-
 	}
 
 	void Component::PostUpdate(const Time& time, Scene& scene)
 	{
+	}
 
+	void Component::OnDrawGizmos()
+	{
+	}
+
+	void Component::OnInactive()
+	{
+	}
+
+	void Component::OnDetach()
+	{
 	}
 
 	std::shared_ptr<SceneObject> Component::GetSceneObject() const
