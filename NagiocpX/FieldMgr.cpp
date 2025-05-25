@@ -40,6 +40,7 @@ namespace NagiocpX
 			return;
 		m_id2Index.emplace(static_cast<c_uint32>(obj_id), static_cast<c_uint32>(idx));
 		m_arrNPC[idx].ptr.store(std::move(pNPC));
+		InterlockedIncrement((LONG*)&m_curNumOfNPC);
 	}
 	void FieldMgr::ReleaseNPC(const ContentsEntity* const pNPC) noexcept
 	{
@@ -49,6 +50,7 @@ namespace NagiocpX
 		
 		m_arrNPC[idx].ptr.reset();
 		m_idxQueue.emplace(idx);
+		InterlockedDecrement((LONG*)&m_curNumOfNPC);
 	}
 	void FieldMgr::InitTLSinField()
 	{

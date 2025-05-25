@@ -54,7 +54,7 @@
 
 #include "NetAddress.h"
 #include "IDGenerator.hpp"
-#include "ObjectPool.hpp"
+#include "PchHelper.h"
 #include "SendBufferChunk.h"
 #include "MemoryMgr.h"
 #include "MemoryHeader.hpp"

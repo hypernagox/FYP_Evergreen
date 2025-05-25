@@ -27,6 +27,7 @@ public:
 		body_angle = pkt.body_angle();
 		time_stamp = pkt.time_stamp();
 	}
+	void AdjustMovement(const float dt, const Vector3 desired_dir)noexcept;
 public:
 	Vector3 pos = {};
 	Vector3 vel = {};

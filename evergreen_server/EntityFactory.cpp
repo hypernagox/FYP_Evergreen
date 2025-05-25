@@ -191,20 +191,20 @@ namespace NagiocpX
 		const auto agent = monster_entity->AddComp<NaviAgent>();
 		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
 		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
-		const auto CENTER = Vector3(-55.360664F, 73.53275F, 11.239024F);
-		Vector3 pos = monster_entity->GetComp<PositionComponent>()->pos;
-		pos.z = -pos.z;
-		const auto status = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->findRandomPointAroundCircle
-		(
-			&CENTER.x,
-			500.f,
-			&pos.x
-		);
-		if (1 == status)
-		{
-			pos.z = -pos.z;
-			agent->SetPos(pos);
-		}
+		//const auto CENTER = Vector3(-55.360664F, 73.53275F, 11.239024F);
+		//Vector3 pos = monster_entity->GetComp<PositionComponent>()->pos;
+		//pos.z = -pos.z;
+		//const auto status = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->findRandomPointAroundCircle
+		//(
+		//	&CENTER.x,
+		//	500.f,
+		//	&pos.x
+		//);
+		//if (1 == status)
+		//{
+		//	pos.z = -pos.z;
+		//	agent->SetPos(pos);
+		//}
 		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
 		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1.5f);
 

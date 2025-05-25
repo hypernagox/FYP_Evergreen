@@ -45,6 +45,10 @@ namespace NagiocpX
 			}
 		}
 	public:
+		const std::span<AtomicNPCPtr> GetNPCContainer()const noexcept{
+			const auto b = m_arrNPC.data();
+			return { b, b + (size_t)m_curNumOfNPC };
+		}
 		void RegisterNPC(S_ptr<ContentsEntity>& pNPC)noexcept;
 		void RegisterNPC(S_ptr<ContentsEntity>&& pNPC)noexcept { RegisterNPC(pNPC); }
 		void ReleaseNPC(const ContentsEntity* const pNPC)noexcept;
@@ -57,7 +61,7 @@ namespace NagiocpX
 		void ShrinkToFitBeforeStart()noexcept;
 	private:
 		std::unordered_map<uint8_t, Field*> m_mapField;
-
+		int32_t m_curNumOfNPC = 0;
 		mutable tbb::concurrent_unordered_map<uint32_t, uint32_t, std::hash<uint32_t>, std::equal_to<uint32_t>> m_id2Index;
 		std::span<AtomicNPCPtr> m_arrNPC;
 		tbb::concurrent_bounded_queue<int32> m_idxQueue;

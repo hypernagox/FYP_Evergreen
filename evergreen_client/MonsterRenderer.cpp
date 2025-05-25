@@ -27,8 +27,8 @@ MonsterRenderer::MonsterRenderer(std::shared_ptr<udsdx::SceneObject> owner) : Co
 
 
 
-	auto gizmoRenderer = GetSceneObject()->AddComponent<GizmoSphereRenderer>();
-	gizmoRenderer->SetRadius(1.5f);
+	//auto gizmoRenderer = GetSceneObject()->AddComponent<GizmoSphereRenderer>();
+	//gizmoRenderer->SetRadius(1.5f);
 
 
 }

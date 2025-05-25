@@ -18,12 +18,71 @@
 #include "NaviAgent.h"
 #include "NaviAgent_Common.h"
 #include "Interaction.h"
+#include "ImGUIMgr.h"
+#include <GLFW/glfw3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 using namespace NagiocpX;
-constexpr const int32_t NUM_OF_NPC = 100001;
+constexpr const int32_t NUM_OF_NPC = 200001;
 constexpr const int32_t NUM_OF_MAX_USER = 5500;
 
 extern std::vector<DirectX::BoundingBox> boxes;
+
+void DrawMiniMap()noexcept
+{
+	constexpr float MAP_WIDTH = 1024.f;
+	constexpr float MAP_HEIGHT = 1024.f;
+
+	ImGui::Begin("MiniMap");
+
+	const ImVec2 size = ImVec2(1280, 720);
+	const ImVec2 topLeft = ImGui::GetCursorScreenPos();
+	ImDrawList* draw = ImGui::GetWindowDrawList();
+
+	draw->AddRectFilled(topLeft, ImVec2(topLeft.x + size.x, topLeft.y + size.y),
+		IM_COL32(30, 30, 30, 255));
+	draw->AddRect(topLeft, ImVec2(topLeft.x + size.x, topLeft.y + size.y),
+		IM_COL32(255, 255, 255, 80));
+
+
+	const auto WorldToMiniMap = [&](const Vector3& pos) -> ImVec2 {
+		const float nx = (pos.x + MAP_WIDTH * 0.5f) / MAP_WIDTH;
+		const float nz = (pos.z + MAP_HEIGHT * 0.5f) / MAP_HEIGHT;
+		const float px = topLeft.x + nx * size.x;
+		const float py = topLeft.y + nz * size.y;
+		return ImVec2(px, py);
+		};
+
+	const auto users = Service::GetMainService()->GetAllSessionContainer();
+
+	for (const auto& u : users)
+	{
+		const auto ptr = u.ptr.load();
+		if (!ptr)continue;
+		if (const auto pos_comp = ptr->GetComp<PositionComponent>())
+		{
+			draw->AddCircleFilled(WorldToMiniMap(pos_comp->pos), 3.0f, IM_COL32(0, 255, 0, 255));
+		}
+	}
+
+	const auto monsters = Mgr(FieldMgr)->GetNPCContainer();
+	
+	for (const auto& m : monsters)
+	{
+		const auto ptr = m.ptr.load();
+		if (!ptr)continue;
+		if (ptr->GetComp<HarvestInteraction>())continue;
+		if (const auto pos_comp = ptr->GetComp<PositionComponent>())
+		{
+			draw->AddCircleFilled(WorldToMiniMap(pos_comp->pos), 3.0f, IM_COL32(255, 0, 0, 255));
+		}
+	}
+
+	ImGui::Dummy(size);
+	ImGui::End();
+}
 
 class ContentsInitiator
 	: public NagiocpX::Initiator
@@ -42,7 +101,7 @@ public:
 		//	Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
 		//}
 
-		for (int i = 0; i < 1000; ++i)
+		for (int i = 0; i < 10000; ++i)
 		{
 			EntityBuilder b;
 			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
@@ -87,13 +146,17 @@ public:
 
 	virtual void ControlThreadFunc()noexcept override
 	{
-		for (;;)
-		{
-			system("pause");
-			char buf[32]{};
-			std::cin >> buf;
-			if ("EXIT" == std::string_view{ buf })break;
-		}
+		Mgr(ImGUIMgr)->Init();
+		Mgr(ImGUIMgr)->RegisterRenderFp(DrawMiniMap);
+		Mgr(ImGUIMgr)->Update();
+		Mgr(ImGUIMgr)->ShutDown();
+		//for (;;)
+		//{
+		//	system("pause");
+		//	char buf[32]{};
+		//	std::cin >> buf;
+		//	if ("EXIT" == std::string_view{ buf })break;
+		//}
 	}
 };
 

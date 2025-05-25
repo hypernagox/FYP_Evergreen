@@ -4,23 +4,6 @@ namespace NagiocpX
 {
 	class Memory;
 
-	/*-------------------
-		StompAllocator
-	-------------------*/
-
-	class StompAllocator
-	{
-		//enum { PAGE_SIZE = 0x1000 };
-
-	public:
-		static void* Alloc(const size_t size);
-		static void	Release(void* ptr);
-	};
-
-	/*-------------------
-		STL Allocator
-	-------------------*/
-
 	template<typename T>
 	class StlAllocator
 	{

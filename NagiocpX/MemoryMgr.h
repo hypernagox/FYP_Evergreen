@@ -6,34 +6,8 @@
 
 class AtomicNonTemplate;
 
-/*-------------
-	Memory
----------------*/
-
 namespace NagiocpX
 {
-	//class MemoryMgr
-	//	:public Singleton<MemoryMgr>
-	//{
-	//	friend class Singleton;
-	//	enum
-	//	{
-	//		// ~1024까지 32단위, ~2048까지 128단위, ~4096까지 256단위
-	//		POOL_COUNT = (1024 / 32) + 1 + ((2048 - 1024) / 128) + 1 + ((4096 - 2048) / 256) + 1,
-	//		MAX_ALLOC_SIZE = 4096 + 256
-	//	};
-	//	MemoryMgr();
-	//	~MemoryMgr();
-	//public:
-	//	void* const	Allocate(const size_t size)const noexcept;
-	//	void Release(void* const ptr)const noexcept;
-	//private:
-	//	std::vector<AtomicNonTemplate*> m_pools[NagiocpX::NUM_OF_THREADS];
-	//	AtomicNonTemplate* m_poolTable[NagiocpX::NUM_OF_THREADS][MAX_ALLOC_SIZE + 1];
-	//	AtomicMemoryPool<AtomicNonTemplate> m_poolAllocator{ POOL_COUNT * NagiocpX::NUM_OF_THREADS };
-	//};
-
-
 #define USE_JE_MALLOC
 
 	class Memory

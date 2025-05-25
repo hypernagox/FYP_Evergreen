@@ -67,6 +67,7 @@ namespace NagiocpX
 		void ReturnSession(Session* const pSession)noexcept;
 	public:
 		void IterateSession(std::function<void(Session* const)> fpIterate_)noexcept;
+		const std::span<AtomicSessionPtr> GetSessionContainer()const noexcept { return { m_arrSession,m_arrSession + (size_t)m_curNumOfSessions }; }
 		const std::span<AtomicSessionPtr> GetAllSessionContainer()const noexcept { return { m_arrSession,m_arrSession + (size_t)m_maxSessionCount + 1 }; }
 	protected:
 		Session* const CreateSession()noexcept;

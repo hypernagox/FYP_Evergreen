@@ -1,6 +1,6 @@
 #pragma once
 #include "NagiocpXPch.h"
-#include "ObjectPool.hpp"
+#include "PchHelper.h"
 #include "SRWLock.hpp"
 
 namespace NagiocpX

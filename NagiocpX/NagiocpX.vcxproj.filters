@@ -160,6 +160,9 @@
     <Filter Include="Lock">
       <UniqueIdentifier>{7f43475c-75fa-4c90-9191-38576b1eb7a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager\ImGUIMgr">
+      <UniqueIdentifier>{29564a05-2eee-408c-aac2-50600f1ad499}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -254,9 +257,6 @@
     </ClInclude>
     <ClInclude Include="TaskTimerMgr.h">
       <Filter>Manager\TaskTimerMgr</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectPool.hpp">
-      <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="ThreadMgr.h">
       <Filter>Manager\ThreadMgr</Filter>
@@ -394,6 +394,12 @@
       <Filter>Network\IocpCore\IocpEvent\GlobalEventQueue</Filter>
     </ClInclude>
     <ClInclude Include="NagiocpXPch.h">
+      <Filter>Utils\predefine</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUIMgr.h">
+      <Filter>Manager\ImGUIMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="PchHelper.h">
       <Filter>Utils\predefine</Filter>
     </ClInclude>
   </ItemGroup>
@@ -535,6 +541,9 @@
     </ClCompile>
     <ClCompile Include="NagiocpXPch.cpp">
       <Filter>Utils\predefine</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUIMgr.cpp">
+      <Filter>Manager\ImGUIMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

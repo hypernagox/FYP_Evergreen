@@ -206,8 +206,10 @@
     <ClInclude Include="DBPacketSender.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="GlobalEventQueue.h" />
+    <ClInclude Include="ImGUIMgr.h" />
     <ClInclude Include="MPSCStack.hpp" />
     <ClInclude Include="NagoxAtomic.h" />
+    <ClInclude Include="PchHelper.h" />
     <ClInclude Include="Queueabler.h" />
     <ClInclude Include="EBR.hpp" />
     <ClInclude Include="MoveBroadcaster.h" />
@@ -234,7 +236,6 @@
     <ClInclude Include="MemoryMgr.h" />
     <ClInclude Include="MemoryHeader.hpp" />
     <ClInclude Include="NetAddress.h" />
-    <ClInclude Include="ObjectPool.hpp" />
     <ClInclude Include="PacketArray.hpp" />
     <ClInclude Include="PacketHeader.h" />
     <ClInclude Include="PacketSession.h" />
@@ -279,6 +280,7 @@
     <ClCompile Include="DBPacketSender.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="GlobalEventQueue.cpp" />
+    <ClCompile Include="ImGUIMgr.cpp" />
     <ClCompile Include="Queueabler.cpp" />
     <ClCompile Include="MoveBroadcaster.cpp" />
     <ClCompile Include="CoreGlobal.cpp" />

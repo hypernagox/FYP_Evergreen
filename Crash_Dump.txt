@@ -1,15 +1,10 @@
-0: NagiocpX::LogStackTrace - 0x7ff727759e90
-1: NagiocpX::DeadLockDetector::DFS - 0x7ff727770260
-2: NagiocpX::DeadLockDetector::DFS - 0x7ff727770260
-3: NagiocpX::DeadLockDetector::DFS - 0x7ff727770260
-4: NagiocpX::DeadLockDetector::CheckCycle - 0x7ff7277a35c0
-5: NagiocpX::DeadLockDetector::AcquireLock - 0x7ff72775e110
-6: NagiocpX::SRWLockGuard::SRWLockGuard - 0x7ff7276cf020
-7: main - 0x7ff7277a2e50
-8: invoke_main - 0x7ff72789be10
-9: __scrt_common_main_seh - 0x7ff72789bc00
-10: __scrt_common_main - 0x7ff72789bbe0
-11: mainCRTStartup - 0x7ff72789bed0
-12: BaseThreadInitThunk - 0x7ffb471e7360
-13: RtlUserThreadStart - 0x7ffb473bcc70
-  2025-05-18 13:16:31 [LOG]: 
+0: NagiocpX::LogStackTrace - 0x7ff7e1e69db0
+1: NagiocpX::Cluster::LeaveAndDestroy - 0x7ff7e1e7b180
+2: `NagiocpX::TaskInvoker::TaskInvoker<NagiocpX::Cluster,void,unsigned char,unsigned int>'::`1'::<lambda_3_>::<lambda_invoker_cdecl> - 0x7ff7e1e6ef30
+3: NagiocpX::ThreadMgr::IocpRoutine - 0x7ff7e1e66870
+4: NagiocpX::ThreadMgr::WorkerThreadFunc - 0x7ff7e1e66850
+5: std::thread::_Invoke<std::tuple<void (__cdecl*)(void) noexcept>,0> - 0x7ff7e1e678a0
+6: configthreadlocale - 0x7ffa8b621b20
+7: BaseThreadInitThunk - 0x7ffa8c907360
+8: RtlUserThreadStart - 0x7ffa8d71cc70
+  2025-05-24 20:10:01 [LOG]: 

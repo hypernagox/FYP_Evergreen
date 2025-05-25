@@ -1,14 +1,9 @@
 #pragma once
 
-/*-----------------
-	MemoryHeader
-------------------*/
-
 namespace NagiocpX
 {
 	struct alignas(8) MemoryHeader
 	{
-		// [MemoryHeader][Data]
 		constexpr MemoryHeader(const int32 size, const int32 thID)noexcept : allocSize{ size }, allocThread{ thID } {}
 		constexpr MemoryHeader(const int32 thID)noexcept : allocThread{ thID } {}
 
