@@ -3,8 +3,6 @@
 #include "pch.h"
 #include "mesh_base.h"
 
-#include <assimp/scene.h>
-
 namespace udsdx
 {
 	struct Bone
@@ -18,7 +16,7 @@ namespace udsdx
 	class RiggedMesh : public MeshBase
 	{
 	public:
-		RiggedMesh(const aiScene& assimpScene);
+		RiggedMesh(const std::filesystem::path& resourcePath);
 
 		// Matrices for default pose (no animation)
 		void PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out) const;

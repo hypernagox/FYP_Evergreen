@@ -3,11 +3,6 @@
 #include "rigged_mesh.h"
 #include "debug_console.h"
 
-// Assimp Library
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 
 namespace udsdx
 {
@@ -29,92 +24,86 @@ namespace udsdx
 		return { seg - 1, seg, fraction };
 	}
 
-	static udsdx::Matrix4x4 ToMatrix4x4(const aiMatrix4x4& m)
+	AnimationClip::AnimationClip(const std::filesystem::path& resourcePath)
 	{
-		return udsdx::Matrix4x4(
-			m.a1, m.b1, m.c1, m.d1,
-			m.a2, m.b2, m.c2, m.d2,
-			m.a3, m.b3, m.c3, m.d3,
-			m.a4, m.b4, m.c4, m.d4
-		);
-	}
-
-	AnimationClip::AnimationClip(const aiScene& assimpScene)
-	{
-		auto model = &assimpScene;
-
-		// Depth-first traversal of the scene graph to collect the bones
-		std::vector<std::pair<aiNode*, int>> nodeStack;
-		std::vector<std::pair<aiNode*, aiMesh*>> meshStack;
-		nodeStack.emplace_back(model->mRootNode, -1);
-		while (!nodeStack.empty())
+		std::ifstream file(resourcePath, std::ios::binary);
+		if (!file.is_open())
 		{
-			auto [node, parentIndex] = nodeStack.back();
-			nodeStack.pop_back();
-
-			Bone boneData{};
-			boneData.Name = node->mName.C_Str();
-			boneData.Transform = ToMatrix4x4(node->mTransformation);
-
-			for (UINT i = 0; i < node->mNumMeshes; ++i)
-			{
-				meshStack.emplace_back(node, model->mMeshes[node->mMeshes[i]]);
-			}
-
-			m_boneIndexMap[boneData.Name] = static_cast<int>(m_bones.size());
-			m_bones.emplace_back(boneData);
-			m_boneParents.push_back(parentIndex);
-
-			for (UINT i = 0; i < node->mNumChildren; ++i)
-			{
-				nodeStack.emplace_back(node->mChildren[i], static_cast<int>(m_bones.size()) - 1);
-			}
+			DebugConsole::LogError("Failed to open rigged mesh file: " + resourcePath.string());
+			return;
 		}
-		UINT numNodes = static_cast<UINT>(m_bones.size());
 
-		// The engine only supports one animation for now
-		auto animationSrc = model->mAnimations[0];
-
-		m_animation.Name = animationSrc->mName.C_Str();
-		m_animation.TicksPerSecond = static_cast<float>(animationSrc->mTicksPerSecond != 0 ? animationSrc->mTicksPerSecond : 1);
-		m_animation.Duration = static_cast<float>(animationSrc->mDuration);
-		m_animation.Channels.resize(numNodes);
-
-		for (UINT i = 0; i < animationSrc->mNumChannels; ++i)
+		// Read bone data
+		size_t boneCount = 0;
+		file.read(reinterpret_cast<char*>(&boneCount), sizeof(size_t));
+		m_bones.resize(boneCount);
+		m_boneParents.resize(boneCount, -1);
+		m_boneIndexMap.clear();
+		for (size_t i = 0; i < boneCount; ++i)
 		{
-			auto channelSrc = animationSrc->mChannels[i];
-			Animation::Channel channel;
+			Bone& bone = m_bones[i];
+			size_t nameLength = 0;
+			file.read(reinterpret_cast<char*>(&nameLength), sizeof(size_t));
+			bone.Name.resize(nameLength);
+			file.read(bone.Name.data(), nameLength);
+			file.read(reinterpret_cast<char*>(&bone.Transform), sizeof(Matrix4x4));
+			m_boneIndexMap[bone.Name] = static_cast<int>(i);
+		}
 
-			channel.Name = channelSrc->mNodeName.C_Str();
+		// Read bone parent data
+		for (size_t i = 0; i < boneCount; ++i)
+		{
+			int parentIndex = -1;
+			file.read(reinterpret_cast<char*>(&parentIndex), sizeof(int));
+			m_boneParents[i] = parentIndex;
+		}
 
-			for (UINT j = 0; j < channelSrc->mNumPositionKeys; ++j)
+		// Read animation data
+		size_t nameLength = 0;
+		file.read(reinterpret_cast<char*>(&nameLength), sizeof(size_t));
+		m_animation.Name.resize(nameLength);
+		file.read(m_animation.Name.data(), nameLength);
+		file.read(reinterpret_cast<char*>(&m_animation.TicksPerSecond), sizeof(float));
+		file.read(reinterpret_cast<char*>(&m_animation.Duration), sizeof(float));
+		size_t channelCount = 0;
+
+		file.read(reinterpret_cast<char*>(&channelCount), sizeof(size_t));
+		m_animation.Channels.resize(channelCount);
+		for (size_t i = 0; i < channelCount; ++i)
+		{
+			Animation::Channel& channel = m_animation.Channels[i];
+			size_t channelNameLength = 0;
+			file.read(reinterpret_cast<char*>(&channelNameLength), sizeof(size_t));
+			channel.Name.resize(channelNameLength);
+			file.read(channel.Name.data(), channelNameLength);
+
+			size_t positionKeyCount = 0;
+			file.read(reinterpret_cast<char*>(&positionKeyCount), sizeof(size_t));
+			channel.PositionTimestamps.resize(positionKeyCount);
+			channel.Positions.resize(positionKeyCount);
+			for (size_t j = 0; j < positionKeyCount; ++j)
 			{
-				auto key = channelSrc->mPositionKeys[j];
-				channel.PositionTimestamps.push_back(static_cast<float>(key.mTime));
-				channel.Positions.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z);
+				file.read(reinterpret_cast<char*>(&channel.PositionTimestamps[j]), sizeof(float));
+				file.read(reinterpret_cast<char*>(&channel.Positions[j]), sizeof(Vector3));
 			}
-
-			for (UINT j = 0; j < channelSrc->mNumRotationKeys; ++j)
+			size_t rotationKeyCount = 0;
+			file.read(reinterpret_cast<char*>(&rotationKeyCount), sizeof(size_t));
+			channel.RotationTimestamps.resize(rotationKeyCount);
+			channel.Rotations.resize(rotationKeyCount);
+			for (size_t j = 0; j < rotationKeyCount; ++j)
 			{
-				auto key = channelSrc->mRotationKeys[j];
-				channel.RotationTimestamps.push_back(static_cast<float>(key.mTime));
-				channel.Rotations.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w);
+				file.read(reinterpret_cast<char*>(&channel.RotationTimestamps[j]), sizeof(float));
+				file.read(reinterpret_cast<char*>(&channel.Rotations[j]), sizeof(Quaternion));
 			}
-
-			for (UINT j = 0; j < channelSrc->mNumScalingKeys; ++j)
+			size_t scaleKeyCount = 0;
+			file.read(reinterpret_cast<char*>(&scaleKeyCount), sizeof(size_t));
+			channel.ScaleTimestamps.resize(scaleKeyCount);
+			channel.Scales.resize(scaleKeyCount);
+			for (size_t j = 0; j < scaleKeyCount; ++j)
 			{
-				auto key = channelSrc->mScalingKeys[j];
-				channel.ScaleTimestamps.push_back(static_cast<float>(key.mTime));
-				channel.Scales.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z);
+				file.read(reinterpret_cast<char*>(&channel.ScaleTimestamps[j]), sizeof(float));
+				file.read(reinterpret_cast<char*>(&channel.Scales[j]), sizeof(Vector3));
 			}
-
-			int channelIndex = GetBoneIndex(channel.Name);
-			if (channelIndex == -1)
-			{
-				DebugConsole::LogWarning("Channel " + channel.Name + " not found in bone list.");
-				continue;
-			}
-			m_animation.Channels[channelIndex] = channel;
 		}
 	}
 
