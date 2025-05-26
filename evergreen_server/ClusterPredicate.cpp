@@ -37,10 +37,10 @@ bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsE
 {
 	if (!a->IsReadyAndValid() || !b->IsReadyAndValid())return false;
 	
-	auto a_pos = a->GetComp<PositionComponent>()->pos;
-	auto b_pos = b->GetComp<PositionComponent>()->pos;
+	const auto a_pos = a->GetComp<PositionComponent>()->pos;
+	const auto b_pos = b->GetComp<PositionComponent>()->pos;
 
-	a_pos.y = b_pos.y = 0.f;
+	//a_pos.y = b_pos.y = 0.f;
 
 	const auto dist = Vector3::DistanceSquared(a_pos, b_pos);
 	const bool bRes = (DISTANCE_FILTER * DISTANCE_FILTER) >= dist;

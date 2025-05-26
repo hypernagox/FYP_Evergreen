@@ -28,12 +28,12 @@ extern std::vector<DirectX::BoundingBox> boxes;
 
 void DrawMiniMap()noexcept
 {
-	constexpr float MAP_WIDTH = 1024.f;
-	constexpr float MAP_HEIGHT = 1024.f;
+	constexpr const float MAP_WIDTH = 1024.f;
+	constexpr const float MAP_HEIGHT = 1024.f;
 
 	ImGui::Begin("MiniMap");
 
-	const ImVec2 size = ImVec2(1280, 720);
+	constexpr const ImVec2 size = ImVec2(1280, 720);
 	const ImVec2 topLeft = ImGui::GetCursorScreenPos();
 	ImDrawList* draw = ImGui::GetWindowDrawList();
 

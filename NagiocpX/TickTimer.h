@@ -18,6 +18,7 @@ namespace NagiocpX
 	class TickTimer
 		:public IocpComponent
 	{
+		static constexpr const uint8_t DELAY_COUNT = 2;
 	public:
 		TickTimer(ContentsEntity* const pOwner_, const uint16_t awakeDist_ = UINT16_MAX) noexcept;
 		virtual ~TickTimer()noexcept = default;
@@ -45,7 +46,7 @@ namespace NagiocpX
 		void Tick(S_ptr<ContentsEntity>* const owner_entity)noexcept;
 	protected:
 		const uint16_t m_npcAwakeDistance;
-		uint8_t m_delay_count = 4; // TODO: 딜레이 매직넘버, 갑자기 몹이 빠르게오는걸 막는 용도임
+		uint8_t m_delay_count = DELAY_COUNT; // TODO: 딜레이 매직넘버, 갑자기 몹이 빠르게오는걸 막는 용도임
 		NagoxAtomic::Atomic<TIMER_STATE> m_timer_state{ TIMER_STATE::IDLE };
 		uint16_t m_tickDT = 0;
 		uint16_t m_tickInterval = 200;

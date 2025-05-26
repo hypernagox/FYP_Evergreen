@@ -162,7 +162,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 	rotatedForward.y = 0.f;
 	auto ppp = pos_comp->pos;
 	ppp.y += 2.f;
-	Common::Sphere sp{ &ppp ,1.2f };
+	Common::Sphere sp{ &ppp ,1.f };
 	//std::cout << "Player Pos: ";
 	//PrintVector3(pos_comp->pos);
 	//Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,4.f };

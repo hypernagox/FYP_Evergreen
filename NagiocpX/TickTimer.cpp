@@ -30,7 +30,7 @@ namespace NagiocpX
 
 	void TickTimer::ProcessCleanUp() noexcept
 	{
-		m_delay_count = 4;
+		m_delay_count = DELAY_COUNT;
 		m_lastTickTime = 0;
 		m_timer_state.store_relaxed(NagiocpX::TIMER_STATE::IDLE);
 		m_curAwakerID = 0;
