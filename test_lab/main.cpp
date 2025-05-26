@@ -54,7 +54,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         g_object[i] = std::make_shared<SceneObject>();
         auto renderer = g_object[i]->AddComponent<MeshRenderer>();
-        renderer->SetMesh(res->Load<Mesh>(L"resource\\cube.obj"));
+        renderer->SetMesh(res->Load<Mesh>(L"resource\\cube.yms"));
         renderer->SetMaterial(g_material.get());
         renderer->SetShader(res->Load<udsdx::Shader>(L"resource\\color.hlsl"));
         g_scene->AddObject(g_object[i]);
@@ -70,7 +70,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_floorObject->GetTransform()->SetLocalPosition(Vector3(0.0f, -1.5f, 0.0f));
     g_floorObject->GetTransform()->SetLocalScale(Vector3(20.0f, 0.25f, 20.0f));
     auto floorRenderer = g_floorObject->AddComponent<MeshRenderer>();
-    floorRenderer->SetMesh(res->Load<Mesh>(L"resource\\cube.obj"));
+    floorRenderer->SetMesh(res->Load<Mesh>(L"resource\\cube.yms"));
     floorRenderer->SetMaterial(g_material.get());
     floorRenderer->SetShader(res->Load<udsdx::Shader>(L"resource\\colornotex.hlsl"));
     g_scene->AddObject(g_floorObject);
@@ -94,9 +94,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     m_characterObject->GetTransform()->SetLocalPositionY(-1.375f);
     m_characterObject->GetTransform()->SetLocalScale(Vector3::One * 1e-2f);
     auto meshRenderer = m_characterObject->AddComponent<RiggedMeshRenderer>();
-    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\character.glb"));
+    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\character.yrms"));
     meshRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\color.hlsl"));
-    meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\biped_attack1.fbx"));
+    meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\biped_attack1.yac"));
 
     for (int i = 0; i < 4; ++i)
     {
@@ -109,7 +109,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     m_characterMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Hat_Main.png"));
     m_characterMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Extra_Main.png"));
 
-    g_scene->AddObject(m_characterObject);
+     g_scene->AddObject(m_characterObject);
 
     return UpdownStudio::Run(g_scene, nCmdShow);
 }

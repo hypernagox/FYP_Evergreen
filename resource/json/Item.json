@@ -3,42 +3,42 @@
     "Name": "여우 꼬리",
     "Description": "A fox tail.",
     "Icon": "gui\\icon_foxtail.png",
-    "DropitemResource": "item\\foxtail\\foxtail.fbx",
+    "DropitemResource": "item\\foxtail\\foxtail.yms",
     "DropitemResourceDiffuse": "item\\foxtail\\foxtail_DefaultMaterial_BaseColor.png"
   },
   "Meat": {
     "Name": "고기",
     "Description": "A piece of meat.",
     "Icon": "gui\\icon_meat.png",
-    "DropitemResource": "item\\meat\\meat.fbx",
+    "DropitemResource": "item\\meat\\meat.yms",
     "DropitemResourceDiffuse": "item\\meat\\meat_DefaultMaterial_BaseColor.png"
   },
   "Coin": {
     "Name": "동전",
     "Description": "",
     "Icon": "gui\\icon_coin.png",
-    "DropitemResource": "item\\coin\\coin.fbx",
+    "DropitemResource": "item\\coin\\coin.yms",
     "DropitemResourceDiffuse": "item\\coin\\coin_DefaultMaterial_BaseColor.png"
   },
   "Herb": {
     "Name": "약초",
     "Description": "",
     "Icon": "gui\\icon_herb.png",
-    "DropitemResource": "item\\herb\\herb.fbx",
+    "DropitemResource": "item\\herb\\herb.yms",
     "DropitemResourceDiffuse": "item\\herb\\herb_BaseColor.png"
   },
   "Timber": {
     "Name": "목재",
     "Description": "",
     "Icon": "gui\\icon_timber.png",
-    "DropitemResource": "item\\timber\\timber_fbx.fbx",
+    "DropitemResource": "item\\timber\\timber_fbx.yms",
     "DropitemResourceDiffuse": "item\\timber\\timber_fbx_DefaultMaterial_BaseColor.png"
   },
   "Ironore": {
     "Name": "철광석",
     "Description": "",
     "Icon": "gui\\icon_ironore.png",
-    "DropitemResource": "item\\ironore\\ironore_fbx.fbx",
+    "DropitemResource": "item\\ironore\\ironore_fbx.yms",
     "DropitemResourceDiffuse": "item\\ironore\\ironore_fbx_DefaultMaterial_BaseColor.png"
   }
 }

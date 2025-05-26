@@ -56,7 +56,7 @@ void PlayerRenderer::InitializeWarrior()
 	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
 
 	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
-	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.glb")));
+	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.yrms")));
 	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
 
 	m_transformBody = pBody->GetTransform();
@@ -68,7 +68,7 @@ void PlayerRenderer::InitializeWarrior()
 	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword_albedo.jpg")));
 
 	auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
-	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword.obj")));
+	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword.yms")));
 	toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
 	toolRenderer->SetMaterial(m_toolMaterial.get());
 	toolRenderer->SetBoneName("Bip001 R Hand");
@@ -92,7 +92,7 @@ void PlayerRenderer::InitializePriest()
 	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
 
 	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
-	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"priest\\priest.glb")));
+	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"priest\\priest.yrms")));
 	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
 
 	m_transformBody = pBody->GetTransform();
@@ -104,7 +104,7 @@ void PlayerRenderer::InitializePriest()
 	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_staff_diffuse.png")));
 
 	auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
-	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"priest\\priest_staff.obj")));
+	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"priest\\priest_staff.yms")));
 	toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
 	toolRenderer->SetMaterial(m_toolMaterial.get());
 	toolRenderer->SetBoneName("Bip001 R Hand");
@@ -150,57 +150,57 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 	{
 	case AnimationState::Idle:
 		m_attackState = 0;
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.fbx")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.yac")), true);
 		break;
 	case AnimationState::RunForward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_fast.fbx")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_fast.yac")), true);
 		break;
 	case AnimationState::RunBackward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_slow.fbx")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_slow.yac")), true);
 		break;
 	case AnimationState::RunLeft:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_strafe_left.fbx")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_strafe_left.yac")), true);
 		break;
 	case AnimationState::RunRight:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_strafe_right.fbx")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_strafe_right.yac")), true);
 		break;
 	case AnimationState::RunLeftForward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_diagonal_left.fbx")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_diagonal_left.yac")), true);
 		break;
 	case AnimationState::RunRightForward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_diagonal_right.fbx")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_diagonal_right.yac")), true);
 		break;
 	case AnimationState::RunLeftBackward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_diagonal_left.fbx")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_diagonal_left.yac")), true);
 		break;
 	case AnimationState::RunRightBackward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_diagonal_right.fbx")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_diagonal_right.yac")), true);
 		break;
 	case AnimationState::Attack:
 		switch (m_attackState)
 		{
 		case 0:
-			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack1.fbx")), false, true);
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack1.yac")), false, true);
 			break;
 		case 1:
-			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack2.fbx")), false, true);
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack2.yac")), false, true);
 			break;
 		case 2:
-			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack3.fbx")), false, true);
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack3.yac")), false, true);
 			break;
 		case 3:
-			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack4.fbx")), false, true);
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack4.yac")), false, true);
 			break;
 		}
 		m_attackState = (m_attackState + 1) % 4;
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
 		break;
 	case AnimationState::Hit:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_hit.fbx")), false, true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_hit.yac")), false, true);
 		*m_stateMachine->GetConditionRefBool("Hit") = false;
 		break;
 	case AnimationState::Death:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_die.fbx")), false);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_die.yac")), false);
 		*m_stateMachine->GetConditionRefBool("Death") = false;
 		break;
 	}

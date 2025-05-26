@@ -18,7 +18,7 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	m_rendererObj->GetTransform()->SetLocalPosition(Vector3::Up * -0.05f);
 
 	m_riggedMeshRenderer = pBody->AddComponent<RiggedMeshRenderer>();
-	m_riggedMeshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"fox\\fox.glb")));
+	m_riggedMeshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"fox\\fox.yrms")));
 	m_riggedMeshRenderer->SetShader(shader);
 	m_riggedMeshRenderer->SetMaterial(m_monsterMaterial.get());
 
@@ -29,7 +29,7 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	GetSceneObject()->AddChild(m_rendererObj);
 
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
-	m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.fbx")), true);
+	m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.yac")), true);
 
 	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::Idle, AnimationState::Run, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
 	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::Run, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
@@ -68,13 +68,13 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 	switch (to)
 	{
 	case AnimationState::Idle:
-		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.fbx")), true);
+		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.yac")), true);
 		break;
 	case AnimationState::Run:
-		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_run_animation.fbx")), true);
+		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_run_animation.yac")), true);
 		break;
 	case AnimationState::Attack:
-		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_attack.fbx")), false, true);
+		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_attack.yac")), false, true);
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
 		break;
 	}

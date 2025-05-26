@@ -62,10 +62,10 @@ namespace udsdx
 
 	void MeshBase::DisposeUploaders()
 	{
-		m_vertexBufferUploader = nullptr;
-		m_indexBufferUploader = nullptr;
+		m_vertexBufferUploader.Reset();
+		m_indexBufferUploader.Reset();
 
-		m_vertexBufferCPU = nullptr;
-		m_indexBufferCPU = nullptr;
+		m_vertexBufferCPU.Reset();
+		m_indexBufferCPU.Reset();
 	}
 }

@@ -21,8 +21,6 @@
 #include "post_process_fxaa.h"
 #include "post_process_outline.h"
 
-#include <assimp/DefaultLogger.hpp>
-
 //#include <imgui.h>
 //#include <imgui_impl_dx12.h>
 //#include <imgui_impl_win32.h>
@@ -76,16 +74,9 @@ namespace udsdx
 
 		m_graphicsMemory = std::make_unique<GraphicsMemory>(m_d3dDevice.Get());
 
-#if defined(DEBUG) || defined(_DEBUG)
-		Assimp::DefaultLogger::create();
-		Assimp::DefaultLogger::get()->attachStream(new AssimpLogStream(), Assimp::Logger::VERBOSE);
-#endif
 		INSTANCE(Input)->Initialize(m_hMainWnd);
 		resource->Initialize(m_d3dDevice.Get(), m_commandQueue.Get(), m_commandList.Get(), m_rootSignature.Get());
 
-#if defined(DEBUG) || defined(_DEBUG)
-		Assimp::DefaultLogger::kill();
-#endif
 		CreateDescriptorHeaps();
 		RegisterDescriptorsToHeaps();
 		BuildConstantBuffers();

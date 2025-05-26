@@ -59,11 +59,11 @@ void PlayerSelect::SetShowingCharacter(unsigned int characterIndex)
 		}
 		if (i == characterIndex)
 		{
-			renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"Zelda\\stand_arguing.fbx")), true, true);
+			renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"Zelda\\stand_arguing.yac")), true, true);
 		}
 		else
 		{
-			renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.fbx")), true, false);
+			renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.yac")), true, false);
 		}
 	}
 }

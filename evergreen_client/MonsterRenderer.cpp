@@ -12,7 +12,7 @@ MonsterRenderer::MonsterRenderer(std::shared_ptr<udsdx::SceneObject> owner) : Co
 	m_rendererObject->GetTransform()->SetLocalScale(Vector3::One * 0.015f);
 
 	auto renderer = m_rendererObject->AddComponent<udsdx::MeshRenderer>();
-	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"sheep\\sheep_max.obj")));
+	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"sheep\\sheep_max.yms")));
 	renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
 
 	m_materials[0] = std::make_shared<udsdx::Material>();

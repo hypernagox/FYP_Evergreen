@@ -3,8 +3,6 @@
 #include "pch.h"
 #include "resource_object.h"
 
-#include <assimp/scene.h>
-
 namespace udsdx
 {
 	struct Bone;
@@ -35,7 +33,7 @@ namespace udsdx
 	class AnimationClip : public ResourceObject
 	{
 	public:
-		AnimationClip(const aiScene& assimpScene);
+		AnimationClip(const std::filesystem::path& resourcePath);
 
 	public:
 		void PopulateTransforms(float animationTime, const std::vector<std::string>& boneNames, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const;
