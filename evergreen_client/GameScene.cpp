@@ -237,7 +237,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 		m_craftTableMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_N.tga")), 1);
 
 		auto craftTableRenderer = m_craftTableObj->AddComponent<MeshRenderer>();
-		craftTableRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Village\\O_Table_B.fbx")));
+		craftTableRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Village\\O_Table_B.yms")));
 		craftTableRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
         craftTableRenderer->SetMaterial(m_craftTableMaterial.get(), 0);
 
@@ -261,7 +261,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         treeObj->GetTransform()->SetLocalPosition(Vector3(-42.968254f, 74.610634f, -87.984f));
         treeObj->SetActive(true);
 
-        treeRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"goldentree\\tree.fbx")));
+        treeRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"goldentree\\tree.yms")));
         treeRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
 
         {
@@ -301,7 +301,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
             std::wstring suffix = directory.path().extension().wstring();
             std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
 
-            if (suffix != L".fbx")
+            if (suffix != L".yms")
                 continue;
             if (terrainData->GetPrototypeInstanceCount(filename) > 0)
                 AddTerrainInstances(directory.path(), textureMap, terrainData);
@@ -476,7 +476,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 
         auto navMeshVisualizer = std::make_shared<SceneObject>();
         auto navMeshRenderer = navMeshVisualizer->AddComponent<MeshRenderer>();
-        navMeshRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh.obj")));
+        navMeshRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh.yms")));
         navMeshRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
         navMeshRenderer->SetMaterial(m_gizmoMaterial.get());
 

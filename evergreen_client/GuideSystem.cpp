@@ -29,7 +29,7 @@ GuideSystem::GuideSystem()
 			auto s = std::make_shared<udsdx::SceneObject>();
 			auto meshRenderer = s->AddComponent<udsdx::MeshRenderer>();
 			meshRenderer->SetCastShadow(false);
-			meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"path_arrow.obj")));
+			meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"path_arrow.yms")));
 			meshRenderer->SetShader(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotexpath.hlsl")));
 			auto transform = s->GetTransform();
 			transform->SetLocalPosition(position + Vector3::Up * 0.5f);
