@@ -73,13 +73,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>

@@ -90,13 +90,13 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(IncludePath);$(SolutionDir)library\inc\</IncludePath>
+    <IncludePath>$(IncludePath);$(SolutionDir)library\inc\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath);$(LibraryPath)</LibraryPath>
-    <IncludePath>$(IncludePath);$(SolutionDir)library\inc\</IncludePath>
+    <IncludePath>$(IncludePath);$(SolutionDir)library\inc\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\</IncludePath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
@@ -188,6 +188,20 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_dx10.h" />
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_dx12.h" />
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_dx9.h" />
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\library\inc\imgui\imconfig.h" />
+    <ClInclude Include="..\library\inc\imgui\imgui.h" />
+    <ClInclude Include="..\library\inc\imgui\imgui_internal.h" />
+    <ClInclude Include="..\library\inc\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\library\inc\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\library\inc\imgui\imstb_truetype.h" />
     <ClInclude Include="Allocator.h" />
     <ClInclude Include="AtomicMemoryPool.hpp" />
     <ClInclude Include="AtomicNonTemplate.h" />
@@ -269,6 +283,18 @@
     <ClInclude Include="NagoxDeleter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_dx10.cpp" />
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_dx12.cpp" />
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_dx9.cpp" />
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\library\inc\imgui\imgui.cpp" />
+    <ClCompile Include="..\library\inc\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\library\inc\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\library\inc\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\library\inc\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Allocator.cpp" />
     <ClCompile Include="AtomicNonTemplate.cpp" />
     <ClCompile Include="Benchmarker.cpp" />

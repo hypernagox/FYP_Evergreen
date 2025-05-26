@@ -32,8 +32,8 @@ namespace NagiocpX
 		template <typename T> requires (false == std::same_as<std::decay_t<T>, RefCountable>)
 		constexpr inline void DecRef()const noexcept {
 			static_assert(false == std::same_as<std::decay_t<T>, RefCountable>);
-			const int32_t old_count = InterlockedDecrement(&m_refCount);
-			if (0 == old_count) {
+			const int32_t new_count = InterlockedDecrement(&m_refCount);
+			if (0 == new_count) {
 				//if constexpr (std::same_as<std::remove_cv_t<T>, ContentsEntity>)
 				//	aligned_xdelete_sized<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), sizeof(ContentsEntity), alignof(ContentsEntity));
 				//else if constexpr (std::derived_from<std::remove_cv_t<T>, Session>)
@@ -41,7 +41,22 @@ namespace NagiocpX
 				//else
 					xdelete<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)));
 			}
-			NAGOX_ASSERT(0 <= old_count);
+			NAGOX_ASSERT(0 <= new_count);
+		}
+		template <typename T> requires (false == std::same_as<std::decay_t<T>, RefCountable>)
+			constexpr inline void DecRef(const int32_t dec_cnt)const noexcept {
+			static_assert(false == std::same_as<std::decay_t<T>, RefCountable>);
+			static_assert(true == std::same_as<std::decay_t<T>, class Field>);
+			const int32_t new_count = InterlockedAdd(&m_refCount, -dec_cnt);
+			if (0 == new_count) {
+				//if constexpr (std::same_as<std::remove_cv_t<T>, ContentsEntity>)
+				//	aligned_xdelete_sized<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), sizeof(ContentsEntity), alignof(ContentsEntity));
+				//else if constexpr (std::derived_from<std::remove_cv_t<T>, Session>)
+				//	aligned_xdelete<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)), alignof(T));
+				//else
+				xdelete<T>(static_cast<T* const>(const_cast<RefCountable* const>(this)));
+			}
+			NAGOX_ASSERT(0 <= new_count);
 		}
 		//template <typename T = RefCountable>
 		//constexpr inline void DecRef(const int32_t dec_cnt)const noexcept {
@@ -54,7 +69,7 @@ namespace NagiocpX
 		//	}
 		//	NAGOX_ASSERT(dec_cnt <= old_count);
 		//}
-		inline void IncRefEnterCluster()const noexcept { m_refCount += NagiocpX::NUM_OF_THREADS; }
+		inline void IncRefEnterCluster()const noexcept { IncRef(NUM_OF_THREADS); }
 	private:
 		inline const RefCountable* const IncAndGetPtrInternal()const noexcept { IncRef(); return this; }
 		inline RefCountable* const IncAndGetPtr()const noexcept { return const_cast<RefCountable* const>(IncAndGetPtrInternal()); }

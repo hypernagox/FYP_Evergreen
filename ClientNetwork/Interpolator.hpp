@@ -52,10 +52,8 @@ namespace NetHelper
         constexpr U LinearInterpolationDeg(const U& start, const U& end)const noexcept {
             U diff = end - start;
             U newEnd = end;
-            if (diff > 180)
-                newEnd -= 360;
-			else if (diff < -180)
-                newEnd += 360;
+            if (diff > 180)newEnd -= 360;
+            else if (diff < -180)newEnd += 360;
             return SmoothLinearInterpolation(start, newEnd, m_fCurInterpolationParam);
 		}
         template <typename U>

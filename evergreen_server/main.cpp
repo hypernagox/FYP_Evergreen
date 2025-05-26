@@ -19,10 +19,6 @@
 #include "NaviAgent_Common.h"
 #include "Interaction.h"
 #include "ImGUIMgr.h"
-#include <GLFW/glfw3.h>
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 200001;

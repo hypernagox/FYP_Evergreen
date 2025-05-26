@@ -50,6 +50,15 @@
 #include <tbb/concurrent_hash_map.h>
 #include <jemalloc/jemalloc.h>
 
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+#include <imgui.h>
+#include <imconfig.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_opengl3_loader.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #pragma comment(lib, "ws2_32.lib")
 
 #include "NetAddress.h"

@@ -37,9 +37,9 @@ namespace NagiocpX
 
 	void Field::EnterFieldWithXY(const uint8_t start_x, const uint8_t start_y, ContentsEntity* const pEntity_)noexcept {
 		const auto cluster = GetCluster(start_x, start_y);
-		pEntity_->IncRefEnterCluster();
 		pEntity_->SetClusterFieldInfoUnsafe(cluster->GetClusterFieldInfo());
 		std::atomic_thread_fence(std::memory_order_release);
+		pEntity_->IncRefEnterCluster();
 		cluster->EnterEnqueue(pEntity_);
 	}
 

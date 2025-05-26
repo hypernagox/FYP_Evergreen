@@ -163,6 +163,9 @@
     <Filter Include="Manager\ImGUIMgr">
       <UniqueIdentifier>{29564a05-2eee-408c-aac2-50600f1ad499}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager\ImGUIMgr\imgui">
+      <UniqueIdentifier>{d9e20887-25d9-44f2-b03c-32122cde2250}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -402,6 +405,48 @@
     <ClInclude Include="PchHelper.h">
       <Filter>Utils\predefine</Filter>
     </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_dx9.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_dx10.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_dx11.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_dx12.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_glfw.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_opengl3.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_opengl3_loader.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_win32.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\imconfig.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\imgui.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\imgui_internal.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\imstb_rectpack.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\imstb_textedit.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\imstb_truetype.h">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -544,6 +589,42 @@
     </ClCompile>
     <ClCompile Include="ImGUIMgr.cpp">
       <Filter>Manager\ImGUIMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_dx9.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_dx10.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_dx11.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_dx12.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\imgui.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\imgui_demo.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\imgui_draw.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\imgui_tables.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\imgui_widgets.cpp">
+      <Filter>Manager\ImGUIMgr\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

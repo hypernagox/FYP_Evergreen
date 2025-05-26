@@ -13,15 +13,6 @@
     "directxtk12",
     "directx-dxc",
     "tbb",
-    "jemalloc",
-    {
-      "name": "imgui",
-      "features": [
-        "dx12-binding",
-        "win32-binding",
-        "opengl3-binding",
-        "glfw-binding"
-      ]
-    }
+    "jemalloc"
   ]
 }

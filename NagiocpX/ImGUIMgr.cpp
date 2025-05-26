@@ -1,9 +1,5 @@
 #include "NagiocpXPch.h"
 #include "ImGUIMgr.h"
-#include <GLFW/glfw3.h>
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
 
 namespace NagiocpX
 {
@@ -67,7 +63,7 @@ namespace NagiocpX
         while (!glfwWindowShouldClose(m_window))
         {
             Render();
-            Sleep(1);
+            Sleep(100);
         }
     }
 
@@ -88,13 +84,13 @@ namespace NagiocpX
 
 	void ImGUIMgr::EndFrame() noexcept
 	{
-        ImGui::Render();
-        int w, h;
-        glfwGetFramebufferSize(m_window, &w, &h);
-        glViewport(0, 0, w, h);
-        glClearColor(0.1f, 0.1f, 0.1f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        glfwSwapBuffers(m_window);
+      ImGui::Render();
+      int w, h;
+      glfwGetFramebufferSize(m_window, &w, &h);
+      glViewport(0, 0, w, h);
+      glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+      glClear(GL_COLOR_BUFFER_BIT);
+      ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+      glfwSwapBuffers(m_window);
 	}
 }

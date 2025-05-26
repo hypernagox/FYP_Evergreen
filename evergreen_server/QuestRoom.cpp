@@ -16,6 +16,7 @@
 std::atomic_int aaaa;
 QuestRoom::QuestRoom() noexcept
 {
+	m_fieldID = -1;
 	m_field_x_scale = 1024;
 	m_field_y_scale = 1024;
 

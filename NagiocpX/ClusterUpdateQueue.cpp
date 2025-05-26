@@ -20,7 +20,6 @@ namespace NagiocpX
 	bool ClusterUpdateTask::Execute() noexcept
 	{
 		m_invoker.InvokeTask(GetCluster(m_info, m_field));
-		m_field->DecRef<Field>();
 		return 0 == InterlockedDecrement(&m_refCount);
 	}
 
@@ -39,7 +38,9 @@ namespace NagiocpX
 					// 한바퀴 돌면 여기서 조금 위험할 수는 있음
 					*task_ptr = nullptr;
 					_Compiler_barrier();
+					const auto field_ptr = task->m_field;
 					NagiocpX::xdelete<ClusterUpdateTask>(task);
+					field_ptr->DecRef<Field>(NUM_OF_THREADS);
 				}
 			}
 			else return;
