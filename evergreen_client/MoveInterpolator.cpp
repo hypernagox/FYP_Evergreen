@@ -34,20 +34,17 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	const auto angle = pkt_.body_angle();
 	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(angle * DEG2RAD + PI, 0.0f, 0.0f);
 	
-	auto dt = (NetMgr(ServerTimeMgr)->GetDtForDeadReckoningSeconds(pkt_.time_stamp()));
-	//TODO: 레이턴시가 너무 길어질 때의 적절한 값
-	if (0.5f <= dt)
-	{
-		dt = DT * 2.f;
-	}
+	const auto dt = (NetMgr(ServerTimeMgr)->GetDtForDeadReckoningSeconds(pkt_.time_stamp()));
+
 	//std::cout << dt << std::endl;
 	
 	const Vector3 vFutureVel = vel + accel * dt;
-	const Vector3 vFuturePos = pos + vFutureVel * dt + accel * dt * dt * 0.5f;
+	const Vector3 vFuturePos = pos + vel * dt + 0.5f * accel * dt * dt;
 
 	auto move_data = m_interpolator.GetInterPolatedData();
 	m_interpolator.UpdateNewData(MoveData{ vFuturePos, angle, vFutureVel, accel });
 	m_interpolator.GetCurData().pos = move_data.pos;
+	m_interpolator.GetCurData().vel = move_data.vel;
 	// m_interpolator.GetCurData().body_angleY = move_data.body_angleY;
 
 	owner_player->SetPosition(pos);
