@@ -146,7 +146,6 @@ namespace udsdx
 			mesh = std::make_unique<Mesh>(pathString);
 			mesh->UploadBuffers(m_device, m_commandList);
 			ret = std::move(mesh);
-			DebugConsole::Log("\tRegistered the resource as Mesh");
 		}
 		else if (pathString.extension().string() == ".yrms")
 		{
@@ -154,12 +153,10 @@ namespace udsdx
 			mesh = std::make_unique<RiggedMesh>(pathString);
 			mesh->UploadBuffers(m_device, m_commandList);
 			ret = std::move(mesh);
-			DebugConsole::Log("\tRegistered the resource as RiggedMesh");
 		}
 		else if (pathString.extension().string() == ".yac")
 		{
 			ret = std::make_unique<AnimationClip>(pathString);
-			DebugConsole::Log("\tRegistered the resource as AnimationClip");
 		}
 
 		return ret;

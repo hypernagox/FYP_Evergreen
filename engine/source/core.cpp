@@ -118,29 +118,25 @@ namespace udsdx
 		// Before creating the device, log the adapter information.
 		LogAdapterInfo();
 
-		// Enumerate adapters and select the one with the most dedicated video memory.
-		ComPtr<IDXGIAdapter1> selectedAdapter = nullptr;
-		SIZE_T maxDedicatedVideoMemory = 0;
-		for (UINT i = 0; ; ++i)
+		// Enumerate the adapters by GPU preference.
+		ComPtr<IDXGIAdapter1> dxgiAdapter = nullptr;
+		for (UINT adapterIndex = 0; SUCCEEDED(m_dxgiFactory->EnumAdapterByGpuPreference(adapterIndex, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&dxgiAdapter))); ++adapterIndex)
 		{
-			ComPtr<IDXGIAdapter1> adapter = nullptr;
-			if (m_dxgiFactory->EnumAdapters1(i, &adapter) == DXGI_ERROR_NOT_FOUND)
+			// Skip software adapters.
+			DXGI_ADAPTER_DESC1 desc;
+			if (FAILED(dxgiAdapter->GetDesc1(&desc)) || (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
+			{
+				continue;
+			}
+
+			// Check if the adapter supports Direct3D 12 then create the device.
+			if (SUCCEEDED(::D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_d3dDevice))))
 			{
 				break;
 			}
-
-			DXGI_ADAPTER_DESC desc;
-			adapter->GetDesc(&desc);
-
-			if (desc.DedicatedVideoMemory > maxDedicatedVideoMemory)
-			{
-				maxDedicatedVideoMemory = desc.DedicatedVideoMemory;
-				selectedAdapter = adapter;
-			}
 		}
 
-		// Create hardware device
-		if (selectedAdapter == nullptr || FAILED(::D3D12CreateDevice(selectedAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_d3dDevice))))
+		if (m_d3dDevice == nullptr)
 		{
 			// Fallback to WARP(Windows Advanced Rasterization Platform) device
 			ComPtr<IDXGIAdapter> adapter = nullptr;
