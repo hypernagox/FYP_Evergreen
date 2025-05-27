@@ -139,11 +139,10 @@ namespace udsdx
 		if (m_d3dDevice == nullptr)
 		{
 			// Fallback to WARP(Windows Advanced Rasterization Platform) device
-			ComPtr<IDXGIAdapter> adapter = nullptr;
-			ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&adapter)));
+			ThrowIfFailed(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&dxgiAdapter)));
 
 			// Create hardware device with WARP adapter
-			ThrowIfFailed(::D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_d3dDevice)));
+			ThrowIfFailed(::D3D12CreateDevice(dxgiAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_d3dDevice)));
 		}
 
 		// Check for tearing support
