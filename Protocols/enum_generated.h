@@ -85,6 +85,36 @@ inline const char *EnumNamePLAYER_TYPE(PLAYER_TYPE e) {
   return EnumNamesPLAYER_TYPE()[index];
 }
 
+enum MONSTER_TYPE : uint8_t {
+  MONSTER_TYPE_MELEE = 0,
+  MONSTER_TYPE_RANGE = 1,
+  MONSTER_TYPE_MIN = MONSTER_TYPE_MELEE,
+  MONSTER_TYPE_MAX = MONSTER_TYPE_RANGE
+};
+
+inline const MONSTER_TYPE (&EnumValuesMONSTER_TYPE())[2] {
+  static const MONSTER_TYPE values[] = {
+    MONSTER_TYPE_MELEE,
+    MONSTER_TYPE_RANGE
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesMONSTER_TYPE() {
+  static const char * const names[3] = {
+    "MELEE",
+    "RANGE",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameMONSTER_TYPE(MONSTER_TYPE e) {
+  if (::flatbuffers::IsOutRange(e, MONSTER_TYPE_MELEE, MONSTER_TYPE_RANGE)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesMONSTER_TYPE()[index];
+}
+
 }  // namespace Enum
 }  // namespace Nagox
 

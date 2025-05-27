@@ -240,7 +240,7 @@ namespace NagiocpX
 		//std::atomic_bool m_bNowUpdateFlag = false;
 	};
 
-	template <typename T, typename U> requires std::is_enum_v<T> && std::is_enum_v<U> && (sizeof(uint8_t) == sizeof(T)) && (sizeof(uint8_t) == sizeof(U))
+	template <typename T, typename U> requires (sizeof(uint8_t) == sizeof(T)) && (sizeof(uint8_t) == sizeof(U))
 	static constexpr inline S_ptr<ContentsEntity> CreateContentsEntity(const T primary_group_type, const U detail_type)noexcept { return MakeShared<ContentsEntity>(static_cast<const uint8_t>(primary_group_type), static_cast<const uint8_t>(detail_type)); }
 
 	class IocpComponent

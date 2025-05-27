@@ -74,9 +74,6 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	//Mgr(WorldMgr)->GetWorld(0)->GetSector({ 0,0 })->BroadCastEnqueue(std::move(pbuff));
 	//
 	//auto pbuff2 = pbuff;
-	EntityBuilder b;
-	b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
-	b.obj_type = MONSTER_TYPE_INFO::FOX;
 	
 	//b.x = 14.6667f;
 	//b.y = 0.0833333f;

@@ -22,7 +22,7 @@ namespace NagiocpX
 {
 	S_ptr<ContentsEntity> EntityFactory::CreateMonster(const EntityBuilder& b) noexcept
 	{
-		const auto monster_entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
+		const auto monster_entity = CreateContentsEntity(b.group_type, b.obj_type);
 
 		const auto bt_timer = monster_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>(),20*20);
 
@@ -52,6 +52,7 @@ namespace NagiocpX
 		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
 		//monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
 		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1.5f);
+		monster_entity->GetComp<SphereCollider>()->GetCollider()->m_offSet.y += 1.f;
 
 		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int,"Fox","hp")); // TODO 매직넘버
 		monster_entity->AddComp<MonsterDeath>();
@@ -65,7 +66,7 @@ namespace NagiocpX
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreateNPC(const EntityBuilder& b) noexcept
 	{
-		const auto entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
+		const auto entity = CreateContentsEntity(b.group_type, b.obj_type);
 		// TODO: NPC에 필요한 부가정보
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
 		return entity;
@@ -73,7 +74,7 @@ namespace NagiocpX
 
 	S_ptr<ContentsEntity> EntityFactory::CreateRangeMonster(const EntityBuilder& b) noexcept
 	{
-		const auto monster_entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
+		const auto monster_entity = CreateContentsEntity(b.group_type, b.obj_type);
 		monster_entity->AddComp<PositionComponent>();
 		const auto fsm = monster_entity->AddIocpComponent<TickTimerFSM>();
 		fsm->SetTickInterval(500);
@@ -90,7 +91,8 @@ namespace NagiocpX
 
 		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
 		//monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
-		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1);
+		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1.5f);
+		monster_entity->GetComp<SphereCollider>()->GetCollider()->m_offSet.y += 1.f;
 
 		monster_entity->AddComp<HP>()->InitHP(3);
 		monster_entity->AddComp<MonsterDeath>();
@@ -105,7 +107,7 @@ namespace NagiocpX
 	S_ptr<ContentsEntity> EntityFactory::CreateDropItem(const EntityBuilder& b) noexcept
 	{
 		const auto& b_ = static_cast<const DropItemBuilder&>(b);
-		const auto entity = CreateContentsEntity(b_.group_type, (ITEM_TYPE_INFO)b_.obj_type);
+		const auto entity = CreateContentsEntity(b_.group_type, b_.obj_type);
 		entity->AddComp<PositionComponent>()->pos = { b_.x, b_.y, b_.z };
 		const auto item = entity->AddComp<DropItem>();
 		item->SetDropItemDetailInfo(b_.item_detail_type);
@@ -114,7 +116,7 @@ namespace NagiocpX
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreateHarvest(const EntityBuilder& b) noexcept
 	{
-		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
+		const auto entity = CreateContentsEntity(b.group_type, b.obj_type);
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
 		
 		if (HARVEST_TYPE::LILLY == (HARVEST_TYPE)b.obj_type)
@@ -136,7 +138,7 @@ namespace NagiocpX
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreatePathNPC(const EntityBuilder& b) noexcept
 	{
-		const auto entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
+		const auto entity = CreateContentsEntity(b.group_type, b.obj_type);
 
 		
 		entity->AddComp<PositionComponent>();
@@ -156,7 +158,7 @@ namespace NagiocpX
 	}
 	S_ptr<ContentsEntity> EntityFactory::CreateClearTree(const EntityBuilder& b) noexcept
 	{
-		const auto entity = CreateContentsEntity(b.group_type, (ITEM_TYPE_INFO)b.obj_type);
+		const auto entity = CreateContentsEntity(b.group_type, b.obj_type);
 		entity->AddComp<PositionComponent>()->pos = { b.x, b.y, b.z };
 		entity->AddComp<DropTable>()->SetItemTypeByID(DATA_TABLE->GetItemID("Herb"));
 		entity->AddComp<ClearTreeInteraction>()->SetInteractionType(HarvestLoader::GetHarvestMaxType());
@@ -166,7 +168,7 @@ namespace NagiocpX
 
 	S_ptr<ContentsEntity> EntityFactory::CreateSheep(const EntityBuilder& b) noexcept
 	{
-		const auto monster_entity = CreateContentsEntity(b.group_type, (MONSTER_TYPE_INFO)b.obj_type);
+		const auto monster_entity = CreateContentsEntity(b.group_type, b.obj_type);
 
 		const auto bt_timer = monster_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>(), 10 * 10);
 

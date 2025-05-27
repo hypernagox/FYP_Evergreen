@@ -224,7 +224,7 @@ void FoxQuest::InitQuestField() noexcept
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
-		b.obj_type = MONSTER_TYPE_INFO::FOX;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_MELEE;
 		const auto m = EntityFactory::CreateMonster(b);
 		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
 
@@ -258,8 +258,8 @@ void GoblinQuest::InitQuestField() noexcept
 	for (int i = 0; i < num; ++i)
 	{
 		EntityBuilder b;
-		b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
-		b.obj_type = 0;
+		b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_RANGE;
 		const auto m = EntityFactory::CreateRangeMonster(b);
 		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
 		m->GetComp<PositionComponent>()->pos = mon_quest_pos[i];
@@ -302,7 +302,7 @@ void NPCGuardQuest::InitQuestField() noexcept
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
-		b.obj_type = MONSTER_TYPE_INFO::FOX;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_MELEE;
 		const auto m = EntityFactory::CreateMonster(b);
 		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
 		//m->GetComp<PositionComponent>()->pos = points[i];

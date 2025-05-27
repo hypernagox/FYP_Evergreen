@@ -16,7 +16,7 @@
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 
-std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Warrior(EntityBuilderBase* builder)
+std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Player(EntityBuilderBase* builder)
 {
 	const auto b = static_cast<DefaultEntityBuilder*>(builder); // 인간적으로 디폴트 빌더인걸 확신하고 그냥 지른다.
 
@@ -56,22 +56,42 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Warrior(EntityBuil
 std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuilderBase* builder)
 {
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
+	if (b->obj_type == Nagox::Enum::MONSTER_TYPE_MELEE)
+	{
+		auto instance = std::make_shared<udsdx::SceneObject>();
+		instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
-	auto instance = std::make_shared<udsdx::SceneObject>();
-	instance->GetTransform()->SetLocalPosition(b->obj_pos);
+		auto monsterComponent = instance->AddComponent<Monster>();
+		auto serverComponent = instance->AddComponent<ServerObject>();
+		serverComponent->SetObjID(builder->obj_id);
 
-	auto monsterComponent = instance->AddComponent<Monster>();
-	auto serverComponent = instance->AddComponent<ServerObject>();
-	serverComponent->SetObjID(builder->obj_id);
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		moveInterpolator->InitInterpolator(b->obj_pos);
 
-	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
-	moveInterpolator->InitInterpolator(b->obj_pos);
+		return instance;
+	}
+	if (b->obj_type == Nagox::Enum::MONSTER_TYPE_RANGE)
+	{
+		const auto b = static_cast<DefaultEntityBuilder*>(builder);
 
-	return instance;
+		auto instance = std::make_shared<udsdx::SceneObject>();
+		instance->GetTransform()->SetLocalPosition(b->obj_pos);
+
+		instance->AddComponent<EntityMovement>();
+		auto serverComponent = instance->AddComponent<ServerObject>();
+		serverComponent->SetObjID(builder->obj_id);
+
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		moveInterpolator->InitInterpolator(b->obj_pos);
+
+		auto renderer = instance->AddComponent<MonsterRenderer>();
+		return instance;
+	}
 }
 
 std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderBase* builder)
 {
+	// TODO: 이제부턴 진짜 NPC임
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
 
 	auto instance = std::make_shared<udsdx::SceneObject>();

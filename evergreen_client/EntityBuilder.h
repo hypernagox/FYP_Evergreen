@@ -1,6 +1,14 @@
 #pragma once
 #include "pch.h"
 
+#define CHECK_NULL_CREATE_FUNC(type) \
+    do { \
+        if (g_createObjectFunc[type] != nullptr) { \
+            printf("Error: Create function for group type %d is already set!\n", static_cast<int>(type)); \
+            std::abort(); \
+        } \
+    } while (0)
+
 // TODO: 자동화
 struct EntityBuilderBase
 {
@@ -11,34 +19,24 @@ struct EntityBuilderBase
 
 public:
 	static inline std::shared_ptr<udsdx::SceneObject> CreateObject(EntityBuilderBase* builder)noexcept {
-		const auto create_func = g_createObjectFunc[builder->group_type][0];
-		if (builder->group_type == Nagox::Enum::GROUP_TYPE_DROP_ITEM) 
+		const auto idx = builder->group_type;
+		if (idx > Nagox::Enum::GROUP_TYPE_MAX || idx < Nagox::Enum::GROUP_TYPE_MIN || !g_createObjectFunc[idx])
 		{
-			return g_createObjectFunc[builder->group_type][0](builder);
-		}
-		if (builder->group_type == Nagox::Enum::GROUP_TYPE_HARVEST)
-		{
-			return Create_Harvest(builder);
-		}
-		if (!create_func)
-		{
-			//TODO:: 적당한 예외처리 nullptr 뱉는게 의미가 없고 그냥 터뜨리고 다시 빌드하는게 맞을 것 같음
 			std::cout << "Invalid Bulider Enum\n";
+			std::abort();
+			return {};
 		}
-		return create_func(builder);
+		return g_createObjectFunc[idx](builder);
 	}
 
 
 #pragma region CREATE_FUNC_LIST
 private:
 #pragma region PLAEYER
-	static std::shared_ptr<udsdx::SceneObject> Create_Warrior(EntityBuilderBase* builder);
-	// 앞으로 법사, 궁수를 여기에추가
+	static std::shared_ptr<udsdx::SceneObject> Create_Player(EntityBuilderBase* builder);
 #pragma endregion
 
-
 #pragma region MONSTER
-	// 몬스터를 여기에 추가
 	static std::shared_ptr<udsdx::SceneObject> Create_Monster(EntityBuilderBase* builder);
 #pragma endregion
 
@@ -48,12 +46,10 @@ private:
 #pragma endregion
 
 #pragma region DROP_ITEM
-	// 드랍아이템을 여기에 추가
 	static std::shared_ptr<udsdx::SceneObject> Create_DropItem(EntityBuilderBase* builder);
 #pragma endregion
 
 #pragma region HARVEST
-	// 드랍아이템을 여기에 추가
 	static std::shared_ptr<udsdx::SceneObject> Create_Harvest(EntityBuilderBase* builder);
 #pragma endregion
 
@@ -61,52 +57,51 @@ private:
 
 
 private:
-	static const bool InitTable()noexcept
+	static const bool InitTable()
 	{
 		// 테이블 초기화 함수
 #pragma region INIT_FUNC_LIST
-
-		// 실수방지를 위해 한번 참조로 받고 시작하였음
+		std::ranges::fill(g_createObjectFunc, nullptr);
 #pragma region PLAEYER
 		{
-			auto& player_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_PLAYER];
-
-			player_func_table[PLAYER_TYPE_INFO::WARRIOR] = Create_Warrior;
+			CHECK_NULL_CREATE_FUNC(Nagox::Enum::GROUP_TYPE_PLAYER);
+			g_createObjectFunc[Nagox::Enum::GROUP_TYPE_PLAYER] = Create_Player;
 		}
 #pragma endregion
 
 #pragma region MONSTER
 		{
-			auto& monster_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER];
-
-			monster_func_table[MONSTER_TYPE_INFO::FOX] = Create_Monster;
+			CHECK_NULL_CREATE_FUNC(Nagox::Enum::GROUP_TYPE_MONSTER);
+			g_createObjectFunc[Nagox::Enum::GROUP_TYPE_MONSTER] = Create_Monster;
 		}
 #pragma endregion
 
 #pragma region NPC
 		{
-			auto& npc_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_NPC];
-
-			npc_func_table[0] = Create_NPC;
+			CHECK_NULL_CREATE_FUNC(Nagox::Enum::GROUP_TYPE_NPC);
+			g_createObjectFunc[Nagox::Enum::GROUP_TYPE_NPC] = Create_NPC;
 		}
 #pragma endregion
 
 #pragma region DROP_ITEM
 		{
-			auto& drop_item_func_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_DROP_ITEM];
-
-			drop_item_func_table[0] = Create_DropItem;
+			CHECK_NULL_CREATE_FUNC(Nagox::Enum::GROUP_TYPE_DROP_ITEM);
+			g_createObjectFunc[Nagox::Enum::GROUP_TYPE_DROP_ITEM] = Create_DropItem;
 		}
 #pragma endregion
 
 #pragma region HARVEST
 		{
-			auto& harvest_table = g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_HARVEST];
-
-			harvest_table[0] = Create_Harvest;
+			CHECK_NULL_CREATE_FUNC(Nagox::Enum::GROUP_TYPE_HARVEST);
+			g_createObjectFunc[Nagox::Enum::GROUP_TYPE_HARVEST] = Create_Harvest;
 		}
 #pragma endregion
-
+		for (const auto fp : g_createObjectFunc)
+		{
+			if (!fp) {
+				throw std::runtime_error{ "Create Table not init\n" };
+			}
+		}
 #pragma endregion
 
 		return true;
@@ -115,8 +110,7 @@ private:
 
 	using CreateObjectFunc = std::shared_ptr<udsdx::SceneObject>(*)(EntityBuilderBase*);
 
-	static inline std::unordered_map<Nagox::Enum::GROUP_TYPE, std::unordered_map<uint8_t, CreateObjectFunc>> g_createObjectFunc;
-
+	static inline CreateObjectFunc g_createObjectFunc[Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MAX + 1] = { nullptr };
 
 	static inline const bool g_initFlag = InitTable();
 };
