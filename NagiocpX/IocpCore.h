@@ -3,10 +3,7 @@
 namespace NagiocpX
 {
 	class IocpObject;
-	/*--------------
-		IocpCore
-	---------------*/
-
+	
 	class IocpCore
 	{
 	public:

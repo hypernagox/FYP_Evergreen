@@ -9,12 +9,12 @@
 
 void HP::PostDoDmg(const int dmg_, NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject) noexcept
 {
-	EnqueueCompTaskPushOnly(&HP::DoDmg, dmg_, std::move(atkObject));
+	EnqueueCompTask(&HP::DoDmg, dmg_, std::move(atkObject));
 }
 
 void HP::PostDoHeal(const int heal_) noexcept
 {
-	EnqueueCompTaskPushOnly(&HP::DoHeal, heal_);
+	EnqueueCompTask(&HP::DoHeal, heal_);
 }
 
 void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject) noexcept
@@ -35,8 +35,7 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 				owner
 			);
 			//std::cout << "µ¥¹ÌÁö :" << result_dmg << "!!\n";
-			atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), GetCurHP() - result_dmg));
-			m_hp -= result_dmg;
+			atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), origin_hp - result_dmg));
 		}
 		else if (owner->GetSession())
 		{

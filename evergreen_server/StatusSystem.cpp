@@ -15,5 +15,5 @@ int StatusSystem::GetDEF() const noexcept
 
 int StatusSystem::ApplyAtk(const int victim_origin_hp, int& victim_hp, ContentsEntity* const victim)
 {
-	return m_equipSystem->ApplyAtk(GetATK(), victim_origin_hp, victim_hp, victim);
+	return m_equipSystem->ApplyAtk(GetOwnerEntityRaw(), GetATK(), victim_origin_hp, victim_hp, victim);
 }

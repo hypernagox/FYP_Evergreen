@@ -8,10 +8,6 @@ namespace NagiocpX
 	class SendBuffer;
 	class Task;
 
-	/*--------------
-		IocpEvent
-	---------------*/
-
 	class IocpEvent
 	{
 	protected:

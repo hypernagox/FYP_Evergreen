@@ -167,7 +167,7 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 	//fan.m_offSet = rotatedForward * 2;
 
 	//if (const auto sector = pOwner->GetCurCluster())
-	XVector<Vector3> vvv;
+	
 	{
 		const auto& mon_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
 		for (const auto pmon : mon_list)
@@ -184,14 +184,13 @@ const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 						//NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getEditableAgent(owner->GetComp<NaviAgent>()->m_my_idx)->active = false;
 						//
 						//owner->TryOnDestroy();
-						std::cout << "Hit Pos: ";
-						PrintVector3(pCol->GetPosComp()->pos);
+						//std::cout << "Hit Pos: ";
+						//PrintVector3(pCol->GetPosComp()->pos);
 						owner->GetComp<HP>()->PostDoDmg(1, pOwner->SharedFromThis());
 						isHit = true;
 					}
 					else
 					{
-						vvv.emplace_back(pCol->GetPosComp()->pos);
 						//const auto ppp = pCol->GetCollider()->GetPosWithOffset();
 						//PrintLogEndl(&ppp.x);
 					}

@@ -17,11 +17,6 @@ namespace NagiocpX
 	class SectorBehavior;
 	class ContentsEntity;
 
-	/*--------------
-		 Session
-	---------------*/
-
-
 	class Session
 		:public IocpObject
 	{

@@ -16,6 +16,7 @@ public:
 	int GetDEF()const noexcept { return def; }
 
 	virtual int ApplyAtkEquipment(
+		ContentsEntity* const atk_obj,
 		const int attacker_atk,
 		const int victim_origin_hp,
 		int& victim_hp,
@@ -41,6 +42,7 @@ public:
 		return sum;
 	}
 	int ApplyAtk(
+		ContentsEntity* const atk_obj,
 		const int attacker_atk,
 		const int victim_origin_hp,
 		int& victim_hp,

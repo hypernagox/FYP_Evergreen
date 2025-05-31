@@ -77,4 +77,70 @@ namespace Common
 
 		CommonMath::InverseZ(out_pos);
 	}
+
+	Vector3 NaviAgent::ForcedMovement(const Vector3& prev_pos, const Vector3& dest_pos) noexcept
+	{
+		constexpr const float MIN_HEIGHT_VAL = 0.12f;
+
+		const dtPolyRef cur_poly_ref = m_curCell.GetPolyRef();
+		dtPolyRef visited_polys[10]{ cur_poly_ref };
+		int visited_count = 1;
+
+		const Vector3 prev_z = CommonMath::InverseZ(prev_pos);
+		const Vector3 dest_z = CommonMath::InverseZ(dest_pos);
+
+		const auto nav_q = m_pNavMesh->GetNavMeshQuery();
+		const auto nav_filter = m_pNavMesh->GetNavFilter();
+
+		float t = 1.0f;
+		float hitNormal[3]{ 0,0,0 };
+
+		const dtStatus ray_status = nav_q->raycast(
+			cur_poly_ref, &prev_z.x, &dest_z.x,
+			nav_filter, &t, hitNormal, visited_polys, &visited_count, 10
+		);
+
+		Vector3 adjusted_dest = dest_z;
+
+		if (dtStatusSucceed(ray_status) && 1.0f > t)
+		{
+			adjusted_dest = prev_z + (dest_z - prev_z) * t;
+		}
+
+		Vector3 moved = prev_z;
+
+		const dtStatus move_status = nav_q->moveAlongSurface(
+			cur_poly_ref, &prev_z.x, &adjusted_dest.x,
+			nav_filter, &moved.x, visited_polys, &visited_count, 10
+		);
+
+		dtPolyRef final_poly = cur_poly_ref;
+
+		if (dtStatusFailed(move_status))
+		{
+			moved = prev_z + (adjusted_dest - prev_z);
+			nav_q->getPolyHeight(cur_poly_ref, &moved.x, &moved.y);
+		}
+		else
+		{
+			final_poly = visited_polys[visited_count - 1];
+			nav_q->getPolyHeight(final_poly, &moved.x, &moved.y);
+		}
+
+		if (moved.y <= MIN_HEIGHT_VAL)
+		{
+			moved = prev_z;
+			nav_q->getPolyHeight(cur_poly_ref, &moved.x, &moved.y);
+			final_poly = cur_poly_ref;
+		}
+
+		m_curCell.SetPolyRef(final_poly);
+		CommonMath::InverseZ(moved);
+		return moved;
+	}
+
+	Vector3& NaviAgent::ForcedMovement(const Vector3 prev_pos, const Vector3& dest_pos, Vector3& out_pos) noexcept
+	{
+		return out_pos = ForcedMovement(prev_pos, dest_pos);
+	}
 }

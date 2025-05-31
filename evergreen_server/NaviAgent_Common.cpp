@@ -3,22 +3,6 @@
 #include "NavigationMesh.h"
 #include "PositionComponent.h"
 
-//TODO: 나중에 바꿔야함
-static auto InitParam()
-{
-	dtCrowdAgentParams params;
-	memset(&params, 0, sizeof(params));
-	params.radius = 1.6f;
-	params.height = 2.0f;
-	params.maxAcceleration = 8.0f;
-	params.maxSpeed = 8.5f;
-	params.collisionQueryRange = params.radius * 36.0f;
-	params.pathOptimizationRange = params.radius * 30.0f;
-	params.separationWeight = 3.0f;
-	params.updateFlags = DT_CROWD_SEPARATION;
-	return params;
-}
-
 void NaviAgent::Init(const Vector3& pos, Common::NavigationMesh* const pNavMesh) noexcept
 {
 	auto& cur_pos = m_posComp->pos;
@@ -46,12 +30,6 @@ void NaviAgent::SetPos(const Vector3& pos) noexcept
 	m_agent.GetCurCell() = m_agent.GetNavMesh()->GetNaviCell(cur_pos);
 }
 
-void NaviAgent::InitParams() noexcept
-{
-	const auto param = InitParam();
-	m_agent.GetNavMesh()->GetCrowd()->updateAgentParameters(m_my_idx, &param);
-}
-
 void NaviAgent::SetCellPos(const float dt, const Vector3& prev_pos, const Vector3& post_pos) noexcept
 {
 	m_agent.SetCellPos(dt, prev_pos, post_pos, m_posComp->pos);
@@ -64,6 +42,13 @@ float NaviAgent::ApplyPostPosition(const Vector3& dir, const float speed, const 
 	const auto post_pos = prev_pos + dir_;
 	SetCellPos(dt, prev_pos, post_pos);
 	return dir_.Length();
+}
+
+void NaviAgent::ForcedMovement(const Vector3 dir, const float movement_dist) noexcept
+{
+	auto& cur_pos = m_posComp->pos;
+	const auto dest_pos = cur_pos + dir * movement_dist;
+	m_agent.ForcedMovement(cur_pos, dest_pos, cur_pos);
 }
 
 void NaviAgent::ProcessCleanUp() noexcept

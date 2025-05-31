@@ -6,7 +6,7 @@
 
 namespace Common
 {
-    std::span<DirectX::SimpleMath::Vector3> PathFinder::GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest,int idx) const noexcept
+    std::span<DirectX::SimpleMath::Vector3> PathFinder::GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest) const noexcept
     {
         // TODO: 매직넘버
         dtPolyRef path[10];
