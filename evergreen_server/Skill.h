@@ -12,10 +12,10 @@ public:
 	const bool IsCoolDown()const noexcept {
 		return IsCoolDown(::GetTickCount64());
 	}
-	const bool UseSkill(class ContentsEntity* const use_entity)noexcept {
+	const bool UseSkill(class StatusSystem* const use_entity_system)noexcept {
 		const auto cur_time = ::GetTickCount64();
 		if (!IsCoolDown(cur_time))return false;
-		const bool res = ExecuteSkill(use_entity);
+		const bool res = ExecuteSkill(use_entity_system);
 		if (res)m_last_used_time = cur_time;
 		return res;
 	}
@@ -29,7 +29,7 @@ protected:
 		return res;
 		//return cur_time - m_last_used_time >= m_cool_down;
 	}
-	virtual bool ExecuteSkill(class ContentsEntity* const use_entity)noexcept = 0;
+	virtual bool ExecuteSkill(class StatusSystem* const use_entity_system)noexcept = 0;
 private:
 	uint64_t m_cool_down = 2000;
 	uint64_t m_last_used_time = 0;
@@ -38,11 +38,11 @@ private:
 class WarriorDefaultAttack
 	:public Skill
 {
-	virtual bool ExecuteSkill(class ContentsEntity* const use_entity)noexcept override;
+	virtual bool ExecuteSkill(class StatusSystem* const use_entity_system)noexcept override;
 };
 
 class PriestDefaultAttack
 	:public Skill
 {
-	virtual bool ExecuteSkill(class ContentsEntity* const use_entity)noexcept override;
+	virtual bool ExecuteSkill(class StatusSystem* const use_entity_system)noexcept override;
 };

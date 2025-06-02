@@ -30,6 +30,6 @@ int StatusSystem::ApplyAtk(const int victim_origin_hp, int& victim_hp, ContentsE
 
 const bool StatusSystem::UseSkill(const Nagox::Enum::SKILL_TYPE skill_type) noexcept
 {
-	if (m_skills[skill_type])return m_skills[skill_type]->UseSkill(GetOwnerEntityRaw());
+	if (m_skills[skill_type])return m_skills[skill_type]->UseSkill(this);
 	else return false;
 }

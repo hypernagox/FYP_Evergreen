@@ -6,17 +6,18 @@
 #include "HP.h"
 #include "TimerRoutine.h"
 #include "Projectile.h"
+#include "StatusSystem.h"
 
 using namespace NagiocpX;
 
-bool WarriorDefaultAttack::ExecuteSkill(ContentsEntity* const use_entity) noexcept
+bool WarriorDefaultAttack::ExecuteSkill(class StatusSystem* const use_entity_system) noexcept
 {
 	//DO_BENCH_GLOBAL_THIS_FUNC;
 
 	// TODO: 월드가 달라졌다면 뷰리스트의 갱신이 필요
 	// TODO: 생포인터로 개기지 말자
 	// 정수값 아이디만 쓰거나 쉐어드를 쓰자
-	const auto pOwner = use_entity;
+	const auto pOwner = use_entity_system->GetOwnerEntityRaw();
 
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
 	
@@ -94,9 +95,9 @@ bool WarriorDefaultAttack::ExecuteSkill(ContentsEntity* const use_entity) noexce
 	return true;
 }
 
-bool PriestDefaultAttack::ExecuteSkill(class ContentsEntity* const use_entity)noexcept
+bool PriestDefaultAttack::ExecuteSkill(class StatusSystem* const use_entity_system)noexcept
 {
-	const auto pOwner = use_entity;
+	const auto pOwner = use_entity_system->GetOwnerEntityRaw();
 
 	const auto pos_comp = pOwner->GetComp<PositionComponent>();
 	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
