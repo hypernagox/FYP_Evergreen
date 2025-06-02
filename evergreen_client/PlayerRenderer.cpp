@@ -17,7 +17,9 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(to); });
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
-	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, 0.8f);
+	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::AttackEnd, 0.25f);
+	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::AttackEnd, AnimationState::Idle, 0.3f);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::AttackEnd, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 
@@ -49,6 +51,11 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	}
 
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Death, AnimationState::Idle, 2.f);
+
+	m_stateMachine->SetStateUpdateFp(AnimationState::Attack, [this]() {
+		static bool flags[4];
+	
+		});
 }
 
 void PlayerRenderer::InitializeWarrior()
@@ -146,6 +153,8 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 
 void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 {
+	std::cout << static_cast<int>(state) << "\n";
+
 	switch (state)
 	{
 	case AnimationState::Idle:

@@ -16,10 +16,6 @@ namespace NagiocpX
 		END
 	};
 
-	/*-------------------
-		Service
-	-------------------*/
-
 	using SessionFactory = std::function<Session*(void)>;
 
 	class Service
@@ -103,10 +99,6 @@ namespace NagiocpX
 		static SessionDeleter g_session_deleter;
 	};
 
-
-	/*-------------------
-		ClientService
-	-------------------*/
 	class ClientService
 		:public Service
 	{
@@ -124,11 +116,6 @@ namespace NagiocpX
 	private:
 
 	};
-
-
-	/*-------------------
-		ServerService
-	-------------------*/
 
 	class ServerService
 		:public Service

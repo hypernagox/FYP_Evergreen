@@ -67,6 +67,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PLAYER_ATTACK(
     const uint64_t atk_player_id,
     const float body_angle,
     const Nagox::Struct::Vec3& atk_pos,
+    const Nagox::Enum::SKILL_TYPE& atk_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PLAYER_DEATH(

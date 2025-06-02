@@ -15,21 +15,20 @@ enum class HANDLE_PKT_ID : uint16_t {
     c2s_PLAYER_ATTACK = 1004,
     c2s_PLAYER_DEATH = 1005,
     c2s_REQUEST_QUEST = 1006,
-    c2s_FIRE_PROJ = 1007,
-    c2s_ACQUIRE_ITEM = 1008,
-    c2s_REQUEST_QUICK_SLOT = 1009,
-    c2s_USE_QUICK_SLOT_ITEM = 1010,
-    c2s_CRAFT_ITEM = 1011,
-    c2s_REGISTER_PARTY_QUEST = 1012,
-    c2s_ACQUIRE_PARTY_LIST = 1013,
-    c2s_INVITE_PARTY_QUEST = 1014,
-    c2s_INVITE_PARTY_RESULT = 1015,
-    c2s_PARTY_JOIN_REQUEST = 1016,
-    c2s_PARTY_JOIN_REQUEST_RESULT = 1017,
-    c2s_QUEST_START = 1018,
-    c2s_QUEST_END = 1019,
-    c2s_PARTY_OUT = 1020,
-    c2s_CHANGE_HARVEST_STATE = 1021,
+    c2s_ACQUIRE_ITEM = 1007,
+    c2s_REQUEST_QUICK_SLOT = 1008,
+    c2s_USE_QUICK_SLOT_ITEM = 1009,
+    c2s_CRAFT_ITEM = 1010,
+    c2s_REGISTER_PARTY_QUEST = 1011,
+    c2s_ACQUIRE_PARTY_LIST = 1012,
+    c2s_INVITE_PARTY_QUEST = 1013,
+    c2s_INVITE_PARTY_RESULT = 1014,
+    c2s_PARTY_JOIN_REQUEST = 1015,
+    c2s_PARTY_JOIN_REQUEST_RESULT = 1016,
+    c2s_QUEST_START = 1017,
+    c2s_QUEST_END = 1018,
+    c2s_PARTY_OUT = 1019,
+    c2s_CHANGE_HARVEST_STATE = 1020,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -77,7 +76,6 @@ const bool Handle_c2s_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSess
 const bool Handle_c2s_PLAYER_ATTACK(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_ATTACK& pkt_);
 const bool Handle_c2s_PLAYER_DEATH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PLAYER_DEATH& pkt_);
 const bool Handle_c2s_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_);
-const bool Handle_c2s_FIRE_PROJ(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_FIRE_PROJ& pkt_);
 const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_ACQUIRE_ITEM& pkt_);
 const bool Handle_c2s_REQUEST_QUICK_SLOT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUICK_SLOT& pkt_);
 const bool Handle_c2s_USE_QUICK_SLOT_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_USE_QUICK_SLOT_ITEM& pkt_);
@@ -105,7 +103,6 @@ public:
         RegisterHandler<HANDLE_PKT_ID::c2s_PLAYER_ATTACK, Nagox::Protocol::c2s_PLAYER_ATTACK, Handle_c2s_PLAYER_ATTACK>();
         RegisterHandler<HANDLE_PKT_ID::c2s_PLAYER_DEATH, Nagox::Protocol::c2s_PLAYER_DEATH, Handle_c2s_PLAYER_DEATH>();
         RegisterHandler<HANDLE_PKT_ID::c2s_REQUEST_QUEST, Nagox::Protocol::c2s_REQUEST_QUEST, Handle_c2s_REQUEST_QUEST>();
-        RegisterHandler<HANDLE_PKT_ID::c2s_FIRE_PROJ, Nagox::Protocol::c2s_FIRE_PROJ, Handle_c2s_FIRE_PROJ>();
         RegisterHandler<HANDLE_PKT_ID::c2s_ACQUIRE_ITEM, Nagox::Protocol::c2s_ACQUIRE_ITEM, Handle_c2s_ACQUIRE_ITEM>();
         RegisterHandler<HANDLE_PKT_ID::c2s_REQUEST_QUICK_SLOT, Nagox::Protocol::c2s_REQUEST_QUICK_SLOT, Handle_c2s_REQUEST_QUICK_SLOT>();
         RegisterHandler<HANDLE_PKT_ID::c2s_USE_QUICK_SLOT_ITEM, Nagox::Protocol::c2s_USE_QUICK_SLOT_ITEM, Handle_c2s_USE_QUICK_SLOT_ITEM>();

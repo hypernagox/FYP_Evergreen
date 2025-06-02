@@ -188,7 +188,7 @@ int main()
 		(
 			  Mgr(CoreGlobal)->GetIocpCore()
 			, NagiocpX::NetAddress{ L"0.0.0.0",7777 }
-			, []() {return NagiocpX::aligned_xnew<ClientSession>(); }
+			, NagiocpX::aligned_xnew<ClientSession>
 			, c2s_PacketHandler::GetPacketHandlerList()
 			, NUM_OF_MAX_USER
 		);

@@ -6,10 +6,6 @@ namespace NagiocpX
 	class SendBufferChunk;
 	class SendBuffer;
 
-	/*--------------
-		SendBufferMgr
-	---------------*/
-
 	class SendBufferMgr
 	{
 		friend class CoreGlobal;

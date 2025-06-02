@@ -93,16 +93,19 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_MOVE(
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_ATTACK(
     const float body_angle,
     const Nagox::Struct::Vec3& atk_pos,
+    const Nagox::Enum::SKILL_TYPE& atk_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto body_angle_value = body_angle;
     const auto atk_pos_offset = &atk_pos;
+    const auto atk_type_value = atk_type;
     const auto serializedc2s_PLAYER_ATTACK = Nagox::Protocol::Createc2s_PLAYER_ATTACK(
         builder
 ,        body_angle_value,
-        atk_pos_offset    );
+        atk_pos_offset,
+        atk_type_value    );
     builder.Finish(serializedc2s_PLAYER_ATTACK);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PLAYER_ATTACK);
@@ -132,23 +135,6 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_REQUEST_QUEST(
     builder.Finish(serializedc2s_REQUEST_QUEST);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REQUEST_QUEST);
-}
-NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_FIRE_PROJ(
-    const Nagox::Struct::Vec3& pos,
-    const float body_angle,
-    flatbuffers::FlatBufferBuilder* const builder_ptr
-)noexcept {
-    auto& builder = *builder_ptr;
-    builder.Clear();
-    const auto pos_offset = &pos;
-    const auto body_angle_value = body_angle;
-    const auto serializedc2s_FIRE_PROJ = Nagox::Protocol::Createc2s_FIRE_PROJ(
-        builder
-,        pos_offset,
-        body_angle_value    );
-    builder.Finish(serializedc2s_FIRE_PROJ);
-
-    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_FIRE_PROJ);
 }
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_ACQUIRE_ITEM(
     const uint64_t item_id,

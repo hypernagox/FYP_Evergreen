@@ -109,6 +109,9 @@
     <Filter Include="Gui\Tutorial">
       <UniqueIdentifier>{193aaa7c-c082-4e16-9dc4-84f621cbb0f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NetEntity\ServerObject\ServerComponent\ForcedMovement">
+      <UniqueIdentifier>{8e0c3ea1-e477-445c-a07d-8af87d62b989}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -278,6 +281,9 @@
     </ClCompile>
     <ClCompile Include="PlayerSelect.cpp">
       <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ForcedMovement.cpp">
+      <Filter>NetEntity\ServerObject\ServerComponent\ForcedMovement</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -460,6 +466,9 @@
     </ClInclude>
     <ClInclude Include="PlayerSelect.h">
       <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ForcedMovement.h">
+      <Filter>NetEntity\ServerObject\ServerComponent\ForcedMovement</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

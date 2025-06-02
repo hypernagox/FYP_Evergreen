@@ -115,6 +115,33 @@ inline const char *EnumNameMONSTER_TYPE(MONSTER_TYPE e) {
   return EnumNamesMONSTER_TYPE()[index];
 }
 
+enum SKILL_TYPE : uint8_t {
+  SKILL_TYPE_DEFAULT = 0,
+  SKILL_TYPE_MIN = SKILL_TYPE_DEFAULT,
+  SKILL_TYPE_MAX = SKILL_TYPE_DEFAULT
+};
+
+inline const SKILL_TYPE (&EnumValuesSKILL_TYPE())[1] {
+  static const SKILL_TYPE values[] = {
+    SKILL_TYPE_DEFAULT
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesSKILL_TYPE() {
+  static const char * const names[2] = {
+    "DEFAULT",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameSKILL_TYPE(SKILL_TYPE e) {
+  if (::flatbuffers::IsOutRange(e, SKILL_TYPE_DEFAULT, SKILL_TYPE_DEFAULT)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesSKILL_TYPE()[index];
+}
+
 }  // namespace Enum
 }  // namespace Nagox
 

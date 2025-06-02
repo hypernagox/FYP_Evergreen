@@ -25,8 +25,12 @@ namespace Common
 		{
 			m_timeInCurrentState += deltaTime;
 
-			int currentStateIndex = static_cast<int>(m_currentState);
-			auto& currentTransitions = m_transitions[currentStateIndex];
+			const int currentStateIndex = static_cast<int>(m_currentState);
+			if (m_stateUpdateFp[currentStateIndex])
+			{
+				m_stateUpdateFp[currentStateIndex]();
+			}
+			const auto& currentTransitions = m_transitions[currentStateIndex];
 
 			for (const auto& transition : currentTransitions)
 			{
@@ -78,6 +82,10 @@ namespace Common
 			}
 			return reinterpret_cast<bool*>(&condition);
 		}
+		
+		void SetStateUpdateFp(const State state, std::function<void(void)> fp)noexcept {
+			m_stateUpdateFp[static_cast<int>(state)].swap(fp);
+		}
 
 		void SetState(State state)
 		{
@@ -126,5 +134,8 @@ namespace Common
 		// 상태 전이 시 콜백 함수들
 		// 매개변수: 이전 상태, 현재 상태
 		std::vector<std::function<void(State, State)>> m_onStateChangeCallbacks;
+
+
+		std::function<void(void)> m_stateUpdateFp[StateCount] = {};
 	};
 }

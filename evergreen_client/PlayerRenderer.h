@@ -20,6 +20,7 @@ public:
 		RunRightForward,
 		RunRightBackward,
 		Attack,
+		AttackEnd,
 		Hit,
 		Death,
 		Size,

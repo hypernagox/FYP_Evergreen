@@ -201,6 +201,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Skill.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="StatusSystem.cpp" />
     <ClCompile Include="ClientSession.cpp" />
     <ClCompile Include="Collider_Common.cpp" />
@@ -259,6 +263,7 @@
     <ClInclude Include="Interaction.h" />
     <ClInclude Include="LifeSpanObj.h" />
     <ClInclude Include="PathNPC.h" />
+    <ClInclude Include="Skill.h" />
     <ClInclude Include="StatusSystem.h" />
     <ClInclude Include="ClientSession.h" />
     <ClInclude Include="Collider_Common.h" />

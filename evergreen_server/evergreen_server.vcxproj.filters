@@ -137,6 +137,9 @@
     <Filter Include="ContentsComponents\LifeSpanObj">
       <UniqueIdentifier>{6391bdf2-5e00-40cb-8634-baf0395e5f8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BattleComponent\Skill">
+      <UniqueIdentifier>{2be59702-26e9-4b3a-b624-ac4aa9495582}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -240,6 +243,9 @@
     </ClCompile>
     <ClCompile Include="LifeSpanObj.cpp">
       <Filter>ContentsComponents\LifeSpanObj</Filter>
+    </ClCompile>
+    <ClCompile Include="Skill.cpp">
+      <Filter>BattleComponent\Skill</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="LifeSpanObj.h">
       <Filter>ContentsComponents\LifeSpanObj</Filter>
+    </ClInclude>
+    <ClInclude Include="Skill.h">
+      <Filter>BattleComponent\Skill</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

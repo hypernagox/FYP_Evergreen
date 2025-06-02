@@ -415,6 +415,7 @@
     <ClCompile Include="EntityMovement.cpp" />
     <ClCompile Include="EventTimer.cpp" />
     <ClCompile Include="FocusAgentGUI.cpp" />
+    <ClCompile Include="ForcedMovement.cpp" />
     <ClCompile Include="func.cpp" />
     <ClCompile Include="GameGUIFacade.cpp" />
     <ClCompile Include="GamePauseGUI.cpp" />
@@ -513,6 +514,7 @@
     <ClInclude Include="EntityMovement.h" />
     <ClInclude Include="EventTimer.h" />
     <ClInclude Include="FocusAgentGUI.h" />
+    <ClInclude Include="ForcedMovement.h" />
     <ClInclude Include="func.h" />
     <ClInclude Include="GameGUIFacade.h" />
     <ClInclude Include="GamePauseGUI.h" />

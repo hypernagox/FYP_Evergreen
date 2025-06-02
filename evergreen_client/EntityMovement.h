@@ -34,6 +34,7 @@ public:
 
 	// TODO: юс╫ц
 	Vector3 prev_pos;
+	float m_factor = 1.f;
 private:
 	Vector3 m_forward = Vector3::Forward;
 	Vector3 m_velocity = Vector3::Zero;
@@ -45,6 +46,4 @@ private:
 	float m_velocityHForwardMax = 7.5f;
 	float m_velocityHBackMax = 3.0f;
 	float m_velocityVMax = 20.0f;
-
-	float m_factor = 1.f;
 };

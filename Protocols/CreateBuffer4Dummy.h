@@ -34,6 +34,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_MOVE(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PLAYER_ATTACK(
     const float body_angle,
     const Nagox::Struct::Vec3& atk_pos,
+    const Nagox::Enum::SKILL_TYPE& atk_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PLAYER_DEATH(
@@ -41,11 +42,6 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PLAYER_DEATH(
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_REQUEST_QUEST(
     const uint64_t quest_id,
-    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
-)noexcept;
-NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_FIRE_PROJ(
-    const Nagox::Struct::Vec3& pos,
-    const float body_angle,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ACQUIRE_ITEM(

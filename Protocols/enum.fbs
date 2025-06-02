@@ -17,7 +17,11 @@ enum PLAYER_TYPE : ubyte
 }
 
 enum MONSTER_TYPE : ubyte
-
 {   MELEE = 0,
     RANGE = 1
+}
+
+enum SKILL_TYPE : ubyte
+{
+    DEFAULT = 0
 }

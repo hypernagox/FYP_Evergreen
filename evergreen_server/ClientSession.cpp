@@ -13,6 +13,7 @@
 #include "Inventory.h"
 #include "StatusSystem.h"
 #include "PartyQuestSystem.h"
+#include "Skill.h"
 
 std::atomic_int cnt = 0;
 static NagoxAtomic::Atomic<int> g_connect_count{ 0 };

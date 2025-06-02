@@ -34,6 +34,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_MOVE(
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_ATTACK(
     const float body_angle,
     const Nagox::Struct::Vec3& atk_pos,
+    const Nagox::Enum::SKILL_TYPE& atk_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_DEATH(
@@ -41,11 +42,6 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PLAYER_DEATH(
 )noexcept;
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_REQUEST_QUEST(
     const uint64_t quest_id,
-    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
-)noexcept;
-NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_FIRE_PROJ(
-    const Nagox::Struct::Vec3& pos,
-    const float body_angle,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_ACQUIRE_ITEM(

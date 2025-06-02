@@ -79,9 +79,6 @@ struct s2c_REQUEST_QUESTBuilder;
 struct s2c_CLEAR_QUEST;
 struct s2c_CLEAR_QUESTBuilder;
 
-struct c2s_FIRE_PROJ;
-struct c2s_FIRE_PROJBuilder;
-
 struct s2c_FIRE_PROJ;
 struct s2c_FIRE_PROJBuilder;
 
@@ -1013,7 +1010,8 @@ struct c2s_PLAYER_ATTACK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table 
   typedef c2s_PLAYER_ATTACKBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_BODY_ANGLE = 4,
-    VT_ATK_POS = 6
+    VT_ATK_POS = 6,
+    VT_ATK_TYPE = 8
   };
   float body_angle() const {
     return GetField<float>(VT_BODY_ANGLE, 0.0f);
@@ -1027,10 +1025,17 @@ struct c2s_PLAYER_ATTACK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table 
   Nagox::Struct::Vec3 *mutable_atk_pos() {
     return GetStruct<Nagox::Struct::Vec3 *>(VT_ATK_POS);
   }
+  Nagox::Enum::SKILL_TYPE atk_type() const {
+    return static_cast<Nagox::Enum::SKILL_TYPE>(GetField<uint8_t>(VT_ATK_TYPE, 0));
+  }
+  bool mutate_atk_type(Nagox::Enum::SKILL_TYPE _atk_type = static_cast<Nagox::Enum::SKILL_TYPE>(0)) {
+    return SetField<uint8_t>(VT_ATK_TYPE, static_cast<uint8_t>(_atk_type), 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<float>(verifier, VT_BODY_ANGLE, 4) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_ATK_POS, 4) &&
+           VerifyField<uint8_t>(verifier, VT_ATK_TYPE, 1) &&
            verifier.EndTable();
   }
 };
@@ -1044,6 +1049,9 @@ struct c2s_PLAYER_ATTACKBuilder {
   }
   void add_atk_pos(const Nagox::Struct::Vec3 *atk_pos) {
     fbb_.AddStruct(c2s_PLAYER_ATTACK::VT_ATK_POS, atk_pos);
+  }
+  void add_atk_type(Nagox::Enum::SKILL_TYPE atk_type) {
+    fbb_.AddElement<uint8_t>(c2s_PLAYER_ATTACK::VT_ATK_TYPE, static_cast<uint8_t>(atk_type), 0);
   }
   explicit c2s_PLAYER_ATTACKBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -1059,10 +1067,12 @@ struct c2s_PLAYER_ATTACKBuilder {
 inline ::flatbuffers::Offset<c2s_PLAYER_ATTACK> Createc2s_PLAYER_ATTACK(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     float body_angle = 0.0f,
-    const Nagox::Struct::Vec3 *atk_pos = nullptr) {
+    const Nagox::Struct::Vec3 *atk_pos = nullptr,
+    Nagox::Enum::SKILL_TYPE atk_type = Nagox::Enum::SKILL_TYPE_DEFAULT) {
   c2s_PLAYER_ATTACKBuilder builder_(_fbb);
   builder_.add_atk_pos(atk_pos);
   builder_.add_body_angle(body_angle);
+  builder_.add_atk_type(atk_type);
   return builder_.Finish();
 }
 
@@ -1071,7 +1081,8 @@ struct s2c_PLAYER_ATTACK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table 
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_ATK_PLAYER_ID = 4,
     VT_BODY_ANGLE = 6,
-    VT_ATK_POS = 8
+    VT_ATK_POS = 8,
+    VT_ATK_TYPE = 10
   };
   uint64_t atk_player_id() const {
     return GetField<uint64_t>(VT_ATK_PLAYER_ID, 0);
@@ -1091,11 +1102,18 @@ struct s2c_PLAYER_ATTACK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table 
   Nagox::Struct::Vec3 *mutable_atk_pos() {
     return GetStruct<Nagox::Struct::Vec3 *>(VT_ATK_POS);
   }
+  Nagox::Enum::SKILL_TYPE atk_type() const {
+    return static_cast<Nagox::Enum::SKILL_TYPE>(GetField<uint8_t>(VT_ATK_TYPE, 0));
+  }
+  bool mutate_atk_type(Nagox::Enum::SKILL_TYPE _atk_type = static_cast<Nagox::Enum::SKILL_TYPE>(0)) {
+    return SetField<uint8_t>(VT_ATK_TYPE, static_cast<uint8_t>(_atk_type), 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint64_t>(verifier, VT_ATK_PLAYER_ID, 8) &&
            VerifyField<float>(verifier, VT_BODY_ANGLE, 4) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_ATK_POS, 4) &&
+           VerifyField<uint8_t>(verifier, VT_ATK_TYPE, 1) &&
            verifier.EndTable();
   }
 };
@@ -1113,6 +1131,9 @@ struct s2c_PLAYER_ATTACKBuilder {
   void add_atk_pos(const Nagox::Struct::Vec3 *atk_pos) {
     fbb_.AddStruct(s2c_PLAYER_ATTACK::VT_ATK_POS, atk_pos);
   }
+  void add_atk_type(Nagox::Enum::SKILL_TYPE atk_type) {
+    fbb_.AddElement<uint8_t>(s2c_PLAYER_ATTACK::VT_ATK_TYPE, static_cast<uint8_t>(atk_type), 0);
+  }
   explicit s2c_PLAYER_ATTACKBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -1128,11 +1149,13 @@ inline ::flatbuffers::Offset<s2c_PLAYER_ATTACK> Creates2c_PLAYER_ATTACK(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint64_t atk_player_id = 0,
     float body_angle = 0.0f,
-    const Nagox::Struct::Vec3 *atk_pos = nullptr) {
+    const Nagox::Struct::Vec3 *atk_pos = nullptr,
+    Nagox::Enum::SKILL_TYPE atk_type = Nagox::Enum::SKILL_TYPE_DEFAULT) {
   s2c_PLAYER_ATTACKBuilder builder_(_fbb);
   builder_.add_atk_player_id(atk_player_id);
   builder_.add_atk_pos(atk_pos);
   builder_.add_body_angle(body_angle);
+  builder_.add_atk_type(atk_type);
   return builder_.Finish();
 }
 
@@ -1364,63 +1387,6 @@ inline ::flatbuffers::Offset<s2c_CLEAR_QUEST> Creates2c_CLEAR_QUEST(
   s2c_CLEAR_QUESTBuilder builder_(_fbb);
   builder_.add_quest_id(quest_id);
   builder_.add_is_clear(is_clear);
-  return builder_.Finish();
-}
-
-struct c2s_FIRE_PROJ FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
-  typedef c2s_FIRE_PROJBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_POS = 4,
-    VT_BODY_ANGLE = 6
-  };
-  const Nagox::Struct::Vec3 *pos() const {
-    return GetStruct<const Nagox::Struct::Vec3 *>(VT_POS);
-  }
-  Nagox::Struct::Vec3 *mutable_pos() {
-    return GetStruct<Nagox::Struct::Vec3 *>(VT_POS);
-  }
-  float body_angle() const {
-    return GetField<float>(VT_BODY_ANGLE, 0.0f);
-  }
-  bool mutate_body_angle(float _body_angle = 0.0f) {
-    return SetField<float>(VT_BODY_ANGLE, _body_angle, 0.0f);
-  }
-  bool Verify(::flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<Nagox::Struct::Vec3>(verifier, VT_POS, 4) &&
-           VerifyField<float>(verifier, VT_BODY_ANGLE, 4) &&
-           verifier.EndTable();
-  }
-};
-
-struct c2s_FIRE_PROJBuilder {
-  typedef c2s_FIRE_PROJ Table;
-  ::flatbuffers::FlatBufferBuilder &fbb_;
-  ::flatbuffers::uoffset_t start_;
-  void add_pos(const Nagox::Struct::Vec3 *pos) {
-    fbb_.AddStruct(c2s_FIRE_PROJ::VT_POS, pos);
-  }
-  void add_body_angle(float body_angle) {
-    fbb_.AddElement<float>(c2s_FIRE_PROJ::VT_BODY_ANGLE, body_angle, 0.0f);
-  }
-  explicit c2s_FIRE_PROJBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  ::flatbuffers::Offset<c2s_FIRE_PROJ> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = ::flatbuffers::Offset<c2s_FIRE_PROJ>(end);
-    return o;
-  }
-};
-
-inline ::flatbuffers::Offset<c2s_FIRE_PROJ> Createc2s_FIRE_PROJ(
-    ::flatbuffers::FlatBufferBuilder &_fbb,
-    const Nagox::Struct::Vec3 *pos = nullptr,
-    float body_angle = 0.0f) {
-  c2s_FIRE_PROJBuilder builder_(_fbb);
-  builder_.add_body_angle(body_angle);
-  builder_.add_pos(pos);
   return builder_.Finish();
 }
 

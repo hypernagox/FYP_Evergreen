@@ -199,6 +199,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PLAYER_ATTACK(
     const uint64_t atk_player_id,
     const float body_angle,
     const Nagox::Struct::Vec3& atk_pos,
+    const Nagox::Enum::SKILL_TYPE& atk_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
@@ -206,11 +207,13 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PLAYER_ATTACK(
     const auto atk_player_id_value = atk_player_id;
     const auto body_angle_value = body_angle;
     const auto atk_pos_offset = &atk_pos;
+    const auto atk_type_value = atk_type;
     const auto serializeds2c_PLAYER_ATTACK = Nagox::Protocol::Creates2c_PLAYER_ATTACK(
         builder
 ,        atk_player_id_value,
         body_angle_value,
-        atk_pos_offset    );
+        atk_pos_offset,
+        atk_type_value    );
     builder.Finish(serializeds2c_PLAYER_ATTACK);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PLAYER_ATTACK);

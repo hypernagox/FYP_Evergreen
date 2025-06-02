@@ -236,6 +236,10 @@ void AuthenticPlayer::UpdateCameraTransformDebug(Transform* pCameraTransfrom, fl
 
 void AuthenticPlayer::TryClickScreen()
 {
+	// 플레이어가 공격 중인 상태 (쿨타임을 기다려야한다)
+	if (PlayerRenderer::AnimationState::Attack == m_playerRenderer->GetCurrentState())
+		return;
+
 	m_playerRenderer->Attack();
 	DoAttack();
 	//std::cout << "공격 시도\n";
@@ -245,22 +249,12 @@ void AuthenticPlayer::DoAttack()
 {
 	if constexpr (g_bUseNetWork)
 	{
-		if (m_playerType == 0)
-		{
-			const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
-			m_bSendFlag = true;
-			Send(
-				Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()))
-			);
-		}
-		else if (m_playerType == 1)
-		{
-			const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
-			m_bSendFlag = true;
-			Send(
-				Create_c2s_FIRE_PROJ(ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition()), rad)
-			);
-		}
+		const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
+		m_bSendFlag = true;
+		Send(
+			Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition())
+			,Nagox::Enum::SKILL_TYPE::SKILL_TYPE_DEFAULT)
+		);
 	}
 }
 
@@ -343,6 +337,30 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	const auto input_handler = sceneObject->GetComponent<InputHandler>();
 	m_bSendFlag = input_handler->IsKeyHit();
 
+	static float acc1 = 5.f;
+	static float acc2 = 0.f;
+	static bool speed_flag = false;
+	acc1 = std::max(acc1 - DT, 0.f);
+	if (!speed_flag && INSTANCE(Input)->GetKeyDown(Keyboard::Space))
+	{
+		speed_flag = true;
+		acc2 = .125f;
+		GetSceneObject()->GetComponent<EntityMovement>()->SetFriction(0.f);
+		const auto v = GetSceneObject()->GetComponent<EntityMovement>()->GetVelocity();
+		GetSceneObject()->GetComponent<EntityMovement>()->SetVelocity(v * 5.f);
+		GetSceneObject()->GetComponent<EntityMovement>()->m_factor = 10.f;
+	}
+	if (speed_flag)
+	{
+		acc2 -= DT;
+		if (acc2 <= 0.f)
+		{
+			GetSceneObject()->GetComponent<EntityMovement>()->SetFriction(20.f);
+			GetSceneObject()->GetComponent<EntityMovement>()->m_factor = 1.f;
+			speed_flag = false;
+			acc1 = 5.f;
+		}
+	}
 	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->m_pNaviAgent;
 	const auto prev_pos = GetSceneObject()->GetComponent<EntityMovement>()->prev_pos;
 	Vector3 temp = prev_pos;
