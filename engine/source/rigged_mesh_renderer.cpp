@@ -134,7 +134,7 @@ namespace udsdx
 		}
 
 		// If the animation is not blending
-		if (m_transitionFactor > 1.0f)
+		if (m_transitionFactor > 1.0f || forcePlay)
 		{
 			m_prevAnimation = m_animation;
 			m_prevAnimationTime = m_animationTime;
