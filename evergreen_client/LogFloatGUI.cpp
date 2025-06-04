@@ -24,7 +24,8 @@ LogFloatGUI::LogFloatGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Co
 void LogFloatGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	m_elapsedTime += time.deltaTime;
-	Color color = Color(1.0f, 1.0f, 1.0f, std::clamp(5.0f - m_elapsedTime, 0.0f, 1.0f));
+	Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
+	color.A(m_alwaysVisible ? 1.0f : std::clamp(5.0f - m_elapsedTime, 0.0f, 1.0f));
 	m_panel->GetComponent<GUIImage>()->SetColor(color);
 	m_floatText->GetComponent<GUIText>()->SetColor(color);
 }

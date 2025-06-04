@@ -12,6 +12,8 @@
 #include "PlayerCraftGUI.h"
 #include "Navigator.h"
 #include "GizmoSphereRenderer.h"
+#include "GameGUIFacade.h"
+#include "LogFloatGUI.h"
 #include "GuideSystem.h"
 #include "HeightMap.h"
 
@@ -126,6 +128,11 @@ void AuthenticPlayer::OnModifyInventory(uint8_t itemID, int delta)
 void AuthenticPlayer::ToggleDebugCamera()
 {
 	m_bDebugCamera = !m_bDebugCamera;
+}
+
+void AuthenticPlayer::ToggleLogFloatGUI()
+{
+	INSTANCE(GameGUIFacade)->LogFloat->SetAlwaysVisible(!INSTANCE(GameGUIFacade)->LogFloat->GetAlwaysVisible());
 }
 
 void AuthenticPlayer::SetQuickSlotItemOnBlank(uint8_t itemID)
@@ -294,6 +301,8 @@ void AuthenticPlayer::Start()
 
 	//input_handler->AddKeyFunc(Keyboard::Space, KEY_STATE::KET_TAP, &AuthenticPlayer::DoAttack, this);
 	input_handler->AddKeyFunc(Keyboard::CapsLock, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuest, this);
+
+	input_handler->AddKeyFunc(Keyboard::Enter, KEY_STATE::KET_TAP, &AuthenticPlayer::ToggleLogFloatGUI, this);
 
 	m_entityMovement = AddComponent<EntityMovement>();
 	m_playerRenderer = AddComponent<PlayerRenderer>();

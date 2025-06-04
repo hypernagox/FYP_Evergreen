@@ -104,6 +104,7 @@ public:
 	void OnHit(int damage);
 	void OnModifyInventory(uint8_t itemID, int delta);
 	void ToggleDebugCamera();
+	void ToggleLogFloatGUI();
 
 	void SetQuickSlotItemOnBlank(uint8_t itemID);
 	void SetQuickSlotItem(int index, uint8_t itemID);
