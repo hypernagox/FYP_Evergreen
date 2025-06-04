@@ -31,7 +31,7 @@ protected:
 	}
 	virtual bool ExecuteSkill(class StatusSystem* const use_entity_system)noexcept = 0;
 private:
-	uint64_t m_cool_down = 2000;
+	uint64_t m_cool_down = 250;
 	uint64_t m_last_used_time = 0;
 };
 
