@@ -2,6 +2,11 @@
   "Warrior": {
     "hp": 5,
     "atk": 1,
-    "name": "abcd"
+    "name": "abcd",
+    "position": {
+      "x": 1.0,
+      "y": 2.0,
+      "z": 3.0
+    }
   }
 }

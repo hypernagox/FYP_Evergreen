@@ -114,6 +114,9 @@ namespace Common
                             case nlohmann::json::value_t::string:
                                 attributeMap[attrName] = value.get<std::string>();
                                 break;
+                            case nlohmann::json::value_t::object:
+                                attributeMap[attrName] = value;
+                                break;
                             default:
                                 throw std::runtime_error("Unsupported attribute type for " + std::string(attrName));
                             }
