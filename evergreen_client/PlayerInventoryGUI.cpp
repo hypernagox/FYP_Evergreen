@@ -66,13 +66,15 @@ void PlayerInventoryGUI::UpdateSlotContents(AuthenticPlayer* target, const std::
 		{
 			const std::string& key = DATA_TABLE->GetItemName(id);
 			udsdx::Texture* texture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, key, "Icon")));
-			m_slotBackground[counter]->GetComponent<GUIButton>()->SetClickCallback([target, id]() {
-				target->SetQuickSlotItemOnBlank(id);
+			m_slotBackground[counter]->GetComponent<GUIButton>()->SetClickCallback([this, target, id]() {
+				SelectInventorySlot(target, id);
 			});
 			m_slotContents[counter]->GetComponent<GUIImage>()->SetTexture(texture);
 			m_slotText[counter]->GetComponent<GUIText>()->SetText(std::to_wstring(table[id]));
 			counter++;
 		}
+		if (counter >= NUM_ROWS * NUM_COLUMNS)
+			break;
 	}
 
 	while (counter < NUM_ROWS * NUM_COLUMNS)
@@ -81,5 +83,22 @@ void PlayerInventoryGUI::UpdateSlotContents(AuthenticPlayer* target, const std::
 		m_slotContents[counter]->GetComponent<GUIImage>()->SetTexture(nullptr);
 		m_slotText[counter]->GetComponent<GUIText>()->SetText(L"");
 		counter++;
+	}
+}
+
+void PlayerInventoryGUI::SelectInventorySlot(AuthenticPlayer* target, int id)
+{
+	auto itemName = DATA_TABLE->GetItemName(id);
+	auto category = GET_DATA(std::string, itemName, "Category");
+	if (category == "Consumable")
+		target->SetQuickSlotItemOnBlank(id);
+	else if (category == "Equipment")
+	{
+		auto subcategory = GET_DATA(std::string, itemName, "Subcategory");
+		if (subcategory == "Weapon")
+		{
+			auto weapon = GET_DATA(std::string, itemName, "WeaponKey");
+			target->SetPlayerWeapon(weapon);
+		}
 	}
 }

@@ -108,6 +108,7 @@ public:
 
 	void SetQuickSlotItemOnBlank(uint8_t itemID);
 	void SetQuickSlotItem(int index, uint8_t itemID);
+	void SetPlayerWeapon(std::string_view weaponKey);
 	void UseQuickSlotItem(int index);
 	void CraftItem(int recipeIndex);
 

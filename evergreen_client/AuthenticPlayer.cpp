@@ -158,6 +158,19 @@ void AuthenticPlayer::SetQuickSlotItem(int index, uint8_t itemID)
 	// TODO: 클라이언트가 서버에게 해당 퀵슬롯에 대한 아이템 설정을 요청한다.
 }
 
+void AuthenticPlayer::SetPlayerWeapon(std::string_view weaponKey)
+{
+	// TODO: 서버에 플레이어의 무기를 설정하는 패킷을 전송한다.
+	// 이때 플레이어의 무기 정보는 ID(int) 로 전송되어야하며
+	// 인자로써 주어진 weaponKey를 ID로 매핑하는 수단이 필요하다.
+
+	int weaponID = 0; // TODO: weaponKey를 ID로 매핑하는 로직 필요
+	// Send(Create_c2s_SET_PLAYER_WEAPON(weaponID)); // 예시로 서버에 무기 설정 요청 패킷을 전송하는 코드
+
+	// 자신의 플레이어 렌더러의 무기 모델을 설정하는 코드
+	m_playerRenderer->SetPlayerWeapon(weaponKey);
+}
+
 void AuthenticPlayer::UseQuickSlotItem(int index)
 {
 	// TODO: 클라이언트가 서버에게 해당 퀵슬롯에 대한 아이템 사용을 요청한다.

@@ -81,7 +81,7 @@ void PlayerRenderer::InitializeWarrior()
 	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
 	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
 
-	SetPlayerWeapon("Sword");
+	SetPlayerWeapon("Master Sword");
 	OnAnimationStateChange(AnimationState::Idle);
 }
 
@@ -108,7 +108,7 @@ void PlayerRenderer::InitializePriest()
 	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
 	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
 
-	SetPlayerWeapon("Priest Staff");
+	SetPlayerWeapon("Staff Priest");
 	OnAnimationStateChange(AnimationState::Idle);
 }
 

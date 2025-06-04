@@ -11,6 +11,7 @@ public:
 
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table);
+	void SelectInventorySlot(AuthenticPlayer* target, int id);
 
 private:
 	static constexpr int NUM_ROWS = 5;
