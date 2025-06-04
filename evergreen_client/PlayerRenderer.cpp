@@ -211,12 +211,6 @@ bool PlayerRenderer::GetIsRunning() const
 
 void PlayerRenderer::SetPlayerWeapon(std::string_view weaponName)
 {
-	// Todo: Loading json should be done in a more efficient way, perhaps caching the data.
-	std::ifstream file(RESOURCE_PATH(L"Weapon.json"));
-	nlohmann::json j;
-	file >> j;
-	auto& weapon_item = j[weaponName.data()];
-
 	auto toolRenderer = m_bodyObj->GetComponent<RiggedPropRenderer>();
 	if (toolRenderer == nullptr)
 	{
@@ -228,13 +222,15 @@ void PlayerRenderer::SetPlayerWeapon(std::string_view weaponName)
 		toolRenderer->SetBoneName("Bip001 R Hand");
 	}
 
-	std::filesystem::path modelPath = static_cast<std::string>(weapon_item["Model"]);
-	std::filesystem::path diffusePath = static_cast<std::string>(weapon_item["ModelDiffuse"]);
-	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(diffusePath.wstring())));
-	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(modelPath.wstring())));
+	auto& scaleJson = GET_DATA(nlohmann::json, weaponName, "Scale");
+	auto& rotationJson = GET_DATA(nlohmann::json, weaponName, "Rotation");
+	auto& positionJson = GET_DATA(nlohmann::json, weaponName, "Position");
+
+	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, weaponName, "ModelDiffuse"))));
+	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring, weaponName, "Model"))));
 	toolRenderer->SetPropLocalTransform(
-		Matrix4x4::CreateScale(weapon_item["Scale"]["X"], weapon_item["Scale"]["Y"], weapon_item["Scale"]["Z"]) *
-		Matrix4x4::CreateFromYawPitchRoll(weapon_item["Rotation"]["Y"] * DEG2RAD, weapon_item["Rotation"]["X"] * DEG2RAD, weapon_item["Rotation"]["Z"] * DEG2RAD) *
-		Matrix4x4::CreateTranslation(weapon_item["Position"]["X"], weapon_item["Position"]["Y"], weapon_item["Position"]["Z"])
+		Matrix4x4::CreateScale(scaleJson["X"], scaleJson["Y"], scaleJson["Z"]) *
+		Matrix4x4::CreateFromYawPitchRoll(rotationJson["Y"] * DEG2RAD, rotationJson["X"] * DEG2RAD, rotationJson["Z"] * DEG2RAD) *
+		Matrix4x4::CreateTranslation(positionJson["X"], positionJson["Y"], positionJson["Z"])
 		);
 }

@@ -311,5 +311,8 @@
     <None Include="..\resource\json\ItemRecipe.json">
       <Filter>Json\Data</Filter>
     </None>
+    <None Include="..\resource\json\Weapon.json">
+      <Filter>Json\Data</Filter>
+    </None>
   </ItemGroup>
 </Project>
