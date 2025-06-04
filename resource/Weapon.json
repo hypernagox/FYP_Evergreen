@@ -1,0 +1,78 @@
+{
+  "Excalibur": {
+    "Model": "weapon\\saber excalibur\\saberexcalibur.yms",
+    "ModelDiffuse": "weapon\\saber excalibur\\saberexcalibur_albedo.png",
+    "Position": {
+      "X": 3.0,
+      "Y": 1.0,
+      "Z": -12.0
+    },
+    "Rotation": {
+      "X": -90.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": {
+      "X": 16.0,
+      "Y": 16.0,
+      "Z": 16.0
+    }
+  },
+  "Bow": {
+    "Model": "weapon\\zelda bow\\ancientbow.yms",
+    "ModelDiffuse": "weapon\\zelda bow\\zeldabow_albedo.png",
+    "Position": {
+      "X": 3.0,
+      "Y": 1.0,
+      "Z": -12.0
+    },
+    "Rotation": {
+      "X": -90.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": {
+      "X": 16.0,
+      "Y": 16.0,
+      "Z": 16.0
+    }
+  },
+  "Sword": {
+    "Model": "weapon\\zelda sword\\zeldasword.yms",
+    "ModelDiffuse": "weapon\\zelda sword\\zeldasword_albedo.jpg",
+    "Position": {
+      "X": 3.0,
+      "Y": 1.0,
+      "Z": -12.0
+    },
+    "Rotation": {
+      "X": -90.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": {
+      "X": 16.0,
+      "Y": 16.0,
+      "Z": 16.0
+    }
+  },
+  "Priest Staff": {
+    "Model": "weapon\\priest staff\\priest_staff.yms",
+    "ModelDiffuse": "weapon\\priest staff\\priest_staff_diffuse.png",
+    "Position": {
+      "X": 3.0,
+      "Y": 1.0,
+      "Z": -22.0
+    },
+    "Rotation": {
+      "X": 90.0,
+      "Y": 0.0,
+      "Z": 0.0
+    },
+    "Scale": {
+      "X": 0.25,
+      "Y": 0.25,
+      "Z": 0.25
+    }
+  }
+}

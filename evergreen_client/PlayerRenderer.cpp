@@ -60,26 +60,16 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 
 void PlayerRenderer::InitializeWarrior()
 {
-	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
+	m_bodyObj = std::make_shared<SceneObject>();
 
-	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
+	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.yrms")));
 	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
 
-	m_transformBody = pBody->GetTransform();
-	m_rendererObj->AddChild(pBody);
+	m_transformBody = m_bodyObj->GetTransform();
+	m_rendererObj->AddChild(m_bodyObj);
 
 	m_transformBody->SetLocalPositionY(-5.5f);
-
-	m_toolMaterial = std::make_shared<udsdx::Material>();
-	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword_albedo.jpg")));
-
-	auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
-	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Zelda\\Weapon\\zelda sword\\zeldasword.yms")));
-	toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
-	toolRenderer->SetMaterial(m_toolMaterial.get());
-	toolRenderer->SetBoneName("Bip001 R Hand");
-	toolRenderer->SetPropLocalTransform(Matrix4x4::CreateScale(16.0f) * Matrix4x4::CreateFromYawPitchRoll(0.0f, -PIDIV2, 0.0f) * Matrix4x4::CreateTranslation(3.0f, 1.0f, -12.0f));
 
 	for (int i = 0; i < m_playerMaterials.size(); ++i)
 	{
@@ -91,31 +81,22 @@ void PlayerRenderer::InitializeWarrior()
 	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
 	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
 
+	SetPlayerWeapon("Sword");
 	OnAnimationStateChange(AnimationState::Idle);
 }
 
 void PlayerRenderer::InitializePriest()
 {
-	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
+	m_bodyObj = std::make_shared<SceneObject>();
 
-	m_renderer = pBody->AddComponent<RiggedMeshRenderer>();
+	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"priest\\priest.yrms")));
 	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
 
-	m_transformBody = pBody->GetTransform();
-	m_rendererObj->AddChild(pBody);
+	m_transformBody = m_bodyObj->GetTransform();
+	m_rendererObj->AddChild(m_bodyObj);
 
 	m_transformBody->SetLocalPositionY(-5.5f);
-
-	m_toolMaterial = std::make_shared<udsdx::Material>();
-	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_staff_diffuse.png")));
-
-	auto toolRenderer = pBody->AddComponent<RiggedPropRenderer>();
-	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"priest\\priest_staff.yms")));
-	toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
-	toolRenderer->SetMaterial(m_toolMaterial.get());
-	toolRenderer->SetBoneName("Bip001 R Hand");
-	toolRenderer->SetPropLocalTransform(Matrix4x4::CreateScale(0.25f) * Matrix4x4::CreateFromYawPitchRoll(0.0f, PIDIV2, 0.0f) * Matrix4x4::CreateTranslation(3.0f, 1.0f, -22.0f));
 
 	for (int i = 0; i < m_playerMaterials.size(); ++i)
 	{
@@ -127,6 +108,7 @@ void PlayerRenderer::InitializePriest()
 	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
 	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
 
+	SetPlayerWeapon("Priest Staff");
 	OnAnimationStateChange(AnimationState::Idle);
 }
 
@@ -225,4 +207,34 @@ bool PlayerRenderer::GetIsRunning() const
 		m_stateMachine->GetCurrentState() == AnimationState::RunRightForward ||
 		m_stateMachine->GetCurrentState() == AnimationState::RunLeftBackward ||
 		m_stateMachine->GetCurrentState() == AnimationState::RunRightBackward;
+}
+
+void PlayerRenderer::SetPlayerWeapon(std::string_view weaponName)
+{
+	// Todo: Loading json should be done in a more efficient way, perhaps caching the data.
+	std::ifstream file(RESOURCE_PATH(L"Weapon.json"));
+	nlohmann::json j;
+	file >> j;
+	auto& weapon_item = j[weaponName.data()];
+
+	auto toolRenderer = m_bodyObj->GetComponent<RiggedPropRenderer>();
+	if (toolRenderer == nullptr)
+	{
+		toolRenderer = m_bodyObj->AddComponent<RiggedPropRenderer>();
+		m_toolMaterial = std::make_shared<udsdx::Material>();
+
+		toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+		toolRenderer->SetMaterial(m_toolMaterial.get());
+		toolRenderer->SetBoneName("Bip001 R Hand");
+	}
+
+	std::filesystem::path modelPath = static_cast<std::string>(weapon_item["Model"]);
+	std::filesystem::path diffusePath = static_cast<std::string>(weapon_item["ModelDiffuse"]);
+	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(diffusePath.wstring())));
+	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(modelPath.wstring())));
+	toolRenderer->SetPropLocalTransform(
+		Matrix4x4::CreateScale(weapon_item["Scale"]["X"], weapon_item["Scale"]["Y"], weapon_item["Scale"]["Z"]) *
+		Matrix4x4::CreateFromYawPitchRoll(weapon_item["Rotation"]["Y"] * DEG2RAD, weapon_item["Rotation"]["X"] * DEG2RAD, weapon_item["Rotation"]["Z"] * DEG2RAD) *
+		Matrix4x4::CreateTranslation(weapon_item["Position"]["X"], weapon_item["Position"]["Y"], weapon_item["Position"]["Z"])
+		);
 }

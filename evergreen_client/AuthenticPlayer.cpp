@@ -52,7 +52,7 @@ bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
 void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 {
 	// TODO: 캐릭터의 전반적인 상태 관리 머신에 따른 행동 제어 필요
-	if (m_playerRenderer->GetCurrentState() == PlayerRenderer::AnimationState::Attack)
+	if (m_playerRenderer->GetCurrentState() == PlayerRenderer::AnimationState::Attack || m_playerRenderer->GetCurrentState() == PlayerRenderer::AnimationState::AttackEnd)
 		return;
 
 	const float deltaTime = DT;
