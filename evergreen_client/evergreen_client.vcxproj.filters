@@ -285,6 +285,9 @@
     <ClCompile Include="ForcedMovement.cpp">
       <Filter>NetEntity\ServerObject\ServerComponent\ForcedMovement</Filter>
     </ClCompile>
+    <ClCompile Include="MinimapRenderer.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -470,6 +473,9 @@
     <ClInclude Include="ForcedMovement.h">
       <Filter>NetEntity\ServerObject\ServerComponent\ForcedMovement</Filter>
     </ClInclude>
+    <ClInclude Include="MinimapRenderer.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\enum.fbs">
@@ -492,5 +498,13 @@
     <CustomBuild Include="..\Protocols\protocol.fbs">
       <Filter>Protocols\fbs</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="vs_minimap_pass.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="ps_minimap_pass.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

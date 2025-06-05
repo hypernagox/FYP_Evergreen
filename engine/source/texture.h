@@ -9,6 +9,8 @@ namespace udsdx
 	{
 	public:
 		Texture(std::wstring_view path, ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+		// For creating texture from existing resource (Works as a wrapper)
+		Texture(ID3D12Resource* resource, D3D12_CPU_DESCRIPTOR_HANDLE srvCpu, D3D12_GPU_DESCRIPTOR_HANDLE srvGpu);
 		~Texture();
 
 	public:

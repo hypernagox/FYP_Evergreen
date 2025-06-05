@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.h"
+#include "MinimapRenderer.h"
 
 class HeightMap;
 class TerrainData;
@@ -15,6 +16,7 @@ public:
 
 public:
 	void Update(const udsdx::Time& time) override;
+	void Render(udsdx::RenderParam& param) override;
 	// 게임 시작 시 캐릭터를 선택하는 단계
 	void EnterCharacterSelection();
 	// 플레이어를 생성하고 월드에 추가하는 단계
@@ -70,4 +72,6 @@ private:
 
 	bool m_bSpectatorMode = false;
 	bool m_bCharacterSelect = false;
+
+	std::unique_ptr<MinimapRenderer> m_minimapRenderer;
 };

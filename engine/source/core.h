@@ -66,7 +66,8 @@ namespace udsdx
 		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
 
-		void IncrementSRVHeapDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE* cpuDescriptorOut, D3D12_GPU_DESCRIPTOR_HANDLE* gpuDescriptorOut);
+		DescriptorParam GetDescriptorParameters() const;
+		void ApplyDescriptorParameters(const DescriptorParam& param);
 
 		int GetClientPosX() const;
 		int GetClientPosY() const;
@@ -213,7 +214,10 @@ namespace udsdx
 		UINT m_dsvDescriptorSize = 0;
 		UINT m_cbvSrvUavDescriptorSize = 0;
 
+		UINT m_cbvHeapSize = 0;
 		UINT m_srvHeapSize = 0;
+		UINT m_rtvHeapSize = SwapChainBufferCount;
+		UINT m_dsvHeapSize = 1;
 
 		std::unique_ptr<FrameDebug> m_frameDebug;
 		TracyD3D12Ctx m_tracyQueueCtx;
