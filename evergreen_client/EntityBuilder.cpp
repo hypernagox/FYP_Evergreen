@@ -49,7 +49,11 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Player(EntityBuild
 
 	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 	moveInterpolator->InitInterpolator(b->obj_pos);
-
+	if (ServerObjectMgr::GetInst()->m_weaponMap.contains(b->obj_id))
+	{
+		playerComponent->SetPlayerWeapon(DATA_TABLE->GetWeaponIDStr(ServerObjectMgr::GetInst()->m_weaponMap[b->obj_id]));
+		ServerObjectMgr::GetInst()->m_weaponMap.erase(b->obj_id);
+	}
 	return instance;
 }
 

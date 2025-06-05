@@ -140,6 +140,9 @@
     <Filter Include="BattleComponent\Skill">
       <UniqueIdentifier>{2be59702-26e9-4b3a-b624-ac4aa9495582}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ObjectIdentifier">
+      <UniqueIdentifier>{3ccf178f-d2c3-4819-bd2a-f87a8dad7432}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -246,6 +249,9 @@
     </ClCompile>
     <ClCompile Include="Skill.cpp">
       <Filter>BattleComponent\Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectIdentifier.cpp">
+      <Filter>ObjectIdentifier</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -362,6 +368,9 @@
     </ClInclude>
     <ClInclude Include="Skill.h">
       <Filter>BattleComponent\Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectIdentifier.h">
+      <Filter>ObjectIdentifier</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

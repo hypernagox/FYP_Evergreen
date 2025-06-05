@@ -83,6 +83,14 @@ namespace Common
                             ++item_start_index;
                         }
 
+                        if ("Weapon" == category)
+                        {
+                            static int g_weapon_id = 0;
+                            const auto wid = g_weapon_id++;
+                            table.m_mapWeaponID[entityName] = wid;
+                            table.m_mapWeaponIDStr[wid] = entityName;
+                        }
+
                         const auto entity_idx = entity_start_index++;
                         table.m_str2detail_id.try_emplace(entityName, entity_idx);
                         table.m_detailType2str[category].try_emplace(entity_idx, entityName);

@@ -142,6 +142,33 @@ inline const char *EnumNameSKILL_TYPE(SKILL_TYPE e) {
   return EnumNamesSKILL_TYPE()[index];
 }
 
+enum EQUIPMENT_TYPE : uint8_t {
+  EQUIPMENT_TYPE_WEAPON = 0,
+  EQUIPMENT_TYPE_MIN = EQUIPMENT_TYPE_WEAPON,
+  EQUIPMENT_TYPE_MAX = EQUIPMENT_TYPE_WEAPON
+};
+
+inline const EQUIPMENT_TYPE (&EnumValuesEQUIPMENT_TYPE())[1] {
+  static const EQUIPMENT_TYPE values[] = {
+    EQUIPMENT_TYPE_WEAPON
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesEQUIPMENT_TYPE() {
+  static const char * const names[2] = {
+    "WEAPON",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameEQUIPMENT_TYPE(EQUIPMENT_TYPE e) {
+  if (::flatbuffers::IsOutRange(e, EQUIPMENT_TYPE_WEAPON, EQUIPMENT_TYPE_WEAPON)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesEQUIPMENT_TYPE()[index];
+}
+
 }  // namespace Enum
 }  // namespace Nagox
 

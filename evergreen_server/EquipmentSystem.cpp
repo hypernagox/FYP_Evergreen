@@ -5,6 +5,25 @@
 #include "ClusterPredicate.h"
 #include "Cluster.h"
 #include "Queueabler.h"
+#include "ObjectIdentifier.h"
+#include "DataRegistry.h"
+
+EquipmentSystem::EquipmentSystem() noexcept
+{
+	for (auto& equip : m_arrEquip)
+	{
+		equip = NagiocpX::xnew<Equipment>();
+	}
+}
+
+EquipmentSystem::~EquipmentSystem() noexcept
+{
+	for (const auto equip : m_arrEquip)
+	{
+		if (!equip)continue;
+		NagiocpX::xdelete<Equipment>(equip);
+	}
+}
 
 int EquipmentSystem::ApplyAtk(
 	ContentsEntity* const atk_obj,
@@ -21,15 +40,40 @@ int EquipmentSystem::ApplyAtk(
 	
 	if (const auto navi_agent = victim->GetComp<NaviAgent>())
 	{
-		// TODO: 장비옵션으로 넉백하기
-		const auto& atk_pos = atk_obj->GetComp<PositionComponent>()->pos;
-		const auto& victim_pos = victim->GetComp<PositionComponent>()->pos;
-		const auto dir = CommonMath::Normalized(victim_pos - atk_pos);
-		ClusterPredicate c;
-		victim->GetQueueabler()->EnqueueAsync(&NaviAgent::ForcedMovement, navi_agent, dir, 5.f);
-		
-		victim->GetCurCluster()->Broadcast(c.ClusterPredicate::CreateMovePacket(victim));
+		if (const auto e = m_arrEquip[0])
+		{
+			if (DATA_TABLE->GetWeaponIDInt("Bow") == e->id)
+			{
+				// TODO: 장비옵션으로 넉백하기
+				const auto& atk_pos = atk_obj->GetComp<PositionComponent>()->pos;
+				const auto& victim_pos = victim->GetComp<PositionComponent>()->pos;
+				const auto dir = CommonMath::Normalized(victim_pos - atk_pos);
+				ClusterPredicate c;
+				victim->GetQueueabler()->EnqueueAsync(&NaviAgent::ForcedMovement, navi_agent, dir, 5.f);
+
+				victim->GetCurCluster()->Broadcast(c.ClusterPredicate::CreateMovePacket(victim));
+			}
+		}
 	}
 	victim_hp -= result_dmg;
 	return result_dmg;
+}
+
+bool EquipmentSystem::SwapEquipment(
+	class ContentsEntity* const owner,
+	const Nagox::Enum::EQUIPMENT_TYPE equip_type, 
+	const uint32_t equip_id) noexcept
+{
+	// TODO: 유효성 검사
+	if (const auto e = m_arrEquip[equip_type])
+	{
+		e->id = equip_id;
+		e->atk = (equip_id + 1);
+		owner->GetComp<ObjectIdentifier>()->BroadcastNotifyEquipmentChange();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

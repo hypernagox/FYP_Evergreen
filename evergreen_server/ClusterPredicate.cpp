@@ -6,6 +6,7 @@
 #include "TickTimer.h"
 #include "HP.h"
 #include "Interaction.h"
+#include "ObjectIdentifier.h"
 
 using namespace NagiocpX;
 
@@ -90,5 +91,10 @@ S_ptr<SendBuffer> ClusterPredicate::CreateMovePacket(const ContentsEntity* const
 		pos_comp->GetPktAccel(),
 		pos_comp->body_angle,
 		pos_comp->time_stamp);
+}
+
+S_ptr<SendBuffer> ClusterPredicate::CreateNotifyDetailPacket(const ContentsEntity* const entity_ptr) const noexcept
+{
+	return entity_ptr->GetComp<ObjectIdentifier>()->CreateNotifyDetailPacket();
 }
 

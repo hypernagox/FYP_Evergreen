@@ -45,6 +45,9 @@ public:
 	int8_t UseQuickSlotItem(const uint8_t quick_idx)noexcept { return m_quickSlot.UseSlotItem(GetOwnerEntityRaw(), quick_idx); }
 	const auto GetEquipmentSystem()const noexcept { return &m_equipSystem; }
 	const auto GetEquipmentSystem()noexcept { return &m_equipSystem; }
+	bool SwapEquipment(
+		const Nagox::Enum::EQUIPMENT_TYPE equip_type,
+		const uint32_t equip_id)noexcept;
 private:
 	Item* FindItem(const int8_t item_type)const noexcept;
 	int8_t FindItemIndex(const int8_t item_type)const noexcept;

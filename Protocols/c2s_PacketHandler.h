@@ -29,6 +29,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     c2s_QUEST_END = 1018,
     c2s_PARTY_OUT = 1019,
     c2s_CHANGE_HARVEST_STATE = 1020,
+    c2s_CHANGE_EQUIPMENT = 1021,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -60,6 +61,7 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_PARTY_QUEST_CLEAR = 1025,
     s2c_PARTY_MEMBERS_INFORMATION = 1026,
     s2c_CHANGE_HARVEST_STATE = 1027,
+    s2c_NOTIFY_USER_DETAIL_INFO = 1028,
 };
 
 class NagiocpX::PacketSession;
@@ -90,6 +92,7 @@ const bool Handle_c2s_QUEST_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>
 const bool Handle_c2s_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_QUEST_END& pkt_);
 const bool Handle_c2s_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PARTY_OUT& pkt_);
 const bool Handle_c2s_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CHANGE_HARVEST_STATE& pkt_);
+const bool Handle_c2s_CHANGE_EQUIPMENT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CHANGE_EQUIPMENT& pkt_);
 
 class c2s_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -117,6 +120,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::c2s_QUEST_END, Nagox::Protocol::c2s_QUEST_END, Handle_c2s_QUEST_END>();
         RegisterHandler<HANDLE_PKT_ID::c2s_PARTY_OUT, Nagox::Protocol::c2s_PARTY_OUT, Handle_c2s_PARTY_OUT>();
         RegisterHandler<HANDLE_PKT_ID::c2s_CHANGE_HARVEST_STATE, Nagox::Protocol::c2s_CHANGE_HARVEST_STATE, Handle_c2s_CHANGE_HARVEST_STATE>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_CHANGE_EQUIPMENT, Nagox::Protocol::c2s_CHANGE_EQUIPMENT, Handle_c2s_CHANGE_EQUIPMENT>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

@@ -24,6 +24,7 @@
 #include "ClusterInfoHelper.h"
 #include "StatusSystem.h"
 #include "Skill.h"
+#include "ObjectIdentifier.h"
 
 using namespace NagiocpX;
 
@@ -58,10 +59,13 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_WARRIOR)
 	{
 		entity->GetComp<StatusSystem>()->SetSkill<WarriorDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
+		
+		entity->GetComp<Inventory>()->GetEquipmentSystem()->GetEquipment(Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON)->id = DATA_TABLE->GetWeaponIDInt("Master Sword");
 	}
 	else if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_PRIEST)
 	{
 		entity->GetComp<StatusSystem>()->SetSkill<PriestDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
+		entity->GetComp<Inventory>()->GetEquipmentSystem()->GetEquipment(Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON)->id = DATA_TABLE->GetWeaponIDInt("Staff Priest");
 	}
 	
 	//pSession_->SetEntity(entity);
@@ -547,6 +551,12 @@ const bool Handle_c2s_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::Packe
 			}
 		}
 	}
+	return true;
+}
+
+const bool Handle_c2s_CHANGE_EQUIPMENT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CHANGE_EQUIPMENT& pkt_)
+{
+	pSession_->GetOwnerEntity()->GetComp<Inventory>()->SwapEquipment(pkt_.equipment_type(), pkt_.equip_id());
 	return true;
 }
 

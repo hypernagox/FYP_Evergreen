@@ -1,9 +1,5 @@
 #pragma once
 
-/*--------------
-	NetAddress
----------------*/
-
 namespace NagiocpX
 {
 	class NetAddress

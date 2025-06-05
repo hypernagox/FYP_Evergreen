@@ -166,6 +166,12 @@ struct c2s_CHANGE_HARVEST_STATEBuilder;
 struct s2c_CHANGE_HARVEST_STATE;
 struct s2c_CHANGE_HARVEST_STATEBuilder;
 
+struct c2s_CHANGE_EQUIPMENT;
+struct c2s_CHANGE_EQUIPMENTBuilder;
+
+struct s2c_NOTIFY_USER_DETAIL_INFO;
+struct s2c_NOTIFY_USER_DETAIL_INFOBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -2911,6 +2917,133 @@ inline ::flatbuffers::Offset<s2c_CHANGE_HARVEST_STATE> Creates2c_CHANGE_HARVEST_
   builder_.add_harvest_id(harvest_id);
   builder_.add_harvest_mesh_type(harvest_mesh_type);
   builder_.add_is_active(is_active);
+  return builder_.Finish();
+}
+
+struct c2s_CHANGE_EQUIPMENT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_CHANGE_EQUIPMENTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_EQUIPMENT_TYPE = 4,
+    VT_EQUIP_ID = 6
+  };
+  Nagox::Enum::EQUIPMENT_TYPE equipment_type() const {
+    return static_cast<Nagox::Enum::EQUIPMENT_TYPE>(GetField<uint8_t>(VT_EQUIPMENT_TYPE, 0));
+  }
+  bool mutate_equipment_type(Nagox::Enum::EQUIPMENT_TYPE _equipment_type = static_cast<Nagox::Enum::EQUIPMENT_TYPE>(0)) {
+    return SetField<uint8_t>(VT_EQUIPMENT_TYPE, static_cast<uint8_t>(_equipment_type), 0);
+  }
+  uint32_t equip_id() const {
+    return GetField<uint32_t>(VT_EQUIP_ID, 0);
+  }
+  bool mutate_equip_id(uint32_t _equip_id = 0) {
+    return SetField<uint32_t>(VT_EQUIP_ID, _equip_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint8_t>(verifier, VT_EQUIPMENT_TYPE, 1) &&
+           VerifyField<uint32_t>(verifier, VT_EQUIP_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_CHANGE_EQUIPMENTBuilder {
+  typedef c2s_CHANGE_EQUIPMENT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_equipment_type(Nagox::Enum::EQUIPMENT_TYPE equipment_type) {
+    fbb_.AddElement<uint8_t>(c2s_CHANGE_EQUIPMENT::VT_EQUIPMENT_TYPE, static_cast<uint8_t>(equipment_type), 0);
+  }
+  void add_equip_id(uint32_t equip_id) {
+    fbb_.AddElement<uint32_t>(c2s_CHANGE_EQUIPMENT::VT_EQUIP_ID, equip_id, 0);
+  }
+  explicit c2s_CHANGE_EQUIPMENTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_CHANGE_EQUIPMENT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_CHANGE_EQUIPMENT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_CHANGE_EQUIPMENT> Createc2s_CHANGE_EQUIPMENT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    Nagox::Enum::EQUIPMENT_TYPE equipment_type = Nagox::Enum::EQUIPMENT_TYPE_WEAPON,
+    uint32_t equip_id = 0) {
+  c2s_CHANGE_EQUIPMENTBuilder builder_(_fbb);
+  builder_.add_equip_id(equip_id);
+  builder_.add_equipment_type(equipment_type);
+  return builder_.Finish();
+}
+
+struct s2c_NOTIFY_USER_DETAIL_INFO FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_NOTIFY_USER_DETAIL_INFOBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_OBJ_ID = 4,
+    VT_WEAPON_ID = 6,
+    VT_ARMOR_ID = 8
+  };
+  uint32_t obj_id() const {
+    return GetField<uint32_t>(VT_OBJ_ID, 0);
+  }
+  bool mutate_obj_id(uint32_t _obj_id = 0) {
+    return SetField<uint32_t>(VT_OBJ_ID, _obj_id, 0);
+  }
+  uint32_t weapon_id() const {
+    return GetField<uint32_t>(VT_WEAPON_ID, 0);
+  }
+  bool mutate_weapon_id(uint32_t _weapon_id = 0) {
+    return SetField<uint32_t>(VT_WEAPON_ID, _weapon_id, 0);
+  }
+  uint32_t armor_id() const {
+    return GetField<uint32_t>(VT_ARMOR_ID, 0);
+  }
+  bool mutate_armor_id(uint32_t _armor_id = 0) {
+    return SetField<uint32_t>(VT_ARMOR_ID, _armor_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_OBJ_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_WEAPON_ID, 4) &&
+           VerifyField<uint32_t>(verifier, VT_ARMOR_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_NOTIFY_USER_DETAIL_INFOBuilder {
+  typedef s2c_NOTIFY_USER_DETAIL_INFO Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_obj_id(uint32_t obj_id) {
+    fbb_.AddElement<uint32_t>(s2c_NOTIFY_USER_DETAIL_INFO::VT_OBJ_ID, obj_id, 0);
+  }
+  void add_weapon_id(uint32_t weapon_id) {
+    fbb_.AddElement<uint32_t>(s2c_NOTIFY_USER_DETAIL_INFO::VT_WEAPON_ID, weapon_id, 0);
+  }
+  void add_armor_id(uint32_t armor_id) {
+    fbb_.AddElement<uint32_t>(s2c_NOTIFY_USER_DETAIL_INFO::VT_ARMOR_ID, armor_id, 0);
+  }
+  explicit s2c_NOTIFY_USER_DETAIL_INFOBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_NOTIFY_USER_DETAIL_INFO> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_NOTIFY_USER_DETAIL_INFO>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_NOTIFY_USER_DETAIL_INFO> Creates2c_NOTIFY_USER_DETAIL_INFO(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t obj_id = 0,
+    uint32_t weapon_id = 0,
+    uint32_t armor_id = 0) {
+  s2c_NOTIFY_USER_DETAIL_INFOBuilder builder_(_fbb);
+  builder_.add_armor_id(armor_id);
+  builder_.add_weapon_id(weapon_id);
+  builder_.add_obj_id(obj_id);
   return builder_.Finish();
 }
 

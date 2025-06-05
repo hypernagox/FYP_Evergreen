@@ -4,6 +4,11 @@
 #include "Item.h"
 #include "QuickSlot.h"
 
+bool Inventory::SwapEquipment(const Nagox::Enum::EQUIPMENT_TYPE equip_type, const uint32_t equip_id) noexcept
+{
+	return m_equipSystem.SwapEquipment(GetOwnerEntityRaw(), equip_type, equip_id);
+}
+
 Item* Inventory::FindItem(const int8_t item_type) const noexcept
 {
 	for (int i = 0; i < NUM_OF_MAX_INVENTORY_ITEM; ++i) {

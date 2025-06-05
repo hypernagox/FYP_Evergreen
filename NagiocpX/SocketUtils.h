@@ -1,10 +1,6 @@
 #pragma once
 #include "NetAddress.h"
 
-/*----------------
-	SocketUtils
------------------*/
-
 namespace NagiocpX
 {
 	class SocketUtils

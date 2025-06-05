@@ -13,6 +13,9 @@ namespace NagiocpX
 		virtual S_ptr<SendBuffer> CreateAddPacket(const ContentsEntity* const entity_ptr)const noexcept = 0;
 		virtual S_ptr<SendBuffer> CreateRemovePacket(const uint32_t obj_id)const noexcept = 0;
 		virtual S_ptr<SendBuffer> CreateMovePacket(const ContentsEntity* const entity_ptr)const noexcept = 0;
+
+
+		virtual S_ptr<SendBuffer> CreateNotifyDetailPacket(const ContentsEntity* const entity_ptr)const noexcept = 0;
 	};
 
 	class BroadcastHandler

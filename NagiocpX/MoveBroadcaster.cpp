@@ -119,11 +119,15 @@ namespace NagiocpX
 		extern thread_local VectorSetUnsafe<std::pair<uint32_t, const ContentsEntity*>, XHashMap> new_view_list_session;
 		new_view_list_session.AddItem(id_ptr);
 		const auto pSession = id_ptr.second->GetSession();
+		const auto notify_detail_pkt = helper.CreateNotifyDetailPacket(thisSession->GetOwnerEntity());
+
 		if (m_view_list_session.AddItem(id_ptr))
 		{
 			thisSession->SendAsync(helper.CreateAddPacket(id_ptr.second));
+			thisSession->SendAsync(helper.CreateNotifyDetailPacket(id_ptr.second));
 
 			pSession->SendAsync(add_pkt);
+			pSession->SendAsync(notify_detail_pkt);
 		}
 		else
 		{

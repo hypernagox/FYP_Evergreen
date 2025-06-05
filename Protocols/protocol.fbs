@@ -295,3 +295,16 @@ table s2c_CHANGE_HARVEST_STATE
      is_active : bool;
      harvest_mesh_type : uint16;
 }
+
+table c2s_CHANGE_EQUIPMENT
+{
+    equipment_type : Nagox.Enum.EQUIPMENT_TYPE;
+    equip_id : uint32;
+}
+
+table s2c_NOTIFY_USER_DETAIL_INFO
+{
+    obj_id : uint32;
+    weapon_id : uint32;
+    armor_id : uint32;
+}

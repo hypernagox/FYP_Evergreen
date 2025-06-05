@@ -533,3 +533,21 @@ const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::Pac
 	GuideSystem::GetInst()->SetHarvestState(pkt_.harvest_mesh_type(), pkt_.is_active());
 	return true;
 }
+
+const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_)
+{
+	std::cout << (pkt_.weapon_id()) << std::endl;
+	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id()))
+	{
+		if (const auto renderer = obj->GetComponent<PlayerRenderer>())
+		{
+			// TODO: 무기 외의 정보도 동기화 필요함
+			renderer->SetPlayerWeapon(DATA_TABLE->GetWeaponIDStr(pkt_.weapon_id()));
+		}
+	}
+	else
+	{
+		ServerObjectMgr::GetInst()->m_weaponMap[pkt_.obj_id()] = pkt_.weapon_id();
+	}
+	return true;
+}

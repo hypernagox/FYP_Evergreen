@@ -1,10 +1,6 @@
 #include "NagiocpXPch.h"
 #include "SocketUtils.h"
 
-/*----------------
-	SocketUtils
------------------*/
-
 namespace NagiocpX
 {
 	const HANDLE SocketUtils::Init()noexcept
@@ -66,7 +62,6 @@ namespace NagiocpX
 		return SetSockOpt(socket, IPPROTO_TCP, TCP_NODELAY, static_cast<int>(flag));
 	}
 
-	// ListenSocket의 특성을 ClientSocket에 그대로 적용
 	bool SocketUtils::SetUpdateAcceptSocket(SOCKET socket, SOCKET listenSocket)noexcept
 	{
 		return SetSockOpt(socket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, listenSocket);

@@ -101,3 +101,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PARTY_OUT(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_HARVEST_STATE(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_EQUIPMENT(
+    const Nagox::Enum::EQUIPMENT_TYPE& equipment_type,
+    const uint32_t equip_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

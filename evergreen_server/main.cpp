@@ -100,7 +100,7 @@ public:
 		for (int i = 0; i < 10000; ++i)
 		{
 			EntityBuilder b;
-			b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+			b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
 			b.obj_type = Nagox::Enum::MONSTER_TYPE_MELEE;
 			const auto m = EntityFactory::CreateSheep(b);
 			const auto m2 = m.get();

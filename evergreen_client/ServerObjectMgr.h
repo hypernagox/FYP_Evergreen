@@ -46,6 +46,8 @@ public:
 		m_mainHero = std::move(hero);
 	}
 	const auto GetMainHero()const noexcept { return m_mainHero->GetComponent<ServerObject>(); }
+
+	std::map<int, int> m_weaponMap;
 private:
 	std::shared_ptr<GameScene> targetScene;
 	std::unordered_map<uint64_t, std::shared_ptr<udsdx::SceneObject>> m_mapServerObj;

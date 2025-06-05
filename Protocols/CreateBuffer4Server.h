@@ -161,3 +161,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHANGE_HARVEST_STATE(
     const uint16_t harvest_mesh_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_USER_DETAIL_INFO(
+    const uint32_t obj_id,
+    const uint32_t weapon_id,
+    const uint32_t armor_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

@@ -25,3 +25,8 @@ enum SKILL_TYPE : ubyte
 {
     DEFAULT = 0
 }
+
+enum EQUIPMENT_TYPE : ubyte
+{
+    WEAPON = 0
+}

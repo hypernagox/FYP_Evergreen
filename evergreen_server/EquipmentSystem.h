@@ -1,14 +1,5 @@
 #pragma once
 
-enum class EQUIPMENT_PART:uint8_t
-{
-	WEAPON = 0,
-
-
-
-	END,
-};
-
 class Equipment
 {
 public:
@@ -22,16 +13,19 @@ public:
 		int& victim_hp,
 		ContentsEntity* const victim)noexcept 
 	{
-		return 0;
+		return atk;
 	}
 //private:
-	int id;
-	int atk = 0;
+	int id = 1;
+	int atk = 1;
 	int def = 0;
 };
 
 class EquipmentSystem
 {
+public:
+	EquipmentSystem()noexcept;
+	~EquipmentSystem()noexcept;
 public:
 	int GetEquipmentAtkSum()const noexcept {
 		int sum = 0;
@@ -47,7 +41,16 @@ public:
 		const int victim_origin_hp,
 		int& victim_hp,
 		ContentsEntity* const victim)noexcept;
+public:
+	const auto GetEquipment(const Nagox::Enum::EQUIPMENT_TYPE equip_type)noexcept {
+		return m_arrEquip[equip_type];
+	}
+public:
+	bool SwapEquipment(
+		class ContentsEntity* const owner,
+		const Nagox::Enum::EQUIPMENT_TYPE equip_type,
+		const uint32_t equip_id)noexcept;
 private:
-	Equipment* m_arrEquip[(int)EQUIPMENT_PART::END]{ nullptr };
+	Equipment* m_arrEquip[(int)Nagox::Enum::EQUIPMENT_TYPE_MAX + 1]{ nullptr };
 };
 

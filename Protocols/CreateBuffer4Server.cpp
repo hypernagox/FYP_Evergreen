@@ -527,3 +527,23 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHANGE_HARVEST_STATE(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_CHANGE_HARVEST_STATE);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_USER_DETAIL_INFO(
+    const uint32_t obj_id,
+    const uint32_t weapon_id,
+    const uint32_t armor_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto obj_id_value = obj_id;
+    const auto weapon_id_value = weapon_id;
+    const auto armor_id_value = armor_id;
+    const auto serializeds2c_NOTIFY_USER_DETAIL_INFO = Nagox::Protocol::Creates2c_NOTIFY_USER_DETAIL_INFO(
+        builder
+,        obj_id_value,
+        weapon_id_value,
+        armor_id_value    );
+    builder.Finish(serializeds2c_NOTIFY_USER_DETAIL_INFO);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_NOTIFY_USER_DETAIL_INFO);
+}

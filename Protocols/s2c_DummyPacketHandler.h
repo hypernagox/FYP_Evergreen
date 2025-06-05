@@ -36,6 +36,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_PARTY_QUEST_CLEAR = 1025,
     s2c_PARTY_MEMBERS_INFORMATION = 1026,
     s2c_CHANGE_HARVEST_STATE = 1027,
+    s2c_NOTIFY_USER_DETAIL_INFO = 1028,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -60,6 +61,7 @@ enum class CREATE_PKT_ID : uint16_t {
     c2s_QUEST_END = 1018,
     c2s_PARTY_OUT = 1019,
     c2s_CHANGE_HARVEST_STATE = 1020,
+    c2s_CHANGE_EQUIPMENT = 1021,
 };
 
 class NagiocpX::PacketSession;
@@ -97,6 +99,7 @@ const bool Handle_s2c_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 const bool Handle_s2c_PARTY_QUEST_CLEAR(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_CLEAR& pkt_);
 const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION& pkt_);
 const bool Handle_s2c_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHANGE_HARVEST_STATE& pkt_);
+const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_);
 
 class s2c_DummyPacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -131,6 +134,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_QUEST_CLEAR, Nagox::Protocol::s2c_PARTY_QUEST_CLEAR, Handle_s2c_PARTY_QUEST_CLEAR>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_MEMBERS_INFORMATION, Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION, Handle_s2c_PARTY_MEMBERS_INFORMATION>();
         RegisterHandler<HANDLE_PKT_ID::s2c_CHANGE_HARVEST_STATE, Nagox::Protocol::s2c_CHANGE_HARVEST_STATE, Handle_s2c_CHANGE_HARVEST_STATE>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_NOTIFY_USER_DETAIL_INFO, Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO, Handle_s2c_NOTIFY_USER_DETAIL_INFO>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

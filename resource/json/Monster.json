@@ -1,6 +1,6 @@
 {
   "Fox": {
-    "hp": 3,
+    "hp": 5,
     "DropItem": "Fox Tail"
   },
   "Bear": {

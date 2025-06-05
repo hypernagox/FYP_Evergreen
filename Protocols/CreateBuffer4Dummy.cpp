@@ -339,3 +339,20 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_HARVEST_STATE(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_HARVEST_STATE);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_EQUIPMENT(
+    const Nagox::Enum::EQUIPMENT_TYPE& equipment_type,
+    const uint32_t equip_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto equipment_type_value = equipment_type;
+    const auto equip_id_value = equip_id;
+    const auto serializedc2s_CHANGE_EQUIPMENT = Nagox::Protocol::Createc2s_CHANGE_EQUIPMENT(
+        builder
+,        equipment_type_value,
+        equip_id_value    );
+    builder.Finish(serializedc2s_CHANGE_EQUIPMENT);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_EQUIPMENT);
+}

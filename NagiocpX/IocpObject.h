@@ -14,11 +14,6 @@ namespace NagiocpX
 	class PacketSession;
 	class Field;
 
-	/*--------------
-		IocpCore
-	---------------*/
-
-	// IOCP에 등록 가능한 모든 오브젝트
 	class IocpObject
 		:public RefCountable
 	{

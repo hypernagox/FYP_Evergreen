@@ -164,9 +164,14 @@ void AuthenticPlayer::SetPlayerWeapon(std::string_view weaponKey)
 	// 이때 플레이어의 무기 정보는 ID(int) 로 전송되어야하며
 	// 인자로써 주어진 weaponKey를 ID로 매핑하는 수단이 필요하다.
 
-	int weaponID = 0; // TODO: weaponKey를 ID로 매핑하는 로직 필요
+	
+	const int weaponID = DATA_TABLE->GetWeaponIDInt(weaponKey); // TODO: weaponKey를 ID로 매핑하는 로직 필요
 	// Send(Create_c2s_SET_PLAYER_WEAPON(weaponID)); // 예시로 서버에 무기 설정 요청 패킷을 전송하는 코드
-
+	Send(
+		Create_c2s_CHANGE_EQUIPMENT(
+			Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
+			weaponID)
+	);
 	// 자신의 플레이어 렌더러의 무기 모델을 설정하는 코드
 	m_playerRenderer->SetPlayerWeapon(weaponKey);
 }

@@ -14,6 +14,8 @@
 #include "StatusSystem.h"
 #include "PartyQuestSystem.h"
 #include "Skill.h"
+#include "ObjectIdentifier.h"
+#include "DataRegistry.h"
 
 std::atomic_int cnt = 0;
 static NagoxAtomic::Atomic<int> g_connect_count{ 0 };
@@ -39,11 +41,11 @@ void ClientSession::OnConnected()
 	pOwner->AddComp<PlayerDeath>();
 	pOwner->AddComp<QuestSystem>();
 	pOwner->AddComp<NagiocpX::TimerHandler>();
-
+	pOwner->AddComp<ObjectIdentifier>();
 	const auto inv = pOwner->AddComp<Inventory>();
 
 	pOwner->AddComp<StatusSystem>()->m_equipSystem = inv->GetEquipmentSystem();
-
+	
 	std::cout << ++g_connect_count << '\n';
 	NagiocpX::PrintKoreaRealTime("Connect !", GetAddress().GetIpAddress());
 }
