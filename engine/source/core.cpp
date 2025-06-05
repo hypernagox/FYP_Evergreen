@@ -331,17 +331,7 @@ namespace udsdx
 
 	void Core::RegisterDescriptorsToHeaps()
 	{ ZoneScoped;
-		DescriptorParam descriptorParam{
-			.CbvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetCPUDescriptorHandleForHeapStart()),
-			.SrvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_srvHeap->GetCPUDescriptorHandleForHeapStart()),
-			.RtvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), SwapChainBufferCount, m_rtvDescriptorSize),
-			.DsvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_dsvHeap->GetCPUDescriptorHandleForHeapStart(), 1, m_dsvDescriptorSize),
-			.CbvGpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetGPUDescriptorHandleForHeapStart()),
-			.SrvGpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_srvHeap->GetGPUDescriptorHandleForHeapStart()),
-			.CbvSrvUavDescriptorSize = m_cbvSrvUavDescriptorSize,
-			.RtvDescriptorSize = m_rtvDescriptorSize,
-			.DsvDescriptorSize = m_dsvDescriptorSize
-		};
+		DescriptorParam descriptorParam = GetDescriptorParameters();
 
 		m_deferredRenderer->BuildDescriptors(descriptorParam);
 		m_shadowMap->BuildDescriptors(descriptorParam, m_d3dDevice.Get());
@@ -360,7 +350,7 @@ namespace udsdx
 			font->CreateShaderResourceView(m_d3dDevice.Get(), descriptorParam);
 		}
 
-		m_srvHeapSize = static_cast<UINT>(descriptorParam.SrvCpuHandle.ptr - m_srvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_cbvSrvUavDescriptorSize;
+		ApplyDescriptorParameters(descriptorParam);
 	}
 
 	void Core::BuildConstantBuffers()
@@ -1122,11 +1112,29 @@ namespace udsdx
 		return m_dsvHeap->GetCPUDescriptorHandleForHeapStart();
 	}
 
-	void Core::IncrementSRVHeapDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE* cpuDescriptorOut, D3D12_GPU_DESCRIPTOR_HANDLE* gpuDescriptorOut)
+	DescriptorParam Core::GetDescriptorParameters() const
 	{
-		*cpuDescriptorOut = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_srvHeap->GetCPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize);
-		*gpuDescriptorOut = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_srvHeap->GetGPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize);
-		m_srvHeapSize++;
+		DescriptorParam descriptorParam{
+			.CbvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetCPUDescriptorHandleForHeapStart(), m_cbvHeapSize, m_cbvSrvUavDescriptorSize),
+			.SrvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_srvHeap->GetCPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize),
+			.RtvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_rtvHeapSize, m_rtvDescriptorSize),
+			.DsvCpuHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_dsvHeap->GetCPUDescriptorHandleForHeapStart(), m_dsvHeapSize, m_dsvDescriptorSize),
+			.CbvGpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_cbvHeap->GetGPUDescriptorHandleForHeapStart(), m_cbvHeapSize, m_cbvSrvUavDescriptorSize),
+			.SrvGpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_srvHeap->GetGPUDescriptorHandleForHeapStart(), m_srvHeapSize, m_cbvSrvUavDescriptorSize),
+			.CbvSrvUavDescriptorSize = m_cbvSrvUavDescriptorSize,
+			.RtvDescriptorSize = m_rtvDescriptorSize,
+			.DsvDescriptorSize = m_dsvDescriptorSize
+		};
+
+		return descriptorParam;
+	}
+
+	void Core::ApplyDescriptorParameters(const DescriptorParam& param)
+	{
+		m_cbvHeapSize = static_cast<UINT>(param.CbvCpuHandle.ptr - m_cbvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_cbvSrvUavDescriptorSize;
+		m_srvHeapSize = static_cast<UINT>(param.SrvCpuHandle.ptr - m_srvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_cbvSrvUavDescriptorSize;
+		m_rtvHeapSize = static_cast<UINT>(param.RtvCpuHandle.ptr - m_rtvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_rtvDescriptorSize;
+		m_dsvHeapSize = static_cast<UINT>(param.DsvCpuHandle.ptr - m_dsvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_dsvDescriptorSize;
 	}
 
 	int Core::GetClientPosX() const

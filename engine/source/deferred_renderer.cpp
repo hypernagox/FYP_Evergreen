@@ -226,7 +226,7 @@ namespace udsdx
 		D3D12_RESOURCE_DESC depthStencilDesc;
 		depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 		depthStencilDesc.Alignment = 0;			// alignment size of the resource. 0 means use default alignment.
-		depthStencilDesc.Width = m_width;			// size of the width.
+		depthStencilDesc.Width = m_width;		// size of the width.
 		depthStencilDesc.Height = m_height;		// size of the height.
 		depthStencilDesc.DepthOrArraySize = 1;	// size of the depth.
 		depthStencilDesc.MipLevels = 1;			// number of mip levels.

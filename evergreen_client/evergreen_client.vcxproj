@@ -283,6 +283,10 @@
       <Command>
       </Command>
     </PostBuildEvent>
+    <FxCompile>
+      <ObjectFileOutput>$(OutDir)compiled_shaders\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel>6.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">
     <ClCompile>
@@ -308,6 +312,10 @@
       <Command>
       </Command>
     </PreBuildEvent>
+    <FxCompile>
+      <ObjectFileOutput>$(OutDir)compiled_shaders\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel>6.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -334,6 +342,10 @@
       <Command>
       </Command>
     </PostBuildEvent>
+    <FxCompile>
+      <ObjectFileOutput>$(OutDir)compiled_shaders\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel>6.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <ClCompile>
@@ -360,6 +372,10 @@
       <Command>
       </Command>
     </PostBuildEvent>
+    <FxCompile>
+      <ObjectFileOutput>$(OutDir)compiled_shaders\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel>6.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">
     <ClCompile>
@@ -389,6 +405,10 @@
       <Command>
       </Command>
     </PreBuildEvent>
+    <FxCompile>
+      <ObjectFileOutput>$(OutDir)compiled_shaders\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel>6.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Protocols\CreateBuffer4Client.cpp">
@@ -449,6 +469,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenuCharacterGUI.cpp" />
     <ClCompile Include="MainMenuGUI.cpp" />
+    <ClCompile Include="MinimapRenderer.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterHPPanel.cpp" />
     <ClCompile Include="MonsterRenderer.cpp" />
@@ -529,6 +550,7 @@
     <ClInclude Include="LogFloatGUI.h" />
     <ClInclude Include="MainMenuCharacterGUI.h" />
     <ClInclude Include="MainMenuGUI.h" />
+    <ClInclude Include="MinimapRenderer.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterHPPanel.h" />
     <ClInclude Include="MonsterRenderer.h" />
@@ -578,6 +600,32 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">$(SolutionDir)Protocols\protocol_generated.h;%(Outputs)</Outputs>
     </CustomBuild>
     <None Include="..\Protocols\struct.fbs" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="ps_minimap_pass.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">PS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">PS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">PS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="vs_minimap_pass.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

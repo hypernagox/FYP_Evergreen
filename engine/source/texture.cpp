@@ -89,6 +89,16 @@ namespace udsdx
 		m_size = Vector2Int(static_cast<int32_t>(image.GetMetadata().width), static_cast<int32_t>(image.GetMetadata().height));
 	}
 
+	Texture::Texture(ID3D12Resource* resource, D3D12_CPU_DESCRIPTOR_HANDLE srvCpu, D3D12_GPU_DESCRIPTOR_HANDLE srvGpu) : ResourceObject(L"")
+		, m_srvCpu(srvCpu)
+		, m_srvGpu(srvGpu)
+	{
+		m_name = "Unnamed Texture";
+		m_size = Vector2Int(static_cast<int32_t>(resource->GetDesc().Width), static_cast<int32_t>(resource->GetDesc().Height));
+		m_texture.Reset();
+		m_textureUpload.Reset();
+	}
+
 	Texture::~Texture()
 	{
 
