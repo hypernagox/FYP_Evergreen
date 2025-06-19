@@ -356,3 +356,17 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_CHANGE_EQUIPMENT(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_EQUIPMENT);
 }
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_CHANGE_CHANNEL(
+    const uint32_t dest_channel_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto dest_channel_id_value = dest_channel_id;
+    const auto serializedc2s_CHANGE_CHANNEL = Nagox::Protocol::Createc2s_CHANGE_CHANNEL(
+        builder
+,        dest_channel_id_value    );
+    builder.Finish(serializedc2s_CHANGE_CHANNEL);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_CHANNEL);
+}

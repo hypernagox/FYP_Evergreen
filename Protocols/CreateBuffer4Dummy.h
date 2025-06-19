@@ -106,3 +106,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_EQUIPMENT(
     const uint32_t equip_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_CHANNEL(
+    const uint32_t dest_channel_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

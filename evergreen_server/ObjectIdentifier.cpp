@@ -13,7 +13,7 @@ S_ptr<SendBuffer> ObjectIdentifier::CreateNotifyDetailPacket() const noexcept
 	const auto equip_sys = inv->GetEquipmentSystem();
 	
 	const auto weapon_ptr = equip_sys->GetEquipment(Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON);
-	std::cout << weapon_ptr->id << std::endl;
+	//std::cout << weapon_ptr->id << std::endl;
 	auto pkt = Create_s2c_NOTIFY_USER_DETAIL_INFO(
 		owner->GetObjectID(),
 		weapon_ptr->id,

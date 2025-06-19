@@ -22,7 +22,8 @@ static NagoxAtomic::Atomic<int> g_connect_count{ 0 };
 
 ClientSession::ClientSession() noexcept
 {
-	std::cout << ++cnt << '\n';
+	//std::cout << ++cnt << '\n';
+	++cnt;
 }
 
 ClientSession::~ClientSession()

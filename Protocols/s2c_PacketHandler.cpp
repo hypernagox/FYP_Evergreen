@@ -536,7 +536,7 @@ const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::Pac
 
 const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_)
 {
-	std::cout << (pkt_.weapon_id()) << std::endl;
+	//std::cout << (pkt_.weapon_id()) << std::endl;
 	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id()))
 	{
 		if (const auto renderer = obj->GetComponent<PlayerRenderer>())

@@ -77,7 +77,8 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	//Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
 	const auto pos = entity->GetComp<PositionComponent>()->pos;
 
-	Field::GetField(0)->EnterFieldWithFloatXY(pos.x + 512.f, pos.z + 512.f, entity);
+	static std::atomic_int chan = 0;
+	Field::GetField(++chan % 10)->EnterFieldWithFloatXY(pos.x + 512.f, pos.z + 512.f, entity);
 
 	//g_sector->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER)
 	//	, s
@@ -557,6 +558,30 @@ const bool Handle_c2s_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::Packe
 const bool Handle_c2s_CHANGE_EQUIPMENT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CHANGE_EQUIPMENT& pkt_)
 {
 	pSession_->GetOwnerEntity()->GetComp<Inventory>()->SwapEquipment(pkt_.equipment_type(), pkt_.equip_id());
+	return true;
+}
+
+const bool Handle_c2s_CHANGE_CHANNEL(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CHANGE_CHANNEL& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+	const auto cluster = owner->GetCurCluster();
+
+	const auto cur_chan_id = cluster->GetClusterFieldInfo().clusterInfo.fieldID;
+	std::cout << (int)cur_chan_id << '\n';
+	const auto pos = owner->GetComp<PositionComponent>()->GetXZWithOffset();
+	if (pkt_.dest_channel_id() == cur_chan_id)
+	{
+		std::cout << "Same Channel \n";
+	}
+	else
+	{
+		cluster->MigrationOtherFieldEnqueue(
+			Field::GetField(pkt_.dest_channel_id()),
+			owner,
+			cluster->GetClusterFieldInfo().clusterInfo.clusterID
+		);
+	}
+	
 	return true;
 }
 

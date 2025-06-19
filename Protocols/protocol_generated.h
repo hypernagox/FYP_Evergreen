@@ -172,6 +172,9 @@ struct c2s_CHANGE_EQUIPMENTBuilder;
 struct s2c_NOTIFY_USER_DETAIL_INFO;
 struct s2c_NOTIFY_USER_DETAIL_INFOBuilder;
 
+struct c2s_CHANGE_CHANNEL;
+struct c2s_CHANGE_CHANNELBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -3044,6 +3047,50 @@ inline ::flatbuffers::Offset<s2c_NOTIFY_USER_DETAIL_INFO> Creates2c_NOTIFY_USER_
   builder_.add_armor_id(armor_id);
   builder_.add_weapon_id(weapon_id);
   builder_.add_obj_id(obj_id);
+  return builder_.Finish();
+}
+
+struct c2s_CHANGE_CHANNEL FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_CHANGE_CHANNELBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_DEST_CHANNEL_ID = 4
+  };
+  uint32_t dest_channel_id() const {
+    return GetField<uint32_t>(VT_DEST_CHANNEL_ID, 0);
+  }
+  bool mutate_dest_channel_id(uint32_t _dest_channel_id = 0) {
+    return SetField<uint32_t>(VT_DEST_CHANNEL_ID, _dest_channel_id, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_DEST_CHANNEL_ID, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_CHANGE_CHANNELBuilder {
+  typedef c2s_CHANGE_CHANNEL Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_dest_channel_id(uint32_t dest_channel_id) {
+    fbb_.AddElement<uint32_t>(c2s_CHANGE_CHANNEL::VT_DEST_CHANNEL_ID, dest_channel_id, 0);
+  }
+  explicit c2s_CHANGE_CHANNELBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_CHANGE_CHANNEL> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_CHANGE_CHANNEL>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_CHANGE_CHANNEL> Createc2s_CHANGE_CHANNEL(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t dest_channel_id = 0) {
+  c2s_CHANGE_CHANNELBuilder builder_(_fbb);
+  builder_.add_dest_channel_id(dest_channel_id);
   return builder_.Finish();
 }
 

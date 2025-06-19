@@ -62,6 +62,7 @@ enum class CREATE_PKT_ID : uint16_t {
     c2s_PARTY_OUT = 1019,
     c2s_CHANGE_HARVEST_STATE = 1020,
     c2s_CHANGE_EQUIPMENT = 1021,
+    c2s_CHANGE_CHANNEL = 1022,
 };
 
 class NetHelper::PacketSession;

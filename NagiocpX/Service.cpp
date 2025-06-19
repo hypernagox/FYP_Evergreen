@@ -156,7 +156,7 @@ namespace NagiocpX
 			auto pSession = PopSession();
 			if (!pSession ||false == pSession->Connect())
 				return false;
-			//Sleep(10);
+			Sleep(1);
 		}
 		return true;
 	}

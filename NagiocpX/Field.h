@@ -82,6 +82,7 @@ namespace NagiocpX
 		}
 		const auto GetClusterXScale()const noexcept { return m_cluster_x_scale; }
 		const auto GetClusterYScale()const noexcept { return m_cluster_y_scale; }
+		void SetFieldID(const uint32_t field_id)noexcept { m_fieldID = field_id; }
 	protected:
 		XVector<Cluster*>* tl_vecClusters[NUM_OF_THREADS] = { nullptr };
 		int8_t m_fieldID = 0;

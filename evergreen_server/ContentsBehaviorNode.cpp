@@ -163,51 +163,25 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
         return NodeStatus::SUCCESS;
     }
 
+    Vector3 raw_dir = dest_pos - cur_pos;
+    raw_dir.Normalize();
 
-    const auto path = pOwnerEntity->GetComp<PathFinder>()->GetPath(cur_pos, dest_pos);
-    {
-   // NagiocpX::Vector<NagiocpX::Sector*> sectors{ pOwnerEntity->GetCurSector() };
+    constexpr float forwardOffset = 0.5f;
+    Vector3 adjusted_dest = dest_pos + raw_dir * forwardOffset;
 
-    
-        //const auto ag = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->getAgent(owner_comp_sys->GetComp<NaviAgent>()->m_my_idx);
-       
-        //Vector3 ppp{ ag->npos[0],ag->npos[1],-ag->npos[2] };
-        //Vector3 vpp{ ag->vel[0],ag->vel[1],-ag->vel[2] };
-        //pOwnerEntity->GetComp<PositionComponent>()->pos = ppp;
-        //pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(vpp.x, vpp.z) * 180.f / 3.141592f;
-        //
-        //bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-        //pOwnerEntity->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-        //NagiocpX::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
-    }
-   // return NodeStatus::RUNNING;
-
-    if(path.empty()) return NodeStatus::FAILURE;
+    const auto path = pOwnerEntity->GetComp<PathFinder>()->GetPath(cur_pos, adjusted_dest);
+    if (path.empty()) return NodeStatus::FAILURE;
 
     auto dir = path.size() >= 2 ? path[1] : path[0];
     dir -= cur_pos;
-
     dir.Normalize();
-    
+
     const float dt_ = bt_root_timer->GetFloatDT();
 
     const auto dx2 = cur_pos.x + dir.x * 5.2f * dt_;
     const auto dy2 = cur_pos.y + dir.y * 5.2f * dt_;
     const auto dz2 = cur_pos.z + dir.z * 5.2f * dt_;
     Vector3 dest_pos2{ dx2, dy2, dz2 };
-
-    
-    const Vector3 final_target = path.back();
-
-    const float closeThreshold = 0.5f;  
-    const float pushBackDist = 0.5f;  
-    float distToTarget = (dest_pos - final_target).Length();
-    if (distToTarget < closeThreshold)
-    {
-        Vector3 backDir = final_target - dest_pos2;
-        backDir.Normalize();
-        dest_pos2 = dest_pos2 - backDir * pushBackDist;
-    }
 
     //pOwnerEntity->GetComp<PositionComponent>()->vel = dir;
 

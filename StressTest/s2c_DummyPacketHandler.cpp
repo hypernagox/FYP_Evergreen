@@ -222,3 +222,8 @@ const bool Handle_s2c_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::Packe
 	session->UpdateHarvest(pkt_.harvest_id(), pkt_.is_active());
 	return true;
 }
+
+const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_)
+{
+	return true;
+}

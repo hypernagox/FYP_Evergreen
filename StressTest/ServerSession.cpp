@@ -56,7 +56,7 @@ ServerSession::~ServerSession()
 
 void ServerSession::OnConnected()
 {
-	std::cout << "Im Dummy !" << std::endl;
+	//std::cout << "Im Dummy !" << std::endl;
 	SendAsync(Create_c2s_LOGIN("Hello"));
 }
 
@@ -105,7 +105,7 @@ Vector3 ServerSession::GetNearestHarvestPoint() noexcept
 	}
 	if (nearest == cur_pos)
 	{
-		nearest = GetKthNearestHarvestPoint(dist_harvest(rng) % 10);
+		nearest = GetKthNearestHarvestPoint(dist_harvest(rng) % 30);
 	}
 
 	return nearest;
@@ -158,7 +158,7 @@ void ServerSession::UpdateMove() noexcept
 		vel = {};
 		accel = {};
 		NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(pos);
-		SendAsync(Create_c2s_CHANGE_HARVEST_STATE());
+		//SendAsync(Create_c2s_CHANGE_HARVEST_STATE());
 		//SendAsync(Create_c2s_ACQUIRE_ITEM(0));
 		SetPath();
 		return;
@@ -206,7 +206,7 @@ void ServerSession::SetPath() noexcept
 	NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(pos);
 	
 	const auto& v = HarvestLoader::GetHarvestPos();
-	const Vector3 end = GetKthNearestHarvestPoint(dist_harvest(rng) % 10);
+	const Vector3 end = GetKthNearestHarvestPoint(dist_harvest(rng) % 30);
 
 	const auto& vecPath = NAVIGATION->GetNavMesh(NUM_0)->GetPathVertices(pos, end, step);
 

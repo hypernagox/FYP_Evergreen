@@ -308,3 +308,8 @@ table s2c_NOTIFY_USER_DETAIL_INFO
     weapon_id : uint32;
     armor_id : uint32;
 }
+
+table c2s_CHANGE_CHANNEL
+{
+   dest_channel_id : uint32;
+}

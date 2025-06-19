@@ -21,8 +21,9 @@
 #include "ImGUIMgr.h"
 
 using namespace NagiocpX;
-constexpr const int32_t NUM_OF_NPC = 200001;
+constexpr const int32_t NUM_OF_NPC = 2000001;
 constexpr const int32_t NUM_OF_MAX_USER = 5500;
+constexpr const uint32_t NUM_OF_CHANNELS = 60;
 
 extern std::vector<DirectX::BoundingBox> boxes;
 
@@ -97,31 +98,37 @@ public:
 		//	Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
 		//}
 
-		for (int i = 0; i < 10000; ++i)
+		for (int c = 0; c < NUM_OF_CHANNELS; ++c)
 		{
-			EntityBuilder b;
-			b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
-			b.obj_type = Nagox::Enum::MONSTER_TYPE_MELEE;
-			const auto m = EntityFactory::CreateSheep(b);
-			const auto m2 = m.get();
-			static_cast<Regenerator*>(m->GetDeleter())->m_targetField = Field::GetField(0)->SharedFromThis<Field>();
-			Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
+			for (int i = 0; i < 50000/NUM_OF_CHANNELS; ++i)
+			{
+				EntityBuilder b;
+				b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
+				b.obj_type = Nagox::Enum::MONSTER_TYPE_MELEE;
+				const auto m = EntityFactory::CreateSheep(b);
+				const auto m2 = m.get();
+				static_cast<Regenerator*>(m->GetDeleter())->m_targetField = Field::GetField(c)->SharedFromThis<Field>();
+				Field::GetField(c)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
+			}
 		}
 
 		const auto& h = HarvestLoader::GetHarvestPos();
-		for (const auto& [pos,type,mesh_type] : h)
+		for (int c = 0; c < NUM_OF_CHANNELS; ++c)
 		{
-			EntityBuilder b;
-			b.group_type = Nagox::Enum::GROUP_TYPE_HARVEST;
-			b.obj_type = (uint8_t)type;
-			b.x = pos.x;
-			b.y = pos.y;
-			b.z = pos.z;
-			const auto m = EntityFactory::CreateHarvest(b);
-			m->SetDetailType(HARVEST_STATE::AVAILABLE);
-			m->GetComp<HarvestInteraction>()->SetInteractionType(mesh_type);
-			const auto m2 = m.get();
-			Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
+			for (const auto& [pos, type, mesh_type] : h)
+			{
+				EntityBuilder b;
+				b.group_type = Nagox::Enum::GROUP_TYPE_HARVEST;
+				b.obj_type = (uint8_t)type;
+				b.x = pos.x;
+				b.y = pos.y;
+				b.z = pos.z;
+				const auto m = EntityFactory::CreateHarvest(b);
+				m->SetDetailType(HARVEST_STATE::AVAILABLE);
+				m->GetComp<HarvestInteraction>()->SetInteractionType(mesh_type);
+				const auto m2 = m.get();
+				Field::GetField(c)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
+			}
 		}
 		HarvestLoader::FreeHarvestLoader();
 	}
@@ -142,17 +149,17 @@ public:
 
 	virtual void ControlThreadFunc()noexcept override
 	{
-		Mgr(ImGUIMgr)->Init();
-		Mgr(ImGUIMgr)->RegisterRenderFp(DrawMiniMap);
-		Mgr(ImGUIMgr)->Update();
-		Mgr(ImGUIMgr)->ShutDown();
-		//for (;;)
-		//{
-		//	system("pause");
-		//	char buf[32]{};
-		//	std::cin >> buf;
-		//	if ("EXIT" == std::string_view{ buf })break;
-		//}
+		//Mgr(ImGUIMgr)->Init();
+		//Mgr(ImGUIMgr)->RegisterRenderFp(DrawMiniMap);
+		//Mgr(ImGUIMgr)->Update();
+		//Mgr(ImGUIMgr)->ShutDown();
+		for (;;)
+		{
+			system("pause");
+			char buf[32]{};
+			std::cin >> buf;
+			if ("EXIT" == std::string_view{ buf })break;
+		}
 	}
 };
 
@@ -160,13 +167,15 @@ XVector<Cluster*> GlobalClusterFilter(const ContentsEntity* const entity, const 
 XVector<Cluster*> GetAllAdjClusterFunc(const ContentsEntity* const entity, const Field* const field)noexcept;
 XVector<Cluster*> GlobalClusterFilterForTest(const ContentsEntity* const entity, const Field* const field)noexcept;
 
+void* custom_dt_alloc(size_t size, dtAllocHint) { return ::je_malloc(size); }
+
 int main()
 {
 	ContentsInitiator con_init;
 	ClusterPredicate broad_helper;
 	Common::DataRegistry::Load();
 	HarvestLoader::LoadHarvest({}, L"environment\\ExportedGameSpawns.json");
-
+	dtAllocSetCustom(custom_dt_alloc, ::je_free);
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 	
 	ClusterInfoHelper::RegisterClusterFilter(GlobalClusterFilter);
@@ -180,8 +189,11 @@ int main()
 
 	MoveBroadcaster::RegisterGlobalHelper(&broad_helper);
 	Mgr(FieldMgr)->SetNumOfNPC<NUM_OF_NPC>();
-	Mgr(FieldMgr)->RegisterField<ContentsField>(0);
 	
+	for (int c = 0; c < NUM_OF_CHANNELS; ++c)
+	{
+		Mgr(FieldMgr)->RegisterField<ContentsField>(c)->SetFieldID(c);
+	}
 	NagiocpX::ServerService::SetSessionDeleter([](Session* session)noexcept {return NagiocpX::Memory::AlignedFree(session, alignof(ClientSession)); });
 
 	const auto pServerService = new NagiocpX::ServerService
