@@ -9,7 +9,7 @@ namespace Common
     std::span<DirectX::SimpleMath::Vector3> PathFinder::GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest) const noexcept
     {
         // TODO: 매직넘버
-        dtPolyRef path[10];
+        //dtPolyRef path[10];
         int pathCount;
         const auto nav = m_agent->GetNavMesh();
         const auto nav_q = nav->GetNavMeshQuery();
@@ -20,7 +20,7 @@ namespace Common
         //float t;
         //float hitNormal[3];
 
-        const auto start_poly = m_agent->GetCurCell().GetPolyRef();
+       const  auto start_poly = m_agent->GetCurCell().GetPolyRef();
 
        //dtStatus status = nav_q->raycast(start_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, &t, hitNormal, path, &pathCount, 10);
        //
@@ -44,8 +44,18 @@ namespace Common
         }
        // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveTarget(idx, dest_poly, &dest_z_pos.x);
 
-       status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path, &pathCount, 10);
-
+       thread_local std::unordered_map<uint64_t, std::vector<dtPolyRef>> tl_poly_vec;
+       uint64_t start_poly64 = (uint64_t)start_poly;
+       uint64_t dest_poly64 = (uint64_t)dest_poly;
+       if (start_poly64 > dest_poly64)std::swap(start_poly64, dest_poly64);
+       const uint64_t key = (start_poly64 << 32) | dest_poly64;
+       auto path = tl_poly_vec[key];
+       if (path.empty())
+       {
+           path.resize(10);
+           status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path.data(), &pathCount, 10);
+       }
+       
         if (dtStatusFailed(status))
         {
            // std::cout << "못 찾음\n";
@@ -62,7 +72,7 @@ namespace Common
         int straightPathCount = 0;
 
 
-        status = nav_q->findStraightPath(&start_z_pos.x, &dest_z_pos.x, path, pathCount, &straightPath[0].x, straightPathFlags, straightPathPolys, &straightPathCount, 10);
+        status = nav_q->findStraightPath(&start_z_pos.x, &dest_z_pos.x, path.data(), pathCount, &straightPath[0].x, straightPathFlags, straightPathPolys, &straightPathCount, 10);
         if (dtStatusFailed(status))
         {
             //std::cout << "못 찾음\n";

@@ -176,7 +176,7 @@ namespace NagiocpX
 
 		monster_entity->AddComp<PositionComponent>();
 
-		bt_timer->SetTickInterval(200);
+		bt_timer->SetTickInterval(500);
 
 
 		const auto s1 = bt_root->AddChild<SequenceNode>();

@@ -100,7 +100,7 @@ public:
 
 		for (int c = 0; c < NUM_OF_CHANNELS; ++c)
 		{
-			for (int i = 0; i < 50000/NUM_OF_CHANNELS; ++i)
+			for (int i = 0; i < 100000/NUM_OF_CHANNELS; ++i)
 			{
 				EntityBuilder b;
 				b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
