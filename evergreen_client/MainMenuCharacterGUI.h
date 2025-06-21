@@ -9,6 +9,7 @@ public:
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void SetCharacterShowCallback(std::function<void(unsigned int)> callback) { m_characterShowCallback = callback; }
 	void SetEnterGameCallback(std::function<void(unsigned int)> callback) { m_enterGameCallback = callback; }
+	void EnterGame();
 	void SetSelectIndex(unsigned int index);
 
 private:

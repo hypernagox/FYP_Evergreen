@@ -288,6 +288,12 @@
     <ClCompile Include="MinimapRenderer.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="ChannelSwitchGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="TransitionOverlayGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -475,6 +481,12 @@
     </ClInclude>
     <ClInclude Include="MinimapRenderer.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ChannelSwitchGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="TransitionOverlayGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

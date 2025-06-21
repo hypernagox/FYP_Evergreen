@@ -54,10 +54,12 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_focusAgentObj;
 	std::shared_ptr<udsdx::SceneObject> m_inventoryObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftObj;
+	std::shared_ptr<udsdx::SceneObject> m_mainMenuObj;
 	std::shared_ptr<udsdx::SceneObject> m_pauseMenuObj;
 	std::shared_ptr<udsdx::SceneObject> m_partyListObj;
 	std::shared_ptr<udsdx::SceneObject> m_playerTagObj;
 	std::shared_ptr<udsdx::SceneObject> m_playerSelectObj;
+	std::shared_ptr<udsdx::SceneObject> m_channelSwitchObj;
 
 	AuthenticPlayer* m_heroComponent;
 
@@ -74,4 +76,6 @@ private:
 	bool m_bCharacterSelect = false;
 
 	std::unique_ptr<MinimapRenderer> m_minimapRenderer;
+
+	int m_currentChannelID = 0;
 };

@@ -30,4 +30,3 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_createPartyText;
 	std::vector<PartyGUI> m_partyPanels;
 };
-

@@ -34,7 +34,6 @@ MainMenuGUI::MainMenuGUI(const std::shared_ptr<SceneObject>& object) : Component
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(200.0f, 50.0f));
 		buttonComponent->SetClickCallback([this]() {
-			m_panel->SetActive(false);
 			if (m_enterGameCallback)
 			{
 				m_enterGameCallback();

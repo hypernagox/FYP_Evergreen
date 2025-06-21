@@ -37,6 +37,8 @@
 #include "DamageCountGUI.h"
 #include "PlayerSelect.h"
 #include "MainMenuCharacterGUI.h"
+#include "ChannelSwitchGUI.h"
+#include "TransitionOverlayGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -458,11 +460,23 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         pauseMenuComp->SetTogglePauseCallback([this](bool isPaused) { OnTogglePause(isPaused); });
         AddObject(m_pauseMenuObj);
 
-        auto mainMenuObj = std::make_shared<SceneObject>();
-        auto mainMenuComp = mainMenuObj->AddComponent<MainMenuGUI>();
-        mainMenuComp->SetEnterGameCallback([this]() { EnterCharacterSelection(); });
+        m_mainMenuObj = std::make_shared<SceneObject>();
+        auto mainMenuComp = m_mainMenuObj->AddComponent<MainMenuGUI>();
+        mainMenuComp->SetEnterGameCallback([this]() { m_channelSwitchObj->SetActive(true); });
         mainMenuComp->SetExitGameCallback([this]() { ExitGame(); });
-        AddObject(mainMenuObj);
+        AddObject(m_mainMenuObj);
+
+        m_channelSwitchObj = std::make_shared<SceneObject>();
+        auto channelSwitchComp = m_channelSwitchObj->AddComponent<ChannelSwitchGUI>();
+        channelSwitchComp->SetPanelGraphic(true);
+        channelSwitchComp->SetChannelSelectedCallback([this](int channelID) {
+            m_channelSwitchObj->SetActive(false);
+            m_currentChannelID = channelID;
+            EnterCharacterSelection();
+            });
+        m_channelSwitchObj->SetActive(false);
+        pauseMenuComp->SetChannelSwitchGUI(m_channelSwitchObj);
+        AddObject(m_channelSwitchObj);
 
         m_playerSelectObj = std::make_shared<SceneObject>();
         m_playerSelectObj->SetActive(false);
@@ -473,11 +487,16 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         mainMenuCharacterComp->SetEnterGameCallback([this](unsigned int character) { EnterGame(character); });
         AddObject(m_playerSelectObj);
 
+        auto transitionOverlayObj = std::make_shared<SceneObject>();
+        auto transitionOverlayComp = transitionOverlayObj->AddComponent<TransitionOverlayGUI>();
+        AddObject(transitionOverlayObj);
+
         INSTANCE(GameGUIFacade)->PartyList = partyListComp;
         INSTANCE(GameGUIFacade)->LogFloat = logFloatComp;
         INSTANCE(GameGUIFacade)->RequestPopup = requestPopupComp;
         INSTANCE(GameGUIFacade)->PartyStatus = partyStatusComp;
         INSTANCE(GameGUIFacade)->DamageCount = damageCountRenderer;
+        INSTANCE(GameGUIFacade)->TransitionOverlay = transitionOverlayComp;
     }
 
     {
@@ -564,6 +583,7 @@ void GameScene::Render(udsdx::RenderParam& param)
 
 void GameScene::EnterCharacterSelection()
 {
+    m_mainMenuObj->SetActive(false);
     m_mainMenuCameraObject->GetComponent<CameraPerspective>()->SetClipOffset(Vector2::Zero);
     m_mainMenuCameraObject->GetComponent<BezierMovement>()->SetActive(false);
     m_mainMenuCameraObject->AddComponent<PlayerSelect>();
@@ -617,6 +637,7 @@ void GameScene::EnterGame(unsigned int character)
         Send(Create_c2s_ENTER
         (ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())
             , player_type));
+        Send(Create_c2s_CHANGE_CHANNEL(m_currentChannelID));
     }
 
     {
@@ -625,6 +646,18 @@ void GameScene::EnterGame(unsigned int character)
       
         m_playerInterfaceGroup->AddChild(tuto);
     }
+
+    auto channelSwitchComp = m_channelSwitchObj->GetComponent<ChannelSwitchGUI>();
+    channelSwitchComp->SetPanelGraphic(false);
+    channelSwitchComp->SetChannelSelectedCallback([this](int channelID) {
+        INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([this, channelID]() {
+            m_channelSwitchObj->SetActive(false);
+            m_pauseMenuObj->GetComponent<GamePauseGUI>()->SetActivePanel(false);
+            Send(Create_c2s_CHANGE_CHANNEL(channelID));
+            },
+            std::format(L"채널 변경 중 ...")
+            );
+        });
 }
 
 void GameScene::ExitGame()

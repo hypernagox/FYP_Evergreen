@@ -7,6 +7,7 @@ class LogFloatGUI;
 class RequestPopupGUI;
 class PartyStatusGUI;
 class DamageCountGUI;
+class TransitionOverlayGUI;
 
 class GameGUIFacade
 {
@@ -19,5 +20,6 @@ public:
 	RequestPopupGUI* RequestPopup = nullptr;
 	PartyStatusGUI* PartyStatus = nullptr;
 	DamageCountGUI* DamageCount = nullptr;
+	TransitionOverlayGUI* TransitionOverlay = nullptr;
 };
 

@@ -427,6 +427,7 @@
     </ClCompile>
     <ClCompile Include="AuthenticPlayer.cpp" />
     <ClCompile Include="BezierMovement.cpp" />
+    <ClCompile Include="ChannelSwitchGUI.cpp" />
     <ClCompile Include="DamageCountGUI.cpp" />
     <ClCompile Include="DropItem.cpp" />
     <ClCompile Include="DropItemRenderer.cpp" />
@@ -504,6 +505,7 @@
     <ClCompile Include="TerrainDetail.cpp" />
     <ClCompile Include="TerrainDetailRenderer.cpp" />
     <ClCompile Include="TerrainInstanceRenderer.cpp" />
+    <ClCompile Include="TransitionOverlayGUI.cpp" />
     <ClCompile Include="TutorialUI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -526,6 +528,7 @@
     <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="AuthenticPlayer.h" />
     <ClInclude Include="BezierMovement.h" />
+    <ClInclude Include="ChannelSwitchGUI.h" />
     <ClInclude Include="DamageCountGUI.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DropItem.h" />
@@ -579,6 +582,7 @@
     <ClInclude Include="TerrainDetail.h" />
     <ClInclude Include="TerrainDetailRenderer.h" />
     <ClInclude Include="TerrainInstanceRenderer.h" />
+    <ClInclude Include="TransitionOverlayGUI.h" />
     <ClInclude Include="TutorialUI.h" />
   </ItemGroup>
   <ItemGroup>

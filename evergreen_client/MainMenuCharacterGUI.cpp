@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "MainMenuCharacterGUI.h"
+#include "GameGUIFacade.h"
+#include "TransitionOverlayGUI.h"
 
 using namespace udsdx;
 
@@ -44,11 +46,7 @@ MainMenuCharacterGUI::MainMenuCharacterGUI(const std::shared_ptr<udsdx::SceneObj
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(200.0f, 50.0f));
 		buttonComponent->SetClickCallback([this]() {
-			m_panel->SetActive(false);
-			if (m_enterGameCallback)
-			{
-				m_enterGameCallback(m_selectIndex);
-			}
+			EnterGame();
 			});
 
 		auto exitText = m_selectButton->AddComponent<GUIText>();
@@ -61,6 +59,19 @@ MainMenuCharacterGUI::MainMenuCharacterGUI(const std::shared_ptr<udsdx::SceneObj
 
 void MainMenuCharacterGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
+}
+
+void MainMenuCharacterGUI::EnterGame()
+{
+	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([this]() {
+		m_panel->SetActive(false);
+		if (m_enterGameCallback)
+		{
+			m_enterGameCallback(m_selectIndex);
+		}
+		},
+		std::format(L"서버 입장 중 ...")
+	);
 }
 
 void MainMenuCharacterGUI::SetSelectIndex(unsigned int index)
