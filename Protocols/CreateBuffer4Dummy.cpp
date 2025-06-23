@@ -50,16 +50,19 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PING_PONG(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ENTER(
     const Nagox::Struct::Vec3& pos,
     const Nagox::Enum::PLAYER_TYPE& player_type,
+    const uint8_t channel_num,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto pos_offset = &pos;
     const auto player_type_value = player_type;
+    const auto channel_num_value = channel_num;
     const auto serializedc2s_ENTER = Nagox::Protocol::Createc2s_ENTER(
         builder
 ,        pos_offset,
-        player_type_value    );
+        player_type_value,
+        channel_num_value    );
     builder.Finish(serializedc2s_ENTER);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ENTER);

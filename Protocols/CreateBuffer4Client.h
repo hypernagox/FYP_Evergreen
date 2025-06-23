@@ -21,6 +21,7 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PING_PONG(
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_ENTER(
     const Nagox::Struct::Vec3& pos,
     const Nagox::Enum::PLAYER_TYPE& player_type,
+    const uint8_t channel_num,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_MOVE(

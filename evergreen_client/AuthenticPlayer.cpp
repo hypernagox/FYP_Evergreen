@@ -411,12 +411,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		else
 			GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
 	}
-	//TODO: 채널 변경 따로 UI 해야함
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::M))
-	{
-		static uint64_t cur_chan = 0;
-		Send(Create_c2s_CHANGE_CHANNEL(++cur_chan % 10));
-	}
 	GuideSystem::GetInst()->UpdateGuideSystem();
 	// 무브패킷 센드 업데이트
 	m_bSendFlag |=

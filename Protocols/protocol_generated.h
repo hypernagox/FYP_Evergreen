@@ -363,7 +363,8 @@ struct c2s_ENTER FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_ENTERBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_POS = 4,
-    VT_PLAYER_TYPE = 6
+    VT_PLAYER_TYPE = 6,
+    VT_CHANNEL_NUM = 8
   };
   const Nagox::Struct::Vec3 *pos() const {
     return GetStruct<const Nagox::Struct::Vec3 *>(VT_POS);
@@ -377,10 +378,17 @@ struct c2s_ENTER FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_player_type(Nagox::Enum::PLAYER_TYPE _player_type = static_cast<Nagox::Enum::PLAYER_TYPE>(0)) {
     return SetField<uint8_t>(VT_PLAYER_TYPE, static_cast<uint8_t>(_player_type), 0);
   }
+  uint8_t channel_num() const {
+    return GetField<uint8_t>(VT_CHANNEL_NUM, 0);
+  }
+  bool mutate_channel_num(uint8_t _channel_num = 0) {
+    return SetField<uint8_t>(VT_CHANNEL_NUM, _channel_num, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_POS, 4) &&
            VerifyField<uint8_t>(verifier, VT_PLAYER_TYPE, 1) &&
+           VerifyField<uint8_t>(verifier, VT_CHANNEL_NUM, 1) &&
            verifier.EndTable();
   }
 };
@@ -394,6 +402,9 @@ struct c2s_ENTERBuilder {
   }
   void add_player_type(Nagox::Enum::PLAYER_TYPE player_type) {
     fbb_.AddElement<uint8_t>(c2s_ENTER::VT_PLAYER_TYPE, static_cast<uint8_t>(player_type), 0);
+  }
+  void add_channel_num(uint8_t channel_num) {
+    fbb_.AddElement<uint8_t>(c2s_ENTER::VT_CHANNEL_NUM, channel_num, 0);
   }
   explicit c2s_ENTERBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -409,9 +420,11 @@ struct c2s_ENTERBuilder {
 inline ::flatbuffers::Offset<c2s_ENTER> Createc2s_ENTER(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     const Nagox::Struct::Vec3 *pos = nullptr,
-    Nagox::Enum::PLAYER_TYPE player_type = Nagox::Enum::PLAYER_TYPE_WARRIOR) {
+    Nagox::Enum::PLAYER_TYPE player_type = Nagox::Enum::PLAYER_TYPE_WARRIOR,
+    uint8_t channel_num = 0) {
   c2s_ENTERBuilder builder_(_fbb);
   builder_.add_pos(pos);
+  builder_.add_channel_num(channel_num);
   builder_.add_player_type(player_type);
   return builder_.Finish();
 }

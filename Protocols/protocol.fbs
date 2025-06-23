@@ -27,6 +27,7 @@ table c2s_ENTER
 {
     pos:Nagox.Struct.Vec3;
     player_type : Nagox.Enum.PLAYER_TYPE;
+    channel_num : uint8;
 }
 
 table s2c_APPEAR_OBJECT
