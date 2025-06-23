@@ -60,7 +60,9 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Player(EntityBuild
 std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuilderBase* builder)
 {
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
-	if (b->obj_type == Nagox::Enum::MONSTER_TYPE_MELEE)
+	switch (b->obj_type)
+	{
+	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_FOX:
 	{
 		auto instance = std::make_shared<udsdx::SceneObject>();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
@@ -73,8 +75,19 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
 		return instance;
+		break;
 	}
-	if (b->obj_type == Nagox::Enum::MONSTER_TYPE_RANGE)
+	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_SHEEP:
+	{
+		// TODO: 剧 积己
+		break;
+	}
+	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BEAR:
+	{
+		// TODO: 磅 积己
+		break;
+	}
+	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_GOBLIN:
 	{
 		const auto b = static_cast<DefaultEntityBuilder*>(builder);
 
@@ -90,6 +103,10 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 
 		auto renderer = instance->AddComponent<MonsterRenderer>();
 		return instance;
+		break;
+	}
+	default:
+		break;
 	}
 }
 

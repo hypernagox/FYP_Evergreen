@@ -86,31 +86,37 @@ inline const char *EnumNamePLAYER_TYPE(PLAYER_TYPE e) {
 }
 
 enum MONSTER_TYPE : uint8_t {
-  MONSTER_TYPE_MELEE = 0,
-  MONSTER_TYPE_RANGE = 1,
-  MONSTER_TYPE_MIN = MONSTER_TYPE_MELEE,
-  MONSTER_TYPE_MAX = MONSTER_TYPE_RANGE
+  MONSTER_TYPE_FOX = 0,
+  MONSTER_TYPE_SHEEP = 1,
+  MONSTER_TYPE_BEAR = 2,
+  MONSTER_TYPE_GOBLIN = 3,
+  MONSTER_TYPE_MIN = MONSTER_TYPE_FOX,
+  MONSTER_TYPE_MAX = MONSTER_TYPE_GOBLIN
 };
 
-inline const MONSTER_TYPE (&EnumValuesMONSTER_TYPE())[2] {
+inline const MONSTER_TYPE (&EnumValuesMONSTER_TYPE())[4] {
   static const MONSTER_TYPE values[] = {
-    MONSTER_TYPE_MELEE,
-    MONSTER_TYPE_RANGE
+    MONSTER_TYPE_FOX,
+    MONSTER_TYPE_SHEEP,
+    MONSTER_TYPE_BEAR,
+    MONSTER_TYPE_GOBLIN
   };
   return values;
 }
 
 inline const char * const *EnumNamesMONSTER_TYPE() {
-  static const char * const names[3] = {
-    "MELEE",
-    "RANGE",
+  static const char * const names[5] = {
+    "FOX",
+    "SHEEP",
+    "BEAR",
+    "GOBLIN",
     nullptr
   };
   return names;
 }
 
 inline const char *EnumNameMONSTER_TYPE(MONSTER_TYPE e) {
-  if (::flatbuffers::IsOutRange(e, MONSTER_TYPE_MELEE, MONSTER_TYPE_RANGE)) return "";
+  if (::flatbuffers::IsOutRange(e, MONSTER_TYPE_FOX, MONSTER_TYPE_GOBLIN)) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesMONSTER_TYPE()[index];
 }

@@ -17,8 +17,10 @@ enum PLAYER_TYPE : ubyte
 }
 
 enum MONSTER_TYPE : ubyte
-{   MELEE = 0,
-    RANGE = 1
+{   FOX = 0,
+    SHEEP = 1,
+    BEAR = 2,
+    GOBLIN = 3
 }
 
 enum SKILL_TYPE : ubyte

@@ -224,7 +224,7 @@ void FoxQuest::InitQuestField() noexcept
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
-		b.obj_type = Nagox::Enum::MONSTER_TYPE_MELEE;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
 		const auto m = EntityFactory::CreateMonster(b);
 		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
 
@@ -259,7 +259,7 @@ void GoblinQuest::InitQuestField() noexcept
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
-		b.obj_type = Nagox::Enum::MONSTER_TYPE_RANGE;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_GOBLIN;
 		const auto m = EntityFactory::CreateRangeMonster(b);
 		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
 		m->GetComp<PositionComponent>()->pos = mon_quest_pos[i];
@@ -302,7 +302,7 @@ void NPCGuardQuest::InitQuestField() noexcept
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
-		b.obj_type = Nagox::Enum::MONSTER_TYPE_MELEE;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
 		const auto m = EntityFactory::CreateMonster(b);
 		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
 		//m->GetComp<PositionComponent>()->pos = points[i];
@@ -324,3 +324,22 @@ void NPCGuardQuest::InitQuestField() noexcept
 	}
 }
 
+void BearQuest::InitQuestField() noexcept
+{
+	const auto num = (int)(sizeof(mon_quest_pos) / sizeof(mon_quest_pos[0]));
+
+	m_mon_count.store_relaxed(num);
+
+	for (int i = 0; i < num; ++i)
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
+		const auto m = EntityFactory::CreateRangeMonster(b);
+		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+		m->GetComp<PositionComponent>()->pos = mon_quest_pos[i];
+		m->GetComp<NaviAgent>()->SetPos(mon_quest_pos[i]);
+		const auto pos = m->GetComp<PositionComponent>()->pos;
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+	}
+}

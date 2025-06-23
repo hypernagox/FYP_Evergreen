@@ -104,7 +104,7 @@ public:
 			{
 				EntityBuilder b;
 				b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
-				b.obj_type = Nagox::Enum::MONSTER_TYPE_MELEE;
+				b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
 				const auto m = EntityFactory::CreateSheep(b);
 				const auto m2 = m.get();
 				static_cast<Regenerator*>(m->GetDeleter())->m_targetField = Field::GetField(c)->SharedFromThis<Field>();

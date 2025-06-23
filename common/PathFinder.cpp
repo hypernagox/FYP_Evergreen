@@ -50,7 +50,7 @@ namespace Common
        uint64_t dest_poly64 = (uint64_t)dest_poly;
        if (start_poly64 > dest_poly64)std::swap(start_poly64, dest_poly64);
        const uint64_t key = (start_poly64 << 32) | dest_poly64;
-       auto path = tl_poly_vec[key];
+       auto& path = tl_poly_vec[key];
        if (path.empty())
        {
            status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path.data(), &pathCount, 10);

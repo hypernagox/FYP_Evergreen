@@ -22,18 +22,24 @@ bool PartyQuestSystem::MissionStart()
 		if (!CanMissionStart())return false;
 		StartFlag();
 		m_runFlag = true;
-		if (0 == m_curQuestID)
+		switch (m_curQuestID)
 		{
+		case 0:
 			m_curQuestRoomInstance = NagiocpX::MakeShared<FoxQuest>();
-		}
-		else if (2 == m_curQuestID)
-		{
-			m_curQuestRoomInstance = NagiocpX::MakeShared<NPCGuardQuest>();
-		}
-		else
-		{
+			break;
+		case 1:
 			m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
+			break;
+		case 2:
+			break;
+			m_curQuestRoomInstance = NagiocpX::MakeShared<NPCGuardQuest>();
+		case 3:
+			m_curQuestRoomInstance = NagiocpX::MakeShared<BearQuest>();
+			break;
+		default:
+			break;
 		}
+		
 		m_curQuestRoomInstance->SetOwnerSystem(shared_from_this());
 		m_prev_field =
 			m_member[0]->GetClusterFieldInfo().curFieldPtr;
