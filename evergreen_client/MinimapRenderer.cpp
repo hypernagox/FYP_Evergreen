@@ -187,9 +187,21 @@ void MinimapRenderer::SetViewMatrix(const udsdx::Vector3& position, const udsdx:
 
 void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam)
 {
+	CD3DX12_RESOURCE_BARRIER barrier[2];
+	barrier[0] = CD3DX12_RESOURCE_BARRIER::Transition(
+		m_renderTarget.Get(),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_RENDER_TARGET);
+	barrier[1] = CD3DX12_RESOURCE_BARRIER::Transition(
+		m_renderTarget.Get(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_GENERIC_READ);
+
 	ID3D12GraphicsCommandList* pCommandList = renderParam.CommandList;
 
 	pCommandList->SetGraphicsRootSignature(m_rootSignature.Get());
+
+	pCommandList->ResourceBarrier(1, &barrier[0]);
 
 	pCommandList->ClearRenderTargetView(m_rtvCpuHandle, RENDER_CLEAR_VALUE, 0, nullptr);
 	pCommandList->ClearDepthStencilView(m_dsvCpuHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
@@ -213,18 +225,6 @@ void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam)
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &transformWorld, 0);
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_viewMatrix, 16);
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &transformProjection, 32);
-
-	CD3DX12_RESOURCE_BARRIER barrier[2];
-	barrier[0] = CD3DX12_RESOURCE_BARRIER::Transition(
-		m_renderTarget.Get(),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		D3D12_RESOURCE_STATE_RENDER_TARGET);
-	barrier[1] = CD3DX12_RESOURCE_BARRIER::Transition(
-		m_renderTarget.Get(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET,
-		D3D12_RESOURCE_STATE_GENERIC_READ);
-
-	pCommandList->ResourceBarrier(1, &barrier[0]);
 
 	// Draw the minimap mesh
 	auto vbv = m_minimapMesh->VertexBufferView();
