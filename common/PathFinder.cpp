@@ -4,6 +4,8 @@
 #include "NaviAgent.h"
 #include "Navigator.h"
 
+thread_local std::unordered_map<uint64_t, std::array<dtPolyRef, 10>> tl_poly_vec = {};
+
 namespace Common
 {
     std::span<DirectX::SimpleMath::Vector3> PathFinder::GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest) const noexcept
@@ -43,8 +45,7 @@ namespace Common
             return {};
         }
        // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveTarget(idx, dest_poly, &dest_z_pos.x);
-
-       thread_local std::unordered_map<uint64_t, std::vector<dtPolyRef>> tl_poly_vec;
+       extern thread_local std::unordered_map<uint64_t, std::array<dtPolyRef, 10>> tl_poly_vec;
        uint64_t start_poly64 = (uint64_t)start_poly;
        uint64_t dest_poly64 = (uint64_t)dest_poly;
        if (start_poly64 > dest_poly64)std::swap(start_poly64, dest_poly64);
@@ -52,7 +53,6 @@ namespace Common
        auto path = tl_poly_vec[key];
        if (path.empty())
        {
-           path.resize(10);
            status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path.data(), &pathCount, 10);
        }
        

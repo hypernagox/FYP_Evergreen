@@ -636,8 +636,7 @@ void GameScene::EnterGame(unsigned int character)
 
         Send(Create_c2s_ENTER
         (ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())
-            , player_type));
-        Send(Create_c2s_CHANGE_CHANNEL(m_currentChannelID));
+            , player_type, m_currentChannelID));
     }
 
     {
