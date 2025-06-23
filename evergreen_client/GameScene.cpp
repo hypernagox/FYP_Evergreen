@@ -386,6 +386,29 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         AddObject(m_focusAgentObj);
         m_focusAgentObj->SetActive(false);
 
+        auto minimapObj = std::make_shared<SceneObject>();
+        auto minimapImage = minimapObj->AddComponent<GUIImage>();
+        minimapImage->SetTexture(m_minimapRenderer->GetRenderTargetTexture(), true);
+        minimapObj->GetTransform()->SetLocalPosition(Vector3(-300.0f, -300.0f, 0.0f));
+
+        {
+            auto minimapBackground = std::make_shared<SceneObject>();
+            auto minimapBackgroundRenderer = minimapBackground->AddComponent<GUIImage>();
+            minimapBackgroundRenderer->SetTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_outline_gradation.png")));
+            minimapBackgroundRenderer->SetSize(Vector2(360.0f, 360.0f));
+
+            auto minimapMarkerObj = std::make_shared<SceneObject>();
+            minimapMarkerObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 16.0f, 0.0f));
+            auto minimapMarkerRenderer = minimapMarkerObj->AddComponent<GUIImage>();
+            minimapMarkerRenderer->SetTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_marker.png")));
+            minimapMarkerRenderer->SetSize(Vector2(32.0f, 32.0f));
+
+            minimapObj->AddChild(minimapBackground);
+            minimapObj->AddChild(minimapMarkerObj);
+        }
+
+        m_playerInterfaceGroup->AddChild(minimapObj);
+
         auto guiObj = std::make_shared<SceneObject>();
         auto guiRenderer = guiObj->AddComponent<PlayerStatusGUI>();
         m_playerInterfaceGroup->AddChild(guiObj);
@@ -430,29 +453,6 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
 		auto interactionFloatGUI = EntityInteractionObj->AddComponent<InteractionFloatGUI>();
 		entityInteraction->SetInteractionFloatGUI(interactionFloatGUI);
 		m_playerInterfaceGroup->AddChild(EntityInteractionObj);
-
-        auto minimapObj = std::make_shared<SceneObject>();
-        auto minimapImage = minimapObj->AddComponent<GUIImage>();
-        minimapImage->SetTexture(m_minimapRenderer->GetRenderTargetTexture(), true);
-        minimapObj->GetTransform()->SetLocalPosition(Vector3(-300.0f, -300.0f, 0.0f));
-
-        {
-            auto minimapBackground = std::make_shared<SceneObject>();
-            auto minimapBackgroundRenderer = minimapBackground->AddComponent<GUIImage>();
-            minimapBackgroundRenderer->SetTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_outline_gradation.png")));
-            minimapBackgroundRenderer->SetSize(Vector2(360.0f, 360.0f));
-
-            auto minimapMarkerObj = std::make_shared<SceneObject>();
-            minimapMarkerObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 16.0f, 0.0f));
-            auto minimapMarkerRenderer = minimapMarkerObj->AddComponent<GUIImage>();
-            minimapMarkerRenderer->SetTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_marker.png")));
-            minimapMarkerRenderer->SetSize(Vector2(32.0f, 32.0f));
-
-            minimapObj->AddChild(minimapBackground);
-            minimapObj->AddChild(minimapMarkerObj);
-        }
-
-        m_playerInterfaceGroup->AddChild(minimapObj);
 
         m_pauseMenuObj = std::make_shared<SceneObject>();
         auto pauseMenuComp = m_pauseMenuObj->AddComponent<GamePauseGUI>();
