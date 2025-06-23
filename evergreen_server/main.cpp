@@ -19,6 +19,7 @@
 #include "NaviAgent_Common.h"
 #include "Interaction.h"
 #include "ImGUIMgr.h"
+#include "PathFinder_Common.h"
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 2000001;
@@ -136,7 +137,7 @@ public:
 	virtual void TLSInitialize()noexcept override
 	{
 		const volatile auto init_builder = GetBuilder();
-		extern thread_local std::unordered_map<uint64_t, std::array<dtPolyRef, 10>> tl_poly_vec;
+		extern thread_local std::unordered_map<uint64_t, std::pair<ZeroInt, std::array<dtPolyRef, 10>>> tl_poly_vec;
 		tl_poly_vec.reserve(128);
 	}
 

@@ -1,5 +1,10 @@
 #pragma once
 
+struct ZeroInt {
+    int num = 0;
+    operator int()const noexcept { return num; }
+};
+
 namespace Common
 {
     class NaviAgent;
