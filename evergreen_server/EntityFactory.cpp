@@ -222,4 +222,48 @@ namespace NagiocpX
 
 		return monster_entity;
 	}
+	S_ptr<ContentsEntity> EntityFactory::CreateBear(const EntityBuilder& b) noexcept
+	{
+		const auto monster_entity = CreateContentsEntity(b.group_type, b.obj_type);
+
+		const auto bt_timer = monster_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>(), 20 * 20);
+
+		const auto& bt_root = bt_timer->GetRootNode();
+
+		monster_entity->AddComp<PositionComponent>();
+
+		bt_timer->SetTickInterval(100);
+
+
+		const auto s1 = bt_root->AddChild<SequenceNode>();
+
+		s1->AddChild<RangeCheckNode>(30);
+		const auto s2 = s1->AddChild<SequenceNode>();
+
+		s2->AddChild<RangeCheckNode>(100);
+		s2->AddChild<AttackNode>();
+
+		s1->AddChild<ChaseNode>();
+
+		bt_root->AddChild<PatrolNode>();
+
+		const auto agent = monster_entity->AddComp<NaviAgent>();
+		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
+		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+
+		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
+		//monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
+		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1.5f);
+		monster_entity->GetComp<SphereCollider>()->GetCollider()->m_offSet.y += 1.f;
+
+		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int, "Fox", "hp")); // TODO 매직넘버
+		monster_entity->AddComp<MonsterDeath>();
+
+		// TODO: 필요할때만 딜리터 설정하기
+		//monster_entity->SetDeleter<Regenerator>(5000, agent->GetPosComp()->pos);
+
+		monster_entity->AddComp<DropTable>()->SetItemType("Fox");
+
+		return monster_entity;
+	}
 }

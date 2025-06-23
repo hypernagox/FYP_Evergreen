@@ -38,6 +38,8 @@ namespace NagiocpX
 		static S_ptr<ContentsEntity> CreateClearTree(const EntityBuilder& b)noexcept;
 
 		static S_ptr<ContentsEntity> CreateSheep(const EntityBuilder& b)noexcept;
+
+		static S_ptr<ContentsEntity> CreateBear(const EntityBuilder& b)noexcept;
 	};
 }
 

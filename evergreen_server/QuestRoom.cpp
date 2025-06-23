@@ -335,7 +335,7 @@ void BearQuest::InitQuestField() noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
-		const auto m = EntityFactory::CreateRangeMonster(b);
+		const auto m = EntityFactory::CreateMonster(b);
 		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
 		m->GetComp<PositionComponent>()->pos = mon_quest_pos[i];
 		m->GetComp<NaviAgent>()->SetPos(mon_quest_pos[i]);
