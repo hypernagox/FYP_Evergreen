@@ -1,5 +1,14 @@
 #include "common.hlsl"
 
+#ifdef DEFERRED
+
+float4 PSDeferred(VertexOut pin) : SV_Target
+{
+	return PSDeferredDefault(pin);
+}
+
+#else
+
 static const float2 gTexCoords[6] =
 {
 	float2(0.0f, 1.0f),
@@ -42,7 +51,7 @@ PixelOut PS(VertexOut pin)
     float3 normal = normalize(mul(pin.NormalW.xyz, (float3x3)gView));
     float3 delta = normalize(PosW.xyz - gEyePosW.xyz);
 	float2 uv = DirectionToEnvironmentUV(delta);
-    float4 texColor = gMainTex.Sample(gSampler, uv);
+    float4 texColor = gMainTex.SampleLevel(gSampler, uv, 0);
     float4 posDelta = PosNDC - PrevPosH;
 
     pOut.Buffer1 = texColor;
@@ -51,3 +60,5 @@ PixelOut PS(VertexOut pin)
 	pOut.Buffer3 /= max(length(pOut.Buffer3), 1.0f);
     return pOut;
 }
+
+#endif

@@ -92,11 +92,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     
     m_characterObject = std::make_shared<SceneObject>();
     m_characterObject->GetTransform()->SetLocalPositionY(-1.375f);
-    m_characterObject->GetTransform()->SetLocalScale(Vector3::One * 1e-2f);
+    m_characterObject->GetTransform()->SetLocalScale(Vector3::One);
     auto meshRenderer = m_characterObject->AddComponent<RiggedMeshRenderer>();
-    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\character.yrms"));
-    meshRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\color.hlsl"));
-    meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\biped_attack1.yac"));
+    //meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\npc\\npc_tpose.yrms"));
+    //meshRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"));
+    //meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\npc\\npc_walk.yac"), true);
+
+    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\bear_new\\bear_tpose.yrms"));
+    meshRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"));
+    meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\bear_new\\bear_attack2.yac"), true);
 
     for (int i = 0; i < 4; ++i)
     {
@@ -104,10 +108,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         meshRenderer->SetMaterial(m_characterMaterials[i].get(), i);
     }
 
-    m_characterMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Body_Main.png"));
-    m_characterMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Cloth_Main.png"));
-    m_characterMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Hat_Main.png"));
-    m_characterMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\character\\Extra_Main.png"));
+    // m_characterMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\npc\\npc_diffuse_1.png"));
+    // m_characterMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\npc\\npc_diffuse_0.png"));
+    // m_characterMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\npc\\npc_diffuse_2.png"));
+
+    m_characterMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\bear_new\\bear_BaseColor.png"));
 
      g_scene->AddObject(m_characterObject);
 

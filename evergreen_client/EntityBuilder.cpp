@@ -85,7 +85,17 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BEAR:
 	{
 		// TODO: °õ »ý¼º
-		break;
+		auto instance = std::make_shared<udsdx::SceneObject>();
+		instance->GetTransform()->SetLocalPosition(b->obj_pos);
+
+		auto monsterComponent = instance->AddComponent<Monster>();
+		auto serverComponent = instance->AddComponent<ServerObject>();
+		serverComponent->SetObjID(builder->obj_id);
+
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		moveInterpolator->InitInterpolator(b->obj_pos);
+
+		return instance;
 	}
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_GOBLIN:
 	{

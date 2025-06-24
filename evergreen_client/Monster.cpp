@@ -50,6 +50,12 @@ Monster::~Monster()
 {
 }
 
+void Monster::InitializeMonster(std::string_view monsterType)
+{
+	m_maxHP = GET_DATA(int, monsterType, "hp");
+	m_hp = m_maxHP;
+}
+
 void Monster::Update(const Time& time, Scene& scene)
 {
 	float distance = (m_lastPosition - m_entityMovement->GetPosition()).Length();
@@ -83,5 +89,5 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 void Monster::OnHit(int afterHealth)
 {
 	m_hp = afterHealth;
-	m_hpPanel->SetHPFraction(static_cast<float>(afterHealth) / GET_DATA(int, "Fox", "hp"));
+	m_hpPanel->SetHPFraction(static_cast<float>(afterHealth) / m_maxHP);
 }
