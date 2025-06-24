@@ -3,7 +3,8 @@
 #include "ServerObject.h"
 #include "EntityMovement.h"
 #include "PlayerRenderer.h"
-#include "Monster.h"
+#include "MonsterFox.h"
+#include "MonsterBear.h"
 #include "MoveInterpolator.h"
 #include "DropItem.h"
 #include "DropItemRenderer.h"
@@ -67,7 +68,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 		auto instance = std::make_shared<udsdx::SceneObject>();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
-		auto monsterComponent = instance->AddComponent<Monster>();
+		auto monsterComponent = instance->AddComponent<MonsterFox>();
 		auto serverComponent = instance->AddComponent<ServerObject>();
 		serverComponent->SetObjID(builder->obj_id);
 
@@ -84,11 +85,10 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	}
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BEAR:
 	{
-		// TODO: °õ »ý¼º
 		auto instance = std::make_shared<udsdx::SceneObject>();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
-		auto monsterComponent = instance->AddComponent<Monster>();
+		auto monsterComponent = instance->AddComponent<MonsterBear>();
 		auto serverComponent = instance->AddComponent<ServerObject>();
 		serverComponent->SetObjID(builder->obj_id);
 

@@ -472,6 +472,8 @@
     <ClCompile Include="MainMenuGUI.cpp" />
     <ClCompile Include="MinimapRenderer.cpp" />
     <ClCompile Include="Monster.cpp" />
+    <ClCompile Include="MonsterBear.cpp" />
+    <ClCompile Include="MonsterFox.cpp" />
     <ClCompile Include="MonsterHPPanel.cpp" />
     <ClCompile Include="MonsterRenderer.cpp" />
     <ClCompile Include="MoveInterpolator.cpp" />
@@ -555,6 +557,8 @@
     <ClInclude Include="MainMenuGUI.h" />
     <ClInclude Include="MinimapRenderer.h" />
     <ClInclude Include="Monster.h" />
+    <ClInclude Include="MonsterBear.h" />
+    <ClInclude Include="MonsterFox.h" />
     <ClInclude Include="MonsterHPPanel.h" />
     <ClInclude Include="MonsterRenderer.h" />
     <ClInclude Include="MoveInterpolator.h" />

@@ -9,6 +9,7 @@ class MonsterHPPanel;
 
 class Monster : public Component
 {
+protected:
 	enum class AnimationState
 	{
 		Idle,
@@ -20,9 +21,6 @@ class Monster : public Component
 protected:
 	std::shared_ptr<SceneObject> m_rendererObj;
 	EntityMovement* m_entityMovement;
-
-	std::shared_ptr<udsdx::Material> m_monsterMaterial;
-	udsdx::RiggedMeshRenderer* m_riggedMeshRenderer;
 
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
 	MonsterHPPanel* m_hpPanel;
