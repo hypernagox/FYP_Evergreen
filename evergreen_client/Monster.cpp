@@ -5,31 +5,9 @@
 
 Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
-	m_rendererObj = std::make_shared<SceneObject>();
-
-	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
-
-	auto shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl"));
-	m_monsterMaterial = std::make_shared<udsdx::Material>();
-	m_monsterMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"fox\\fox_high_DefaultMaterial_BaseColor.png")));
-
-	m_transformBody = pBody->GetTransform();
-	m_rendererObj->AddChild(pBody);
-	m_rendererObj->GetTransform()->SetLocalPosition(Vector3::Up * -0.05f);
-
-	m_riggedMeshRenderer = pBody->AddComponent<RiggedMeshRenderer>();
-	m_riggedMeshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"fox\\fox.yrms")));
-	m_riggedMeshRenderer->SetShader(shader);
-	m_riggedMeshRenderer->SetMaterial(m_monsterMaterial.get());
-
-	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 48.0f);
-
 	m_entityMovement = object->AddComponent<EntityMovement>();
 
-	GetSceneObject()->AddChild(m_rendererObj);
-
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
-	m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.yac")), true);
 
 	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::Idle, AnimationState::Run, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
 	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::Run, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
@@ -43,11 +21,17 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	auto hpPanelObj = std::make_shared<SceneObject>();
 	hpPanelObj->GetTransform()->SetLocalPosition(Vector3::Up * 1.5f);
 	m_hpPanel = hpPanelObj->AddComponent<MonsterHPPanel>();
-	// GetSceneObject()->AddChild(hpPanelObj);
+	GetSceneObject()->AddChild(hpPanelObj);
 }
 
 Monster::~Monster()
 {
+}
+
+void Monster::InitializeMonster(std::string_view monsterType)
+{
+	m_maxHP = GET_DATA(int, monsterType, "hp");
+	m_hp = m_maxHP;
 }
 
 void Monster::Update(const Time& time, Scene& scene)
@@ -67,14 +51,7 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 {
 	switch (to)
 	{
-	case AnimationState::Idle:
-		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.yac")), true);
-		break;
-	case AnimationState::Run:
-		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_run_animation.yac")), true);
-		break;
 	case AnimationState::Attack:
-		m_riggedMeshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_attack.yac")), false, true);
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
 		break;
 	}
@@ -83,5 +60,5 @@ void Monster::OnAnimationStateChange(AnimationState from, AnimationState to)
 void Monster::OnHit(int afterHealth)
 {
 	m_hp = afterHealth;
-	m_hpPanel->SetHPFraction(static_cast<float>(afterHealth) / GET_DATA(int, "Fox", "hp"));
+	m_hpPanel->SetHPFraction(static_cast<float>(afterHealth) / m_maxHP);
 }

@@ -1,5 +1,14 @@
 #include "common.hlsl"
 
+#ifdef DEFERRED
+
+float4 PSDeferred(VertexOut pin) : SV_Target
+{
+	return PSDeferredDefault(pin);
+}
+
+#else
+
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout;
@@ -17,8 +26,6 @@ PixelOut PS(VertexOut pin)
     posH /= posH.w;
     pin.PrevPosH /= pin.PrevPosH.w;
     float4 posDelta = posH - pin.PrevPosH;
-    
-    clip(texColor.a - 0.1f);
      
     pOut.Buffer1 = texColor;
     pOut.Buffer2 = PackNormal(normal);
@@ -26,3 +33,5 @@ PixelOut PS(VertexOut pin)
 	pOut.Buffer3 /= max(length(pOut.Buffer3), 1.0f);
     return pOut;
 }
+
+#endif

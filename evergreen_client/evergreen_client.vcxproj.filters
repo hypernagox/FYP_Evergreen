@@ -294,6 +294,12 @@
     <ClCompile Include="TransitionOverlayGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="MonsterBear.cpp">
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterFox.cpp">
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -487,6 +493,12 @@
     </ClInclude>
     <ClInclude Include="TransitionOverlayGUI.h">
       <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterBear.h">
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterFox.h">
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -118,7 +118,9 @@ namespace udsdx
 	void Scene::EnqueueRenderObject(RendererBase* object, RenderGroup group)
 	{
 		ID3D12PipelineState* pipelineState = object->GetPipelineState();
-		ID3D12PipelineState* defferedPipelineState = object->GetShader()->DeferredPipelineState();
+		ID3D12PipelineState* defferedPipelineState = nullptr;
+		if (object->GetShader() != nullptr)
+			defferedPipelineState = object->GetShader()->DeferredPipelineState();
 		m_renderObjectQueues[group][defferedPipelineState][pipelineState].emplace_back(object);
 	}
 
