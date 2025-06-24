@@ -1,6 +1,15 @@
 #define USE_CUSTOM_SHADOWPS
 #include "common.hlsl"
 
+#ifdef DEFERRED
+
+float4 PSDeferred(VertexOut pin) : SV_Target
+{
+	return PSDeferredDefault(pin);
+}
+
+#else
+
 Texture2D gSrcSplatmap0 : register(t0);
 Texture2D gSrcSplatmap1 : register(t1);
 
@@ -116,3 +125,5 @@ PixelOut PS(VertexOut pin)
 void ShadowPS(VertexOut pin)
 {
 }
+
+#endif

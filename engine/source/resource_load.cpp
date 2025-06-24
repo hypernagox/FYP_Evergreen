@@ -170,6 +170,7 @@ namespace udsdx
 	{ ZoneScoped;
 		auto shader = std::make_unique<Shader>(path);
 		shader->BuildPipelineState(m_device, m_rootSignature);
+		shader->BuildDeferredPipelineState(m_device, m_rootSignature);
 		return shader;
 	}
 

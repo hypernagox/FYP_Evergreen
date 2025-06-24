@@ -1,5 +1,14 @@
 #include "common.hlsl"
 
+#ifdef DEFERRED
+
+float4 PSDeferred(VertexOut pin) : SV_Target
+{
+	return PSDeferredDefault(pin);
+}
+
+#else
+
 Texture2D gNormalTex : register(t1);
 
 VertexOut VS(VertexIn vin)
@@ -43,3 +52,5 @@ PixelOut PS(VertexOut pin)
 	pOut.Buffer3 /= max(length(pOut.Buffer3), 1.0f);
     return pOut;
 }
+
+#endif

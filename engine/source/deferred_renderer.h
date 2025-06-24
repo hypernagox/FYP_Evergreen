@@ -19,20 +19,20 @@ namespace udsdx
 		void BuildRootSignature();
 		void RebuildDescriptors();
 		void BuildResources();
-		void BuildPipelineStateObjects();
 
 	public:
 		void ClearRenderTargets(ID3D12GraphicsCommandList* commandList);
 		void SetRenderTargets(ID3D12GraphicsCommandList* commandList);
 		void PassBufferPreparation(RenderParam& renderParam);
 		void PassBufferPostProcess(RenderParam& renderParam);
-		void PassRender(RenderParam& renderParam, D3D12_GPU_VIRTUAL_ADDRESS cbvGpu);
+		void PassRender(RenderParam& renderParam, D3D12_GPU_VIRTUAL_ADDRESS cbvGpu, const std::vector<ID3D12PipelineState*>& pipelineStates);
 
 	public:
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetGBufferSrv(UINT index) const { return m_gBuffersGpuSrv[index]; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetDepthBufferSrv() const { return m_depthBufferGpuSrv; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetStencilBufferSrv() const { return m_stencilBufferGpuSrv; }
 		CD3DX12_CPU_DESCRIPTOR_HANDLE GetDepthBufferDsv() const { return m_depthBufferCpuDsv; }
+		ID3D12RootSignature* GetRootSignature() const { return m_renderRootSignature.Get(); }
 
 	public:
 		static constexpr UINT NUM_GBUFFERS = 3;
@@ -58,8 +58,6 @@ namespace udsdx
 		UINT m_height = 0;
 
 		ComPtr<ID3D12RootSignature> m_renderRootSignature;
-		ComPtr<ID3D12PipelineState> m_renderPipelineState;
-		ComPtr<ID3D12PipelineState> m_debugPipelineState;
 
 		// Multiple Render Target (MRT) for deferred rendering
 		std::array<ComPtr<ID3D12Resource>, NUM_GBUFFERS> m_gBuffers;

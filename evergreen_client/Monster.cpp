@@ -43,7 +43,7 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	auto hpPanelObj = std::make_shared<SceneObject>();
 	hpPanelObj->GetTransform()->SetLocalPosition(Vector3::Up * 1.5f);
 	m_hpPanel = hpPanelObj->AddComponent<MonsterHPPanel>();
-	GetSceneObject()->AddChild(hpPanelObj);
+	// GetSceneObject()->AddChild(hpPanelObj);
 }
 
 Monster::~Monster()

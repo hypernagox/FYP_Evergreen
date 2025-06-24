@@ -339,12 +339,6 @@
     <FxCompile Include="resource\cs_motion_blur_tilemax.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="resource\ps_deferred_pass.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="resource\ps_deferred_pass_debug.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
     <FxCompile Include="resource\ps_outline.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>

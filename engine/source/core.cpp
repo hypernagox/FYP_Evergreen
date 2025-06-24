@@ -178,7 +178,6 @@ namespace udsdx
 		
 		// Create Deferred Renderer
 		m_deferredRenderer = std::make_unique<DeferredRenderer>(m_d3dDevice.Get());
-		m_deferredRenderer->BuildPipelineStateObjects();
 
 		// Create Shadow Map
 		m_shadowMap = std::make_unique<ShadowMap>(4096u, 4096u, m_d3dDevice.Get());
@@ -616,6 +615,7 @@ namespace udsdx
 			.RenderTargetView = CurrentBackBufferView(),
 
 			.RenderTargetResource = CurrentBackBuffer(),
+			.DepthStencilResource = m_depthStencilBuffer.Get(),
 
 			.SpriteBatchNonPremultipliedAlpha = m_hudSpriteBatch.get(),
 			.SpriteBatchPreMultipliedAlpha = m_hudSpriteBatchPremultipliedAlpha.get(),

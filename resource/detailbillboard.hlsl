@@ -1,6 +1,31 @@
 #define USE_CUSTOM_SHADOWPS
 #include "common.hlsl"
 
+#ifdef DEFERRED
+
+float4 PSDeferred(VertexOut pin) : SV_Target
+{
+    float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
+	// Compute world space position from depth value.
+	float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
+    float4 PosW = mul(PosNDC, gViewProjInverse);
+	PosW /= PosW.w;
+
+	float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
+	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
+	float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
+
+	// Sky color. #142743
+	float4 skyColor = float4(0.178f, 0.257f, 0.363f, 1.0f);
+	float shadowValue = ShadowValue(PosW, normalW);
+	float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
+	gBuffer1Color.rgb = gBuffer1Color.rgb * lerp(skyColor, 1.0f.xxxx, shadowValue) * AOFactor;
+
+	return float4(gBuffer1Color.rgb, 1.0f);
+}
+
+#else
+
 struct GeometryOut {
 	float4 PosH     : SV_POSITION;
 	float4 PosW     : POSITION0;
@@ -122,7 +147,6 @@ void GS(point VertexOut input[1], uint primitiveID : SV_PRIMITIVEID, inout Trian
         output.PosW = input[0].PosW + float4(worldOffset, 1.0f);
         output.PosH = mul(output.PosW, gViewProj);
         output.PrevPosH = mul(output.PosW, gPrevViewProj);
-        output.NormalW = -gDirLight;
         output.Tex = input[0].Tex + float2(i / 2, 1 - i % 2) * 0.5f;
         outStream.Append(output);
     }
@@ -131,7 +155,6 @@ void GS(point VertexOut input[1], uint primitiveID : SV_PRIMITIVEID, inout Trian
 PixelOut PS(GeometryOut pin)
 {
 	PixelOut pOut;
-    float3 normal = normalize(mul(pin.NormalW.xyz, (float3x3)gView));
     float4 texColor = gMainTex.Sample(gSampler, pin.Tex);
     float4 posH = mul(pin.PosW, gViewProj);
     posH /= posH.w;
@@ -141,7 +164,7 @@ PixelOut PS(GeometryOut pin)
     clip(texColor.a - 0.1f);
      
     pOut.Buffer1 = texColor;
-    pOut.Buffer2 = PackNormal(normal);
+    pOut.Buffer2 = PackNormal(float3(0.0f, 0.0f, -1.0f));
     pOut.Buffer3 = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
 	pOut.Buffer3 /= max(length(pOut.Buffer3), 1.0f);
     return pOut;
@@ -152,3 +175,5 @@ void ShadowPS(GeometryOut pin)
     float a = gMainTex.Sample(gSampler, pin.Tex).a;
     clip(a - 0.1f);
 }
+
+#endif

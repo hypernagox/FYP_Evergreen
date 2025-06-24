@@ -17,6 +17,7 @@
 #include "post_process_fxaa.h"
 #include "post_process_outline.h"
 #include "gui_element.h"
+#include "debug_console.h"
 
 namespace udsdx
 {
@@ -116,7 +117,9 @@ namespace udsdx
 
 	void Scene::EnqueueRenderObject(RendererBase* object, RenderGroup group)
 	{
-		m_renderObjectQueues[group].emplace_back(object);
+		ID3D12PipelineState* pipelineState = object->GetPipelineState();
+		ID3D12PipelineState* defferedPipelineState = object->GetShader()->DeferredPipelineState();
+		m_renderObjectQueues[group][defferedPipelineState][pipelineState].emplace_back(object);
 	}
 
 	void Scene::EnqueueRenderShadowObject(RendererBase* object)
@@ -152,6 +155,12 @@ namespace udsdx
 
 		auto pCommandList = param.CommandList;
 
+		std::vector<ID3D12PipelineState*> defferedPipelineStates;
+		for (const auto& [defferedPipelineState, objectGroups] : m_renderObjectQueues[RenderGroup::Deferred])
+		{
+			defferedPipelineStates.push_back(defferedPipelineState);
+		}
+
 		// Deferred rendering pass
 		param.Renderer->PassBufferPreparation(param);
 		param.Renderer->ClearRenderTargets(pCommandList);
@@ -165,7 +174,7 @@ namespace udsdx
 
 		PassRenderSSAO(param, camera);
 
-		param.Renderer->PassRender(param, cameraCbv);
+		param.Renderer->PassRender(param, cameraCbv, defferedPipelineStates);
 
 		// Forward rendering pass
 		param.Renderer->PassBufferPreparation(param);
@@ -216,12 +225,29 @@ namespace udsdx
 	
 	void Scene::RenderSceneObjects(RenderParam& param, RenderGroup group, int instances)
 	{
-		for (const auto& object : m_renderObjectQueues[group])
+		UINT pipelineCount = 0;
+		for (const auto& [defferedPipelineState, objectGroups] : m_renderObjectQueues[group])
 		{
-			param.CommandList->SetPipelineState(object->GetPipelineState());
-			param.CommandList->OMSetStencilRef(static_cast<UINT>(object->GetDrawOutline()) << 7);
-			object->Render(param, instances);
+			if (pipelineCount >= 128)
+			{
+				DebugConsole::LogWarning("Too many deffered pipeline states in render stage: " + std::to_string(group) + ". Limit is 128.");
+				break;
+			}
+
+			for (const auto& [pipelineState, objects] : objectGroups)
+			{
+				param.CommandList->SetPipelineState(pipelineState);
+
+				for (const auto& object : objects)
+				{
+					param.CommandList->OMSetStencilRef(pipelineCount | (static_cast<UINT>(object->GetDrawOutline()) << 7));
+					object->Render(param, instances);
+				}
+			}
+
+			pipelineCount++;
 		}
+
 		param.RenderStageIndex++;
 	}
 

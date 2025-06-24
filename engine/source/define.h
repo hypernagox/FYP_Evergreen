@@ -55,6 +55,7 @@ namespace udsdx
 		const D3D12_CPU_DESCRIPTOR_HANDLE& DepthStencilView;
 		const D3D12_CPU_DESCRIPTOR_HANDLE& RenderTargetView;
 		ID3D12Resource* RenderTargetResource;
+		ID3D12Resource* DepthStencilResource;
 
 		SpriteBatch* SpriteBatchNonPremultipliedAlpha;
 		SpriteBatch* SpriteBatchPreMultipliedAlpha;

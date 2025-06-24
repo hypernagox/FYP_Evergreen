@@ -64,7 +64,7 @@ void PlayerRenderer::InitializeWarrior()
 
 	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.yrms")));
-	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")));
 
 	m_transformBody = m_bodyObj->GetTransform();
 	m_rendererObj->AddChild(m_bodyObj);
@@ -91,7 +91,7 @@ void PlayerRenderer::InitializePriest()
 
 	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"priest\\priest.yrms")));
-	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")));
 
 	m_transformBody = m_bodyObj->GetTransform();
 	m_rendererObj->AddChild(m_bodyObj);
@@ -217,7 +217,7 @@ void PlayerRenderer::SetPlayerWeapon(std::string_view weaponName)
 		toolRenderer = m_bodyObj->AddComponent<RiggedPropRenderer>();
 		m_toolMaterial = std::make_shared<udsdx::Material>();
 
-		toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+		toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")));
 		toolRenderer->SetMaterial(m_toolMaterial.get());
 		toolRenderer->SetBoneName("Bip001 R Hand");
 	}

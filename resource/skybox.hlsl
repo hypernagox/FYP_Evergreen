@@ -1,5 +1,14 @@
 #include "common.hlsl"
 
+#ifdef DEFERRED
+
+float4 PSDeferred(VertexOut pin) : SV_Target
+{
+	return gBuffer1.Sample(gsamPointClamp, pin.TexC);
+}
+
+#else
+
 static const float2 gTexCoords[6] =
 {
 	float2(0.0f, 1.0f),
@@ -51,3 +60,5 @@ PixelOut PS(VertexOut pin)
 	pOut.Buffer3 /= max(length(pOut.Buffer3), 1.0f);
     return pOut;
 }
+
+#endif

@@ -119,15 +119,16 @@ namespace udsdx
 		CD3DX12_DESCRIPTOR_RANGE texTable5;
 		texTable5.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 6);
 
-		CD3DX12_ROOT_PARAMETER slotRootParameter[6];
+		CD3DX12_ROOT_PARAMETER slotRootParameter[7];
 
 		// Perfomance TIP: Order from most frequent to least frequent.
 		slotRootParameter[0].InitAsConstantBufferView(0);
 		slotRootParameter[1].InitAsConstantBufferView(1);
-		slotRootParameter[2].InitAsDescriptorTable(1, &texTable1, D3D12_SHADER_VISIBILITY_PIXEL);
-		slotRootParameter[3].InitAsDescriptorTable(1, &texTable2, D3D12_SHADER_VISIBILITY_PIXEL);
-		slotRootParameter[4].InitAsDescriptorTable(1, &texTable3, D3D12_SHADER_VISIBILITY_PIXEL);
-		slotRootParameter[5].InitAsDescriptorTable(1, &texTable4, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[2].InitAsConstantBufferView(2);
+		slotRootParameter[3].InitAsDescriptorTable(1, &texTable1, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[4].InitAsDescriptorTable(1, &texTable2, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[5].InitAsDescriptorTable(1, &texTable3, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[6].InitAsDescriptorTable(1, &texTable4, D3D12_SHADER_VISIBILITY_PIXEL);
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(_countof(slotRootParameter), slotRootParameter,
 			static_cast<UINT>(staticSamplers.size()), staticSamplers.data(),
@@ -267,71 +268,6 @@ namespace udsdx
 			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
     }
 
-	void DeferredRenderer::BuildPipelineStateObjects()
-	{
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
-		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-
-		psoDesc.InputLayout.pInputElementDescs = nullptr;
-		psoDesc.InputLayout.NumElements = 0;
-		psoDesc.pRootSignature = m_renderRootSignature.Get();
-		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		psoDesc.DepthStencilState.DepthEnable = false;
-		psoDesc.SampleMask = UINT_MAX;
-		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		psoDesc.NumRenderTargets = 1;
-		psoDesc.SampleDesc.Count = 1;
-		psoDesc.SampleDesc.Quality = 0;
-		psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
-
-		{
-			auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_drawscreen.cso");
-			auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_deferred_pass.cso");
-
-			psoDesc.VS =
-			{
-				reinterpret_cast<BYTE*>(vsByteCode.data()),
-				vsByteCode.size()
-			};
-			psoDesc.PS =
-			{
-				reinterpret_cast<BYTE*>(psByteCode.data()),
-				psByteCode.size()
-			};
-
-			ThrowIfFailed(m_device->CreateGraphicsPipelineState(
-				&psoDesc,
-				IID_PPV_ARGS(m_renderPipelineState.GetAddressOf())
-			));
-			m_renderPipelineState->SetName(L"DeferredRenderer::Pass");
-		}
-
-		{
-			auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_drawscreen.cso");
-			auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_deferred_pass_debug.cso");
-
-			psoDesc.VS =
-			{
-				reinterpret_cast<BYTE*>(vsByteCode.data()),
-				vsByteCode.size()
-			};
-			psoDesc.PS =
-			{
-				reinterpret_cast<BYTE*>(psByteCode.data()),
-				psByteCode.size()
-			};
-
-			ThrowIfFailed(m_device->CreateGraphicsPipelineState(
-				&psoDesc,
-				IID_PPV_ARGS(m_debugPipelineState.GetAddressOf())
-			));
-			m_debugPipelineState->SetName(L"DeferredRenderer::PassDebug");
-		}
-	}
-
 	void DeferredRenderer::ClearRenderTargets(ID3D12GraphicsCommandList* commandList)
 	{
 		for (UINT i = 0; i < NUM_GBUFFERS; ++i)
@@ -366,13 +302,17 @@ namespace udsdx
 		pCommandList->ResourceBarrier(static_cast<UINT>(m_gBufferEndRenderTransitions.size()), m_gBufferEndRenderTransitions.data());
 	}
 
-	void DeferredRenderer::PassRender(RenderParam& renderParam, D3D12_GPU_VIRTUAL_ADDRESS cbvGpu)
+	void DeferredRenderer::PassRender(RenderParam& renderParam, D3D12_GPU_VIRTUAL_ADDRESS cbvGpu, const std::vector<ID3D12PipelineState*>& pipelineStates)
 	{
 		ID3D12GraphicsCommandList* pCommandList = renderParam.CommandList;
 
+		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderParam.DepthStencilResource, D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_COPY_DEST));
+		pCommandList->CopyResource(renderParam.DepthStencilResource, m_depthBuffer.Get());
+		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderParam.DepthStencilResource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+
 		pCommandList->SetGraphicsRootSignature(m_renderRootSignature.Get());
 
-		pCommandList->OMSetRenderTargets(1, &renderParam.RenderTargetView, true, nullptr);
+		pCommandList->OMSetRenderTargets(1, &renderParam.RenderTargetView, true, &renderParam.DepthStencilView);
 
 		pCommandList->RSSetViewports(1, &renderParam.Viewport);
 		pCommandList->RSSetScissorRects(1, &renderParam.ScissorRect);
@@ -381,16 +321,21 @@ namespace udsdx
 		pCommandList->IASetIndexBuffer(nullptr);
 		pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		pCommandList->SetPipelineState(m_renderPipelineState.Get());
-
 		pCommandList->SetGraphicsRootConstantBufferView(0, cbvGpu);
 		pCommandList->SetGraphicsRootConstantBufferView(1, renderParam.RenderShadowMap->GetConstantBuffer(renderParam.FrameResourceIndex));
-		pCommandList->SetGraphicsRootDescriptorTable(2, m_gBuffersGpuSrv[0]);
-		pCommandList->SetGraphicsRootDescriptorTable(3, renderParam.RenderShadowMap->GetSrvGpu());
-		pCommandList->SetGraphicsRootDescriptorTable(4, renderParam.RenderScreenSpaceAO->GetAmbientMapGpuSrv());
-		pCommandList->SetGraphicsRootDescriptorTable(5, m_depthBufferGpuSrv);
+		pCommandList->SetGraphicsRootConstantBufferView(2, renderParam.ConstantBufferView);
+		pCommandList->SetGraphicsRootDescriptorTable(3, m_gBuffersGpuSrv[0]);
+		pCommandList->SetGraphicsRootDescriptorTable(4, renderParam.RenderShadowMap->GetSrvGpu());
+		pCommandList->SetGraphicsRootDescriptorTable(5, renderParam.RenderScreenSpaceAO->GetAmbientMapGpuSrv());
+		pCommandList->SetGraphicsRootDescriptorTable(6, m_depthBufferGpuSrv);
 
-		pCommandList->DrawInstanced(6, 1, 0, 0);
+		for (size_t index = 0; index < pipelineStates.size(); ++index)
+		{
+			pCommandList->SetPipelineState(pipelineStates[index]);
+			pCommandList->OMSetStencilRef(static_cast<UINT>(index));
+
+			pCommandList->DrawInstanced(6, 1, 0, 0);
+		}
 
 //#if defined(DEBUG) || defined(_DEBUG)
 //		pCommandList->SetPipelineState(m_debugPipelineState.Get());

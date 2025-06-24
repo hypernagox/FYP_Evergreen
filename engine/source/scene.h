@@ -12,6 +12,9 @@ namespace udsdx
 
 	class Scene
 	{
+	private:
+		using RendererGroup = std::unordered_map<ID3D12PipelineState*, std::unordered_map<ID3D12PipelineState*, std::vector<RendererBase*>>>;
+
 	public:
 		Scene();
 		~Scene();
@@ -46,7 +49,7 @@ namespace udsdx
 
 		std::vector<Camera*> m_renderCameraQueue;
 		std::vector<LightDirectional*> m_renderLightQueue;
-		std::array<std::vector<RendererBase*>, 2> m_renderObjectQueues;
+		std::array<RendererGroup, 2> m_renderObjectQueues;
 		std::vector<RendererBase*> m_renderShadowObjectQueue;
 		std::vector<GUIElement*> m_renderGUIObjectQueue;
 	};

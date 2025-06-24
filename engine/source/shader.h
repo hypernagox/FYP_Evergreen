@@ -14,6 +14,7 @@ namespace udsdx
 		ComPtr<ID3D12PipelineState> m_riggedPipelineState;
 		ComPtr<ID3D12PipelineState> m_shadowPipelineState;
 		ComPtr<ID3D12PipelineState> m_riggedShadowPipelineState;
+		ComPtr<ID3D12PipelineState> m_deferredPipelineState;
 
 		std::wstring m_path;
 
@@ -22,11 +23,13 @@ namespace udsdx
 
 	public:
 		void BuildPipelineState(ID3D12Device* pDevice, ID3D12RootSignature* pRootSignature);
+		void BuildDeferredPipelineState(ID3D12Device* pDevice, ID3D12RootSignature* pRootSignature);
 
 	public:
 		ID3D12PipelineState* DefaultPipelineState() const;
 		ID3D12PipelineState* RiggedPipelineState() const;
 		ID3D12PipelineState* ShadowPipelineState() const;
 		ID3D12PipelineState* RiggedShadowPipelineState() const;
+		ID3D12PipelineState* DeferredPipelineState() const;
 	};
 }
