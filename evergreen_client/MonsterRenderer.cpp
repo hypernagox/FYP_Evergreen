@@ -13,7 +13,7 @@ MonsterRenderer::MonsterRenderer(std::shared_ptr<udsdx::SceneObject> owner) : Co
 
 	auto renderer = m_rendererObject->AddComponent<udsdx::RiggedMeshRenderer>();
 	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"sheep\\sheep_max.yrms")));
-	renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+	renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")));
 	renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"sheep\\sheep_run.yac")), true);
 
 	m_materials[0] = std::make_shared<udsdx::Material>();

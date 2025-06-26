@@ -6,7 +6,7 @@ MonsterFox::MonsterFox(const std::shared_ptr<SceneObject>& object) : Monster(obj
 
 	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();
 
-	auto shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl"));
+	auto shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl"));
 	m_monsterMaterial = std::make_shared<udsdx::Material>();
 	m_monsterMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"fox\\fox_high_DefaultMaterial_BaseColor.png")));
 
