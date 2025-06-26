@@ -213,7 +213,7 @@ void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam)
 
 	pCommandList->SetPipelineState(m_pipelineState.Get());
 
-	const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
+	const float TerrainSize = GET_DATA(float,"GlobalValues", "TerrainSize", "Value");
 	Matrix4x4 transformWorld = Matrix4x4::CreateScale(TerrainSize) * Matrix4x4::CreateTranslation(-TerrainSize * 0.5f, 0.0f, -TerrainSize * 0.5f);
 	Matrix4x4 transformView;
 	Matrix4x4 transformProjection;

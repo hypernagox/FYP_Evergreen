@@ -30,7 +30,7 @@ Monster::~Monster()
 
 void Monster::InitializeMonster(std::string_view monsterType)
 {
-	m_maxHP = GET_DATA(int, monsterType, "hp");
+	m_maxHP = GET_DATA(int,"Monster", monsterType, "hp");
 	m_hp = m_maxHP;
 }
 

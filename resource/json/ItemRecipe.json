@@ -1,22 +1,22 @@
 {
   "Recipe_2": {
     "Fox Tail": 1,
-    "Result Item": "Item Master Sword",
+    "Result Item": "Master Sword",
     "Result Num Of Item": 1
   },
   "Recipe_3": {
     "Fox Tail": 1,
-    "Result Item": "Item Sword Excalibur",
+    "Result Item": "Sword Excalibur",
     "Result Num Of Item": 1
   },
   "Recipe_4": {
     "Fox Tail": 1,
-    "Result Item": "Item Staff Priest",
+    "Result Item": "Staff Priest",
     "Result Num Of Item": 1
   },
   "Recipe_5": {
     "Fox Tail": 1,
-    "Result Item": "Item Bow",
+    "Result Item": "Bow",
     "Result Num Of Item": 1
   }
 }

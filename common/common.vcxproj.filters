@@ -299,7 +299,7 @@
     <None Include="..\resource\json\Player.json">
       <Filter>Json\Data</Filter>
     </None>
-    <None Include="..\resource\json\GlabalValues.json">
+    <None Include="..\resource\json\GlobalValues.json">
       <Filter>Json\Data</Filter>
     </None>
     <None Include="..\resource\json\Item.json">

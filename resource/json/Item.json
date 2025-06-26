@@ -53,7 +53,7 @@
     "DropitemResource": "item\\ironore\\ironore_fbx.yms",
     "DropitemResourceDiffuse": "item\\ironore\\ironore_fbx_DefaultMaterial_BaseColor.png"
   },
-  "Item Master Sword": {
+  "Master Sword": {
     "Name": "마스터 소드",
     "Description": "",
     "Category": "Equipment",
@@ -63,7 +63,7 @@
     "DropitemResource": "item\\ironore\\ironore_fbx.yms",
     "DropitemResourceDiffuse": "item\\ironore\\ironore_fbx_DefaultMaterial_BaseColor.png"
   },
-  "Item Sword Excalibur": {
+  "Sword Excalibur": {
     "Name": "엑스칼리버",
     "Description": "",
     "Category": "Equipment",
@@ -73,7 +73,7 @@
     "DropitemResource": "item\\ironore\\ironore_fbx.yms",
     "DropitemResourceDiffuse": "item\\ironore\\ironore_fbx_DefaultMaterial_BaseColor.png"
   },
-  "Item Staff Priest": {
+  "Staff Priest": {
     "Name": "지팡이",
     "Description": "",
     "Category": "Equipment",
@@ -83,7 +83,7 @@
     "DropitemResource": "item\\ironore\\ironore_fbx.yms",
     "DropitemResourceDiffuse": "item\\ironore\\ironore_fbx_DefaultMaterial_BaseColor.png"
   },
-  "Item Bow": {
+  "Bow": {
     "Name": "활",
     "Description": "",
     "Category": "Equipment",

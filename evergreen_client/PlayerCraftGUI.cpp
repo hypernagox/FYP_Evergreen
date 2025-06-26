@@ -17,7 +17,7 @@ PlayerCraftGUI::PlayerCraftGUI(const std::shared_ptr<SceneObject>& object) : Com
 	for (int id = 0; id < recipe_count; id++)
 	{
 		const auto& combine_list = DATA_TABLE->GetItemRecipe(id);
-		auto iconPath = GET_DATA(std::wstring, combine_list.resultItem, "Icon");
+		auto iconPath = GET_DATA(std::wstring,"Item", combine_list.resultItem, "Icon");
 
 		float y = id * -130.0f + 250.0f;
 		auto& recipeGUI = m_recipePanels.emplace_back();
@@ -63,7 +63,7 @@ PlayerCraftGUI::PlayerCraftGUI(const std::shared_ptr<SceneObject>& object) : Com
 		for (const auto& combine : combine_list.itemElements)
 		{
 			float x = j * 65.0f - 65.0f;
-			auto iconPath = GET_DATA(std::wstring, combine.itemName, "Icon");
+			auto iconPath = GET_DATA(std::wstring,"Item", combine.itemName, "Icon");
 
 			auto inputSlotBackground = recipeGUI.InputSlotBackground.emplace_back(std::make_shared<SceneObject>());
 			auto inputBackgroundRenderer = inputSlotBackground->AddComponent<GUIImage>();

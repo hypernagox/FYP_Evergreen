@@ -83,32 +83,29 @@ namespace Common
 			return m_mapItemRecipe.find(recipe_id)->second;
 		}
 		template<typename T>
-		const T& GetObjectData(const std::string_view obj_name, const std::string_view att_name) const {
+		const T& GetObjectData(const std::string_view category, const std::string_view obj_name, const std::string_view att_name) const {
 #ifdef _DEBUG
-#define DBG_ASSERT(cond, msg) \
-        if (!(cond)) { \
-            assert(false && msg); \
-        }
+#define DBG_ASSERT(cond, msg) if (!(cond)) { assert(false && msg); }
 #else
 #define DBG_ASSERT(cond, msg) ((void)0)
 #endif
-			const auto categoryIter = m_detail2category_str.find(obj_name.data());
-			DBG_ASSERT(categoryIter != m_detail2category_str.end(), "Object not found");
-			const auto& category = categoryIter->second;
-			const auto objIter = m_mapDatatable.find(category);
-			DBG_ASSERT(objIter != m_mapDatatable.end(), "Category not found");
-			const auto& dataTable = objIter->second;
-			const auto attrMapIter = dataTable.find(obj_name.data());
-			DBG_ASSERT(attrMapIter != dataTable.end(), "Object attributes not found");
-			const auto& attrMap = attrMapIter->second;
+			const auto catIter = m_mapDatatable.find(category.data());
+			DBG_ASSERT(catIter != m_mapDatatable.end(), "Category not found");
+
+			const auto& dataTable = catIter->second;
+			const auto objIter = dataTable.find(obj_name.data());
+			DBG_ASSERT(objIter != dataTable.end(), "Entity not found");
+
+			const auto& attrMap = objIter->second;
 			const auto attrIter = attrMap.find(att_name.data());
 			DBG_ASSERT(attrIter != attrMap.end(), "Attribute not found");
+
 			if constexpr (std::same_as<T, std::wstring>) {
-				DBG_ASSERT(std::holds_alternative<std::string>(attrIter->second), "Type mismatch for attribute");
+				DBG_ASSERT(std::holds_alternative<std::string>(attrIter->second), "Type mismatch");
 				return Str2Wstr(std::get<std::string>(attrIter->second));
 			}
 			else {
-				DBG_ASSERT(std::holds_alternative<T>(attrIter->second), "Type mismatch for attribute");
+				DBG_ASSERT(std::holds_alternative<T>(attrIter->second), "Type mismatch");
 				return std::get<T>(attrIter->second);
 			}
 		}
@@ -154,6 +151,7 @@ namespace Common
 	};
 
 #define DATA_TABLE (Common::DataRegistry::GetDataTable())
-#define GET_DATA(type, obj_name, attr_name) (DATA_TABLE->GetObjectData<type>(obj_name, attr_name))
+#define GET_DATA(type, category, obj_name, attr_name) \
+    (DATA_TABLE->GetObjectData<type>(category, obj_name, attr_name))
 #define GET_RECIPE(item_name) (DATA_TABLE->GetItemRecipe(item_name))
 }

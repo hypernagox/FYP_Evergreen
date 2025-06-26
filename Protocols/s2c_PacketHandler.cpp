@@ -280,7 +280,7 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 		if (auto playerComp = targetObject->GetComponent<AuthenticPlayer>())
 		{
 			playerComp->OnModifyInventory(item_id, item_count);
-			INSTANCE(GameGUIFacade)->LogFloat->AddText(GET_DATA(std::wstring, DATA_TABLE->GetItemName(item_id), "Name") + L"을(를) " + std::to_wstring(item_count) + L"개 획득하였습니다.");
+			INSTANCE(GameGUIFacade)->LogFloat->AddText(GET_DATA(std::wstring,"Item", DATA_TABLE->GetItemName(item_id), "Name") + L"을(를) " + std::to_wstring(item_count) + L"개 획득하였습니다.");
 		}
 	}
 
