@@ -10,8 +10,7 @@ namespace Common
 {
     std::span<DirectX::SimpleMath::Vector3> PathFinder::GetPath(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& dest) const noexcept
     {
-        // TODO: 매직넘버
-        //dtPolyRef path[10];
+        constexpr const uint8_t PATH_COUNT = 10;
         int pathCount;
         const auto nav = m_agent->GetNavMesh();
         const auto nav_q = nav->GetNavMeshQuery();
@@ -54,7 +53,7 @@ namespace Common
        auto& path = num_path.second;
        if (0 == num_path.first)
        {
-           status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path.data(), &pathCount, 10);
+           status = nav_q->findPath(start_poly, dest_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, path.data(), &pathCount, PATH_COUNT);
            if (dtStatusFailed(status))
            {
                // std::cout << "못 찾음\n";
@@ -68,16 +67,16 @@ namespace Common
        }
 
         // TODO: 매직넘버
-        constinit thread_local float straightPathRaw[10 * 3] = {};
+        constinit thread_local float straightPathRaw[PATH_COUNT * 3] = {};
 
        // thread_local DirectX::SimpleMath::Vector3 straightPath[10];
         const auto straightPath = (Vector3*)straightPathRaw;
-        unsigned char straightPathFlags[10];
-        dtPolyRef straightPathPolys[10];
+        unsigned char straightPathFlags[PATH_COUNT];
+        dtPolyRef straightPathPolys[PATH_COUNT];
         int straightPathCount = 0;
 
 
-        status = nav_q->findStraightPath(&start_z_pos.x, &dest_z_pos.x, path.data(), pathCount, &straightPath[0].x, straightPathFlags, straightPathPolys, &straightPathCount, 10);
+        status = nav_q->findStraightPath(&start_z_pos.x, &dest_z_pos.x, path.data(), pathCount, &straightPath[0].x, straightPathFlags, straightPathPolys, &straightPathCount, PATH_COUNT);
         if (dtStatusFailed(status))
         {
             //std::cout << "못 찾음\n";
@@ -92,7 +91,5 @@ namespace Common
             ++b;
         }
         return { straightPath,straightPath + straightPathCount };
-        // TODO: 매직넘버
-        // return SmoothPath(straightPath, straightPathCount, 4);
     }
 }

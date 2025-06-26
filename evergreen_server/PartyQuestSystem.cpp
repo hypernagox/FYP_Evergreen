@@ -25,14 +25,14 @@ bool PartyQuestSystem::MissionStart()
 		switch (m_curQuestID)
 		{
 		case 0:
-			m_curQuestRoomInstance = NagiocpX::MakeShared<FoxQuest>();
+			m_curQuestRoomInstance = NagiocpX::MakeShared<NPCGuardQuest>();
 			break;
 		case 1:
-			m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
+			m_curQuestRoomInstance = NagiocpX::MakeShared<FoxQuest>();
 			break;
 		case 2:
+			m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
 			break;
-			m_curQuestRoomInstance = NagiocpX::MakeShared<NPCGuardQuest>();
 		case 3:
 			m_curQuestRoomInstance = NagiocpX::MakeShared<BearQuest>();
 			break;

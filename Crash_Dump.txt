@@ -1,10 +1,6 @@
-0: NagiocpX::LogStackTrace - 0x7ff7e1e69db0
-1: NagiocpX::Cluster::LeaveAndDestroy - 0x7ff7e1e7b180
-2: `NagiocpX::TaskInvoker::TaskInvoker<NagiocpX::Cluster,void,unsigned char,unsigned int>'::`1'::<lambda_3_>::<lambda_invoker_cdecl> - 0x7ff7e1e6ef30
-3: NagiocpX::ThreadMgr::IocpRoutine - 0x7ff7e1e66870
-4: NagiocpX::ThreadMgr::WorkerThreadFunc - 0x7ff7e1e66850
-5: std::thread::_Invoke<std::tuple<void (__cdecl*)(void) noexcept>,0> - 0x7ff7e1e678a0
-6: configthreadlocale - 0x7ffa8b621b20
-7: BaseThreadInitThunk - 0x7ffa8c907360
-8: RtlUserThreadStart - 0x7ffa8d71cc70
-  2025-05-24 20:10:01 [LOG]: 
+0: NagiocpX::LogStackTrace - 0x7ff7ef45f580
+1: std::thread::_Invoke<std::tuple<`main'::`2'::<lambda_1> >,0> - 0x7ff7ef4433a0
+2: configthreadlocale - 0x7ff9bf711b20
+3: BaseThreadInitThunk - 0x7ff9c0907360
+4: RtlUserThreadStart - 0x7ff9c18dcc70
+  2025-06-26 10:01:30 [LOG]: 

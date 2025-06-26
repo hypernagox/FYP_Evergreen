@@ -70,9 +70,6 @@
     <Filter Include="Manager\ThreadMgr">
       <UniqueIdentifier>{cb6dd78f-4f7e-4dbd-aa14-af9d28dd3145}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Manager\DeadLockProfiler">
-      <UniqueIdentifier>{b37477d9-fe30-4340-b44b-2b9a1311c9c7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Memory\AtomicNonTemplate">
       <UniqueIdentifier>{35e601fe-34f4-44bd-b758-f4d74e161692}</UniqueIdentifier>
     </Filter>
@@ -165,6 +162,9 @@
     </Filter>
     <Filter Include="Manager\ImGUIMgr\imgui">
       <UniqueIdentifier>{d9e20887-25d9-44f2-b03c-32122cde2250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\DeadLockDetector">
+      <UniqueIdentifier>{b37477d9-fe30-4340-b44b-2b9a1311c9c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -265,7 +265,7 @@
       <Filter>Manager\ThreadMgr</Filter>
     </ClInclude>
     <ClInclude Include="DeadLockDetector.h">
-      <Filter>Manager\DeadLockProfiler</Filter>
+      <Filter>Manager\DeadLockDetector</Filter>
     </ClInclude>
     <ClInclude Include="SRWLock.hpp">
       <Filter>Lock</Filter>
@@ -522,7 +522,7 @@
       <Filter>Manager\ThreadMgr</Filter>
     </ClCompile>
     <ClCompile Include="DeadLockDetector.cpp">
-      <Filter>Manager\DeadLockProfiler</Filter>
+      <Filter>Manager\DeadLockDetector</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Manager\Logger</Filter>
