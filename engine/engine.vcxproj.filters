@@ -140,6 +140,9 @@
     <ClCompile Include="source\post_process_outline.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="source\mono_upload_buffer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -314,6 +317,9 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="source\post_process_outline.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\mono_upload_buffer.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>

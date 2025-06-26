@@ -63,6 +63,8 @@ namespace udsdx
 
 		InitializeDirect3D();
 
+		m_monoUploadBuffer = std::make_unique<MonoUploadBuffer>(m_d3dDevice.Get());
+
 		for (int i = 0; i < FrameResourceCount; ++i)
 		{
 			m_frameResources[i] = std::make_unique<FrameResource>(m_d3dDevice.Get());
@@ -82,21 +84,7 @@ namespace udsdx
 		BuildConstantBuffers();
 		InitializeSpriteBatch();
 
-		ExecuteCommandList();
 		OnResizeWindow(m_clientWidth, m_clientHeight);
-
-		for (auto& resource_mesh : resource->LoadAll<MeshBase>())
-		{
-			resource_mesh->DisposeUploaders();
-		}
-
-		for (auto& resource_shader : resource->LoadAll<Texture>())
-		{
-			resource_shader->DisposeUploaders();
-		}
-
-		// Reset the command list to prep for initialization commands.
-		ThrowIfFailed(m_commandList->Reset(m_directCmdListAlloc.Get(), nullptr));
 
 		m_fenceEvent = ::CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
 
@@ -236,9 +224,6 @@ namespace udsdx
 		ThrowIfFailed(m_d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
 
 		m_commandList->Close();
-
-		// Reset the command list to prep for initialization commands.
-		ThrowIfFailed(m_commandList->Reset(m_directCmdListAlloc.Get(), nullptr));
 	}
 
 	void Core::RegisterUpdateCallback(std::function<void(const Time&)> callback)
@@ -535,6 +520,22 @@ namespace udsdx
 		}
 	}
 
+	void Core::PrepareDirectCommandList()
+	{
+		// Reset the command allocator for the next frame.
+		m_directCmdListAlloc->Reset();
+		m_commandList->Reset(m_directCmdListAlloc.Get(), nullptr);
+	}
+
+	void Core::ExecuteAndFlushDirectCommandList()
+	{ ZoneScoped;
+		// Close the command list and execute it to begin the initial GPU setup.
+		ExecuteCommandList();
+
+		// Wait until all commands are finished.
+		FlushCommandQueue();
+	}
+
 	void Core::SetScene(std::shared_ptr<Scene> scene)
 	{
 		m_scene = scene;
@@ -629,7 +630,11 @@ namespace udsdx
 			.TracyQueueContext = &m_tracyQueueCtx
 		};
 
+		// Command list allocators can only be reset when the associated 
+		// command lists have finished execution on the GPU; apps should use 
+		// fences to determine GPU execution progress.
 		ThrowIfFailed(cmdListAlloc->Reset());
+
 		// Resets a command list back to its initial state as if a new command list was just created.
 		// ID3D12PipelineState: This is optional and can be NULL.
 		// If NULL, the runtime sets a dummy initial pipeline state so that drivers don't have to deal with undefined state.
@@ -839,7 +844,7 @@ namespace udsdx
 		// Flush before changing any resources.
 		FlushCommandQueue();
 
-		ThrowIfFailed(m_commandList->Reset(m_directCmdListAlloc.Get(), nullptr));
+		PrepareDirectCommandList();
 
 		// Release the previous resources we will be recreating.
 		for (int i = 0; i < SwapChainBufferCount; ++i)
@@ -931,10 +936,7 @@ namespace udsdx
 		m_postProcessOutline->OnResize(width, height);
 		m_postProcessOutline->RebuildDescriptors();
 
-		// Execute the resize commands.
-		ExecuteCommandList();
-		// Wait until resize is complete.
-		FlushCommandQueue();
+		ExecuteAndFlushDirectCommandList();
 
 		// Update the viewport transform to cover the client area.
 		m_screenViewport.TopLeftX = 0;
@@ -1056,6 +1058,11 @@ namespace udsdx
 	ShadowMap* Core::GetShadowMap() const
 	{
 		return m_shadowMap.get();
+	}
+
+	MonoUploadBuffer* Core::GetMonoUploadBuffer() const
+	{
+		return m_monoUploadBuffer.get();
 	}
 
 	ID3D12RootSignature* Core::GetRootSignature() const

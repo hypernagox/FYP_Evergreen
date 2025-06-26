@@ -42,9 +42,6 @@ namespace udsdx
 		void CreateBuffers(const std::vector<TVertex>& vertices, const std::vector<UINT>& indices);
 		void UploadBuffers(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 
-		// We can free this memory after we finish upload to the GPU.
-		void DisposeUploaders();
-
 	protected:
 		std::vector<Submesh> m_submeshes;
 
@@ -61,9 +58,6 @@ namespace udsdx
 
 		ComPtr<ID3D12Resource> m_vertexBufferGPU = nullptr;
 		ComPtr<ID3D12Resource> m_indexBufferGPU = nullptr;
-
-		ComPtr<ID3D12Resource> m_vertexBufferUploader = nullptr;
-		ComPtr<ID3D12Resource> m_indexBufferUploader = nullptr;
 	};
 
 	template<typename TVertex>

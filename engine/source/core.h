@@ -35,6 +35,9 @@ namespace udsdx
 		void ExecuteCommandList();
 		void FlushCommandQueue();
 
+		void PrepareDirectCommandList();
+		void ExecuteAndFlushDirectCommandList();
+
 		void SetScene(std::shared_ptr<Scene> scene);
 		void RegisterUpdateCallback(std::function<void(const Time&)> callback);
 		void AcquireNextFrameResource();
@@ -59,6 +62,7 @@ namespace udsdx
 		ID3D12RootSignature* GetRootSignature() const;
 		DeferredRenderer* GetRenderer() const;
 		ShadowMap* GetShadowMap() const;
+		MonoUploadBuffer* GetMonoUploadBuffer() const;
 
 		FrameResource* CurrentFrameResource() const;
 		ID3D12Resource* CurrentBackBuffer() const;
@@ -229,6 +233,8 @@ namespace udsdx
 		std::unique_ptr<PostProcessOutline> m_postProcessOutline;
 
 		std::unique_ptr<GraphicsMemory> m_graphicsMemory;
+
+		std::unique_ptr<MonoUploadBuffer> m_monoUploadBuffer;
 
 		// DirectXTK Sprite Batch for HUD rendering
 		std::unique_ptr<SpriteBatch> m_hudSpriteBatch;

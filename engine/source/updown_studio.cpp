@@ -55,8 +55,6 @@ namespace udsdx
 			return -1;
 		}
 
-        core->ExecuteCommandList();
-        core->FlushCommandQueue();
         core->SetScene(beginScene);
 
         ShowWindow(m_hWnd, nCmdShow);

@@ -26,13 +26,10 @@ namespace udsdx
 		int GetWidth() const { return m_size.x; }
 		int GetHeight() const { return m_size.y; }
 
-		void DisposeUploaders();
-
 	private:
 		std::string m_name;
 
 		ComPtr<ID3D12Resource> m_texture;
-		ComPtr<ID3D12Resource> m_textureUpload;
 
 		D3D12_CPU_DESCRIPTOR_HANDLE m_srvCpu;
 		D3D12_GPU_DESCRIPTOR_HANDLE m_srvGpu;

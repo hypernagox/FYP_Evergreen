@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "texture.h"
 #include "debug_console.h"
+#include "core.h"
 
 #include <DirectXTex.h>
 
@@ -69,22 +70,18 @@ namespace udsdx
 
 		const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture.Get(), 0, static_cast<UINT>(subresources.size()));
 
-		ThrowIfFailed(device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
-			D3D12_RESOURCE_STATE_GENERIC_READ,
-			nullptr,
-			IID_PPV_ARGS(m_textureUpload.GetAddressOf())));
+		INSTANCE(Core)->PrepareDirectCommandList();
 
 		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(),
 			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 		UpdateSubresources(commandList,
-			m_texture.Get(), m_textureUpload.Get(),
+			m_texture.Get(), INSTANCE(Core)->GetMonoUploadBuffer()->PrepareForUpload(uploadBufferSize),
 			0, 0, static_cast<UINT>(subresources.size()),
 			subresources.data());
 		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(),
 			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+
+		INSTANCE(Core)->ExecuteAndFlushDirectCommandList();
 
 		m_size = Vector2Int(static_cast<int32_t>(image.GetMetadata().width), static_cast<int32_t>(image.GetMetadata().height));
 	}
@@ -96,7 +93,6 @@ namespace udsdx
 		m_name = "Unnamed Texture";
 		m_size = Vector2Int(static_cast<int32_t>(resource->GetDesc().Width), static_cast<int32_t>(resource->GetDesc().Height));
 		m_texture.Reset();
-		m_textureUpload.Reset();
 	}
 
 	Texture::~Texture()
@@ -132,10 +128,5 @@ namespace udsdx
 	D3D12_GPU_DESCRIPTOR_HANDLE Texture::GetSrvGpu() const
 	{
 		return m_srvGpu;
-	}
-
-	void Texture::DisposeUploaders()
-	{
-		m_textureUpload.Reset();
 	}
 }

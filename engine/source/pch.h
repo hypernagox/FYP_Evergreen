@@ -84,6 +84,7 @@ using namespace DirectX;
 #include "define.h"
 #include "d3dUtil.h"
 #include "custom_math.h"
+#include "mono_upload_buffer.h"
 #include "singleton.h"
 #include "vertex.h"
 #include "UploadBuffer.h"
