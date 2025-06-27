@@ -2,6 +2,7 @@
 #include "DataRegistry.h"
 #include "PathManager.h"
 #include "json.hpp"
+#include "JsonGenerator.h"
 
 namespace Common
 {
@@ -14,6 +15,11 @@ namespace Common
         std::string errStr;
         int category_start_index = 0;
         int recipe_id = 0;
+        if (!JsonGenerator::GenerateJson(path))
+        {
+            errStr = std::format("Err in json generator");
+            exit(0);
+        }
         for (const auto& entry : std::filesystem::directory_iterator{ RESOURCE_PATH(path) + L"\\json" })
         {
             if (entry.path().extension() == ".json")

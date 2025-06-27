@@ -120,6 +120,9 @@
     <ClInclude Include="json.hpp">
       <Filter>Json</Filter>
     </ClInclude>
+    <ClInclude Include="JsonGenerator.h">
+      <Filter>Json\JsonGenerator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />
@@ -244,6 +247,9 @@
     <ClCompile Include="DataRegistry.cpp">
       <Filter>Json\DataRegistry</Filter>
     </ClCompile>
+    <ClCompile Include="JsonGenerator.cpp">
+      <Filter>Json\JsonGenerator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Navigation">
@@ -290,6 +296,9 @@
     </Filter>
     <Filter Include="Json\Data">
       <UniqueIdentifier>{614ff580-f952-4e83-ab03-2a033e9700a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Json\JsonGenerator">
+      <UniqueIdentifier>{0c59628e-ccd0-40a9-9add-e9915656cf5c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
