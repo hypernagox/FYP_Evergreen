@@ -217,6 +217,8 @@
       <ShaderModel>6.0</ShaderModel>
       <ObjectFileOutput>$(OutDir)compiled_shaders\%(Filename).cso</ObjectFileOutput>
       <PreprocessorDefinitions>KERNEL_SIZE=32;BLUR_SAMPLE=16;MAX_BLUR_RADIUS=20</PreprocessorDefinitions>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

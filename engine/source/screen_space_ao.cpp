@@ -125,7 +125,9 @@ namespace udsdx
 		pCommandList->SetComputeRootDescriptorTable(5, param.Renderer->GetDepthBufferSrv());
 		pCommandList->SetComputeRootDescriptorTable(6, m_blurMapGpuUav);
 
-		pCommandList->Dispatch((m_width + 127) / 128, m_height, 1);
+		constexpr UINT ThreadGroupSize = 32;
+
+		pCommandList->Dispatch((m_width + ThreadGroupSize - 1) / ThreadGroupSize, m_height, 1);
 
 		pCommandList->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(
@@ -147,7 +149,7 @@ namespace udsdx
 		pCommandList->SetComputeRootDescriptorTable(5, param.Renderer->GetDepthBufferSrv());
 		pCommandList->SetComputeRootDescriptorTable(6, m_ambientMapGpuUav);
 
-		pCommandList->Dispatch((m_height + 127) / 128, m_width, 1);
+		pCommandList->Dispatch((m_height + ThreadGroupSize - 1) / ThreadGroupSize, m_width, 1);
 
 		pCommandList->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(
