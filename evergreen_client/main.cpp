@@ -67,7 +67,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     INSTANCE(Resource)->SetResourceRootPath(RESOURCE_PATH(L""));
-    UpdownStudio::Initialize(hInstance);
+    UpdownStudio::Initialize(hInstance, L"Evergreen");
     UpdownStudio::RegisterUpdateCallback(Update);
 
     GuideSystem::GetInst()->Init();

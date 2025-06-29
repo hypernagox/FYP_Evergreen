@@ -13,9 +13,13 @@ namespace udsdx
     std::function<void()> UpdownStudio::m_ioUpdateCallback = nullptr;
 
 
-    int UpdownStudio::Initialize(HINSTANCE hInstance)
+    int UpdownStudio::Initialize(HINSTANCE hInstance, std::wstring_view sWindowName)
     {
         m_hInstance = hInstance;
+        if (!sWindowName.empty())
+        {
+			m_windowName = sWindowName.data();
+		}
 
         WNDCLASSEXW wcex = { 0 };
         wcex.cbSize = sizeof(WNDCLASSEX);
