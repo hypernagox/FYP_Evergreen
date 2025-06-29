@@ -17,7 +17,7 @@ DropItemRenderer::DropItemRenderer(std::shared_ptr<udsdx::SceneObject> owner) : 
 
 void DropItemRenderer::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	float scale = GET_DATA(float, "DropitemScale", "Value");
+	float scale = GET_DATA(float,"GlobalValues", "DropitemScale", "Value");
 	m_rendererObject->GetTransform()->SetLocalRotation(udsdx::Quaternion::CreateFromYawPitchRoll(time.totalTime * 2.0f + m_rotationOffset, XM_PIDIV4, 0.0f));
 	m_rendererObject->GetTransform()->SetLocalPositionY(scale / 8.0f + sin(time.totalTime * 2.0f) * scale / 80.0f);
 	m_scaleFactor = std::lerp(m_scaleFactor, scale, time.deltaTime * 8.0f);
@@ -27,8 +27,8 @@ void DropItemRenderer::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void DropItemRenderer::SetDropItem(uint8_t item_id)
 {
 	const auto& key = DATA_TABLE->GetItemName(item_id);
-	m_meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring, key, "DropitemResource"))));
+	m_meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring,"Item", key, "DropitemResource"))));
 	m_material = std::make_shared<udsdx::Material>();
-	m_material->SetSourceTexture(INSTANCE(udsdx::Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, key, "DropitemResourceDiffuse"))));
+	m_material->SetSourceTexture(INSTANCE(udsdx::Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring,"Item", key, "DropitemResourceDiffuse"))));
 	m_meshRenderer->SetMaterial(m_material.get());
 }

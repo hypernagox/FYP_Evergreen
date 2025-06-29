@@ -54,7 +54,7 @@ namespace NagiocpX
 		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1.5f);
 		monster_entity->GetComp<SphereCollider>()->GetCollider()->m_offSet.y += 1.f;
 
-		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int,"Fox","hp")); // TODO 매직넘버
+		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int,"Monster", "Fox", "hp")); // TODO 매직넘버
 		monster_entity->AddComp<MonsterDeath>();
 
 		// TODO: 필요할때만 딜리터 설정하기
@@ -212,7 +212,7 @@ namespace NagiocpX
 
 		monster_entity->GetComp<SphereCollider>()->GetCollider()->m_offSet.y += 1.f;
 
-		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int, "Fox", "hp")); // TODO 매직넘버
+		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int,"Monster", "Fox", "hp")); // TODO 매직넘버
 		monster_entity->AddComp<MonsterDeath>();
 
 		// TODO: 필요할때만 딜리터 설정하기
@@ -256,7 +256,7 @@ namespace NagiocpX
 		monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1.5f);
 		monster_entity->GetComp<SphereCollider>()->GetCollider()->m_offSet.y += 1.f;
 
-		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int, "Fox", "hp")); // TODO 매직넘버
+		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int,"Monster", "Fox", "hp")); // TODO 매직넘버
 		monster_entity->AddComp<MonsterDeath>();
 
 		// TODO: 필요할때만 딜리터 설정하기

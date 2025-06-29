@@ -143,6 +143,7 @@
     <ClCompile Include="CommonMath.cpp" />
     <ClCompile Include="DataRegistry.cpp" />
     <ClCompile Include="HeightMap.cpp" />
+    <ClCompile Include="JsonGenerator.cpp" />
     <ClCompile Include="NaviAgent.cpp" />
     <ClCompile Include="NaviCell.cpp" />
     <ClCompile Include="Navigator.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="DataRegistry.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="JsonGenerator.h" />
     <ClInclude Include="NaviAgent.h" />
     <ClInclude Include="NaviCell.h" />
     <ClInclude Include="Navigator.h" />
@@ -201,7 +203,7 @@
     <ClInclude Include="SharedDefines.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\resource\json\GlabalValues.json" />
+    <None Include="..\resource\json\GlobalValues.json" />
     <None Include="..\resource\json\Item.json" />
     <None Include="..\resource\json\ItemRecipe.json" />
     <None Include="..\resource\json\Monster.json" />

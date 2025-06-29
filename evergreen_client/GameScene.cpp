@@ -209,7 +209,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
     m_terrainMesh = CreateMeshFromHeightMap(heightMap, 512, 512, 1.0f);
     m_terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
-    const float TerrainSize = GET_DATA(float, "TerrainSize", "Value");
+    const float TerrainSize = GET_DATA(float,"GlobalValues", "TerrainSize", "Value");
     const Vector3 terrainPos = Vector3(-TerrainSize * 0.5f, 0, -TerrainSize * 0.5f);
     const Vector3 terrainScale = Vector3::One * TerrainSize;
 
@@ -360,7 +360,7 @@ GameScene::GameScene(HeightMap* heightMap, TerrainData* terrainData, TerrainDeta
         auto textObj = std::make_shared<SceneObject>();
         auto textRenderer = textObj->AddComponent<GUIText>();
         textObj->GetTransform()->SetLocalPosition(Vector3(-640, 480, 0));
-        textRenderer->SetText(GET_DATA(std::wstring, "Intro", "Start"));
+        textRenderer->SetText(GET_DATA(std::wstring,"Script", "Intro", "Start"));
         textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
         textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
         m_playerInterfaceGroup->AddChild(textObj);

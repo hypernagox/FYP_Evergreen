@@ -11,7 +11,7 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 
 	GetSceneObject()->AddChild(m_rendererObj);
 
-	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "CharacterScale", "Value"));
+	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float,"GlobalValues", "CharacterScale", "Value"));
 
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(to); });
@@ -222,12 +222,12 @@ void PlayerRenderer::SetPlayerWeapon(std::string_view weaponName)
 		toolRenderer->SetBoneName("Bip001 R Hand");
 	}
 
-	auto& scaleJson = GET_DATA(nlohmann::json, weaponName, "Scale");
-	auto& rotationJson = GET_DATA(nlohmann::json, weaponName, "Rotation");
-	auto& positionJson = GET_DATA(nlohmann::json, weaponName, "Position");
+	auto& scaleJson = GET_DATA(nlohmann::json, "Weapon", weaponName, "Scale");
+	auto& rotationJson = GET_DATA(nlohmann::json, "Weapon", weaponName, "Rotation");
+	auto& positionJson = GET_DATA(nlohmann::json, "Weapon", weaponName, "Position");
 
-	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, weaponName, "ModelDiffuse"))));
-	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring, weaponName, "Model"))));
+	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "ModelDiffuse"))));
+	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring,"Weapon", weaponName, "Model"))));
 	toolRenderer->SetPropLocalTransform(
 		Matrix4x4::CreateScale(scaleJson["X"], scaleJson["Y"], scaleJson["Z"]) *
 		Matrix4x4::CreateFromYawPitchRoll(rotationJson["Y"] * DEG2RAD, rotationJson["X"] * DEG2RAD, rotationJson["Z"] * DEG2RAD) *
