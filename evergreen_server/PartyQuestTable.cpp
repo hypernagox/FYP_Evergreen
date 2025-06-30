@@ -5,9 +5,6 @@
 void PartyQuestTable::InitPartyQuestTable() noexcept
 {
 	{
-		g_party_quest_table.emplace_back(NagiocpX::MakeShared<InvadeQuest_1>);
-	}
-	{
 		g_party_quest_table.emplace_back(NagiocpX::MakeShared<TutorialGuardQuest>);
 	}
 	{
