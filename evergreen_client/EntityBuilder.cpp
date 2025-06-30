@@ -14,6 +14,7 @@
 #include "ServerObjectMgr.h"
 #include "GuideSystem.h"
 #include "InteractiveEntity.h"
+#include "GizmoSectorRenderer.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 
@@ -87,7 +88,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	{
 		auto instance = std::make_shared<udsdx::SceneObject>();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
-
+		
 		auto monsterComponent = instance->AddComponent<MonsterBear>();
 		auto serverComponent = instance->AddComponent<ServerObject>();
 		serverComponent->SetObjID(builder->obj_id);
@@ -95,6 +96,10 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
+		//TODO: 매직넘버
+		const auto sector = instance->AddComponent<GizmoSectorRenderer>();
+		sector->SetAngle(65.f);
+		sector->SetRadius(4.5f);
 		return instance;
 	}
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_GOBLIN:

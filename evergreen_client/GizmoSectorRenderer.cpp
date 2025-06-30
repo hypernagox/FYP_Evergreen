@@ -61,9 +61,16 @@ GizmoSectorRenderer::GizmoSectorRenderer(const std::shared_ptr<SceneObject>& obj
 
 void GizmoSectorRenderer::Render(udsdx::RenderParam& param, int instances)
 {
+	// TODO: 시야가 반대로 렌더링 된다.
+
 	ObjectConstants objectConstants;
-	Matrix4x4 worldTransform = XMMatrixScaling(m_radius, 1.0f, m_radius) * XMLoadFloat4x4(&m_transformCache);
-	objectConstants.World = worldTransform.Transpose();
+
+	const DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(m_radius, 1.0f, m_radius);
+	const DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(180.0f));
+	const DirectX::XMMATRIX transform = DirectX::XMLoadFloat4x4(&m_transformCache);
+	const DirectX::XMMATRIX worldTransform = scale * rotation * transform;
+	
+	DirectX::XMStoreFloat4x4(&objectConstants.World, DirectX::XMMatrixTranspose(worldTransform));
 	objectConstants.PrevWorld.m[0][0] = m_angle * DEG2RAD;
 
 	param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerObjectCBV, sizeof(ObjectConstants) / 4, &objectConstants, 0);

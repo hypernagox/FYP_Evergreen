@@ -194,7 +194,7 @@ void PartyQuestTable::InitPartyQuestTable(const std::wstring_view path) noexcept
 	const auto party_quest_table_path = RESOURCE_PATH(path) + L"\\party_quest_table\\PartyQuestTable.json";
 
 	std::ifstream file_stream{ party_quest_table_path };
-	if (!file_stream.is_open())
+	if (!file_stream)
 	{
 		std::cout << "파티퀘스트 테이블 경로 오류\n";
 		return;
