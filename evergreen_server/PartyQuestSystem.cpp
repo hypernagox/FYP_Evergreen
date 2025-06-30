@@ -31,10 +31,12 @@ bool PartyQuestSystem::MissionStart()
 			m_curQuestRoomInstance = NagiocpX::MakeShared<FoxQuest>();
 			break;
 		case 2:
-			m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
+			m_curQuestRoomInstance = NagiocpX::MakeShared<InvadeQuest_1>();
+			//m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
 			break;
 		case 3:
-			m_curQuestRoomInstance = NagiocpX::MakeShared<BearQuest>();
+			//m_curQuestRoomInstance = NagiocpX::MakeShared<BearQuest>();
+			m_curQuestRoomInstance = NagiocpX::MakeShared<InvadeQuest_2>();
 			break;
 		default:
 			break;
@@ -109,6 +111,7 @@ void PartyQuestSystem::MissionEnd()
 			owner,
 			m_prev_field->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 		);
+		mem->GetClientSession()->SendAsync(Create_s2c_FORCED_MOVE(mem->GetObjectID(), ToFlatVec(Vector3(-103.19971F, 75.85828F, 11.403826F))));
 	}
 	m_runFlag = false;
 }

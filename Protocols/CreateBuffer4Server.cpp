@@ -462,6 +462,18 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_NEW_PLAYER(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_JOIN_NEW_PLAYER);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_START(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto serializeds2c_PARTY_QUEST_START = Nagox::Protocol::Creates2c_PARTY_QUEST_START(
+        builder
+    );
+    builder.Finish(serializeds2c_PARTY_QUEST_START);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_QUEST_START);
+}
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_OUT(
     const uint32_t out_user_id,
     const uint32_t cur_leader_id,
@@ -546,4 +558,21 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_USER_DETAIL_INFO(
     builder.Finish(serializeds2c_NOTIFY_USER_DETAIL_INFO);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_NOTIFY_USER_DETAIL_INFO);
+}
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FORCED_MOVE(
+    const uint32_t target_user_id,
+    const Nagox::Struct::Vec3& target_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto target_user_id_value = target_user_id;
+    const auto target_pos_offset = &target_pos;
+    const auto serializeds2c_FORCED_MOVE = Nagox::Protocol::Creates2c_FORCED_MOVE(
+        builder
+,        target_user_id_value,
+        target_pos_offset    );
+    builder.Finish(serializeds2c_FORCED_MOVE);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_FORCED_MOVE);
 }

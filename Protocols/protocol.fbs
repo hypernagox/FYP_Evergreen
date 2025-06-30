@@ -270,6 +270,11 @@ table c2s_PARTY_OUT
     
 }
 
+table s2c_PARTY_QUEST_START
+{
+   
+}
+
 table s2c_PARTY_OUT
 {
     out_user_id : uint32;
@@ -313,4 +318,10 @@ table s2c_NOTIFY_USER_DETAIL_INFO
 table c2s_CHANGE_CHANNEL
 {
    dest_channel_id : uint32;
+}
+
+table s2c_FORCED_MOVE
+{
+    target_user_id : uint32;
+    target_pos: Nagox.Struct.Vec3;
 }

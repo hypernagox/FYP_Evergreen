@@ -30,6 +30,11 @@ void NaviAgent::SetPos(const Vector3& pos) noexcept
 	m_agent.GetCurCell() = m_agent.GetNavMesh()->GetNaviCell(cur_pos);
 }
 
+Common::NavigationMesh* const NaviAgent::GetNavMesh() noexcept
+{
+	return m_agent.GetNavMesh();
+}
+
 void NaviAgent::SetCellPos(const float dt, const Vector3& prev_pos, const Vector3& post_pos) noexcept
 {
 	m_agent.SetCellPos(dt, prev_pos, post_pos, m_posComp->pos);

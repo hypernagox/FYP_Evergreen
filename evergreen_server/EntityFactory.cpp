@@ -170,7 +170,7 @@ namespace NagiocpX
 	{
 		const auto monster_entity = CreateContentsEntity(b.group_type, b.obj_type);
 
-		const auto bt_timer = monster_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>(), 10 * 10);
+		const auto bt_timer = monster_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>(), 64 * 64);
 
 		const auto& bt_root = bt_timer->GetRootNode();
 
@@ -181,10 +181,10 @@ namespace NagiocpX
 
 		const auto s1 = bt_root->AddChild<SequenceNode>();
 
-		s1->AddChild<RangeCheckNode>(30);
+		s1->AddChild<RangeCheckNode>(30/30);
 		const auto s2 = s1->AddChild<SequenceNode>();
 
-		s2->AddChild<RangeCheckNode>(50);
+		s2->AddChild<RangeCheckNode>(50/2);
 		
 		s1->AddChild<ChaseNode>();
 

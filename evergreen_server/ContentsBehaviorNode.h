@@ -43,6 +43,15 @@ public:
 	virtual NodeStatus Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
 
 	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
+	float m_accTime = 0.f;
+	float m_accStopTime = 0.f;
+	Vector3 m_dir = {};
+	Vector3 m_curDest = {};
+	bool m_bInit = false;
+	bool m_bStop = false;
+	float m_accTimeLimit;
+	float m_accStopLimit;
+	Vector3 m_randPoint[4]{};
 };
 
 class MoveNode

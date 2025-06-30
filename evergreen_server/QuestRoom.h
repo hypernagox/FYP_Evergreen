@@ -45,7 +45,6 @@ public:
 	bool IsClear()const noexcept { return m_isClear.load(); }
 protected:
 	NagoxAtomic::Atomic<int8_t> m_mon_count{ 0 };
-private:
 	NagoxAtomic::Atomic<bool> m_isClear{ false };
 	NagoxAtomic::Atomic<int8_t> m_numOfMember{ 0 };
 	std::shared_ptr<PartyQuestSystem> m_ownerPartrySystem;
@@ -113,4 +112,66 @@ public:
 	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
 	virtual void InitQuestField()noexcept override;
 private:
+};
+
+struct PatrolUnit 
+{
+	S_ptr<ContentsEntity> m_patrol = {};
+	Vector3 m_start = {};
+	Vector3 m_dest = {};
+	Vector3 m_prev_pos = {};
+	float m_dist = {};
+	float m_accStop = { 0.f };
+	float m_speed = 3.f;
+	bool m_bTempStopPatrol = { false };
+	PatrolUnit(
+		  Nagox::Enum::MONSTER_TYPE mon_type
+		, const Vector3& start
+		, const Vector3& dest
+		, const float speed
+	)noexcept;
+
+	bool UpdatePatrol(const float DT)noexcept;
+	void CheckInsight(const std::shared_ptr<PartyQuestSystem>& party_sys, const Vector3& reset_pos)noexcept;
+	
+};
+
+class InvadeQuestBase
+	:public QuestRoom
+{
+public:
+	virtual bool ProcessPartyQuest()noexcept override;
+	virtual bool IsFailPartyQuest()const noexcept { return false; }
+
+	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	virtual void InitQuestField()noexcept = 0;
+protected:
+	PatrolUnit* const AddPatrolUnit(
+		  Nagox::Enum::MONSTER_TYPE mon_type
+		, const Vector3& start
+		, const Vector3& dest
+		, const float speed)noexcept;
+	void StartUpdate(const Vector3& reset_pos)noexcept;
+	ContentsEntity* const SetTargetObject(const Vector3& target_pos)noexcept;
+private:
+	void Update()noexcept;
+private:
+	XVector<PatrolUnit> m_patrols;
+	S_ptr<ContentsEntity> m_target = {};
+	Vector3 m_resetPos = {};
+	NagiocpX::Timer m_timer;
+};
+
+
+class InvadeQuest_1
+	:public InvadeQuestBase
+{
+	virtual void InitQuestField()noexcept override;
+};
+
+class InvadeQuest_2
+	:public InvadeQuestBase
+{
+	virtual void InitQuestField()noexcept override;
 };

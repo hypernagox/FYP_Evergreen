@@ -151,6 +151,9 @@ struct c2s_QUEST_ENDBuilder;
 struct c2s_PARTY_OUT;
 struct c2s_PARTY_OUTBuilder;
 
+struct s2c_PARTY_QUEST_START;
+struct s2c_PARTY_QUEST_STARTBuilder;
+
 struct s2c_PARTY_OUT;
 struct s2c_PARTY_OUTBuilder;
 
@@ -174,6 +177,9 @@ struct s2c_NOTIFY_USER_DETAIL_INFOBuilder;
 
 struct c2s_CHANGE_CHANNEL;
 struct c2s_CHANGE_CHANNELBuilder;
+
+struct s2c_FORCED_MOVE;
+struct s2c_FORCED_MOVEBuilder;
 
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
@@ -2682,6 +2688,35 @@ inline ::flatbuffers::Offset<c2s_PARTY_OUT> Createc2s_PARTY_OUT(
   return builder_.Finish();
 }
 
+struct s2c_PARTY_QUEST_START FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PARTY_QUEST_STARTBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PARTY_QUEST_STARTBuilder {
+  typedef s2c_PARTY_QUEST_START Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit s2c_PARTY_QUEST_STARTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PARTY_QUEST_START> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PARTY_QUEST_START>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PARTY_QUEST_START> Creates2c_PARTY_QUEST_START(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  s2c_PARTY_QUEST_STARTBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
 struct s2c_PARTY_OUT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_PARTY_OUTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -3104,6 +3139,63 @@ inline ::flatbuffers::Offset<c2s_CHANGE_CHANNEL> Createc2s_CHANGE_CHANNEL(
     uint32_t dest_channel_id = 0) {
   c2s_CHANGE_CHANNELBuilder builder_(_fbb);
   builder_.add_dest_channel_id(dest_channel_id);
+  return builder_.Finish();
+}
+
+struct s2c_FORCED_MOVE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_FORCED_MOVEBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_USER_ID = 4,
+    VT_TARGET_POS = 6
+  };
+  uint32_t target_user_id() const {
+    return GetField<uint32_t>(VT_TARGET_USER_ID, 0);
+  }
+  bool mutate_target_user_id(uint32_t _target_user_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_USER_ID, _target_user_id, 0);
+  }
+  const Nagox::Struct::Vec3 *target_pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_target_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_TARGET_POS, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_FORCED_MOVEBuilder {
+  typedef s2c_FORCED_MOVE Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_user_id(uint32_t target_user_id) {
+    fbb_.AddElement<uint32_t>(s2c_FORCED_MOVE::VT_TARGET_USER_ID, target_user_id, 0);
+  }
+  void add_target_pos(const Nagox::Struct::Vec3 *target_pos) {
+    fbb_.AddStruct(s2c_FORCED_MOVE::VT_TARGET_POS, target_pos);
+  }
+  explicit s2c_FORCED_MOVEBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_FORCED_MOVE> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_FORCED_MOVE>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_FORCED_MOVE> Creates2c_FORCED_MOVE(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_user_id = 0,
+    const Nagox::Struct::Vec3 *target_pos = nullptr) {
+  s2c_FORCED_MOVEBuilder builder_(_fbb);
+  builder_.add_target_pos(target_pos);
+  builder_.add_target_user_id(target_user_id);
   return builder_.Finish();
 }
 

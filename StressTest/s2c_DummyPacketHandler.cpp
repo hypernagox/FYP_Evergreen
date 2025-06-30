@@ -201,6 +201,11 @@ const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NagiocpX::S_ptr<NagiocpX::Pack
 	return true;
 }
 
+const bool Handle_s2c_PARTY_QUEST_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_START& pkt_)
+{
+	return true;
+}
+
 const bool Handle_s2c_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_)
 {
 	return true;
@@ -225,6 +230,11 @@ const bool Handle_s2c_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::Packe
 }
 
 const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_FORCED_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_FORCED_MOVE& pkt_)
 {
 	return true;
 }
