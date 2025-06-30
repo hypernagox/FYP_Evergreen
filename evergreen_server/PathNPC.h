@@ -9,7 +9,7 @@ class PathNPC
 	CONSTRUCTOR_CONTENTS_COMPONENT(PathNPC)
 public:
 	void UpdateMove();
-	void InitPathNPC();
+	void InitPathNPC(const XVector<Vector3> points);
 public:
 	class NaviAgent* m_navAgent = nullptr;
 	XVector<std::pair<Vector3, float>> m_vecDirDists;

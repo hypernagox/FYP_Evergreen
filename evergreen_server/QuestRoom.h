@@ -43,6 +43,7 @@ public:
 public:
 	void CheckPartyQuestState()noexcept;
 	bool IsClear()const noexcept { return m_isClear.load(); }
+	void SetQuestBeginPos(const Vector3& pos)noexcept;
 protected:
 	NagoxAtomic::Atomic<int8_t> m_mon_count{ 0 };
 	NagoxAtomic::Atomic<bool> m_isClear{ false };
@@ -82,7 +83,7 @@ public:
 private:
 };
 
-class NPCGuardQuest
+class NPCGuardQuestBase
 	:public QuestRoom
 {
 public:
@@ -94,10 +95,29 @@ public:
 
 	//virtual void MigrationAfterBehavior(Field* const prev_field)noexcept override;
 
-	virtual void InitQuestField()noexcept override;
+	virtual void InitQuestField()noexcept = 0;
+
+	void SetPathNPC(XVector<Vector3> path)noexcept;
+	virtual void SetMonsters(const XVector<Vector3> points)noexcept = 0;
 	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
 	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
 };
+
+class TutorialGuardQuest
+	: public NPCGuardQuestBase
+{
+	virtual void InitQuestField()noexcept override;
+
+	void SetMonsters(const XVector<Vector3> points)noexcept override;
+};
+
+class NPCGuardQuest2
+	: public NPCGuardQuestBase
+{
+	virtual void InitQuestField()noexcept override;
+	void SetMonsters(const XVector<Vector3> points)noexcept override;
+};
+
 
 class BearQuest
 	:public QuestRoom
