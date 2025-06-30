@@ -120,7 +120,7 @@ NodeStatus AttackNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
     const auto dx = dest_pos.x - cur_pos.x;
     const auto dy = dest_pos.y - cur_pos.y;
     const auto dz = dest_pos.z - cur_pos.z;
-
+   
    // std::cout << "АјАн!" << std::endl;
 
     if (m_attack_range * m_attack_range <= dx * dx + dy * dy + dz * dz)
@@ -211,12 +211,70 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
 
 NodeStatus PatrolNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
-    // owner_comp_sys->GetComp<PositionComponent>()->body_angle += 1000.f * bt_root_timer->GetBTTimerDT();
+    //   owner_comp_sys->GetComp<PositionComponent>()->body_angle += 1000.f * bt_root_timer->GetFloatDT();
     const auto pOwnerEntity = owner_comp_sys->GetOwnerEntity();
     //NagiocpX::Vector<NagiocpX::Sector*> sectors{ pOwnerEntity->GetCurSector() };
 
     //pOwnerEntity->MoveBroadcastEnqueue(0, 0, std::move(sectors));
-    bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+
+    const auto nav_mesh = owner_comp_sys->GetComp<NaviAgent>()->GetNavMesh();
+    const auto pos_comp = owner_comp_sys->GetComp<PositionComponent>();
+    const auto cur_pos = pos_comp->pos;
+    const Vector3 start_pos = CommonMath::InverseZ(cur_pos);
+    Vector3 out_pos = start_pos;
+    const auto dt_ = bt_root_timer->GetFloatDT();
+    const bool prev_init = m_bInit;
+    if (!m_bInit)
+    {
+        m_bInit = true;
+        for (auto& r : m_randPoint)
+        {
+            if (nav_mesh->findRandomPointAroundCircle(&start_pos.x, 5.f, &out_pos.x))
+            {
+                CommonMath::InverseZ(out_pos);
+                r = out_pos;
+            }
+            else
+            {
+                r = cur_pos;
+            }
+        }
+        extern thread_local std::default_random_engine Common::LDefaultRandEngine;
+
+        std::uniform_real_distribution<float> urd1(2.f,4.f);
+        std::uniform_real_distribution<float> urd2(3.f, 7.f);
+       
+        m_accTimeLimit = urd1(Common::LDefaultRandEngine);
+        m_accStopLimit = urd2(Common::LDefaultRandEngine);
+    }
+    if (!m_bStop)
+    {
+        if (0.f >= m_accTime)
+        {
+            m_curDest = *std::ranges::max_element(m_randPoint, [cur_pos](const auto& a,const auto& b) {
+                return Vector3::DistanceSquared(cur_pos, a) < Vector3::DistanceSquared(cur_pos, b);
+                });
+            m_dir = CommonMath::Normalized(m_curDest - cur_pos);
+            m_accTime = m_accTimeLimit;
+            m_bStop = true;
+        }
+        if(!m_bStop || !prev_init)
+        {
+            m_accTime -= dt_;
+            pOwnerEntity->GetComp<PositionComponent>()->AdjustMovement(dt_, m_dir * 0.001f);
+            pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(m_dir.x, m_dir.z) * 180.f / 3.141592f;
+            bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
+        }
+    }
+    else
+    {
+        m_accStopTime += dt_;
+        if (m_accStopLimit <= m_accStopTime)
+        {
+            m_bStop = false;
+            m_accStopTime = 0.f;
+        }
+    }
     //pOwnerEntity->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
    // NagiocpX::SectorInfoHelper::BroadcastWithID(bt_root_timer->GetCurObjInSight(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
 

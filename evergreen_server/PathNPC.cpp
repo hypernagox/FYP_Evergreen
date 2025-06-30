@@ -23,7 +23,7 @@ void PathNPC::UpdateMove()
 		// µµÂø
 		// TODO ¸¯ °¡´É¼º
 		if (room) {
-			static_cast<NPCGuardQuest*>(
+			static_cast<NPCGuardQuestBase*>(
 				room.get()
 				)->m_clear.store(true);
 			room->CheckPartyQuestState();
@@ -83,25 +83,12 @@ void PathNPC::UpdateMove()
 	);
 }
 
-void PathNPC::InitPathNPC()
+void PathNPC::InitPathNPC(const XVector<Vector3> points)
 {
 	const float step = 2.f;
 	const Vector3 begin = Vector3(-270.50497F, 86.48416F, -23.966377F);
 	//const Vector3 end = Vector3(-120.628365, 75.83887, 12.696598); // ¸¶À» Áß¾Ó
-	const Vector3 points[] = {
-	Vector3(-270.50497F,86.48416F,-23.966377F),
-	Vector3(-262.50986F,86.0128F,-23.310076F),
-	Vector3(-248.07124F,84.52976F,-15.239957F),
-	Vector3(-236.64597F,83.31353F,-5.343036F),
-	Vector3(-229.64525F,82.18539F,-2.87825F),
-	Vector3(-209.29497F,81.04176F,-3.3852773F),
-	Vector3(-188.42654F,79.49546F,-3.2104106F),
-	Vector3(-169.08516F,78.3188F,-3.3492434F),
-	Vector3(-149.05505F,78.25525F,-0.90608793F),
-	Vector3(-139.2348F,78.220726F,-0.37422684F),
-	Vector3(-122.58272F,75.91813F,11.575291F),
-	};
-	const auto num = sizeof(points) / sizeof(points[0]);
+	const auto num = (int)points.size();
 	std::vector<Vector3> pvec;
 	for (int i=0;i<num-1;++i)
 	{
@@ -114,7 +101,7 @@ void PathNPC::InitPathNPC()
 	//const auto& vecPath = m_navAgent->GetAgentConcreate()->
 	//	GetNavMesh()->GetPathVertices(begin, end, step);
 	m_navAgent->SetPos(points[0]);
-	m_speed = 5.f;
+	m_speed = 10.f;
 
 	if (auto num = pvec.size())
 	{

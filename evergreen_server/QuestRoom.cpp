@@ -12,6 +12,9 @@
 #include "NaviAgent.h"
 #include "NaviAgent_Common.h"
 #include "ClusterPredicate.h"
+#include "Collider_Common.h"
+#include "HP.h"
+#include "Death.h"
 
 std::atomic_int aaaa;
 QuestRoom::QuestRoom() noexcept
@@ -201,6 +204,26 @@ void QuestRoom::CheckPartyQuestState()noexcept
 	}
 }
 
+void QuestRoom::SetQuestBeginPos(const Vector3& pos) noexcept
+{
+	const auto party_sys = m_ownerPartrySystem;
+	if (!party_sys)return;
+	const auto members = party_sys->GetPartyMembers();
+	for (const auto& member : members)
+	{
+		if (!member)continue;
+		const auto pos_comp = member->GetComp<PositionComponent>();
+		pos_comp->pos = pos;
+
+		member->GetClientSession()->SendAsync(Create_s2c_FORCED_MOVE(member->GetObjectID(), ToFlatVec(pos)));
+	}
+}
+
+
+bool InvadeQuestBase::ProcessPartyQuest() noexcept
+{
+	return true;
+}
 
 void FoxQuest::InitQuestField() noexcept
 {
@@ -269,59 +292,63 @@ void GoblinQuest::InitQuestField() noexcept
 	}
 }
 
-void NPCGuardQuest::InitQuestField() noexcept
+void TutorialGuardQuest::InitQuestField() noexcept
 {
-	EntityBuilder b;
-	b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
-	b.obj_type = 0;
-	const auto m = EntityFactory::CreatePathNPC(b);
-	const auto m2 = m;
+	SetPathNPC({
+	Vector3(-270.50497F,86.48416F,-23.966377F),
+	Vector3(-262.50986F,86.0128F,-23.310076F),
+	Vector3(-248.07124F,84.52976F,-15.239957F),
+	Vector3(-236.64597F,83.31353F,-5.343036F),
+	Vector3(-229.64525F,82.18539F,-2.87825F),
+	Vector3(-209.29497F,81.04176F,-3.3852773F),
+	Vector3(-188.42654F,79.49546F,-3.2104106F),
+	Vector3(-169.08516F,78.3188F,-3.3492434F),
+	Vector3(-149.05505F,78.25525F,-0.90608793F),
+	Vector3(-139.2348F,78.220726F,-0.37422684F),
+	Vector3(-122.58272F,75.91813F,11.575291F),
+		});
+	SetMonsters({
+		Vector3(-259.22272F, 84.94523F, -15.314469F),
+		Vector3(-242.5948F, 83.53157F, -20.12327F),
+		Vector3(-244.0131F, 83.93936F, -1.8343055F),
+		Vector3(-225.44817F, 81.969826F, -12.672854F),
+		Vector3(-210.61905F, 81.896484F, 5.847359F),
+		Vector3(-199.39998F, 80.16998F, -11.756538F),
+		Vector3(-192.54158F, 80.21647F, 5.781999F),
+		Vector3(-174.05774F, 78.48746F, -9.923426F),
+		Vector3(-158.33324F, 77.9395F, 5.0919523F) }
+		);
+}
 
-	const Vector3 begin = Vector3(-270.50497F, 86.48416F, -23.966377F);
-	const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
-
-	EnterFieldWithFloatXYNPC(begin.x + 512.f, begin.z + 512.f, m);
-	//EnterFieldNPC(m);
-	// TODO: 위험
-	m2->GetComp<PathNPC>()->m_owner_system = GetOwnerSystem();
-	m2->GetComp<PathNPC>()->InitPathNPC();
-
-	const Vector3 points[] = {
-	Vector3(-259.22272F,84.94523F,-15.314469F),
-	Vector3(-242.5948F,83.53157F,-20.12327F)  ,
-	Vector3(-244.0131F,83.93936F,-1.8343055F) ,
-	Vector3(-225.44817F,81.969826F,-12.672854F),
-	Vector3(-210.61905F,81.896484F,5.847359F) ,
-	Vector3(-199.39998F,80.16998F,-11.756538F),
-	Vector3(-192.54158F,80.21647F,5.781999F)  ,
-	Vector3(-174.05774F,78.48746F,-9.923426F) ,
-	Vector3(-158.33324F,77.9395F,5.0919523F)  ,
-	};
-	const auto num = sizeof(points) / sizeof(points[0]);
+void TutorialGuardQuest::SetMonsters(const XVector<Vector3> points) noexcept
+{
+	const auto num = (int)points.size();
 	for (int i = 0; i < num; ++i)
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
 		const auto m = EntityFactory::CreateMonster(b);
-		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
-		//m->GetComp<PositionComponent>()->pos = points[i];
 		auto p = points[i];
-		//float f[3]{ 10,10000,10 };
-		//auto p2 = p;
-		//dtPolyRef ref;
-		//NAVIGATION->GetNavMesh(NUM_0)->GetNavMeshQuery()->findNearestPoly(&p.x, f,
-		//	NAVIGATION->GetNavMesh(NUM_0)->GetNavFilter(), &ref, &p2.x
-		//);
-
-		//p.y = NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(p).CalculateHeight(p, NAVIGATION->GetNavMesh(NUM_0));
 		m->GetComp<NaviAgent>()->SetPos(p);
 		m->GetComp<PositionComponent>()->pos = p;
 		const auto pos = p;
-		//m->GetComp<NaviAgent>()->InitCrowd();
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
-		//EnterFieldNPC(m);
 	}
+}
+
+void NPCGuardQuestBase::SetPathNPC(XVector<Vector3> path) noexcept
+{
+	EntityBuilder b;
+	b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
+	b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
+	const auto m = EntityFactory::CreatePathNPC(b);
+	const auto m2 = m;
+	//EnterFieldNPC(m);
+	// TODO: 위험
+	EnterFieldWithFloatXYNPC(path[0].x + 512.f, path[0].z + 512.f, m);
+	m2->GetComp<PathNPC>()->m_owner_system = GetOwnerSystem();
+	m2->GetComp<PathNPC>()->InitPathNPC(std::move(path));
 }
 
 void BearQuest::InitQuestField() noexcept
@@ -340,6 +367,331 @@ void BearQuest::InitQuestField() noexcept
 		m->GetComp<PositionComponent>()->pos = mon_quest_pos[i];
 		m->GetComp<NaviAgent>()->SetPos(mon_quest_pos[i]);
 		const auto pos = m->GetComp<PositionComponent>()->pos;
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+	}
+}
+
+PatrolUnit* const InvadeQuestBase::AddPatrolUnit(Nagox::Enum::MONSTER_TYPE mon_type, const Vector3& start, const Vector3& dest, const float speed) noexcept
+{
+	auto& patrol = m_patrols.emplace_back(mon_type, start, dest, speed);
+	const auto temp_ptr = patrol.m_patrol;
+	const auto pos = temp_ptr->GetComp<PositionComponent>()->pos;
+	EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, temp_ptr);
+	return &patrol;
+}
+
+void InvadeQuestBase::Update()noexcept
+{
+	m_timer.Update();
+	const auto DT = m_timer.GetDT();
+	const auto party_sys = m_ownerPartrySystem;
+	for (auto& patrol : m_patrols)
+	{
+		if (patrol.UpdatePatrol(DT))
+		{
+			if (party_sys)
+			{
+				patrol.CheckInsight(party_sys, m_resetPos);
+			}
+		}
+	}
+	if (!m_bIsRunning)return;
+	Mgr(TaskTimerMgr)->ReserveAsyncTask(100, [r = SharedFromThis<InvadeQuestBase>()]() {
+		r->Update();
+		});
+}
+
+void InvadeQuestBase::StartUpdate(const Vector3& reset_pos) noexcept
+{
+	
+	for (const auto& patrol : m_patrols)
+	{
+		const auto& monster_entity = patrol.m_patrol;
+		const auto agent = monster_entity->AddComp<NaviAgent>();
+		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
+		agent->GetAgentConcreate()->SetNavMesh(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+		monster_entity->GetComp<NaviAgent>()->SetPos(monster_entity->GetComp<PositionComponent>()->pos);
+	}
+
+	m_resetPos = reset_pos;
+	m_timer.Update();
+	Mgr(TaskTimerMgr)->ReserveAsyncTask(100, [r = SharedFromThis<InvadeQuestBase>()]() {
+		r->Update();
+		});
+	SetQuestBeginPos(reset_pos);
+}
+
+ContentsEntity* const InvadeQuestBase::SetTargetObject(const Vector3& target_pos) noexcept
+{
+	const auto monster_entity = NagiocpX::CreateContentsEntity(Nagox::Enum::GROUP_TYPE_MONSTER, Nagox::Enum::MONSTER_TYPE_FOX);
+
+	
+	const auto pos_comp = monster_entity->AddComp<PositionComponent>();
+	pos_comp->pos = target_pos;
+	
+	monster_entity->AddComp<SphereCollider>()->SetSphere(monster_entity->GetComp<PositionComponent>(), 1.5f);
+
+	monster_entity->GetComp<SphereCollider>()->GetCollider()->m_offSet.y += 1.f;
+
+	monster_entity->AddComp<HP>()->InitHP(GET_DATA(int, "Monster", "Fox", "hp")); // TODO 매직넘버
+	monster_entity->AddComp<MonsterDeath>();
+	const auto temp_ptr = monster_entity.get();
+	const auto pos = pos_comp->pos;
+	EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, monster_entity);
+	return temp_ptr;
+}
+
+static bool IsInSector(const Vector3& origin, const Vector3& forward, const Vector3& target,
+	const float fovAngleDeg, const float maxDistance)noexcept
+{
+	Vector3 toTarget = target - origin;
+	const float distSq = toTarget.LengthSquared();
+
+	if (distSq > maxDistance * maxDistance)
+		return false;
+
+	toTarget.y = 0.0f;
+
+	if (toTarget.LengthSquared() < 1e-6f)
+		return true;
+
+	toTarget.Normalize();
+
+	Vector3 forwardFlat = forward;
+	forwardFlat.y = 0.0f;
+	forwardFlat.Normalize();
+
+	const float dot = forwardFlat.Dot(toTarget);
+	const float halfAngleRad = DirectX::XMConvertToRadians(fovAngleDeg * 0.5f);
+	const float cosThreshold = std::cos(halfAngleRad);
+
+	return dot >= cosThreshold;
+}
+
+PatrolUnit::PatrolUnit(
+	  Nagox::Enum::MONSTER_TYPE mon_type
+	, const Vector3& start
+	, const Vector3& dest
+	, const float speed) noexcept
+	: m_patrol{ NagiocpX::CreateContentsEntity(Nagox::Enum::GROUP_TYPE_MONSTER, mon_type) }
+	, m_start{start}
+	, m_dest{dest}
+	, m_dist{ Vector3::Distance(start,dest) }
+	, m_accStop{ 0.f }
+	, m_bTempStopPatrol{ false }
+	, m_speed{ speed }
+{
+	const auto pos_comp = m_patrol->AddComp<PositionComponent>();
+	pos_comp->pos = start;
+	const auto dir = CommonMath::Normalized(dest - start);
+	pos_comp->body_angle = DirectX::XMConvertToDegrees(std::atan2(dir.x, dir.z));
+}
+
+bool PatrolUnit::UpdatePatrol(const float DT) noexcept
+{
+	const auto pos_comp = m_patrol->GetComp<PositionComponent>();
+	const auto dir = CommonMath::Normalized(m_dest - pos_comp->pos);
+	if (!m_bTempStopPatrol)
+	{
+		const auto delta = dir * DT * m_speed;
+		const auto prev_pos = pos_comp->pos;
+		m_prev_pos = prev_pos;
+		pos_comp->pos += delta;
+		m_dist -= delta.Length(); 
+		const auto& monster_entity = m_patrol;
+		const auto agent = monster_entity->GetComp<NaviAgent>();
+		agent->SetCellPos(DT, prev_pos, pos_comp->pos);
+		if (0.f >= m_dist)
+		{
+			m_dist = Vector3::Distance(m_start, m_dest);
+			std::swap(m_start, m_dest);
+			m_bTempStopPatrol = true;
+		}
+		else
+		{
+			ClusterPredicate c;
+			m_patrol->GetCurCluster()->Broadcast(c.ClusterPredicate::CreateMovePacket(m_patrol.get()));
+		}
+		return true;
+	}
+	else
+	{
+		m_accStop += DT;
+		if (1.5f <= m_accStop)
+		{
+			m_accStop = 0.f;
+			m_bTempStopPatrol = false;
+			const auto dir = CommonMath::Normalized(m_dest - m_start);
+			pos_comp->body_angle = DirectX::XMConvertToDegrees(std::atan2(dir.x, dir.z));
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+}
+
+void PatrolUnit::CheckInsight(const std::shared_ptr<PartyQuestSystem>& party_sys, const Vector3& reset_pos) noexcept
+{
+	const auto members = party_sys->GetPartyMembers();
+	const auto mon_pos = m_patrol->GetComp<PositionComponent>()->pos;
+	const auto mon_dir = CommonMath::Normalized(m_dest - m_start);
+	const auto delta = mon_pos - m_prev_pos;
+	for (const auto& member : members)
+	{
+		if (!member) continue;
+
+		const auto pos_comp = member->GetComp<PositionComponent>();
+		
+		bool found = false;
+		for (int i = 0; i <= 10; ++i)
+		{
+			const float t = static_cast<float>(i) / 10.0f;
+			const Vector3 interp_pos = m_prev_pos + delta * t;
+
+			if (IsInSector(interp_pos, mon_dir, pos_comp->pos, 70.f, 4.f))
+			{
+				found = true;
+				break;
+			}
+		}
+		if (found)
+		{
+			pos_comp->pos = reset_pos;
+			member->GetCurCluster()->Broadcast(Create_s2c_FORCED_MOVE(member->GetObjectID(), ToFlatVec(reset_pos)));
+		}
+	}
+}
+
+void InvadeQuest_1::InitQuestField() noexcept
+{
+	{
+		AddPatrolUnit(
+			Nagox::Enum::MONSTER_TYPE_BEAR,
+			Vector3(-29.655296F, 78.92489F, -100.080925F),
+			Vector3(-47.767162F, 78.92489F, -107.52249F),
+			3.f);
+	}
+	{
+		AddPatrolUnit(
+			Nagox::Enum::MONSTER_TYPE_BEAR,
+			Vector3(-48.67735F, 78.92489F, -102.31094F),
+			Vector3(-34.25242F, 78.96087F, -105.86635F),
+			3.f);
+	}
+	{
+		AddPatrolUnit(
+			Nagox::Enum::MONSTER_TYPE_BEAR,
+			Vector3(-17.33981F, 81.89751F, -130.25797F),
+			Vector3(-28.772465F, 81.730095F, -113.34569F),
+			3.f);
+	}
+	SetTargetObject(Vector3(-3.6082437F, 81.624916F, -121.17864F));
+	StartUpdate(Vector3(-38.879353F, 75.17851F, -85.985756F));
+}
+
+void InvadeQuest_2::InitQuestField() noexcept
+{
+	{
+		AddPatrolUnit(
+			Nagox::Enum::MONSTER_TYPE_BEAR,
+			Vector3(-99.57018F, 79.59282F, -261.79742F),
+			Vector3(-84.79776F, 80.71591F, -285.81674F),
+			10.f);
+	}
+	{
+		AddPatrolUnit(
+			Nagox::Enum::MONSTER_TYPE_BEAR,
+			Vector3(-64.295166F, 77.92885F, -287.31644F),
+			Vector3(-73.56366F, 76.989655F, -257.2729F),
+			10.f);
+	}
+	{
+		AddPatrolUnit(
+			Nagox::Enum::MONSTER_TYPE_BEAR,
+			Vector3(-59.886127F, 75.013176F, -249.21278F),
+			Vector3(-32.887623F, 74.41561F, -266.91882F),
+			10.f);
+	}
+	{
+		AddPatrolUnit(
+			Nagox::Enum::MONSTER_TYPE_BEAR,
+			Vector3(-11.032458F, 72.16888F, -236.6082F),
+			Vector3(0.25170872F, 71.84044F, -258.67227F),
+			10.f);
+	}
+	{
+		AddPatrolUnit(
+			Nagox::Enum::MONSTER_TYPE_BEAR,
+			Vector3(-85.54531F, 77.76605F, -266.77887F),
+			Vector3(-80.107574F, 80.24683F, -286.1981F),
+			10.f);
+	}
+	{
+		AddPatrolUnit(
+			Nagox::Enum::MONSTER_TYPE_BEAR,
+			Vector3(-42.924076F, 72.60209F, -227.80591F),
+			Vector3(-26.292973F, 74.84331F, -270.19565F),
+			10.f);
+	}
+	SetTargetObject(Vector3(16.376675F, 70.53413F, -243.55034F));
+	StartUpdate(Vector3(-126.12132F, 81.613266F, -267.6741F));
+}
+
+void NPCGuardQuest2::InitQuestField() noexcept
+{
+	SetPathNPC({
+	   Vector3(215.83626F,81.56483F,127.289085F)
+		,Vector3(210.23375F,82.09833F,140.25215F)
+		,Vector3(202.44603F,82.04046F,142.32162F)
+		,Vector3(195.5804F,82.28131F,142.95117F)
+		,Vector3(182.68251F,82.870056F,138.94922F)
+		,Vector3(173.06229F,83.266F,133.08772F)
+		,Vector3(163.60434F,83.29547F,122.55677F)
+		,Vector3(158.2657F,83.45808F,117.04457F)
+		,Vector3(139.16446F,85.24577F,115.83121F)
+		,Vector3(123.09017F,87.060265F,107.61383F)
+		,Vector3(104.11417F,87.44576F,98.76893F)
+		,Vector3(83.39752F,90.79084F,101.76995F)
+		});
+	SetMonsters({
+		Vector3(276.3846F,87.071205F,132.33232F)
+		,Vector3(270.6501F,87.435905F,144.14229F)
+		,Vector3(262.24268F,86.312035F,142.35698F)
+		,Vector3(262.05365F,84.54996F,131.11317F)
+		,Vector3(253.66066F,82.50959F,126.64804F)
+		,Vector3(242.14177F,82.71103F,136.88171F)
+		,Vector3(231.86168F,81.23654F,127.57626F)
+		,Vector3(200.2323F,81.90057F,132.80669F)
+		,Vector3(186.08543F,82.504654F,133.19452F)
+		,Vector3(167.60686F,83.77578F,138.95009F)
+		,Vector3(172.88174F,84.0878F,144.22244F)
+		,Vector3(160.4144F,83.77346F,131.8457F)
+		,Vector3(155.5111F,83.69453F,121.039764F)
+		,Vector3(150.09778F,84.05262F,108.284706F)
+		,Vector3(138.35092F,85.30143F,102.45897F)
+		,Vector3(129.41908F,86.021F,104.367195F)
+		,Vector3(121.49226F,87.21519F,112.734474F)
+		,Vector3(109.68462F,87.03806F,108.25743F)
+		,Vector3(122.89287F,87.17902F,116.92817F)
+		});
+	SetQuestBeginPos(Vector3(312.29892F, 85.07235F, 138.55077F));
+}
+
+void NPCGuardQuest2::SetMonsters(const XVector<Vector3> points) noexcept
+{
+	const auto num = (int)points.size();
+	for (int i = 0; i < num; ++i)
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
+		const auto m = EntityFactory::CreateMonster(b);
+		auto p = points[i];
+		m->GetComp<NaviAgent>()->SetPos(p);
+		m->GetComp<PositionComponent>()->pos = p;
+		const auto pos = p;
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 	}
 }

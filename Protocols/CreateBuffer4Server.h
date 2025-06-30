@@ -142,6 +142,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_NEW_PLAYER(
     const uint32_t target_user_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_START(
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_OUT(
     const uint32_t out_user_id,
     const uint32_t cur_leader_id,
@@ -165,5 +168,10 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_USER_DETAIL_INFO(
     const uint32_t obj_id,
     const uint32_t weapon_id,
     const uint32_t armor_id,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FORCED_MOVE(
+    const uint32_t target_user_id,
+    const Nagox::Struct::Vec3& target_pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;

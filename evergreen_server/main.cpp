@@ -22,7 +22,7 @@
 #include "PathFinder_Common.h"
 
 using namespace NagiocpX;
-constexpr const int32_t NUM_OF_NPC = 2000001;
+constexpr const int32_t NUM_OF_NPC = 200001;
 constexpr const int32_t NUM_OF_MAX_USER = 5500;
 constexpr const uint32_t NUM_OF_CHANNELS = 60;
 
@@ -99,9 +99,10 @@ public:
 		//	Field::GetField(0)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
 		//}
 
-		for (int c = 0; c < NUM_OF_CHANNELS; ++c)
+		
+		for (int c = 0; c < 20; ++c)
 		{
-			for (int i = 0; i < 100000/NUM_OF_CHANNELS; ++i)
+			for (int i = 0; i < 50000/20; ++i)
 			{
 				EntityBuilder b;
 				b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;

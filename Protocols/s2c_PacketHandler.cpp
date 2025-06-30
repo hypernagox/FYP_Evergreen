@@ -21,6 +21,7 @@
 #include "PartyStatusGUI.h"
 #include "GuideSystem.h"
 #include "DamageCountGUI.h"
+#include "MovePacketSender.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -474,6 +475,12 @@ const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NetHelper::S_ptr<NetHelper::Pa
 	return true;
 }
 
+const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_START& pkt_)
+{
+	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
+	return true;
+}
+
 const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_)
 {
 	const bool is_my_id = pSession_->GetSessionID() == pkt_.out_user_id();
@@ -508,6 +515,7 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
 	GuideSystem::GetInst()->ToggleFlag();
 	GuideSystem::GetInst()->SetGuidePath(Vector3(-44.4872F, 74.50986F, -59.177734F));
+	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.5f);
 	return true;
 }
 
@@ -548,6 +556,24 @@ const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::
 	else
 	{
 		ServerObjectMgr::GetInst()->m_weaponMap[pkt_.obj_id()] = pkt_.weapon_id();
+	}
+	return true;
+}
+
+const bool Handle_s2c_FORCED_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_FORCED_MOVE& pkt_)
+{
+	const auto target_id = pkt_.target_user_id();
+	if (pSession_->GetSessionID() == target_id)
+	{
+		ServerObjectMgr::GetInst()->GetMainHero()->GetTransform()->SetLocalPosition(ToOriginVec3(pkt_.target_pos()));
+		return true;
+	}
+	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(target_id))
+	{
+		if (const auto comp = obj->GetComp<MoveInterpolator>())
+		{
+			comp->UpdateForcedMoveData(ToOriginVec3(pkt_.target_pos()));
+		}
 	}
 	return true;
 }

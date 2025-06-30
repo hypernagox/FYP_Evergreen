@@ -135,7 +135,7 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 
 void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 {
-	std::cout << static_cast<int>(state) << "\n";
+	//std::cout << static_cast<int>(state) << "\n";
 
 	switch (state)
 	{

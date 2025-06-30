@@ -23,8 +23,8 @@ void PositionComponent::AdjustMovement(const float dt, const Vector3 desired_dir
     const auto owner = GetOwnerEntityRaw();
    // const auto clusters = owner->GetComp<NagiocpX::ClusterInfoHelper>()->GetAdjClusters(owner);
     const auto clusters = XVector<NagiocpX::Cluster*>{ owner->GetCurCluster() };
-    constexpr const float NEAR_MON_DIST_SQ = 5.f * 5.f;
-    constexpr const float COMBINED_RADIUS = 3.5f + 3.5f;
+    constexpr const float NEAR_MON_DIST_SQ = 5.f / 2.f * 5.f / 2.f;
+    constexpr const float COMBINED_RADIUS = 2.5f + 3.5f;
     constexpr const float COMBINED_RADIUS_SQ = COMBINED_RADIUS * COMBINED_RADIUS;
     constexpr const float HARD_PUSH_DIST_SQ = 1.5f;
     constexpr const float MOVE_SPEED = 2.5f;

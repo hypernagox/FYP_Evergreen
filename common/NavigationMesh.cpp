@@ -11,6 +11,7 @@ using namespace rapidjson;
 
 namespace Common
 {
+	thread_local std::default_random_engine LDefaultRandEngine = {};
 	static constexpr int NAVMESHSET_MAGIC = 'M' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'MSET';
 	static constexpr int NAVMESHSET_VERSION = 1;
 	struct NavMeshSetHeader
@@ -34,9 +35,6 @@ namespace Common
 	NavigationMesh::~NavigationMesh()
 	{
 		// TODO: crowd 悼矫己力绢
-		// crowd 皋葛府包府
-		if (m_crowd)
-			dtFreeCrowd(m_crowd);
 		dtFreeNavMesh(m_navMesh);
 		delete m_filter;
 	}
@@ -49,15 +47,15 @@ namespace Common
 			m_filter = new dtQueryFilter;
 			m_filter->setIncludeFlags(0xFFFF);
 			m_filter->setExcludeFlags(0);
-			m_crowd = new dtCrowd;
-			m_crowd->init(100, 5.f, m_navMesh);
 		}
 		return m_navMesh != NULL ? 1 : 0;
 	}
 
 	static float frand()noexcept
 	{
-		return (float)rand() / (float)RAND_MAX;
+		extern thread_local std::default_random_engine LDefaultRandEngine;
+		std::uniform_real_distribution<float> distribution{ 0.0f, 1.0f };
+		return distribution(LDefaultRandEngine);
 	}
 
 	void NavigationMesh::GetRandomPos(Vector3& out_pos, NaviCell& outCell) const noexcept

@@ -32,11 +32,13 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_PARTY_JOIN_REQUEST = 1021,
     s2c_PARTY_JOIN_REQUEST_RESULT = 1022,
     s2c_PARTY_JOIN_NEW_PLAYER = 1023,
-    s2c_PARTY_OUT = 1024,
-    s2c_PARTY_QUEST_CLEAR = 1025,
-    s2c_PARTY_MEMBERS_INFORMATION = 1026,
-    s2c_CHANGE_HARVEST_STATE = 1027,
-    s2c_NOTIFY_USER_DETAIL_INFO = 1028,
+    s2c_PARTY_QUEST_START = 1024,
+    s2c_PARTY_OUT = 1025,
+    s2c_PARTY_QUEST_CLEAR = 1026,
+    s2c_PARTY_MEMBERS_INFORMATION = 1027,
+    s2c_CHANGE_HARVEST_STATE = 1028,
+    s2c_NOTIFY_USER_DETAIL_INFO = 1029,
+    s2c_FORCED_MOVE = 1030,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -96,11 +98,13 @@ const bool Handle_s2c_INVITE_PARTY_RESULT(const NagiocpX::S_ptr<NagiocpX::Packet
 const bool Handle_s2c_PARTY_JOIN_REQUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_REQUEST& pkt_);
 const bool Handle_s2c_PARTY_JOIN_REQUEST_RESULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_REQUEST_RESULT& pkt_);
 const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_NEW_PLAYER& pkt_);
+const bool Handle_s2c_PARTY_QUEST_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_START& pkt_);
 const bool Handle_s2c_PARTY_OUT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_OUT& pkt_);
 const bool Handle_s2c_PARTY_QUEST_CLEAR(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_CLEAR& pkt_);
 const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION& pkt_);
 const bool Handle_s2c_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHANGE_HARVEST_STATE& pkt_);
 const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_);
+const bool Handle_s2c_FORCED_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_FORCED_MOVE& pkt_);
 
 class s2c_DummyPacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -131,11 +135,13 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_JOIN_REQUEST, Nagox::Protocol::s2c_PARTY_JOIN_REQUEST, Handle_s2c_PARTY_JOIN_REQUEST>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_JOIN_REQUEST_RESULT, Nagox::Protocol::s2c_PARTY_JOIN_REQUEST_RESULT, Handle_s2c_PARTY_JOIN_REQUEST_RESULT>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_JOIN_NEW_PLAYER, Nagox::Protocol::s2c_PARTY_JOIN_NEW_PLAYER, Handle_s2c_PARTY_JOIN_NEW_PLAYER>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_QUEST_START, Nagox::Protocol::s2c_PARTY_QUEST_START, Handle_s2c_PARTY_QUEST_START>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_OUT, Nagox::Protocol::s2c_PARTY_OUT, Handle_s2c_PARTY_OUT>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_QUEST_CLEAR, Nagox::Protocol::s2c_PARTY_QUEST_CLEAR, Handle_s2c_PARTY_QUEST_CLEAR>();
         RegisterHandler<HANDLE_PKT_ID::s2c_PARTY_MEMBERS_INFORMATION, Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION, Handle_s2c_PARTY_MEMBERS_INFORMATION>();
         RegisterHandler<HANDLE_PKT_ID::s2c_CHANGE_HARVEST_STATE, Nagox::Protocol::s2c_CHANGE_HARVEST_STATE, Handle_s2c_CHANGE_HARVEST_STATE>();
         RegisterHandler<HANDLE_PKT_ID::s2c_NOTIFY_USER_DETAIL_INFO, Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO, Handle_s2c_NOTIFY_USER_DETAIL_INFO>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_FORCED_MOVE, Nagox::Protocol::s2c_FORCED_MOVE, Handle_s2c_FORCED_MOVE>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

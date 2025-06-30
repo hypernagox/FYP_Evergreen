@@ -411,6 +411,10 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		else
 			GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
 	}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::Y))
+	{
+		GetTransform()->SetLocalPosition(Vector3(312.29892F, 85.07235F, 138.55077F));
+	}
 	GuideSystem::GetInst()->UpdateGuideSystem();
 	// 무브패킷 센드 업데이트
 	m_bSendFlag |=

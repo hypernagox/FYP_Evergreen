@@ -32,7 +32,7 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	const auto vel = ToOriginVec3(pkt_.vel());
 	const auto accel = ToOriginVec3(pkt_.accel());
 	const auto angle = pkt_.body_angle();
-	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(angle * DEG2RAD + PI, 0.0f, 0.0f);
+	const Quaternion rotation = Quaternion::CreateFromYawPitchRoll(angle * DEG2RAD + PI, 0.0f, 0.0f);
 	
 	constexpr const float MIN_DT = 0.1f;
 
@@ -70,4 +70,12 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	// TOOD: 지형보정 방식은 앞으로 바뀔 듯 해요
 	// auto move_data = m_interpolator.GetInterPolatedData();
 	//root_obj->GetTransform()->SetLocalPosition(move_data.pos);
+}
+
+void MoveInterpolator::UpdateForcedMoveData(const Vector3& pos) noexcept
+{
+	const auto owner_player = m_owner->GetSceneObject()->GetComponent<EntityMovement>();
+	m_interpolator.GetCurData().pos = pos;
+	m_interpolator.GetNewData().pos = pos;
+	owner_player->SetPosition(pos);
 }

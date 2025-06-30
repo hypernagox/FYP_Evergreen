@@ -26,6 +26,7 @@
 #include <format>
 #include <variant>
 #include <algorithm>
+#include <random>
 #include "recastnavigation/DetourCrowd.h"
 #include "SharedDefines.h"
 

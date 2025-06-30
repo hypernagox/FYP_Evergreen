@@ -3,7 +3,7 @@
 
 class PositionComponent;
 
-class NavigationMesh;
+class Common::NavigationMesh;
 
 
 class NaviAgent
@@ -17,6 +17,7 @@ public:
 	void SetPosComp(PositionComponent* const posComp)noexcept { m_posComp = posComp; }
 	const auto GetPosComp()noexcept { return m_posComp; }
 	void SetPos(const Vector3& pos)noexcept;
+	Common::NavigationMesh* const GetNavMesh()noexcept;
 public:
 	void SetCellPos(const float dt, const Vector3& prev_pos, const Vector3& post_pos)noexcept;
 	const auto GetAgentConcreate()noexcept { return &m_agent; }
