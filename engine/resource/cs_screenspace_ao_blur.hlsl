@@ -1,3 +1,5 @@
+#define THREAD_SIZE 32
+
 cbuffer cbSsao : register(b0)
 {
 	float4x4 gProj;
@@ -45,28 +47,50 @@ float3 ReconstructNormal(float2 np)
 	n.xy = normalize(np) * sqrt(1.0f - n.z * n.z);
 	return n;
 }
+
+// 20 Bytes per kernel. Expected to take up 1'280 Bytes of shared memory.
+groupshared float gColorCache[THREAD_SIZE + BLUR_SAMPLE * 2];
+groupshared float3 gNormalCache[THREAD_SIZE + BLUR_SAMPLE * 2];
+groupshared float gDepthCache[THREAD_SIZE + BLUR_SAMPLE * 2];
 		
-[numthreads(128, 1, 1)]
-void CS(int3 id : SV_DispatchThreadID)
+[numthreads(THREAD_SIZE, 1, 1)]
+void CS(int3 id : SV_DISPATCHTHREADID, int3 tid : SV_GROUPTHREADID)
 {
-    uint width, height, srcWidth, srcHeight;
-	gSrcTex.GetDimensions(srcWidth, srcHeight);
+    uint width, height;
 	gDstTex.GetDimensions(width, height);
 
-	int2 dstID = id.xy;
-	float2 texOffset = float2(1.0f, 0.0f) / float(srcWidth);
-	if (gOrientation)
+	int3 dstID = gOrientation ? id.yxz : id.xyz;
+	int3 offsetID = int3(1 - gOrientation, gOrientation, 0);
+	int cacheID = tid.x + BLUR_SAMPLE;
+	
+	// Store the cache value.
+	gColorCache[cacheID] = gSrcTex.Load(dstID).r;
+	gNormalCache[cacheID] = ReconstructNormal(gNormalMap.Load(dstID).rg);
+	gDepthCache[cacheID] = NdcDepthToViewDepth(gDepthMap.Load(dstID).r);
+
+	if (tid.x < BLUR_SAMPLE)
 	{
-		dstID = id.yx;
-		texOffset = float2(0.0f, 1.0f) / float(srcHeight);
+	    int3 dstpID = max(dstID - offsetID * BLUR_SAMPLE, int3(0, 0, 0));
+		gColorCache[cacheID - BLUR_SAMPLE] = gSrcTex.Load(dstpID).r;
+		gNormalCache[cacheID - BLUR_SAMPLE] = ReconstructNormal(gNormalMap.Load(dstpID).rg);
+		gDepthCache[cacheID - BLUR_SAMPLE] = NdcDepthToViewDepth(gDepthMap.Load(dstpID).r);
+	}
+	if (tid.x >= THREAD_SIZE - BLUR_SAMPLE)
+	{
+	    int3 dstpID = min(dstID + offsetID * BLUR_SAMPLE, int3(width - 1, height - 1, 0));
+		gColorCache[cacheID + BLUR_SAMPLE] = gSrcTex.Load(dstpID).r;
+		gNormalCache[cacheID + BLUR_SAMPLE] = ReconstructNormal(gNormalMap.Load(dstpID).rg);
+		gDepthCache[cacheID + BLUR_SAMPLE] = NdcDepthToViewDepth(gDepthMap.Load(dstpID).r);
 	}
 
-	float2 uv = (float2(dstID) + 0.5f) / float2(width, height);
-	float4 color = gSrcTex.SampleLevel(gsamPointClamp, uv, 0) * gBlurWeights[0][0];
+	float colorSum = gColorCache[cacheID] * gBlurWeights[0][0];
 	float weightSum = gBlurWeights[0][0];
 
-	float3 n = ReconstructNormal(gNormalMap.SampleLevel(gsamPointClamp, uv, 0).xy);
-	float p = NdcDepthToViewDepth(gDepthMap.SampleLevel(gsamPointClamp, uv, 0).x);
+	float3 n = gNormalCache[cacheID];
+	float p = gDepthCache[cacheID];
+
+	// Ensure all threads have written to the cache before proceeding.
+	GroupMemoryBarrierWithGroupSync();
 			
 	[unroll]
 	for (int i = 1 - BLUR_SAMPLE; i < BLUR_SAMPLE; ++i)
@@ -74,19 +98,16 @@ void CS(int3 id : SV_DispatchThreadID)
 		if (i == 0)
 			continue;
 
-		float2 offset = texOffset * float(i);
-		float4 sample = gSrcTex.SampleLevel(gsamPointClamp, uv + offset, 0);
-
-		float3 np = ReconstructNormal(gNormalMap.SampleLevel(gsamPointClamp, uv + offset, 0).xy);
-		float pp = NdcDepthToViewDepth(gDepthMap.SampleLevel(gsamPointClamp, uv + offset, 0).x);
+		float3 np = gNormalCache[cacheID + i];
+		float pp = gDepthCache[cacheID + i];
 
         if (dot(n, np) > 0.8f && abs(p - pp) < 0.2f)
 		{
 			int wi = abs(i);
             float weight = gBlurWeights[wi / 4][wi % 4];
-			color += sample * weight;
+			colorSum += gColorCache[cacheID + i] * weight;
 			weightSum += weight;
 		}
 	}
-	gDstTex[dstID.xy] = color / weightSum;
+	gDstTex[dstID.xy] = colorSum / weightSum;
 }

@@ -52,7 +52,7 @@ namespace udsdx
 		static std::function<void()> m_ioUpdateCallback;
 
 	public:
-		static int Initialize(HINSTANCE hInstance);
+		static int Initialize(HINSTANCE hInstance, std::wstring_view sWindowName = std::wstring());
 		static int Run(std::shared_ptr<Scene> beginScene, int nCmdShow = SW_SHOWNORMAL);
 		static void Quit();
 		static LRESULT CALLBACK ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
