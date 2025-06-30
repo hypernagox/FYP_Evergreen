@@ -300,6 +300,15 @@
     <ClCompile Include="MonsterFox.cpp">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="MainScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDungeonScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GizmoSectorRenderer.cpp">
+      <Filter>GizmoRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -499,6 +508,15 @@
     </ClInclude>
     <ClInclude Include="MonsterFox.h">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="MainScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDungeonScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GizmoSectorRenderer.h">
+      <Filter>GizmoRenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

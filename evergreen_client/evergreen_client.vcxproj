@@ -438,6 +438,7 @@
     <ClCompile Include="FocusAgentGUI.cpp" />
     <ClCompile Include="ForcedMovement.cpp" />
     <ClCompile Include="func.cpp" />
+    <ClCompile Include="GameDungeonScene.cpp" />
     <ClCompile Include="GameGUIFacade.cpp" />
     <ClCompile Include="GamePauseGUI.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -455,6 +456,7 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</IncludeInUnityFile>
     </ClCompile>
+    <ClCompile Include="GizmoSectorRenderer.cpp" />
     <ClCompile Include="GizmoSphereRenderer.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">false</IncludeInUnityFile>
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
@@ -470,6 +472,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenuCharacterGUI.cpp" />
     <ClCompile Include="MainMenuGUI.cpp" />
+    <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="MinimapRenderer.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterBear.cpp" />
@@ -542,11 +545,13 @@
     <ClInclude Include="FocusAgentGUI.h" />
     <ClInclude Include="ForcedMovement.h" />
     <ClInclude Include="func.h" />
+    <ClInclude Include="GameDungeonScene.h" />
     <ClInclude Include="GameGUIFacade.h" />
     <ClInclude Include="GamePauseGUI.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GizmoBoxRenderer.h" />
     <ClInclude Include="GizmoCylinderRenderer.h" />
+    <ClInclude Include="GizmoSectorRenderer.h" />
     <ClInclude Include="GizmoSphereRenderer.h" />
     <ClInclude Include="GuideSystem.h" />
     <ClInclude Include="InteractionFloatGUI.h" />
@@ -555,6 +560,7 @@
     <ClInclude Include="LogFloatGUI.h" />
     <ClInclude Include="MainMenuCharacterGUI.h" />
     <ClInclude Include="MainMenuGUI.h" />
+    <ClInclude Include="MainScene.h" />
     <ClInclude Include="MinimapRenderer.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterBear.h" />

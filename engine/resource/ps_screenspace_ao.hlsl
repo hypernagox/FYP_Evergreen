@@ -43,7 +43,7 @@ float OcclusionFunction(float distZ)
 	if(distZ > gSurfaceEpsilon)
 	{
 		float fadeLength = gOcclusionFadeEnd - gOcclusionFadeStart;
-		occlusion = saturate( (gOcclusionFadeEnd-distZ)/fadeLength );
+		occlusion = saturate((gOcclusionFadeEnd - distZ) / fadeLength);
 	}
 	
 	return occlusion;	
