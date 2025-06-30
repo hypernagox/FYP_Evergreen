@@ -143,6 +143,9 @@
     <Filter Include="ObjectIdentifier">
       <UniqueIdentifier>{3ccf178f-d2c3-4819-bd2a-f87a8dad7432}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ClientSession\QuestRoom\PartyQuestTable">
+      <UniqueIdentifier>{e3b752f7-42c3-4a92-ad1a-21252ada4dbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -252,6 +255,9 @@
     </ClCompile>
     <ClCompile Include="ObjectIdentifier.cpp">
       <Filter>ObjectIdentifier</Filter>
+    </ClCompile>
+    <ClCompile Include="PartyQuestTable.cpp">
+      <Filter>ClientSession\QuestRoom\PartyQuestTable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -371,6 +377,9 @@
     </ClInclude>
     <ClInclude Include="ObjectIdentifier.h">
       <Filter>ObjectIdentifier</Filter>
+    </ClInclude>
+    <ClInclude Include="PartyQuestTable.h">
+      <Filter>ClientSession\QuestRoom\PartyQuestTable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

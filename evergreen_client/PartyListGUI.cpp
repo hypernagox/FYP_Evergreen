@@ -3,6 +3,8 @@
 #include "GameGUIFacade.h"
 #include "LogFloatGUI.h"
 #include "NetworkMgr.h"
+#include "json.hpp"
+#include "DataRegistry.h"
 
 using namespace udsdx;
 
@@ -185,4 +187,27 @@ void PartyListGUI::UpdateQuestID(int questID)
 	m_standByText->SetActive(true);
 	for (const auto& partyGUI : m_partyPanels)
 		partyGUI.Panel->SetActive(false);
+}
+
+void PartyQuestTable::InitPartyQuestTable(const std::wstring_view path) noexcept
+{
+	const auto party_quest_table_path = RESOURCE_PATH(path) + L"\\party_quest_table\\PartyQuestTable.json";
+
+	std::ifstream file_stream{ party_quest_table_path };
+	if (!file_stream.is_open())
+	{
+		std::cout << "파티퀘스트 테이블 경로 오류\n";
+		return;
+	}
+
+	nlohmann::json j;
+	file_stream >> j;
+
+	for (size_t i = 0; i < j.size(); ++i)
+	{
+		const std::string& utf8_str = j[i];
+		std::wstring wide_str = Common::DataRegistry::Str2Wstr(utf8_str);
+		m_name_to_id[wide_str] = static_cast<int>(i);
+		m_id_to_name[static_cast<int>(i)] = std::move(wide_str);
+	}
 }

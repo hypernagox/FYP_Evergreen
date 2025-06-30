@@ -210,6 +210,7 @@
     <None Include="..\resource\json\Player.json" />
     <None Include="..\resource\json\Script.json" />
     <None Include="..\resource\json\Weapon.json" />
+    <None Include="..\resource\party_quest_table\PartyQuestTable.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

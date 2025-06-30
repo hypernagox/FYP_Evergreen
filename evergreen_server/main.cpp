@@ -20,6 +20,7 @@
 #include "Interaction.h"
 #include "ImGUIMgr.h"
 #include "PathFinder_Common.h"
+#include "PartyQuestTable.h"
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 200001;
@@ -181,7 +182,9 @@ int main()
 	HarvestLoader::LoadHarvest({}, L"environment\\ExportedGameSpawns.json");
 	dtAllocSetCustom(custom_dt_alloc, ::je_free);
 	NagiocpX::PrintKoreaRealTime("Server Start !");
-	
+
+	PartyQuestTable::InitPartyQuestTable();
+
 	ClusterInfoHelper::RegisterClusterFilter(GlobalClusterFilter);
 	//ClusterInfoHelper::RegisterAllClusterFunc(GetAllAdjClusterFunc);
 	ClusterInfoHelper::RegisterAllClusterFunc(GlobalClusterFilter);

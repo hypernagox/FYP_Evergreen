@@ -4,6 +4,7 @@
 #include "ClientSession.h"
 #include "Cluster.h"
 #include "PositionComponent.h"
+#include "PartyQuestTable.h"
 
 PartyQuestSystem::~PartyQuestSystem() noexcept
 {
@@ -22,27 +23,12 @@ bool PartyQuestSystem::MissionStart()
 		if (!CanMissionStart())return false;
 		StartFlag();
 		m_runFlag = true;
-		switch (m_curQuestID)
+		m_curQuestRoomInstance = PartyQuestTable::CreatePartyQuest(m_curQuestID);
+		if (!m_curQuestRoomInstance)
 		{
-		case 0:
-			//m_curQuestRoomInstance = NagiocpX::MakeShared<TutorialGuardQuest>();
-			m_curQuestRoomInstance = NagiocpX::MakeShared<NPCGuardQuest2>();
-			break;
-		case 1:
-			m_curQuestRoomInstance = NagiocpX::MakeShared<FoxQuest>();
-			break;
-		case 2:
-			m_curQuestRoomInstance = NagiocpX::MakeShared<InvadeQuest_1>();
-			//m_curQuestRoomInstance = NagiocpX::MakeShared<GoblinQuest>();
-			break;
-		case 3:
-			//m_curQuestRoomInstance = NagiocpX::MakeShared<BearQuest>();
-			m_curQuestRoomInstance = NagiocpX::MakeShared<InvadeQuest_2>();
-			break;
-		default:
-			break;
+			std::cout << "Party Quest Index Err\n";
+			return false;
 		}
-		
 		m_curQuestRoomInstance->SetOwnerSystem(shared_from_this());
 		m_prev_field =
 			m_member[0]->GetClusterFieldInfo().curFieldPtr;
