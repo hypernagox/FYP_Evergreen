@@ -83,6 +83,35 @@ public:
 private:
 };
 
+class BearQuest
+	:public QuestRoom
+{
+public:
+	virtual bool ProcessPartyQuest()noexcept override {
+		return 1 == m_mon_count.fetch_sub(1);
+	}
+	virtual bool IsFailPartyQuest()const noexcept { return false; }
+
+	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	virtual void InitQuestField()noexcept override;
+private:
+};
+
+class CombinationBattleQuest
+	:public QuestRoom
+{
+public:
+	virtual bool ProcessPartyQuest()noexcept override {
+		return 1 == m_mon_count.fetch_sub(1);
+	}
+	virtual bool IsFailPartyQuest()const noexcept { return false; }
+
+	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	virtual void InitQuestField()noexcept override;
+private:
+};
 class NPCGuardQuestBase
 	:public QuestRoom
 {
@@ -116,22 +145,6 @@ class NPCGuardQuest2
 {
 	virtual void InitQuestField()noexcept override;
 	void SetMonsters(const XVector<Vector3> points)noexcept override;
-};
-
-
-class BearQuest
-	:public QuestRoom
-{
-public:
-	virtual bool ProcessPartyQuest()noexcept override {
-		return 1 == m_mon_count.fetch_sub(1);
-	}
-	virtual bool IsFailPartyQuest()const noexcept { return false; }
-
-	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
-	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
-	virtual void InitQuestField()noexcept override;
-private:
 };
 
 struct PatrolUnit 

@@ -98,7 +98,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 
 		//TODO: 매직넘버
 		const auto sector = instance->AddComponent<GizmoSectorRenderer>();
-		sector->SetAngle(65.f);
+		sector->SetAngle(62.5f);
 		sector->SetRadius(4.5f);
 		return instance;
 	}

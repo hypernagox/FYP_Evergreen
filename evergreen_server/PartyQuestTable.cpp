@@ -25,4 +25,7 @@ void PartyQuestTable::InitPartyQuestTable() noexcept
 	{
 		g_party_quest_table.emplace_back(NagiocpX::MakeShared<InvadeQuest_2>);
 	}
+	{
+		g_party_quest_table.emplace_back(NagiocpX::MakeShared<CombinationBattleQuest>);
+	}
 }

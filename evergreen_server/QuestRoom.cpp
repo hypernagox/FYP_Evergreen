@@ -15,8 +15,12 @@
 #include "Collider_Common.h"
 #include "HP.h"
 #include "Death.h"
+#include "Collider_Common.h"
 
 std::atomic_int aaaa;
+
+static constinit const Vector3 ViLLAGE_ENTRANCE = Vector3(-103.19971F, 75.85828F, 11.403826F);
+
 QuestRoom::QuestRoom() noexcept
 {
 	m_fieldID = -1;
@@ -257,6 +261,7 @@ void FoxQuest::InitQuestField() noexcept
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 		//EnterFieldNPC(m);
 	}
+	SetQuestBeginPos(ViLLAGE_ENTRANCE);
 }
 
 void GoblinQuest::InitQuestField() noexcept
@@ -290,6 +295,7 @@ void GoblinQuest::InitQuestField() noexcept
 		const auto pos = m->GetComp<PositionComponent>()->pos;
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 	}
+	SetQuestBeginPos(ViLLAGE_ENTRANCE);
 }
 
 void TutorialGuardQuest::InitQuestField() noexcept
@@ -369,6 +375,7 @@ void BearQuest::InitQuestField() noexcept
 		const auto pos = m->GetComp<PositionComponent>()->pos;
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 	}
+	SetQuestBeginPos(ViLLAGE_ENTRANCE);
 }
 
 PatrolUnit* const InvadeQuestBase::AddPatrolUnit(Nagox::Enum::MONSTER_TYPE mon_type, const Vector3& start, const Vector3& dest, const float speed) noexcept
@@ -439,33 +446,6 @@ ContentsEntity* const InvadeQuestBase::SetTargetObject(const Vector3& target_pos
 	const auto pos = pos_comp->pos;
 	EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, monster_entity);
 	return temp_ptr;
-}
-
-static bool IsInSector(const Vector3& origin, const Vector3& forward, const Vector3& target,
-	const float fovAngleDeg, const float maxDistance)noexcept
-{
-	Vector3 toTarget = target - origin;
-	const float distSq = toTarget.LengthSquared();
-
-	if (distSq > maxDistance * maxDistance)
-		return false;
-
-	toTarget.y = 0.0f;
-
-	if (toTarget.LengthSquared() < 1e-6f)
-		return true;
-
-	toTarget.Normalize();
-
-	Vector3 forwardFlat = forward;
-	forwardFlat.y = 0.0f;
-	forwardFlat.Normalize();
-
-	const float dot = forwardFlat.Dot(toTarget);
-	const float halfAngleRad = DirectX::XMConvertToRadians(fovAngleDeg * 0.5f);
-	const float cosThreshold = std::cos(halfAngleRad);
-
-	return dot >= cosThreshold;
 }
 
 PatrolUnit::PatrolUnit(
@@ -543,14 +523,15 @@ void PatrolUnit::CheckInsight(const std::shared_ptr<PartyQuestSystem>& party_sys
 		if (!member) continue;
 
 		const auto pos_comp = member->GetComp<PositionComponent>();
-		
+		auto zero_y_pos = pos_comp->pos;
+		zero_y_pos.y = 0.f;
 		bool found = false;
 		for (int i = 0; i <= 10; ++i)
 		{
 			const float t = static_cast<float>(i) / 10.0f;
-			const Vector3 interp_pos = m_prev_pos + delta * t;
-
-			if (IsInSector(interp_pos, mon_dir, pos_comp->pos, 70.f, 4.f))
+			Vector3 interp_pos = m_prev_pos + delta * t;
+			interp_pos.y = 0.f;
+			if (Common::Fan::IsIntersect(interp_pos, mon_dir, zero_y_pos, 70.f, 4.f))
 			{
 				found = true;
 				break;
@@ -694,4 +675,57 @@ void NPCGuardQuest2::SetMonsters(const XVector<Vector3> points) noexcept
 		const auto pos = p;
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 	}
+}
+
+void CombinationBattleQuest::InitQuestField() noexcept
+{
+	const Vector3 mon_quest_pos[]
+	{
+		Vector3(-14.789355F,86.360855F,-329.16034F)
+		,Vector3(-10.508543F,85.54358F,-326.56857F)
+		,Vector3(-4.273209F,84.762F,-323.69095F)
+		,Vector3(2.495394F,84.92774F,-321.60648F)
+		,Vector3(9.827456F,85.29504F,-321.7305F)
+		,Vector3(18.507647F,84.951355F,-319.18286F)
+		,Vector3(21.764019F,84.48343F,-325.29858F)
+		,Vector3(19.653528F,83.73852F,-333.0341F)
+		,Vector3(14.543057F,83.52652F,-336.2194F)
+		,Vector3(6.175371F,84.30505F,-337.25052F)
+		,Vector3(-4.27499F,84.92839F,-335.6931F)
+	};
+	const auto num = (int)(sizeof(mon_quest_pos) / sizeof(mon_quest_pos[0]));
+	const auto num_half = num / 2;
+	//m_mon_count.store_relaxed(num);
+
+	for (int i = 0; i < num_half; ++i)
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
+		const auto m = EntityFactory::CreateMonster(b);
+		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+
+		m->GetComp<PositionComponent>()->pos = mon_quest_pos[i];
+		m->GetComp<NaviAgent>()->SetPos(mon_quest_pos[i]);
+		const auto pos = m->GetComp<PositionComponent>()->pos;
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+		++m_mon_count;
+		//EnterFieldNPC(m);
+	}
+	for (int i = num_half; i < num; ++i)
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
+		const auto m = EntityFactory::CreateMonster(b);
+		//static_cast<Regenerator*>(m->GetDeleter())->m_targetField = SharedFromThis<NagiocpX::Field>();
+
+		m->GetComp<PositionComponent>()->pos = mon_quest_pos[i];
+		m->GetComp<NaviAgent>()->SetPos(mon_quest_pos[i]);
+		const auto pos = m->GetComp<PositionComponent>()->pos;
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+		//EnterFieldNPC(m);
+		++m_mon_count;
+	}
+	SetQuestBeginPos(Vector3(-36.739315F, 88.53785F, -354.69366F));
 }

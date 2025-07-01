@@ -235,14 +235,25 @@ namespace Common
 			m_dir.Normalize();
 		}
 	public:
-		bool IsIntersect(const Collider* const col) const noexcept { return IsIntersect(col->GetPosWithOffset()); }
-		bool IsIntersect(const Vector3& point) const noexcept
-		{
-			const Vector3 OP = point - m_pos + m_offSet;
+		static inline const bool IsIntersect(
+			const Vector3& origin,
+			const Vector3& dir,
+			const Vector3& target,
+			const float fovAngleDeg,
+			const float radius,
+			const Vector3& offset = DirectX::SimpleMath::Vector3::Zero
+		)noexcept {
+			const Vector3 OP = target - (origin + offset);
 			const float len = OP.Length();
 			return (len < FLT_EPSILON) ||
-				   (len <= m_radius &&
-				   m_dir.Dot(OP) >= len * DirectX::XMScalarCosEst(DirectX::XMConvertToRadians(m_degree * 0.5f)));
+				(len <= radius &&
+					dir.Dot(OP) >= len * DirectX::XMScalarCosEst(DirectX::XMConvertToRadians(fovAngleDeg * 0.5f)));
+		}
+		bool IsIntersect(const Collider* const col) const noexcept { return IsIntersect(col->GetPosWithOffset()); }
+		
+		bool IsIntersect(const Vector3& point) const noexcept
+		{
+			return Fan::IsIntersect(m_pos, m_dir, point, m_degree, m_radius, m_offSet);
 		}
 	public:
 		DirectX::SimpleMath::Vector3 m_pos;
