@@ -729,3 +729,8 @@ void CombinationBattleQuest::InitQuestField() noexcept
 	}
 	SetQuestBeginPos(Vector3(-36.739315F, 88.53785F, -354.69366F));
 }
+
+void NexusQuest::InitQuestField() noexcept
+{
+	SetQuestBeginPos(Vector3(177.23233F, 76.67912F, -195.14803F));
+}

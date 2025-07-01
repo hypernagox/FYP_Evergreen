@@ -51,6 +51,15 @@ namespace Common
 			return;
 		}
 
+		status = nav_q->closestPointOnPoly(targetPoly, &post_z.x, &out_pos.x, nullptr);
+		
+		if (dtStatusSucceed(status))
+		{
+			m_curCell.SetPolyRef(targetPoly);
+			CommonMath::InverseZ(out_pos);
+			return;
+		}
+	
 		status = nav_q->moveAlongSurface(targetPoly, &prev_z.x, &post_z.x, m_pNavMesh->GetNavFilter(), &out_pos.x, p, &v, 10);
 
 		if (!dtStatusSucceed(status))

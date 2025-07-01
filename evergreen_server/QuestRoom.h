@@ -52,6 +52,21 @@ protected:
 	XMap<uint32_t, uint32_t> m_id2idx_table;
 };
 
+class NexusQuest
+	:public QuestRoom
+{
+public:
+	
+	virtual bool ProcessPartyQuest()noexcept override {
+		return 1 == m_mon_count.fetch_sub(1);
+	}
+	virtual bool IsFailPartyQuest()const noexcept { return false; }
+
+	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
+	virtual void InitQuestField()noexcept override;
+};
+
 class FoxQuest
 	:public QuestRoom
 {
