@@ -38,6 +38,7 @@ public:
 public:
 	static const std::wstring& GetPartyQuestStr(const int party_quest_id)noexcept { return m_id_to_name[party_quest_id]; }
 	static const int GetPartyQuestInt(const std::wstring_view party_quest_name)noexcept { return m_name_to_id[party_quest_name.data()]; }
+	static const size_t GetPartyQuestSize() noexcept { return m_id_to_name.size(); }
 private:
 	static inline std::map<int, std::wstring> m_id_to_name;
 	static inline std::map<std::wstring, int> m_name_to_id;

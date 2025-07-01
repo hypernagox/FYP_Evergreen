@@ -124,16 +124,17 @@ PartyListGUI::PartyListGUI(const std::shared_ptr<udsdx::SceneObject>& object) : 
 
 	m_createPartyButton->GetComponent<GUIButton>()->SetClickCallback([this]() {
 		Send(Create_c2s_REGISTER_PARTY_QUEST(m_currentQuestID));
-		INSTANCE(GameGUIFacade)->LogFloat->AddText(L"퀘스트 " + std::to_wstring(m_currentQuestID) + L"의 파티를 생성했습니다.");
+		INSTANCE(GameGUIFacade)->LogFloat->AddText(L"퀘스트 \'" + PartyQuestTable::GetPartyQuestStr(m_currentQuestID) + L"\'의 파티를 생성했습니다.");
 		UpdateQuestID(m_currentQuestID);
 	});
 
 	m_incrementQuestButton->GetComponent<GUIButton>()->SetClickCallback([this]() {
-		m_currentQuestID = (m_currentQuestID + 1) % NUM_OF_PARTYQUEST;
+		m_currentQuestID = (m_currentQuestID + 1) % PartyQuestTable::GetPartyQuestSize();
 		UpdateQuestID(m_currentQuestID);
 	});
 	m_decrementQuestButton->GetComponent<GUIButton>()->SetClickCallback([this]() {
-		m_currentQuestID = (m_currentQuestID - 1 + NUM_OF_PARTYQUEST) % NUM_OF_PARTYQUEST;
+		size_t partyQuestSize = PartyQuestTable::GetPartyQuestSize();
+		m_currentQuestID = (m_currentQuestID - 1 + partyQuestSize) % partyQuestSize;
 		UpdateQuestID(m_currentQuestID);
 	});
 	m_refreshQuestButton->GetComponent<GUIButton>()->SetClickCallback([this]() {
@@ -181,7 +182,7 @@ void PartyListGUI::UpdateContents(const std::vector<uint32_t>& table)
 
 void PartyListGUI::UpdateQuestID(int questID)
 {
-	m_selectedQuestText->GetComponent<GUIText>()->SetText(L"Selected Quest ID: " + std::to_wstring(questID));
+	m_selectedQuestText->GetComponent<GUIText>()->SetText(L"Selected Quest: \'" + PartyQuestTable::GetPartyQuestStr(m_currentQuestID) + L"\'");
 	Send(Create_c2s_ACQUIRE_PARTY_LIST(questID));
 
 	m_standByText->SetActive(true);
