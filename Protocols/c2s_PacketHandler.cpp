@@ -174,13 +174,15 @@ const bool Handle_c2s_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSessio
 {
 	const auto owner = pSession_->GetOwnerEntity();
 	const auto q = Quest::CreateQuest(pkt_.quest_id());
+	// TODO: 나중에 DB 달리면 퀘 진행 상황까지 관리해야함
 	if (!owner->GetComp<QuestSystem>()->AddQuest(q))
 	{
 		xdelete<Quest>(q);
+		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(q->GetQuestKey(), false));
 	}
 	else
 	{
-		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(q->GetQuestKey()));
+		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(q->GetQuestKey(), true));
 	}
 	return true;
 }

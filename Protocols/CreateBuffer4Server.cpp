@@ -237,14 +237,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PLAYER_DEATH(
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_REQUEST_QUEST(
     const uint64_t quest_id,
+    const bool is_accept,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto quest_id_value = quest_id;
+    const auto is_accept_value = is_accept;
     const auto serializeds2c_REQUEST_QUEST = Nagox::Protocol::Creates2c_REQUEST_QUEST(
         builder
-,        quest_id_value    );
+,        quest_id_value,
+        is_accept_value    );
     builder.Finish(serializeds2c_REQUEST_QUEST);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_REQUEST_QUEST);

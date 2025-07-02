@@ -1320,7 +1320,8 @@ inline ::flatbuffers::Offset<c2s_REQUEST_QUEST> Createc2s_REQUEST_QUEST(
 struct s2c_REQUEST_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_REQUEST_QUESTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_QUEST_ID = 4
+    VT_QUEST_ID = 4,
+    VT_IS_ACCEPT = 6
   };
   uint64_t quest_id() const {
     return GetField<uint64_t>(VT_QUEST_ID, 0);
@@ -1328,9 +1329,16 @@ struct s2c_REQUEST_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table 
   bool mutate_quest_id(uint64_t _quest_id = 0) {
     return SetField<uint64_t>(VT_QUEST_ID, _quest_id, 0);
   }
+  bool is_accept() const {
+    return GetField<uint8_t>(VT_IS_ACCEPT, 0) != 0;
+  }
+  bool mutate_is_accept(bool _is_accept = 0) {
+    return SetField<uint8_t>(VT_IS_ACCEPT, static_cast<uint8_t>(_is_accept), 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint64_t>(verifier, VT_QUEST_ID, 8) &&
+           VerifyField<uint8_t>(verifier, VT_IS_ACCEPT, 1) &&
            verifier.EndTable();
   }
 };
@@ -1341,6 +1349,9 @@ struct s2c_REQUEST_QUESTBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_quest_id(uint64_t quest_id) {
     fbb_.AddElement<uint64_t>(s2c_REQUEST_QUEST::VT_QUEST_ID, quest_id, 0);
+  }
+  void add_is_accept(bool is_accept) {
+    fbb_.AddElement<uint8_t>(s2c_REQUEST_QUEST::VT_IS_ACCEPT, static_cast<uint8_t>(is_accept), 0);
   }
   explicit s2c_REQUEST_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -1355,9 +1366,11 @@ struct s2c_REQUEST_QUESTBuilder {
 
 inline ::flatbuffers::Offset<s2c_REQUEST_QUEST> Creates2c_REQUEST_QUEST(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint64_t quest_id = 0) {
+    uint64_t quest_id = 0,
+    bool is_accept = false) {
   s2c_REQUEST_QUESTBuilder builder_(_fbb);
   builder_.add_quest_id(quest_id);
+  builder_.add_is_accept(is_accept);
   return builder_.Finish();
 }
 

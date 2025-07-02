@@ -225,6 +225,11 @@ const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSessi
 
 const bool Handle_s2c_REQUEST_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REQUEST_QUEST& pkt_)
 {
+	if (!pkt_.is_accept())
+	{
+		std::cout << "이미 받은 퀘스트 입니다.\n";
+		return true;
+	}
 	std::cout << "퀘스트 ID: " << pkt_.quest_id() << " 수락 !\n";
 	// TODO: 퀘스트 정보
 	// 몹 종류 마리수 다있음
