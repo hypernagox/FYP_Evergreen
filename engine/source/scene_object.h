@@ -73,6 +73,37 @@ namespace udsdx
 			return components;
 		}
 
+		template <typename Component_T>
+		Component_T* GetComponentInParent() const
+		{
+			const SceneObject* parent = GetParent();
+			while (nullptr != parent)
+			{
+				if (Component_T* component = parent->GetComponent<Component_T>())
+				{
+					return component;
+				}
+				parent = parent->GetParent();
+			}
+			return nullptr;
+		}
+
+		template <typename Component_T>
+		std::vector<Component_T*> GetComponentsInParent() const
+		{
+			std::vector<Component_T*> components;
+			const SceneObject* parent = GetParent();
+			while (nullptr != parent)
+			{
+				if (Component_T* component = parent->GetComponent<Component_T>())
+				{
+					components.push_back(component);
+				}
+				parent = parent->GetParent();
+			}
+			return components;
+		}
+
 		void RemoveAllComponents();
 
 	private:

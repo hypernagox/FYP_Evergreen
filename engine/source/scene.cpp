@@ -31,6 +31,10 @@ namespace udsdx
 
 	}
 
+	void Scene::OnAttach()
+	{
+	}
+
 	void Scene::Update(const Time& time)
 	{ ZoneScoped;
 	    UpdateGUIElementEvent(time);
@@ -76,6 +80,10 @@ namespace udsdx
 		}
 
 		PassRenderHUD(param);
+	}
+
+	void Scene::OnDetach()
+	{
 	}
 
 	void Scene::UpdateGUIElementEvent(const Time& time)

@@ -41,7 +41,7 @@ namespace udsdx
 			}
 			else
 			{
-				ThrowIfFailed(::LoadFromWICFile(path.data(), WIC_FLAGS_NONE, nullptr, image));
+				ThrowIfFailed(::LoadFromWICFile(path.data(), WIC_FLAGS_IGNORE_SRGB, nullptr, image));
 			}
 
 			ScratchImage compressedImage;
@@ -65,7 +65,7 @@ namespace udsdx
 		}
 
 		std::vector<D3D12_SUBRESOURCE_DATA> subresources;
-		ThrowIfFailed(::CreateTextureEx(device, image.GetMetadata(), D3D12_RESOURCE_FLAG_NONE, CREATETEX_IGNORE_SRGB, &m_texture));
+		ThrowIfFailed(::CreateTextureEx(device, image.GetMetadata(), D3D12_RESOURCE_FLAG_NONE, CREATETEX_DEFAULT, &m_texture));
 		ThrowIfFailed(::PrepareUpload(device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), subresources));
 
 		const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture.Get(), 0, static_cast<UINT>(subresources.size()));

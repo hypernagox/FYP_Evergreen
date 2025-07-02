@@ -20,11 +20,22 @@ namespace udsdx
 		~Scene();
 
 	public:
-		virtual void Update(const Time& time);
-		virtual void PostUpdate(const Time& time);
-		virtual void Render(RenderParam& param);
-		void UpdateGUIElementEvent(const Time& time);
+		// Called when the scene is attached from the core
+		virtual void OnAttach();
 
+		// Called every frame
+		virtual void Update(const Time& time);
+
+		// Called every frame after Update()
+		virtual void PostUpdate(const Time& time);
+
+		// Called when the scene needs to draw primitives. The command list already called Reset() and is ready to use.
+		virtual void Render(RenderParam& param);
+
+		// Called when the scene is detached from the core
+		virtual void OnDetach();
+
+		void UpdateGUIElementEvent(const Time& time);
 		void AddObject(std::shared_ptr<SceneObject> object);
 
 	public:

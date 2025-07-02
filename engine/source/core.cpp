@@ -538,7 +538,13 @@ namespace udsdx
 
 	void Core::SetScene(std::shared_ptr<Scene> scene)
 	{
+		assert(scene != nullptr && "Scene cannot be null.");
+		if (nullptr != m_scene)
+		{
+			m_scene->OnDetach();
+		}
 		m_scene = scene;
+		m_scene->OnAttach();
 	}
 
 	void Core::AcquireNextFrameResource()
