@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GamePauseGUI.h"
 #include "ChannelSwitchGUI.h"
+#include "PopupGUIManager.h"
 
 using namespace udsdx;
 
@@ -19,6 +20,9 @@ GamePauseGUI::GamePauseGUI(const std::shared_ptr<SceneObject>& object) : Compone
 		auto buttonComponent = m_resumeButton->AddComponent<GUIButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(200.0f, 50.0f));
+		buttonComponent->SetClickCallback([this]() {
+			GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Pop();
+		});
 
 		auto resumeText = m_resumeButton->AddComponent<GUIText>();
 		resumeText->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
@@ -37,7 +41,7 @@ GamePauseGUI::GamePauseGUI(const std::shared_ptr<SceneObject>& object) : Compone
 		buttonComponent->SetClickCallback([this]() {
 			if (m_channelSwitchGUI)
 			{
-				m_channelSwitchGUI->SetActive(true);
+				GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Append(m_channelSwitchGUI);
 				m_channelSwitchGUI->GetComponent<ChannelSwitchGUI>()->SwitchChannelPage(0);
 			}
 		});
@@ -69,25 +73,4 @@ GamePauseGUI::GamePauseGUI(const std::shared_ptr<SceneObject>& object) : Compone
 		exitText->SetRaycastTarget(false);
 		m_panel->AddChild(m_exitButton);
 	}
-}
-
-void GamePauseGUI::SetTogglePauseCallback(std::function<void(bool)> callback)
-{
-	m_togglePauseCallback = callback;
-	m_resumeButton->GetComponent<GUIButton>()->SetClickCallback([this]() {
-		SetActivePanel(false);
-		});
-	SetActivePanel(false);
-}
-
-void GamePauseGUI::SetActivePanel(bool active)
-{
-	m_panel->SetActive(active);
-	m_togglePauseCallback(active);
-}
-
-void GamePauseGUI::ToggleActivePanel()
-{
-	bool active = !m_panel->GetActive();
-	SetActivePanel(active);
 }

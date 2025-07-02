@@ -99,7 +99,7 @@ void PlayerCraftGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vect
 	int recipe_id = -1;
 	for (size_t i = 0; i < m_recipePanels.size(); i++)
 	{
-		const auto& combine_list = GET_RECIPE(i);
+		const auto& combine_list = GET_RECIPE(static_cast<int>(i));
 		recipe_id = combine_list.recipeID;
 
 		// 해당 레시피가 재료의 개수를 충족하는지 확인

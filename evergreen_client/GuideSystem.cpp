@@ -147,7 +147,8 @@ const bool GuideSystem::SetHarvestState(const uint32_t harvest_id, const bool is
 			shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colorhighlight.hlsl"));
 		else
 			shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl"));
-		harvest->GetComponent<MeshRenderer>()->SetShader(shader);
+		for (MeshRenderer* renderer : harvest->GetComponentsInChildren<MeshRenderer>())
+			renderer->SetShader(shader);
 		return true;
 	}
 	else

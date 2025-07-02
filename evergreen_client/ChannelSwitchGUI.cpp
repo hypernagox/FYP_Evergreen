@@ -69,12 +69,6 @@ ChannelSwitchGUI::ChannelSwitchGUI(const std::shared_ptr<udsdx::SceneObject>& ob
 	SwitchChannelPage(m_currentPage);
 }
 
-void ChannelSwitchGUI::Update(const Time& time, Scene& scene)
-{
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::Escape))
-		GetSceneObject()->SetActive(false);
-}
-
 void ChannelSwitchGUI::SetPanelGraphic(bool isEnter)
 {
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();

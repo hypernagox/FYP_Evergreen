@@ -14,7 +14,6 @@ private:
 
 public:
 	ChannelSwitchGUI(const std::shared_ptr<udsdx::SceneObject>& object);
-	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void SetPanelGraphic(bool isEnter);
 	void SwitchChannelPage(int page);
 	void SelectChannel(int channel);

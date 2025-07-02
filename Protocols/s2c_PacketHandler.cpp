@@ -15,7 +15,7 @@
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
 #include "GameGUIFacade.h"
-#include "PartyListGUI.h"
+#include "QuestGUI.h"
 #include "LogFloatGUI.h"
 #include "RequestPopupGUI.h"
 #include "PartyStatusGUI.h"
@@ -349,9 +349,9 @@ const bool Handle_s2c_ACQUIRE_PARTY_LIST(const NetHelper::S_ptr<NetHelper::Packe
 		std::cout << "파티장 ID: " << v << std::endl;
 	}
 
-	auto partyListGUI = INSTANCE(GameGUIFacade)->PartyList;
+	auto partyListGUI = INSTANCE(GameGUIFacade)->QuestGUI;
 	std::vector<uint32_t> partyList(pkt_.party_leader_ids()->cbegin(), pkt_.party_leader_ids()->cend());
-	partyListGUI->UpdateContents(partyList);
+	partyListGUI->FetchPartyList(partyList);
 
 	return true;
 }

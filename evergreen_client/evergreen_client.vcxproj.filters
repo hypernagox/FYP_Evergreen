@@ -228,9 +228,6 @@
     <ClCompile Include="GameGUIFacade.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
-    <ClCompile Include="PartyListGUI.cpp">
-      <Filter>Gui</Filter>
-    </ClCompile>
     <ClCompile Include="LogFloatGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
@@ -308,6 +305,15 @@
     </ClCompile>
     <ClCompile Include="GizmoSectorRenderer.cpp">
       <Filter>GizmoRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvironmentRenderer.cpp">
+      <Filter>Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="PopupGUIManager.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestGUI.cpp">
+      <Filter>Gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -437,9 +443,6 @@
     <ClInclude Include="GameGUIFacade.h">
       <Filter>Gui</Filter>
     </ClInclude>
-    <ClInclude Include="PartyListGUI.h">
-      <Filter>Gui</Filter>
-    </ClInclude>
     <ClInclude Include="LogFloatGUI.h">
       <Filter>Gui</Filter>
     </ClInclude>
@@ -517,6 +520,15 @@
     </ClInclude>
     <ClInclude Include="GizmoSectorRenderer.h">
       <Filter>GizmoRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvironmentRenderer.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="PopupGUIManager.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

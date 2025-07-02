@@ -31,8 +31,9 @@
 #include "ServerObjectMgr.h"
 
 #include "GameScene.h"
+#include "MainScene.h"
 #include "GuideSystem.h"
-#include "PartyListGUI.h"
+#include "QuestGUI.h"
 
 using namespace udsdx;
 
@@ -46,6 +47,7 @@ constexpr const static inline wchar_t IP_ADDR[][256]
 };
 
 std::shared_ptr<GameScene> g_scene;
+std::shared_ptr<MainScene> g_mainScene;
 
 std::unique_ptr<TerrainDetail> g_terrainDetail;
 std::unique_ptr<HeightMap> g_heightMap;
@@ -88,6 +90,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
 
     g_scene = std::make_shared<GameScene>(g_heightMap.get(), g_terrainData.get(), g_terrainDetail.get());
+    // g_mainScene = std::make_shared<MainScene>(g_heightMap.get(), g_terrainData.get(), g_terrainDetail.get());
 
     // 타겟씬은 이런저런 테스트 할 때 늘 필요 ..
    // if constexpr (true == g_bUseNetWork)

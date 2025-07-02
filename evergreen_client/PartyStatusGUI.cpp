@@ -104,7 +104,7 @@ void PartyStatusGUI::SetPartyLeader(uint32_t partyLeaderID)
 	auto it = std::find(m_partyMemberIDsCache.begin(), m_partyMemberIDsCache.end(), partyLeaderID);
 	if (it != m_partyMemberIDsCache.end())
 	{
-		uint32_t index = std::distance(m_partyMemberIDsCache.begin(), it);
+		uint32_t index = static_cast<uint32_t>(std::distance(m_partyMemberIDsCache.begin(), it));
 		if (index != m_partyLeaderIndexCache)
 		{
 			m_partyLeaderIndexCache = index;

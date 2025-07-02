@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RequestPopupGUI.h"
+#include "PopupGUIManager.h"
 
 using namespace udsdx;
 
@@ -38,7 +39,7 @@ RequestPopupGUI::RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& obje
 	acceptButtonRenderer->SetClickCallback([this]() {
 		if (m_onAccept)
 			m_onAccept();
-		m_panel->SetActive(false);
+		GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Pop(m_panel);
 	});
 	m_panel->AddChild(m_acceptButton);
 
@@ -56,7 +57,7 @@ RequestPopupGUI::RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& obje
 	cancelButtonRenderer->SetClickCallback([this]() {
 		if (m_onCancel)
 			m_onCancel();
-		m_panel->SetActive(false);
+		GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Pop(m_panel);
 	});
 	m_panel->AddChild(m_cancelButton);
 
@@ -71,7 +72,8 @@ RequestPopupGUI::RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& obje
 
 void RequestPopupGUI::ShowPopup(std::wstring_view title, std::wstring_view contents, const std::function<void()>& onAccept, const std::function<void()>& onCancel)
 {
-	m_panel->SetActive(true);
+	GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Append(m_panel);
+
 	m_titleText->GetComponent<GUIText>()->SetText(title.data());
 	m_text->GetComponent<GUIText>()->SetText(contents.data());
 

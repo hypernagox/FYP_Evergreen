@@ -8,6 +8,7 @@ class TerrainData;
 class TerrainDetail;
 class AuthenticPlayer;
 class InteractiveEntity;
+class PopupGUIManager;
 
 class GameScene : public udsdx::Scene
 {
@@ -33,26 +34,23 @@ public:
 	udsdx::Camera* GetMainCamera() const;
 
 private:
-	void AddTerrainInstances(std::filesystem::path path, const std::map<std::string, udsdx::Texture*>& textureMap, TerrainData* terrainData);
-	void AddHarvestObjects(std::filesystem::path path, const std::map<std::string, udsdx::Texture*>& textureMap, const nlohmann::json& prototype);
-
-private:
 	std::shared_ptr<udsdx::SceneObject> m_activeObjectGroup;
 
 	std::vector<std::shared_ptr<udsdx::Material>> m_instanceMaterials;
 	std::vector<std::shared_ptr<udsdx::Material>> m_harvestMaterials;
 
-	std::unique_ptr<SoundEffectInstance> m_menuSound;
+	std::shared_ptr<udsdx::SceneObject> m_environmentObject;
 	std::shared_ptr<udsdx::SceneObject> m_mainMenuCameraObject;
 	std::shared_ptr<udsdx::SceneObject> m_heroObj;
 	std::shared_ptr<udsdx::SceneObject> m_spectatorObj;
 	std::shared_ptr<udsdx::SceneObject> m_playerLightObj;
-	std::shared_ptr<udsdx::SceneObject> m_terrainObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftTableObj;
 
+	std::shared_ptr<udsdx::SceneObject> m_interfaceGroup;
 	std::shared_ptr<udsdx::SceneObject> m_playerInterfaceGroup;
 	std::shared_ptr<udsdx::SceneObject> m_focusAgentObj;
 	std::shared_ptr<udsdx::SceneObject> m_inventoryObj;
+	std::shared_ptr<udsdx::SceneObject> m_tutorialObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftObj;
 	std::shared_ptr<udsdx::SceneObject> m_mainMenuObj;
 	std::shared_ptr<udsdx::SceneObject> m_pauseMenuObj;
@@ -62,6 +60,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_channelSwitchObj;
 
 	AuthenticPlayer* m_heroComponent;
+	PopupGUIManager* m_popupGUIManager;
 
 	std::shared_ptr<udsdx::Material> m_terrainMaterial;
 	std::shared_ptr<udsdx::Material> m_terrainDetailMaterial;
@@ -69,8 +68,6 @@ private:
 	std::shared_ptr<udsdx::Material> m_skyboxMaterial;
 	std::shared_ptr<udsdx::Material> m_gizmoMaterial;
 	std::shared_ptr<udsdx::Material> m_craftTableMaterial;
-
-	std::shared_ptr<udsdx::Mesh> m_terrainMesh;
 
 	bool m_bSpectatorMode = false;
 	bool m_bCharacterSelect = false;

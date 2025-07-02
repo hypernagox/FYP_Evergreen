@@ -6,14 +6,11 @@ using namespace udsdx;
 
 InteractiveEntity::InteractiveEntity(const std::shared_ptr<SceneObject>& owner) : Component(owner)
 {
-	m_targetRenderer = owner->GetComponent<RendererBase>();
-	if (m_targetRenderer == nullptr)
+	m_targetRenderers = owner->GetComponentsInChildren<RendererBase>();
+	RendererBase* renderer = owner->GetComponent<RendererBase>();
+	if (nullptr != renderer)
 	{
-		const auto& renderers = owner->GetComponentsInChildren<RendererBase>();
-		if (renderers.size() > 0)
-		{
-			m_targetRenderer = renderers[0];
-		}
+		m_targetRenderers.emplace_back(renderer);
 	}
 }
 
@@ -31,8 +28,8 @@ void InteractiveEntity::OnInteract()
 
 void InteractiveEntity::OnInteractRange(bool inRange)
 {
-	if (m_targetRenderer != nullptr)
+	for (const auto& renderer : m_targetRenderers)
 	{
-		m_targetRenderer->SetDrawOutline(inRange);
+		renderer->SetDrawOutline(inRange);
 	}
 }
