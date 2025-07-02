@@ -21,6 +21,7 @@
 #include "ImGUIMgr.h"
 #include "PathFinder_Common.h"
 #include "PartyQuestTable.h"
+#include "CommonQuestTable.h"
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 200001;
@@ -184,6 +185,7 @@ int main()
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 
 	PartyQuestTable::InitPartyQuestTable();
+	Common::CommonQuestTable::LoadCommonQuest();
 
 	ClusterInfoHelper::RegisterClusterFilter(GlobalClusterFilter);
 	//ClusterInfoHelper::RegisterAllClusterFunc(GetAllAdjClusterFunc);

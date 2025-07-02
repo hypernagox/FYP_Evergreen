@@ -33,6 +33,7 @@
 #include "GameScene.h"
 #include "GuideSystem.h"
 #include "PartyListGUI.h"
+#include "CommonQuestTable.h"
 
 using namespace udsdx;
 
@@ -77,6 +78,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Common::DataRegistry::Load();
     s2c_PacketHandler::Init();
     PartyQuestTable::InitPartyQuestTable();
+    Common::CommonQuestTable::LoadCommonQuest();
 
     // Height Map: 지형의 (x, z) 좌표에 대한 y 높이를 담는 맵
     g_heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta_04_28.raw"), 2049, 2049);

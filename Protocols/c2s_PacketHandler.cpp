@@ -173,14 +173,14 @@ const bool Handle_c2s_PLAYER_DEATH(const NagiocpX::S_ptr<NagiocpX::PacketSession
 const bool Handle_c2s_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_)
 {
 	const auto owner = pSession_->GetOwnerEntity();
-	const auto q = NagiocpX::xnew<KillFoxQuest>();
+	const auto q = Quest::CreateQuest(pkt_.quest_id());
 	if (!owner->GetComp<QuestSystem>()->AddQuest(q))
 	{
 		xdelete<Quest>(q);
 	}
 	else
 	{
-		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(0));
+		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(q->GetQuestKey()));
 	}
 	return true;
 }

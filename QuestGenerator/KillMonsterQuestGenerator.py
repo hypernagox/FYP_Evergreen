@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
 
 QUEST_HEADER_FILE = "../evergreen_server/KillMonsterQuest.h"
 QUEST_CPP_FILE = "../evergreen_server/KillMonsterQuest.cpp"
-QUEST_JSON_FILE = "../resource/json/quest_data.json"
+QUEST_JSON_FILE = "../resource/quest_data/quest_data.json"
 ITEM_JSON_PATH = "../resource/json/Item.json"
 MONSTER_JSON_PATH = "../resource/json/Monster.json"
 
@@ -145,7 +145,6 @@ class QuestGenerator(QWidget):
                 midict = quest["monsters"]
                 qid = quest["id"]
 
-                # 수정된 생성자: Quest(qid)
                 hfile.write(f"\nclass {cname} : public Quest {{\n")
                 hfile.write(f"public:\n    {cname}() noexcept : Quest({qid}) {{}}\n")
                 hfile.write(
@@ -156,9 +155,11 @@ class QuestGenerator(QWidget):
                     hfile.write(f"    int m_{m}_count = {c};\n")
                 hfile.write("};\n")
 
-                cppfile.write(f"\nbool {cname}::OnAchieve( NagiocpX::ContentsEntity* const key_entity, NagiocpX::ContentsEntity* const clear_entity ) noexcept {{\n")
+                cppfile.write(
+                    f"\nbool {cname}::OnAchieve( NagiocpX::ContentsEntity* const key_entity, NagiocpX::ContentsEntity* const clear_entity ) noexcept {{\n")
                 for m in midict:
-                    cppfile.write(f"    if ( key_entity->GetEntityInfo().GetObjectDetailType() == Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_{m.upper()} ) {{\n")
+                    cppfile.write(
+                        f"    if ( key_entity->GetEntityInfo().GetObjectDetailType() == Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_{m.upper()} ) {{\n")
                     cppfile.write(f"        m_{m}_count = std::max( 0, m_{m}_count - 1 );\n")
                     cppfile.write("    }\n")
                 conds = " && ".join([f"m_{m}_count == 0" for m in midict])
@@ -173,7 +174,25 @@ class QuestGenerator(QWidget):
                 cppfile.write("        session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );\n")
                 cppfile.write("    }\n}\n")
 
-        QMessageBox.information(self, "성공", "헤더와 CPP 파일이 생성되었습니다!")
+        QUEST_FACTORY_FILE = "../evergreen_server/Quest.cpp"
+        sorted_data = sorted(data, key=lambda q: q["id"])
+
+        with open(QUEST_FACTORY_FILE, "w", encoding="utf-8") as f:
+            f.write("#include \"pch.h\"\n")
+            f.write("#include \"Quest.h\"\n")
+            f.write("#include \"KillMonsterQuest.h\"\n")
+            f.write("\n")
+            f.write("Quest* const Quest::CreateQuest(const uint64_t quest_id) noexcept\n")
+            f.write("{\n")
+            f.write("    static const std::function<Quest* (void)> g_quest_list[] =\n")
+            f.write("    {\n")
+            for q in sorted_data:
+                f.write(f"        NagiocpX::xnew<{q['class_name']}>,\n")
+            f.write("    };\n\n")
+            f.write("    return g_quest_list[quest_id]();\n")
+            f.write("}\n")
+
+        QMessageBox.information(self, "성공", "헤더, CPP, 팩토리 파일이 생성되었습니다!")
 
 
 # 앱 실행
