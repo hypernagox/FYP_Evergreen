@@ -141,6 +141,7 @@
     </ClCompile>
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="CommonMath.cpp" />
+    <ClCompile Include="CommonQuestTable.cpp" />
     <ClCompile Include="DataRegistry.cpp" />
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="JsonGenerator.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="..\library\inc\recastnavigation\version.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CommonMath.h" />
+    <ClInclude Include="CommonQuestTable.h" />
     <ClInclude Include="DataRegistry.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="json.hpp" />
@@ -211,6 +213,7 @@
     <None Include="..\resource\json\Script.json" />
     <None Include="..\resource\json\Weapon.json" />
     <None Include="..\resource\party_quest_table\PartyQuestTable.json" />
+    <None Include="..\resource\quest_data\quest_data.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

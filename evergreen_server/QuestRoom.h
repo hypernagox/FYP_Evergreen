@@ -1,5 +1,8 @@
 #pragma once
 #include "Field.h"
+#include "EntityFactory.h"
+#include "PositionComponent.h"
+#include "NaviAgent_Common.h"
 
 struct PartyQuestInfo {
 	uint32_t leader_id;
@@ -13,6 +16,7 @@ enum class PARTY_ACCEPT_RESULT :int8_t {
 };
 
 class PartyQuestSystem;
+class Common::NavigationMesh;
 
 class QuestRoom
 	:public NagiocpX::Field
@@ -44,6 +48,24 @@ public:
 	void CheckPartyQuestState()noexcept;
 	bool IsClear()const noexcept { return m_isClear.load(); }
 	void SetQuestBeginPos(const Vector3& pos)noexcept;
+	template<typename FactoryFunc>
+	inline ContentsEntity* const AddMonster(
+		const FactoryFunc func,
+		EntityBuilder& b,
+		const Vector3& pos,
+		Common::NavigationMesh* const nav_mesh
+	)noexcept{
+		b.x = pos.x;
+		b.y = pos.y;
+		b.z = pos.z;
+		const auto m = func(b);
+		const auto temp_ptr = m.get();
+		m->GetComp<PositionComponent>()->pos = pos;
+		m->GetComp<NaviAgent>()->Init(pos, nav_mesh);
+		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
+		++m_mon_count;
+		return temp_ptr;
+	}
 protected:
 	NagoxAtomic::Atomic<int8_t> m_mon_count{ 0 };
 	NagoxAtomic::Atomic<bool> m_isClear{ false };

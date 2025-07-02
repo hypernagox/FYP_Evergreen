@@ -22,6 +22,7 @@
 #include "GuideSystem.h"
 #include "DamageCountGUI.h"
 #include "MovePacketSender.h"
+#include "CommonQuestTable.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -224,23 +225,43 @@ const bool Handle_s2c_PLAYER_DEATH(const NetHelper::S_ptr<NetHelper::PacketSessi
 
 const bool Handle_s2c_REQUEST_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REQUEST_QUEST& pkt_)
 {
-	std::cout << "퀘스트 수락 !" << std::endl;
+	if (!pkt_.is_accept())
+	{
+		std::cout << "이미 받은 퀘스트 입니다.\n";
+		return true;
+	}
+	std::cout << "퀘스트 ID: " << pkt_.quest_id() << " 수락 !\n";
+	// TODO: 퀘스트 정보
+	// 몹 종류 마리수 다있음
+	const auto quest_info = Common::CommonQuestTable::GetCommonQuestInfo(pkt_.quest_id());
+	std::wcout << L"퀘스트 이름: " << quest_info.quest_name << std::endl;
+	for (const auto& [mon, num] : quest_info.monsters_info)
+	{
+		std::wcout << mon << L" " << num << L" 마리\n";
+	}
 	return true;
 }
 
 const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CLEAR_QUEST& pkt_)
 {
-	static int temp_count = 0;
-
 	if (pkt_.is_clear())
 	{
-		temp_count = 0;
+		// TODO: 보상정보도 여기에있음 골드 템 다 포함
+		const auto quest_info = Common::CommonQuestTable::GetCommonQuestInfo(pkt_.quest_id());
+		std::cout << "보상 목록:\n";
+		for (const auto& [item, num] : quest_info.reward_info)
+		{
+			std::wcout << item << L" " << num << L"개\n";
+		}
+		std::cout << "골드: " << quest_info.reward_gold << "원\n";
 		std::cout << "퀘스트 클리어 !" << std::endl;
+
 	}
 	else
 	{
-		std::cout << "잡은 여우 수: " << ++temp_count << std::endl;
+		// false라면 퀘스트 경과가 오는데 이건 없앨수 있음 예: 여우1마리 2마리 .. 카운팅같은거
 	}
+	
 	return true;
 }
 

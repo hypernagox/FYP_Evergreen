@@ -1,0 +1,80 @@
+#include "KillMonsterQuest.h"
+
+bool KillFoxQuest::OnAchieve( NagiocpX::ContentsEntity* const key_entity, NagiocpX::ContentsEntity* const clear_entity ) noexcept {
+    if ( key_entity->GetEntityInfo().GetObjectDetailType() == Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_FOX ) {
+        m_Fox_count = std::max( 0, m_Fox_count - 1 );
+    }
+    if ( m_Fox_count == 0 ) {
+        if ( const auto session = clear_entity->GetSession() ) {
+            session->SendAsync( Create_s2c_CLEAR_QUEST( 0, false ) );
+        }
+        return true;
+    }
+    return false;
+}
+
+void KillFoxQuest::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {
+    if ( const auto session = clear_entity->GetSession() ) {
+        session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );
+    }
+}
+
+bool KillBearQuest::OnAchieve( NagiocpX::ContentsEntity* const key_entity, NagiocpX::ContentsEntity* const clear_entity ) noexcept {
+    if ( key_entity->GetEntityInfo().GetObjectDetailType() == Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BEAR ) {
+        m_Bear_count = std::max( 0, m_Bear_count - 1 );
+    }
+    if ( m_Bear_count == 0 ) {
+        if ( const auto session = clear_entity->GetSession() ) {
+            session->SendAsync( Create_s2c_CLEAR_QUEST( 1, false ) );
+        }
+        return true;
+    }
+    return false;
+}
+
+void KillBearQuest::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {
+    if ( const auto session = clear_entity->GetSession() ) {
+        session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );
+    }
+}
+
+bool KillBearFoxQuest::OnAchieve( NagiocpX::ContentsEntity* const key_entity, NagiocpX::ContentsEntity* const clear_entity ) noexcept {
+    if ( key_entity->GetEntityInfo().GetObjectDetailType() == Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_FOX ) {
+        m_Fox_count = std::max( 0, m_Fox_count - 1 );
+    }
+    if ( key_entity->GetEntityInfo().GetObjectDetailType() == Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BEAR ) {
+        m_Bear_count = std::max( 0, m_Bear_count - 1 );
+    }
+    if ( m_Fox_count == 0 && m_Bear_count == 0 ) {
+        if ( const auto session = clear_entity->GetSession() ) {
+            session->SendAsync( Create_s2c_CLEAR_QUEST( 2, false ) );
+        }
+        return true;
+    }
+    return false;
+}
+
+void KillBearFoxQuest::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {
+    if ( const auto session = clear_entity->GetSession() ) {
+        session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );
+    }
+}
+
+bool ManyFoxKillQuest::OnAchieve( NagiocpX::ContentsEntity* const key_entity, NagiocpX::ContentsEntity* const clear_entity ) noexcept {
+    if ( key_entity->GetEntityInfo().GetObjectDetailType() == Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_FOX ) {
+        m_Fox_count = std::max( 0, m_Fox_count - 1 );
+    }
+    if ( m_Fox_count == 0 ) {
+        if ( const auto session = clear_entity->GetSession() ) {
+            session->SendAsync( Create_s2c_CLEAR_QUEST( 3, false ) );
+        }
+        return true;
+    }
+    return false;
+}
+
+void ManyFoxKillQuest::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {
+    if ( const auto session = clear_entity->GetSession() ) {
+        session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );
+    }
+}

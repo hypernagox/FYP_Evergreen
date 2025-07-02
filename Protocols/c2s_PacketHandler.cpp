@@ -25,6 +25,7 @@
 #include "StatusSystem.h"
 #include "Skill.h"
 #include "ObjectIdentifier.h"
+#include "KillMonsterQuest.h"
 
 using namespace NagiocpX;
 
@@ -172,14 +173,16 @@ const bool Handle_c2s_PLAYER_DEATH(const NagiocpX::S_ptr<NagiocpX::PacketSession
 const bool Handle_c2s_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_)
 {
 	const auto owner = pSession_->GetOwnerEntity();
-	const auto q = NagiocpX::xnew<KillFoxQuest>(0);
+	const auto q = Quest::CreateQuest(pkt_.quest_id());
+	// TODO: 나중에 DB 달리면 퀘 진행 상황까지 관리해야함
 	if (!owner->GetComp<QuestSystem>()->AddQuest(q))
 	{
 		xdelete<Quest>(q);
+		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(q->GetQuestKey(), false));
 	}
 	else
 	{
-		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(0));
+		pSession_->SendAsync(Create_s2c_REQUEST_QUEST(q->GetQuestKey(), true));
 	}
 	return true;
 }

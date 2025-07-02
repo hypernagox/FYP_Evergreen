@@ -123,6 +123,9 @@
     <ClInclude Include="JsonGenerator.h">
       <Filter>Json\JsonGenerator</Filter>
     </ClInclude>
+    <ClInclude Include="CommonQuestTable.h">
+      <Filter>CommonQuestTable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />
@@ -250,6 +253,9 @@
     <ClCompile Include="JsonGenerator.cpp">
       <Filter>Json\JsonGenerator</Filter>
     </ClCompile>
+    <ClCompile Include="CommonQuestTable.cpp">
+      <Filter>CommonQuestTable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Navigation">
@@ -300,6 +306,9 @@
     <Filter Include="Json\JsonGenerator">
       <UniqueIdentifier>{0c59628e-ccd0-40a9-9add-e9915656cf5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CommonQuestTable">
+      <UniqueIdentifier>{74e85673-055e-4dc3-a94d-a863cb56b943}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\json\Monster.json">
@@ -324,6 +333,9 @@
       <Filter>Json\Data</Filter>
     </None>
     <None Include="..\resource\party_quest_table\PartyQuestTable.json">
+      <Filter>Json\Data</Filter>
+    </None>
+    <None Include="..\resource\quest_data\quest_data.json">
       <Filter>Json\Data</Filter>
     </None>
   </ItemGroup>

@@ -1,0 +1,63 @@
+[
+  {
+    "id": 0,
+    "class_name": "KillFoxQuest",
+    "name": "여우 사냥",
+    "monsters": {
+      "Fox": 1
+    },
+    "rewards": {
+      "Foxtail": 1,
+      "Timber": 2
+    },
+    "gold": 10,
+    "giver": "촌장",
+    "destination": "",
+    "type": "KillMonster"
+  },
+  {
+    "id": 1,
+    "class_name": "KillBearQuest",
+    "name": "곰 사냥",
+    "monsters": {
+      "Bear": 1
+    },
+    "rewards": {
+      "Timber": 1
+    },
+    "gold": 3,
+    "giver": "촌장",
+    "destination": "",
+    "type": "KillMonster"
+  },
+  {
+    "id": 2,
+    "class_name": "KillBearFoxQuest",
+    "name": "여우 곰 잡기",
+    "monsters": {
+      "Fox": 1,
+      "Bear": 1
+    },
+    "rewards": {
+      "Meat": 1,
+      "Timber": 1
+    },
+    "gold": 2,
+    "giver": "촌장",
+    "destination": "",
+    "type": "KillMonster"
+  },
+  {
+    "id": 3,
+    "class_name": "ManyFoxKillQuest",
+    "name": "여우 많이 잡기",
+    "monsters": {
+      "Fox": 5
+    },
+    "rewards": {},
+    "gold": 10,
+    "giver": "촌장",
+    "destination": "",
+    "type": "KillMonster"
+  }
+]

@@ -1,20 +1,16 @@
 #include "pch.h"
 #include "Quest.h"
-#include "Session.h"
+#include "KillMonsterQuest.h"
 
-bool KillFoxQuest::OnAchieve(NagiocpX::ContentsEntity* const key_entity, NagiocpX::ContentsEntity* const clear_entity) noexcept
+Quest* const Quest::CreateQuest(const uint64_t quest_id) noexcept
 {
-    if (const auto session = clear_entity->GetSession())
+    static const std::function<Quest* (void)> g_quest_list[] =
     {
-        session->SendAsync(Create_s2c_CLEAR_QUEST(0, false));
-    }
-    return m_clearCount <= ++m_curCount;
-}
+        NagiocpX::xnew<KillFoxQuest>,
+        NagiocpX::xnew<KillBearQuest>,
+        NagiocpX::xnew<KillBearFoxQuest>,
+        NagiocpX::xnew<ManyFoxKillQuest>,
+    };
 
-void KillFoxQuest::OnReward(NagiocpX::ContentsEntity* const clear_entity) noexcept
-{
-    if (const auto session = clear_entity->GetSession())
-    {
-        session->SendAsync(Create_s2c_CLEAR_QUEST(0, true));
-    }
+    return g_quest_list[quest_id]();
 }
