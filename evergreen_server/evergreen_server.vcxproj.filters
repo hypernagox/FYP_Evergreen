@@ -146,6 +146,9 @@
     <Filter Include="ClientSession\QuestRoom\PartyQuestTable">
       <UniqueIdentifier>{e3b752f7-42c3-4a92-ad1a-21252ada4dbe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="QuestSystem\KillMonsterQuest">
+      <UniqueIdentifier>{1f95195b-261d-4fe8-8925-b5dd14d19fc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -258,6 +261,9 @@
     </ClCompile>
     <ClCompile Include="PartyQuestTable.cpp">
       <Filter>ClientSession\QuestRoom\PartyQuestTable</Filter>
+    </ClCompile>
+    <ClCompile Include="KillMonsterQuest.cpp">
+      <Filter>QuestSystem\KillMonsterQuest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -380,6 +386,9 @@
     </ClInclude>
     <ClInclude Include="PartyQuestTable.h">
       <Filter>ClientSession\QuestRoom\PartyQuestTable</Filter>
+    </ClInclude>
+    <ClInclude Include="KillMonsterQuest.h">
+      <Filter>QuestSystem\KillMonsterQuest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

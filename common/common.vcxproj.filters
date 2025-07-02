@@ -326,5 +326,8 @@
     <None Include="..\resource\party_quest_table\PartyQuestTable.json">
       <Filter>Json\Data</Filter>
     </None>
+    <None Include="..\resource\json\quest_data.json">
+      <Filter>Json\Data</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,0 +1,32 @@
+[
+  {
+    "id": 0,
+    "class_name": "KillFoxQuest",
+    "name": "여우 사냥",
+    "monsters": {
+      "Fox": 5
+    },
+    "rewards": {
+      "Foxtail": 1
+    },
+    "gold": 1,
+    "giver": "촌장",
+    "destination": "",
+    "type": "KillMonster"
+  },
+  {
+    "id": 1,
+    "class_name": "KillBearQuest",
+    "name": "곰 사냥",
+    "monsters": {
+      "Bear": 2
+    },
+    "rewards": {
+      "Timber": 1
+    },
+    "gold": 3,
+    "giver": "촌장",
+    "destination": "",
+    "type": "KillMonster"
+  }
+]

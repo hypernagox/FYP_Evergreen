@@ -25,6 +25,7 @@
 #include "StatusSystem.h"
 #include "Skill.h"
 #include "ObjectIdentifier.h"
+#include "KillMonsterQuest.h"
 
 using namespace NagiocpX;
 
@@ -172,7 +173,7 @@ const bool Handle_c2s_PLAYER_DEATH(const NagiocpX::S_ptr<NagiocpX::PacketSession
 const bool Handle_c2s_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REQUEST_QUEST& pkt_)
 {
 	const auto owner = pSession_->GetOwnerEntity();
-	const auto q = NagiocpX::xnew<KillFoxQuest>(0);
+	const auto q = NagiocpX::xnew<KillFoxQuest>();
 	if (!owner->GetComp<QuestSystem>()->AddQuest(q))
 	{
 		xdelete<Quest>(q);
