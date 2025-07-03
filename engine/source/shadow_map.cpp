@@ -11,13 +11,8 @@ namespace udsdx
 {
 	ShadowMap::ShadowMap(UINT mapWidth, UINT mapHeight, ID3D12Device* device)
 	{
-		m_mapWidth = mapWidth;
-		m_mapHeight = mapHeight;
-
-		m_viewport = { 0.0f, 0.0f, (float)mapWidth, (float)mapHeight, 0.0f, 1.0f };
-		m_scissorRect = { 0, 0, (int)mapWidth, (int)mapHeight };
-
 		OnResize(mapWidth, mapHeight, device);
+
 		for (auto& buffer : m_constantBuffers)
 		{
 			buffer = std::make_unique<UploadBuffer<ShadowConstants>>(device, 1, true);
@@ -38,6 +33,12 @@ namespace udsdx
 
 	void ShadowMap::OnResize(UINT newWidth, UINT newHeight, ID3D12Device* device)
 	{
+		m_mapWidth = newWidth;
+		m_mapHeight = newHeight;
+
+		m_viewport = { 0.0f, 0.0f, (float)newWidth, (float)newHeight, 0.0f, 1.0f };
+		m_scissorRect = { 0, 0, (int)newWidth, (int)newHeight };
+
 		D3D12_RESOURCE_DESC texDesc;
 		ZeroMemory(&texDesc, sizeof(D3D12_RESOURCE_DESC));
 		texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -76,6 +77,11 @@ namespace udsdx
 		descriptorParam.DsvCpuHandle.Offset(1, descriptorParam.DsvDescriptorSize);
 		descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
+		RebuildDescriptors(device);
+	}
+
+	void ShadowMap::RebuildDescriptors(ID3D12Device* device)
+	{
 		// Create SRV to resource so we can sample the shadow map in a shader program.
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -149,7 +155,7 @@ namespace udsdx
 
 		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PerShadowCBV, m_constantBuffers[param.FrameResourceIndex]->Resource()->GetGPUVirtualAddress());
 
-		if (m_drawShadow)
+		if (param.RenderOptions->DrawShadowMap)
 		{
 			param.UseFrustumCulling = false;
 

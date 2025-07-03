@@ -326,7 +326,7 @@ namespace udsdx
 		pCommandList->SetGraphicsRootConstantBufferView(2, renderParam.ConstantBufferView);
 		pCommandList->SetGraphicsRootDescriptorTable(3, m_gBuffersGpuSrv[0]);
 		pCommandList->SetGraphicsRootDescriptorTable(4, renderParam.RenderShadowMap->GetSrvGpu());
-		pCommandList->SetGraphicsRootDescriptorTable(5, renderParam.RenderScreenSpaceAO->GetAmbientMapGpuSrv());
+		pCommandList->SetGraphicsRootDescriptorTable(5, renderParam.RenderScreenSpaceAO->GetSSAOMapGpuSrv());
 		pCommandList->SetGraphicsRootDescriptorTable(6, m_depthBufferGpuSrv);
 
 		for (size_t index = 0; index < pipelineStates.size(); ++index)

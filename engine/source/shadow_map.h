@@ -18,6 +18,7 @@ namespace udsdx
 	public:
 		void OnResize(UINT newWidth, UINT newHeight, ID3D12Device* device);
 		void BuildDescriptors(DescriptorParam& descriptorParam, ID3D12Device* device);
+		void RebuildDescriptors(ID3D12Device* device);
 
 		void Pass(RenderParam& param, Scene* target, Camera* camera, LightDirectional* light);
 

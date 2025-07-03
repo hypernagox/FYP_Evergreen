@@ -82,6 +82,11 @@ using namespace DirectX;
 #include "../tracy/public/tracy/Tracy.hpp"
 #include "../tracy/public/tracy/TracyD3D12.hpp"
 
+// ImGui Library
+#include <imgui.h>
+#include <imgui_impl_dx12.h>
+#include <imgui_impl_win32.h>
+
 // In-Engine Library
 #include "define.h"
 #include "d3dUtil.h"

@@ -138,6 +138,8 @@ namespace udsdx
 		std::shared_ptr<Scene> m_scene;
 		std::function<void(const Time&)> m_updateCallback = nullptr;
 
+		RenderOptions m_renderOptions;
+
 	protected:
 		TimeMeasure* m_timeMeasure;
 		std::unique_ptr<Wrappers::RoInitializeWrapper> m_roInitialization;

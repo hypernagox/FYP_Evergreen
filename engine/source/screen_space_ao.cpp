@@ -66,6 +66,25 @@ namespace udsdx
 		m_blurConstantBuffer->CopyData(0, blurCB);
 	}
 
+	void ScreenSpaceAO::ClearSSAOMap(ID3D12GraphicsCommandList* pCommandList)
+	{
+		float clearColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+		pCommandList->ResourceBarrier(1,
+			&CD3DX12_RESOURCE_BARRIER::Transition(
+				m_ssaomap.Get(),
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		pCommandList->ClearRenderTargetView(m_ssaomapCpuRtv, clearColor, 0, nullptr);
+
+		pCommandList->ResourceBarrier(1,
+			&CD3DX12_RESOURCE_BARRIER::Transition(
+				m_ssaomap.Get(),
+				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_GENERIC_READ));
+	}
+
 	void ScreenSpaceAO::PassSSAO(RenderParam& param)
 	{
 		auto pCommandList = param.CommandList;
@@ -137,7 +156,7 @@ namespace udsdx
 
 		pCommandList->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(
-				m_ambientMap.Get(),
+				m_ssaomap.Get(),
 				D3D12_RESOURCE_STATE_GENERIC_READ,
 				D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
 
@@ -147,13 +166,13 @@ namespace udsdx
 		pCommandList->SetComputeRootDescriptorTable(3, m_blurMapGpuSrv);
 		pCommandList->SetComputeRootDescriptorTable(4, param.Renderer->GetGBufferSrv(1));
 		pCommandList->SetComputeRootDescriptorTable(5, param.Renderer->GetDepthBufferSrv());
-		pCommandList->SetComputeRootDescriptorTable(6, m_ambientMapGpuUav);
+		pCommandList->SetComputeRootDescriptorTable(6, m_ssaoMapGpuUav);
 
 		pCommandList->Dispatch((m_height + ThreadGroupSize - 1) / ThreadGroupSize, m_width, 1);
 
 		pCommandList->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(
-				m_ambientMap.Get(),
+				m_ssaomap.Get(),
 				D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
 				D3D12_RESOURCE_STATE_GENERIC_READ));
 	}
@@ -180,7 +199,6 @@ namespace udsdx
 	void ScreenSpaceAO::BuildResources()
 	{
 		// Free the old resources if they exist
-		m_ambientMap.Reset();
 		m_ssaomap.Reset();
 		m_blurMap.Reset();
 
@@ -196,7 +214,7 @@ namespace udsdx
 		texDesc.SampleDesc.Count = 1;
 		texDesc.SampleDesc.Quality = 0;
 		texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-		texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+		texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
 		// Ambient map and blur map
 		float aoClearColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -210,17 +228,9 @@ namespace udsdx
 			&texDesc,
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
-			IID_PPV_ARGS(m_ambientMap.GetAddressOf())));
-
-		ThrowIfFailed(m_device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-			D3D12_HEAP_FLAG_NONE,
-			&texDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ,
-			nullptr,
 			IID_PPV_ARGS(m_blurMap.GetAddressOf())));
 
-		texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+		texDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 
 		// SSAO map
 		texDesc.Width = static_cast<UINT>(m_width * m_ssaoMapScale);
@@ -237,20 +247,18 @@ namespace udsdx
 
 	void ScreenSpaceAO::BuildDescriptors(DescriptorParam& descriptorParam, ID3D12Resource* depthStencilBuffer)
 	{
-		m_ambientMapCpuSrv = descriptorParam.SrvCpuHandle;
-		m_ssaomapCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		m_ssaomapCpuSrv = descriptorParam.SrvCpuHandle;
 		m_blurMapCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_depthMapCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
-		m_ambientMapGpuSrv = descriptorParam.SrvGpuHandle;
-		m_ssaomapGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		m_ssaomapGpuSrv = descriptorParam.SrvGpuHandle;
 		m_blurMapGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_depthMapGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
-		m_ambientMapCpuUav = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		m_ssaoMapCpuUav = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_blurMapCpuUav = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
-		m_ambientMapGpuUav = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		m_ssaoMapGpuUav = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_blurMapGpuUav = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
 		m_ssaomapCpuRtv = descriptorParam.RtvCpuHandle.Offset(1, descriptorParam.RtvDescriptorSize);
@@ -274,14 +282,13 @@ namespace udsdx
 		m_device->CreateShaderResourceView(depthStencilBuffer, &srvDesc, m_depthMapCpuSrv);
 
 		srvDesc.Format = AO_FORMAT;
-		m_device->CreateShaderResourceView(m_ambientMap.Get(), &srvDesc, m_ambientMapCpuSrv);
 		m_device->CreateShaderResourceView(m_ssaomap.Get(), &srvDesc, m_ssaomapCpuSrv);
 		m_device->CreateShaderResourceView(m_blurMap.Get(), &srvDesc, m_blurMapCpuSrv);
 
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
 		uavDesc.Format = AO_FORMAT;
 		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
-		m_device->CreateUnorderedAccessView(m_ambientMap.Get(), nullptr, &uavDesc, m_ambientMapCpuUav);
+		m_device->CreateUnorderedAccessView(m_ssaomap.Get(), nullptr, &uavDesc, m_ssaoMapCpuUav);
 		m_device->CreateUnorderedAccessView(m_blurMap.Get(), nullptr, &uavDesc, m_blurMapCpuUav);
 
 		// Create the render target view

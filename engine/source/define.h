@@ -30,6 +30,16 @@ namespace udsdx
 	class PostProcessOutline;
 	class BoundingCamera;
 
+	struct RenderOptions
+	{
+		bool DrawSSAO = true;
+		bool DrawMotionBlur = true;
+		bool DrawFXAA = true;
+		bool DrawOutline = true;
+		bool DrawShadowMap = true;
+		unsigned int ShadowMapSize = 4096u;
+	};
+
 	struct RenderParam
 	{
 		ID3D12Device* Device;
@@ -38,6 +48,7 @@ namespace udsdx
 		ID3D12DescriptorHeap* SRVDescriptorHeap;
 
 		DeferredRenderer* Renderer;
+		RenderOptions* RenderOptions;
 
 		float AspectRatio;
 		int FrameResourceIndex;

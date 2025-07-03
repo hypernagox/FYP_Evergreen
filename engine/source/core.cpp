@@ -21,10 +21,6 @@
 #include "post_process_fxaa.h"
 #include "post_process_outline.h"
 
-#include <imgui.h>
-#include <imgui_impl_dx12.h>
-#include <imgui_impl_win32.h>
-
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -168,7 +164,7 @@ namespace udsdx
 		m_deferredRenderer = std::make_unique<DeferredRenderer>(m_d3dDevice.Get());
 
 		// Create Shadow Map
-		m_shadowMap = std::make_unique<ShadowMap>(4096u, 4096u, m_d3dDevice.Get());
+		m_shadowMap = std::make_unique<ShadowMap>(m_renderOptions.ShadowMapSize, m_renderOptions.ShadowMapSize, m_d3dDevice.Get());
 
 		// Create Screen Space Ambient Occlusion
 		m_screenSpaceAO = std::make_unique<ScreenSpaceAO>(m_d3dDevice.Get(), m_commandList.Get(), 1.0f);
@@ -572,19 +568,19 @@ namespace udsdx
 		INSTANCE(Audio)->Update();
 		INSTANCE(Input)->Update();
 
+		BroadcastUpdateMessage();
+		m_scene->Update(m_timeMeasure->GetTime());
+		m_scene->PostUpdate(m_timeMeasure->GetTime());
+
 		// Toggle ImGui elements with F12 key (Debug feature)
 		if (INSTANCE(Input)->GetKeyDown(Keyboard::F12))
 		{
 			m_drawImGUIElements = !m_drawImGUIElements;
 		}
-
 		if (m_drawImGUIElements)
 		{
 			ImGuiNewFrame();
 		}
-		BroadcastUpdateMessage();
-		m_scene->Update(m_timeMeasure->GetTime());
-		m_scene->PostUpdate(m_timeMeasure->GetTime());
 
 		// Update the constant buffer with the latest view and project matrix.
 		UpdateMainPassCB();
@@ -615,6 +611,7 @@ namespace udsdx
 			.SRVDescriptorHeap = m_srvHeap.Get(),
 
 			.Renderer = m_deferredRenderer.get(),
+			.RenderOptions = &m_renderOptions,
 
 			.AspectRatio = GetAspectRatio(),
 			.FrameResourceIndex = m_currFrameResourceIndex,
@@ -1027,6 +1024,31 @@ namespace udsdx
 		// Draw the histogram
 		ImGui::Begin("Frame Time Histogram");
 		ImGui::PlotHistogram("Frame Times", frameTimes.data(), static_cast<int>(frameTimes.size()), 0, nullptr, 0.0f, smoothMaxFrameTime, ImVec2(0.0f, 100.0f));
+
+		ImGui::Checkbox("Draw Shadow Map", &m_renderOptions.DrawShadowMap);
+		bool changeSSAO = ImGui::Checkbox("Draw SSAO", &m_renderOptions.DrawSSAO);
+		ImGui::Checkbox("Draw Motion Blur", &m_renderOptions.DrawMotionBlur);
+		ImGui::Checkbox("Draw Post Process FXAA", &m_renderOptions.DrawFXAA);
+		ImGui::Checkbox("Draw Post Process Outline", &m_renderOptions.DrawOutline);
+		
+		// Draw combobox for shadow map resolution. the options are (256, 512, 1024, 2048, 4096, 8192).
+		static const char* shadowMapResolutions[] = { "256", "512", "1024", "2048", "4096", "8192" };
+		std::string currentShadowMapResolution = std::to_string(m_renderOptions.ShadowMapSize);
+		int selectedShadowMapResolution = static_cast<int>(std::distance(std::begin(shadowMapResolutions), std::find(std::begin(shadowMapResolutions), std::end(shadowMapResolutions), currentShadowMapResolution)));
+		if (ImGui::Combo("Shadow Map Resolution", &selectedShadowMapResolution, shadowMapResolutions, IM_ARRAYSIZE(shadowMapResolutions)))
+		{
+			FlushCommandQueue();
+			m_renderOptions.ShadowMapSize = static_cast<unsigned int>(std::stoi(shadowMapResolutions[selectedShadowMapResolution]));
+			m_shadowMap->OnResize(m_renderOptions.ShadowMapSize, m_renderOptions.ShadowMapSize, m_d3dDevice.Get());
+			m_shadowMap->RebuildDescriptors(m_d3dDevice.Get());
+		}
+
+		if (changeSSAO && !m_renderOptions.DrawSSAO)
+		{
+			PrepareDirectCommandList();
+			m_screenSpaceAO->ClearSSAOMap(m_commandList.Get());
+			ExecuteAndFlushDirectCommandList();
+		}
 
 		// Set window position to top left corner
 		ImGui::SetWindowPos(ImVec2(0, 0));

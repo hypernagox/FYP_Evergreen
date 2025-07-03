@@ -42,6 +42,7 @@ namespace udsdx
 		void UpdateSSAOConstants(RenderParam& param, Camera* pCamera);
 		void UpdateBlurConstants();
 
+		void ClearSSAOMap(ID3D12GraphicsCommandList* pCommandList);
 		void PassSSAO(RenderParam& param);
 		void PassBlur(RenderParam& param);
 
@@ -55,7 +56,6 @@ namespace udsdx
 		void BuildBlurWeights();
 
 	public:
-		CD3DX12_GPU_DESCRIPTOR_HANDLE GetAmbientMapGpuSrv() const { return m_ambientMapGpuSrv; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetSSAOMapGpuSrv() const { return m_ssaomapGpuSrv; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetBlurMapGpuSrv() const { return m_blurMapGpuSrv; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetDepthMapGpuSrv() const { return m_depthMapGpuSrv; }
@@ -73,17 +73,13 @@ namespace udsdx
 		ComPtr<ID3D12PipelineState> m_ssaoPSO;
 		ComPtr<ID3D12PipelineState> m_blurPSO;
 
-		ComPtr<ID3D12Resource> m_ambientMap;
 		ComPtr<ID3D12Resource> m_ssaomap;
 		ComPtr<ID3D12Resource> m_blurMap;
 
-		CD3DX12_CPU_DESCRIPTOR_HANDLE m_ambientMapCpuSrv;
-		CD3DX12_GPU_DESCRIPTOR_HANDLE m_ambientMapGpuSrv;
-		CD3DX12_CPU_DESCRIPTOR_HANDLE m_ambientMapCpuUav;
-		CD3DX12_GPU_DESCRIPTOR_HANDLE m_ambientMapGpuUav;
-
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_ssaomapCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_ssaomapGpuSrv;
+		CD3DX12_CPU_DESCRIPTOR_HANDLE m_ssaoMapCpuUav;
+		CD3DX12_GPU_DESCRIPTOR_HANDLE m_ssaoMapGpuUav;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_ssaomapCpuRtv;
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_blurMapCpuSrv;

@@ -153,9 +153,12 @@ namespace udsdx
 	{
 		ZoneScopedN("SSAO Render Pass");
 		TracyD3D12Zone(*param.TracyQueueContext, param.CommandList, "SSAO Render Pass");
-		param.RenderScreenSpaceAO->UpdateSSAOConstants(param, camera);
-		param.RenderScreenSpaceAO->PassSSAO(param);
-		param.RenderScreenSpaceAO->PassBlur(param);
+		if (param.RenderOptions->DrawSSAO)
+		{
+			param.RenderScreenSpaceAO->UpdateSSAOConstants(param, camera);
+			param.RenderScreenSpaceAO->PassSSAO(param);
+			param.RenderScreenSpaceAO->PassBlur(param);
+		}
 	}
 
 	void Scene::PassRenderMain(RenderParam& param, Camera* camera, D3D12_GPU_VIRTUAL_ADDRESS cameraCbv)
@@ -201,13 +204,22 @@ namespace udsdx
 		param.Renderer->PassBufferPostProcess(param);
 
 		// FXAA pass
-		param.RenderPostProcessFXAA->Pass(param);
+		if (param.RenderOptions->DrawFXAA)
+		{
+			param.RenderPostProcessFXAA->Pass(param);
+		}
 
 		// Motion blur pass
-		param.RenderMotionBlur->Pass(param, cameraCbv);
+		if (param.RenderOptions->DrawMotionBlur)
+		{
+			param.RenderMotionBlur->Pass(param, cameraCbv);
+		}
 
 		// Post-process outline pass
-		param.RenderPostProcessOutline->Pass(param);
+		if (param.RenderOptions->DrawOutline)
+		{
+			param.RenderPostProcessOutline->Pass(param);
+		}
 	}
 
 	void Scene::PassRenderHUD(RenderParam& param)
