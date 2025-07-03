@@ -8,6 +8,7 @@ public:
 	TransitionOverlayGUI(const std::shared_ptr<udsdx::SceneObject>& object);
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
+	void BeginFadeOut();
 	void AppendTransition(std::function<void()> callback, std::wstring_view message);
 
 private:

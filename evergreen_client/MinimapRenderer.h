@@ -13,6 +13,7 @@ public:
 	void BuildDescriptors(udsdx::DescriptorParam& descriptorParam);
 	void BuildPipelineStateObject();
 	void SetViewMatrix(const udsdx::Vector3& position, const udsdx::Vector3& forward);
+	void OnDetach();
 
 public:
 	void PassRender(udsdx::RenderParam& renderParam);

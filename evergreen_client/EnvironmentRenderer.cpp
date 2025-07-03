@@ -4,6 +4,7 @@
 #include "TerrainData.h"
 #include "TerrainInstanceRenderer.h"
 #include "InteractiveEntity.h"
+#include "TerrainDetailRenderer.h"
 
 using namespace udsdx;
 
@@ -110,15 +111,15 @@ EnvironmentRenderer::EnvironmentRenderer(const std::shared_ptr<SceneObject>& obj
 {
 }
 
-void EnvironmentRenderer::Initialize(HeightMap* heightMap, TerrainData* terrainData, TerrainDetail* terrainDetail)
+void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
 {
     auto res = INSTANCE(Resource);
 
-    const float TerrainSize = GET_DATA(float, "GlobalValues", "TerrainSize", "Value");
+    const float TerrainSize = parameters.TerrainSize;
     const Vector3 terrainPos = Vector3(-TerrainSize * 0.5f, 0, -TerrainSize * 0.5f);
     const Vector3 terrainScale = Vector3::One * TerrainSize;
 
-    m_terrainMesh = CreateMeshFromHeightMap(heightMap, 512, 512, 1.0f);
+    m_terrainMesh = CreateMeshFromHeightMap(parameters.HeightMap, 512, 512, 1.0f);
     m_terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
     m_terrainMaterial = std::make_shared<udsdx::Material>();
@@ -139,6 +140,24 @@ void EnvironmentRenderer::Initialize(HeightMap* heightMap, TerrainData* terrainD
     m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_5.png")), 14);
     m_terrainMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_6.tif")), 15);
 
+    if (parameters.TerrainDetail != nullptr)
+    {
+        m_terrainDetailMaterial = std::make_shared<udsdx::Material>();
+        m_terrainDetailMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Grass.tga")), 0);
+
+        std::shared_ptr<SceneObject> terrainDetailObj = std::make_shared<SceneObject>();
+        auto terrainDetailRenderer = terrainDetailObj->AddComponent<TerrainDetailRenderer>();
+        terrainDetailRenderer->SetTerrainDetail(parameters.TerrainDetail);
+        terrainDetailRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"detailbillboard.hlsl")));
+        terrainDetailRenderer->SetMaterial(m_terrainDetailMaterial.get());
+
+        terrainDetailObj->GetTransform()->SetLocalPosition(terrainPos);
+        terrainDetailObj->GetTransform()->SetLocalScale(terrainScale);
+
+        GetSceneObject()->AddChild(terrainDetailObj);
+    }
+
+    if (parameters.TerrainData != nullptr)
     {
         for (auto texture : INSTANCE(Resource)->LoadAll<udsdx::Texture>())
             m_textureMap[texture->GetName().data()] = texture;
@@ -155,12 +174,13 @@ void EnvironmentRenderer::Initialize(HeightMap* heightMap, TerrainData* terrainD
 
             if (suffix != L".yms")
                 continue;
-            if (terrainData->GetPrototypeInstanceCount(filename) > 0)
-                AddTerrainInstances(directory.path(), terrainData);
+            if (parameters.TerrainData->GetPrototypeInstanceCount(filename) > 0)
+                AddTerrainInstances(directory.path(), parameters.TerrainData);
             m_prefabMap[filename] = directory.path();
         }
     }
 
+    if (parameters.HeightMap != nullptr)
     {
         m_terrainObj = std::make_shared<SceneObject>();
         m_terrainObj->GetTransform()->SetLocalPosition(terrainPos);

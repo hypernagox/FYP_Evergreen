@@ -43,6 +43,13 @@ void TransitionOverlayGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 	}
 }
 
+void TransitionOverlayGUI::BeginFadeOut()
+{
+	m_transitionDurationRemain = TransitionDuration;
+	m_panel->SetActive(true);
+	m_messageText->SetActive(false);
+}
+
 void TransitionOverlayGUI::AppendTransition(std::function<void()> callback, std::wstring_view message)
 {
 	m_transitionCallbacks.push_back(callback);

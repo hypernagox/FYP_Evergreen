@@ -2,6 +2,9 @@
   "TerrainSize": {
     "Value": 1024.0
   },
+  "DungeonTerrainSize": {
+    "Value": 512.0
+  },
   "CharacterScale": {
     "Value": 0.025
   },

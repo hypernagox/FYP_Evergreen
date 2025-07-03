@@ -39,7 +39,7 @@ public:
 	void Clear()noexcept { m_mapServerObj.clear(); }
 	void SetMainHero(const uint32_t id, std::shared_ptr<udsdx::SceneObject> hero) {
 		if (m_mainHero) {
-			throw std::runtime_error{ "Hero already exist" };
+			// throw std::runtime_error{ "Hero already exist" };
 		}
 		m_mainHeroID = id;
 		m_mapServerObj.try_emplace(id, hero);

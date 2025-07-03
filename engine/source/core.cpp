@@ -535,6 +535,7 @@ namespace udsdx
 	void Core::SetScene(std::shared_ptr<Scene> scene)
 	{
 		assert(scene != nullptr && "Scene cannot be null.");
+		FlushCommandQueue();
 		if (nullptr != m_scene)
 		{
 			m_scene->OnDetach();

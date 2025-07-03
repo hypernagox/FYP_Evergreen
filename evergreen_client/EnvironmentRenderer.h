@@ -6,11 +6,20 @@ class HeightMap;
 class TerrainData;
 class TerrainDetail;
 
+struct EnvironmentParameters
+{
+public:
+	HeightMap* HeightMap;
+	TerrainData* TerrainData;
+	TerrainDetail* TerrainDetail;
+	float TerrainSize;
+};
+
 class EnvironmentRenderer : public udsdx::Component
 {
 public:
 	EnvironmentRenderer(const std::shared_ptr<udsdx::SceneObject>& object);
-	void Initialize(HeightMap* heightMap, TerrainData* terrainData, TerrainDetail* terrainDetail);
+	void Initialize(const EnvironmentParameters& parameters);
 
 public:
 	std::shared_ptr<udsdx::SceneObject> AddTerrainInstances(std::filesystem::path path, TerrainData* terrainData);

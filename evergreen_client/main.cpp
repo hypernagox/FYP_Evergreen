@@ -12,13 +12,12 @@
 
 #include <HeightMap.h>
 #include "TerrainData.h"
-#include "TerrainInstanceRenderer.h"
 #include "AuthenticPlayer.h"
 #include "PlayerRenderer.h"
 #include "MovePacketSender.h"
 #include "EntityMovement.h"
 #include "TerrainDetail.h"
-#include "TerrainDetailRenderer.h"
+#include "EnvironmentRenderer.h"
 #include <regex>
 #include "InputHandler.h"
 #include "ServerObjectMgr.h"
@@ -30,7 +29,6 @@
 #include "../common/json.hpp"
 #include "ServerObjectMgr.h"
 
-#include "GameScene.h"
 #include "MainScene.h"
 #include "GuideSystem.h"
 #include "CommonQuestTable.h"
@@ -47,12 +45,8 @@ constexpr const static inline wchar_t IP_ADDR[][256]
     L"43.203.153.176"
 };
 
-std::shared_ptr<GameScene> g_scene;
-std::shared_ptr<MainScene> g_mainScene;
-
-std::unique_ptr<TerrainDetail> g_terrainDetail;
-std::unique_ptr<HeightMap> g_heightMap;
-std::unique_ptr<TerrainData> g_terrainData;
+EnvironmentParameters g_defaultEnvironmentParam;
+EnvironmentParameters g_dungeonEnvironmentParam;
 
 void Update(const Time& time);
 void ProcessLogin();
@@ -83,29 +77,34 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Common::CommonQuestTable::LoadCommonQuest();
 
     // Height Map: 지형의 (x, z) 좌표에 대한 y 높이를 담는 맵
-    g_heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta_04_28.raw"), 2049, 2049);
+    auto heightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_beta_04_28.raw"), 2049, 2049);
 
     // Terrain Detail: 잔디의 위치를 담는 맵, 잔디 위치에 대한 버텍스 / 인덱스 버퍼 포함
-    g_terrainDetail = std::make_unique<TerrainDetail>(g_heightMap.get(), RESOURCE_PATH(L"environment\\Terrain_Detail.raw"), 512, 512, 16, INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
+    auto terrainDetail = std::make_unique<TerrainDetail>(heightMap.get(), RESOURCE_PATH(L"environment\\Terrain_Detail.raw"), 512, 512, 16, INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
 	// Terrain Data: 나무, 바위, 건물 등 지형에 배치할 오브젝트의 위치를 담는 자료 구조
-    g_terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
+    auto terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
 
-    g_scene = std::make_shared<GameScene>(g_heightMap.get(), g_terrainData.get(), g_terrainDetail.get());
-    // g_mainScene = std::make_shared<MainScene>(g_heightMap.get(), g_terrainData.get(), g_terrainDetail.get());
+    g_defaultEnvironmentParam.HeightMap = heightMap.get();
+    g_defaultEnvironmentParam.TerrainDetail = terrainDetail.get();
+    g_defaultEnvironmentParam.TerrainData = terrainData.get();
+    g_defaultEnvironmentParam.TerrainSize = GET_DATA(float, "GlobalValues", "TerrainSize", "Value");
 
-    // 타겟씬은 이런저런 테스트 할 때 늘 필요 ..
-   // if constexpr (true == g_bUseNetWork)
-    {
-        ServerObjectMgr::GetInst()->SetTargetScene(g_scene);
-    }
+    auto dungeonHeightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 2048, 2048);
+
+    g_dungeonEnvironmentParam.HeightMap = dungeonHeightMap.get();
+    g_dungeonEnvironmentParam.TerrainDetail = nullptr;
+    g_dungeonEnvironmentParam.TerrainData = nullptr;
+    g_dungeonEnvironmentParam.TerrainSize = GET_DATA(float, "GlobalValues", "DungeonTerrainSize", "Value");
+
+    auto mainScene = std::make_shared<MainScene>();
 
     if constexpr (true == g_bUseNetWork)
     {
         NetMgr(NetworkMgr)->RegisterLoginRoutine(ProcessLogin);
     }
 
-    return UpdownStudio::Run(g_scene, nCmdShow);
+    return UpdownStudio::Run(mainScene, nCmdShow);
 }
 
 void Update(const Time& time)

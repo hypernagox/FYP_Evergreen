@@ -300,9 +300,6 @@
     <ClCompile Include="MainScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="GameDungeonScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="GizmoSectorRenderer.cpp">
       <Filter>GizmoRenderer</Filter>
     </ClCompile>
@@ -513,9 +510,6 @@
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
     <ClInclude Include="MainScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="GameDungeonScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="GizmoSectorRenderer.h">

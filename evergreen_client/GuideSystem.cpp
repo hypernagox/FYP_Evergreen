@@ -125,6 +125,14 @@ void GuideSystem::RemoveHarvest(uint32_t server_id)
 	m_mapHarvestID.erase(server_id);
 }
 
+void GuideSystem::ClearHarvest() noexcept
+{
+	m_mapHarvest.clear();
+	m_mapHarvestID.clear();
+	m_active_list.clear();
+	m_in_active_list.clear();
+}
+
 const bool GuideSystem::SetHarvestState(const uint32_t harvest_id, const bool is_active) noexcept
 {
 	// APPEAR OBJECT 패킷에 액티브상태라고 표시후 보내기직전에

@@ -2,6 +2,8 @@
 #include "GamePauseGUI.h"
 #include "ChannelSwitchGUI.h"
 #include "PopupGUIManager.h"
+#include "GameGUIFacade.h"
+#include "TransitionOverlayGUI.h"
 
 using namespace udsdx;
 
@@ -61,15 +63,15 @@ GamePauseGUI::GamePauseGUI(const std::shared_ptr<SceneObject>& object) : Compone
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(200.0f, 50.0f));
 		buttonComponent->SetClickCallback([this]() {
-			if (m_exitGameCallback)
-			{
+			INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([this]() {
 				m_exitGameCallback();
-			}
-		});
+				},
+				L"메인화면 이동 중 ...");
+			});
 
 		auto exitText = m_exitButton->AddComponent<GUIText>();
 		exitText->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
-		exitText->SetText(L"Exit");
+		exitText->SetText(L"Return Main");
 		exitText->SetRaycastTarget(false);
 		m_panel->AddChild(m_exitButton);
 	}

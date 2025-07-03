@@ -439,7 +439,6 @@
     <ClCompile Include="FocusAgentGUI.cpp" />
     <ClCompile Include="ForcedMovement.cpp" />
     <ClCompile Include="func.cpp" />
-    <ClCompile Include="GameDungeonScene.cpp" />
     <ClCompile Include="GameGUIFacade.cpp" />
     <ClCompile Include="GamePauseGUI.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -548,7 +547,6 @@
     <ClInclude Include="FocusAgentGUI.h" />
     <ClInclude Include="ForcedMovement.h" />
     <ClInclude Include="func.h" />
-    <ClInclude Include="GameDungeonScene.h" />
     <ClInclude Include="GameGUIFacade.h" />
     <ClInclude Include="GamePauseGUI.h" />
     <ClInclude Include="GameScene.h" />

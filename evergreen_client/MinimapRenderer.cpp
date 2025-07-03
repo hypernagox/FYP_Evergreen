@@ -185,6 +185,18 @@ void MinimapRenderer::SetViewMatrix(const udsdx::Vector3& position, const udsdx:
 	)));
 }
 
+void MinimapRenderer::OnDetach()
+{
+	auto rootParam = INSTANCE(Core)->GetDescriptorParameters();
+
+	rootParam.SrvCpuHandle.Offset(-1, rootParam.CbvSrvUavDescriptorSize);
+	rootParam.SrvGpuHandle.Offset(-1, rootParam.CbvSrvUavDescriptorSize);
+	rootParam.RtvCpuHandle.Offset(-1, rootParam.RtvDescriptorSize);
+	rootParam.DsvCpuHandle.Offset(-1, rootParam.DsvDescriptorSize);
+
+	INSTANCE(Core)->ApplyDescriptorParameters(rootParam);
+}
+
 void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam)
 {
 	CD3DX12_RESOURCE_BARRIER barrier[2];

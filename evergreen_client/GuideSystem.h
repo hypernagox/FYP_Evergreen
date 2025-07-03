@@ -25,6 +25,7 @@ public:
 	void AddHarvestMeshObject(std::shared_ptr<udsdx::SceneObject> obj);
 	bool AddHarvest(uint32_t server_id, uint32_t harvest_id, bool is_active);
 	void RemoveHarvest(uint32_t server_id);
+	void ClearHarvest() noexcept;
 
 	udsdx::SceneObject* GetHarvest(const uint32_t server_id)const noexcept {
 		const auto iter = m_mapHarvestID.find(server_id);
