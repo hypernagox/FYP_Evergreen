@@ -130,7 +130,9 @@ namespace udsdx
 		bool		m_4xMsaaState = false;    // 4X MSAA enabled
 		UINT		m_4xMsaaQuality = 0;      // quality level of 4X MSAA
 
-		Color    m_clearColor = Color(0.0f, 0.0f, 0.0f, 1.0f);
+		Color		m_clearColor = Color(0.0f, 0.0f, 0.0f, 1.0f);
+
+		bool		m_drawImGUIElements = false; // Draw ImGui elements on the screen
 
 		// Current Scene to render with
 		std::shared_ptr<Scene> m_scene;

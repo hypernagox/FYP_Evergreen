@@ -99,16 +99,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)common\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)common\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)common\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)common\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)common\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)common\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>

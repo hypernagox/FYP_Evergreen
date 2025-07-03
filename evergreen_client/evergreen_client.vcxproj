@@ -160,31 +160,31 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)engine\source\;$(SolutionDir)library\inc\;$(SolutionDir)ClientNetwork\;$(SolutionDir)common\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
@@ -270,7 +270,7 @@
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <UnityFilesDirectory>$(ProjectDir)UnityBuild\$(Configuration)\</UnityFilesDirectory>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <IncludeInUnityFile>true</IncludeInUnityFile>
@@ -296,7 +296,7 @@
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <UnityFilesDirectory>$(ProjectDir)UnityBuild\$(Configuration)\</UnityFilesDirectory>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <IncludeInUnityFile>true</IncludeInUnityFile>
@@ -329,7 +329,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <UnityFilesDirectory>$(ProjectDir)UnityBuild\$(Configuration)\</UnityFilesDirectory>
       <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
@@ -359,7 +359,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <UnityFilesDirectory>$(ProjectDir)UnityBuild\$(Configuration)\</UnityFilesDirectory>
       <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
@@ -389,7 +389,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UnityFilesDirectory>$(ProjectDir)UnitiyBuild\$(Configuration)\</UnityFilesDirectory>
+      <UnityFilesDirectory>$(ProjectDir)UnityBuild\$(Configuration)\</UnityFilesDirectory>
       <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>

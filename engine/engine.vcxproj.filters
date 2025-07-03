@@ -143,6 +143,24 @@
     <ClCompile Include="source\mono_upload_buffer.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\imgui.cpp">
+      <Filter>ImGUI Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_dx12.cpp">
+      <Filter>ImGUI Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>ImGUI Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\imgui_draw.cpp">
+      <Filter>ImGUI Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\imgui_tables.cpp">
+      <Filter>ImGUI Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\library\inc\imgui\imgui_widgets.cpp">
+      <Filter>ImGUI Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -168,6 +186,9 @@
     </Filter>
     <Filter Include="Engine\Runtime\Gui">
       <UniqueIdentifier>{b23d477f-3376-4798-a14c-0fb0f69cbc9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGUI Sources">
+      <UniqueIdentifier>{5a46020e-35f4-4ef0-8a90-cc273b174e8c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -321,6 +342,15 @@
     </ClInclude>
     <ClInclude Include="source\mono_upload_buffer.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\imgui.h">
+      <Filter>ImGUI Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_dx12.h">
+      <Filter>ImGUI Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_win32.h">
+      <Filter>ImGUI Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
