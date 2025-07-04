@@ -77,7 +77,7 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	//Mgr(WorldMgr)->GetWorld(0) ->GetStartSector()->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER));
 	//Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
 	const auto pos = entity->GetComp<PositionComponent>()->pos;
-
+	std::cout << (int)pkt_.channel_num() << std::endl;
 	Field::GetField(pkt_.channel_num())->EnterFieldWithFloatXY(pos.x + 512.f, pos.z + 512.f, entity);
 
 	//g_sector->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER)

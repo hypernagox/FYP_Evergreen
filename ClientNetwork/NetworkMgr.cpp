@@ -17,6 +17,7 @@ namespace NetHelper
 
     NetworkMgr::~NetworkMgr()
     {
+        SocketUtils::Clear();
     }
 
     void NetworkMgr::DoNetworkIO(const DWORD timeout_millisecond) noexcept
@@ -52,13 +53,14 @@ namespace NetHelper
         }
         if (INVALID_SOCKET != m_c2sSession->m_sessionSocket)
         {
-            shutdown(m_c2sSession->m_sessionSocket, SD_BOTH);
-            SocketUtils::Close(m_c2sSession->m_sessionSocket);
+           //shutdown(m_c2sSession->m_sessionSocket, SD_BOTH);
+           //SocketUtils::Close(m_c2sSession->m_sessionSocket);
         }
-        WSACloseEvent(m_connectEvent);
-        SocketUtils::Clear();
+      //  WSACloseEvent(m_connectEvent);
+      //  SocketUtils::Clear();
         m_c2sSession->ProcessDisconnect();
         m_c2sSession->m_pCacheSharedFromThis.reset();
+        m_sessionFactory = nullptr;
     }
 
     bool NetworkMgr::Connect(std::wstring_view ip, uint16 port, const PacketHandleFunc* const handler) noexcept
@@ -66,6 +68,10 @@ namespace NetHelper
         m_serverAddr = NetAddress{ ip.data(),port };
         const auto limitTick = ::GetTickCount64() + 100000;
         bool bConnectSuccess = false;
+        if (m_c2sSession)
+        {
+            SocketUtils::Close(m_c2sSession->m_sessionSocket);
+        }
         while (::GetTickCount64() < limitTick)
         {
             m_c2sSession = m_sessionFactory();
