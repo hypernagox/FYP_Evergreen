@@ -540,7 +540,6 @@ namespace udsdx
 		{
 			m_scene->OnDetach();
 		}
-		m_lastScene = m_scene;
 		m_scene = scene;
 		m_scene->OnAttach();
 	}
@@ -570,8 +569,15 @@ namespace udsdx
 		INSTANCE(Audio)->Update();
 		INSTANCE(Input)->Update();
 
+		std::shared_ptr<Scene> lastScene = m_scene;
+
 		BroadcastUpdateMessage();
 		m_scene->Update(m_timeMeasure->GetTime());
+		// If the scene has changed while updating Scene, we need to update the new scene.
+		if (m_scene != lastScene)
+		{
+			m_scene->Update(m_timeMeasure->GetTime());
+		}
 		m_scene->PostUpdate(m_timeMeasure->GetTime());
 
 		// Toggle ImGui elements with F12 key (Debug feature)
