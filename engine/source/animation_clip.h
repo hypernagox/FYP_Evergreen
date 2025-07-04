@@ -36,8 +36,11 @@ namespace udsdx
 		AnimationClip(const std::filesystem::path& resourcePath);
 
 	public:
+		void PopulateTransforms(float animationTime, std::vector<Matrix4x4>& out) const;
 		void PopulateTransforms(float animationTime, const std::vector<std::string>& boneNames, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const;
 		int GetBoneIndex(std::string_view boneName) const;
+		const std::vector<Bone>& GetBones() const { return m_bones; };
+		const std::vector<int>& GetBoneParents() const { return m_boneParents; }
 		UINT GetBoneCount() const;
 		float GetAnimationDuration() const;
 

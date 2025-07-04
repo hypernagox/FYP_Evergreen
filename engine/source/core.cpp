@@ -1011,6 +1011,7 @@ namespace udsdx
 	void Core::ImGuiNewFrame()
 	{
 		static std::array<float, 100> frameTimes;
+		std::array<float, 100> frameTimeHistogram;
 		static float smoothMaxFrameTime = 0.0f;
 
 		ImGui_ImplDX12_NewFrame();
@@ -1026,12 +1027,25 @@ namespace udsdx
 		frameTimes.back() = m_timeMeasure->GetTime().deltaTime;
 
 		// Find the maximum frame time
-		float maxFrameTime = *std::max_element(frameTimes.begin(), frameTimes.end());
+		std::memset(frameTimeHistogram.data(), 0, frameTimeHistogram.size() * sizeof(float));
+		float maxFrameTime = *std::max_element(frameTimes.begin(), frameTimes.end()) * 1.5f;
 		smoothMaxFrameTime = std::lerp(smoothMaxFrameTime, maxFrameTime, 0.1f);
+
+		// Update the histogram data
+		for (size_t i = 0; i < frameTimes.size(); ++i)
+		{
+			int targetIndex = (frameTimes[i] / smoothMaxFrameTime) * frameTimeHistogram.size();
+			if (targetIndex >= 0 && targetIndex < frameTimeHistogram.size())
+			{
+				frameTimeHistogram[targetIndex]++;
+			}
+		}
+		float maxHistogramValue = *std::max_element(frameTimeHistogram.begin(), frameTimeHistogram.end()) * 1.25f;
 
 		// Draw the histogram
 		ImGui::Begin("Frame Time Histogram");
 		ImGui::PlotHistogram("Frame Times", frameTimes.data(), static_cast<int>(frameTimes.size()), 0, nullptr, 0.0f, smoothMaxFrameTime, ImVec2(0.0f, 100.0f));
+		ImGui::PlotLines("Frame Time Histogram", frameTimeHistogram.data(), static_cast<int>(frameTimeHistogram.size()), 0, nullptr, 0.0f, maxHistogramValue, ImVec2(0.0f, 100.0f));
 
 		ImGui::Checkbox("Draw Shadow Map", &m_renderOptions.DrawShadowMap);
 		bool changeSSAO = ImGui::Checkbox("Draw SSAO", &m_renderOptions.DrawSSAO);
@@ -1064,6 +1078,8 @@ namespace udsdx
 		ImGui::SetWindowSize(ImVec2(400, 200), ImGuiCond_FirstUseEver);
 
 		ImGui::End();
+
+		m_scene->OnDrawGizmos();
 	}
 
 	void Core::ImGuiRender()

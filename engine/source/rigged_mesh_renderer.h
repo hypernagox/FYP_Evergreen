@@ -21,6 +21,7 @@ namespace udsdx
 
 	public:
 		virtual void Update(const Time& time, Scene& scene) override;
+		virtual void OnDrawGizmos(const Camera* target) override;
 		virtual void Render(RenderParam& param, int instances = 1);
 
 	public:
@@ -32,6 +33,7 @@ namespace udsdx
 		virtual ID3D12PipelineState* GetShadowPipelineState() const override;
 
 		Matrix4x4 PopulateTransform(std::string_view boneName);
+		void PopulateTransforms(std::vector<Matrix4x4>& out);
 		void PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out);
 
 	protected:

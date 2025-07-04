@@ -33,7 +33,7 @@ namespace udsdx
 	{
 	}
 
-	void Component::OnDrawGizmos()
+	void Component::OnDrawGizmos(const Camera* target)
 	{
 	}
 

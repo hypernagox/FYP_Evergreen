@@ -55,6 +55,75 @@ namespace udsdx
 		SceneObject::EnumeratePostUpdate(m_rootObject, time, *this);
 	}
 
+	void Scene::OnDrawGizmos()
+	{
+		const char* className = typeid(*this).name();
+
+		ImGui::Begin(className);
+
+		unsigned int activeObjectsCount = 0;
+		Camera* renderCamera = m_renderCameraQueue[0];
+		SceneObject::Enumerate(m_rootObject, [&activeObjectsCount, renderCamera](const std::shared_ptr<SceneObject>& object) {
+			activeObjectsCount++;
+			object->OnDrawGizmos(renderCamera);
+			});
+		
+		// Add Category for draw calls
+		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+		ImGui::Text("Active Objects Count: %u", activeObjectsCount);
+		if (ImGui::TreeNode("Draw Calls"))
+		{
+			ImGui::Text("Render Camera Count: %zu", m_renderCameraQueue.size());
+			ImGui::Text("Render Light Count: %zu", m_renderLightQueue.size());
+			ImGui::Text("Render Shadow Object Count: %zu", m_renderShadowObjectQueue.size());
+
+			for (size_t i = 0; i < m_renderObjectQueues.size(); ++i)
+			{
+				const auto& group = m_renderObjectQueues[i];
+				ImGui::Text("Render Group %zu:", i);
+				for (const auto& [defferedPipelineState, objectGroups] : group)
+				{
+					ImGui::Text("  Deferred Pipeline State: %p", defferedPipelineState);
+					for (const auto& [pipelineState, objects] : objectGroups)
+					{
+						ImGui::Text("    Object Count: %zu", objects.size());
+					}
+				}
+			}
+			ImGui::TreePop();
+		}
+
+		Matrix4x4 viewMatrix = renderCamera->GetViewMatrix();
+
+		Vector3 viewForward = Vector3::TransformNormal(Vector3::UnitZ, viewMatrix);
+		Vector3 viewUp = Vector3::TransformNormal(Vector3::UnitY, viewMatrix);
+		Vector3 viewRight = viewUp.Cross(viewForward);
+
+		std::array<std::pair<Vector3, ImColor>, 3> lines = {
+			std::make_pair(viewRight,	ImColor(1.0f, 0.0f, 0.0f, 1.0f)),	// Red for right
+			std::make_pair(viewUp,		ImColor(0.0f, 1.0f, 0.0f, 1.0f)),		// Green for up
+			std::make_pair(viewForward, ImColor(0.0f, 0.0f, 1.0f, 1.0f))		// Blue for forward
+		};
+		std::sort(lines.begin(), lines.end(), [](const auto& a, const auto& b) { return a.first.z > b.first.z; });
+
+		float lineLength = 40.0f;
+		float lineThickness = 4.0f;
+		ImVec2 screenPosition = ImVec2(ImGui::GetIO().DisplaySize.x - 50.0f, 50.0f);
+		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+		for (const auto& line : lines)
+		{
+			drawList->AddLine(screenPosition,
+				screenPosition + ImVec2(line.first.x, -line.first.y) * lineLength,
+				line.second, lineThickness);
+		}
+
+		const char* text = "View Gizmos";
+		ImVec2 textSize = ImGui::CalcTextSize(text);
+		drawList->AddText(screenPosition - textSize * 0.5f + ImVec2(0.0f, 50.0f), ImColor(1.0f, 1.0f, 1.0f, 1.0f), text);
+
+		ImGui::End();
+	}
+
 	void Scene::Render(RenderParam& param)
 	{ ZoneScoped;
 		std::vector<D3D12_GPU_VIRTUAL_ADDRESS> cameraCbvs(m_renderCameraQueue.size());

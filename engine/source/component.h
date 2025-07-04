@@ -38,7 +38,7 @@ namespace udsdx
 		virtual void PostUpdate(const Time& time, Scene& scene);
 
 		// Called when the component needs to draw ImGUI primitives
-		virtual void OnDrawGizmos();
+		virtual void OnDrawGizmos(const Camera* target);
 
 		// Called when:
 		// - Before OnDetach() if the component is hierachically active

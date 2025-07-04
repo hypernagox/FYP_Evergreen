@@ -107,6 +107,23 @@ namespace udsdx
 		}
 	}
 
+	void AnimationClip::PopulateTransforms(float animationTime, std::vector<Matrix4x4>& out) const
+	{
+		std::vector<std::string> boneNames;
+		std::vector<Matrix4x4> boneOffsets;
+
+		boneNames.reserve(m_bones.size());
+		boneOffsets.reserve(m_bones.size());
+
+		for (const Bone& bone : m_bones)
+		{
+			boneNames.push_back(bone.Name);
+			boneOffsets.push_back(Matrix4x4::Identity);
+		}
+
+		PopulateTransforms(animationTime, boneNames, boneOffsets, out);
+	}
+
 	void AnimationClip::PopulateTransforms(float animationTime, const std::vector<std::string>& boneNames, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const
 	{
 		float animationTicks = animationTime * m_animation.TicksPerSecond;

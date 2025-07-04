@@ -29,6 +29,9 @@ namespace udsdx
 		// Called every frame after Update()
 		virtual void PostUpdate(const Time& time);
 
+		// Called when the component needs to draw ImGUI primitives
+		virtual void OnDrawGizmos();
+
 		// Called when the scene needs to draw primitives. The command list already called Reset() and is ready to use.
 		virtual void Render(RenderParam& param);
 

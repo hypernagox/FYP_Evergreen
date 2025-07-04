@@ -7,6 +7,7 @@ namespace udsdx
 {
 	class Component;
 	class Scene;
+	class Camera;
 
 	class SceneObject : public std::enable_shared_from_this<SceneObject>
 	{
@@ -25,6 +26,7 @@ namespace udsdx
 		Transform* GetTransform();
 		void Update(const Time& time, Scene& scene);
 		bool PostUpdate(const Time& time, Scene& scene, bool& forceValidate);
+		void OnDrawGizmos(const Camera* target);
 
 	public:
 		void AddChild(std::shared_ptr<SceneObject> child);

@@ -30,6 +30,68 @@ namespace udsdx
 		RendererBase::Update(time, scene);
 	}
 
+	void RiggedMeshRenderer::OnDrawGizmos(const Camera* target)
+	{	
+		ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+		float screenRatio = screenSize.x / screenSize.y;
+		
+		// Perform frustum culling
+		BoundingBox boundsWorld;
+		m_riggedMesh->GetBounds().Transform(boundsWorld, m_transformCache);
+		if (nullptr == m_animation || target->GetViewFrustumWorld(screenRatio)->Contains(boundsWorld) == ContainmentType::DISJOINT)
+		{
+			return;
+		}
+
+		std::vector<Matrix4x4> boneTransforms;
+		PopulateTransforms(boneTransforms);
+		const auto& boneParents = m_animation->GetBoneParents();
+
+		Matrix4x4 viewMatrix = target->GetViewMatrix();
+		Matrix4x4 projMatrix = target->GetProjMatrix(screenRatio);
+
+		std::vector<ImVec2> boneScreenPositions(boneTransforms.size());
+
+		for (size_t index = 0; index < boneParents.size(); ++index)
+		{
+			const auto& bone = boneTransforms[index];
+
+			Vector3 worldPosition = Vector3::Transform(Vector3(bone.m[0][3], bone.m[1][3], bone.m[2][3]), m_transformCache);
+			Vector3 viewPosition = Vector3::Transform(worldPosition, viewMatrix);
+
+			Vector3 screenPosition = Vector3::Transform(viewPosition, projMatrix);
+
+			Matrix4x4 screenMatrix = Matrix4x4::Identity;
+			screenMatrix.m[0][0] = 0.5f * screenSize.x;
+			screenMatrix.m[1][1] = -0.5f * screenSize.y;
+			screenMatrix.m[3][0] = 0.5f * screenSize.x;
+			screenMatrix.m[3][1] = 0.5f * screenSize.y;
+
+			screenPosition = Vector3::Transform(screenPosition, screenMatrix);
+			boneScreenPositions[index] = ImVec2(screenPosition.x, screenPosition.y);
+		}
+
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+		for (size_t index = 0; index < boneParents.size(); ++index)
+		{
+			const auto& parentIndex = boneParents[index];
+
+			ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+			drawList->AddRectFilled(
+				ImVec2(boneScreenPositions[index].x - 2.0f, boneScreenPositions[index].y - 2.0f),
+				ImVec2(boneScreenPositions[index].x + 2.0f, boneScreenPositions[index].y + 2.0f),
+				IM_COL32(255, 255, 0, 255));
+
+			if (boneParents[index] >= 0)
+			{
+				drawList->AddLine(
+					boneScreenPositions[index],
+					boneScreenPositions[parentIndex],
+					IM_COL32(255, 255, 0, 255), 2.0f);
+			}
+		}
+	}
+
 	void RiggedMeshRenderer::Render(RenderParam& param, int instances)
 	{
 		const auto& submeshes = m_riggedMesh->GetSubmeshes();
@@ -170,6 +232,29 @@ namespace udsdx
 	static constexpr float SmoothStep(float t)
 	{
 		return t * t * (3.0f - 2.0f * t);
+	}
+
+	void RiggedMeshRenderer::PopulateTransforms(std::vector<Matrix4x4>& out)
+	{
+		if (m_animation == nullptr)
+		{
+			out.emplace_back(Matrix4x4::Identity);
+		}
+		else
+		{
+			float animationTime = m_loop ? fmodf(m_animationTime, m_animation->GetAnimationDuration()) : m_animationTime;
+			m_animation->PopulateTransforms(animationTime, out);
+		}
+		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
+		{
+			std::vector<Matrix4x4> prevTransforms;
+			m_prevAnimation->PopulateTransforms(m_prevAnimationTime, prevTransforms);
+			float t = SmoothStep(std::clamp(m_transitionFactor, 0.0f, 1.0f));
+			for (size_t i = 0; i < out.size(); ++i)
+			{
+				out[i] = Matrix4x4::Lerp(prevTransforms[i], out[i], t);
+			}
+		}
 	}
 
 	Matrix4x4 RiggedMeshRenderer::PopulateTransform(std::string_view boneName)
