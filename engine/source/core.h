@@ -136,6 +136,7 @@ namespace udsdx
 
 		// Current Scene to render with
 		std::shared_ptr<Scene> m_scene;
+		std::shared_ptr<Scene> m_lastScene;
 		std::function<void(const Time&)> m_updateCallback = nullptr;
 
 		RenderOptions m_renderOptions;

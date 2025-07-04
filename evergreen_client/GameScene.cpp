@@ -425,6 +425,9 @@ void GameScene::Render(udsdx::RenderParam& param)
 
 void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int character, int channelID)
 {
+    m_currentChannelID = channelID;
+    m_channelSwitchObj->GetComponent<ChannelSwitchGUI>()->InitializeChannel(channelID);
+
     m_heroComponent->SetPlayerType(character);
     PlayerRenderer* playerRenderer = m_heroObj->GetComponent<PlayerRenderer>();
     switch (character)
@@ -474,7 +477,6 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
     if constexpr (true == g_bUseNetWork)
     {
         // TODO: 여기서 캐릭터 종류를 넣어주세요
-        m_currentChannelID = channelID;
         Nagox::Enum::PLAYER_TYPE player_type = character ? Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_PRIEST : Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_WARRIOR;
         std::cout << (int)m_currentChannelID << std::endl;
         Send(Create_c2s_ENTER

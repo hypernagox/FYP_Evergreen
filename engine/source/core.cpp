@@ -540,6 +540,7 @@ namespace udsdx
 		{
 			m_scene->OnDetach();
 		}
+		m_lastScene = m_scene;
 		m_scene = scene;
 		m_scene->OnAttach();
 	}

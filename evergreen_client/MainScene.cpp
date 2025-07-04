@@ -88,8 +88,8 @@ void MainScene::OnAttach()
         auto channelSwitchComp = m_channelSwitchObj->AddComponent<ChannelSwitchGUI>();
         channelSwitchComp->SetPanelGraphic(true);
         channelSwitchComp->SetChannelSelectedCallback([this](int channelID) {
-            m_popupGUIManager->Pop();
             m_currentChannelID = channelID;
+            m_popupGUIManager->Pop();
             EnterCharacterSelection();
             });
         m_channelSwitchObj->SetActive(false);

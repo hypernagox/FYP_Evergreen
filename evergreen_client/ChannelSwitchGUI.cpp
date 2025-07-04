@@ -110,6 +110,12 @@ void ChannelSwitchGUI::SwitchChannelPage(int page)
 	}
 }
 
+void ChannelSwitchGUI::InitializeChannel(int channel)
+{
+	m_currentChannel = channel;
+	SwitchChannelPage(m_currentPage);
+}
+
 void ChannelSwitchGUI::SelectChannel(int channel)
 {
 	m_currentChannel = channel;

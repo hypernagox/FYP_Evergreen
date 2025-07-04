@@ -16,6 +16,7 @@ public:
 	ChannelSwitchGUI(const std::shared_ptr<udsdx::SceneObject>& object);
 	void SetPanelGraphic(bool isEnter);
 	void SwitchChannelPage(int page);
+	void InitializeChannel(int channel);
 	void SelectChannel(int channel);
 	void SetChannelSelectedCallback(std::function<void(int)> callback) { m_channelSelectedCallback = callback; }
 
