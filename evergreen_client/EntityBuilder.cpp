@@ -148,6 +148,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderB
 std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBuilderBase* builder)
 {
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
+	uint32_t owner_id = ServerObjectMgr::GetInst()->GetMainHero()->GetObjID();
 
 	auto instance = std::make_shared<udsdx::SceneObject>();
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
@@ -161,6 +162,12 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 	auto renderer = instance->AddComponent<DropItemRenderer>();
 	auto interactiveEntity = instance->AddComponent<InteractiveEntity>();
 	interactiveEntity->SetInteractionText(L"획득하기");
+	interactiveEntity->SetInteractionCallback([owner_id, id = builder->obj_id]() {
+		// TODO: 플레이어가 상호작용을 통해 아이템을 주웠을 때의 코드 영역
+		// 기존 인자인 owner_id(줍는 플레이어)에 더해 프로토콜에서 주울 아이템의 id를 추가적으로 정의해주어야 한다.
+		// 
+		// Send(Create_c2s_ACQUIRE_ITEM(owner_id, id));
+		});
 
 	renderer->SetDropItem(b->obj_type);
 

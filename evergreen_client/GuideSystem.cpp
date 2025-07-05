@@ -98,7 +98,7 @@ bool GuideSystem::AddHarvest(uint32_t server_id, uint32_t harvest_id, bool is_ac
 	if (nullptr != harvest)
 	{
 		harvest->SetActive(true);
-		SetHarvestState(harvest_id, is_active);
+		SetHarvestState(server_id, harvest_id, is_active);
 	}
 
 	return is_active;
@@ -133,14 +133,16 @@ void GuideSystem::ClearHarvest() noexcept
 	m_in_active_list.clear();
 }
 
-const bool GuideSystem::SetHarvestState(const uint32_t harvest_id, const bool is_active) noexcept
+const bool GuideSystem::SetHarvestState(const uint32_t server_id, const uint32_t harvest_id, const bool is_active) noexcept
 {
 	// APPEAR OBJECT 패킷에 액티브상태라고 표시후 보내기직전에
 	// 누군가 채집해서 인액티브가되어서 인액티브사실을 먼저 알리는 패킷이 도착해버림
 	// 아직 이 클라는 채집물이 없는 상황
 	// 채집물 인액티브 패킷은 무시되고, 어피어오브젝트를 받았을 때 패킷 제작 시 넣은 정보가 액티브여서 오차 발생
 	// 만약 내가 모르는 채집물인데 채집물 상태변화 패킷이 와버렸다면 버리지말고 기억
-
+	std::cout << "SetHarvestState: server_id: " << server_id
+		<< ", harvest_id: " << harvest_id
+		<< ", is_active: " << is_active << std::endl;
 	if (0 > harvest_id || m_mapHarvest.size() <= static_cast<size_t>(harvest_id))
 		return false; // 유효하지 않은 harvest_id
 	const auto harvest = m_mapHarvest[harvest_id].get();
@@ -149,7 +151,16 @@ const bool GuideSystem::SetHarvestState(const uint32_t harvest_id, const bool is
 	{
 		// TODO: 상태를 바꾼다.
 		// harvest->GetComponent<GizmoCylinderRenderer>()->SetActive(false);
-		harvest->GetComponent<InteractiveEntity>()->SetActive(is_active);
+		auto interactiveEntity = harvest->GetComponent<InteractiveEntity>();
+		interactiveEntity->SetActive(is_active);
+		interactiveEntity->SetInteractionCallback([server_id]() {
+			// TODO: 플레이어가 상호작용을 통해 채집물을 채집했을 때의 코드 영역
+			// 프로토콜에서 채집한 채집물의 server_id를 추가적으로 정의해주어야 한다.
+			// 여기서 server_id는 채집물 매핑 id가 아닌 server object 고유 id이다.
+			// 
+			// Send(Create_c2s_CHANGE_HARVEST_STATE(server_id));
+			});
+
 		Shader* shader = nullptr;
 		if (is_active)
 			shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colorhighlight.hlsl"));

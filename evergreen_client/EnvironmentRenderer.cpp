@@ -310,7 +310,6 @@ std::shared_ptr<udsdx::SceneObject> EnvironmentRenderer::AddHarvestObject(const 
 
     auto interactiveEntity = harvestObj->AddComponent<InteractiveEntity>();
     interactiveEntity->SetInteractionText(L"채집하기");
-    interactiveEntity->SetInteractionCallback([]() { Send(Create_c2s_CHANGE_HARVEST_STATE()); });
 
     harvestObj->GetTransform()->SetLocalPosition(position);
     harvestObj->GetTransform()->SetLocalRotation(rotation);
