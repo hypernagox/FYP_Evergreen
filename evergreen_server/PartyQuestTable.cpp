@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PartyQuestTable.h"
 #include "QuestRoom.h"
+#include "BossRoom.h"
 
 void PartyQuestTable::InitPartyQuestTable() noexcept
 {
@@ -30,5 +31,8 @@ void PartyQuestTable::InitPartyQuestTable() noexcept
 	}
 	{
 		g_party_quest_table.emplace_back(NagiocpX::MakeShared<NexusQuest>);
+	}
+	{
+		g_party_quest_table.emplace_back(NagiocpX::MakeShared<BossRoom>);
 	}
 }

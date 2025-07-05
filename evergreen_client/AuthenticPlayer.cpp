@@ -389,7 +389,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 			acc1 = 5.f;
 		}
 	}
-	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->m_pNaviAgent;
+	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->GetNaviAgent();
 	const auto prev_pos = GetSceneObject()->GetComponent<EntityMovement>()->prev_pos;
 	Vector3 temp = prev_pos;
 	navi->SetCellPos(DT, prev_pos, transform->GetLocalPosition(), temp);

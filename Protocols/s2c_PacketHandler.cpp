@@ -23,6 +23,9 @@
 #include "DamageCountGUI.h"
 #include "MovePacketSender.h"
 #include "CommonQuestTable.h"
+#include "NavigationMesh.h"
+#include "Navigator.h"
+#include "Naviagent.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -533,6 +536,10 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 {
 	extern bool g_first_clear;
 	g_first_clear = true;
+	// TODO: 여기서 깨진 퀘스트 ID로 보스방인지 아닌지 구분, ID로 어떤 파퀘가 깨졌는지 여기서 체크함
+	// if 지금 깬 파티퀘스트가 보스방퀘면? 나가면 네비메시를 바꾼다
+	//ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
+	
 	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
 	GuideSystem::GetInst()->ToggleFlag();
 	GuideSystem::GetInst()->SetGuidePath(Vector3(-44.4872F, 74.50986F, -59.177734F));
@@ -596,5 +603,20 @@ const bool Handle_s2c_FORCED_MOVE(const NetHelper::S_ptr<NetHelper::PacketSessio
 			comp->UpdateForcedMoveData(ToOriginVec3(pkt_.target_pos()));
 		}
 	}
+	return true;
+}
+
+const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_ROOM_ENTER& pkt_)
+{
+	// TODO: 보스방 입장 요청시 답변으로 오는 패킷
+	// 여기서 네비메시 바꾸고 씬바꾸고 등등 해야함
+	// 나가거나 클리어해서 다시 바꿀땐 파티퀘스트 클리어 패킷이오고 거기서 해결
+	// 보스방 네비메시는
+	// 
+	// 
+	//ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
+	// 이렇게 바꾼다.
+
+	std::cout << "보스방 입장함\n";
 	return true;
 }

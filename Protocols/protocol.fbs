@@ -326,3 +326,7 @@ table s2c_FORCED_MOVE
     target_user_id : uint32;
     target_pos: Nagox.Struct.Vec3;
 }
+
+table s2c_BOSS_ROOM_ENTER
+{
+}

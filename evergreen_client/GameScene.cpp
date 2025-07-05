@@ -75,8 +75,8 @@ void GameScene::OnAttach()
         84.93234f,
         -33.050846f
     };
-    auto& cell = heroServerComponent->m_pNaviAgent->GetCurCell();
-    cell = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetNaviCell(start_pos);
+    auto& cell = heroServerComponent->GetNaviAgent()->GetCurCell();
+    cell = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(start_pos);
 
     m_activeObjectGroup = std::make_shared<SceneObject>();
 

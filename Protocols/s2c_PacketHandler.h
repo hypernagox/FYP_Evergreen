@@ -39,6 +39,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_CHANGE_HARVEST_STATE = 1028,
     s2c_NOTIFY_USER_DETAIL_INFO = 1029,
     s2c_FORCED_MOVE = 1030,
+    s2c_BOSS_ROOM_ENTER = 1031,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -105,6 +106,7 @@ const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NetHelper::S_ptr<NetHelper
 const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHANGE_HARVEST_STATE& pkt_);
 const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_);
 const bool Handle_s2c_FORCED_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_FORCED_MOVE& pkt_);
+const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_ROOM_ENTER& pkt_);
 
 class s2c_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const BYTE* const, const int32_t);
@@ -142,6 +144,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_CHANGE_HARVEST_STATE, Nagox::Protocol::s2c_CHANGE_HARVEST_STATE, Handle_s2c_CHANGE_HARVEST_STATE>();
         RegisterHandler<HANDLE_PKT_ID::s2c_NOTIFY_USER_DETAIL_INFO, Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO, Handle_s2c_NOTIFY_USER_DETAIL_INFO>();
         RegisterHandler<HANDLE_PKT_ID::s2c_FORCED_MOVE, Nagox::Protocol::s2c_FORCED_MOVE, Handle_s2c_FORCED_MOVE>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_ROOM_ENTER, Nagox::Protocol::s2c_BOSS_ROOM_ENTER, Handle_s2c_BOSS_ROOM_ENTER>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

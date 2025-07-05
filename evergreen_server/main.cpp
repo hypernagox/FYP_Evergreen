@@ -146,7 +146,10 @@ public:
 
 	virtual void TLSDestroy()noexcept override
 	{
-		NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
+		for (int i = 0; i < (int)NAVI_MESH_TYPE::END; ++i)
+		{
+			NAVIGATION->GetNavMesh(static_cast<NAVI_MESH_TYPE>(i))->FreeNavMeshQuery();
+		}
 	}
 	
 	virtual void GlobalDestroy()noexcept override

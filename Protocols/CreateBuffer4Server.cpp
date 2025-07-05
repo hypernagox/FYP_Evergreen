@@ -579,3 +579,15 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FORCED_MOVE(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_FORCED_MOVE);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_ROOM_ENTER(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto serializeds2c_BOSS_ROOM_ENTER = Nagox::Protocol::Creates2c_BOSS_ROOM_ENTER(
+        builder
+    );
+    builder.Finish(serializeds2c_BOSS_ROOM_ENTER);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_BOSS_ROOM_ENTER);
+}

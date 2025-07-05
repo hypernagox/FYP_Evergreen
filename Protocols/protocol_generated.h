@@ -181,6 +181,9 @@ struct c2s_CHANGE_CHANNELBuilder;
 struct s2c_FORCED_MOVE;
 struct s2c_FORCED_MOVEBuilder;
 
+struct s2c_BOSS_ROOM_ENTER;
+struct s2c_BOSS_ROOM_ENTERBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -3209,6 +3212,35 @@ inline ::flatbuffers::Offset<s2c_FORCED_MOVE> Creates2c_FORCED_MOVE(
   s2c_FORCED_MOVEBuilder builder_(_fbb);
   builder_.add_target_pos(target_pos);
   builder_.add_target_user_id(target_user_id);
+  return builder_.Finish();
+}
+
+struct s2c_BOSS_ROOM_ENTER FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_BOSS_ROOM_ENTERBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_BOSS_ROOM_ENTERBuilder {
+  typedef s2c_BOSS_ROOM_ENTER Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit s2c_BOSS_ROOM_ENTERBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_BOSS_ROOM_ENTER> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_BOSS_ROOM_ENTER>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_BOSS_ROOM_ENTER> Creates2c_BOSS_ROOM_ENTER(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  s2c_BOSS_ROOM_ENTERBuilder builder_(_fbb);
   return builder_.Finish();
 }
 

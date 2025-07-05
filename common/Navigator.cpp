@@ -10,7 +10,7 @@ Navigator::Navigator()
 
 Navigator::~Navigator()
 {
-	for (int i = 0; i < NAVI_MESH_NUM::NUM_END; ++i)
+	for (int i = 0; i < (int)NAVI_MESH_TYPE::END; ++i)
 	{
 		delete m_arrNavMesh[i];
 	}
@@ -18,9 +18,18 @@ Navigator::~Navigator()
 
 void Navigator::Init() noexcept
 {
-	for (int i = 0; i < NAVI_MESH_NUM::NUM_END; ++i)
+	int index = 0; 
+	for (const auto& entry : std::filesystem::directory_iterator(RESOURCE_PATH(L"navmesh")))
 	{
-		m_arrNavMesh[i] = new Common::NavigationMesh;
-		m_arrNavMesh[i]->Init(RESOURCE_PATH(L"all_tiles_navmesh2try.bin"));
+		if (entry.is_regular_file() && entry.path().extension() == L".bin")
+		{
+			if (index >= (int)NAVI_MESH_TYPE::END)
+			{
+				std::wcout << L"[WARN] 최대 개수 초과\n";
+				break;
+			}
+			m_arrNavMesh[index] = new Common::NavigationMesh;
+			m_arrNavMesh[index++]->Init(entry.path().wstring());
+		}
 	}
 }

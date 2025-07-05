@@ -36,6 +36,7 @@ private:
 	virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept;
 	virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept;
 protected:
+	void Broadcast2PartyMembers(S_ptr<SendBuffer> send_buff)const noexcept;
 public:
 	virtual void InitQuestField()noexcept = 0;
 	virtual void MigrationAfterBehavior(Field* const prev_field)noexcept override;

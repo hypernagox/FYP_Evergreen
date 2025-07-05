@@ -34,7 +34,7 @@ namespace Common
 		{
 			const auto nav = dtAllocNavMeshQuery();
 			// TODO: 매직넘버
-			nav->init(m_navMesh, 2048);
+			nav->init(m_navMesh, 256);
 			return nav;
 		}
 		void FreeNavMeshQuery()const noexcept { dtFreeNavMeshQuery(const_cast<dtNavMeshQuery*>(GetNavMeshQuery())); }
