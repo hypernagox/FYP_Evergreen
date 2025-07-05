@@ -465,6 +465,18 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_NEW_PLAYER(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_JOIN_NEW_PLAYER);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_QUEST_END(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto serializeds2c_QUEST_END = Nagox::Protocol::Creates2c_QUEST_END(
+        builder
+    );
+    builder.Finish(serializeds2c_QUEST_END);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_QUEST_END);
+}
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_START(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {

@@ -205,7 +205,7 @@ const bool Handle_c2s_ACQUIRE_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession
 		const auto item_pos = pos_comp->pos;
 		if (const auto item_ptr = item->GetComp<DropItem>())
 		{
-			if (!CommonMath::IsInDistanceDX(pos, item_pos, 5.f))continue;
+			if (!CommonMath::IsInDistanceDX(pos, item_pos, 5.f) || pkt_.item_id() != item->GetObjectID())continue;
 			if (!const_cast<ContentsEntity*>(item)->TryOnDestroy())continue;
 			owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastAllCluster(
 				Create_s2c_ACQUIRE_ITEM(pSession_->GetSessionID(), item->GetObjectID(), item->GetDetailType(), item_ptr->GetNumOfItemStack()));
@@ -502,6 +502,7 @@ const bool Handle_c2s_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 //	return true;
 //}
 	cur_party->MissionEnd();
+	pSession_->SendAsync(Create_s2c_QUEST_END());
 	return true;
 }
 
@@ -546,11 +547,11 @@ const bool Handle_c2s_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::Packe
 	{
 		if (h->GetPrimaryGroupType() != Nagox::Enum::GROUP_TYPE_HARVEST)continue;
 		const auto& harvest_pos = h->GetComp<PositionComponent>()->pos;
-		if (CommonMath::IsInDistanceDX(player_pos, harvest_pos, HARVEST_INTERACTION_DIST))
+		if (CommonMath::IsInDistanceDX(player_pos, harvest_pos, HARVEST_INTERACTION_DIST) && pkt_.harvest_id() == h->GetObjectID())
 		{
 			if (h->GetComp<Interaction>()->DoInteraction(owner))
 			{
-				//break;
+				break;
 			}
 		}
 	}

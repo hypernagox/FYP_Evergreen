@@ -500,6 +500,13 @@ const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NetHelper::S_ptr<NetHelper::Pa
 	return true;
 }
 
+const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_QUEST_END& pkt_)
+{
+	ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Default);
+	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
+	return true;
+}
+
 const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_START& pkt_)
 {
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
