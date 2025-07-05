@@ -158,7 +158,7 @@ const bool GuideSystem::SetHarvestState(const uint32_t server_id, const uint32_t
 			// 프로토콜에서 채집한 채집물의 server_id를 추가적으로 정의해주어야 한다.
 			// 여기서 server_id는 채집물 매핑 id가 아닌 server object 고유 id이다.
 			// 
-			// Send(Create_c2s_CHANGE_HARVEST_STATE(server_id));
+			 Send(Create_c2s_CHANGE_HARVEST_STATE(server_id));
 			});
 
 		Shader* shader = nullptr;
