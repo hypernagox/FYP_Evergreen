@@ -2,9 +2,16 @@
   "TerrainSize": {
     "Value": 1024.0
   },
-  "DungeonTerrainSize": {
-    "Value": 512.0
+  "TerrainHeight": {
+    "Value": 1024.0
   },
+  "DungeonTerrainSize": {
+    "Value": 1000.0
+  },
+  "DungeonTerrainHeight": {
+    "Value": 165.0
+  },
+
   "CharacterScale": {
     "Value": 0.025
   },

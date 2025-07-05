@@ -116,8 +116,9 @@ void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
     auto res = INSTANCE(Resource);
 
     const float TerrainSize = parameters.TerrainSize;
+    const float TerrainHeight = parameters.TerrainHeight;
     const Vector3 terrainPos = Vector3(-TerrainSize * 0.5f, 0, -TerrainSize * 0.5f);
-    const Vector3 terrainScale = Vector3::One * TerrainSize;
+    const Vector3 terrainScale = Vector3(TerrainSize, TerrainHeight, TerrainSize);
 
     m_terrainMesh = CreateMeshFromHeightMap(parameters.HeightMap, 512, 512, 1.0f);
     m_terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
