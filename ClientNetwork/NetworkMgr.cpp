@@ -7,12 +7,7 @@ namespace NetHelper
 {
     NetworkMgr::NetworkMgr()
     {
-        SocketUtils::Init();
-        m_connectEvent = ::WSACreateEvent();
-        if (WSA_INVALID_EVENT == m_connectEvent)
-        {
-            NET_NAGOX_ASSERT_LOG(false, "Invalide Socket");
-        }
+       
     }
 
     NetworkMgr::~NetworkMgr()
@@ -32,11 +27,12 @@ namespace NetHelper
                 if (m_disconnectCallback)m_disconnectCallback();
             }
         }
+        WSAResetEvent(m_connectEvent);
     }
 
     void NetworkMgr::SetSessionID(const uint32_t sessionID_) const noexcept
     {
-        NET_NAGOX_ASSERT_LOG(0 == m_c2sSession->GetSessionID() && 0 != sessionID_, "Session ID Must Init Once !");
+        //NET_NAGOX_ASSERT_LOG(0 == m_c2sSession->GetSessionID() && 0 != sessionID_, "Session ID Must Init Once !");
         m_c2sSession->SetSessionID(sessionID_);
     }
 
@@ -49,36 +45,41 @@ namespace NetHelper
     {
         if (m_c2sSession->IsConnected())
         {
-            m_c2sSession->Disconnect(L"Bye");
+           // m_c2sSession->Disconnect(L"Bye");
         }
         if (INVALID_SOCKET != m_c2sSession->m_sessionSocket)
         {
-           //shutdown(m_c2sSession->m_sessionSocket, SD_BOTH);
-           //SocketUtils::Close(m_c2sSession->m_sessionSocket);
+           shutdown(m_c2sSession->m_sessionSocket, SD_BOTH);
+           SocketUtils::Close(m_c2sSession->m_sessionSocket);
         }
-      //  WSACloseEvent(m_connectEvent);
-      //  SocketUtils::Clear();
-        m_c2sSession->ProcessDisconnect();
-        m_c2sSession->m_pCacheSharedFromThis.reset();
+        WSACloseEvent(m_connectEvent);
+        SocketUtils::Clear();
         m_sessionFactory = nullptr;
     }
 
     bool NetworkMgr::Connect(std::wstring_view ip, uint16 port, const PacketHandleFunc* const handler) noexcept
     {
+        SocketUtils::Init();
+        m_connectEvent = ::WSACreateEvent();
+        if (WSA_INVALID_EVENT == m_connectEvent)
+        {
+            NET_NAGOX_ASSERT_LOG(false, "Invalide Socket");
+        }
         m_serverAddr = NetAddress{ ip.data(),port };
         const auto limitTick = ::GetTickCount64() + 100000;
         bool bConnectSuccess = false;
+        const bool re_connect = m_c2sSession.get();
         if (m_c2sSession)
         {
-            SocketUtils::Close(m_c2sSession->m_sessionSocket);
+            m_c2sSession->ProcessDisconnect();
+            m_c2sSession->m_pCacheSharedFromThis.reset();
         }
-        while (::GetTickCount64() < limitTick)
+        while (1)
         {
             m_c2sSession = m_sessionFactory();
             m_c2sSession->m_serverAddr = m_serverAddr;
             m_c2sSession->m_sessionPacketHandler = handler;
             m_c2sSession->m_pCacheSharedFromThis = std::static_pointer_cast<PacketSession>(m_c2sSession->shared_from_this());
-
             if (!m_c2sSession->RegisterConnect())
             {
                 m_c2sSession->m_pCacheSharedFromThis.reset();
@@ -88,7 +89,7 @@ namespace NetHelper
             WSAEventSelect(m_c2sSession->GetSocket(), m_connectEvent, FD_CONNECT);
             WSANETWORKEVENTS networkEvents;
 
-            const DWORD dwResult = WSAWaitForMultipleEvents(1, &m_connectEvent, FALSE, 10000, FALSE);
+            const DWORD dwResult = WSAWaitForMultipleEvents(1, &m_connectEvent, FALSE, INFINITE, FALSE);
             if (dwResult == WSA_WAIT_FAILED)
             {
                 NET_NAGOX_ASSERT_LOG(false, "WSA WAIT FAILED");
@@ -105,12 +106,13 @@ namespace NetHelper
                 SocketUtils::SetTcpNoDelay(m_c2sSession->GetSocket(), true))
             {
                 m_c2sSession->ProcessConnect();
-                std::cout << "Server Join!" << std::endl;
+                std::cout << "Server Join!\n";
                 bConnectSuccess = true;
                 break;
             }
+            SleepEx(100, TRUE);
         }
-        if (bConnectSuccess)
+        if (bConnectSuccess && !re_connect)
         {
             WSAEventSelect(m_c2sSession->GetSocket(), m_connectEvent, FD_CLOSE);
             static SOCKET finSocket = m_c2sSession->GetSocket();
