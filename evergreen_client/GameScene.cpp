@@ -67,15 +67,15 @@ void GameScene::OnAttach()
     m_heroComponent->SetHeightMap(g_defaultEnvironmentParam.HeightMap);
     auto entityInteraction = m_heroObj->AddComponent<EntityInteraction>();
     entityInteraction->SetTargetScene(this);
-    auto heroServerComponent = m_heroObj->GetComponent<ServerObject>();
-    heroServerComponent->AddComp<MovePacketSender>();
+    m_heroServerObject = m_heroObj->GetComponent<ServerObject>();
+    m_heroServerObject->AddComp<MovePacketSender>();
 
     Vector3 start_pos = Vector3{
         -315.8432f,
         84.93234f,
         -33.050846f
     };
-    auto& cell = heroServerComponent->GetNaviAgent()->GetCurCell();
+    auto& cell = m_heroServerObject->GetNaviAgent()->GetCurCell();
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(start_pos);
 
     m_activeObjectGroup = std::make_shared<SceneObject>();
@@ -547,9 +547,11 @@ void GameScene::ChangeGameScene(GameSceneType type)
     switch (type)
 	{
 		case GameSceneType::Default:
+            m_heroServerObject->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
             m_defaultEnvironmentObject->SetActive(true);
 			break;
 		case GameSceneType::Dungeon:
+            m_heroServerObject->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
             m_dungeonEnvironmentObject->SetActive(true);
 			break;
 	}
