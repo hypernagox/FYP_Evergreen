@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/QuestGenerator.iml" filepath="$PROJECT_DIR$/.idea/QuestGenerator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/JsonGenerator.iml" filepath="$PROJECT_DIR$/.idea/JsonGenerator.iml" />
     </modules>
   </component>
 </project>
