@@ -6,6 +6,7 @@
 class AuthenticPlayer;
 class InteractiveEntity;
 class PopupGUIManager;
+class ServerObject;
 
 class GameScene : public udsdx::Scene
 {
@@ -65,6 +66,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_channelSwitchObj;
 
 	AuthenticPlayer* m_heroComponent;
+	ServerObject* m_heroServerObject;
 	PopupGUIManager* m_popupGUIManager;
 
 	std::shared_ptr<udsdx::Material> m_playerMaterial;

@@ -14,6 +14,7 @@ public:
 	TerrainDetail* TerrainDetail;
 	float TerrainSize;
 	float TerrainHeight;
+	float TerrainOffset;
 };
 
 class EnvironmentRenderer : public udsdx::Component

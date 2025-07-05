@@ -90,6 +90,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_defaultEnvironmentParam.TerrainData = terrainData.get();
     g_defaultEnvironmentParam.TerrainSize = GET_DATA(float, "GlobalValues", "TerrainSize", "Value");
     g_defaultEnvironmentParam.TerrainHeight = GET_DATA(float, "GlobalValues", "TerrainHeight", "Value");
+    g_defaultEnvironmentParam.TerrainOffset = -g_defaultEnvironmentParam.TerrainSize * 0.5f;
 
     auto dungeonHeightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"boss_terrain.raw"), 2048, 2048);
     auto dungeonData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedDungeonInstance.json"), 1.0f, 0.01f);
@@ -99,6 +100,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_dungeonEnvironmentParam.TerrainData = dungeonData.get();
     g_dungeonEnvironmentParam.TerrainSize = GET_DATA(float, "GlobalValues", "DungeonTerrainSize", "Value");
     g_dungeonEnvironmentParam.TerrainHeight = GET_DATA(float, "GlobalValues", "DungeonTerrainHeight", "Value");
+    g_dungeonEnvironmentParam.TerrainOffset = 0.0f;
 
     auto mainScene = std::make_shared<MainScene>();
 

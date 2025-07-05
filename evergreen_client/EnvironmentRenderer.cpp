@@ -117,7 +117,9 @@ void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
 
     const float TerrainSize = parameters.TerrainSize;
     const float TerrainHeight = parameters.TerrainHeight;
-    const Vector3 terrainPos = Vector3(-TerrainSize * 0.5f, 0, -TerrainSize * 0.5f);
+    const float TerrainOffset = parameters.TerrainOffset;
+
+    const Vector3 terrainPos = Vector3(TerrainOffset, 0, TerrainOffset);
     const Vector3 terrainScale = Vector3(TerrainSize, TerrainHeight, TerrainSize);
 
     m_terrainMesh = CreateMeshFromHeightMap(parameters.HeightMap, 512, 512, 1.0f);
