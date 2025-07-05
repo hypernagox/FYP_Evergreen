@@ -19,13 +19,11 @@ class Navigator
 	Navigator();
 	~Navigator();
 public:
-	// 네비메시들 초기화 방법은 더 생각.
 	void Init()noexcept;
 public:
 	Common::NavigationMesh* GetNavMesh(const NAVI_MESH_TYPE eType)const noexcept { return m_arrNavMesh[(int)eType]; }
 
 private:
-	std::mutex m_mt;
 	static inline thread_local constinit Common::NavigationMesh* m_arrNavMesh[(int)NAVI_MESH_TYPE::END] = {};
 };
 
