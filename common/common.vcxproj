@@ -205,6 +205,7 @@
     <ClInclude Include="SharedDefines.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\resource\json\Armor.json" />
     <None Include="..\resource\json\GlobalValues.json" />
     <None Include="..\resource\json\Item.json" />
     <None Include="..\resource\json\ItemRecipe.json" />
