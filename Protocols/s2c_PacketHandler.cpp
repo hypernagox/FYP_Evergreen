@@ -26,6 +26,7 @@
 #include "NavigationMesh.h"
 #include "Navigator.h"
 #include "Naviagent.h"
+#include "GameScene.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -540,6 +541,13 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 	// if 지금 깬 파티퀘스트가 보스방퀘면? 나가면 네비메시를 바꾼다
 	//ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
 	
+	// 퀘스트를 깨면 무조건 메인 월드로 나가게 되므로 항상 마을맵 이동 로직을 수행한다.
+	// 이미 마을이더라 하더라도 동작에는 문제가 없으나 추후 더 유연한 맵 이동 로직 요
+	{
+		ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Default);
+		ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
+	}
+
 	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
 	GuideSystem::GetInst()->ToggleFlag();
 	GuideSystem::GetInst()->SetGuidePath(Vector3(-44.4872F, 74.50986F, -59.177734F));
@@ -614,8 +622,11 @@ const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSe
 	// 보스방 네비메시는
 	// 
 	// 
-	//ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
+	// ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
 	// 이렇게 바꾼다.
+
+	ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Dungeon);
+	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
 
 	std::cout << "보스방 입장함\n";
 	return true;
