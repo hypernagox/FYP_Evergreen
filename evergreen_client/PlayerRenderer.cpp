@@ -222,9 +222,9 @@ void PlayerRenderer::SetPlayerWeapon(std::string_view weaponName)
 		toolRenderer->SetBoneName("Bip001 R Hand");
 	}
 
-	auto& scaleJson = GET_DATA(nlohmann::json, "Weapon", weaponName, "Scale");
-	auto& rotationJson = GET_DATA(nlohmann::json, "Weapon", weaponName, "Rotation");
-	auto& positionJson = GET_DATA(nlohmann::json, "Weapon", weaponName, "Position");
+	auto& scaleJson = GET_DATA(nlohmann::ordered_json, "Weapon", weaponName, "Scale");
+	auto& rotationJson = GET_DATA(nlohmann::ordered_json, "Weapon", weaponName, "Rotation");
+	auto& positionJson = GET_DATA(nlohmann::ordered_json, "Weapon", weaponName, "Position");
 
 	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "ModelDiffuse"))));
 	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring,"Weapon", weaponName, "Model"))));

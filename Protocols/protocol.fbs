@@ -145,6 +145,7 @@ table s2c_FIRE_PROJ
 
 table c2s_ACQUIRE_ITEM
 {
+    get_user_id : uint64;
     item_id : uint64;
 }
 
@@ -266,6 +267,10 @@ table c2s_QUEST_END
 {
 }
 
+table s2c_QUEST_END
+{
+}
+
 table c2s_PARTY_OUT
 {
     
@@ -294,6 +299,7 @@ table s2c_PARTY_MEMBERS_INFORMATION
 
 table c2s_CHANGE_HARVEST_STATE
 {
+    harvest_id : uint32;
 }
 
 table s2c_CHANGE_HARVEST_STATE

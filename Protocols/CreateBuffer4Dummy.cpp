@@ -140,15 +140,18 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_REQUEST_QUEST(
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REQUEST_QUEST);
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ACQUIRE_ITEM(
+    const uint64_t get_user_id,
     const uint64_t item_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
+    const auto get_user_id_value = get_user_id;
     const auto item_id_value = item_id;
     const auto serializedc2s_ACQUIRE_ITEM = Nagox::Protocol::Createc2s_ACQUIRE_ITEM(
         builder
-,        item_id_value    );
+,        get_user_id_value,
+        item_id_value    );
     builder.Finish(serializedc2s_ACQUIRE_ITEM);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ACQUIRE_ITEM);
@@ -331,13 +334,15 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PARTY_OUT(
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PARTY_OUT);
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_HARVEST_STATE(
+    const uint32_t harvest_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
+    const auto harvest_id_value = harvest_id;
     const auto serializedc2s_CHANGE_HARVEST_STATE = Nagox::Protocol::Createc2s_CHANGE_HARVEST_STATE(
         builder
-    );
+,        harvest_id_value    );
     builder.Finish(serializedc2s_CHANGE_HARVEST_STATE);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_HARVEST_STATE);

@@ -166,7 +166,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 		// TODO: 플레이어가 상호작용을 통해 아이템을 주웠을 때의 코드 영역
 		// 기존 인자인 owner_id(줍는 플레이어)에 더해 프로토콜에서 주울 아이템의 id를 추가적으로 정의해주어야 한다.
 		// 
-		// Send(Create_c2s_ACQUIRE_ITEM(owner_id, id));
+		 Send(Create_c2s_ACQUIRE_ITEM(owner_id, id));
 		});
 
 	renderer->SetDropItem(b->obj_type);

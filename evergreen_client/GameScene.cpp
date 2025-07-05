@@ -147,7 +147,9 @@ void GameScene::OnAttach()
         {
             auto interactiveEntity = treeObj->AddComponent<InteractiveEntity>();
             interactiveEntity->SetInteractionText(L"보상 얻기");
-            interactiveEntity->SetInteractionCallback([]() { Send(Create_c2s_CHANGE_HARVEST_STATE()); });
+            interactiveEntity->SetInteractionCallback([]() { 
+                //Send(Create_c2s_CHANGE_HARVEST_STATE());
+                });
         }
 
         AddActiveObject(treeObj);

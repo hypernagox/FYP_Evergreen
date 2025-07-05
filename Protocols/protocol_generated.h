@@ -148,6 +148,9 @@ struct c2s_QUEST_STARTBuilder;
 struct c2s_QUEST_END;
 struct c2s_QUEST_ENDBuilder;
 
+struct s2c_QUEST_END;
+struct s2c_QUEST_ENDBuilder;
+
 struct c2s_PARTY_OUT;
 struct c2s_PARTY_OUTBuilder;
 
@@ -1533,8 +1536,15 @@ inline ::flatbuffers::Offset<s2c_FIRE_PROJ> Creates2c_FIRE_PROJ(
 struct c2s_ACQUIRE_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_ACQUIRE_ITEMBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_ITEM_ID = 4
+    VT_GET_USER_ID = 4,
+    VT_ITEM_ID = 6
   };
+  uint64_t get_user_id() const {
+    return GetField<uint64_t>(VT_GET_USER_ID, 0);
+  }
+  bool mutate_get_user_id(uint64_t _get_user_id = 0) {
+    return SetField<uint64_t>(VT_GET_USER_ID, _get_user_id, 0);
+  }
   uint64_t item_id() const {
     return GetField<uint64_t>(VT_ITEM_ID, 0);
   }
@@ -1543,6 +1553,7 @@ struct c2s_ACQUIRE_ITEM FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_GET_USER_ID, 8) &&
            VerifyField<uint64_t>(verifier, VT_ITEM_ID, 8) &&
            verifier.EndTable();
   }
@@ -1552,6 +1563,9 @@ struct c2s_ACQUIRE_ITEMBuilder {
   typedef c2s_ACQUIRE_ITEM Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_get_user_id(uint64_t get_user_id) {
+    fbb_.AddElement<uint64_t>(c2s_ACQUIRE_ITEM::VT_GET_USER_ID, get_user_id, 0);
+  }
   void add_item_id(uint64_t item_id) {
     fbb_.AddElement<uint64_t>(c2s_ACQUIRE_ITEM::VT_ITEM_ID, item_id, 0);
   }
@@ -1568,9 +1582,11 @@ struct c2s_ACQUIRE_ITEMBuilder {
 
 inline ::flatbuffers::Offset<c2s_ACQUIRE_ITEM> Createc2s_ACQUIRE_ITEM(
     ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t get_user_id = 0,
     uint64_t item_id = 0) {
   c2s_ACQUIRE_ITEMBuilder builder_(_fbb);
   builder_.add_item_id(item_id);
+  builder_.add_get_user_id(get_user_id);
   return builder_.Finish();
 }
 
@@ -2675,6 +2691,35 @@ inline ::flatbuffers::Offset<c2s_QUEST_END> Createc2s_QUEST_END(
   return builder_.Finish();
 }
 
+struct s2c_QUEST_END FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_QUEST_ENDBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_QUEST_ENDBuilder {
+  typedef s2c_QUEST_END Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit s2c_QUEST_ENDBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_QUEST_END> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_QUEST_END>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_QUEST_END> Creates2c_QUEST_END(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  s2c_QUEST_ENDBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
 struct c2s_PARTY_OUT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_PARTY_OUTBuilder Builder;
   bool Verify(::flatbuffers::Verifier &verifier) const {
@@ -2890,8 +2935,18 @@ inline ::flatbuffers::Offset<s2c_PARTY_MEMBERS_INFORMATION> Creates2c_PARTY_MEMB
 
 struct c2s_CHANGE_HARVEST_STATE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_CHANGE_HARVEST_STATEBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_HARVEST_ID = 4
+  };
+  uint32_t harvest_id() const {
+    return GetField<uint32_t>(VT_HARVEST_ID, 0);
+  }
+  bool mutate_harvest_id(uint32_t _harvest_id = 0) {
+    return SetField<uint32_t>(VT_HARVEST_ID, _harvest_id, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_HARVEST_ID, 4) &&
            verifier.EndTable();
   }
 };
@@ -2900,6 +2955,9 @@ struct c2s_CHANGE_HARVEST_STATEBuilder {
   typedef c2s_CHANGE_HARVEST_STATE Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_harvest_id(uint32_t harvest_id) {
+    fbb_.AddElement<uint32_t>(c2s_CHANGE_HARVEST_STATE::VT_HARVEST_ID, harvest_id, 0);
+  }
   explicit c2s_CHANGE_HARVEST_STATEBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -2912,8 +2970,10 @@ struct c2s_CHANGE_HARVEST_STATEBuilder {
 };
 
 inline ::flatbuffers::Offset<c2s_CHANGE_HARVEST_STATE> Createc2s_CHANGE_HARVEST_STATE(
-    ::flatbuffers::FlatBufferBuilder &_fbb) {
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t harvest_id = 0) {
   c2s_CHANGE_HARVEST_STATEBuilder builder_(_fbb);
+  builder_.add_harvest_id(harvest_id);
   return builder_.Finish();
 }
 
