@@ -47,7 +47,7 @@ public:
 		return m_mapHarvest[harvest_id].get();
 	}
 
-	const bool SetHarvestState(const uint32_t harvest_id, const bool is_active)noexcept;
+	const bool SetHarvestState(const uint32_t server_id, const uint32_t harvest_id, const bool is_active)noexcept;
 
 	void UpdateGuideSystem();
 	void ToggleFlag() {
