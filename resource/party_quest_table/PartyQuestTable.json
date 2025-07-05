@@ -43,5 +43,10 @@
     "name": "신전퀘스트",
     "description": "...",
     "icon": "gui\\party_ui\\party_monster_fox.png"
+  },
+  {
+    "name": "보스퀘스트",
+    "description": "...",
+    "icon": "gui\\party_ui\\party_monster_fox.png"
   }
 ]

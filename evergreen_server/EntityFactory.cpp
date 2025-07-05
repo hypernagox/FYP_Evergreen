@@ -47,7 +47,7 @@ namespace NagiocpX
 
 		const auto agent = monster_entity->AddComp<NaviAgent>();
 		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
-		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
 
 		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
 		//monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
@@ -87,7 +87,7 @@ namespace NagiocpX
 
 		const auto agent = monster_entity->AddComp<NaviAgent>();
 		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
-		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
 
 		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
 		//monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });
@@ -145,7 +145,7 @@ namespace NagiocpX
 
 		const auto agent = entity->AddComp<NaviAgent>();
 		agent->SetPosComp(entity->GetComp<PositionComponent>());
-		agent->Init(Vector3{ -19.601448f,  72.97739f,  0.74976814f }, NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+		agent->Init(Vector3{ -19.601448f,  72.97739f,  0.74976814f }, NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
 		
 		const auto path_npc = entity->AddComp<PathNPC>();
 		path_npc->m_navAgent = agent;
@@ -192,7 +192,7 @@ namespace NagiocpX
 
 		const auto agent = monster_entity->AddComp<NaviAgent>();
 		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
-		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
 		//const auto CENTER = Vector3(-55.360664F, 73.53275F, 11.239024F);
 		//Vector3 pos = monster_entity->GetComp<PositionComponent>()->pos;
 		//pos.z = -pos.z;
@@ -249,7 +249,7 @@ namespace NagiocpX
 
 		const auto agent = monster_entity->AddComp<NaviAgent>();
 		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
-		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+		agent->InitRandPos(NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
 
 		monster_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
 		//monster_entity->AddComp<Collider>()->SetBox(monster_entity->GetComp<PositionComponent>(), { 1,1,1 });

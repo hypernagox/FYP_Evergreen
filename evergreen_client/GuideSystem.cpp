@@ -218,12 +218,12 @@ void GuideSystem::SetGuidePathInternal(const Vector3& target_pos)
 	else
 		m_cur_target_pos = temp_force_pos;
 	const auto pos = m_main_hero->GetTransform()->GetLocalPosition();
-	const auto navi = m_main_hero->GetComponent<ServerObject>()->m_pNaviAgent;
+	const auto navi = m_main_hero->GetComponent<ServerObject>()->GetNaviAgent();
 	const auto prev_pos = m_main_hero->GetComponent<EntityMovement>()->prev_pos;
 	Vector3 temp = pos;
 	navi->SetCellPos(DT, pos, pos, temp);
 	// TODO: 점 사이 사이 간격의 길이가 매직넘버
-	const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetPathVertices(
+	const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetPathVertices(
 		pos, target_pos, 1.0f);
 	m_path_obj_maker(v);
 }

@@ -47,11 +47,13 @@ namespace NetHelper
 	void ServerTimeMgr::InitAndWaitServerTimeStamp(std::function<void(void)> ping_pong_fp) noexcept
 	{
 		std::this_thread::yield();
+		const bool init_connect = m_func_called_time_stamp.try_emplace(SERVER_TIME_UPDATE_FUNC_KEY.data(), NetHelper::GetTimeStampMilliseconds()).second;
 		m_func_called_time_stamp[SERVER_TIME_UPDATE_FUNC_KEY.data()] = NetHelper::GetTimeStampMilliseconds();
 		while (0 == m_server_time_stamp) { 
 			m_server_time_stamp_updated = NetHelper::GetTimeStampMilliseconds();
 			NetMgr(NetworkMgr)->DoNetworkIO();
 		}
-		RegisterTimerFunc(SERVER_TIME_UPDATE_INTERVAL, std::move(ping_pong_fp), SERVER_TIME_UPDATE_FUNC_KEY, false);
+		if(init_connect)
+			RegisterTimerFunc(SERVER_TIME_UPDATE_INTERVAL, std::move(ping_pong_fp), SERVER_TIME_UPDATE_FUNC_KEY, false);
 	}
 }

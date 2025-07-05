@@ -149,6 +149,9 @@
     <Filter Include="QuestSystem\KillMonsterQuest">
       <UniqueIdentifier>{1f95195b-261d-4fe8-8925-b5dd14d19fc5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ClientSession\QuestRoom\BossRoom">
+      <UniqueIdentifier>{0b7a6947-a9f6-41c8-8c09-147cb16309ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -264,6 +267,9 @@
     </ClCompile>
     <ClCompile Include="KillMonsterQuest.cpp">
       <Filter>QuestSystem\KillMonsterQuest</Filter>
+    </ClCompile>
+    <ClCompile Include="BossRoom.cpp">
+      <Filter>ClientSession\QuestRoom\BossRoom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +395,9 @@
     </ClInclude>
     <ClInclude Include="KillMonsterQuest.h">
       <Filter>QuestSystem\KillMonsterQuest</Filter>
+    </ClInclude>
+    <ClInclude Include="BossRoom.h">
+      <Filter>ClientSession\QuestRoom\BossRoom</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

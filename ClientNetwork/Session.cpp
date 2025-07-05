@@ -20,6 +20,7 @@ namespace NetHelper
 
 	Session::~Session()
 	{
+		SocketUtils::Close(m_sessionSocket);
 	}
 
 	void Session::Send(S_ptr<SendBuffer> pSendBuff_)noexcept
@@ -111,8 +112,8 @@ namespace NetHelper
 
 	void Session::RegisterRecv()noexcept
 	{
-		if (false == IsConnected())
-			return;
+		//if (false == IsConnected())
+		//	return;
 
 		m_pRecvEvent->Init();
 		m_pRecvEvent->SetSession(m_pCacheSharedFromThis);
@@ -164,8 +165,8 @@ namespace NetHelper
 
 	void Session::RegisterSend()noexcept
 	{
-		if (false == IsConnected())
-			return;
+		//if (false == IsConnected())
+		//	return;
 
 		m_pSendEvent->Init();
 		m_pSendEvent->SetSession(m_pCacheSharedFromThis);

@@ -2,12 +2,12 @@
 #include "../NagiocpX/Singleton.hpp"
 #include "NavigationMesh.h"
 
-enum NAVI_MESH_NUM : uint8_t
+enum class NAVI_MESH_TYPE : uint8_t
 {
-	NUM_0,
+	MAIN_WORLD,
+	BOSS_ROOM,
 
-
-	NUM_END,
+	END,
 };
 
 class Common::NavigationMesh;
@@ -22,10 +22,10 @@ public:
 	// 네비메시들 초기화 방법은 더 생각.
 	void Init()noexcept;
 public:
-	Common::NavigationMesh* GetNavMesh(const NAVI_MESH_NUM eType)const noexcept { return m_arrNavMesh[eType]; }
+	Common::NavigationMesh* GetNavMesh(const NAVI_MESH_TYPE eType)const noexcept { return m_arrNavMesh[(int)eType]; }
 
 private:
-	Common::NavigationMesh* m_arrNavMesh[NAVI_MESH_NUM::NUM_END] = {};
+	Common::NavigationMesh* m_arrNavMesh[(int)NAVI_MESH_TYPE::END] = {};
 };
 
 #define NAVIGATION (Navigator::GetInst())

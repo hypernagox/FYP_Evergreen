@@ -3,6 +3,7 @@
 #include "ServerComponent.h"
 #include "Component.h"
 #include "NaviAgent.h"
+#include "Navigator.h"
 
 using udsdx::Component;
 class ServerComponent;
@@ -41,6 +42,9 @@ public:
 		if (const auto comp = GetComp<T>())
 			comp->Update();
 	}
+	void SetNavigationMesh(class Common::NavigationMesh* const nav_mesh)noexcept;
+	void SetNavigationMesh(const NAVI_MESH_TYPE eType)noexcept;
+	const auto GetNaviAgent()noexcept { return m_pNaviAgent; }
 private:
 	ServerComponent* const AddComp(const uint64_t comp_id, ServerComponent* const pComp)noexcept;
 private:
@@ -48,12 +52,10 @@ private:
 		const auto iter = m_mapServerComp.find(comp_id);
 		return m_mapServerComp.cend() != iter ? iter->second.get() : nullptr;
 	}
-	// TODO: 어따 놓을지 몰라서 임시
-public:
-	Common::NaviAgent* m_pNaviAgent = nullptr;
-private:
 	
+private:
 	uint32_t m_objID = 0;
+	Common::NaviAgent* m_pNaviAgent = nullptr;
 	std::unordered_map<uint64_t, std::unique_ptr<ServerComponent>> m_mapServerComp;
 };
 

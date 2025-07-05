@@ -7,8 +7,9 @@
 
 ServerObject::ServerObject(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
+	// TODO: 앞으로 유동적으로 바뀌어야함
 	m_pNaviAgent = new Common::NaviAgent;
-	m_pNaviAgent->SetNavMesh(NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0));
+	m_pNaviAgent->SetNavMesh(NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
 }
 
 ServerObject::~ServerObject()
@@ -19,6 +20,16 @@ ServerObject::~ServerObject()
 void ServerObject::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	ServerCompUpdateALL();
+}
+
+void ServerObject::SetNavigationMesh(Common::NavigationMesh* const nav_mesh) noexcept
+{
+	m_pNaviAgent->SetNavMesh(nav_mesh);
+}
+
+void ServerObject::SetNavigationMesh(const NAVI_MESH_TYPE eType) noexcept
+{
+	SetNavigationMesh(NAVIGATION->GetNavMesh(eType));
 }
 
 ServerComponent* const ServerObject::AddComp(const uint64_t comp_id, ServerComponent* const pComp) noexcept
