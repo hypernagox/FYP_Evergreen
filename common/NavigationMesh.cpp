@@ -48,6 +48,7 @@ namespace Common
 			m_filter->setIncludeFlags(0xFFFF);
 			m_filter->setExcludeFlags(0);
 		}
+		m_nav_q = InitNavMeshQuery();
 		return m_navMesh != NULL ? 1 : 0;
 	}
 

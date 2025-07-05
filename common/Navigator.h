@@ -25,7 +25,8 @@ public:
 	Common::NavigationMesh* GetNavMesh(const NAVI_MESH_TYPE eType)const noexcept { return m_arrNavMesh[(int)eType]; }
 
 private:
-	Common::NavigationMesh* m_arrNavMesh[(int)NAVI_MESH_TYPE::END] = {};
+	std::mutex m_mt;
+	static inline thread_local constinit Common::NavigationMesh* m_arrNavMesh[(int)NAVI_MESH_TYPE::END] = {};
 };
 
 #define NAVIGATION (Navigator::GetInst())

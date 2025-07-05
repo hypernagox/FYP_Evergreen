@@ -19,6 +19,7 @@ Navigator::~Navigator()
 void Navigator::Init() noexcept
 {
 	int index = 0; 
+	std::lock_guard<std::mutex> lk{ m_mt };
 	for (const auto& entry : std::filesystem::directory_iterator(RESOURCE_PATH(L"navmesh")))
 	{
 		if (entry.is_regular_file() && entry.path().extension() == L".bin")

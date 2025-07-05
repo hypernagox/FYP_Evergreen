@@ -142,6 +142,7 @@ public:
 		const volatile auto init_builder = GetBuilder();
 		extern thread_local std::unordered_map<uint64_t, std::pair<ZeroInt, std::array<dtPolyRef, 10>>> tl_poly_vec;
 		tl_poly_vec.reserve(128);
+		NAVIGATION->Init();
 	}
 
 	virtual void TLSDestroy()noexcept override
@@ -196,7 +197,6 @@ int main()
 
 	Mgr(CoreGlobal)->Init();
 	c2s_PacketHandler::Init();
-	NAVIGATION->Init();
 	NAVIGATION->RegisterDestroy();
 
 	MoveBroadcaster::RegisterGlobalHelper(&broad_helper);

@@ -633,6 +633,12 @@ const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSe
 	// 이렇게 바꾼다.
 
 	ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Dungeon);
+	ServerObjectMgr::GetInst()->GetMainHero()->GetTransform()->SetLocalPosition(
+		Vector3{
+		496.3992f,
+		13.17f,
+		286.6206f });
+	
 	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
 
 	std::cout << "보스방 입장함\n";
