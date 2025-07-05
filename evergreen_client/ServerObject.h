@@ -42,7 +42,6 @@ public:
 		if (const auto comp = GetComp<T>())
 			comp->Update();
 	}
-	void SetNavigationMesh(class Common::NavigationMesh* const nav_mesh)noexcept;
 	void SetNavigationMesh(const NAVI_MESH_TYPE eType)noexcept;
 	const auto GetNaviAgent()noexcept { return m_pNaviAgent; }
 private:

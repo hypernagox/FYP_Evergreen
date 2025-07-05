@@ -12,8 +12,8 @@ class NaviAgent
 public:
 	CONSTRUCTOR_CONTENTS_COMPONENT(NaviAgent)
 public:
-	void Init(const Vector3& pos, Common::NavigationMesh* const pNavMesh)noexcept;
-	void InitRandPos(Common::NavigationMesh* const pNavMesh)noexcept;
+	void Init(const Vector3& pos, const NAVI_MESH_TYPE nav_mesh_type)noexcept;
+	void InitRandPos(const NAVI_MESH_TYPE nav_mesh_type)noexcept;
 	void SetPosComp(PositionComponent* const posComp)noexcept { m_posComp = posComp; }
 	const auto GetPosComp()noexcept { return m_posComp; }
 	void SetPos(const Vector3& pos)noexcept;

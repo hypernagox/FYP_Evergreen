@@ -40,7 +40,7 @@ const bool Handle_s2c_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	const float pos_x = dist1024(rng) - 512.f;  // 0 ~ 1023 ±ÕÀÏ ºÐÆ÷
 	const float pos_z = dist1024(rng) - 512.f;
 	Vector3 pos{ pos_x,0,pos_z };
-	NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(pos);
+	NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
 	//const auto vv = Vector3{ -30.0f, 0.0f, -30.0f } + dir[NagiocpX::my_rand() % 4] * 10.f;
 	//const auto vv = Vector3{ -30.0f, 0.0f, -30.0f } + dir[NagiocpX::my_rand() % 4] * 10.f;
 	//const auto v = Nagox::Struct::Vec3{ 75.0f, 0.0f, 25.0f };
@@ -201,6 +201,11 @@ const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NagiocpX::S_ptr<NagiocpX::Pack
 	return true;
 }
 
+const bool Handle_s2c_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_QUEST_END& pkt_)
+{
+	return true;
+}
+
 const bool Handle_s2c_PARTY_QUEST_START(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_START& pkt_)
 {
 	return true;
@@ -235,6 +240,11 @@ const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NagiocpX::S_ptr<NagiocpX::Pa
 }
 
 const bool Handle_s2c_FORCED_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_FORCED_MOVE& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_BOSS_ROOM_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_ROOM_ENTER& pkt_)
 {
 	return true;
 }

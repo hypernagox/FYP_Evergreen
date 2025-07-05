@@ -8,14 +8,24 @@ namespace Common
 {
 	NaviCell NaviAgent::GetPostCell(DirectX::SimpleMath::Vector3& pos)const noexcept
 	{
-		return m_pNavMesh->GetNaviCell(pos);
+		return NAVIGATION->GetNavMesh(m_navmesh_type)->GetNaviCell(pos);
+	}
+
+	float NaviAgent::GetSlope() const noexcept
+	{
+		return m_curCell.GetSlopeAngle(NAVIGATION->GetNavMesh(m_navmesh_type));
 	}
 
 	DirectX::SimpleMath::Vector3 NaviAgent::GetNaviPos(const DirectX::SimpleMath::Vector3& pos) noexcept
 	{
-		const auto y = m_curCell.CalculateHeight(pos, m_pNavMesh);
+		const auto y = m_curCell.CalculateHeight(pos, NAVIGATION->GetNavMesh(m_navmesh_type));
 
 		return { pos.x,y,pos.z };
+	}
+
+	NavigationMesh* const NaviAgent::GetNavMesh()const noexcept
+	{
+		return NAVIGATION->GetNavMesh(m_navmesh_type);
 	}
 
 	void NaviAgent::SetCurCell(DirectX::SimpleMath::Vector3& pos) noexcept
@@ -33,7 +43,9 @@ namespace Common
 		const auto prev_z = CommonMath::InverseZ(prev_pos);
 		const auto post_z = CommonMath::InverseZ(post_pos);
 
-		const auto nav_q = m_pNavMesh->GetNavMeshQuery();
+		const auto nav = NAVIGATION->GetNavMesh(m_navmesh_type);
+		const auto nav_q = nav->GetNavMeshQuery();
+		const auto nav_filter = nav->GetNavFilter();
 
 		dtPolyRef targetPoly = 0;
 
@@ -41,7 +53,7 @@ namespace Common
 		
 		constexpr const float extents[3] = { 2.f, 4.f, 2.f };
 
-		dtStatus status = nav_q->findNearestPoly(&post_z.x, extents, m_pNavMesh->GetNavFilter(), &targetPoly, &nearestPt.x);
+		dtStatus status = nav_q->findNearestPoly(&post_z.x, extents, nav_filter, &targetPoly, &nearestPt.x);
 
 		if (!dtStatusSucceed(status) || 0 == targetPoly)
 		{
@@ -60,7 +72,7 @@ namespace Common
 			return;
 		}
 	
-		status = nav_q->moveAlongSurface(targetPoly, &prev_z.x, &post_z.x, m_pNavMesh->GetNavFilter(), &out_pos.x, p, &v, 10);
+		status = nav_q->moveAlongSurface(targetPoly, &prev_z.x, &post_z.x, nav_filter, &out_pos.x, p, &v, 10);
 
 		if (!dtStatusSucceed(status))
 		{
@@ -98,8 +110,9 @@ namespace Common
 		const Vector3 prev_z = CommonMath::InverseZ(prev_pos);
 		const Vector3 dest_z = CommonMath::InverseZ(dest_pos);
 
-		const auto nav_q = m_pNavMesh->GetNavMeshQuery();
-		const auto nav_filter = m_pNavMesh->GetNavFilter();
+		const auto nav = NAVIGATION->GetNavMesh(m_navmesh_type);
+		const auto nav_q = nav->GetNavMeshQuery();
+		const auto nav_filter = nav->GetNavFilter();
 
 		float t = 1.0f;
 		float hitNormal[3]{ 0,0,0 };

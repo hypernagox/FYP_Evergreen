@@ -54,7 +54,7 @@ public:
 		const FactoryFunc func,
 		EntityBuilder& b,
 		const Vector3& pos,
-		Common::NavigationMesh* const nav_mesh
+		const NAVI_MESH_TYPE nav_mesh_type
 	)noexcept{
 		b.x = pos.x;
 		b.y = pos.y;
@@ -62,7 +62,7 @@ public:
 		const auto m = func(b);
 		const auto temp_ptr = m.get();
 		m->GetComp<PositionComponent>()->pos = pos;
-		m->GetComp<NaviAgent>()->Init(pos, nav_mesh);
+		m->GetComp<NaviAgent>()->Init(pos, nav_mesh_type);
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m);
 		++m_mon_count;
 		return temp_ptr;

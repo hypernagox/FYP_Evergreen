@@ -138,7 +138,7 @@ void ServerSession::UpdateMove() noexcept
 	++m_moveCount;
 	//pos += dir * 4.f * 0.5f;
 	
-	NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(pos);
+	NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
 
 	//++dir_count;
 	//if (10 < dir_count)
@@ -157,7 +157,7 @@ void ServerSession::UpdateMove() noexcept
 		// µµÂø
 		vel = {};
 		accel = {};
-		NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(pos);
+		NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
 		//SendAsync(Create_c2s_CHANGE_HARVEST_STATE());
 		//SendAsync(Create_c2s_ACQUIRE_ITEM(0));
 		SetPath();
@@ -169,7 +169,7 @@ void ServerSession::UpdateMove() noexcept
 	accel = vel;
 	pos += dir_;
 
-	NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(pos);
+	NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
 
 	
 	m_curDistAcc += dir_.Length();
@@ -203,12 +203,12 @@ void ServerSession::SetPath() noexcept
 
 	const float step = 5.f;
 
-	NAVIGATION->GetNavMesh(NUM_0)->GetNaviCell(pos);
+	NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
 	
 	const auto& v = HarvestLoader::GetHarvestPos();
 	const Vector3 end = GetKthNearestHarvestPoint(dist_harvest(rng) % 30);
 
-	const auto& vecPath = NAVIGATION->GetNavMesh(NUM_0)->GetPathVertices(pos, end, step);
+	const auto& vecPath = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetPathVertices(pos, end, step);
 
 
 	m_speed = 5.f;

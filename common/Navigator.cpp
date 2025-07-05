@@ -18,19 +18,14 @@ Navigator::~Navigator()
 
 void Navigator::Init() noexcept
 {
-	int index = 0; 
+	// 혹시라도 컴퓨터/OS에 따라서 디렉토리 읽는 순서에 따라 인덱싱 오류생길까봐 하드코딩함
 	std::lock_guard<std::mutex> lk{ m_mt };
-	for (const auto& entry : std::filesystem::directory_iterator(RESOURCE_PATH(L"navmesh")))
 	{
-		if (entry.is_regular_file() && entry.path().extension() == L".bin")
-		{
-			if (index >= (int)NAVI_MESH_TYPE::END)
-			{
-				std::wcout << L"[WARN] 최대 개수 초과\n";
-				break;
-			}
-			m_arrNavMesh[index] = new Common::NavigationMesh;
-			m_arrNavMesh[index++]->Init(entry.path().wstring());
-		}
+		m_arrNavMesh[(int)NAVI_MESH_TYPE::MAIN_WORLD] = new Common::NavigationMesh;
+		m_arrNavMesh[(int)NAVI_MESH_TYPE::MAIN_WORLD]->Init(RESOURCE_PATH(L"\\navmesh\\all_tiles_navmesh2try.bin"));
+	}
+	{
+		m_arrNavMesh[(int)NAVI_MESH_TYPE::BOSS_ROOM] = new Common::NavigationMesh;
+		m_arrNavMesh[(int)NAVI_MESH_TYPE::BOSS_ROOM]->Init(RESOURCE_PATH(L"\\navmesh\\boss_navmesh.bin"));
 	}
 }

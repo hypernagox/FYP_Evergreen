@@ -250,7 +250,7 @@ void FoxQuest::InitQuestField() noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
-		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
+		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 	SetQuestBeginPos(ViLLAGE_ENTRANCE);
 }
@@ -264,7 +264,7 @@ void GoblinQuest::InitQuestField() noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_GOBLIN;
-		AddMonster(EntityFactory::CreateRangeMonster, b, mon_quest_pos[i], NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
+		AddMonster(EntityFactory::CreateRangeMonster, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 	SetQuestBeginPos(ViLLAGE_ENTRANCE);
 }
@@ -336,7 +336,7 @@ void BearQuest::InitQuestField() noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
-		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
+		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 	SetQuestBeginPos(ViLLAGE_ENTRANCE);
 }
@@ -379,7 +379,7 @@ void InvadeQuestBase::StartUpdate(const Vector3& reset_pos) noexcept
 		const auto& monster_entity = patrol.m_patrol;
 		const auto agent = monster_entity->AddComp<NaviAgent>();
 		agent->SetPosComp(monster_entity->GetComp<PositionComponent>());
-		agent->GetAgentConcreate()->SetNavMesh(NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
+		agent->GetAgentConcreate()->SetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD);
 		monster_entity->GetComp<NaviAgent>()->SetPos(monster_entity->GetComp<PositionComponent>()->pos);
 	}
 
@@ -631,7 +631,7 @@ void NPCGuardQuest2::SetMonsters(const XVector<Vector3> points) noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
-		AddMonster(EntityFactory::CreateMonster, b, points[i], NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
+		AddMonster(EntityFactory::CreateMonster, b, points[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 }
 
@@ -658,14 +658,14 @@ void CombinationBattleQuest::InitQuestField() noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
-		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
+		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 	for (int i = num_half; i < num; ++i)
 	{
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
-		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD));
+		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 	SetQuestBeginPos(Vector3(-36.739315F, 88.53785F, -354.69366F));
 }

@@ -3,18 +3,18 @@
 #include "NavigationMesh.h"
 #include "PositionComponent.h"
 
-void NaviAgent::Init(const Vector3& pos, Common::NavigationMesh* const pNavMesh) noexcept
+void NaviAgent::Init(const Vector3& pos, const NAVI_MESH_TYPE nav_mesh_type) noexcept
 {
 	auto& cur_pos = m_posComp->pos;
 	cur_pos = pos;
-	m_agent.SetNavMesh(pNavMesh);
+	m_agent.SetNavMesh(nav_mesh_type);
 	SetPos(pos);
 }
 
-void NaviAgent::InitRandPos(Common::NavigationMesh* const pNavMesh) noexcept
+void NaviAgent::InitRandPos(const NAVI_MESH_TYPE nav_mesh_type) noexcept
 {
-	m_agent.SetNavMesh(pNavMesh);
-	pNavMesh->GetRandomPos(m_posComp->pos, m_agent.GetCurCell());
+	m_agent.SetNavMesh(nav_mesh_type);
+	GetNavMesh()->GetRandomPos(m_posComp->pos, m_agent.GetCurCell());
 
 	//dtCrowdAgentParams params = InitParam();
 
