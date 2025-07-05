@@ -31,7 +31,7 @@ namespace Common
                         errStr = std::format("Path Error: {}", entry.path().string());
                         throw std::exception{ errStr.data() };
                     }
-                    nlohmann::json jsonData;
+                    nlohmann::ordered_json jsonData;
                     const std::string category = entry.path().stem().string();
                     const auto category_idx = category_start_index++;
                     table.m_categoryId2str.try_emplace(category_idx, category);

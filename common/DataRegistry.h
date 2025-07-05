@@ -116,7 +116,7 @@ namespace Common
 			return m_mapWeaponIDStr.find(weapon_id)->second;
 		}
 	private:
-		using AttributeValue = std::variant<int, float, bool, std::string, nlohmann::json>;
+		using AttributeValue = std::variant<int, float, bool, std::string, nlohmann::ordered_json>;
 		using AttributeMap = std::map<std::string, AttributeValue>;
 		using DataTable = std::map<std::string, AttributeMap>;
 		std::map<std::string, DataTable> m_mapDatatable;
