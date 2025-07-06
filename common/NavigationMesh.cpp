@@ -58,7 +58,8 @@ namespace Common
 	static float frand()noexcept
 	{
 		extern thread_local std::default_random_engine LDefaultRandEngine;
-		std::uniform_real_distribution<float> distribution{ 0.0f, 1.0f };
+		std::uniform_real_distribution<float> distribution{ 0.1f, 1.0f };
+		return (float)rand() / (float)RAND_MAX;
 		return distribution(LDefaultRandEngine);
 	}
 
