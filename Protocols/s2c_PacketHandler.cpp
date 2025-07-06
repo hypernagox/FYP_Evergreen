@@ -612,6 +612,7 @@ const bool Handle_s2c_FORCED_MOVE(const NetHelper::S_ptr<NetHelper::PacketSessio
 	if (pSession_->GetSessionID() == target_id)
 	{
 		ServerObjectMgr::GetInst()->GetMainHero()->GetTransform()->SetLocalPosition(ToOriginVec3(pkt_.target_pos()));
+		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 		return true;
 	}
 	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(target_id))
@@ -641,6 +642,7 @@ const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSe
 		496.3992f,
 		13.17f,
 		286.6206f });
+	ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 	
 	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
 

@@ -34,6 +34,7 @@ public:
 	void AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj);
 	void AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj);
 	bool GetSpectatorMode() const { return m_bSpectatorMode; }
+	void RequestChangeGameScene(GameSceneType type);
 	void ChangeGameScene(GameSceneType type);
 	std::vector<InteractiveEntity*> GetInteractiveEntities() const;
 

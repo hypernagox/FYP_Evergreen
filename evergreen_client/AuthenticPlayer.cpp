@@ -17,6 +17,7 @@
 #include "LogFloatGUI.h"
 #include "GuideSystem.h"
 #include "HeightMap.h"
+#include "TransitionOverlayGUI.h"
 #include "CommonQuestTable.h"
 
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
@@ -78,6 +79,12 @@ void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 	else
 		m_entityMovement->AddAcceleration(vWorldDelta);
 	m_rendererBodyAngleY = std::lerp(m_rendererBodyAngleY, m_cameraAngleAxis.y, deltaTime * 8.0f);
+}
+
+void AuthenticPlayer::FixCameraAnchor()
+{
+	m_cameraAnchor->GetTransform()->SetLocalPosition(Vector3::Up * 1.5f);
+	m_cameraAnchorLastPosition = m_cameraAnchor->GetTransform()->GetWorldPosition();
 }
 
 void AuthenticPlayer::InitCamDirection()
@@ -214,12 +221,12 @@ void AuthenticPlayer::CraftItem(int recipeIndex)
 
 void AuthenticPlayer::RequestQuestStart()
 {
-	Send(Create_c2s_QUEST_START());
+	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() { Send(Create_c2s_QUEST_START()); }, L"퀘스트를 시작하는 중 ...");
 }
 
 void AuthenticPlayer::RequestQuestEnd()
 {
-	Send(Create_c2s_QUEST_END());
+	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() { Send(Create_c2s_QUEST_END()); }, L"위치로 돌아가는 중 ...");
 }
 
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)

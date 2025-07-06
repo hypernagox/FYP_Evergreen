@@ -96,6 +96,7 @@ public:
 	bool& GetSendFlag()noexcept { return m_bSendFlag; }
 	const float GetYAngle()const noexcept { return m_rendererBodyAngleY; }
 
+	void FixCameraAnchor();
 	void SetPlayerType(unsigned int playerType) noexcept { m_playerType = playerType; }
 	void InitCamDirection();
 	void SetServerObject(ServerObject* serverObject) noexcept { m_pServerObject = serverObject; }

@@ -166,6 +166,13 @@ void GameScene::OnAttach()
         dungeonEnvironmentRenderer->Initialize(g_dungeonEnvironmentParam);
         AddObject(m_dungeonEnvironmentObject);
 
+        auto dungeonWaterObj = std::make_shared<SceneObject>();
+        dungeonWaterObj->GetTransform()->SetLocalPosition(Vector3(338.0f, 11.3f, 448.0f));
+        auto dungeonWaterRenderer = dungeonWaterObj->AddComponent<MeshRenderer>();
+        dungeonWaterRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\plane.yms")));
+        dungeonWaterRenderer->SetShader(res->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+        m_dungeonEnvironmentObject->AddChild(dungeonWaterObj);
+
         std::ifstream file(RESOURCE_PATH(L"environment\\ExportedGameSpawns.json"));
         nlohmann::json j;
         file >> j;
@@ -557,6 +564,17 @@ void GameScene::AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj)
 void GameScene::AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj)
 {
 	m_playerInterfaceGroup->AddChild(obj);
+}
+
+void GameScene::RequestChangeGameScene(GameSceneType type)
+{
+    if (m_sceneType == type)
+        return;
+
+    INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition(
+            [this, type]() { ChangeGameScene(type); },
+            std::format(L"{} 맵으로 이동 중 ...", type == GameSceneType::Default ? L"마을" : L"보스")
+    	);
 }
 
 void GameScene::ChangeGameScene(GameSceneType type)
