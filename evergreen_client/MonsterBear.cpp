@@ -22,6 +22,8 @@ MonsterBear::MonsterBear(const std::shared_ptr<SceneObject>& object) : Monster(o
 	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * 2.0f);
 
 	GetSceneObject()->AddChild(m_rendererObj);
+
+	InitializeMonster("Bear");
 }
 
 void MonsterBear::OnAnimationStateChange(AnimationState from, AnimationState to)

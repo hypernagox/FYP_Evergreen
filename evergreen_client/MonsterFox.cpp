@@ -23,6 +23,8 @@ MonsterFox::MonsterFox(const std::shared_ptr<SceneObject>& object) : Monster(obj
 	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 48.0f);
 
 	GetSceneObject()->AddChild(m_rendererObj);
+
+	InitializeMonster("Fox");
 }
 
 void MonsterFox::OnAnimationStateChange(AnimationState from, AnimationState to)
