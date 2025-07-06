@@ -586,6 +586,9 @@ const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::Pac
 
 const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_)
 {
+	// TODO: 여기에 이 유저의 무기 / 갑옷 정수 id가 온다.
+	// 갑옷이 지금 미정인데, 여기에서 바꾸면된다
+	const auto armor_id = pkt_.armor_id();
 	//std::cout << (pkt_.weapon_id()) << std::endl;
 	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id()))
 	{

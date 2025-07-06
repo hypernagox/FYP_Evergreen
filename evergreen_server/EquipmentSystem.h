@@ -37,6 +37,14 @@ public:
 		}
 		return sum;
 	}
+	int GetEquipmentDefSum()const noexcept {
+		int sum = 0;
+		for (const auto equip : m_arrEquip) {
+			if (!equip)continue;
+			sum += equip->GetDEF();
+		}
+		return sum;
+	}
 	int ApplyAtk(
 		ContentsEntity* const atk_obj,
 		const int attacker_atk,

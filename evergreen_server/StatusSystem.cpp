@@ -20,7 +20,7 @@ int StatusSystem::GetATK() const noexcept
 
 int StatusSystem::GetDEF() const noexcept
 {
-	return 0;
+	return m_defaultDEF + m_equipSystem->GetEquipmentDefSum();
 }
 
 int StatusSystem::ApplyAtk(const int victim_origin_hp, int& victim_hp, ContentsEntity* const victim)

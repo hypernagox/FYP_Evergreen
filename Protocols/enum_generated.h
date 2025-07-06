@@ -150,27 +150,30 @@ inline const char *EnumNameSKILL_TYPE(SKILL_TYPE e) {
 
 enum EQUIPMENT_TYPE : uint8_t {
   EQUIPMENT_TYPE_WEAPON = 0,
+  EQUIPMENT_TYPE_ARMOR = 1,
   EQUIPMENT_TYPE_MIN = EQUIPMENT_TYPE_WEAPON,
-  EQUIPMENT_TYPE_MAX = EQUIPMENT_TYPE_WEAPON
+  EQUIPMENT_TYPE_MAX = EQUIPMENT_TYPE_ARMOR
 };
 
-inline const EQUIPMENT_TYPE (&EnumValuesEQUIPMENT_TYPE())[1] {
+inline const EQUIPMENT_TYPE (&EnumValuesEQUIPMENT_TYPE())[2] {
   static const EQUIPMENT_TYPE values[] = {
-    EQUIPMENT_TYPE_WEAPON
+    EQUIPMENT_TYPE_WEAPON,
+    EQUIPMENT_TYPE_ARMOR
   };
   return values;
 }
 
 inline const char * const *EnumNamesEQUIPMENT_TYPE() {
-  static const char * const names[2] = {
+  static const char * const names[3] = {
     "WEAPON",
+    "ARMOR",
     nullptr
   };
   return names;
 }
 
 inline const char *EnumNameEQUIPMENT_TYPE(EQUIPMENT_TYPE e) {
-  if (::flatbuffers::IsOutRange(e, EQUIPMENT_TYPE_WEAPON, EQUIPMENT_TYPE_WEAPON)) return "";
+  if (::flatbuffers::IsOutRange(e, EQUIPMENT_TYPE_WEAPON, EQUIPMENT_TYPE_ARMOR)) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesEQUIPMENT_TYPE()[index];
 }

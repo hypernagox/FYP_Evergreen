@@ -30,5 +30,6 @@ enum SKILL_TYPE : ubyte
 
 enum EQUIPMENT_TYPE : ubyte
 {
-    WEAPON = 0
+    WEAPON = 0,
+    ARMOR = 1
 }

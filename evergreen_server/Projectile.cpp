@@ -29,7 +29,7 @@ NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 		if (obj->GetPrimaryGroupType() == Nagox::Enum::GROUP_TYPE_HARVEST)continue;
 		if (col->GetCollider()->IsIntersect(s))
 		{
-			obj->GetComp<HP>()->PostDoDmg(1, owner);
+			obj->GetComp<HP>()->PostDoDmg(2, owner);
 			isHit = true;
 		}
 	}

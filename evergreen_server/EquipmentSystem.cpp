@@ -65,14 +65,19 @@ bool EquipmentSystem::SwapEquipment(
 	const Nagox::Enum::EQUIPMENT_TYPE equip_type, 
 	const uint32_t equip_id) noexcept
 {
+	// TODO: 추후 변경 필요
 	// TODO: 유효성 검사
 	if (const auto e = m_arrEquip[equip_type])
 	{
 		e->id = equip_id;
 		const auto equip_stat = DATA_TABLE->GetEquipStat(equip_id);
 		e->atk = equip_stat.atk;
-		std::cout << "Atk: " << e->atk << std::endl;
+		//std::cout << "Atk: " << e->atk << std::endl;
 		e->def = equip_stat.def;
+		if (Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_ARMOR == equip_type)
+		{
+			e->def = equip_id;
+		}
 		owner->GetComp<ObjectIdentifier>()->BroadcastNotifyEquipmentChange();
 		return true;
 	}

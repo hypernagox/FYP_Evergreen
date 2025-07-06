@@ -28,7 +28,7 @@ public:
 	const bool UseSkill(const Nagox::Enum::SKILL_TYPE skill_type)noexcept;
 public:
 	int m_defaultATK = 1;
-	int m_defaultDEF = 1;
+	int m_defaultDEF = 0;
 	EquipmentSystem* m_equipSystem = nullptr;
 	BuffSystem* m_buffSystem = nullptr;
 

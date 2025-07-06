@@ -39,8 +39,9 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 		}
 		else if (owner->GetSession())
 		{
-			owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - dmg_));
-			m_hp -= dmg_;
+			const auto cur_dmg = std::max(dmg_ - owner->GetComp<StatusSystem>()->GetDEF(), 0);
+			owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - cur_dmg));
+			m_hp -= cur_dmg;
 		}
 		else
 		{
