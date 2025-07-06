@@ -512,6 +512,7 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
             , player_type, m_currentChannelID));
     }
 
+    m_heroComponent->FixCameraAnchor();
     m_tutorialObj->SetActive(true);
 }
 
