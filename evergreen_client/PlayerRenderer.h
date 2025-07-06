@@ -7,6 +7,11 @@ using namespace udsdx;
 class PlayerRenderer : public Component
 {
 public:
+	enum class CharacterType
+	{
+		Warrior,
+		Priest,
+	};
 	enum class AnimationState
 	{
 		Idle,
@@ -34,6 +39,7 @@ protected:
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
 	
 public:
+	CharacterType m_characterType = CharacterType::Warrior;
 	int m_attackState = 0;
 	Transform* m_transformBody;
 	PlayerRenderer(const std::shared_ptr<SceneObject>& object);

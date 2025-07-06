@@ -83,6 +83,7 @@ void PlayerRenderer::InitializeWarrior()
 
 	SetPlayerWeapon("Master Sword");
 	OnAnimationStateChange(AnimationState::Idle);
+	m_characterType = CharacterType::Warrior;
 }
 
 void PlayerRenderer::InitializePriest()
@@ -103,13 +104,14 @@ void PlayerRenderer::InitializePriest()
 		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
 		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
 	}
-	m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
-	m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
-	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
-	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
+	m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_2.png")));
+	m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_0.png")));
+	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_2.png")));
+	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_1.png")));
 
 	SetPlayerWeapon("Staff Priest");
 	OnAnimationStateChange(AnimationState::Idle);
+	m_characterType = CharacterType::Priest;
 }
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
@@ -135,8 +137,6 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 
 void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 {
-	//std::cout << static_cast<int>(state) << "\n";
-
 	switch (state)
 	{
 	case AnimationState::Idle:
@@ -168,22 +168,42 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_diagonal_right.yac")), true);
 		break;
 	case AnimationState::Attack:
-		switch (m_attackState)
+		switch (m_characterType)
 		{
-		case 0:
-			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack1.yac")), false, true);
-			break;
-		case 1:
-			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack2.yac")), false, true);
-			break;
-		case 2:
-			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack3.yac")), false, true);
-			break;
-		case 3:
-			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack4.yac")), false, true);
-			break;
+			case CharacterType::Warrior:
+				switch (m_attackState)
+				{
+				case 0:
+					m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack1.yac")), false, true);
+					break;
+				case 1:
+					m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack2.yac")), false, true);
+					break;
+				case 2:
+					m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack3.yac")), false, true);
+					break;
+				case 3:
+					m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack4.yac")), false, true);
+					break;
+				}
+				m_attackState = (m_attackState + 1) % 4;
+				break;
+			case CharacterType::Priest:
+				switch (m_attackState)
+				{
+				case 0:
+					m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"priest\\attack_1.yac")), false, true);
+					break;
+				case 1:
+					m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"priest\\attack_2.yac")), false, true);
+					break;
+				case 2:
+					m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"priest\\attack_3.yac")), false, true);
+					break;
+				}
+				m_attackState = (m_attackState + 1) % 3;
+				break;
 		}
-		m_attackState = (m_attackState + 1) % 4;
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
 		break;
 	case AnimationState::Hit:
