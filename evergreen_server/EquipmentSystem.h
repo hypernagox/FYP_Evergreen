@@ -2,6 +2,8 @@
 
 class Equipment
 {
+	friend class EquipmentSystem;
+	friend class ObjectIdentifier;
 public:
 	int GetATK()const noexcept { return atk; }
 	int GetDEF()const noexcept { return def; }
@@ -13,9 +15,9 @@ public:
 		int& victim_hp,
 		ContentsEntity* const victim)noexcept 
 	{
-		return atk;
+		return 0;
 	}
-//private:
+private:
 	int id = 1;
 	int atk = 1;
 	int def = 0;

@@ -6,13 +6,16 @@ struct ItemCombineInfo {
 	int itemID;
 	int numOfRequire;
 };
-
 struct ItemRecipeData {
 	std::string resultItem;
 	int resultItemID;
 	int recipeID;
 	int numOfResultItem;
 	std::vector<ItemCombineInfo> itemElements;
+};
+struct EquipmentStat {
+	int atk = 0;
+	int def = 0;
 };
 
 namespace Common
@@ -109,11 +112,19 @@ namespace Common
 				return std::get<T>(attrIter->second);
 			}
 		}
+	public:
+		// -- 장비 스탯 --
 		const auto GetWeaponIDInt(const std::string_view weapon_str)const noexcept {
 			return m_mapWeaponID.find(weapon_str.data())->second;
 		}
 		const auto GetWeaponIDStr(const int weapon_id)const noexcept {
 			return m_mapWeaponIDStr.find(weapon_id)->second;
+		}
+		const auto& GetEquipStat(const std::string_view equip_str)const noexcept{
+			return m_mapEquipStat.find(GetWeaponIDInt(equip_str))->second;
+		}
+		const auto& GetEquipStat(const int equip_id)const noexcept {
+			return m_mapEquipStat.find(equip_id)->second;
 		}
 	private:
 		using AttributeValue = std::variant<int, float, bool, std::string, nlohmann::ordered_json>;
@@ -148,6 +159,7 @@ namespace Common
 		//TODO: 임시 무기 id
 		std::map<std::string, int> m_mapWeaponID;
 		std::map<int, std::string> m_mapWeaponIDStr;
+		std::map<int, EquipmentStat> m_mapEquipStat;
 	};
 
 #define DATA_TABLE (Common::DataRegistry::GetDataTable())

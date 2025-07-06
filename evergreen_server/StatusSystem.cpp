@@ -12,9 +12,9 @@ StatusSystem::~StatusSystem() noexcept
 	}
 }
 
-// TODO: 버프시스템고려
 int StatusSystem::GetATK() const noexcept
 {
+	// TODO: 버프시스템고려
 	return m_defaultATK + m_equipSystem->GetEquipmentAtkSum();
 }
 

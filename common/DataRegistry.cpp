@@ -15,6 +15,8 @@ namespace Common
         std::string errStr;
         int category_start_index = 0;
         int recipe_id = 0;
+        std::unordered_map<std::string, nlohmann::ordered_json> weapon_data_map;
+        bool weapon_loaded = false;
         if (!JsonGenerator::GenerateJson(path))
         {
             errStr = std::format("Err in json generator");
@@ -89,12 +91,54 @@ namespace Common
                             ++item_start_index;
                         }
 
+                        // TODO: 단순한 스탯이라면 갑옷도 여기서 읽어야할 것 같다.
                         if ("Weapon" == category)
                         {
-                            static int g_weapon_id = 0;
+                            static constinit int g_weapon_id = 0;
                             const auto wid = g_weapon_id++;
                             table.m_mapWeaponID[entityName] = wid;
                             table.m_mapWeaponIDStr[wid] = entityName;
+                            if (!weapon_loaded)
+                            {
+                                const std::wstring weapon_path = RESOURCE_PATH(path) + L"\\json\\Weapon.json";
+                                std::ifstream weapon_file{ weapon_path };
+                                if (!weapon_file)
+                                {
+                                    throw std::runtime_error("Failed to open Weapon.json");
+                                }
+
+                                nlohmann::ordered_json weapon_json;
+                                weapon_file >> weapon_json;
+
+                                for (const auto& [name, data] : weapon_json.items())
+                                {
+                                    weapon_data_map.emplace(name, data);
+                                }
+
+                                weapon_loaded = true;
+                            }
+
+                            const auto it = weapon_data_map.find(entityName);
+                            if (it != weapon_data_map.end())
+                            {
+                                const auto& json_obj = it->second;
+
+                                EquipmentStat stat;
+                                if (json_obj.contains("atk") && json_obj["atk"].is_number_integer())
+                                {
+                                    stat.atk = json_obj["atk"].get<int>();
+                                }
+                                if (json_obj.contains("def") && json_obj["def"].is_number_integer()) 
+                                {
+                                    stat.def = json_obj["def"].get<int>();
+                                }
+
+                                table.m_mapEquipStat[wid] = stat;
+                            }
+                            else
+                            {
+                                std::cerr << "[Warning] entityName not found in Weapon.json: " << entityName << "\n";
+                            }
                         }
 
                         const auto entity_idx = entity_start_index++;

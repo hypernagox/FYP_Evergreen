@@ -16,7 +16,9 @@
       "X": 0.125,
       "Y": 0.125,
       "Z": 0.125
-    }
+    },
+    "atk": 1,
+    "def": 0
   },
   "Bow": {
     "Model": "weapon\\zelda bow\\ancientbow.yms",
@@ -35,7 +37,9 @@
       "X": 24.0,
       "Y": 24.0,
       "Z": 24.0
-    }
+    },
+    "atk": 2,
+    "def": 0
   },
   "Master Sword": {
     "Model": "weapon\\zelda sword\\zeldasword.yms",
@@ -54,7 +58,9 @@
       "X": 16.0,
       "Y": 16.0,
       "Z": 16.0
-    }
+    },
+    "atk": 3,
+    "def": 0
   },
   "Staff Priest": {
     "Model": "weapon\\priest staff\\priest_staff.yms",
@@ -73,6 +79,8 @@
       "X": 0.75,
       "Y": 0.75,
       "Z": 0.75
-    }
+    },
+    "atk": 4,
+    "def": 0
   }
 }

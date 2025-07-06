@@ -176,12 +176,12 @@ namespace NagiocpX
 
 		monster_entity->AddComp<PositionComponent>();
 
-		bt_timer->SetTickInterval(500);
+		bt_timer->SetTickInterval(200);
 
 
 		const auto s1 = bt_root->AddChild<SequenceNode>();
 
-		s1->AddChild<RangeCheckNode>(30/30);
+		s1->AddChild<RangeCheckNode>(10);
 		const auto s2 = s1->AddChild<SequenceNode>();
 
 		s2->AddChild<RangeCheckNode>(50/2);

@@ -55,6 +55,7 @@ int EquipmentSystem::ApplyAtk(
 			}
 		}
 	}
+	//std::cout << "Dmg: "<<result_dmg << std::endl;
 	victim_hp -= result_dmg;
 	return result_dmg;
 }
@@ -68,7 +69,10 @@ bool EquipmentSystem::SwapEquipment(
 	if (const auto e = m_arrEquip[equip_type])
 	{
 		e->id = equip_id;
-		e->atk = (equip_id + 1);
+		const auto equip_stat = DATA_TABLE->GetEquipStat(equip_id);
+		e->atk = equip_stat.atk;
+		std::cout << "Atk: " << e->atk << std::endl;
+		e->def = equip_stat.def;
 		owner->GetComp<ObjectIdentifier>()->BroadcastNotifyEquipmentChange();
 		return true;
 	}

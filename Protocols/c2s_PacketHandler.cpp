@@ -57,17 +57,7 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	const auto entity = pSession_->GetOwnerEntity();
 
 	entity->SetDetailType(pkt_.player_type());
-	if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_WARRIOR)
-	{
-		entity->GetComp<StatusSystem>()->SetSkill<WarriorDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
-		
-		entity->GetComp<Inventory>()->GetEquipmentSystem()->GetEquipment(Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON)->id = DATA_TABLE->GetWeaponIDInt("Master Sword");
-	}
-	else if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_PRIEST)
-	{
-		entity->GetComp<StatusSystem>()->SetSkill<PriestDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
-		entity->GetComp<Inventory>()->GetEquipmentSystem()->GetEquipment(Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON)->id = DATA_TABLE->GetWeaponIDInt("Staff Priest");
-	}
+	
 	
 	//pSession_->SetEntity(entity);
 	//entity->AddIocpComponent<Queueabler>();
@@ -79,6 +69,24 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	const auto pos = entity->GetComp<PositionComponent>()->pos;
 	std::cout << (int)pkt_.channel_num() << std::endl;
 	Field::GetField(pkt_.channel_num())->EnterFieldWithFloatXY(pos.x + 512.f, pos.z + 512.f, entity);
+
+	if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_WARRIOR)
+	{
+		entity->GetComp<StatusSystem>()->SetSkill<WarriorDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
+
+		entity->GetComp<Inventory>()->SwapEquipment(
+			Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
+			DATA_TABLE->GetWeaponIDInt("Master Sword")
+		);
+	}
+	else if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_PRIEST)
+	{
+		entity->GetComp<StatusSystem>()->SetSkill<PriestDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
+		entity->GetComp<Inventory>()->SwapEquipment(
+			Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
+			DATA_TABLE->GetWeaponIDInt("Staff Priest")
+		);
+	}
 
 	//g_sector->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER)
 	//	, s

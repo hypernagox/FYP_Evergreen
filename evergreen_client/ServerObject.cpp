@@ -21,9 +21,7 @@ void ServerObject::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	ServerCompUpdateALL();
 }
-
-
-
+ 
 void ServerObject::SetNavigationMesh(const NAVI_MESH_TYPE eType) noexcept
 {
 	m_pNaviAgent->SetNavMesh(eType);
