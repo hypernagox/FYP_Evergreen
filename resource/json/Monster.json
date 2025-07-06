@@ -1,10 +1,10 @@
 {
   "Fox": {
-    "hp": 7,
+    "hp": 5,
     "DropItem": "Foxtail"
   },
   "Bear": {
-    "hp": 200,
+    "hp": 10,
     "DropItem": "Meat"
   }
 }

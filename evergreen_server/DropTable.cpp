@@ -48,9 +48,9 @@ void DropTable::TryCreateItem() const noexcept
 
 	auto pkt = p.CreateAddPacket(temp_ptr);
 
-	//owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(
-	//	std::move(pkt)
-	//);
+	owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(
+		std::move(pkt)
+	);
 
 	owner->GetCurField()->EnterFieldWithFloatXYNPC(
 		PositionComponent::GetXZWithOffsetGlobal(temp_ptr),
@@ -59,7 +59,7 @@ void DropTable::TryCreateItem() const noexcept
 
 	if (b.has_life_span && !item)
 	{
-		temp_ptr->AddComp<LifeSpanObj>()->InitLifeTimer(5000);
+		temp_ptr->AddComp<LifeSpanObj>()->InitLifeTimer(15000);
 	}
 
 	else if (item)

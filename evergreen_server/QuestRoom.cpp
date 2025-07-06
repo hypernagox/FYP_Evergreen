@@ -336,7 +336,7 @@ void BearQuest::InitQuestField() noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
-		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
+		AddMonster(EntityFactory::CreateBear, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 	SetQuestBeginPos(ViLLAGE_ENTRANCE);
 }
@@ -665,7 +665,7 @@ void CombinationBattleQuest::InitQuestField() noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
 		b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
-		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
+		AddMonster(EntityFactory::CreateBear, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 	SetQuestBeginPos(Vector3(-36.739315F, 88.53785F, -354.69366F));
 }
