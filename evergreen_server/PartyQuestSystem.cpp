@@ -42,8 +42,24 @@ bool PartyQuestSystem::MissionStart()
 		return false;
 	}
 
-	room->InitQuestField();
 	auto pkt = Create_s2c_PARTY_QUEST_START();
+
+	{
+		EXCLUSIVE_LOCK(m_partyLock);
+		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
+		{
+			const auto owner = m_member[i].get();
+			if (!owner)continue;
+			const auto session = owner->GetClientSession();
+			if (!session)continue;
+			session->SendAsync(pkt);
+		}
+	}
+
+	Sleep(500);
+
+	room->InitQuestField();
+
 	{
 		EXCLUSIVE_LOCK(m_partyLock);
 		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
@@ -61,7 +77,6 @@ bool PartyQuestSystem::MissionStart()
 				owner,
 				m_curQuestRoomInstance->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 			);
-			session->SendAsync(pkt);
 		}
 	}
 	return true;
@@ -88,6 +103,18 @@ void PartyQuestSystem::MissionEnd()
 	m_curQuestRoomInstance->FinishField();
 	m_curQuestRoomInstance.reset();
 	auto end_pkt = Create_s2c_QUEST_END();
+
+	for (const auto& mem : m_member)
+	{
+		if (!mem)continue;
+		const auto owner = mem.get();
+		const auto session = owner->GetClientSession();
+		const auto pos = owner->GetComp<PositionComponent>()->pos;
+		session->SendAsync(end_pkt);
+	}
+
+	Sleep(500);
+
 	for (const auto& mem : m_member)
 	{
 		// TODO: ±ÍÈ¯À§Ä¡
@@ -100,7 +127,6 @@ void PartyQuestSystem::MissionEnd()
 			owner,
 			m_prev_field->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 		);
-		session->SendAsync(end_pkt);
 		session->SendAsync(Create_s2c_FORCED_MOVE(mem->GetObjectID(), ToFlatVec(Vector3(-103.19971F, 75.85828F, 11.403826F))));
 	}
 	m_runFlag = false;
