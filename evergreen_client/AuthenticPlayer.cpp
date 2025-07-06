@@ -57,7 +57,11 @@ void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 	// TODO: 캐릭터의 전반적인 상태 관리 머신에 따른 행동 제어 필요
 	if (m_playerRenderer->GetCurrentState() == PlayerRenderer::AnimationState::Attack || m_playerRenderer->GetCurrentState() == PlayerRenderer::AnimationState::AttackEnd)
 		return;
-
+	// 죽거나 사망이면 이동못함
+	if (PlayerRenderer::AnimationState::Hit == m_playerRenderer->GetCurrentState())
+		return;
+	if (PlayerRenderer::AnimationState::Death == m_playerRenderer->GetCurrentState())
+		return;
 	const float deltaTime = DT;
 	Vector3 temp{};
 	vDelta.Normalize(temp);
@@ -265,7 +269,12 @@ void AuthenticPlayer::TryClickScreen()
 	// 플레이어가 공격 중인 상태 (쿨타임을 기다려야한다)
 	if (PlayerRenderer::AnimationState::Attack == m_playerRenderer->GetCurrentState())
 		return;
-
+	// 경직상태에선 공격 못함
+	if (PlayerRenderer::AnimationState::Hit == m_playerRenderer->GetCurrentState())
+		return;
+	// 죽는모션도 마찬가지임
+	if (PlayerRenderer::AnimationState::Death == m_playerRenderer->GetCurrentState())
+		return;
 	m_playerRenderer->Attack();
 	DoAttack();
 	//std::cout << "공격 시도\n";
@@ -389,6 +398,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 			acc1 = 5.f;
 		}
 	}
+
 	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->GetNaviAgent();
 	const auto prev_pos = GetSceneObject()->GetComponent<EntityMovement>()->prev_pos;
 	Vector3 temp = prev_pos;

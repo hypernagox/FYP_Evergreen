@@ -10,6 +10,7 @@ Navigator::Navigator()
 
 Navigator::~Navigator()
 {
+	DestroyTLS();
 	for (int i = 0; i < (int)NAVI_MESH_TYPE::END; ++i)
 	{
 		dtFreeNavMesh(const_cast<dtNavMesh*>(m_dt_nav_mesh[i]));
@@ -30,7 +31,7 @@ void Navigator::Init()noexcept
 
 void Navigator::InitTLS() noexcept
 {
-	static constinit std::mutex g_mt = {};
+	static std::mutex g_mt = {};
 	std::lock_guard<std::mutex> lk{ g_mt };
 	for (int i = 0; i < (int)NAVI_MESH_TYPE::END; ++i)
 	{
@@ -43,6 +44,8 @@ void Navigator::DestroyTLS() noexcept
 {
 	for (int i = 0; i < (int)NAVI_MESH_TYPE::END; ++i)
 	{
+		if (!m_arrNavMesh[i])continue;
 		delete m_arrNavMesh[i];
+		m_arrNavMesh[i] = nullptr;
 	}
 }
