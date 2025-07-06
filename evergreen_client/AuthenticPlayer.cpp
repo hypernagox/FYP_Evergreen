@@ -9,6 +9,7 @@
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
 #include "PlayerInventoryGUI.h"
+#include "PlayerEquipmentGUI.h"
 #include "PlayerCraftGUI.h"
 #include "Navigator.h"
 #include "GizmoSphereRenderer.h"
@@ -108,6 +109,11 @@ void AuthenticPlayer::SetPlayerInventoryGUI(PlayerInventoryGUI* playerInventoryG
 	m_playerInventoryGUI = playerInventoryGUI;
 }
 
+void AuthenticPlayer::SetPlayerEquipmentGUI(PlayerEquipmentGUI* playerEquipmentGUI) noexcept
+{
+	m_playerEquipmentGUI = playerEquipmentGUI;
+}
+
 void AuthenticPlayer::SetPlayerCraftGUI(PlayerCraftGUI* playerCraftGUI) noexcept
 {
 	m_playerCraftGUI = playerCraftGUI;
@@ -163,7 +169,7 @@ void AuthenticPlayer::SetQuickSlotItem(int index, uint8_t itemID)
 	// TODO: 클라이언트가 서버에게 해당 퀵슬롯에 대한 아이템 설정을 요청한다.
 }
 
-void AuthenticPlayer::SetPlayerWeapon(std::string_view weaponKey)
+void AuthenticPlayer::SetPlayerWeapon(std::string_view weaponKey, uint8_t itemID)
 {
 	// TODO: 서버에 플레이어의 무기를 설정하는 패킷을 전송한다.
 	// 이때 플레이어의 무기 정보는 ID(int) 로 전송되어야하며
@@ -179,6 +185,16 @@ void AuthenticPlayer::SetPlayerWeapon(std::string_view weaponKey)
 	);
 	// 자신의 플레이어 렌더러의 무기 모델을 설정하는 코드
 	m_playerRenderer->SetPlayerWeapon(weaponKey);
+	m_playerEquipmentGUI->UpdateSlotContents(this, 0, itemID); // 0번 인덱스는 무기 슬롯으로 가정
+}
+
+void AuthenticPlayer::SetPlayerArmor(std::string_view armorKey, int itemID)
+{
+	const int temp_armor_id = itemID >= 0;
+	Send(Create_c2s_CHANGE_EQUIPMENT(Nagox::Enum::EQUIPMENT_TYPE_ARMOR, temp_armor_id));
+
+	m_playerRenderer->SetEquipmentState(temp_armor_id > 0);
+	m_playerEquipmentGUI->UpdateSlotContents(this, 1, itemID); // 1번 인덱스는 갑옷 슬롯으로 가정
 }
 
 void AuthenticPlayer::UseQuickSlotItem(int index)
@@ -426,13 +442,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	{
 		//GetTransform()->SetLocalPosition(Vector3(312.29892F, 85.07235F, 138.55077F));
 		Send(Create_c2s_REQUEST_QUEST(Common::CommonQuestTable::GetCommonQuestInfo(L"여우 곰 잡기").quest_id));
-	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::L))
-	{
-		//GetTransform()->SetLocalPosition(Vector3(312.29892F, 85.07235F, 138.55077F));
-		static constinit bool temp_armor_id = false;
-		temp_armor_id = !temp_armor_id;
-		Send(Create_c2s_CHANGE_EQUIPMENT(Nagox::Enum::EQUIPMENT_TYPE_ARMOR, temp_armor_id));
 	}
 	GuideSystem::GetInst()->UpdateGuideSystem();
 	// 무브패킷 센드 업데이트

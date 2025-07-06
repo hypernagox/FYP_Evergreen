@@ -18,7 +18,7 @@ public:
 		return 0;
 	}
 private:
-	int id = 1;
+	int id = 0;
 	int atk = 1;
 	int def = 0;
 };

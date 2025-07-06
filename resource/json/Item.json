@@ -93,6 +93,38 @@
         "DropitemResource": "item\\ironore\\ironore_fbx.yms",
         "DropitemResourceDiffuse": "item\\ironore\\ironore_fbx_DefaultMaterial_BaseColor.png"
     },
+    "Zelda Armor 1": {
+        "Name": "젤다 갑옷 1",
+        "Description": "",
+        "Category": "Equipment",
+        "Subcategory": "Armor",
+        "ArmorKey": "Zelda Armor 1",
+        "Icon": "gui\\icon_zeldaequipment_1.png"
+    },
+    "Zelda Armor 2": {
+        "Name": "젤다 갑옷 2",
+        "Description": "",
+        "Category": "Equipment",
+        "Subcategory": "Armor",
+        "ArmorKey": "Zelda Armor 2",
+        "Icon": "gui\\icon_zeldaequipment_2.png"
+    },
+    "Priest Armor 1": {
+        "Name": "사제 갑옷 1",
+        "Description": "",
+        "Category": "Equipment",
+        "Subcategory": "Armor",
+        "ArmorKey": "Priest Armor 1",
+        "Icon": "gui\\icon_priestequipment_1.png"
+    },
+    "Priest Armor 2": {
+        "Name": "사제 갑옷 2",
+        "Description": "",
+        "Category": "Equipment",
+        "Subcategory": "Armor",
+        "ArmorKey": "Priest Armor 2",
+        "Icon": "gui\\icon_priestequipment_2.png"
+    },
     "Testitem": {
         "Name": "",
         "Description": "",

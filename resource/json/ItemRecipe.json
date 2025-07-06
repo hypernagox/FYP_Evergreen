@@ -19,5 +19,15 @@
     "Timber": 1,
     "Result Item": "Bow",
     "Result Num Of Item": 1
+  },
+  "Recipe_7": {
+    "Foxtail": 1,
+    "Result Item": "Zelda Armor 2",
+    "Result Num Of Item": 1
+  },
+  "Recipe_9": {
+    "Foxtail": 1,
+    "Result Item": "Priest Armor 2",
+    "Result Num Of Item": 1
   }
 }

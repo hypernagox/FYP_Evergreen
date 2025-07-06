@@ -11,6 +11,7 @@ class PlayerRenderer;
 class PlayerStatusGUI;
 class PlayerQuickSlotGUI;
 class PlayerInventoryGUI;
+class PlayerEquipmentGUI;
 class PlayerCraftGUI;
 
 // AuthenticPlayer는 우리가 조종할 수 있는 진짜의 플레이어를 나타내는 클래스
@@ -71,6 +72,8 @@ private:
 	PlayerStatusGUI* m_playerStatusGUI = nullptr;
 	PlayerQuickSlotGUI* m_playerQuickSlotGUI = nullptr;
 	PlayerInventoryGUI* m_playerInventoryGUI = nullptr;
+	PlayerEquipmentGUI* m_playerEquipmentGUI = nullptr;
+
 	PlayerCraftGUI* m_playerCraftGUI = nullptr;
 
 private:
@@ -100,6 +103,7 @@ public:
 	void SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexcept;
 	void SetPlayerQuickSlotGUI(PlayerQuickSlotGUI* playerQuickSlotGUI) noexcept;
 	void SetPlayerInventoryGUI(PlayerInventoryGUI* playerInventoryGUI) noexcept;
+	void SetPlayerEquipmentGUI(PlayerEquipmentGUI* playerEquipmentGUI) noexcept;
 	void SetPlayerCraftGUI(PlayerCraftGUI* playerCraftGUI) noexcept;
 	void OnHit(int damage);
 	void OnModifyInventory(uint8_t itemID, int delta);
@@ -108,7 +112,8 @@ public:
 
 	void SetQuickSlotItemOnBlank(uint8_t itemID);
 	void SetQuickSlotItem(int index, uint8_t itemID);
-	void SetPlayerWeapon(std::string_view weaponKey);
+	void SetPlayerWeapon(std::string_view weaponKey, uint8_t itemID);
+	void SetPlayerArmor(std::string_view armorKey, int itemID);
 	void UseQuickSlotItem(int index);
 	void CraftItem(int recipeIndex);
 

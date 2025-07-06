@@ -120,9 +120,9 @@ void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
     const float TerrainOffset = parameters.TerrainOffset;
 
     const Vector3 terrainPos = Vector3(TerrainOffset, 0, TerrainOffset);
-    const Vector3 terrainScale = Vector3(TerrainSize, TerrainHeight, TerrainSize);
+    const Vector3 terrainScale = Vector3::One * TerrainSize;
 
-    m_terrainMesh = CreateMeshFromHeightMap(parameters.HeightMap, 512, 512, 1.0f);
+    m_terrainMesh = CreateMeshFromHeightMap(parameters.HeightMap, 512, 512, TerrainHeight / TerrainSize);
     m_terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
     m_terrainMaterial = std::make_shared<udsdx::Material>();

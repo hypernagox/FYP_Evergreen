@@ -76,14 +76,11 @@ void PlayerRenderer::InitializeWarrior()
 		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
 		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
 	}
-	m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_body_BaseColor.png")));
-	m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
-	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
-	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
 
 	SetPlayerWeapon("Master Sword");
 	OnAnimationStateChange(AnimationState::Idle);
 	m_characterType = CharacterType::Warrior;
+	SetEquipmentState(false);
 }
 
 void PlayerRenderer::InitializePriest()
@@ -104,14 +101,11 @@ void PlayerRenderer::InitializePriest()
 		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
 		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
 	}
-	m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_2.png")));
-	m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_0.png")));
-	m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_2.png")));
-	m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_1.png")));
 
 	SetPlayerWeapon("Staff Priest");
 	OnAnimationStateChange(AnimationState::Idle);
 	m_characterType = CharacterType::Priest;
+	SetEquipmentState(false);
 }
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
@@ -135,8 +129,29 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 	m_stateMachine->Update(time.deltaTime);
 }
 
+void PlayerRenderer::SetEquipmentState(bool isEquipped)
+{
+	switch (m_characterType)
+	{
+		case CharacterType::Warrior:
+			m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"Zelda\\zelda_body_BaseColor_Armor.png" : L"Zelda\\zelda_body_BaseColor.png")));
+			m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
+			m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
+			m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
+			break;
+		case CharacterType::Priest:
+			m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_2a.png" : L"priest\\priest_diffuse_2.png")));
+			m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_0a.png" : L"priest\\priest_diffuse_0.png")));
+			m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_2a.png" : L"priest\\priest_diffuse_2.png")));
+			m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_1.png")));
+			break;
+	}
+}
+
 void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 {
+	std::wstring jogPrefix = m_characterType == CharacterType::Warrior ? L"Zelda\\AnimationJog\\" : L"priest\\AnimationJog\\";
+
 	switch (state)
 	{
 	case AnimationState::Idle:
@@ -144,28 +159,28 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.yac")), true);
 		break;
 	case AnimationState::RunForward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_fast.yac")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(jogPrefix + L"jog_forward_fast.yac")), true);
 		break;
 	case AnimationState::RunBackward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_slow.yac")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(jogPrefix + L"jog_backward_slow.yac")), true);
 		break;
 	case AnimationState::RunLeft:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_strafe_left.yac")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(jogPrefix + L"jog_strafe_left.yac")), true);
 		break;
 	case AnimationState::RunRight:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_strafe_right.yac")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(jogPrefix + L"jog_strafe_right.yac")), true);
 		break;
 	case AnimationState::RunLeftForward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_diagonal_left.yac")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(jogPrefix + L"jog_forward_diagonal_left.yac")), true);
 		break;
 	case AnimationState::RunRightForward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_forward_diagonal_right.yac")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(jogPrefix + L"jog_forward_diagonal_right.yac")), true);
 		break;
 	case AnimationState::RunLeftBackward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_diagonal_left.yac")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(jogPrefix + L"jog_backward_diagonal_left.yac")), true);
 		break;
 	case AnimationState::RunRightBackward:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\AnimationJog\\jog_backward_diagonal_right.yac")), true);
+		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(jogPrefix + L"jog_backward_diagonal_right.yac")), true);
 		break;
 	case AnimationState::Attack:
 		switch (m_characterType)

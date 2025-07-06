@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.h"
+#include "EnvironmentRenderer.h"
 
 class MinimapRenderer
 {
@@ -21,6 +22,7 @@ public:
 public:
 	udsdx::Texture* GetRenderTargetTexture() const { return m_renderTargetTexture.get(); }
 	void SetMinimapMesh(udsdx::Mesh* mesh) { m_minimapMesh = mesh; }
+	void SetMinimapEnvironment(const EnvironmentParameters& environmentParams);
 
 public:
 	static constexpr DXGI_FORMAT RENDER_FORMAT = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -50,6 +52,8 @@ private:
 	udsdx::Mesh* m_minimapMesh = nullptr;
 	std::unique_ptr<udsdx::Texture> m_renderTargetTexture;
 
+	udsdx::Matrix4x4 m_worldMatrix;
 	udsdx::Matrix4x4 m_viewMatrix;
+	udsdx::Matrix4x4 m_projectionMatrix;
 };
 

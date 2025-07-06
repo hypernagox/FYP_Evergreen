@@ -98,7 +98,12 @@ void PlayerInventoryGUI::SelectInventorySlot(AuthenticPlayer* target, int id)
 		if (subcategory == "Weapon")
 		{
 			auto weapon = GET_DATA(std::string, "Item", itemName, "WeaponKey");
-			target->SetPlayerWeapon(weapon);
+			target->SetPlayerWeapon(weapon, id);
+		}
+		else if (subcategory == "Armor")
+		{
+			auto armor = GET_DATA(std::string, "Item", itemName, "ArmorKey");
+			target->SetPlayerArmor(armor, id);
 		}
 	}
 }

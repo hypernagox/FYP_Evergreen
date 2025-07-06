@@ -19,6 +19,7 @@
 #include "PlayerStatusGUI.h"
 #include "PlayerQuickSlotGUI.h"
 #include "PlayerInventoryGUI.h"
+#include "PlayerEquipmentGUI.h"
 #include "PlayerCraftGUI.h"
 #include "QuestGUI.h"
 #include "LogFloatGUI.h"
@@ -181,7 +182,6 @@ void GameScene::OnAttach()
         GuideSystem::GetInst()->AddHarvestMeshObject(treeObj);
 
         m_minimapRenderer = std::make_unique<MinimapRenderer>(INSTANCE(Core)->GetDevice(), 256, 256);
-        m_minimapRenderer->SetMinimapMesh(environmentRenderer->GetTerrainMesh());
     }
 
     {
@@ -288,6 +288,12 @@ void GameScene::OnAttach()
         m_heroComponent->SetPlayerInventoryGUI(inventoryRenderer);
         m_inventoryObj->SetActive(false);
 
+        m_equipmentObj = std::make_shared<SceneObject>();
+        auto equipmentRenderer = m_equipmentObj->AddComponent<PlayerEquipmentGUI>();
+        m_playerInterfaceGroup->AddChild(m_equipmentObj);
+        m_heroComponent->SetPlayerEquipmentGUI(equipmentRenderer);
+        m_equipmentObj->SetActive(false);
+
         m_craftObj = std::make_shared<SceneObject>();
         auto craftComp = m_craftObj->AddComponent<PlayerCraftGUI>();
         m_playerInterfaceGroup->AddChild(m_craftObj);
@@ -379,8 +385,21 @@ void GameScene::Update(const Time& time)
             if (m_inventoryObj->GetActive())
                 m_popupGUIManager->Pop(m_inventoryObj, true);
             else
+            {
                 m_popupGUIManager->Append(m_inventoryObj);
+                m_popupGUIManager->Pop(m_equipmentObj, true);
+            }
         }
+        if (INSTANCE(Input)->GetKeyDown(Keyboard::O))
+        {
+			if (m_equipmentObj->GetActive())
+				m_popupGUIManager->Pop(m_equipmentObj, true);
+            else
+            {
+                m_popupGUIManager->Append(m_equipmentObj);
+                m_popupGUIManager->Pop(m_inventoryObj, true);
+            }
+		}
         if (INSTANCE(Input)->GetKeyDown(Keyboard::C))
         {
             if (m_craftObj->GetActive())
@@ -551,10 +570,14 @@ void GameScene::ChangeGameScene(GameSceneType type)
 		case GameSceneType::Default:
             m_heroServerObject->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
             m_defaultEnvironmentObject->SetActive(true);
+            m_minimapRenderer->SetMinimapMesh(m_defaultEnvironmentObject->GetComponent<EnvironmentRenderer>()->GetTerrainMesh());
+            m_minimapRenderer->SetMinimapEnvironment(g_defaultEnvironmentParam);
 			break;
 		case GameSceneType::Dungeon:
             m_heroServerObject->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
             m_dungeonEnvironmentObject->SetActive(true);
+            m_minimapRenderer->SetMinimapMesh(m_dungeonEnvironmentObject->GetComponent<EnvironmentRenderer>()->GetTerrainMesh());
+            m_minimapRenderer->SetMinimapEnvironment(g_dungeonEnvironmentParam);
 			break;
 	}
 }

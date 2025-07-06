@@ -225,18 +225,9 @@ void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam)
 
 	pCommandList->SetPipelineState(m_pipelineState.Get());
 
-	const float TerrainSize = GET_DATA(float,"GlobalValues", "TerrainSize", "Value");
-	Matrix4x4 transformWorld = Matrix4x4::CreateScale(TerrainSize) * Matrix4x4::CreateTranslation(-TerrainSize * 0.5f, 0.0f, -TerrainSize * 0.5f);
-	Matrix4x4 transformView;
-	Matrix4x4 transformProjection;
-	DirectX::XMStoreFloat4x4(&transformProjection, XMMatrixOrthographicLH(512.0f, 512.0f, -1000.0f, 1000.0f));
-
-	transformWorld = transformWorld.Transpose();
-	transformProjection = transformProjection.Transpose();
-
-	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &transformWorld, 0);
+	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_worldMatrix, 0);
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_viewMatrix, 16);
-	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &transformProjection, 32);
+	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_projectionMatrix, 32);
 
 	// Draw the minimap mesh
 	auto vbv = m_minimapMesh->VertexBufferView();
@@ -254,4 +245,12 @@ void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam)
 	}
 
 	pCommandList->ResourceBarrier(1, &barrier[1]);
+}
+
+void MinimapRenderer::SetMinimapEnvironment(const EnvironmentParameters& environmentParams)
+{
+	m_worldMatrix = (
+		Matrix4x4::CreateScale(environmentParams.TerrainSize) *
+		Matrix4x4::CreateTranslation(environmentParams.TerrainOffset, 0.0f, environmentParams.TerrainOffset)).Transpose();
+	m_projectionMatrix = Matrix4x4::CreateOrthographic(512.0f, 512.0f, -1000.0f, 1000.0f).Transpose();
 }

@@ -58,6 +58,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_playerInterfaceGroup;
 	std::shared_ptr<udsdx::SceneObject> m_focusAgentObj;
 	std::shared_ptr<udsdx::SceneObject> m_inventoryObj;
+	std::shared_ptr<udsdx::SceneObject> m_equipmentObj;
 	std::shared_ptr<udsdx::SceneObject> m_tutorialObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftObj;
 	std::shared_ptr<udsdx::SceneObject> m_pauseMenuObj;

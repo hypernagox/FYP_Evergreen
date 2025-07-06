@@ -491,6 +491,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PlayerCraftGUI.cpp" />
+    <ClCompile Include="PlayerEquipmentGUI.cpp" />
     <ClCompile Include="PlayerInventoryGUI.cpp" />
     <ClCompile Include="PlayerQuickSlotGUI.cpp" />
     <ClCompile Include="PlayerRenderer.cpp" />
@@ -574,6 +575,7 @@
     <ClInclude Include="PartyStatusGUI.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerCraftGUI.h" />
+    <ClInclude Include="PlayerEquipmentGUI.h" />
     <ClInclude Include="PlayerInventoryGUI.h" />
     <ClInclude Include="PlayerQuickSlotGUI.h" />
     <ClInclude Include="PlayerRenderer.h" />

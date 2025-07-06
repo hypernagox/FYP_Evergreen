@@ -596,6 +596,7 @@ const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::
 		{
 			// TODO: 무기 외의 정보도 동기화 필요함
 			renderer->SetPlayerWeapon(DATA_TABLE->GetWeaponIDStr(pkt_.weapon_id()));
+			renderer->SetEquipmentState(armor_id > 0);
 		}
 	}
 	else

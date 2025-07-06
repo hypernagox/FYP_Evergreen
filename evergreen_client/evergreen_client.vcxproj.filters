@@ -312,6 +312,9 @@
     <ClCompile Include="QuestGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerEquipmentGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -522,6 +525,9 @@
       <Filter>Gui</Filter>
     </ClInclude>
     <ClInclude Include="QuestGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerEquipmentGUI.h">
       <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>

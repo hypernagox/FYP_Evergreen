@@ -49,6 +49,7 @@ public:
 	void Update(const Time& time, Scene& scene) override;
 
 	Transform* const GetRenderObjTransform() const noexcept { return m_rendererObj->GetTransform(); }
+	void SetEquipmentState(bool isEquipped);
 	void SetRotation(const Quaternion& rotation) { m_rendererObj->GetTransform()->SetLocalRotation(rotation); }
 	void SetAnimation(AnimationClip* animationClip, bool loop, bool forcePlay) { m_renderer->SetAnimation(animationClip, loop, forcePlay); }
 	void OnAnimationStateChange(const AnimationState& state);
