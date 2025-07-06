@@ -221,12 +221,12 @@ void AuthenticPlayer::CraftItem(int recipeIndex)
 
 void AuthenticPlayer::RequestQuestStart()
 {
-	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() { Send(Create_c2s_QUEST_START()); }, L"퀘스트를 시작하는 중 ...");
+	Send(Create_c2s_QUEST_START());
 }
 
 void AuthenticPlayer::RequestQuestEnd()
 {
-	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() { Send(Create_c2s_QUEST_END()); }, L"위치로 돌아가는 중 ...");
+	Send(Create_c2s_QUEST_END());
 }
 
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)

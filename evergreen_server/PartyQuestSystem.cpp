@@ -43,7 +43,7 @@ bool PartyQuestSystem::MissionStart()
 	}
 
 	room->InitQuestField();
-
+	auto pkt = Create_s2c_PARTY_QUEST_START();
 	{
 		EXCLUSIVE_LOCK(m_partyLock);
 		for (int i = 0; i < NUM_OF_MAX_PARTY_MEMBER; ++i)
@@ -61,6 +61,7 @@ bool PartyQuestSystem::MissionStart()
 				owner,
 				m_curQuestRoomInstance->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 			);
+			session->SendAsync(pkt);
 		}
 	}
 	return true;
@@ -86,6 +87,7 @@ void PartyQuestSystem::MissionEnd()
 	if (!CanMissionEnd())return;
 	m_curQuestRoomInstance->FinishField();
 	m_curQuestRoomInstance.reset();
+	auto end_pkt = Create_s2c_QUEST_END();
 	for (const auto& mem : m_member)
 	{
 		// TODO: ±ÍÈ¯À§Ä¡
@@ -98,7 +100,8 @@ void PartyQuestSystem::MissionEnd()
 			owner,
 			m_prev_field->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 		);
-		mem->GetClientSession()->SendAsync(Create_s2c_FORCED_MOVE(mem->GetObjectID(), ToFlatVec(Vector3(-103.19971F, 75.85828F, 11.403826F))));
+		session->SendAsync(end_pkt);
+		session->SendAsync(Create_s2c_FORCED_MOVE(mem->GetObjectID(), ToFlatVec(Vector3(-103.19971F, 75.85828F, 11.403826F))));
 	}
 	m_runFlag = false;
 }

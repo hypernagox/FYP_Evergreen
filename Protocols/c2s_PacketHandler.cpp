@@ -509,11 +509,6 @@ const bool Handle_c2s_QUEST_END(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 //	std::cout << "Not Clear \n";
 //	return true;
 //}
-	for (const auto& member : cur_party->GetPartyMembers())
-	{
-		if (!member)continue;
-		member->GetClientSession()->SendAsync(Create_s2c_QUEST_END());
-	}
 	cur_party->MissionEnd();
 	return true;
 }
