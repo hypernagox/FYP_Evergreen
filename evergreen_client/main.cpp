@@ -70,6 +70,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     GuideSystem::GetInst()->Init();
     NAVIGATION->Init();
+    NAVIGATION->InitTLS();
     NAVIGATION->RegisterDestroy();
     Common::DataRegistry::Load();
     s2c_PacketHandler::Init();
@@ -108,7 +109,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         NetMgr(NetworkMgr)->RegisterLoginRoutine(ProcessLogin);
     }
-
+    // TODO: 스레드로칼인 네비메시의 해제 타이밍을 못잡겠음 릭 발생한다면 제보 바람.
     return UpdownStudio::Run(mainScene, nCmdShow);
 }
 

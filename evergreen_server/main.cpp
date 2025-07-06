@@ -142,15 +142,12 @@ public:
 		const volatile auto init_builder = GetBuilder();
 		extern thread_local std::unordered_map<uint64_t, std::pair<ZeroInt, std::array<dtPolyRef, 10>>> tl_poly_vec;
 		tl_poly_vec.reserve(128);
-		NAVIGATION->Init();
+		NAVIGATION->InitTLS();
 	}
 
 	virtual void TLSDestroy()noexcept override
 	{
-		for (int i = 0; i < (int)NAVI_MESH_TYPE::END; ++i)
-		{
-			NAVIGATION->GetNavMesh(static_cast<NAVI_MESH_TYPE>(i))->FreeNavMeshQuery();
-		}
+		NAVIGATION->DestroyTLS();
 	}
 	
 	virtual void GlobalDestroy()noexcept override
@@ -189,6 +186,7 @@ int main()
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 
 	PartyQuestTable::InitPartyQuestTable();
+	NAVIGATION->Init();
 	Common::CommonQuestTable::LoadCommonQuest();
 
 	ClusterInfoHelper::RegisterClusterFilter(GlobalClusterFilter);

@@ -1,106 +1,99 @@
 
 Thread 1 Func Log: 
-FuncName: TickTimerBT::TimerUpdate, CallCount: 8, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 806570, TotalCallTime: 42164ms, Avg: 0.052276 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 3304221, TotalCallTime: 8819ms, Avg: 0.002669 ms
 
  -----ID 1 Func Log End----- 
 
 
 Thread 2 Func Log: 
-FuncName: TickTimerBT::TimerUpdate, CallCount: 6, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 630515, TotalCallTime: 33461ms, Avg: 0.053069 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2834522, TotalCallTime: 10310ms, Avg: 0.003637 ms
 
  -----ID 2 Func Log End----- 
 
 
 Thread 3 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 8, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 796745, TotalCallTime: 42019ms, Avg: 0.052738 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 3278278, TotalCallTime: 8454ms, Avg: 0.002579 ms
 
  -----ID 3 Func Log End----- 
 
 
 Thread 4 Func Log: 
-FuncName: TickTimerBT::TimerUpdate, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 635147, TotalCallTime: 32443ms, Avg: 0.051080 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2834588, TotalCallTime: 8986ms, Avg: 0.003170 ms
 
  -----ID 4 Func Log End----- 
 
 
 Thread 5 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 634934, TotalCallTime: 34214ms, Avg: 0.053886 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2836685, TotalCallTime: 9223ms, Avg: 0.003251 ms
 
  -----ID 5 Func Log End----- 
 
 
 Thread 6 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 4, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 800962, TotalCallTime: 43137ms, Avg: 0.053856 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 3298545, TotalCallTime: 9014ms, Avg: 0.002733 ms
 
  -----ID 6 Func Log End----- 
 
 
 Thread 7 Func Log: 
-FuncName: TickTimerBT::TimerUpdate, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 633530, TotalCallTime: 34562ms, Avg: 0.054555 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2818795, TotalCallTime: 9939ms, Avg: 0.003526 ms
 
  -----ID 7 Func Log End----- 
 
 
 Thread 8 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 5, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 633887, TotalCallTime: 35018ms, Avg: 0.055243 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2839621, TotalCallTime: 9467ms, Avg: 0.003334 ms
 
  -----ID 8 Func Log End----- 
 
 
 Thread 9 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 3, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 632965, TotalCallTime: 34192ms, Avg: 0.054019 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2836540, TotalCallTime: 9080ms, Avg: 0.003201 ms
 
  -----ID 9 Func Log End----- 
 
 
 Thread 10 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 8, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 799200, TotalCallTime: 41945ms, Avg: 0.052484 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 3306196, TotalCallTime: 9032ms, Avg: 0.002732 ms
 
  -----ID 10 Func Log End----- 
 
 
 Thread 11 Func Log: 
-FuncName: TickTimerBT::TimerUpdate, CallCount: 6, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 637379, TotalCallTime: 34791ms, Avg: 0.054584 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2863365, TotalCallTime: 9770ms, Avg: 0.003412 ms
 
  -----ID 11 Func Log End----- 
 
 
 Thread 12 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 8, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 635609, TotalCallTime: 33700ms, Avg: 0.053020 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 2826702, TotalCallTime: 10254ms, Avg: 0.003628 ms
 
  -----ID 12 Func Log End----- 
 
 
-Thread 13 Func Log: 
-FuncName: TickTimerBT::TimerUpdate, CallCount: 11, TotalCallTime: 0ms, Avg: 0.000000 ms
-
- -----ID 13 Func Log End----- 
-
-
-Thread 14 Func Log: 
-FuncName: Handle_c2s_MOVE, CallCount: 1, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 6, TotalCallTime: 0ms, Avg: 0.000000 ms
-
- -----ID 14 Func Log End----- 
-
-
 Total Result 
 
-FuncName: Handle_c2s_MOVE, CallCount: 8, TotalCallTime: 0ms, Avg: 0.000000 ms
-FuncName: TickTimerBT::TimerUpdate, CallCount: 84, TotalCallTime: 0ms, Avg: 0.000000 ms
+FuncName: Handle_c2s_MOVE, CallCount: 8277443, TotalCallTime: 441646ms, Avg: 0.053355 ms
+FuncName: TickTimerBT::TimerUpdate, CallCount: 35878058, TotalCallTime: 112348ms, Avg: 0.003131 ms
 
 
-Server Running Time: 25.53 seconds, Total Func Acc Time: 0.00 seconds / 0 ms
+Server Running Time: 1698.95 seconds, Total Func Acc Time: 553.99 seconds / 553994 ms
 
 
 
 Total Percentage
 
-Total Func Time is Zero
+FuncName: Handle_c2s_MOVE, 79.72% 
+FuncName: TickTimerBT::TimerUpdate, 20.28% 

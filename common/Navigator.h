@@ -20,11 +20,14 @@ class Navigator
 	~Navigator();
 public:
 	void Init()noexcept;
+	void InitTLS()noexcept;
+	void DestroyTLS()noexcept;
 public:
-	Common::NavigationMesh* GetNavMesh(const NAVI_MESH_TYPE eType)const noexcept { return m_arrNavMesh[(int)eType]; }
+	Common::NavigationMesh* const GetNavMesh(const NAVI_MESH_TYPE eType)const noexcept { return m_arrNavMesh[(int)eType]; }
 
 private:
-	static inline thread_local constinit Common::NavigationMesh* m_arrNavMesh[(int)NAVI_MESH_TYPE::END] = {};
+	static inline constinit const dtNavMesh* m_dt_nav_mesh[(int)NAVI_MESH_TYPE::END] = { nullptr };
+	static inline thread_local constinit Common::NavigationMesh* m_arrNavMesh[(int)NAVI_MESH_TYPE::END] = { nullptr };
 };
 
 #define NAVIGATION (Navigator::GetInst())

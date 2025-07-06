@@ -44,7 +44,7 @@ namespace Common
             return {};
         }
        // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->GetCrowd()->requestMoveTarget(idx, dest_poly, &dest_z_pos.x);
-       extern thread_local std::unordered_map<uint64_t, std::pair<ZeroInt, std::array<dtPolyRef, 10>>> tl_poly_vec;
+       extern thread_local std::unordered_map<uint64_t, std::pair<ZeroInt, std::array<dtPolyRef, PATH_COUNT>>> tl_poly_vec;
        uint64_t start_poly64 = (uint64_t)start_poly;
        uint64_t dest_poly64 = (uint64_t)dest_poly;
        if (start_poly64 > dest_poly64)std::swap(start_poly64, dest_poly64);

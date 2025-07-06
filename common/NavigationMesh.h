@@ -4,6 +4,7 @@
 
 class dtNavMesh;
 class dtNavMeshQuery;
+class Navigator;
 
 namespace Common
 {
@@ -11,10 +12,11 @@ namespace Common
 
 	class NavigationMesh
 	{
+		friend class Navigator;
 	public:
 		NavigationMesh();
 		virtual ~NavigationMesh();
-		int Init(const std::wstring_view path);
+		int Init(const dtNavMesh* const p_nav_mesh);
 	public:
 		void GetRandomPos(Vector3& out_pos, NaviCell& outCell)const noexcept;
 	public:
@@ -37,17 +39,16 @@ namespace Common
 			nav->init(m_navMesh, 256);
 			return nav;
 		}
-		void FreeNavMeshQuery()const noexcept { dtFreeNavMeshQuery(const_cast<dtNavMeshQuery*>(GetNavMeshQuery())); }
 		const dtNavMeshQuery* const GetNavMeshQuery()const noexcept { return m_nav_q; }
-		dtQueryFilter* const GetNavFilter()const noexcept { return const_cast<NavigationMesh*>(this)->m_filter; }
+		const dtQueryFilter* const GetNavFilter()const noexcept { return const_cast<NavigationMesh*>(this)->m_filter; }
 		NaviCell GetNaviCell(Vector3& pos)const noexcept { return NaviCell{ pos,this }; }
 	protected:
 		static int ParseJson(const std::wstring_view path, rapidjson::Document& doc);
 		static int FullPolyDataFromJsonObj(rapidjson::Document& doc, struct rcPolyMesh& mesh);
 	private:
 		dtNavMeshQuery* m_nav_q = nullptr;
-		dtNavMesh* m_navMesh;
-		dtQueryFilter* m_filter;
-		static constexpr float m_polyPickExt[3]{ 2,4,2 };
+		const dtNavMesh* m_navMesh = nullptr;
+		dtQueryFilter* m_filter = nullptr;
+		static constexpr const float m_polyPickExt[3]{ 2,4,2 };
 	};
 }

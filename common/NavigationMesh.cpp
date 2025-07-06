@@ -34,19 +34,22 @@ namespace Common
 
 	NavigationMesh::~NavigationMesh()
 	{
-		// TODO: crowd 동시성제어
-		dtFreeNavMesh(m_navMesh);
 		delete m_filter;
+		dtFreeNavMeshQuery(const_cast<dtNavMeshQuery*>(GetNavMeshQuery()));
 	}
 
-	int NavigationMesh::Init(const std::wstring_view path)
+	int NavigationMesh::Init(const dtNavMesh* const p_nav_mesh)
 	{
-		m_navMesh = LoadNavMesh(path);
+		m_navMesh = p_nav_mesh;
 		if (m_navMesh != NULL)
 		{
 			m_filter = new dtQueryFilter;
 			m_filter->setIncludeFlags(0xFFFF);
 			m_filter->setExcludeFlags(0);
+		}
+		else
+		{
+			std::cout << "Fail to Load Navmesh\n";
 		}
 		m_nav_q = InitNavMeshQuery();
 		return m_navMesh != NULL ? 1 : 0;
