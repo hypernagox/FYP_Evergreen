@@ -17,7 +17,7 @@ public:
 	void OnDetach();
 
 public:
-	void PassRender(udsdx::RenderParam& renderParam);
+	void PassRender(udsdx::RenderParam& renderParam, const std::vector<Vector3>& marks);
 
 public:
 	udsdx::Texture* GetRenderTargetTexture() const { return m_renderTargetTexture.get(); }
@@ -34,6 +34,7 @@ private:
 
 	ComPtr<ID3D12RootSignature> m_rootSignature;
 	ComPtr<ID3D12PipelineState> m_pipelineState;
+	ComPtr<ID3D12PipelineState> m_markPipelineState;
 
 	ComPtr<ID3D12Resource> m_renderTarget;
 	ComPtr<ID3D12Resource> m_depthStencil;
@@ -51,6 +52,7 @@ private:
 
 	udsdx::Mesh* m_minimapMesh = nullptr;
 	std::unique_ptr<udsdx::Texture> m_renderTargetTexture;
+	udsdx::Texture* m_markTexture = nullptr;
 
 	udsdx::Matrix4x4 m_worldMatrix;
 	udsdx::Matrix4x4 m_viewMatrix;

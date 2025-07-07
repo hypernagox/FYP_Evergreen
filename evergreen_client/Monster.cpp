@@ -2,6 +2,7 @@
 #include "Monster.h"
 #include "EntityMovement.h"
 #include "MonsterHPPanel.h"
+#include "GameScene.h"
 
 Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 {
@@ -40,6 +41,11 @@ void Monster::Update(const Time& time, Scene& scene)
 	*m_stateMachine->GetConditionRefFloat("Speed") = distance;
 	m_lastPosition = m_entityMovement->GetPosition();
 	m_stateMachine->Update(time.deltaTime);
+
+	if (GameScene* gameScene = dynamic_cast<GameScene*>(&scene))
+	{
+		gameScene->AddMinimapMark(GetTransform()->GetLocalPosition());
+	}
 }
 
 void Monster::OnAttackToPlayer()
