@@ -440,13 +440,14 @@ void GameScene::Update(const Time& time)
     playerForwardXZ.y -= 0.5f;
     playerForwardXZ.Normalize();
     m_minimapRenderer->SetViewMatrix(playerPosition, playerForwardXZ);
+    m_minimapMarks.clear();
 
     Scene::Update(time);
 }
 
 void GameScene::Render(udsdx::RenderParam& param)
 {
-    m_minimapRenderer->PassRender(param);
+    m_minimapRenderer->PassRender(param, m_minimapMarks);
 
     Scene::Render(param);
 }
@@ -599,6 +600,11 @@ void GameScene::ChangeGameScene(GameSceneType type)
             m_minimapRenderer->SetMinimapEnvironment(g_dungeonEnvironmentParam);
 			break;
 	}
+}
+
+void GameScene::AddMinimapMark(const Vector3& position)
+{
+    m_minimapMarks.emplace_back(position);
 }
 
 std::vector<InteractiveEntity*> GameScene::GetInteractiveEntities() const

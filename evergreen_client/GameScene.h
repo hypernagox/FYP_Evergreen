@@ -36,6 +36,7 @@ public:
 	bool GetSpectatorMode() const { return m_bSpectatorMode; }
 	void RequestChangeGameScene(GameSceneType type);
 	void ChangeGameScene(GameSceneType type);
+	void AddMinimapMark(const Vector3& position);
 	std::vector<InteractiveEntity*> GetInteractiveEntities() const;
 
 	udsdx::Camera* GetMainCamera() const;
@@ -79,6 +80,7 @@ private:
 	bool m_bSpectatorMode = false;
 
 	std::unique_ptr<MinimapRenderer> m_minimapRenderer;
+	std::vector<Vector3> m_minimapMarks;
 
 	int m_currentChannelID = 0;
 };

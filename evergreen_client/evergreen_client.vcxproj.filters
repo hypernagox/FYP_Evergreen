@@ -560,5 +560,14 @@
     <FxCompile Include="ps_minimap_pass.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
+    <FxCompile Include="vs_minimapmark_pass.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="gs_minimapmark_pass.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="ps_minimapmark_pass.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

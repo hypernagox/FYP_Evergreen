@@ -17,6 +17,8 @@ MinimapRenderer::MinimapRenderer(ID3D12Device* device, UINT width, UINT height) 
 
 	m_renderTargetTexture = std::make_unique<udsdx::Texture>(m_renderTarget.Get(), m_srvCpuHandle, m_srvGpuHandle);
 	SetViewMatrix(udsdx::Vector3(0.0f, 100.0f, 0.0f), udsdx::Vector3(0.0f, -1.0f, 0.0f));
+
+	m_markTexture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap\\monster_normal_icon.png"));
 }
 
 MinimapRenderer::~MinimapRenderer()
@@ -25,11 +27,18 @@ MinimapRenderer::~MinimapRenderer()
 
 void MinimapRenderer::BuildRootSignature()
 {
-	CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
+	CD3DX12_DESCRIPTOR_RANGE descriptorRange[1];
+	descriptorRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND);
 
-	slotRootParameter[0].InitAsConstants(48, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+	slotRootParameter[0].InitAsConstants(48, 0, 0, D3D12_SHADER_VISIBILITY_ALL);
+	slotRootParameter[1].InitAsDescriptorTable(1, descriptorRange, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(_countof(slotRootParameter), slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	// Create a static sampler
+	CD3DX12_STATIC_SAMPLER_DESC samplerDesc(0, D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+				D3D12_TEXTURE_ADDRESS_MODE_CLAMP, D3D12_TEXTURE_ADDRESS_MODE_CLAMP, D3D12_TEXTURE_ADDRESS_MODE_CLAMP);
+
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(_countof(slotRootParameter), slotRootParameter, 1, &samplerDesc, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
 	ComPtr<ID3DBlob> errorBlob = nullptr;
@@ -137,42 +146,104 @@ void MinimapRenderer::BuildDescriptors(udsdx::DescriptorParam& descriptorParam)
 
 void MinimapRenderer::BuildPipelineStateObject()
 {
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
-	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	{
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
+		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
-	psoDesc.pRootSignature = m_rootSignature.Get();
-	psoDesc.InputLayout = { Vertex::DescriptionTable, Vertex::DescriptionTableSize };
-	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	psoDesc.SampleMask = UINT_MAX;
-	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	psoDesc.NumRenderTargets = 1;
-	psoDesc.SampleDesc.Count = 1;
-	psoDesc.SampleDesc.Quality = 0;
-	psoDesc.RTVFormats[0] = RENDER_FORMAT;
-	psoDesc.DSVFormat = DEPTH_FORMAT;
+		psoDesc.pRootSignature = m_rootSignature.Get();
+		psoDesc.InputLayout = { Vertex::DescriptionTable, Vertex::DescriptionTableSize };
+		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		psoDesc.DepthStencilState.DepthEnable = TRUE;
+		psoDesc.SampleMask = UINT_MAX;
+		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		psoDesc.NumRenderTargets = 1;
+		psoDesc.SampleDesc.Count = 1;
+		psoDesc.SampleDesc.Quality = 0;
+		psoDesc.RTVFormats[0] = RENDER_FORMAT;
+		psoDesc.DSVFormat = DEPTH_FORMAT;
+
+		{
+			auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_minimap_pass.cso");
+			auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_minimap_pass.cso");
+
+			psoDesc.VS =
+			{
+				reinterpret_cast<BYTE*>(vsByteCode.data()),
+				vsByteCode.size()
+			};
+			psoDesc.PS =
+			{
+				reinterpret_cast<BYTE*>(psByteCode.data()),
+				psByteCode.size()
+			};
+
+			ThrowIfFailed(m_device->CreateGraphicsPipelineState(
+				&psoDesc,
+				IID_PPV_ARGS(m_pipelineState.GetAddressOf())
+			));
+			m_pipelineState->SetName(L"MinimapRenderer::PassRender");
+		}
+	}
 
 	{
-		auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_minimap_pass.cso");
-		auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_minimap_pass.cso");
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
+		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 
-		psoDesc.VS =
-		{
-			reinterpret_cast<BYTE*>(vsByteCode.data()),
-			vsByteCode.size()
-		};
-		psoDesc.PS =
-		{
-			reinterpret_cast<BYTE*>(psByteCode.data()),
-			psByteCode.size()
-		};
+		psoDesc.pRootSignature = m_rootSignature.Get();
+		psoDesc.InputLayout = { nullptr, 0 };
+		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 
-		ThrowIfFailed(m_device->CreateGraphicsPipelineState(
-			&psoDesc,
-			IID_PPV_ARGS(m_pipelineState.GetAddressOf())
-		));
-		m_pipelineState->SetName(L"MinimapRenderer::PassRender");
+		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		// typical blend state for gui rendering
+		psoDesc.BlendState.RenderTarget[0].BlendEnable = TRUE;
+		psoDesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		psoDesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		psoDesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		psoDesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+		psoDesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+		psoDesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		psoDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+
+		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		psoDesc.DepthStencilState.DepthEnable = FALSE; // Disable depth testing for minimap marks
+		psoDesc.SampleMask = UINT_MAX;
+		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+		psoDesc.NumRenderTargets = 1;
+		psoDesc.SampleDesc.Count = 1;
+		psoDesc.SampleDesc.Quality = 0;
+		psoDesc.RTVFormats[0] = RENDER_FORMAT;
+		psoDesc.DSVFormat = DEPTH_FORMAT;
+
+		{
+			auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_minimapmark_pass.cso");
+			auto gsByteCode = DX::ReadData(L"compiled_shaders\\gs_minimapmark_pass.cso");
+			auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_minimapmark_pass.cso");
+
+			psoDesc.VS =
+			{
+				reinterpret_cast<BYTE*>(vsByteCode.data()),
+				vsByteCode.size()
+			};
+			psoDesc.GS =
+			{
+				reinterpret_cast<BYTE*>(gsByteCode.data()),
+				gsByteCode.size()
+			};
+			psoDesc.PS =
+			{
+				reinterpret_cast<BYTE*>(psByteCode.data()),
+				psByteCode.size()
+			};
+
+			ThrowIfFailed(m_device->CreateGraphicsPipelineState(
+				&psoDesc,
+				IID_PPV_ARGS(m_markPipelineState.GetAddressOf())
+			));
+			m_markPipelineState->SetName(L"MinimapRenderer::PassRenderMark");
+		}
 	}
 }
 
@@ -197,7 +268,7 @@ void MinimapRenderer::OnDetach()
 	INSTANCE(Core)->ApplyDescriptorParameters(rootParam);
 }
 
-void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam)
+void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam, const std::vector<Vector3>& marks)
 {
 	CD3DX12_RESOURCE_BARRIER barrier[2];
 	barrier[0] = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -228,6 +299,7 @@ void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam)
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_worldMatrix, 0);
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_viewMatrix, 16);
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_projectionMatrix, 32);
+	pCommandList->SetGraphicsRootDescriptorTable(1, m_markTexture->GetSrvGpu());
 
 	// Draw the minimap mesh
 	auto vbv = m_minimapMesh->VertexBufferView();
@@ -244,6 +316,21 @@ void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam)
 		pCommandList->DrawIndexedInstanced(submesh.IndexCount, 1, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 	}
 
+	// Draw minimap marks
+	pCommandList->SetPipelineState(m_markPipelineState.Get());
+
+	pCommandList->IASetVertexBuffers(0, 0, nullptr);
+	pCommandList->IASetIndexBuffer(nullptr);
+	pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	for (const auto& mark : marks)
+	{
+		XMMATRIX worldMatrix = XMMatrixTranspose(XMMatrixTranslation(mark.x, mark.y, mark.z));
+		pCommandList->SetGraphicsRoot32BitConstants(0, 16, &worldMatrix, 0);
+
+		pCommandList->DrawInstanced(1, 1, 0, 0);
+	}
+
 	pCommandList->ResourceBarrier(1, &barrier[1]);
 }
 
@@ -252,5 +339,5 @@ void MinimapRenderer::SetMinimapEnvironment(const EnvironmentParameters& environ
 	m_worldMatrix = (
 		Matrix4x4::CreateScale(environmentParams.TerrainSize) *
 		Matrix4x4::CreateTranslation(environmentParams.TerrainOffset, 0.0f, environmentParams.TerrainOffset)).Transpose();
-	m_projectionMatrix = Matrix4x4::CreateOrthographic(512.0f, 512.0f, -1000.0f, 1000.0f).Transpose();
+	m_projectionMatrix = Matrix4x4::CreateOrthographic(256.0f, 256.0f, -1000.0f, 1000.0f).Transpose();
 }
