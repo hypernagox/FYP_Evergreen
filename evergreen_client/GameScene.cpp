@@ -57,11 +57,8 @@ GameScene::GameScene() : Scene()
 
 void GameScene::OnAttach()
 {
-    auto res = INSTANCE(Resource);
-    auto shader = res->Load<Shader>(RESOURCE_PATH(L"color.hlsl"));
-
-    m_playerMaterial = std::make_shared<udsdx::Material>();
-    m_playerMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
+    auto resource = INSTANCE(Resource);
+    auto shader = resource->Load<Shader>(RESOURCE_PATH(L"color.hlsl"));
 
     m_heroObj = std::make_shared<SceneObject>();
     m_heroComponent = m_heroObj->AddComponent<AuthenticPlayer>();
@@ -99,14 +96,13 @@ void GameScene::OnAttach()
         m_craftTableObj->GetTransform()->SetLocalRotation(Quaternion(0.0f, 1.0f, 0.0f, 0.0f));
         m_craftTableObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 0.01f);
 
-        m_craftTableMaterial = std::make_shared<udsdx::Material>();
-        m_craftTableMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_D.tga")), 0);
-        m_craftTableMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_N.tga")), 1);
+        udsdx::Material craftTableMaterial(shader);
+        craftTableMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_D.tga")), 0);
+        craftTableMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_N.tga")), 1);
 
         auto craftTableRenderer = m_craftTableObj->AddComponent<MeshRenderer>();
-        craftTableRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Village\\O_Table_B.yms")));
-        craftTableRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
-        craftTableRenderer->SetMaterial(m_craftTableMaterial.get(), 0);
+        craftTableRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Village\\O_Table_B.yms")));
+        craftTableRenderer->SetMaterial(craftTableMaterial, 0);
 
         auto interactiveEntity = m_craftTableObj->AddComponent<InteractiveEntity>();
         interactiveEntity->SetInteractionText(L"제작하기");
@@ -123,25 +119,23 @@ void GameScene::OnAttach()
         treeObj->GetTransform()->SetLocalPosition(Vector3(-42.968254f, 74.610634f, -87.984f));
         treeObj->SetActive(true);
 
-        treeRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"goldentree\\tree.yms")));
-        treeRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
+        treeRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"goldentree\\tree.yms")));
+        treeRenderer->SetMaterial(shader);
 
         {
-            std::shared_ptr<udsdx::Material> treeMaterial = std::make_shared<udsdx::Material>();
-            treeMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\leaves_color.png")), 0);
-            treeMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\leaves_nm.png")), 1);
+            udsdx::Material treeMaterial(shader);
+            treeMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\leaves_color.png")), 0);
+            treeMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\leaves_nm.png")), 1);
 
-            treeRenderer->SetMaterial(treeMaterial.get(), 0);
-            m_harvestMaterials.emplace_back(treeMaterial);
+            treeRenderer->SetMaterial(treeMaterial, 0);
         }
 
         {
-            std::shared_ptr<udsdx::Material> treeMaterial = std::make_shared<udsdx::Material>();
-            treeMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\trunk_Base_color.png")), 0);
-            treeMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\trunk_Normal_OpenGL.png")), 1);
+            udsdx::Material treeMaterial(shader);
+            treeMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\trunk_Base_color.png")), 0);
+            treeMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\trunk_Normal_OpenGL.png")), 1);
 
-            treeRenderer->SetMaterial(treeMaterial.get(), 1);
-            m_harvestMaterials.emplace_back(treeMaterial);
+            treeRenderer->SetMaterial(treeMaterial, 1);
         }
 
         {
@@ -168,8 +162,8 @@ void GameScene::OnAttach()
         auto dungeonWaterObj = std::make_shared<SceneObject>();
         dungeonWaterObj->GetTransform()->SetLocalPosition(Vector3(338.0f, 11.3f, 448.0f));
         auto dungeonWaterRenderer = dungeonWaterObj->AddComponent<MeshRenderer>();
-        dungeonWaterRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\plane.yms")));
-        dungeonWaterRenderer->SetShader(res->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+        dungeonWaterRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\plane.yms")));
+        dungeonWaterRenderer->SetMaterial(resource->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
         m_dungeonEnvironmentObject->AddChild(dungeonWaterObj);
 
         std::ifstream file(RESOURCE_PATH(L"environment\\ExportedGameSpawns.json"));
@@ -193,14 +187,9 @@ void GameScene::OnAttach()
     {
         auto skyboxObj = std::make_shared<SceneObject>();
         auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
-        skyboxRenderer->SetShader(res->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")));
+        skyboxRenderer->SetMaterial(udsdx::Material(resource->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"))));
         skyboxRenderer->SetVertexCount(6);
         skyboxRenderer->SetCastShadow(false);
-
-        auto skyboxTexture = res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"));
-        m_skyboxMaterial = std::make_shared<udsdx::Material>();
-        m_skyboxMaterial->SetSourceTexture(skyboxTexture);
-        skyboxRenderer->SetMaterial(m_skyboxMaterial.get());
 
         AddObject(skyboxObj);
     }
@@ -219,7 +208,7 @@ void GameScene::OnAttach()
         auto textRenderer = textObj->AddComponent<GUIText>();
         textObj->GetTransform()->SetLocalPosition(Vector3(-640, 480, 0));
         textRenderer->SetText(GET_DATA(std::wstring, "Script", "Intro", "Start"));
-        textRenderer->SetFont(res->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
+        textRenderer->SetFont(resource->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
         textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
         m_playerInterfaceGroup->AddChild(textObj);
 
@@ -253,13 +242,13 @@ void GameScene::OnAttach()
         {
             auto minimapBackground = std::make_shared<SceneObject>();
             auto minimapBackgroundRenderer = minimapBackground->AddComponent<GUIImage>();
-            minimapBackgroundRenderer->SetTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_outline_gradation.png")));
+            minimapBackgroundRenderer->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_outline_gradation.png")));
             minimapBackgroundRenderer->SetSize(Vector2(360.0f, 360.0f));
 
             auto minimapMarkerObj = std::make_shared<SceneObject>();
             minimapMarkerObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 16.0f, 0.0f));
             auto minimapMarkerRenderer = minimapMarkerObj->AddComponent<GUIImage>();
-            minimapMarkerRenderer->SetTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_marker.png")));
+            minimapMarkerRenderer->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_marker.png")));
             minimapMarkerRenderer->SetSize(Vector2(32.0f, 32.0f));
 
             minimapObj->AddChild(minimapBackground);
@@ -362,14 +351,10 @@ void GameScene::OnAttach()
 
     if (false)
     {
-        m_gizmoMaterial = std::make_shared<udsdx::Material>();
-        m_gizmoMaterial->SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png")));
-
         auto navMeshVisualizer = std::make_shared<SceneObject>();
         auto navMeshRenderer = navMeshVisualizer->AddComponent<MeshRenderer>();
-        navMeshRenderer->SetMesh(res->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh.yms")));
-        navMeshRenderer->SetShader(res->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")));
-        navMeshRenderer->SetMaterial(m_gizmoMaterial.get());
+        navMeshRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh.yms")));
+        navMeshRenderer->SetMaterial(udsdx::Material(resource->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png"))));
 
         AddObject(navMeshVisualizer);
     }

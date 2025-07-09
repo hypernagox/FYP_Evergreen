@@ -7,7 +7,6 @@ void DropItemRenderer::OnInitialize()
 {
 	m_rendererObject = std::make_shared<udsdx::SceneObject>();
 	m_meshRenderer = m_rendererObject->AddComponent<udsdx::MeshRenderer>();
-	m_meshRenderer->SetShader(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colorhighlight.hlsl")));
 
 	GetSceneObject()->AddChild(m_rendererObject);
 
@@ -27,8 +26,7 @@ void DropItemRenderer::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void DropItemRenderer::SetDropItem(uint8_t item_id)
 {
 	const auto& key = DATA_TABLE->GetItemName(item_id);
+	const auto texture = INSTANCE(udsdx::Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Item", key, "DropitemResourceDiffuse")));
 	m_meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring,"Item", key, "DropitemResource"))));
-	m_material = std::make_shared<udsdx::Material>();
-	m_material->SetSourceTexture(INSTANCE(udsdx::Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring,"Item", key, "DropitemResourceDiffuse"))));
-	m_meshRenderer->SetMaterial(m_material.get());
+	m_meshRenderer->SetMaterial(udsdx::Material(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colorhighlight.hlsl")), texture));
 }

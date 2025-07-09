@@ -14,10 +14,7 @@ std::shared_ptr<SceneObject> g_cameraObject;
 std::shared_ptr<SceneObject> g_lightObject;
 std::shared_ptr<SceneObject> g_object[3];
 std::shared_ptr<SceneObject> g_floorObject;
-std::shared_ptr<udsdx::Material> g_material;
-std::shared_ptr<udsdx::Material> g_skyboxMaterial;
 std::shared_ptr<SceneObject> m_characterObject;
-std::array<std::shared_ptr<udsdx::Material>, 4> m_characterMaterials;
 
 void Update(const Time& time);
 
@@ -47,16 +44,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_lightObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.25f, 1.0f, 0));
     g_scene->AddObject(g_lightObject);
 
-    g_material = std::make_shared<udsdx::Material>();
-    g_material->SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\UV_checker_Map_byValle.jpg"));
-
     for (int i = 0; i < 3; ++i)
     {
         g_object[i] = std::make_shared<SceneObject>();
         auto renderer = g_object[i]->AddComponent<MeshRenderer>();
         renderer->SetMesh(res->Load<Mesh>(L"resource\\cube.yms"));
-        renderer->SetMaterial(g_material.get());
-        renderer->SetShader(res->Load<udsdx::Shader>(L"resource\\color.hlsl"));
+        renderer->SetMaterial(udsdx::Material(res->Load<udsdx::Shader>(L"resource\\color.hlsl"), res->Load<udsdx::Texture>(L"resource\\UV_checker_Map_byValle.jpg")));
         g_scene->AddObject(g_object[i]);
     }
 
@@ -71,21 +64,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_floorObject->GetTransform()->SetLocalScale(Vector3(20.0f, 0.25f, 20.0f));
     auto floorRenderer = g_floorObject->AddComponent<MeshRenderer>();
     floorRenderer->SetMesh(res->Load<Mesh>(L"resource\\cube.yms"));
-    floorRenderer->SetMaterial(g_material.get());
-    floorRenderer->SetShader(res->Load<udsdx::Shader>(L"resource\\colornotex.hlsl"));
+    floorRenderer->SetMaterial(res->Load<udsdx::Shader>(L"resource\\colornotex.hlsl"));
     g_scene->AddObject(g_floorObject);
 
     {
         auto skyboxObj = std::make_shared<SceneObject>();
         auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
-        skyboxRenderer->SetShader(res->Load<Shader>(L"resource\\skybox.hlsl"));
         skyboxRenderer->SetVertexCount(6);
         skyboxRenderer->SetCastShadow(false);
 
-        auto skyboxTexture = res->Load<udsdx::Texture>(L"resource\\Interior.jpg");
-        g_skyboxMaterial = std::make_shared<udsdx::Material>();
-        g_skyboxMaterial->SetSourceTexture(skyboxTexture);
-        skyboxRenderer->SetMaterial(g_skyboxMaterial.get());
+        skyboxRenderer->SetMaterial(udsdx::Material(res->Load<Shader>(L"resource\\skybox.hlsl"), res->Load<udsdx::Texture>(L"resource\\Interior.jpg")));
 
         g_scene->AddObject(skyboxObj);
     }
@@ -94,25 +82,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     m_characterObject->GetTransform()->SetLocalPositionY(-1.375f);
     m_characterObject->GetTransform()->SetLocalScale(Vector3::One);
     auto meshRenderer = m_characterObject->AddComponent<RiggedMeshRenderer>();
-    //meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\npc\\npc_tpose.yrms"));
-    //meshRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"));
-    //meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\npc\\npc_walk.yac"), true);
 
     meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\bear_new\\bear_tpose.yrms"));
-    meshRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"));
+    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\bear_new\\bear_BaseColor.png")));
     meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\bear_new\\bear_attack2.yac"), true);
-
-    for (int i = 0; i < 4; ++i)
-    {
-        m_characterMaterials[i] = std::make_shared<udsdx::Material>();
-        meshRenderer->SetMaterial(m_characterMaterials[i].get(), i);
-    }
-
-    // m_characterMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\npc\\npc_diffuse_1.png"));
-    // m_characterMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\npc\\npc_diffuse_0.png"));
-    // m_characterMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\npc\\npc_diffuse_2.png"));
-
-    m_characterMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(L"resource\\bear_new\\bear_BaseColor.png"));
 
      g_scene->AddObject(m_characterObject);
 

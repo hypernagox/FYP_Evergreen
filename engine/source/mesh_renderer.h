@@ -5,23 +5,18 @@
 
 namespace udsdx
 {
-	class Scene;
 	class Mesh;
-	class Shader;
-	class Material;
 
 	class MeshRenderer : public RendererBase
 	{
 	public:
+		virtual void PostUpdate(const Time& time, Scene& scene) override;
 		virtual void Render(RenderParam& param, int instances = 1) override;
 		virtual void OnDrawGizmos(const Camera* target) override;
 
 	public:
 		void SetMesh(Mesh* mesh);
 		Mesh* GetMesh() const;
-
-		virtual ID3D12PipelineState* GetPipelineState() const override;
-		virtual ID3D12PipelineState* GetShadowPipelineState() const override;
 
 	protected:
 		Mesh* m_mesh = nullptr;

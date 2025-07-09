@@ -34,8 +34,6 @@ protected:
 	RiggedMeshRenderer* m_renderer;
 	std::shared_ptr<SceneObject> m_rendererObj;
 	std::shared_ptr<SceneObject> m_bodyObj;
-	std::array<std::shared_ptr<udsdx::Material>, 5> m_playerMaterials;
-	std::shared_ptr<udsdx::Material> m_toolMaterial;
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
 	
 public:

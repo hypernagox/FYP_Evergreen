@@ -11,8 +11,6 @@ public:
 	void Render(udsdx::RenderParam& param, int instances = 1) override;
 
 	void BuildPipelineState();
-	ID3D12PipelineState* GetPipelineState() const override { return m_pipelineState.Get(); }
-	ID3D12PipelineState* GetShadowPipelineState() const override { return nullptr; }
 
 	float GetHPFraction() const noexcept { return m_hpFraction; }
 	void SetHPFraction(float value) noexcept { m_hpFraction = value; }

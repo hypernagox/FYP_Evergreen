@@ -252,25 +252,28 @@ namespace udsdx
 			ImVec2 cursorWinPos = cursorPos - ImGui::GetWindowPos();
 			float regionHeight = ImGui::GetWindowHeight();
 
-			if (cursorWinPos.y >= 0.0f && cursorWinPos.y + ImGui::GetTextLineHeight() <= regionHeight)
+			if (screenPosition.x >= 0 && screenPosition.x <= screenSize.x && screenPosition.y >= 0 && screenPosition.y <= screenSize.y)
 			{
-				ImVec2 beginPos = ImVec2(cursorPos.x - 20.0f, cursorPos.y + ImGui::GetTextLineHeight() * 0.5f);
-				ImVec2 endPos = ImVec2(screenPosition.x, screenPosition.y);
-
-				drawList->AddCircleFilled(beginPos, 4.0f, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
-				if (std::abs(endPos.x - beginPos.x) < 50.0f)
+				if (cursorWinPos.y >= 0.0f && cursorWinPos.y + ImGui::GetTextLineHeight() <= regionHeight)
 				{
-					drawList->AddLine(beginPos, endPos, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
-				}
-				else
-				{
-					float sign = (endPos.x - beginPos.x < 0.0f) ? -1.0f : 1.0f;
-					ImVec2 midPos1 = ImVec2((endPos.x + beginPos.x - 50.0f * sign) * 0.5f, beginPos.y);
-					ImVec2 midPos2 = ImVec2((endPos.x + beginPos.x + 50.0f * sign) * 0.5f, endPos.y);
+					ImVec2 beginPos = ImVec2(cursorPos.x - 20.0f, cursorPos.y + ImGui::GetTextLineHeight() * 0.5f);
+					ImVec2 endPos = ImVec2(screenPosition.x, screenPosition.y);
 
-					drawList->AddLine(beginPos, midPos1, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
-					drawList->AddLine(midPos1, midPos2, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
-					drawList->AddLine(midPos2, endPos, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
+					drawList->AddCircleFilled(beginPos, 4.0f, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
+					if (std::abs(endPos.x - beginPos.x) < 50.0f)
+					{
+						drawList->AddLine(beginPos, endPos, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
+					}
+					else
+					{
+						float sign = (endPos.x - beginPos.x < 0.0f) ? -1.0f : 1.0f;
+						ImVec2 midPos1 = ImVec2((endPos.x + beginPos.x - 50.0f * sign) * 0.5f, beginPos.y);
+						ImVec2 midPos2 = ImVec2((endPos.x + beginPos.x + 50.0f * sign) * 0.5f, endPos.y);
+
+						drawList->AddLine(beginPos, midPos1, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
+						drawList->AddLine(midPos1, midPos2, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
+						drawList->AddLine(midPos2, endPos, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
+					}
 				}
 			}
 		}

@@ -9,7 +9,18 @@ void TerrainDetailRenderer::OnInitialize()
 	m_castShadow = false;
 }
 
-void TerrainDetailRenderer::Render(udsdx::RenderParam& param, int instances)
+void TerrainDetailRenderer::PostUpdate(const Time& time, Scene& scene)
+{
+	RendererBase::PostUpdate(time, scene);
+
+	scene.EnqueueRenderObject(this, m_renderGroup, m_materials[0].GetShader()->DefaultPipelineState(), m_materials[0].GetShader()->DeferredPipelineState(), 0);
+	if (m_castShadow == true)
+	{
+		scene.EnqueueRenderShadowObject(this, m_materials[0].GetShader()->ShadowPipelineState(), 0);
+	}
+}
+
+void TerrainDetailRenderer::Render(udsdx::RenderParam& param, int parameter)
 {
 	ObjectConstants objectConstants;
 	objectConstants.World = m_transformCache.Transpose();
@@ -34,7 +45,7 @@ void TerrainDetailRenderer::Render(udsdx::RenderParam& param, int instances)
 	int cameraSegmentX = static_cast<int>(cameraTerrainPosition.x * segmentation);
 	int cameraSegmentY = static_cast<int>(cameraTerrainPosition.z * segmentation);
 
-	const udsdx::Texture* texture = m_materials[0]->GetSourceTexture(0);
+	const udsdx::Texture* texture = m_materials[0].GetSourceTexture(0);
 	param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0, texture->GetSrvGpu());
 
 	BoundingBox boundingBox;
@@ -49,7 +60,7 @@ void TerrainDetailRenderer::Render(udsdx::RenderParam& param, int instances)
 			UINT indexBase = m_terrainDetail->GetIndexBase(segmentX, segmentY);
 			UINT indexCount = m_terrainDetail->GetIndexCount(segmentX, segmentY);
 			if (indexCount > 0)
-				param.CommandList->DrawIndexedInstanced(indexCount, instances, indexBase, 0, 0);
+				param.CommandList->DrawIndexedInstanced(indexCount, 1, indexBase, 0, 0);
 		}
 	}
 }

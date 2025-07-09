@@ -3,120 +3,52 @@
 
 using namespace udsdx;
 
-static constexpr char g_psoResource[] = R"(
-	cbuffer cbPerObject : register(b0)
-	{
-		float4x4 gWorld;
-		float    gRadian;
-	};
-
-	cbuffer cbPerCamera : register(b1)
-	{
-		float4x4 gView;
-		float4x4 gProj;
-		float4x4 gViewProj;
-		float4x4 gViewInverse;
-		float4x4 gProjInverse;
-		float4x4 gViewProjInverse;
-		float4x4 gPrevViewProj;
-		float4 gEyePosW;
-	};
-
-	static uint gIndexData[60] = 
-	{
-        0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 0,
-        10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 10,
-        0, 10, 1, 11, 2, 12, 3, 13, 4, 14, 5, 15, 6, 16, 7, 17, 8, 18, 9, 19
-	};
-
-	float4 VS(uint vid : SV_VertexID) : SV_POSITION
-	{
-        uint index = gIndexData[vid];
-        float4 position = float4(0.0f, 0.0f, 0.0f, 1.0f);
-        if (index >= 10)
-            position.y = 1.0f;
-        if (index % 10 != 0)
-        {
-            float angle = (int(index % 10) - 5) * 0.125f * gRadian;
-            position.x = sin(angle);
-            position.z = cos(angle);
-        }
-		float4 worldPos = mul(position, gWorld);
-		float4 projPos = mul(worldPos, gViewProj);
-		return projPos;
-	}
-
-	float4 PS(float4 pos : SV_POSITION) : SV_TARGET
-	{
-		return float4(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-)";
-
-void GizmoSectorRenderer::OnInitialize()
-{
-	m_castShadow = false;
-	m_renderGroup = RenderGroup::Forward;
-	BuildPipelineState();
-}
-
-void GizmoSectorRenderer::Render(udsdx::RenderParam& param, int instances)
+void GizmoSectorRenderer::OnDrawGizmos(const udsdx::Camera* target)
 {
 	// TODO: 시야가 반대로 렌더링 된다.
 	// 이 문제는 NPC, 캐릭터, 몬스터 등 모든 오브젝트가 Z- 방향으로 바라보고 있는 상태로 import 되었기 때문이다.
 	// 모든 모델을 180도 회전시키는것으로 해결하는 것이나, 고쳐야 할 코드가 많으므로 우선순위를 낮게 둔다.
 
-	ObjectConstants objectConstants;
+	float radian = m_angle * DEG2RAD;
 
-	const DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(m_radius, 1.0f, m_radius);
-	const DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(180.0f));
-	const DirectX::XMMATRIX transform = DirectX::XMLoadFloat4x4(&m_transformCache);
-	const DirectX::XMMATRIX worldTransform = scale * rotation * transform;
-	
-	DirectX::XMStoreFloat4x4(&objectConstants.World, DirectX::XMMatrixTranspose(worldTransform));
-	objectConstants.PrevWorld.m[0][0] = m_angle * DEG2RAD;
+	Vector3 vertexData[20];
 
-	param.CommandList->SetGraphicsRoot32BitConstants(RootParam::PerObjectCBV, sizeof(ObjectConstants) / 4, &objectConstants, 0);
-	param.CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-	param.CommandList->DrawInstanced(60, instances, 0, 0);
-}
-
-void GizmoSectorRenderer::BuildPipelineState()
-{
-	ID3D12RootSignature* rootSignature = INSTANCE(Core)->GetRootSignature();
-	ID3D12Device* device = INSTANCE(Core)->GetDevice();
-
-	static ComPtr<IDxcBlob> vsByteCode = nullptr;
-	static ComPtr<IDxcBlob> psByteCode = nullptr;
-
-	if (vsByteCode == nullptr || psByteCode == nullptr)
+	vertexData[0] = Vector3(0.0f, 0.0f, 0.0f);
+	vertexData[10] = Vector3(0.0f, 1.0f, 0.0f);
+	for (int index = 1; index < 10; ++index)
 	{
-		vsByteCode = udsdx::CompileShaderFromMemory(g_psoResource, {}, L"VS", L"vs_6_0");
-		psByteCode = udsdx::CompileShaderFromMemory(g_psoResource, {}, L"PS", L"ps_6_0");
+		float angle = (index - 5) * 0.125f * radian;
+		vertexData[index] = Vector3(sin(angle), 0.0f, cos(angle));
+		vertexData[index + 10] = Vector3(sin(angle), 1.0f, cos(angle));
 	}
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
-	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	static unsigned int indexData[] =
+	{
+		0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 0,
+		10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 10,
+		0, 10, 1, 11, 2, 12, 3, 13, 4, 14, 5, 15, 6, 16, 7, 17, 8, 18, 9, 19
+	};
 
-	psoDesc.pRootSignature = rootSignature;
-	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-	psoDesc.SampleMask = UINT_MAX;
-	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
-	psoDesc.NumRenderTargets = 1;
-	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	psoDesc.SampleDesc.Count = 1;
-	psoDesc.SampleDesc.Quality = 0;
-	psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	std::array<Vector2, _countof(vertexData)> vertexScreen;
+	bool isVisible = true;
+	for (size_t i = 0; i < vertexScreen.size() && isVisible; ++i)
+	{
+		Vector3 worldPosition = Vector3::Transform(vertexData[i] * Vector3(m_radius, 1.0f, m_radius), GetTransform()->GetWorldSRTMatrix());
 
-	psoDesc.VS.pShaderBytecode = reinterpret_cast<BYTE*>(vsByteCode->GetBufferPointer()),
-	psoDesc.VS.BytecodeLength = vsByteCode->GetBufferSize();
-	psoDesc.PS.pShaderBytecode = reinterpret_cast<BYTE*>(psByteCode->GetBufferPointer());
-	psoDesc.PS.BytecodeLength = psByteCode->GetBufferSize();
+		isVisible &= target->ToViewPosition(worldPosition).z > 1e-2f;
+		vertexScreen[i] = target->ToScreenPosition(worldPosition);
+	}
 
-	psoDesc.InputLayout.NumElements = 0;
-	psoDesc.InputLayout.pInputElementDescs = nullptr;
+	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+	ImColor drawColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	ThrowIfFailed(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
+	for (size_t i = 0; i < _countof(indexData) >> 1; ++i)
+	{
+		int start = indexData[i << 1];
+		int end = indexData[i << 1 | 1];
+		drawList->AddLine(
+			ImVec2(vertexScreen[start].x, vertexScreen[start].y),
+			ImVec2(vertexScreen[end].x, vertexScreen[end].y),
+			drawColor);
+	}
 }

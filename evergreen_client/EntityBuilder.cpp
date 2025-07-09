@@ -15,6 +15,7 @@
 #include "GuideSystem.h"
 #include "InteractiveEntity.h"
 #include "GizmoSectorRenderer.h"
+#include "GizmoBoxRenderer.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 
@@ -97,9 +98,14 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
 		//TODO: 매직넘버
-		const auto sector = instance->AddComponent<GizmoSectorRenderer>();
+		std::shared_ptr<SceneObject> gizmoObject = std::make_shared<SceneObject>();
+		gizmoObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PI, 0.0f, 0.0f));
+		instance->AddChild(gizmoObject);
+
+		const auto sector = gizmoObject->AddComponent<GizmoSectorRenderer>();
 		sector->SetAngle(62.5f);
 		sector->SetRadius(4.5f);
+
 		return instance;
 	}
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_GOBLIN:

@@ -45,9 +45,6 @@ private:
 	GameSceneType m_sceneType = GameSceneType::Default;
 	std::shared_ptr<udsdx::SceneObject> m_activeObjectGroup;
 
-	std::vector<std::shared_ptr<udsdx::Material>> m_instanceMaterials;
-	std::vector<std::shared_ptr<udsdx::Material>> m_harvestMaterials;
-
 	std::shared_ptr<udsdx::SceneObject> m_defaultEnvironmentObject;
 	std::shared_ptr<udsdx::SceneObject> m_dungeonEnvironmentObject;
 
@@ -71,11 +68,6 @@ private:
 	AuthenticPlayer* m_heroComponent;
 	ServerObject* m_heroServerObject;
 	PopupGUIManager* m_popupGUIManager;
-
-	std::shared_ptr<udsdx::Material> m_playerMaterial;
-	std::shared_ptr<udsdx::Material> m_skyboxMaterial;
-	std::shared_ptr<udsdx::Material> m_gizmoMaterial;
-	std::shared_ptr<udsdx::Material> m_craftTableMaterial;
 
 	bool m_bSpectatorMode = false;
 

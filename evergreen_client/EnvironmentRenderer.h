@@ -31,12 +31,6 @@ private:
 	std::unordered_map<std::string, udsdx::Texture*> m_textureMap;
 	std::unordered_map<std::string, std::filesystem::path> m_prefabMap;
 
-	std::vector<std::shared_ptr<udsdx::Material>> m_instanceMaterials;
-
-	std::shared_ptr<udsdx::Material> m_terrainMaterial;
-	std::shared_ptr<udsdx::Material> m_terrainDetailMaterial;
-	std::shared_ptr<udsdx::Material> m_skyboxMaterial;
-
 	std::shared_ptr<udsdx::Mesh> m_terrainMesh;
 
 	std::shared_ptr<udsdx::SceneObject> m_terrainObj;

@@ -42,14 +42,9 @@ void MainScene::OnAttach()
     {
         auto skyboxObj = std::make_shared<SceneObject>();
         auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
-        skyboxRenderer->SetShader(res->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")));
+        skyboxRenderer->SetMaterial(udsdx::Material(res->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")), res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"))));
         skyboxRenderer->SetVertexCount(6);
         skyboxRenderer->SetCastShadow(false);
-
-        auto skyboxTexture = res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"));
-        m_skyboxMaterial = std::make_shared<udsdx::Material>();
-        m_skyboxMaterial->SetSourceTexture(skyboxTexture);
-        skyboxRenderer->SetMaterial(m_skyboxMaterial.get());
 
         AddObject(skyboxObj);
     }

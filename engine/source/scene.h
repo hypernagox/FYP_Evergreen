@@ -13,7 +13,7 @@ namespace udsdx
 	class Scene
 	{
 	private:
-		using RendererGroup = std::unordered_map<ID3D12PipelineState*, std::unordered_map<ID3D12PipelineState*, std::vector<RendererBase*>>>;
+		using RendererGroup = std::unordered_map<ID3D12PipelineState*, std::unordered_map<ID3D12PipelineState*, std::vector<std::pair<RendererBase*, int>>>>;
 
 	public:
 		Scene();
@@ -44,8 +44,8 @@ namespace udsdx
 	public:
 		void EnqueueRenderCamera(Camera* camera);
 		void EnqueueRenderLight(LightDirectional* light);
-		void EnqueueRenderObject(RendererBase* object, RenderGroup group);
-		void EnqueueRenderShadowObject(RendererBase* object);
+		void EnqueueRenderObject(RendererBase* object, RenderGroup group, ID3D12PipelineState* pipelineState, ID3D12PipelineState* deferredPipelineState, int parameter);
+		void EnqueueRenderShadowObject(RendererBase* object, ID3D12PipelineState* pipelineState, int parameter);
 		void EnqueueRenderGUIObject(GUIElement* object);
 
 		void RenderShadowSceneObjects(RenderParam& param, int instances = 1);
@@ -64,7 +64,7 @@ namespace udsdx
 		std::vector<Camera*> m_renderCameraQueue;
 		std::vector<LightDirectional*> m_renderLightQueue;
 		std::array<RendererGroup, 2> m_renderObjectQueues;
-		std::vector<RendererBase*> m_renderShadowObjectQueue;
+		std::unordered_map<ID3D12PipelineState*, std::vector<std::pair<RendererBase*, int>>> m_renderShadowObjectQueue;
 		std::vector<GUIElement*> m_renderGUIObjectQueue;
 	};
 }

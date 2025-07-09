@@ -13,33 +13,18 @@ namespace udsdx
 	void RendererBase::PostUpdate(const Time& time, Scene& scene)
 	{
 		UpdateTransformCache();
-		scene.EnqueueRenderObject(this, m_renderGroup);
-		if (m_castShadow)
-		{
-			scene.EnqueueRenderShadowObject(this);
-		}
 	}
 
-	void RendererBase::SetShader(Shader* shader)
+	void RendererBase::SetMaterial(const Material& material, int index)
 	{
-		m_shader = shader;
-	}
-
-	void RendererBase::SetMaterial(Material* material, int index)
-	{
-		if (m_materials.size() <= index)
+		while (m_materials.size() <= index)
 		{
-			m_materials.resize(index + 1);
+			m_materials.emplace_back(material);
 		}
 		m_materials[index] = material;
 	}
 
-	Shader* RendererBase::GetShader() const
-	{
-		return m_shader;
-	}
-
-	Material* RendererBase::GetMaterial(int index) const
+	Material RendererBase::GetMaterial(int index) const
 	{
 		return m_materials[index];
 	}

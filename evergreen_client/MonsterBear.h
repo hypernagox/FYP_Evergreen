@@ -8,7 +8,6 @@ using namespace udsdx;
 class MonsterBear : public Monster
 {
 protected:
-	std::shared_ptr<udsdx::Material> m_monsterMaterial;
 	udsdx::RiggedMeshRenderer* m_riggedMeshRenderer;
 
 	MonsterHPPanel* m_hpPanel;

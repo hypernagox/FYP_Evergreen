@@ -2,15 +2,10 @@
 
 #include "pch.h"
 
-class GizmoCylinderRenderer : public udsdx::RendererBase
+class GizmoCylinderRenderer : public udsdx::Component
 {
 public:
-	void OnInitialize() override;
-	void Render(udsdx::RenderParam& param, int instances = 1) override;
-
-	void BuildPipelineState();
-	ID3D12PipelineState* GetPipelineState() const override { return m_pipelineState.Get(); }
-	ID3D12PipelineState* GetShadowPipelineState() const override { return nullptr; }
+	void OnDrawGizmos(const udsdx::Camera* target) override;
 
 	float GetRadius() const { return m_radius; }
 	void SetRadius(float radius) { m_radius = radius; }
@@ -20,7 +15,6 @@ public:
 	void SetOffset(const Vector3& offset) { m_offset = offset; }
 
 private:
-	ComPtr<ID3D12PipelineState> m_pipelineState;
 	float m_radius = 1.0f;
 	float m_height = 2.0f;
 	Vector3 m_offset = Vector3::Zero;

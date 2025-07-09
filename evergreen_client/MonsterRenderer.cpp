@@ -13,16 +13,9 @@ void MonsterRenderer::OnInitialize()
 
 	auto renderer = m_rendererObject->AddComponent<udsdx::RiggedMeshRenderer>();
 	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"sheep\\sheep_max.yrms")));
-	renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")));
+	renderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"sheep\\sheep_BaseColor.png"))), 0);
+	renderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"goblin\\Goblin(Wizard)\\goblin_notex_DefaultMaterial_BaseColor.png"))), 0);
 	renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"sheep\\sheep_run.yac")), true);
-
-	m_materials[0] = std::make_shared<udsdx::Material>();
-	m_materials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"sheep\\sheep_BaseColor.png")));
-	m_materials[1] = std::make_shared<udsdx::Material>();
-	m_materials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"goblin\\Goblin(Wizard)\\goblin_notex_DefaultMaterial_BaseColor.png")));
-
-	renderer->SetMaterial(m_materials[0].get(), 0);
-	renderer->SetMaterial(m_materials[1].get(), 1);
 
 	GetSceneObject()->AddChild(m_rendererObject);
 }

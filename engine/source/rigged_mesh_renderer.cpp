@@ -15,6 +15,21 @@
 
 namespace udsdx
 {
+	void RiggedMeshRenderer::PostUpdate(const Time& time, Scene& scene)
+	{
+		RendererBase::PostUpdate(time, scene);
+
+		int submeshCount = m_riggedMesh ? static_cast<int>(std::min(m_riggedMesh->GetSubmeshes().size(), m_materials.size())) : 0;
+		for (int i = 0; i < submeshCount; ++i)
+		{
+			scene.EnqueueRenderObject(this, m_renderGroup, m_materials[i].GetShader()->RiggedPipelineState(), m_materials[i].GetShader()->DeferredPipelineState(), i);
+			if (m_castShadow == true)
+			{
+				scene.EnqueueRenderShadowObject(this, m_materials[i].GetShader()->RiggedShadowPipelineState(), i);
+			}
+		}
+	}
+
 	void RiggedMeshRenderer::Update(const Time& time, Scene& scene)
 	{
 		m_animationTime += time.deltaTime;
@@ -107,7 +122,7 @@ namespace udsdx
 		}
 	}
 
-	void RiggedMeshRenderer::Render(RenderParam& param, int instances)
+	void RiggedMeshRenderer::Render(RenderParam& param, int parameter)
 	{
 		const auto& submeshes = m_riggedMesh->GetSubmeshes();
 
@@ -151,27 +166,20 @@ namespace udsdx
 			m_constantBuffersDirty = false;
 		}
 
-		for (size_t index = 0; index < submeshes.size(); ++index)
+		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::BonesCBV, uploaders[parameter]->Resource()->GetGPUVirtualAddress());
+		param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PrevBonesCBV, prevUploaders[parameter]->Resource()->GetGPUVirtualAddress());
+
+		for (UINT textureSrcIndex = 0; textureSrcIndex < m_materials[parameter].GetTextureCount(); ++textureSrcIndex)
 		{
-			const auto& submesh = submeshes[index];
-
-			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::BonesCBV, uploaders[index]->Resource()->GetGPUVirtualAddress());
-			param.CommandList->SetGraphicsRootConstantBufferView(RootParam::PrevBonesCBV, prevUploaders[index]->Resource()->GetGPUVirtualAddress());
-
-			if (index < m_materials.size() && m_materials[index] != nullptr)
+			const Texture* texture = m_materials[parameter].GetSourceTexture(textureSrcIndex);
+			if (texture != nullptr)
 			{
-				for (UINT textureSrcIndex = 0; textureSrcIndex < m_materials[index]->GetTextureCount(); ++textureSrcIndex)
-				{
-					const Texture* texture = m_materials[index]->GetSourceTexture(textureSrcIndex);
-					if (texture != nullptr)
-					{
-						param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0 + textureSrcIndex, texture->GetSrvGpu());
-					}
-				}
+				param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0 + textureSrcIndex, texture->GetSrvGpu());
 			}
-
-			param.CommandList->DrawIndexedInstanced(submesh.IndexCount, instances, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 		}
+
+		const auto& submesh = submeshes[parameter];
+		param.CommandList->DrawIndexedInstanced(submesh.IndexCount, 1, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 	}
 
 	RiggedMesh* RiggedMeshRenderer::GetMesh() const
@@ -232,16 +240,6 @@ namespace udsdx
 		}
 		m_animation = animationClip;
 		m_loop = loop;
-	}
-
-	ID3D12PipelineState* RiggedMeshRenderer::GetPipelineState() const
-	{
-		return m_shader->RiggedPipelineState();
-	}
-
-	ID3D12PipelineState* RiggedMeshRenderer::GetShadowPipelineState() const
-	{
-		return m_shader->RiggedShadowPipelineState();
 	}
 
 	static constexpr float SmoothStep(float t)

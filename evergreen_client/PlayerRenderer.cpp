@@ -63,18 +63,11 @@ void PlayerRenderer::InitializeWarrior()
 
 	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.yrms")));
-	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")));
 
 	m_transformBody = m_bodyObj->GetTransform();
 	m_rendererObj->AddChild(m_bodyObj);
 
 	m_transformBody->SetLocalPositionY(-5.5f);
-
-	for (int i = 0; i < m_playerMaterials.size(); ++i)
-	{
-		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
-		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
-	}
 
 	SetPlayerWeapon("Master Sword");
 	OnAnimationStateChange(AnimationState::Idle);
@@ -88,18 +81,11 @@ void PlayerRenderer::InitializePriest()
 
 	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"priest\\priest.yrms")));
-	m_renderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")));
 
 	m_transformBody = m_bodyObj->GetTransform();
 	m_rendererObj->AddChild(m_bodyObj);
 
 	m_transformBody->SetLocalPositionY(-5.5f);
-
-	for (int i = 0; i < m_playerMaterials.size(); ++i)
-	{
-		m_playerMaterials[i] = std::make_shared<udsdx::Material>();
-		m_renderer->SetMaterial(m_playerMaterials[i].get(), i);
-	}
 
 	SetPlayerWeapon("Staff Priest");
 	OnAnimationStateChange(AnimationState::Idle);
@@ -130,19 +116,21 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 
 void PlayerRenderer::SetEquipmentState(bool isEquipped)
 {
+	Shader* shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl"));
+
 	switch (m_characterType)
 	{
 		case CharacterType::Warrior:
-			m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"Zelda\\zelda_body_BaseColor_Armor.png" : L"Zelda\\zelda_body_BaseColor.png")));
-			m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png")));
-			m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png")));
-			m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png")));
+			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"Zelda\\zelda_body_BaseColor_Armor.png" : L"Zelda\\zelda_body_BaseColor.png"))), 0);
+			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png"))), 1);
+			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png"))), 2);
+			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png"))), 3);
 			break;
 		case CharacterType::Priest:
-			m_playerMaterials[0]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_2a.png" : L"priest\\priest_diffuse_2.png")));
-			m_playerMaterials[1]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_0a.png" : L"priest\\priest_diffuse_0.png")));
-			m_playerMaterials[2]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_2a.png" : L"priest\\priest_diffuse_2.png")));
-			m_playerMaterials[3]->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_1.png")));
+			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_2a.png" : L"priest\\priest_diffuse_2.png"))), 0);
+			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_0a.png" : L"priest\\priest_diffuse_0.png"))), 1);
+			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_2a.png" : L"priest\\priest_diffuse_2.png"))), 2);
+			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_1.png"))), 3);
 			break;
 	}
 }
@@ -245,22 +233,19 @@ bool PlayerRenderer::GetIsRunning() const
 
 void PlayerRenderer::SetPlayerWeapon(std::string_view weaponName)
 {
-	auto toolRenderer = m_bodyObj->GetComponent<RiggedPropRenderer>();
-	if (toolRenderer == nullptr)
-	{
-		toolRenderer = m_bodyObj->AddComponent<RiggedPropRenderer>();
-		m_toolMaterial = std::make_shared<udsdx::Material>();
-
-		toolRenderer->SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")));
-		toolRenderer->SetMaterial(m_toolMaterial.get());
-		toolRenderer->SetBoneName("Bip001 R Hand");
-	}
-
 	auto& scaleJson = GET_DATA(nlohmann::ordered_json, "Weapon", weaponName, "Scale");
 	auto& rotationJson = GET_DATA(nlohmann::ordered_json, "Weapon", weaponName, "Rotation");
 	auto& positionJson = GET_DATA(nlohmann::ordered_json, "Weapon", weaponName, "Position");
 
-	m_toolMaterial->SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "ModelDiffuse"))));
+	auto toolRenderer = m_bodyObj->GetComponent<RiggedPropRenderer>();
+	if (toolRenderer == nullptr)
+	{
+		toolRenderer = m_bodyObj->AddComponent<RiggedPropRenderer>();
+
+		toolRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "ModelDiffuse")))));
+		toolRenderer->SetBoneName("Bip001 R Hand");
+	}
+
 	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring,"Weapon", weaponName, "Model"))));
 	toolRenderer->SetPropLocalTransform(
 		Matrix4x4::CreateScale(scaleJson["X"], scaleJson["Y"], scaleJson["Z"]) *

@@ -30,7 +30,7 @@ GuideSystem::GuideSystem()
 			auto meshRenderer = s->AddComponent<udsdx::MeshRenderer>();
 			meshRenderer->SetCastShadow(false);
 			meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"path_arrow.yms")));
-			meshRenderer->SetShader(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotexpath.hlsl")));
+			meshRenderer->SetMaterial(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotexpath.hlsl")));
 			auto transform = s->GetTransform();
 			transform->SetLocalPosition(position + Vector3::Up * 0.5f);
 			transform->SetLocalRotation(Quaternion::CreateFromRotationMatrix(m));
@@ -167,7 +167,11 @@ const bool GuideSystem::SetHarvestState(const uint32_t server_id, const uint32_t
 		else
 			shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl"));
 		for (MeshRenderer* renderer : harvest->GetComponentsInChildren<MeshRenderer>())
-			renderer->SetShader(shader);
+		{
+			udsdx::Material material = renderer->GetMaterial();
+			material.SetShader(shader);
+			renderer->SetMaterial(material);
+		}
 		return true;
 	}
 	else

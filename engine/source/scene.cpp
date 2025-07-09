@@ -199,18 +199,14 @@ namespace udsdx
 		m_renderLightQueue.emplace_back(light);
 	}
 
-	void Scene::EnqueueRenderObject(RendererBase* object, RenderGroup group)
+	void Scene::EnqueueRenderObject(RendererBase* object, RenderGroup group, ID3D12PipelineState* pipelineState, ID3D12PipelineState* deferredPipelineState, int parameter)
 	{
-		ID3D12PipelineState* pipelineState = object->GetPipelineState();
-		ID3D12PipelineState* defferedPipelineState = nullptr;
-		if (object->GetShader() != nullptr)
-			defferedPipelineState = object->GetShader()->DeferredPipelineState();
-		m_renderObjectQueues[group][defferedPipelineState][pipelineState].emplace_back(object);
+		m_renderObjectQueues[group][deferredPipelineState][pipelineState].emplace_back(object, parameter);
 	}
 
-	void Scene::EnqueueRenderShadowObject(RendererBase* object)
+	void Scene::EnqueueRenderShadowObject(RendererBase* object, ID3D12PipelineState* pipelineState, int parameter)
 	{
-		m_renderShadowObjectQueue.emplace_back(object);
+		m_renderShadowObjectQueue[pipelineState].emplace_back(object, parameter);
 	}
 
 	void Scene::EnqueueRenderGUIObject(GUIElement* object)
@@ -313,10 +309,13 @@ namespace udsdx
 
 	void Scene::RenderShadowSceneObjects(RenderParam& param, int instances)
 	{
-		for (const auto& object : m_renderShadowObjectQueue)
+		for (const auto& [pipelineState, objects] : m_renderShadowObjectQueue)
 		{
-			param.CommandList->SetPipelineState(object->GetShadowPipelineState());
-			object->Render(param, instances);
+			param.CommandList->SetPipelineState(pipelineState);
+			for (const auto& [object, parameter] : objects)
+			{
+				object->Render(param, parameter);
+			}
 		}
 		param.RenderStageIndex++;
 	}
@@ -336,10 +335,10 @@ namespace udsdx
 			{
 				param.CommandList->SetPipelineState(pipelineState);
 
-				for (const auto& object : objects)
+				for (const auto& [object, parameter] : objects)
 				{
 					param.CommandList->OMSetStencilRef(pipelineCount | (static_cast<UINT>(object->GetDrawOutline()) << 7));
-					object->Render(param, instances);
+					object->Render(param, parameter);
 				}
 			}
 

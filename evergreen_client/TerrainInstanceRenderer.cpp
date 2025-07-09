@@ -4,7 +4,20 @@
 
 using namespace udsdx;
 
-void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
+void TerrainInstanceRenderer::PostUpdate(const Time& time, Scene& scene)
+{
+	int submeshCount = m_mesh ? static_cast<int>(std::min(m_mesh->GetSubmeshes().size(), m_materials.size())) : 0;
+	for (int i = 0; i < submeshCount; ++i)
+	{
+		scene.EnqueueRenderObject(this, m_renderGroup, m_materials[i].GetShader()->DefaultPipelineState(), m_materials[i].GetShader()->DeferredPipelineState(), i);
+		if (m_castShadow == true)
+		{
+			scene.EnqueueRenderShadowObject(this, m_materials[i].GetShader()->ShadowPipelineState(), i);
+		}
+	}
+}
+
+void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int parameter)
 {
 	if (param.RenderStageIndex == 3)
 	{
@@ -54,23 +67,17 @@ void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 	param.CommandList->IASetIndexBuffer(&ibv);
 	param.CommandList->IASetPrimitiveTopology(m_topology);
 
-	const auto& submeshes = m_mesh->GetSubmeshes();
-	for (size_t index = 0; index < submeshes.size(); ++index)
+	for (UINT textureSrcIndex = 0; textureSrcIndex < m_materials[parameter].GetTextureCount(); ++textureSrcIndex)
 	{
-		const auto& submesh = submeshes[index];
-		if (index < m_materials.size() && m_materials[index] != nullptr)
+		const udsdx::Texture* texture = m_materials[parameter].GetSourceTexture(textureSrcIndex);
+		if (texture != nullptr)
 		{
-			for (UINT textureSrcIndex = 0; textureSrcIndex < m_materials[index]->GetTextureCount(); ++textureSrcIndex)
-			{
-				const udsdx::Texture* texture = m_materials[index]->GetSourceTexture(textureSrcIndex);
-				if (texture != nullptr)
-				{
-					param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0 + textureSrcIndex, texture->GetSrvGpu());
-				}
-			}
+			param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0 + textureSrcIndex, texture->GetSrvGpu());
 		}
-		param.CommandList->DrawIndexedInstanced(submesh.IndexCount, instanceCount, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 	}
+
+	const auto& submesh = m_mesh->GetSubmeshes()[parameter];
+	param.CommandList->DrawIndexedInstanced(submesh.IndexCount, instanceCount, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 }
 
 void TerrainInstanceRenderer::SetMesh(udsdx::Mesh* mesh)
@@ -94,14 +101,4 @@ void TerrainInstanceRenderer::SetTerrainData(TerrainData* terrainData, std::stri
 
 	INSTANCE(Core)->FlushCommandQueue();
 	m_instanceUploadBuffer.clear();
-}
-
-ID3D12PipelineState* TerrainInstanceRenderer::GetPipelineState() const
-{
-	return m_shader->DefaultPipelineState();
-}
-
-ID3D12PipelineState* TerrainInstanceRenderer::GetShadowPipelineState() const
-{
-	return m_shader->ShadowPipelineState();
 }

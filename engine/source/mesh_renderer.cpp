@@ -12,7 +12,22 @@
 
 namespace udsdx
 {
-	void MeshRenderer::Render(RenderParam& param, int instances)
+	void MeshRenderer::PostUpdate(const Time& time, Scene& scene)
+	{
+		RendererBase::PostUpdate(time, scene);
+
+		int submeshCount = m_mesh ? static_cast<int>(std::min(m_mesh->GetSubmeshes().size(), m_materials.size())) : 0;
+		for (int i = 0; i < submeshCount; ++i)
+		{
+			scene.EnqueueRenderObject(this, m_renderGroup, m_materials[i].GetShader()->DefaultPipelineState(), m_materials[i].GetShader()->DeferredPipelineState(), i);
+			if (m_castShadow == true)
+			{
+				scene.EnqueueRenderShadowObject(this, m_materials[i].GetShader()->ShadowPipelineState(), i);
+			}
+		}
+	}
+
+	void MeshRenderer::Render(RenderParam& param, int parameter)
 	{
 		if (param.UseFrustumCulling)
 		{
@@ -35,23 +50,16 @@ namespace udsdx
 		param.CommandList->IASetIndexBuffer(&m_mesh->IndexBufferView());
 		param.CommandList->IASetPrimitiveTopology(m_topology);
 
-		const auto& submeshes = m_mesh->GetSubmeshes();
-		for (size_t index = 0; index < submeshes.size(); ++index)
+		for (UINT textureSrcIndex = 0; textureSrcIndex < m_materials[parameter].GetTextureCount(); ++textureSrcIndex)
 		{
-			if (index < m_materials.size() && m_materials[index] != nullptr)
+			const Texture* texture = m_materials[parameter].GetSourceTexture(textureSrcIndex);
+			if (texture != nullptr)
 			{
-				for (UINT textureSrcIndex = 0; textureSrcIndex < m_materials[index]->GetTextureCount(); ++textureSrcIndex)
-				{
-					const Texture* texture = m_materials[index]->GetSourceTexture(textureSrcIndex);
-					if (texture != nullptr)
-					{
-						param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0 + textureSrcIndex, texture->GetSrvGpu());
-					}
-				}
+				param.CommandList->SetGraphicsRootDescriptorTable(RootParam::SrcTexSRV_0 + textureSrcIndex, texture->GetSrvGpu());
 			}
-			const auto& submesh = submeshes[index];
-			param.CommandList->DrawIndexedInstanced(submesh.IndexCount, instances, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 		}
+		const auto& submesh = m_mesh->GetSubmeshes()[parameter];
+		param.CommandList->DrawIndexedInstanced(submesh.IndexCount, 1, submesh.StartIndexLocation, submesh.BaseVertexLocation, 0);
 	}
 
 	void MeshRenderer::OnDrawGizmos(const Camera* target)
@@ -107,15 +115,5 @@ namespace udsdx
 	Mesh* MeshRenderer::GetMesh() const
 	{
 		return m_mesh;
-	}
-
-	ID3D12PipelineState* MeshRenderer::GetPipelineState() const
-	{
-		return m_shader->DefaultPipelineState();
-	}
-
-	ID3D12PipelineState* MeshRenderer::GetShadowPipelineState() const
-	{
-		return m_shader->ShadowPipelineState();
 	}
 }

@@ -17,17 +17,15 @@ namespace udsdx
 		};
 
 	public:
+		virtual void PostUpdate(const Time& time, Scene& scene) override;
 		virtual void Update(const Time& time, Scene& scene) override;
 		virtual void OnDrawGizmos(const Camera* target) override;
-		virtual void Render(RenderParam& param, int instances = 1);
+		virtual void Render(RenderParam& param, int parameter);
 
 	public:
 		RiggedMesh* GetMesh() const;
 		void SetMesh(RiggedMesh* mesh);
 		void SetAnimation(AnimationClip* animationClip, bool loop = false, bool forcePlay = false);
-
-		virtual ID3D12PipelineState* GetPipelineState() const override;
-		virtual ID3D12PipelineState* GetShadowPipelineState() const override;
 
 		Matrix4x4 PopulateTransform(std::string_view boneName);
 		void PopulateTransforms(std::vector<Matrix4x4>& out);

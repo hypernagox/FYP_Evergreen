@@ -8,16 +8,14 @@ class TerrainData;
 class TerrainInstanceRenderer : public udsdx::RendererBase
 {
 public:
-	virtual void Render(udsdx::RenderParam& param, int instances = 1) override;
+	void PostUpdate(const udsdx::Time& time, udsdx::Scene& scene) override;
+	void Render(udsdx::RenderParam& param, int instances = 1) override;
 
 public:
 	void SetMesh(udsdx::Mesh* mesh);
 
 	TerrainData* GetTerrainData() const;
 	void SetTerrainData(TerrainData* terrainData, std::string_view prototypeName);
-
-	virtual ID3D12PipelineState* GetPipelineState() const override;
-	virtual ID3D12PipelineState* GetShadowPipelineState() const override;
 
 protected:
 	udsdx::Mesh* m_mesh = nullptr;
