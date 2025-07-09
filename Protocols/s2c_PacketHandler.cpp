@@ -506,13 +506,11 @@ const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>
 	ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Default);
 	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.5f);
-	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {; }, L"위치로 돌아가는 중 ...");
 	return true;
 }
 
 const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_START& pkt_)
 {
-	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {; }, L"퀘스트를 시작하는 중 ...");
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	return true;
 }
