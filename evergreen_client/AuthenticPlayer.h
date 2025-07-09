@@ -13,6 +13,7 @@ class PlayerQuickSlotGUI;
 class PlayerInventoryGUI;
 class PlayerEquipmentGUI;
 class PlayerCraftGUI;
+class EnvironmentParameters;
 
 // AuthenticPlayer는 우리가 조종할 수 있는 진짜의 플레이어를 나타내는 클래스
 //   - 인풋 핸들러를 이용해 플레이어의 움직임을 직접 조종
@@ -64,7 +65,7 @@ private:
 	bool m_bSendFlag = false;
 	Vector3Int m_vCurState = {};
 
-	HeightMap* m_heightMap = nullptr;
+	EnvironmentParameters* m_environment = nullptr;
 	PlayerRenderer* m_playerRenderer = nullptr;
 	EntityMovement* m_entityMovement = nullptr;
 	ServerObject* m_pServerObject = nullptr;
@@ -100,7 +101,7 @@ public:
 	void SetPlayerType(unsigned int playerType) noexcept { m_playerType = playerType; }
 	void InitCamDirection();
 	void SetServerObject(ServerObject* serverObject) noexcept { m_pServerObject = serverObject; }
-	void SetHeightMap(HeightMap* terrainData) noexcept { m_heightMap = terrainData; }
+	void SetEnvironment(EnvironmentParameters* environment) noexcept { m_environment = environment; }
 	void SetPlayerStatusGUI(PlayerStatusGUI* playerStatusGUI) noexcept;
 	void SetPlayerQuickSlotGUI(PlayerQuickSlotGUI* playerQuickSlotGUI) noexcept;
 	void SetPlayerInventoryGUI(PlayerInventoryGUI* playerInventoryGUI) noexcept;

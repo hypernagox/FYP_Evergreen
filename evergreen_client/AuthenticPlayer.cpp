@@ -262,17 +262,21 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam + m_cameraXOffsetSmooth, sin(tParam * 2.0f) * mParam, m_cameraDistanceSmooth));
 
 	// Region: Camera Position Postprocess
-	if (m_heightMap)
+	if (m_environment)
 	{
+		HeightMap* heightMap = m_environment->HeightMap;
+		const float TerrainSize = m_environment->TerrainSize;
+		const float TerrainHeight = m_environment->TerrainHeight;
+		const float TerrainOffset = m_environment->TerrainOffset;
+
 		Transform* pAnchorTransform = m_cameraAnchor->GetTransform();
-		const float TerrainSize = GET_DATA(float,"GlobalValues", "TerrainSize", "Value");
 		Matrix4x4 cameraWorldMatrix = pAnchorTransform->GetWorldSRTMatrix();
-		Matrix4x4 terrainWorldMatrix = Matrix4x4::CreateScale(TerrainSize) * Matrix4x4::CreateTranslation(Vector3(-0.5f, 0.0f, -0.5f) * TerrainSize);
+		Matrix4x4 terrainWorldMatrix = Matrix4x4::CreateScale(TerrainSize, TerrainHeight, TerrainSize) * Matrix4x4::CreateTranslation(Vector3(TerrainOffset, 0.0f, TerrainOffset));
 		Matrix4x4 cameraToTerrain = cameraWorldMatrix * terrainWorldMatrix.Invert();
 
 		Vector3 terrainPos = Vector3::Transform(pCameraTransfrom->GetLocalPosition(), cameraToTerrain);
-		float height = m_heightMap->GetHeight(terrainPos.x * m_heightMap->GetPixelWidth(), terrainPos.z * m_heightMap->GetPixelHeight());
-		terrainPos.y = std::max(terrainPos.y, height + 0.1f / TerrainSize);
+		float height = heightMap->GetHeight(terrainPos.x * heightMap->GetPixelWidth(), terrainPos.z * heightMap->GetPixelHeight());
+		terrainPos.y = std::max(terrainPos.y, height + 0.25f / TerrainHeight);
 		pCameraTransfrom->SetLocalPosition(Vector3::Transform(terrainPos, cameraToTerrain.Invert()));
 	}
 

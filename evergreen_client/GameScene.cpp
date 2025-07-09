@@ -65,7 +65,6 @@ void GameScene::OnAttach()
 
     m_heroObj = std::make_shared<SceneObject>();
     m_heroComponent = m_heroObj->AddComponent<AuthenticPlayer>();
-    m_heroComponent->SetHeightMap(g_defaultEnvironmentParam.HeightMap);
     auto entityInteraction = m_heroObj->AddComponent<EntityInteraction>();
     entityInteraction->SetTargetScene(this);
     m_heroServerObject = m_heroObj->GetComponent<ServerObject>();
@@ -592,12 +591,14 @@ void GameScene::ChangeGameScene(GameSceneType type)
             m_defaultEnvironmentObject->SetActive(true);
             m_minimapRenderer->SetMinimapMesh(m_defaultEnvironmentObject->GetComponent<EnvironmentRenderer>()->GetTerrainMesh());
             m_minimapRenderer->SetMinimapEnvironment(g_defaultEnvironmentParam);
+            m_heroComponent->SetEnvironment(&g_defaultEnvironmentParam);
 			break;
 		case GameSceneType::Dungeon:
             m_heroServerObject->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
             m_dungeonEnvironmentObject->SetActive(true);
             m_minimapRenderer->SetMinimapMesh(m_dungeonEnvironmentObject->GetComponent<EnvironmentRenderer>()->GetTerrainMesh());
             m_minimapRenderer->SetMinimapEnvironment(g_dungeonEnvironmentParam);
+            m_heroComponent->SetEnvironment(&g_dungeonEnvironmentParam);
 			break;
 	}
 }
