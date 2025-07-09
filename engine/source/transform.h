@@ -8,23 +8,11 @@ namespace udsdx
 	{
 		friend class SceneObject;
 
-	private:
-		enum class ValidationState : uint8_t
-		{
-			Valid,						// Local / World SRT matrices and its children are valid.
-			Invalid,					// Local / World SRT matrices are invalid, children should be validated.
-			InvalidChildren,		    // Local / World SRT matrices are valid, but some children may be invalid.
-			InvalidChildrenIteration,   // Local / World SRT matrices are valid, but some children may be invalid. After the iteration, the children are guaranteed to be valid.
-		};
-
 	public:
 		Transform() = default;
 		~Transform() = default;
 
 	public:
-		void SetParent(Transform* parent);
-		Transform* GetParent() const;
-
 		void SetLocalPosition(const Vector3& position);
 		void SetLocalPosition(float x, float y, float z);
 		void SetLocalRotation(const Quaternion& rotation);
@@ -54,9 +42,9 @@ namespace udsdx
 
 		// Validate both the local and the world SRT matrix.
 		// If the m_isLocalMatrixDirty is true, the local SRT matrix is recalculated.
-		// If the m_forceChildrenValidate of m_parent is true, the world SRT matrix is recalculated.
+		// If the m_isWorldMatrixDirty is true, the world SRT matrix is recalculated. And the children are set to dirty as propagation.
 		// Calling this function assumes the world SRT matrix of the parent is already calculated.
-		void ValidateSRTMatrices(bool iteration = false);
+		void ValidateSRTMatrices();
 
 		// Validate both the local and the world SRT matrices.
 		// This function traverses the all parents of the transform and validates the world SRT matrix of each parent.
@@ -66,6 +54,7 @@ namespace udsdx
 
 	protected:
 		Transform*	m_parent = nullptr;
+		std::vector<Transform*> m_children;
 
 		Vector3		m_position = Vector3::Zero;
 		Quaternion	m_rotation = Quaternion::Identity;
@@ -74,6 +63,7 @@ namespace udsdx
 		Matrix4x4	m_localSRTMatrix = Matrix4x4::Identity;
 		Matrix4x4	m_worldSRTMatrix = Matrix4x4::Identity;
 
-		ValidationState m_validationState = ValidationState::Valid;
+		bool        m_isLocalMatrixDirty = true;
+		bool        m_isWorldMatrixDirty = true;
 	};
 }

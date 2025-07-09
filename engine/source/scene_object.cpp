@@ -47,18 +47,18 @@ namespace udsdx
 
 	void SceneObject::EnumeratePostUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene)
 	{
-		static std::stack<std::pair<std::shared_ptr<SceneObject>, bool>> s;
+		static std::stack<std::shared_ptr<SceneObject>> s;
 		size_t sBase = s.size();
-		std::pair<std::shared_ptr<SceneObject>, bool> node = std::make_pair(root, false);
+		std::shared_ptr<SceneObject> node = root;
 
 		// Perform in-order traversal (sibiling-node-child)
 		// Since the order of the siblings is reversed, it needs to visit the siblings first
-		while (s.size() > sBase || node.first != nullptr)
+		while (s.size() > sBase || node != nullptr)
 		{
-			if (node.first != nullptr)
+			if (node != nullptr)
 			{
 				s.emplace(node);
-				node = std::make_pair(node.first->m_sibling, node.second);
+				node = node->m_sibling;
 			}
 			else
 			{
@@ -66,13 +66,13 @@ namespace udsdx
 				s.pop();
 
 				// SceneObject::PostUpdate() returns true if the node is still valid and active
-				if (node.first->PostUpdate(time, scene, node.second))
+				if (node->PostUpdate(time, scene))
 				{
-					node = std::make_pair(node.first->m_child, node.second);
+					node = node->m_child;
 				}
 				else
 				{
-					node = std::make_pair(nullptr, node.second);
+					node = nullptr;
 				}
 			}
 		}
@@ -102,6 +102,17 @@ namespace udsdx
 	{
 		INSTANCE(Core)->FlushCommandQueue();
 
+		m_transform.m_parent = nullptr;
+		if (m_parent != nullptr)
+		{
+			auto childrenContainer = m_parent->m_transform.m_children;
+			auto it = std::find(childrenContainer.begin(), childrenContainer.end(), &m_transform);
+			if (it != childrenContainer.end())
+			{
+				childrenContainer.erase(it);
+			}
+		}
+
 		if (m_sibling != nullptr)
 		{
 			m_sibling->m_parent = m_parent;
@@ -118,8 +129,6 @@ namespace udsdx
 		m_parent = nullptr;
 		m_sibling = nullptr;
 
-		m_transform.SetParent(nullptr);
-
 		m_detachDirty = false;
 	}
 
@@ -135,7 +144,7 @@ namespace udsdx
 		}
 	}
 
-	bool SceneObject::PostUpdate(const Time& time, Scene& scene, bool& forceValidate)
+	bool SceneObject::PostUpdate(const Time& time, Scene& scene)
 	{
 		if (m_detachDirty)
 		{
@@ -148,7 +157,7 @@ namespace udsdx
 		}
 
 		// Validate SRT matrix
-		m_transform.ValidateSRTMatrices(true);
+		m_transform.ValidateSRTMatrices();
 
 		// Update components
 		for (auto& component : m_components)
@@ -296,7 +305,8 @@ namespace udsdx
 		child->m_parent = this;
 		m_child = child;
 
-		child->m_transform.SetParent(&m_transform);
+		m_transform.m_children.emplace_back(&child->m_transform);
+		child->m_transform.m_parent = &m_transform;
 	}
 
 	void SceneObject::RemoveFromParent()

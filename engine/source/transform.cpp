@@ -6,21 +6,10 @@ namespace udsdx
 	unsigned long long g_localMatrixRecalculateCounter = 0;
 	unsigned long long g_worldMatrixRecalculateCounter = 0;
 
-	void Transform::SetParent(Transform* parent)
-	{
-		m_parent = parent;
-		m_validationState = ValidationState::Invalid;
-	}
-
-	Transform* Transform::GetParent() const
-	{
-		return m_parent;
-	}
-
 	void Transform::SetLocalPosition(const Vector3& position)
 	{
 		m_position = position;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalPosition(float x, float y, float z)
@@ -28,19 +17,19 @@ namespace udsdx
 		m_position.x = x;
 		m_position.y = y;
 		m_position.z = z;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalRotation(const Quaternion& rotation)
 	{
 		m_rotation = rotation;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalScale(const Vector3& scale)
 	{
 		m_scale = scale;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalScale(float x, float y, float z)
@@ -48,7 +37,7 @@ namespace udsdx
 		m_scale.x = x;
 		m_scale.y = y;
 		m_scale.z = z;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalScale(float scale)
@@ -56,38 +45,38 @@ namespace udsdx
 		m_scale.x = scale;
 		m_scale.y = scale;
 		m_scale.z = scale;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalPositionX(float x)
 	{
 		m_position.x = x;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalPositionY(float y)
 	{
 		m_position.y = y;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::SetLocalPositionZ(float z)
 	{
 		m_position.z = z;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::Translate(const Vector3& translation)
 	{
 		m_position += translation;
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	void Transform::Rotate(const Quaternion& rotation)
 	{
 		m_rotation = Quaternion::Concatenate(m_rotation, rotation);
 		m_rotation.Normalize();
-		m_validationState = ValidationState::Invalid;
+		m_isLocalMatrixDirty = true;
 	}
 
 	Vector3 Transform::GetLocalPosition() const
@@ -128,10 +117,11 @@ namespace udsdx
 
 	Matrix4x4 Transform::GetLocalSRTMatrix()
 	{
-		if (m_validationState == ValidationState::Invalid)
+		if (m_isLocalMatrixDirty)
 		{
 			RecalculateLocalSRTMatrix();
-			m_validationState = ValidationState::InvalidChildren;
+			m_isLocalMatrixDirty = false;
+			m_isWorldMatrixDirty = true;
 		}
 		return m_localSRTMatrix;
 	}
@@ -179,34 +169,24 @@ namespace udsdx
 		XMStoreFloat4x4(&m_worldSRTMatrix, m);
 	}
 
-	void Transform::ValidateSRTMatrices(bool iteration)
+	void Transform::ValidateSRTMatrices()
 	{
-		bool forceValidate = false;
-		if (m_validationState == ValidationState::Invalid)
+		if (m_isLocalMatrixDirty)
 		{
 			RecalculateLocalSRTMatrix();
-			forceValidate = true;
-		}
-		if (m_parent != nullptr)
-		{
-			forceValidate |= m_parent->m_validationState != ValidationState::Valid;
+			m_isLocalMatrixDirty = false;
+			m_isWorldMatrixDirty = true;
 		}
 
-		if (forceValidate)
+		if (m_isWorldMatrixDirty)
 		{
 			RecalculateWorldSRTMatrix();
-			if (iteration)
+			m_isWorldMatrixDirty = false;
+			for (Transform* child : m_children)
 			{
-				m_validationState = ValidationState::InvalidChildrenIteration;
+				// Mark all children as dirty.
+				child->m_isWorldMatrixDirty = true;
 			}
-			else
-			{
-				m_validationState = ValidationState::InvalidChildren;
-			}
-		}
-		else if (m_validationState == ValidationState::InvalidChildrenIteration)
-		{
-			m_validationState = ValidationState::Valid;
 		}
 	}
 
@@ -220,14 +200,13 @@ namespace udsdx
 			current = current->m_parent;
 		}
 
-		bool forceValidate = false;
 		while (!stack.empty())
 		{
 			current = stack.top();
 			stack.pop();
 
-			// Validate the local SRT matrix.
-			ValidateSRTMatrices(false);
+			// Validate the SRT matrices of the current transform.
+			ValidateSRTMatrices();
 		}
 	}
 }

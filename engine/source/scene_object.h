@@ -33,7 +33,7 @@ namespace udsdx
 	public:
 		Transform* GetTransform();
 		void Update(const Time& time, Scene& scene);
-		bool PostUpdate(const Time& time, Scene& scene, bool& forceValidate);
+		bool PostUpdate(const Time& time, Scene& scene);
 		void OnDrawGizmos(const Camera* target);
 
 	public:
