@@ -212,7 +212,6 @@ namespace udsdx
 			ImGui::Text(std::format("Local Position: ({:.2f}, {:.2f}, {:.2f})", localPosition.x, localPosition.y, localPosition.z).c_str());
 			ImGui::Text(std::format("Local Rotation: ({:.2f}, {:.2f}, {:.2f})", localRotationEuler.x, localRotationEuler.y, localRotationEuler.z).c_str());
 			ImGui::Text(std::format("Local Scale: ({:.2f}, {:.2f}, {:.2f})", localScale.x, localScale.y, localScale.z).c_str());
-			ImGui::Text(std::format("Transform Validation State: {}", static_cast<int>(m_transform.m_validationState)).c_str());
 
 			ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 			if (ImGui::TreeNode((nodeID + "_c").c_str(), "Components"))
