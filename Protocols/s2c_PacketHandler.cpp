@@ -640,9 +640,9 @@ const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSe
 	ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Dungeon);
 	ServerObjectMgr::GetInst()->GetMainHero()->GetTransform()->SetLocalPosition(
 		Vector3{
-		-6.6008f,
+		-18.6008f,
 		13.17f,
-		-213.3794f });
+		-225.3794f });
 	ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 	
 	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);

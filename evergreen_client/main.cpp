@@ -101,7 +101,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_dungeonEnvironmentParam.TerrainData = dungeonData.get();
     g_dungeonEnvironmentParam.TerrainSize = GET_DATA(float, "GlobalValues", "DungeonTerrainSize", "Value");
     g_dungeonEnvironmentParam.TerrainHeight = GET_DATA(float, "GlobalValues", "DungeonTerrainHeight", "Value");
-    g_dungeonEnvironmentParam.TerrainOffset = -g_dungeonEnvironmentParam.TerrainSize * 0.5f;
+    g_dungeonEnvironmentParam.TerrainOffset = -g_defaultEnvironmentParam.TerrainSize * 0.5f; // 실질적으로 지형 중심이 정위치에서 벗어나지만 계산의 편의성을 위해 메인 지형의 오프셋과 동일하게 설정
 
     auto mainScene = std::make_shared<MainScene>();
 
