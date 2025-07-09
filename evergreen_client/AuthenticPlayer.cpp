@@ -20,6 +20,7 @@
 #include "TransitionOverlayGUI.h"
 #include "EnvironmentRenderer.h"
 #include "CommonQuestTable.h"
+#include "EnvironmentRenderer.h"
 
 bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
 	const DirectX::SimpleMath::Vector3& targetPosition,
