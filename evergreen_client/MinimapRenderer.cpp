@@ -202,7 +202,7 @@ void MinimapRenderer::BuildPipelineStateObject()
 		psoDesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 		psoDesc.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 		psoDesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-		psoDesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+		psoDesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
 		psoDesc.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 		psoDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
@@ -323,7 +323,12 @@ void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam, const std::vec
 	pCommandList->IASetIndexBuffer(nullptr);
 	pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	for (const auto& mark : marks)
+	std::vector<Vector3> sortedMarks = marks;
+	Vector3 forward = Vector3(m_viewMatrix.m[2][0], m_viewMatrix.m[2][1], m_viewMatrix.m[2][2]);
+	std::sort(sortedMarks.begin(), sortedMarks.end(), [&forward](const Vector3& lhs, const Vector3& rhs) {
+		return lhs.Dot(forward) > rhs.Dot(forward); // Sort by projection onto the forward vector
+	});
+	for (const auto& mark : sortedMarks)
 	{
 		XMMATRIX worldMatrix = XMMatrixTranspose(XMMatrixTranslation(mark.x, mark.y, mark.z));
 		pCommandList->SetGraphicsRoot32BitConstants(0, 16, &worldMatrix, 0);
