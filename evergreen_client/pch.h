@@ -22,5 +22,6 @@
 
 #include <updown_studio.h>
 
+#include "resource.h"
 #include "define.h"
 #include "func.h"

@@ -587,6 +587,7 @@
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="QuestGUI.h" />
     <ClInclude Include="RequestPopupGUI.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ServerComponent.h" />
     <ClInclude Include="ServerObject.h" />
     <ClInclude Include="ServerObjectMgr.h" />
@@ -680,6 +681,9 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">VS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -16,6 +16,42 @@ using namespace udsdx;
 
 extern EnvironmentParameters g_defaultEnvironmentParam;
 
+INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    static std::string* pIdPassword = nullptr;
+
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        pIdPassword = reinterpret_cast<std::string*>(lParam);
+        return TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK)
+        {
+            char id[100] = {};
+            char password[100] = {};
+
+            GetDlgItemTextA(hDlg, IDC_EDIT_ID, id, 100);
+            GetDlgItemTextA(hDlg, IDC_EDIT_PASSWORD, password, 100);
+
+            // 저장
+            pIdPassword[0] = id;
+            pIdPassword[1] = password;
+
+            EndDialog(hDlg, IDOK);
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, IDCANCEL);
+            return TRUE;
+        }
+        break;
+    }
+    return FALSE;
+}
+
 MainScene::MainScene() : Scene()
 {
 }
@@ -75,7 +111,35 @@ void MainScene::OnAttach()
 
         m_mainMenuObj = std::make_shared<SceneObject>();
         auto mainMenuComp = m_mainMenuObj->AddComponent<MainMenuGUI>();
-        mainMenuComp->SetEnterGameCallback([this]() { m_popupGUIManager->Append(m_channelSwitchObj); });
+        mainMenuComp->SetEnterGameCallback([this]() {
+            if constexpr (g_bUseNetWork)
+            {
+                std::string credentials[2]; // [0]: ID, [1]: Password
+                INT_PTR ret = DialogBoxParam(
+                    INSTANCE(Core)->GetInstance(),
+                    MAKEINTRESOURCE(IDD_LOGIN_DIALOG),
+                    INSTANCE(Core)->GetMainWindow(),
+                    LoginDialogProc,
+                    reinterpret_cast<LPARAM>(&credentials)
+                );
+
+                if (ret == IDOK)
+                {
+                    // 사용자가 입력 완료
+                    std::string userId = credentials[0];
+                    std::string userPw = credentials[1];
+
+                    // 여기서 로그인 처리 로직 실행
+                    //
+
+                    m_popupGUIManager->Append(m_channelSwitchObj);
+                }
+            }
+            else
+            {
+                EnterCharacterSelection();
+            }
+            });
         mainMenuComp->SetExitGameCallback([this]() { ExitGame(); });
         m_interfaceGroup->AddChild(m_mainMenuObj);
 
