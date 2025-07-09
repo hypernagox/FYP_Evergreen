@@ -398,9 +398,10 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-evergreen_client/AssimpLog.txt
+# Ignore all imgui.ini files in any folder
+**/imgui.ini
+
 evergreen_client/UnityBuild
-test_lab/imgui.ini
-test_lab/AssimpLog.txt
+AssimpLog.txt
 *.ddscache
 !resource/**/*.obj
