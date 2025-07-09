@@ -19,6 +19,7 @@
 #include "HeightMap.h"
 #include "TransitionOverlayGUI.h"
 #include "CommonQuestTable.h"
+#include "EnvironmentRenderer.h"
 
 AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
 	: Component{ object }
