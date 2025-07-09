@@ -68,6 +68,9 @@ namespace udsdx
 		void SetClipOffset(const Vector2& offset) { m_clipOffset = offset; }
 		Vector2 GetClipOffset() const { return m_clipOffset; }
 
+		const Vector3 ToViewPosition(const Vector3& worldPosition) const;
+		const Vector2 ToScreenPosition(const Vector3& worldPosition) const;
+
 	protected:
 		std::array<std::unique_ptr<UploadBuffer<CameraConstants>>, FrameResourceCount> m_constantBuffers;
 

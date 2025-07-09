@@ -54,6 +54,51 @@ namespace udsdx
 		}
 	}
 
+	void MeshRenderer::OnDrawGizmos(const Camera* target)
+	{
+		if (m_mesh == nullptr)
+		{
+			return;
+		}
+
+		BoundingBox boundsWorld;
+		m_mesh->GetBounds().Transform(boundsWorld, m_transformCache);
+		
+		std::array<Vector3, BoundingBox::CORNER_COUNT> corners;
+		std::array<Vector2, BoundingBox::CORNER_COUNT> cornersScreen;
+
+		boundsWorld.GetCorners(corners.data());
+
+		bool isVisible = true;
+		for (size_t i = 0; i < BoundingBox::CORNER_COUNT && isVisible; ++i)
+		{
+			isVisible &= target->ToViewPosition(corners[i]).z > 1e-2f;
+			cornersScreen[i] = target->ToScreenPosition(corners[i]);
+		}
+
+		if (!isVisible)
+		{
+			return;
+		}
+
+		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+		ImColor drawColor(1.0f, 1.0f, 1.0f, 1.0f);
+		int indices[] = {
+			0, 1, 1, 2, 2, 3, 3, 0,
+			4, 5, 5, 6, 6, 7, 7, 4,
+			0, 4, 1, 5, 2, 6, 3, 7
+		};
+		for (size_t i = 0; i < 12; ++i)
+		{
+			int start = indices[i << 1];
+			int end = indices[i << 1 | 1];
+			drawList->AddLine(
+				ImVec2(cornersScreen[start].x, cornersScreen[start].y),
+				ImVec2(cornersScreen[end].x, cornersScreen[end].y),
+				drawColor);
+		}
+	}
+
 	void MeshRenderer::SetMesh(Mesh* mesh)
 	{
 		m_mesh = mesh;

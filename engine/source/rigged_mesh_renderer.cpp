@@ -42,9 +42,6 @@ namespace udsdx
 		PopulateTransforms(boneTransforms);
 		const auto& boneParents = m_animation->GetBoneParents();
 
-		Matrix4x4 viewMatrix = target->GetViewMatrix();
-		Matrix4x4 projMatrix = target->GetProjMatrix(screenRatio);
-
 		std::vector<ImVec2> boneScreenPositions(boneTransforms.size());
 
 		for (size_t index = 0; index < boneParents.size(); ++index)
@@ -52,21 +49,11 @@ namespace udsdx
 			const auto& bone = boneTransforms[index];
 
 			Vector3 worldPosition = Vector3::Transform(Vector3(bone.m[0][3], bone.m[1][3], bone.m[2][3]), m_transformCache);
-			Vector3 viewPosition = Vector3::Transform(worldPosition, viewMatrix);
-
-			Vector3 screenPosition = Vector3::Transform(viewPosition, projMatrix);
-
-			Matrix4x4 screenMatrix = Matrix4x4::Identity;
-			screenMatrix.m[0][0] = 0.5f * screenSize.x;
-			screenMatrix.m[1][1] = -0.5f * screenSize.y;
-			screenMatrix.m[3][0] = 0.5f * screenSize.x;
-			screenMatrix.m[3][1] = 0.5f * screenSize.y;
-
-			screenPosition = Vector3::Transform(screenPosition, screenMatrix);
+			Vector2 screenPosition = target->ToScreenPosition(worldPosition);
 			boneScreenPositions[index] = ImVec2(screenPosition.x, screenPosition.y);
 		}
 
-		ImDrawList* drawList = ImGui::GetWindowDrawList();
+		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 		for (size_t index = 0; index < boneParents.size(); ++index)
 		{
 			const auto& parentIndex = boneParents[index];
@@ -84,6 +71,39 @@ namespace udsdx
 					boneScreenPositions[parentIndex],
 					IM_COL32(255, 255, 0, 255), 2.0f);
 			}
+		}
+
+		std::array<Vector3, BoundingBox::CORNER_COUNT> corners;
+		std::array<Vector2, BoundingBox::CORNER_COUNT> cornersScreen;
+
+		boundsWorld.GetCorners(corners.data());
+
+		bool isVisible = true;
+		for (size_t i = 0; i < BoundingBox::CORNER_COUNT && isVisible; ++i)
+		{
+			isVisible &= target->ToViewPosition(corners[i]).z > 1e-2f;
+			cornersScreen[i] = target->ToScreenPosition(corners[i]);
+		}
+
+		if (!isVisible)
+		{
+			return;
+		}
+
+		ImColor drawColor(1.0f, 1.0f, 1.0f, 1.0f);
+		int indices[] = {
+			0, 1, 1, 2, 2, 3, 3, 0,
+			4, 5, 5, 6, 6, 7, 7, 4,
+			0, 4, 1, 5, 2, 6, 3, 7
+		};
+		for (size_t i = 0; i < 12; ++i)
+		{
+			int start = indices[i << 1];
+			int end = indices[i << 1 | 1];
+			drawList->AddLine(
+				ImVec2(cornersScreen[start].x, cornersScreen[start].y),
+				ImVec2(cornersScreen[end].x, cornersScreen[end].y),
+				drawColor);
 		}
 	}
 

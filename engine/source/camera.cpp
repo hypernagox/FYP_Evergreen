@@ -68,6 +68,23 @@ namespace udsdx
 		return m_clearColor;
 	}
 
+	const Vector3 Camera::ToViewPosition(const Vector3& worldPosition) const
+	{
+		return Vector3::Transform(worldPosition, GetViewMatrix());
+	}
+
+	const Vector2 Camera::ToScreenPosition(const Vector3& worldPosition) const
+	{
+		const int screenWidth = INSTANCE(Core)->GetClientWidth();
+		const int screenHeight = INSTANCE(Core)->GetClientHeight();
+
+		Vector3 screenPos = Vector3::Transform(worldPosition, GetViewMatrix() * GetProjMatrix(static_cast<float>(screenWidth) / screenHeight));
+		screenPos.x = (screenPos.x + 1.0f) * 0.5f;
+		screenPos.y = (1.0f - screenPos.y) * 0.5f;
+
+		return Vector2(screenPos.x * screenWidth, screenPos.y * screenHeight);
+	}
+
 	Matrix4x4 CameraPerspective::GetProjMatrix(float aspect) const
 	{
 		Matrix4x4 m;

@@ -188,17 +188,12 @@ namespace udsdx
 		float screenRatio = screenSize.x / screenSize.y;
 		Matrix4x4 viewMatrix = target->GetViewMatrix();
 		Matrix4x4 projMatrix = target->GetProjMatrix(screenRatio);
+		Vector3 viewForward = Vector3(viewMatrix.m[2][0], viewMatrix.m[2][1], viewMatrix.m[2][2]);
 
 		// Draw transform gizmos
 		Vector3 worldPosition = m_transform.GetWorldPosition();
 		Quaternion worldRotation = m_transform.GetWorldRotation();
-		Vector3 worldForward = Vector3::Transform(Vector3::UnitZ, worldRotation);
-		Vector3 worldUp = Vector3::Transform(Vector3::UnitY, worldRotation);
-
-		Vector3 viewPosition = Vector3::Transform(worldPosition, viewMatrix);
-		Vector3 viewForward = Vector3::TransformNormal(worldForward, viewMatrix);
-		Vector3 viewUp = Vector3::TransformNormal(worldUp, viewMatrix);
-		Vector3 viewRight = viewUp.Cross(viewForward);
+		Vector3 viewPosition = target->ToViewPosition(worldPosition);
 
 		ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 		std::string nodeID = std::to_string(reinterpret_cast<unsigned long long>(this));
@@ -229,40 +224,28 @@ namespace udsdx
 		if (viewPosition.z > 1e-2f)
 		{
 			float worldLength = (lineLength / screenSize.y) * (2.0f * viewPosition.z / projMatrix.m[1][1]);
-			Vector3 screenRight = viewPosition + viewRight * worldLength;
-			Vector3 screenUp = viewPosition + viewUp * worldLength;
-			Vector3 screenForward = viewPosition + viewForward * worldLength;
 
-			Vector3 screenPosition = Vector3::Transform(viewPosition, projMatrix);
-			screenRight = Vector3::Transform(screenRight, projMatrix);
-			screenUp = Vector3::Transform(screenUp, projMatrix);
-			screenForward = Vector3::Transform(screenForward, projMatrix);
+			Vector3 worldForward = Vector3::Transform(Vector3::UnitZ, worldRotation);
+			Vector3 worldUp = Vector3::Transform(Vector3::UnitY, worldRotation);
+			Vector3 worldRight = worldUp.Cross(worldForward);
 
-			Matrix4x4 screenMatrix = Matrix4x4::Identity;
-			screenMatrix.m[0][0] = 0.5f * screenSize.x;
-			screenMatrix.m[1][1] = -0.5f * screenSize.y;
-			screenMatrix.m[3][0] = 0.5f * screenSize.x;
-			screenMatrix.m[3][1] = 0.5f * screenSize.y;
+			Vector2 screenPosition = target->ToScreenPosition(worldPosition);
+			Vector2 screenRight = target->ToScreenPosition(worldPosition + worldRight * worldLength);
+			Vector2 screenUp = target->ToScreenPosition(worldPosition + worldUp * worldLength);
+			Vector2 screenForward = target->ToScreenPosition(worldPosition + worldForward * worldLength);
 
-			screenPosition = Vector3::Transform(screenPosition, screenMatrix);
-			screenRight = Vector3::Transform(screenRight, screenMatrix);
-			screenUp = Vector3::Transform(screenUp, screenMatrix);
-			screenForward = Vector3::Transform(screenForward, screenMatrix);
-
-			std::array<std::pair<Vector3, ImColor>, 3> lines = {
-				std::make_pair(screenRight, ImColor(1.0f, 0.0f, 0.0f, 1.0f)),	// Red for right
-				std::make_pair(screenUp, ImColor(0.0f, 1.0f, 0.0f, 1.0f)),		// Green for up
-				std::make_pair(screenForward, ImColor(0.0f, 0.0f, 1.0f, 1.0f))  // Blue for forward
+			std::array<std::tuple<float, Vector2, ImColor>, 3> lines = {
+				std::make_tuple(viewForward.Dot(worldRight), screenRight, ImColor(1.0f, 0.0f, 0.0f, 1.0f)),	// Red for right
+				std::make_tuple(viewForward.Dot(worldUp), screenUp, ImColor(0.0f, 1.0f, 0.0f, 1.0f)),		// Green for up
+				std::make_tuple(viewForward.Dot(worldForward), screenForward, ImColor(0.0f, 0.0f, 1.0f, 1.0f))  // Blue for forward
 			};
 
-			std::sort(lines.begin(), lines.end(), [](const auto& a, const auto& b) { return a.first.z > b.first.z; });
+			std::sort(lines.begin(), lines.end(), [](const auto& a, const auto& b) { return std::get<0>(a) > std::get<0>(b); });
 
 			ImDrawList* drawList = ImGui::GetBackgroundDrawList();
-			for (const auto& line : lines)
+			for (const auto& [distance, screenPos, color] : lines)
 			{
-				drawList->AddLine(ImVec2(screenPosition.x, screenPosition.y),
-					ImVec2(line.first.x, line.first.y),
-					line.second, lineThickness);
+				drawList->AddLine(ImVec2(screenPosition.x, screenPosition.y), ImVec2(screenPos.x, screenPos.y), color, lineThickness);
 			}
 			drawList->AddCircleFilled(ImVec2(screenPosition.x, screenPosition.y), lineThickness, ImColor(1.0f, 1.0f, 1.0f, 1.0f));
 

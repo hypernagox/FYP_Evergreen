@@ -14,6 +14,7 @@ namespace udsdx
 	{
 	public:
 		virtual void Render(RenderParam& param, int instances = 1) override;
+		virtual void OnDrawGizmos(const Camera* target) override;
 
 	public:
 		void SetMesh(Mesh* mesh);
