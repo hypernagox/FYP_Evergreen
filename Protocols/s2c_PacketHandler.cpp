@@ -554,9 +554,6 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 	
 	// 퀘스트를 깨면 무조건 메인 월드로 나가게 되므로 항상 마을맵 이동 로직을 수행한다.
 	// 이미 마을이더라 하더라도 동작에는 문제가 없으나 추후 더 유연한 맵 이동 로직 요
-	{
-		ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Default);
-	}
 
 	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
 	GuideSystem::GetInst()->ToggleFlag();
@@ -643,9 +640,9 @@ const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSe
 	ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Dungeon);
 	ServerObjectMgr::GetInst()->GetMainHero()->GetTransform()->SetLocalPosition(
 		Vector3{
-		496.3992f,
+		-6.6008f,
 		13.17f,
-		286.6206f });
+		-213.3794f });
 	ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 	
 	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
