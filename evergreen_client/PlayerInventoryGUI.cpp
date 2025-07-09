@@ -4,14 +4,14 @@
 
 using namespace udsdx;
 
-PlayerInventoryGUI::PlayerInventoryGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
+void PlayerInventoryGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(640.0f, 0.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\inventory.png")));
 	uiRenderer->SetSize(Vector2(360.0f, 520.0f));
-	object->AddChild(m_panel);
+	GetSceneObject()->AddChild(m_panel);
 
 	for (int i = 0; i < NUM_ROWS * NUM_COLUMNS; i++)
 	{

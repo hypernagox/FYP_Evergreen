@@ -10,10 +10,11 @@ class ServerComponent;
 
 class ServerObject : public Component
 {
-public:
-	ServerObject(const std::shared_ptr<SceneObject>& object);
+protected:
 	~ServerObject();
+
 public:
+	virtual void OnInitialize() override;
 	virtual void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	void SetObjID(const uint32_t id) { m_objID = id; }

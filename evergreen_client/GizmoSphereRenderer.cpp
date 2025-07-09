@@ -64,7 +64,7 @@ static constexpr char g_psoResource[] = R"(
 
 using namespace udsdx;
 
-GizmoSphereRenderer::GizmoSphereRenderer(const std::shared_ptr<SceneObject>& object) : RendererBase(object)
+void GizmoSphereRenderer::OnInitialize()
 {
 	m_castShadow = false;
 	m_renderGroup = RenderGroup::Forward;

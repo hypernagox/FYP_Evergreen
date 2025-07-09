@@ -22,11 +22,8 @@ class TutorialUI
 	: public udsdx::Component
 {
 public:
-	TutorialUI(const std::shared_ptr<udsdx::SceneObject>& object);
-
-
-public:
-	virtual void Update(const udsdx::Time& time, udsdx::Scene& scene)override;
+	virtual void OnInitialize() override;
+	virtual void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 public:
 	std::shared_ptr<TutorialUIElementBase> m_cur_gui;
@@ -61,7 +58,7 @@ class WASDTutorial
 {
 public:
 	virtual void Init(const std::shared_ptr<udsdx::SceneObject>& object) override;
-	virtual UI_TYPE Update(const udsdx::Time& time, udsdx::Scene& scene)override;
+	virtual UI_TYPE Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 public:
 

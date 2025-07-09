@@ -5,7 +5,7 @@
 class MainMenuGUI : public udsdx::Component
 {
 public:
-	MainMenuGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
     void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void SetEnterGameCallback(std::function<void()> callback) { m_enterGameCallback = callback; }
 	void SetExitGameCallback(std::function<void()> callback) { m_exitGameCallback = callback; }

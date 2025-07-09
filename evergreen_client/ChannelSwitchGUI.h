@@ -13,7 +13,7 @@ private:
 	};
 
 public:
-	ChannelSwitchGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 	void SetPanelGraphic(bool isEnter);
 	void SwitchChannelPage(int page);
 	void InitializeChannel(int channel);

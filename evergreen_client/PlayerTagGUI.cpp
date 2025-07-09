@@ -4,14 +4,14 @@
 
 using namespace udsdx;
 
-PlayerTagGUI::PlayerTagGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
+void PlayerTagGUI::OnInitialize()
 {
 	m_nameObject = std::make_shared<SceneObject>();
 	auto nameRenderer = m_nameObject->AddComponent<GUIText>();
 	nameRenderer->SetText(L"Player Name");
 	nameRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 
-	object->AddChild(m_nameObject);
+	GetSceneObject()->AddChild(m_nameObject);
 }
 
 void PlayerTagGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)

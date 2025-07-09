@@ -5,7 +5,7 @@
 class PlayerStatusGUI : public udsdx::Component
 {
 public:
-	PlayerStatusGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 
 	void SetMaxHealth(int value);
 	void SetCurrentHealth(int value);

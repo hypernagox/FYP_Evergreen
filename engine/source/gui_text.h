@@ -26,9 +26,6 @@ namespace udsdx
 		};
 
 	public:
-		GUIText(const std::shared_ptr<SceneObject>& object);
-
-	public:
 		void Render(RenderParam& param) override;
 
 	public:

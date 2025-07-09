@@ -7,7 +7,7 @@ class AuthenticPlayer;
 class PlayerEquipmentGUI : public udsdx::Component
 {
 public:
-	PlayerEquipmentGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 
 	void UpdateSlotContents(AuthenticPlayer* target, int index, int id);
 	void SelectEquipmentSlot(AuthenticPlayer* target, int index);

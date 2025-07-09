@@ -7,9 +7,9 @@
 
 using namespace udsdx;
 
-EntityInteraction::EntityInteraction(const std::shared_ptr<SceneObject>& owner) : Component(owner)
+void EntityInteraction::OnInitialize()
 {
-	auto inputHandler = owner->GetComponent<InputHandler>();
+	auto inputHandler = GetComponent<InputHandler>();
 	inputHandler->AddKeyFunc(Keyboard::E, KEY_STATE::KET_TAP, &EntityInteraction::Interact, this);
 }
 

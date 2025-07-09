@@ -12,8 +12,6 @@ private:
 	};
 
 public:
-	PopupGUIManager(const std::shared_ptr<udsdx::SceneObject>& object);
-
 	void Append(const std::shared_ptr<udsdx::SceneObject>& popup, const std::shared_ptr<udsdx::SceneObject>& page = nullptr);
 	void Pop(const std::shared_ptr<udsdx::SceneObject>& popup, bool ignorePages = false);
 	void Pop(bool ignorePages = false);

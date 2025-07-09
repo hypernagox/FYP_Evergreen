@@ -5,9 +5,7 @@
 class GizmoCylinderRenderer : public udsdx::RendererBase
 {
 public:
-	GizmoCylinderRenderer(const std::shared_ptr<udsdx::SceneObject>& object);
-
-public:
+	void OnInitialize() override;
 	void Render(udsdx::RenderParam& param, int instances = 1) override;
 
 	void BuildPipelineState();

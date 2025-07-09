@@ -15,11 +15,6 @@
 
 namespace udsdx
 {
-	RiggedMeshRenderer::RiggedMeshRenderer(const std::shared_ptr<SceneObject>& object) : RendererBase(object)
-	{
-
-	}
-
 	void RiggedMeshRenderer::Update(const Time& time, Scene& scene)
 	{
 		m_animationTime += time.deltaTime;

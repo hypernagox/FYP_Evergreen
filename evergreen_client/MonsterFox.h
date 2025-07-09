@@ -15,7 +15,7 @@ protected:
 
 public:
 	Transform* m_transformBody;
-	MonsterFox(const std::shared_ptr<SceneObject>& object);
 
+	void OnInitialize() override;
 	virtual void OnAnimationStateChange(AnimationState from, AnimationState to) override;
 };

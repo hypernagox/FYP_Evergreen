@@ -18,30 +18,8 @@
 #include "GuideSystem.h"
 #include "HeightMap.h"
 #include "TransitionOverlayGUI.h"
+#include "EnvironmentRenderer.h"
 #include "CommonQuestTable.h"
-
-AuthenticPlayer::AuthenticPlayer(const std::shared_ptr<SceneObject>& object)
-	: Component{ object }
-{
-	m_cameraAnchor = std::make_shared<SceneObject>();
-	m_cameraObj = std::make_shared<SceneObject>();
-
-	m_pCamera = m_cameraObj->AddComponent<CameraPerspective>();
-	m_pCamera->SetClearColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
-
-	// TODO: 아이템 Json 레지스트리에서 종류의 개수를 알아내서 가져오면 좋겠다.
-	m_inventory = std::vector<int>(16, 0);
-	m_quickSlot = std::vector<int>(MAX_QUICK_SLOT, -1);
-
-	m_cameraAnchorLastPosition = Vector3::Up * 120.0f;
-
-	Start();
-}
-
-AuthenticPlayer::~AuthenticPlayer()
-{
-
-}
 
 bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
 	const DirectX::SimpleMath::Vector3& targetPosition,
@@ -307,30 +285,20 @@ void AuthenticPlayer::TryClickScreen()
 	//std::cout << "공격 시도\n";
 }
 
-void AuthenticPlayer::DoAttack()
+void AuthenticPlayer::OnInitialize()
 {
-	if constexpr (g_bUseNetWork)
-	{
-		const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
-		m_bSendFlag = true;
-		Send(
-			Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition())
-			,Nagox::Enum::SKILL_TYPE::SKILL_TYPE_DEFAULT)
-		);
-	}
-}
+	m_cameraAnchor = std::make_shared<SceneObject>();
+	m_cameraObj = std::make_shared<SceneObject>();
 
-void AuthenticPlayer::RequestQuest()
-{
-	const auto t = GetSceneObject()->GetTransform();
-	if (IsWithinDistance(t->GetLocalPosition(), { 0,0,0 }, 10.f))
-	{	
-		Send(Create_c2s_REQUEST_QUEST(0));
-	}
-}
+	m_pCamera = m_cameraObj->AddComponent<CameraPerspective>();
+	m_pCamera->SetClearColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
 
-void AuthenticPlayer::Start()
-{
+	// TODO: 아이템 Json 레지스트리에서 종류의 개수를 알아내서 가져오면 좋겠다.
+	m_inventory = std::vector<int>(16, 0);
+	m_quickSlot = std::vector<int>(MAX_QUICK_SLOT, -1);
+
+	m_cameraAnchorLastPosition = Vector3::Up * 120.0f;
+
 	InitCamDirection();
 
 	auto sceneObject = GetSceneObject();
@@ -364,6 +332,28 @@ void AuthenticPlayer::Start()
 	m_pServerObject = AddComponent<ServerObject>();
 
 	m_entityMovement->SetFriction(40.0f);
+}
+
+void AuthenticPlayer::DoAttack()
+{
+	if constexpr (g_bUseNetWork)
+	{
+		const auto rad = CommonMath::GetYawFromQuaternion(m_cameraAnchor->GetTransform()->GetLocalRotation());
+		m_bSendFlag = true;
+		Send(
+			Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition())
+			,Nagox::Enum::SKILL_TYPE::SKILL_TYPE_DEFAULT)
+		);
+	}
+}
+
+void AuthenticPlayer::RequestQuest()
+{
+	const auto t = GetSceneObject()->GetTransform();
+	if (IsWithinDistance(t->GetLocalPosition(), { 0,0,0 }, 10.f))
+	{	
+		Send(Create_c2s_REQUEST_QUEST(0));
+	}
 }
 
 void AuthenticPlayer::Update(const Time& time, Scene& scene)

@@ -5,7 +5,7 @@
 class PlayerTagGUI : public udsdx::Component
 {
 public:
-	PlayerTagGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	void SetTargetPosition(const Vector3& targetPos) { m_targetPos = targetPos; }

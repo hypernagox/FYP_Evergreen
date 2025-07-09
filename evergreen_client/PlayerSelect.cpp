@@ -4,21 +4,21 @@
 
 using namespace udsdx;
 
-PlayerSelect::PlayerSelect(const std::shared_ptr<SceneObject>& object) : Component(object)
+void PlayerSelect::OnInitialize()
 {
-	m_targetPosition = object->GetTransform()->GetLocalPosition();
+	m_targetPosition = GetSceneObject()->GetTransform()->GetLocalPosition();
 	m_targetPosition.y = 256.0f;
 
 	m_characterObjects[0] = std::make_shared<SceneObject>();
 	m_characterObjects[0]->AddComponent<PlayerRenderer>()->InitializeWarrior();
-	object->AddChild(m_characterObjects[0]);
+	GetSceneObject()->AddChild(m_characterObjects[0]);
 
 	m_characterObjects[1] = std::make_shared<SceneObject>();
 	m_characterObjects[1]->AddComponent<PlayerRenderer>()->InitializePriest();
-	object->AddChild(m_characterObjects[1]);
+	GetSceneObject()->AddChild(m_characterObjects[1]);
 
 	m_characterObjects[2] = std::make_shared<SceneObject>();
-	object->AddChild(m_characterObjects[2]);
+	GetSceneObject()->AddChild(m_characterObjects[2]);
 
 	SetShowingCharacter(0);
 }

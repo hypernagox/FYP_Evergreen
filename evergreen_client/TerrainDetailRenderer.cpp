@@ -4,7 +4,7 @@
 
 using namespace udsdx;
 
-TerrainDetailRenderer::TerrainDetailRenderer(const std::shared_ptr<udsdx::SceneObject>& object) : RendererBase(object)
+void TerrainDetailRenderer::OnInitialize()
 {
 	m_castShadow = false;
 }

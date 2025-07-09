@@ -13,9 +13,6 @@ namespace udsdx
 	class MeshRenderer : public RendererBase
 	{
 	public:
-		MeshRenderer(const std::shared_ptr<SceneObject>& object);
-
-	public:
 		virtual void Render(RenderParam& param, int instances = 1) override;
 
 	public:

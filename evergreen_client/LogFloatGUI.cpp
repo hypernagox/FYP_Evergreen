@@ -3,14 +3,14 @@
 
 using namespace udsdx;
 
-LogFloatGUI::LogFloatGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
+void LogFloatGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(-640.0f, -240.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
 	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
-	object->AddChild(m_panel);
+	GetSceneObject()->AddChild(m_panel);
 
 	m_floatText = std::make_shared<SceneObject>();
 	auto floatText = m_floatText->AddComponent<GUIText>();

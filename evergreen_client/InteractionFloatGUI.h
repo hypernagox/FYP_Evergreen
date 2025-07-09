@@ -5,7 +5,7 @@
 class InteractionFloatGUI : public udsdx::Component
 {
 public:
-	InteractionFloatGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	void SetTargetPosition(const Vector3& targetPos) { m_targetPos = targetPos; }

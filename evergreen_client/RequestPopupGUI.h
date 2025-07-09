@@ -5,7 +5,7 @@
 class RequestPopupGUI : public udsdx::Component
 {
 public:
-	RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 	void ShowPopup(std::wstring_view title, std::wstring_view contents, const std::function<void()>& onAccept, const std::function<void()>& onCancel);
 
 private:

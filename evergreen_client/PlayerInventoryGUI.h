@@ -7,8 +7,7 @@ class AuthenticPlayer;
 class PlayerInventoryGUI : public udsdx::Component
 {
 public:
-	PlayerInventoryGUI(const std::shared_ptr<udsdx::SceneObject>& object);
-
+	void OnInitialize() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table);
 	void SelectInventorySlot(AuthenticPlayer* target, int id);

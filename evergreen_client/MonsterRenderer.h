@@ -5,9 +5,7 @@
 class MonsterRenderer : public udsdx::Component
 {
 public:
-	MonsterRenderer(std::shared_ptr<udsdx::SceneObject> owner);
-
-	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
+	void OnInitialize() override;
 
 private:
 	std::shared_ptr<udsdx::SceneObject> m_rendererObject;

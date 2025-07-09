@@ -7,9 +7,7 @@ using namespace udsdx;
 class MonsterHPPanel : public udsdx::RendererBase
 {
 public:
-	MonsterHPPanel(const std::shared_ptr<SceneObject>& object);
-
-public:
+	void OnInitialize() override;
 	void Render(udsdx::RenderParam& param, int instances = 1) override;
 
 	void BuildPipelineState();

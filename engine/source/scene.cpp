@@ -21,6 +21,9 @@
 
 namespace udsdx
 {
+	extern unsigned long long g_localMatrixRecalculateCounter;
+	extern unsigned long long g_worldMatrixRecalculateCounter;
+
 	Scene::Scene()
 	{
 		m_rootObject = std::make_shared<SceneObject>();
@@ -71,6 +74,10 @@ namespace udsdx
 		// Add Category for draw calls
 		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 		ImGui::Text("Active Objects Count: %u", activeObjectsCount);
+		ImGui::Text("Local Matrix Recalculation Count: %zu", g_localMatrixRecalculateCounter);
+		ImGui::Text("World Matrix Recalculation Count: %zu", g_worldMatrixRecalculateCounter);
+		g_localMatrixRecalculateCounter = 0;
+		g_worldMatrixRecalculateCounter = 0;
 		if (ImGui::TreeNode("Draw Calls"))
 		{
 			ImGui::Text("Render Camera Count: %zu", m_renderCameraQueue.size());

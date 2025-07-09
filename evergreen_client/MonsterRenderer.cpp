@@ -6,7 +6,7 @@ using namespace udsdx;
 
 // TODO: MonsterRenderer는 몬스터 타입에 따라 다양화 시키는게 좋을 것 같다. 추후 상속이나 참조를 통해 속성을 변경할 수 있어야 한다.
 
-MonsterRenderer::MonsterRenderer(std::shared_ptr<udsdx::SceneObject> owner) : Component(owner)
+void MonsterRenderer::OnInitialize()
 {
 	m_rendererObject = std::make_shared<udsdx::SceneObject>();
 	m_rendererObject->GetTransform()->SetLocalScale(Vector3::One * 0.015f);
@@ -24,16 +24,5 @@ MonsterRenderer::MonsterRenderer(std::shared_ptr<udsdx::SceneObject> owner) : Co
 	renderer->SetMaterial(m_materials[0].get(), 0);
 	renderer->SetMaterial(m_materials[1].get(), 1);
 
-	owner->AddChild(m_rendererObject);
-
-
-
-	//auto gizmoRenderer = GetSceneObject()->AddComponent<GizmoSphereRenderer>();
-	//gizmoRenderer->SetRadius(1.5f);
-
-
-}
-
-void MonsterRenderer::Update(const udsdx::Time& time, udsdx::Scene& scene)
-{
+	GetSceneObject()->AddChild(m_rendererObject);
 }

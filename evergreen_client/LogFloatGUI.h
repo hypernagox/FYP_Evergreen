@@ -5,7 +5,7 @@
 class LogFloatGUI : public udsdx::Component
 {
 public:
-	LogFloatGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void AddText(const std::wstring& text);
 	bool GetAlwaysVisible() const { return m_alwaysVisible; }

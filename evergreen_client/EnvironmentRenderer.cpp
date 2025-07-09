@@ -107,10 +107,6 @@ static std::shared_ptr<udsdx::Mesh> CreateMeshFromHeightMap(const HeightMap* hei
     return mesh;
 }
 
-EnvironmentRenderer::EnvironmentRenderer(const std::shared_ptr<SceneObject>& object) : Component(object)
-{
-}
-
 void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
 {
     auto res = INSTANCE(Resource);

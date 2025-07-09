@@ -5,9 +5,7 @@
 class GizmoSphereRenderer : public udsdx::RendererBase
 {
 public:
-	GizmoSphereRenderer(const std::shared_ptr<udsdx::SceneObject>& object);
-
-public:
+	void OnInitialize() override;
 	void Render(udsdx::RenderParam& param, int instances = 1) override;
 
 	void BuildPipelineState();

@@ -11,12 +11,16 @@ namespace udsdx
 
 	class Component
 	{
-	public:
-		Component() = delete;
-		Component(const std::shared_ptr<SceneObject>& object);
+		friend class SceneObject;
+
+	protected:
+		Component();
 		virtual ~Component();
 
 	public:
+		// Called when the component is created and attached to a SceneObject
+		virtual void OnInitialize();
+
 		// Called when the component is attached to a active scene
 		virtual void OnAttach();
 
@@ -28,6 +32,7 @@ namespace udsdx
 		// Called when the component is about to call Update() function for the first time
 		virtual void Begin();
 
+		friend class SceneObject;
 		// Called every frame
 		virtual void Update(const Time& time, Scene& scene);
 

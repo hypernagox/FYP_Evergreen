@@ -42,11 +42,12 @@ public:
 	CharacterType m_characterType = CharacterType::Warrior;
 	int m_attackState = 0;
 	Transform* m_transformBody;
-	PlayerRenderer(const std::shared_ptr<SceneObject>& object);
+
+	void OnInitialize() override;
+	void Update(const Time& time, Scene& scene) override;
+
 	void InitializeWarrior();
 	void InitializePriest();
-
-	void Update(const Time& time, Scene& scene) override;
 
 	Transform* const GetRenderObjTransform() const noexcept { return m_rendererObj->GetTransform(); }
 	void SetEquipmentState(bool isEquipped);

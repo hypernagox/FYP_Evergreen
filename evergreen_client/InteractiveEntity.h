@@ -5,8 +5,8 @@
 class InteractiveEntity : public udsdx::Component
 {
 public:
-	InteractiveEntity(const std::shared_ptr<udsdx::SceneObject>& owner);
-	
+	void OnInitialize() override;
+
 	void OnInteract();
 	void OnInteractRange(bool inRange);
 	std::wstring GetInteractionText() const { return m_interactionText; }

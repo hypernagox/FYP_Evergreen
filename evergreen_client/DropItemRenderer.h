@@ -5,8 +5,7 @@
 class DropItemRenderer : public udsdx::Component
 {
 public:
-	DropItemRenderer(std::shared_ptr<udsdx::SceneObject> owner);
-
+	void OnInitialize() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	void SetDropItem(uint8_t item_id);

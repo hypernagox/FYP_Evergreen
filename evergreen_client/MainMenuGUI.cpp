@@ -3,13 +3,13 @@
 
 using namespace udsdx;
 
-MainMenuGUI::MainMenuGUI(const std::shared_ptr<SceneObject>& object) : Component(object)
+void MainMenuGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
 	m_backgroundImage = m_panel->AddComponent<GUIImage>();
 	m_backgroundImage->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
 	m_backgroundImage->SetSize(Vector2::One * 8192.0f);
-	object->AddChild(m_panel);
+	GetSceneObject()->AddChild(m_panel);
 
 	m_verticalPanel = std::make_shared<SceneObject>();
 	m_verticalPanel->GetTransform()->SetLocalPosition(Vector3(-480.0f, 0.0f, 0.0f));

@@ -12,9 +12,6 @@ namespace udsdx
 	class GUIButton : public GUIImage
 	{
 	public:
-		GUIButton(const std::shared_ptr<SceneObject>& object);
-
-	public:
 		void Render(RenderParam& param) override;
 		void OnMouseRelease() override;
 

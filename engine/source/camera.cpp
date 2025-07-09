@@ -8,7 +8,7 @@
 
 namespace udsdx
 {
-	Camera::Camera(const std::shared_ptr<SceneObject>& object) : Component(object)
+	void Camera::OnInitialize()
 	{
 		for (auto& buffer : m_constantBuffers)
 		{
@@ -68,10 +68,6 @@ namespace udsdx
 		return m_clearColor;
 	}
 
-	CameraPerspective::CameraPerspective(const std::shared_ptr<SceneObject>& object) : Camera(object)
-	{
-	}
-
 	Matrix4x4 CameraPerspective::GetProjMatrix(float aspect) const
 	{
 		Matrix4x4 m;
@@ -114,10 +110,6 @@ namespace udsdx
 	float CameraPerspective::GetFar() const
 	{
 		return m_far;
-	}
-
-	CameraOrthographic::CameraOrthographic(const std::shared_ptr<SceneObject>& object) : Camera(object)
-	{
 	}
 
 	Matrix4x4 CameraOrthographic::GetProjMatrix(float aspect) const

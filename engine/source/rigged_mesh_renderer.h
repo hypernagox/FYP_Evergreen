@@ -17,9 +17,6 @@ namespace udsdx
 		};
 
 	public:
-		RiggedMeshRenderer(const std::shared_ptr<SceneObject>& object);
-
-	public:
 		virtual void Update(const Time& time, Scene& scene) override;
 		virtual void OnDrawGizmos(const Camera* target) override;
 		virtual void Render(RenderParam& param, int instances = 1);

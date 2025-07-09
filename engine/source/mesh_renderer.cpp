@@ -12,10 +12,6 @@
 
 namespace udsdx
 {
-	MeshRenderer::MeshRenderer(const std::shared_ptr<SceneObject>& object) : RendererBase(object)
-	{
-	}
-
 	void MeshRenderer::Render(RenderParam& param, int instances)
 	{
 		if (param.UseFrustumCulling)

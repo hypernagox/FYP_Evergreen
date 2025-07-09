@@ -4,9 +4,9 @@
 #include "MonsterHPPanel.h"
 #include "GameScene.h"
 
-Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
+void Monster::OnInitialize()
 {
-	m_entityMovement = object->AddComponent<EntityMovement>();
+	m_entityMovement = GetSceneObject()->AddComponent<EntityMovement>();
 
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
 
@@ -23,10 +23,6 @@ Monster::Monster(const std::shared_ptr<SceneObject>& object) : Component(object)
 	hpPanelObj->GetTransform()->SetLocalPosition(Vector3::Up * 1.5f);
 	m_hpPanel = hpPanelObj->AddComponent<MonsterHPPanel>();
 	GetSceneObject()->AddChild(hpPanelObj);
-}
-
-Monster::~Monster()
-{
 }
 
 void Monster::InitializeMonster(std::string_view monsterType)

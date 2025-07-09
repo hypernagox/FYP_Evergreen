@@ -96,7 +96,8 @@ static constexpr char g_psoResource[] = R"(
 	}
 )";
 
-MonsterHPPanel::MonsterHPPanel(const std::shared_ptr<SceneObject>& object) : RendererBase(object)
+
+void MonsterHPPanel::OnInitialize()
 {
 	m_castShadow = false;
 	m_renderGroup = RenderGroup::Forward;

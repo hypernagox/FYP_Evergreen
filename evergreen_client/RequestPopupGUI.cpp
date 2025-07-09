@@ -4,14 +4,14 @@
 
 using namespace udsdx;
 
-RequestPopupGUI::RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& object) : udsdx::Component(object)
+void RequestPopupGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(0.0f, -240.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_0_entry.png")));
 	uiRenderer->SetSize(Vector2(420.0f, 240.0f));
-	object->AddChild(m_panel);
+	GetSceneObject()->AddChild(m_panel);
 
 	m_titleText = std::make_shared<SceneObject>();
 	auto titleTextRenderer = m_titleText->AddComponent<GUIText>();
@@ -40,7 +40,7 @@ RequestPopupGUI::RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& obje
 		if (m_onAccept)
 			m_onAccept();
 		GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Pop(m_panel);
-	});
+		});
 	m_panel->AddChild(m_acceptButton);
 
 	auto acceptButtonText = m_acceptButton->AddComponent<GUIText>();
@@ -58,7 +58,7 @@ RequestPopupGUI::RequestPopupGUI(const std::shared_ptr<udsdx::SceneObject>& obje
 		if (m_onCancel)
 			m_onCancel();
 		GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Pop(m_panel);
-	});
+		});
 	m_panel->AddChild(m_cancelButton);
 
 	auto cancelButtonText = m_cancelButton->AddComponent<GUIText>();

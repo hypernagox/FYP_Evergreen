@@ -12,9 +12,6 @@ namespace udsdx
 	class GUIImage : public GUIElement
 	{
 	public:
-		GUIImage(const std::shared_ptr<SceneObject>& object);
-
-	public:
 		void Render(RenderParam& param) override;
 
 	public:

@@ -5,7 +5,6 @@
 class DamageCountGUI : public udsdx::Component
 {
 public:
-	DamageCountGUI(const std::shared_ptr<udsdx::SceneObject>& object);
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	void AddCountObject(const Vector3& targetPos, unsigned int damageCount);

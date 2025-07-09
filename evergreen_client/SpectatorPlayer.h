@@ -9,7 +9,7 @@ using namespace udsdx;
 class SpectatorPlayer : public Component
 {
 public:
-	SpectatorPlayer(const std::shared_ptr<SceneObject>& object);
+	void OnInitialize() override;
 	void Update(const Time& time, Scene& scene) override;
 
 	void MoveByView(const Vector3& acceleration);

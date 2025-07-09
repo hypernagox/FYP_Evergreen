@@ -84,12 +84,10 @@ private:
 	void RequestQuest();
 
 public:
-	AuthenticPlayer(const std::shared_ptr<SceneObject>& object);
-	~AuthenticPlayer();
+	void OnInitialize() override;
+	void Update(const Time& time, Scene& scene) override;
 
 	void DoAttack();
-	void Start();
-	void Update(const Time& time, Scene& scene) override;
 	void TryClickScreen();
 
 	Vector3 GetPlayerLook() const noexcept;

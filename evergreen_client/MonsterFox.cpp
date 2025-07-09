@@ -1,7 +1,9 @@
 #include "MonsterFox.h"
 
-MonsterFox::MonsterFox(const std::shared_ptr<SceneObject>& object) : Monster(object)
+void MonsterFox::OnInitialize()
 {
+	Monster::OnInitialize();
+
 	m_rendererObj = std::make_shared<SceneObject>();
 
 	std::shared_ptr<SceneObject> pBody = std::make_shared<SceneObject>();

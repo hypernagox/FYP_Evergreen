@@ -5,10 +5,6 @@
 
 namespace udsdx
 {
-	GUIText::GUIText(const std::shared_ptr<SceneObject>& object) : GUIElement(object)
-	{
-	}
-
 	void GUIText::Render(RenderParam& param)
 	{
 		const float height = 1080.0f;

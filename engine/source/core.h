@@ -55,6 +55,8 @@ namespace udsdx
 		void ReleaseImGui();
 
 	public:
+		HINSTANCE GetInstance() const;
+		HWND GetMainWindow() const;
 		ID3D12Device* GetDevice() const;
 		ID3D12CommandQueue* GetCommandQueue() const;
 		ID3D12CommandAllocator* GetCommandAllocator() const;

@@ -5,7 +5,7 @@
 class TransitionOverlayGUI : public udsdx::Component
 {
 public:
-	TransitionOverlayGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	void BeginFadeOut();

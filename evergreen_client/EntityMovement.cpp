@@ -3,14 +3,6 @@
 #include "NaviAgent.h"
 #include "ServerObject.h"
 
-EntityMovement::EntityMovement(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
-{
-}
-
-EntityMovement::~EntityMovement()
-{
-}
-
 void EntityMovement::Update(const Time& time, Scene& scene)
 {
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::OemPlus))

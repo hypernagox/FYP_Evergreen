@@ -25,10 +25,6 @@ Vector3 BezierMovement::GetTangentByTime(const ControlPoint& p1, const ControlPo
 	return cf1d * (p1.TangentOut - p1.Position) + cf2d * (p2.TangentIn - p1.TangentOut) + cf3d * (p2.Position - p2.TangentIn);
 }
 
-BezierMovement::BezierMovement(const std::shared_ptr<SceneObject>& owner) : Component(owner)
-{
-}
-
 void BezierMovement::Update(const Time& time, Scene& scene)
 {
 	m_currentTime += time.deltaTime * m_speed;

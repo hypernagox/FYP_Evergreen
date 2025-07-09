@@ -22,7 +22,7 @@ private:
 	};
 
 public:
-	QuestGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 
 	void RequestPartyList(int questID);
 	void FetchQuestList();

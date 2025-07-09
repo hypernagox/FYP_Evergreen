@@ -20,7 +20,7 @@ private:
 	};
 
 public:
-	PlayerCraftGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 	void UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table);
 
 private:

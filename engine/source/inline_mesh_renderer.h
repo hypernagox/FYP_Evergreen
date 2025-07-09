@@ -8,9 +8,6 @@ namespace udsdx
 	class InlineMeshRenderer : public RendererBase
 	{
 	public:
-		InlineMeshRenderer(const std::shared_ptr<SceneObject>& object);
-
-	public:
 		virtual void Render(RenderParam& param, int instances = 1) override;
 
 	public:

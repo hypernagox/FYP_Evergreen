@@ -9,7 +9,7 @@ class GameScene;
 class EntityInteraction : public udsdx::Component
 {
 public:
-	EntityInteraction(const std::shared_ptr<udsdx::SceneObject>& owner);
+	void OnInitialize() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	void Interact();

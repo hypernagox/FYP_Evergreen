@@ -26,8 +26,6 @@ private:
 	static udsdx::Vector3 GetTangentByTime(const ControlPoint& p1, const ControlPoint& p2, float t);
 
 public:
-	BezierMovement(const std::shared_ptr<udsdx::SceneObject>& owner);
-
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void LoadSpline(const std::wstring& filePath);
 

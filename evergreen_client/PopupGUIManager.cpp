@@ -3,10 +3,6 @@
 
 using namespace udsdx;
 
-PopupGUIManager::PopupGUIManager(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
-{
-}
-
 std::vector<PopupGUIManager::PopupElement>::iterator PopupGUIManager::Find(const std::shared_ptr<udsdx::SceneObject>& popup)
 {
 	return std::find_if(m_popupContainer.begin(), m_popupContainer.end(), [&popup](const PopupElement& element) { return element.PopupObject == popup; });

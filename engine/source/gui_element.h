@@ -13,9 +13,6 @@ namespace udsdx
 		static constexpr Vector2 RefScreenSize = Vector2(1920, 1080);
 
 	public:
-		GUIElement(const std::shared_ptr<SceneObject>& object);
-
-	public:
 		void UpdateEvent(bool hover);
 		void PostUpdate(const Time& time, Scene& scene) override;
 		virtual void Render(RenderParam& param) = 0;

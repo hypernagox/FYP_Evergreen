@@ -53,9 +53,7 @@ namespace udsdx
 	class Camera : public Component
 	{
 	public:
-		Camera(const std::shared_ptr<SceneObject>& object);
-
-	public:
+		virtual void OnInitialize() override;
 		virtual void PostUpdate(const Time& time, Scene& scene) override;
 		D3D12_GPU_VIRTUAL_ADDRESS UpdateConstantBuffer(int frameResourceIndex, float width, float height);
 
@@ -81,9 +79,6 @@ namespace udsdx
 	class CameraPerspective : public Camera
 	{
 	public:
-		CameraPerspective(const std::shared_ptr<SceneObject>& object);
-
-	public:
 		virtual Matrix4x4 GetProjMatrix(float aspect) const override;
 		virtual std::unique_ptr<BoundingCamera> GetViewFrustumWorld(float aspect) const override;
 
@@ -104,9 +99,6 @@ namespace udsdx
 
 	class CameraOrthographic : public Camera
 	{
-	public:
-		CameraOrthographic(const std::shared_ptr<SceneObject>& object);
-
 	public:
 		virtual Matrix4x4 GetProjMatrix(float aspect) const override;
 		virtual std::unique_ptr<BoundingCamera> GetViewFrustumWorld(float aspect) const override;

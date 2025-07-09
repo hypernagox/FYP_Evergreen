@@ -8,9 +8,9 @@ using namespace udsdx;
 
 bool g_first_clear = false;
 
-TutorialUI::TutorialUI(const std::shared_ptr<udsdx::SceneObject>& object)
-	:Component{ object }
+void TutorialUI::OnInitialize()
 {
+	auto object = GetSceneObject();
 
 	{
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::WASD];

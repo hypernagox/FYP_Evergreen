@@ -7,7 +7,7 @@
 
 using namespace udsdx;
 
-QuestGUI::QuestGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
+void QuestGUI::OnInitialize()
 {
 	auto font = INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont"));
 
@@ -17,7 +17,7 @@ QuestGUI::QuestGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Componen
 		m_questListPanel->SetActive(false);
 		auto uiRenderer = m_questListPanel->AddComponent<GUIImage>();
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_questlist.png")), true);
-		object->AddChild(m_questListPanel);
+		GetSceneObject()->AddChild(m_questListPanel);
 
 		auto incrementQuestButton = std::make_shared<SceneObject>();
 		m_incrementQuestButton = incrementQuestButton->AddComponent<GUIButton>();
@@ -100,7 +100,7 @@ QuestGUI::QuestGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Componen
 		m_partyListPanel->SetActive(false);
 		auto uiRenderer = m_partyListPanel->AddComponent<GUIImage>();
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_find.png")), true);
-		object->AddChild(m_partyListPanel);
+		GetSceneObject()->AddChild(m_partyListPanel);
 
 		m_standByText = std::make_shared<SceneObject>();
 		m_standByText->SetActive(false);
@@ -211,7 +211,7 @@ QuestGUI::QuestGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Componen
 		m_partyCreatePanel->SetActive(false);
 		auto uiRenderer = m_partyCreatePanel->AddComponent<GUIImage>();
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_create.png")), true);
-		object->AddChild(m_partyCreatePanel);
+		GetSceneObject()->AddChild(m_partyCreatePanel);
 
 		auto createButton = std::make_shared<SceneObject>();
 		auto createButtonRenderer = createButton->AddComponent<GUIButton>();

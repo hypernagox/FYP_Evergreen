@@ -5,13 +5,13 @@
 #include "AuthenticPlayer.h"
 #include "../common/json.hpp"
 
-PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Component(object)
+void PlayerRenderer::OnInitialize()
 {
 	m_rendererObj = std::make_shared<SceneObject>();
 
 	GetSceneObject()->AddChild(m_rendererObj);
 
-	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float,"GlobalValues", "CharacterScale", "Value"));
+	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "GlobalValues", "CharacterScale", "Value"));
 
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(to); });
@@ -20,12 +20,12 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::AttackEnd, 0.25f);
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::AttackEnd, AnimationState::Idle, 0.3f);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::AttackEnd, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
-	
+
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Idle, 0.365f);
-	
+
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Death, m_stateMachine->GetConditionRefBool("Death"), true);
 
 	const AnimationState runStates[] = {
@@ -54,7 +54,6 @@ PlayerRenderer::PlayerRenderer(const std::shared_ptr<SceneObject>& object) : Com
 
 	m_stateMachine->SetStateUpdateFp(AnimationState::Attack, [this]() {
 		static bool flags[4];
-	
 		});
 }
 

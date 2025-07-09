@@ -3,7 +3,7 @@
 
 using namespace udsdx;
 
-PartyStatusGUI::PartyStatusGUI(const std::shared_ptr<SceneObject>& object) : Component(object)
+void PartyStatusGUI::OnInitialize()
 {
 	auto font = INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont"));
 
@@ -13,7 +13,7 @@ PartyStatusGUI::PartyStatusGUI(const std::shared_ptr<SceneObject>& object) : Com
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
 	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
 
-	object->AddChild(m_panel);
+	GetSceneObject()->AddChild(m_panel);
 
 	m_titleText = std::make_shared<SceneObject>();
 	auto titleText = m_titleText->AddComponent<GUIText>();
@@ -33,7 +33,7 @@ PartyStatusGUI::PartyStatusGUI(const std::shared_ptr<SceneObject>& object) : Com
 	leavePartyButtonRenderer->SetClickCallback([]() {
 		// TODO: 파티 리셋, 또는 탈퇴 패킷, 다만 현재 파퀘 진행중이라면 여기서도 좀 검증 필요
 		Send(Create_c2s_PARTY_OUT());
-	});
+		});
 
 	auto leavePartyButtonText = m_leavePartyButton->AddComponent<GUIText>();
 	leavePartyButtonText->SetFont(font);

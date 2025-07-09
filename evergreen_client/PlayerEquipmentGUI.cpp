@@ -5,14 +5,14 @@
 
 using namespace udsdx;
 
-PlayerEquipmentGUI::PlayerEquipmentGUI(const std::shared_ptr<SceneObject>& object) : Component(object)
+void PlayerEquipmentGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(640.0f, 0.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\equipment.png")), true);
 	uiRenderer->SetSize(Vector2(452.0f, 600.0f));
-	object->AddChild(m_panel);
+	GetSceneObject()->AddChild(m_panel);
 
 	m_statText = std::make_shared<SceneObject>();
 	auto text = m_statText->AddComponent<GUIText>();

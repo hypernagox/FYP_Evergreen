@@ -4,14 +4,14 @@
 
 using namespace udsdx;
 
-InteractionFloatGUI::InteractionFloatGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
+void InteractionFloatGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 	uiRenderer->SetSize(Vector2(200.0f, 40.0f));
-	object->AddChild(m_panel);	
+	GetSceneObject()->AddChild(m_panel);
 
 	m_interactionText = std::make_shared<SceneObject>();
 	auto interactionText = m_interactionText->AddComponent<GUIText>();

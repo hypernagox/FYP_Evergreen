@@ -3,13 +3,13 @@
 
 std::default_random_engine DropItemRenderer::randomEngine{};
 
-DropItemRenderer::DropItemRenderer(std::shared_ptr<udsdx::SceneObject> owner) : udsdx::Component(owner)
+void DropItemRenderer::OnInitialize()
 {
 	m_rendererObject = std::make_shared<udsdx::SceneObject>();
 	m_meshRenderer = m_rendererObject->AddComponent<udsdx::MeshRenderer>();
 	m_meshRenderer->SetShader(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colorhighlight.hlsl")));
 
-	owner->AddChild(m_rendererObject);
+	GetSceneObject()->AddChild(m_rendererObject);
 
 	auto urd = std::uniform_real_distribution(0.0f, udsdx::PI2);
 	m_rotationOffset = urd(randomEngine);

@@ -31,8 +31,8 @@ protected:
 
 public:
 	Transform* m_transformBody;
-	Monster(const std::shared_ptr<SceneObject>& object);
-	~Monster();
+
+	void OnInitialize() override;
 
 	void InitializeMonster(std::string_view monsterType);
 	void Update(const Time& time, Scene& scene) override;

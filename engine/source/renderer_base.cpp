@@ -10,10 +10,6 @@
 
 namespace udsdx
 {
-	RendererBase::RendererBase(const std::shared_ptr<SceneObject>& object) : Component(object)
-	{
-	}
-
 	void RendererBase::PostUpdate(const Time& time, Scene& scene)
 	{
 		UpdateTransformCache();

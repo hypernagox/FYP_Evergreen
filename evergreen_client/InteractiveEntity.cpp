@@ -4,10 +4,10 @@
 
 using namespace udsdx;
 
-InteractiveEntity::InteractiveEntity(const std::shared_ptr<SceneObject>& owner) : Component(owner)
+void InteractiveEntity::OnInitialize()
 {
-	m_targetRenderers = owner->GetComponentsInChildren<RendererBase>();
-	RendererBase* renderer = owner->GetComponent<RendererBase>();
+	m_targetRenderers = GetSceneObject()->GetComponentsInChildren<RendererBase>();
+	RendererBase* renderer = GetSceneObject()->GetComponent<RendererBase>();
 	if (nullptr != renderer)
 	{
 		m_targetRenderers.emplace_back(renderer);

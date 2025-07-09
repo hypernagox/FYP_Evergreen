@@ -28,8 +28,6 @@ class InputHandler
 	:public udsdx::Component
 {
 public:
-	InputHandler(const std::shared_ptr<udsdx::SceneObject>& object)noexcept :udsdx::Component{ object } {}
-public:
 	using KeyFunc = std::function<void(void)>;
 public:
 	virtual void Update(const udsdx::Time& time, udsdx::Scene& scene)override;

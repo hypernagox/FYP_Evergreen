@@ -6,7 +6,7 @@
 
 using namespace udsdx;
 
-ChannelSwitchGUI::ChannelSwitchGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
+void ChannelSwitchGUI::OnInitialize()
 {
 	auto font = INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont"));
 
@@ -14,12 +14,12 @@ ChannelSwitchGUI::ChannelSwitchGUI(const std::shared_ptr<udsdx::SceneObject>& ob
 	auto backgroundRenderer = m_background->AddComponent<GUIImage>();
 	backgroundRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
 	backgroundRenderer->SetSize(Vector2::One * 8192.0f);
-	object->AddChild(m_background);
+	GetSceneObject()->AddChild(m_background);
 
 	m_panel = std::make_shared<SceneObject>();
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\channel\\move_channel.png")), true);
-	object->AddChild(m_panel);
+	GetSceneObject()->AddChild(m_panel);
 
 	for (int row = 0; row < PageRows; ++row)
 	{

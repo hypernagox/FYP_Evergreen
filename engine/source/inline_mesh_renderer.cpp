@@ -7,10 +7,6 @@
 
 namespace udsdx
 {
-	InlineMeshRenderer::InlineMeshRenderer(const std::shared_ptr<SceneObject>& object) : RendererBase(object)
-	{
-	}
-
 	void InlineMeshRenderer::Render(RenderParam& param, int instances)
 	{
 		ObjectConstants objectConstants;

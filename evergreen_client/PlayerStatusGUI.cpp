@@ -3,8 +3,7 @@
 
 using namespace udsdx;
 
-PlayerStatusGUI::PlayerStatusGUI(const std::shared_ptr<udsdx::SceneObject>& object)
-	: Component(object)
+void PlayerStatusGUI::OnInitialize()
 {
     {
         m_healthBackground = std::make_shared<SceneObject>();
@@ -29,9 +28,9 @@ PlayerStatusGUI::PlayerStatusGUI(const std::shared_ptr<udsdx::SceneObject>& obje
         m_textRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
     }
 
-    object->AddChild(m_healthBackground);
-    object->AddChild(m_healthFill);
-    object->AddChild(m_textObj);
+    GetSceneObject()->AddChild(m_healthBackground);
+    GetSceneObject()->AddChild(m_healthFill);
+    GetSceneObject()->AddChild(m_textObj);
 
     SetCurrentHealth(m_maxHealth);
 }

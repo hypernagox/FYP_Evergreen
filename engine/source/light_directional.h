@@ -10,9 +10,6 @@ namespace udsdx
 	class LightDirectional : public Component
 	{
 	public:
-		LightDirectional(const std::shared_ptr<SceneObject>& object);
-
-	public:
 		virtual void PostUpdate(const Time& time, Scene& scene) override;
 
 	public:

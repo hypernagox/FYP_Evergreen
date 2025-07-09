@@ -11,6 +11,14 @@ namespace udsdx
 
 	class SceneObject : public std::enable_shared_from_this<SceneObject>
 	{
+		friend class Scene;
+
+	private:
+		struct ComponentDeleter
+		{
+			void operator()(Component* component) const;
+		};
+
 	public:
 		static void Enumerate(const std::shared_ptr<SceneObject>& root, std::function<void(const std::shared_ptr<SceneObject>&)> callback);
 		static void EnumerateUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene);
@@ -42,9 +50,11 @@ namespace udsdx
 		template <typename Component_T>
 		Component_T* AddComponent()
 		{
-			std::unique_ptr<Component_T> component = std::make_unique<Component_T>(shared_from_this());
+			std::unique_ptr<Component_T, ComponentDeleter> component = std::unique_ptr<Component_T, ComponentDeleter>(new Component_T());
 			Component_T* componentPtr = component.get();
+			componentPtr->m_object = shared_from_this();
 			m_components.emplace_back(std::move(component));
+			componentPtr->OnInitialize();
 			return componentPtr;
 		}
 
@@ -114,7 +124,7 @@ namespace udsdx
 	protected:
 		bool m_active = true;
 		Transform m_transform = Transform();
-		std::vector<std::unique_ptr<Component>> m_components;
+		std::vector<std::unique_ptr<Component, ComponentDeleter>> m_components;
 
 	protected:
 		bool m_detachDirty = false;

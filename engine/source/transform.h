@@ -6,6 +6,17 @@ namespace udsdx
 {
 	class Transform
 	{
+		friend class SceneObject;
+
+	private:
+		enum class ValidationState : uint8_t
+		{
+			Valid,						// Local / World SRT matrices and its children are valid.
+			Invalid,					// Local / World SRT matrices are invalid, children should be validated.
+			InvalidChildren,		    // Local / World SRT matrices are valid, but some children may be invalid.
+			InvalidChildrenIteration,   // Local / World SRT matrices are valid, but some children may be invalid. After the iteration, the children are guaranteed to be valid.
+		};
+
 	public:
 		Transform() = default;
 		~Transform() = default;
@@ -38,15 +49,14 @@ namespace udsdx
 		Matrix4x4 GetLocalSRTMatrix();
 		Matrix4x4 GetWorldSRTMatrix(bool forceValidate = true);
 
-		// Validate the local SRT matrix.
-		// If the local matrix is dirty, the local SRT matrix is recalculated.
-		// The return value is true if the local matrix was dirty; you can use the return value to determine whether the children need to be recalculated.
-		bool ValidateLocalSRTMatrix();
+		void RecalculateLocalSRTMatrix();
+		void RecalculateWorldSRTMatrix();
 
-		// Validate the world SRT matrix.
-		// If the world matrix is dirty, the world SRT matrix is recalculated.
+		// Validate both the local and the world SRT matrix.
+		// If the m_isLocalMatrixDirty is true, the local SRT matrix is recalculated.
+		// If the m_forceChildrenValidate of m_parent is true, the world SRT matrix is recalculated.
 		// Calling this function assumes the world SRT matrix of the parent is already calculated.
-		void ValidateWorldSRTMatrix();
+		void ValidateSRTMatrices(bool iteration = false);
 
 		// Validate both the local and the world SRT matrices.
 		// This function traverses the all parents of the transform and validates the world SRT matrix of each parent.
@@ -64,6 +74,6 @@ namespace udsdx
 		Matrix4x4	m_localSRTMatrix = Matrix4x4::Identity;
 		Matrix4x4	m_worldSRTMatrix = Matrix4x4::Identity;
 
-		bool		m_isLocalMatrixDirty = true;
+		ValidationState m_validationState = ValidationState::Valid;
 	};
 }

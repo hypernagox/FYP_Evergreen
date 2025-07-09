@@ -8,10 +8,6 @@
 
 namespace udsdx
 {
-	GUIImage::GUIImage(const std::shared_ptr<SceneObject>& object) : GUIElement(object)
-	{
-	}
-
 	void GUIImage::Render(RenderParam& param)
 	{
 		float ratio = param.Viewport.Height / RefScreenSize.y;

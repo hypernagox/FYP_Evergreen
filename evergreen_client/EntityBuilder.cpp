@@ -121,6 +121,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 		break;
 	}
 	default:
+		return nullptr; // TODO: 예외처리
 		break;
 	}
 }

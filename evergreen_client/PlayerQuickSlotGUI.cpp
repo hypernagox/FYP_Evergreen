@@ -3,30 +3,30 @@
 
 using namespace udsdx;
 
-PlayerQuickSlotGUI::PlayerQuickSlotGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
+void PlayerQuickSlotGUI::OnInitialize()
 {
-    for (int i = 0; i < MAX_QUICK_SLOT; i++)
-    {
+	for (int i = 0; i < MAX_QUICK_SLOT; i++)
+	{
 		m_slotBackground[i] = std::make_shared<SceneObject>();
 		auto uiRenderer = m_slotBackground[i]->AddComponent<GUIButton>();
 		m_slotBackground[i]->GetTransform()->SetLocalPosition(Vector3(640.0f + 120.0f * i, -400.0f, 0.0f));
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(std::format(L"gui\\quickslot_{0}.png", i + 1))));
 		uiRenderer->SetSize(Vector2(105, 136));
-		object->AddChild(m_slotBackground[i]);
+		GetSceneObject()->AddChild(m_slotBackground[i]);
 
 		m_slotContents[i] = std::make_shared<SceneObject>();
 		auto renderer = m_slotContents[i]->AddComponent<GUIImage>();
 		m_slotContents[i]->GetTransform()->SetLocalPosition(Vector3(640.0f + 120.0f * i, -380.0f, 0.0f));
 		renderer->SetSize(Vector2(100, 100));
 		renderer->SetRaycastTarget(false);
-		object->AddChild(m_slotContents[i]);
+		GetSceneObject()->AddChild(m_slotContents[i]);
 
 		m_slotText[i] = std::make_shared<SceneObject>();
 		auto text = m_slotText[i]->AddComponent<GUIText>();
 		text->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 		m_slotText[i]->GetTransform()->SetLocalPosition(Vector3(680.0f + 120.0f * i, -420.0f, 0.0f));
 		text->SetRaycastTarget(false);
-		object->AddChild(m_slotText[i]);
+		GetSceneObject()->AddChild(m_slotText[i]);
 	}
 }
 

@@ -4,10 +4,6 @@
 
 namespace udsdx
 {
-	GUIButton::GUIButton(const std::shared_ptr<SceneObject>& object) : GUIImage(object)
-	{
-	}
-
 	void GUIButton::Render(RenderParam& param)
 	{
 		float ratio = param.Viewport.Height / RefScreenSize.y;

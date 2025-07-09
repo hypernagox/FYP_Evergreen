@@ -7,9 +7,9 @@
 
 namespace udsdx
 {
-	udsdx::RiggedPropRenderer::RiggedPropRenderer(const std::shared_ptr<SceneObject>& object) : MeshRenderer(object)
+	void RiggedPropRenderer::OnInitialize()
 	{
-		m_targetCache = object->GetComponent<RiggedMeshRenderer>();
+		m_targetCache = GetSceneObject()->GetComponent<RiggedMeshRenderer>();
 		if (!m_targetCache)
 		{
 			throw std::runtime_error("RiggedPropRenderer requires a RiggedMeshRenderer component on the target object.");

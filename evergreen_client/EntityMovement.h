@@ -7,9 +7,6 @@ using namespace udsdx;
 class EntityMovement : public udsdx::Component
 {
 public:
-	EntityMovement(const std::shared_ptr<udsdx::SceneObject>& object);
-	~EntityMovement();
-
 	void Update(const Time& time, Scene& scene) override;
 
 	void AddVelocity(const Vector3& velocity) { m_velocity += velocity; }

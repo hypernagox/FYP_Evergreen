@@ -25,18 +25,6 @@
     <ClCompile Include="source\audio_clip.cpp">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="source\camera.cpp">
-      <Filter>Engine\Runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="source\component.cpp">
-      <Filter>Engine\Runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="source\light_directional.cpp">
-      <Filter>Engine\Runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="source\mesh_renderer.cpp">
-      <Filter>Engine\Runtime</Filter>
-    </ClCompile>
     <ClCompile Include="source\scene_object.cpp">
       <Filter>Engine\Runtime</Filter>
     </ClCompile>
@@ -80,17 +68,11 @@
     <ClCompile Include="source\scene.cpp">
       <Filter>Engine\Runtime</Filter>
     </ClCompile>
-    <ClCompile Include="source\rigged_mesh_renderer.cpp">
-      <Filter>Engine\Runtime</Filter>
-    </ClCompile>
     <ClCompile Include="source\rigged_mesh.cpp">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="source\mesh_base.cpp">
       <Filter>Engine\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="source\renderer_base.cpp">
-      <Filter>Engine\Runtime</Filter>
     </ClCompile>
     <ClCompile Include="source\deferred_renderer.cpp">
       <Filter>Engine</Filter>
@@ -104,12 +86,6 @@
     <ClCompile Include="source\motion_blur.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="source\inline_mesh_renderer.cpp">
-      <Filter>Engine\Runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="source\rigged_prop_renderer.cpp">
-      <Filter>Engine\Runtime</Filter>
-    </ClCompile>
     <ClCompile Include="source\shader_compile.cpp">
       <Filter>Utility Sources</Filter>
     </ClCompile>
@@ -117,22 +93,19 @@
       <Filter>Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="source\gui_image.cpp">
-      <Filter>Engine\Runtime\Gui</Filter>
+      <Filter>Engine\Runtime\Component\Gui</Filter>
     </ClCompile>
     <ClCompile Include="source\gui_text.cpp">
-      <Filter>Engine\Runtime\Gui</Filter>
+      <Filter>Engine\Runtime\Component\Gui</Filter>
     </ClCompile>
     <ClCompile Include="source\font.cpp">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="source\gui_element.cpp">
-      <Filter>Engine\Runtime\Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="source\rect_transform.cpp">
-      <Filter>Engine\Runtime</Filter>
+      <Filter>Engine\Runtime\Component\Gui</Filter>
     </ClCompile>
     <ClCompile Include="source\gui_button.cpp">
-      <Filter>Engine\Runtime\Gui</Filter>
+      <Filter>Engine\Runtime\Component\Gui</Filter>
     </ClCompile>
     <ClCompile Include="source\post_process_fxaa.cpp">
       <Filter>Engine</Filter>
@@ -161,6 +134,33 @@
     <ClCompile Include="..\library\inc\imgui\imgui_widgets.cpp">
       <Filter>ImGUI Sources</Filter>
     </ClCompile>
+    <ClCompile Include="source\camera.cpp">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\component.cpp">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\inline_mesh_renderer.cpp">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\light_directional.cpp">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rect_transform.cpp">
+      <Filter>Engine\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="source\mesh_renderer.cpp">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\renderer_base.cpp">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rigged_mesh_renderer.cpp">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rigged_prop_renderer.cpp">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled Headers">
@@ -184,11 +184,14 @@
     <Filter Include="Engine\External Sources">
       <UniqueIdentifier>{2a4c4a61-42fa-46c7-a545-6fe2054977ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Runtime\Gui">
-      <UniqueIdentifier>{b23d477f-3376-4798-a14c-0fb0f69cbc9b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ImGUI Sources">
       <UniqueIdentifier>{5a46020e-35f4-4ef0-8a90-cc273b174e8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Runtime\Component">
+      <UniqueIdentifier>{62ac17d7-00e8-4787-9a7c-4e6b48649a46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Runtime\Component\Gui">
+      <UniqueIdentifier>{b23d477f-3376-4798-a14c-0fb0f69cbc9b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -196,18 +199,6 @@
       <Filter>Engine\Runtime</Filter>
     </ClInclude>
     <ClInclude Include="source\transform.h">
-      <Filter>Engine\Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="source\camera.h">
-      <Filter>Engine\Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="source\component.h">
-      <Filter>Engine\Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="source\light_directional.h">
-      <Filter>Engine\Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="source\mesh_renderer.h">
       <Filter>Engine\Runtime</Filter>
     </ClInclude>
     <ClInclude Include="source\shader.h">
@@ -274,17 +265,11 @@
     <ClInclude Include="source\screen_space_ao.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="source\rigged_mesh_renderer.h">
-      <Filter>Engine\Runtime</Filter>
-    </ClInclude>
     <ClInclude Include="source\rigged_mesh.h">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="source\mesh_base.h">
       <Filter>Engine\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="source\renderer_base.h">
-      <Filter>Engine\Runtime</Filter>
     </ClInclude>
     <ClInclude Include="source\deferred_renderer.h">
       <Filter>Engine</Filter>
@@ -301,12 +286,6 @@
     <ClInclude Include="source\motion_blur.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="source\inline_mesh_renderer.h">
-      <Filter>Engine\Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="source\rigged_prop_renderer.h">
-      <Filter>Engine\Runtime</Filter>
-    </ClInclude>
     <ClInclude Include="source\shader_compile.h">
       <Filter>Utility Sources</Filter>
     </ClInclude>
@@ -314,22 +293,19 @@
       <Filter>Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="source\gui_image.h">
-      <Filter>Engine\Runtime\Gui</Filter>
+      <Filter>Engine\Runtime\Component\Gui</Filter>
     </ClInclude>
     <ClInclude Include="source\gui_text.h">
-      <Filter>Engine\Runtime\Gui</Filter>
+      <Filter>Engine\Runtime\Component\Gui</Filter>
     </ClInclude>
     <ClInclude Include="source\font.h">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="source\gui_element.h">
-      <Filter>Engine\Runtime\Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="source\rect_transform.h">
-      <Filter>Engine\Runtime</Filter>
+      <Filter>Engine\Runtime\Component\Gui</Filter>
     </ClInclude>
     <ClInclude Include="source\gui_button.h">
-      <Filter>Engine\Runtime\Gui</Filter>
+      <Filter>Engine\Runtime\Component\Gui</Filter>
     </ClInclude>
     <ClInclude Include="source\ReadData.h">
       <Filter>Utility Sources</Filter>
@@ -351,6 +327,33 @@
     </ClInclude>
     <ClInclude Include="..\library\inc\imgui\backends\imgui_impl_win32.h">
       <Filter>ImGUI Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="source\camera.h">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\component.h">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\light_directional.h">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\inline_mesh_renderer.h">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\rect_transform.h">
+      <Filter>Engine\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="source\mesh_renderer.h">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\renderer_base.h">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\rigged_mesh_renderer.h">
+      <Filter>Engine\Runtime\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\rigged_prop_renderer.h">
+      <Filter>Engine\Runtime\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

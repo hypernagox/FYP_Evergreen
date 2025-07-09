@@ -5,8 +5,7 @@
 class PlayerQuickSlotGUI : public udsdx::Component
 {
 public:
-	PlayerQuickSlotGUI(const std::shared_ptr<udsdx::SceneObject>& object);
-
+	void OnInitialize() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	// 인벤토리의 정보나 퀵슬롯의 정보가 수정되었을 경우 호출하는 함수

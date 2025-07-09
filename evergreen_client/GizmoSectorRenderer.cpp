@@ -52,7 +52,7 @@ static constexpr char g_psoResource[] = R"(
 	}
 )";
 
-GizmoSectorRenderer::GizmoSectorRenderer(const std::shared_ptr<SceneObject>& object) : RendererBase(object)
+void GizmoSectorRenderer::OnInitialize()
 {
 	m_castShadow = false;
 	m_renderGroup = RenderGroup::Forward;
@@ -62,6 +62,8 @@ GizmoSectorRenderer::GizmoSectorRenderer(const std::shared_ptr<SceneObject>& obj
 void GizmoSectorRenderer::Render(udsdx::RenderParam& param, int instances)
 {
 	// TODO: 시야가 반대로 렌더링 된다.
+	// 이 문제는 NPC, 캐릭터, 몬스터 등 모든 오브젝트가 Z- 방향으로 바라보고 있는 상태로 import 되었기 때문이다.
+	// 모든 모델을 180도 회전시키는것으로 해결하는 것이나, 고쳐야 할 코드가 많으므로 우선순위를 낮게 둔다.
 
 	ObjectConstants objectConstants;
 

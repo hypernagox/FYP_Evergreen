@@ -4,10 +4,6 @@
 
 using namespace udsdx;
 
-TerrainInstanceRenderer::TerrainInstanceRenderer(const std::shared_ptr<udsdx::SceneObject>& object) : RendererBase(object)
-{
-}
-
 void TerrainInstanceRenderer::Render(udsdx::RenderParam& param, int instances)
 {
 	if (param.RenderStageIndex == 3)

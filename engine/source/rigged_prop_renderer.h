@@ -10,9 +10,7 @@ namespace udsdx
 	class RiggedPropRenderer : public MeshRenderer
 	{
 	public:
-		RiggedPropRenderer(const std::shared_ptr<SceneObject>& object);
-
-	public:
+		void OnInitialize() override;
 		void UpdateTransformCache() override;
 		std::string_view GetBoneName() const;
 		void SetBoneName(const std::string& boneName);

@@ -1096,6 +1096,16 @@ namespace udsdx
 		ImGui::DestroyContext();
 	}
 
+	HINSTANCE Core::GetInstance() const
+	{
+		return m_hInstance;
+	}
+
+	HWND Core::GetMainWindow() const
+	{
+		return m_hMainWnd;
+	}
+
 	ID3D12Device* Core::GetDevice() const
 	{
 		return m_d3dDevice.Get();

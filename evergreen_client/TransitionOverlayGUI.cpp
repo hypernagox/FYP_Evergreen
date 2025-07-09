@@ -3,14 +3,14 @@
 
 using namespace udsdx;
 
-TransitionOverlayGUI::TransitionOverlayGUI(const std::shared_ptr<udsdx::SceneObject>& object) : udsdx::Component(object)
+void TransitionOverlayGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
 	m_backgroundRenderer = m_panel->AddComponent<GUIImage>();
 	m_backgroundRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
 	m_backgroundRenderer->SetSize(Vector2::One * 8192.0f);
 
-	object->AddChild(m_panel);
+	GetSceneObject()->AddChild(m_panel);
 
 	m_messageText = std::make_shared<SceneObject>();
 	auto messageText = m_messageText->AddComponent<GUIText>();

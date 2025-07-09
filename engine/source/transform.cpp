@@ -3,9 +3,13 @@
 
 namespace udsdx
 {
+	unsigned long long g_localMatrixRecalculateCounter = 0;
+	unsigned long long g_worldMatrixRecalculateCounter = 0;
+
 	void Transform::SetParent(Transform* parent)
 	{
 		m_parent = parent;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	Transform* Transform::GetParent() const
@@ -16,7 +20,7 @@ namespace udsdx
 	void Transform::SetLocalPosition(const Vector3& position)
 	{
 		m_position = position;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::SetLocalPosition(float x, float y, float z)
@@ -24,19 +28,19 @@ namespace udsdx
 		m_position.x = x;
 		m_position.y = y;
 		m_position.z = z;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::SetLocalRotation(const Quaternion& rotation)
 	{
 		m_rotation = rotation;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::SetLocalScale(const Vector3& scale)
 	{
 		m_scale = scale;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::SetLocalScale(float x, float y, float z)
@@ -44,7 +48,7 @@ namespace udsdx
 		m_scale.x = x;
 		m_scale.y = y;
 		m_scale.z = z;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::SetLocalScale(float scale)
@@ -52,38 +56,38 @@ namespace udsdx
 		m_scale.x = scale;
 		m_scale.y = scale;
 		m_scale.z = scale;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::SetLocalPositionX(float x)
 	{
 		m_position.x = x;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::SetLocalPositionY(float y)
 	{
 		m_position.y = y;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::SetLocalPositionZ(float z)
 	{
 		m_position.z = z;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::Translate(const Vector3& translation)
 	{
 		m_position += translation;
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	void Transform::Rotate(const Quaternion& rotation)
 	{
 		m_rotation = Quaternion::Concatenate(m_rotation, rotation);
 		m_rotation.Normalize();
-		m_isLocalMatrixDirty = true;
+		m_validationState = ValidationState::Invalid;
 	}
 
 	Vector3 Transform::GetLocalPosition() const
@@ -124,7 +128,11 @@ namespace udsdx
 
 	Matrix4x4 Transform::GetLocalSRTMatrix()
 	{
-		ValidateLocalSRTMatrix();
+		if (m_validationState == ValidationState::Invalid)
+		{
+			RecalculateLocalSRTMatrix();
+			m_validationState = ValidationState::InvalidChildren;
+		}
 		return m_localSRTMatrix;
 	}
 
@@ -134,16 +142,12 @@ namespace udsdx
 		{
 			ValidateMatrixRecursive();
 		}
-
 		return m_worldSRTMatrix;
 	}
 
-	bool Transform::ValidateLocalSRTMatrix()
+	void Transform::RecalculateLocalSRTMatrix()
 	{
-		if (!m_isLocalMatrixDirty)
-		{
-			return false;
-		}
+		g_localMatrixRecalculateCounter++;
 
 		// All properties of the transform are converted to XMVECTOR without an explicit conversion.
 		XMVECTOR t = XMLoadFloat3(&m_position);
@@ -153,13 +157,12 @@ namespace udsdx
 
 		// Apply the local SRT matrix.
 		XMStoreFloat4x4(&m_localSRTMatrix, m);
-
-		m_isLocalMatrixDirty = false;
-		return true;
 	}
 
-	void Transform::ValidateWorldSRTMatrix()
+	void Transform::RecalculateWorldSRTMatrix()
 	{
+		g_worldMatrixRecalculateCounter++;
+
 		// If the parent is null, the transform is the root of the hierarchy.
 		// This can be either the root of the scene or the root of the pre-constructed hierarchy.
 		if (m_parent == nullptr)
@@ -168,11 +171,43 @@ namespace udsdx
 			return;
 		}
 
-		XMMATRIX m = XMLoadFloat4x4(&m_localSRTMatrix);
-		m = XMMatrixMultiply(m, m_parent->m_worldSRTMatrix);
+		XMMATRIX ml = XMLoadFloat4x4(&m_localSRTMatrix);
+		XMMATRIX mp = XMLoadFloat4x4(&m_parent->m_worldSRTMatrix);
+		XMMATRIX m = XMMatrixMultiply(ml, mp);
 
 		// Apply the world SRT matrix.
 		XMStoreFloat4x4(&m_worldSRTMatrix, m);
+	}
+
+	void Transform::ValidateSRTMatrices(bool iteration)
+	{
+		bool forceValidate = false;
+		if (m_validationState == ValidationState::Invalid)
+		{
+			RecalculateLocalSRTMatrix();
+			forceValidate = true;
+		}
+		if (m_parent != nullptr)
+		{
+			forceValidate |= m_parent->m_validationState != ValidationState::Valid;
+		}
+
+		if (forceValidate)
+		{
+			RecalculateWorldSRTMatrix();
+			if (iteration)
+			{
+				m_validationState = ValidationState::InvalidChildrenIteration;
+			}
+			else
+			{
+				m_validationState = ValidationState::InvalidChildren;
+			}
+		}
+		else if (m_validationState == ValidationState::InvalidChildrenIteration)
+		{
+			m_validationState = ValidationState::Valid;
+		}
 	}
 
 	void Transform::ValidateMatrixRecursive()
@@ -192,11 +227,7 @@ namespace udsdx
 			stack.pop();
 
 			// Validate the local SRT matrix.
-			forceValidate |= current->ValidateLocalSRTMatrix();
-			if (forceValidate)
-			{
-				current->ValidateWorldSRTMatrix();
-			}
+			ValidateSRTMatrices(false);
 		}
 	}
 }

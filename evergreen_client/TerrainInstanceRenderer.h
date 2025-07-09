@@ -8,9 +8,6 @@ class TerrainData;
 class TerrainInstanceRenderer : public udsdx::RendererBase
 {
 public:
-	TerrainInstanceRenderer(const std::shared_ptr<udsdx::SceneObject>& object);
-
-public:
 	virtual void Render(udsdx::RenderParam& param, int instances = 1) override;
 
 public:

@@ -6,10 +6,6 @@ using namespace udsdx;
 
 std::default_random_engine DamageCountGUI::randomEngine{};
 
-DamageCountGUI::DamageCountGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
-{
-}
-
 void DamageCountGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	auto gameScene = dynamic_cast<GameScene*>(&scene);

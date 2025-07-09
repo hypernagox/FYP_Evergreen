@@ -5,11 +5,11 @@
 
 using namespace udsdx;
 
-MainMenuCharacterGUI::MainMenuCharacterGUI(const std::shared_ptr<udsdx::SceneObject>& object) : Component(object)
+void MainMenuCharacterGUI::OnInitialize()
 {
 	{
 		m_panel = std::make_shared<SceneObject>();
-		object->AddChild(m_panel);
+		GetSceneObject()->AddChild(m_panel);
 	}
 
 	{

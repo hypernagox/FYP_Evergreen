@@ -6,10 +6,6 @@
 
 namespace udsdx
 {
-	GUIElement::GUIElement(const std::shared_ptr<SceneObject>& object) : Component(object)
-	{
-	}
-
 	void GUIElement::UpdateEvent(bool hover)
 	{
 		if (m_mouseHovering != hover)

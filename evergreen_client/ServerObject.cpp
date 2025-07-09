@@ -5,7 +5,7 @@
 #include "NaviAgent.h"
 #include "Navigator.h"
 
-ServerObject::ServerObject(const std::shared_ptr<SceneObject>& object) : Component(object)
+void ServerObject::OnInitialize()
 {
 	// TODO: 앞으로 유동적으로 바뀌어야함
 	m_pNaviAgent = new Common::NaviAgent;

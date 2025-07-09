@@ -20,7 +20,6 @@ public:
 class EnvironmentRenderer : public udsdx::Component
 {
 public:
-	EnvironmentRenderer(const std::shared_ptr<udsdx::SceneObject>& object);
 	void Initialize(const EnvironmentParameters& parameters);
 
 public:

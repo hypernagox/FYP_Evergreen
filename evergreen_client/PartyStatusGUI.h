@@ -13,7 +13,7 @@ private:
 	};
 
 public:
-	PartyStatusGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 	void InitializeContents(const std::vector<uint32_t>& table);
 	void AddPartyMember(uint32_t partyMemberID);
 	void RemovePartyMember(uint32_t partyMemberID);

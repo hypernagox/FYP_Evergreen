@@ -5,7 +5,7 @@
 class GamePauseGUI : public udsdx::Component
 {
 public:
-	GamePauseGUI(const std::shared_ptr<udsdx::SceneObject>& object);
+	void OnInitialize() override;
 
 	void SetExitGameCallback(std::function<void()> callback) { m_exitGameCallback = callback; }
 	void SetChannelSwitchGUI(const std::shared_ptr<udsdx::SceneObject>& channelSwitchGUI) { m_channelSwitchGUI = channelSwitchGUI; }

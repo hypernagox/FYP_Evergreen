@@ -7,13 +7,13 @@
 
 using namespace udsdx;
 
-GamePauseGUI::GamePauseGUI(const std::shared_ptr<SceneObject>& object) : Component(object)
+void GamePauseGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
 	uiRenderer->SetSize(Vector2::One * 8192.0f);
-	object->AddChild(m_panel);
+	GetSceneObject()->AddChild(m_panel);
 
 	{
 		m_resumeButton = std::make_shared<SceneObject>();

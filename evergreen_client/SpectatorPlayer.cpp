@@ -2,7 +2,7 @@
 #include "SpectatorPlayer.h"
 #include "InputHandler.h"
 
-SpectatorPlayer::SpectatorPlayer(const std::shared_ptr<SceneObject>& object) : Component(object)
+void SpectatorPlayer::OnInitialize()
 {
 	auto camera = AddComponent<CameraPerspective>();
 	camera->SetFov(45.0f);
