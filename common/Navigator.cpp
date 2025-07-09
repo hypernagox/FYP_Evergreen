@@ -21,7 +21,7 @@ void Navigator::Init()noexcept
 {
 	// 혹시라도 컴퓨터/OS에 따라서 디렉토리 읽는 순서에 따라 인덱싱 오류생길까봐 하드코딩함
 	{
-		m_dt_nav_mesh[(int)NAVI_MESH_TYPE::MAIN_WORLD] = Common::NavigationMesh::LoadNavMesh(RESOURCE_PATH(L"\\navmesh\\all_tiles_navmesh2try.bin"));
+		m_dt_nav_mesh[(int)NAVI_MESH_TYPE::MAIN_WORLD] = Common::NavigationMesh::LoadNavMesh(RESOURCE_PATH(L"\\navmesh\\main_navmesh.bin"));
 	}
 	{
 		m_dt_nav_mesh[(int)NAVI_MESH_TYPE::BOSS_ROOM] = Common::NavigationMesh::LoadNavMesh(RESOURCE_PATH(L"\\navmesh\\boss_navmesh.bin"));
