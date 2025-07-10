@@ -129,9 +129,12 @@ void MainScene::OnAttach()
                     std::string userId = credentials[0];
                     std::string userPw = credentials[1];
 
-                    // 여기서 로그인 처리 로직 실행
+                    // TODO: 여기서 로그인 처리 로직 실행
                     //
-
+                   // Send(Create_c2s_LOGIN(userId, userPw));
+                    NetMgr(NetworkMgr)->ProcessLogin();
+                    Send(Create_c2s_LOGIN(userId, userPw));
+                    NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
                     m_popupGUIManager->Append(m_channelSwitchObj);
                 }
             }

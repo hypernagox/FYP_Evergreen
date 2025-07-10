@@ -482,7 +482,7 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
     }
 
     // 만약 여기서 와일루프 돌면, 서버로부터 아직 ID발급을 못받았다는 이야기
-    NetMgr(NetworkMgr)->ProcessLogin();
+   // NetMgr(NetworkMgr)->ProcessLogin();
 
     // 서버오브젝트 매니저는 뭐 테스트 할 때 필요 할수도있음..
     ServerObjectMgr::GetInst()->SetMainHero(NetMgr(NetworkMgr)->GetSessionID(), m_heroObj);

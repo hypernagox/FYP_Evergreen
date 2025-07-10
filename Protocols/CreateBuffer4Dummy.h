@@ -12,7 +12,8 @@ extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { return CreateBuilder(); }
 
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_LOGIN(
-    const std::string_view& name,
+    const std::string_view& id,
+    const std::string_view& pw,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PING_PONG(

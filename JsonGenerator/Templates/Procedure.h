@@ -1,0 +1,57 @@
+{%- macro lower_first(text) %}{{ text[0]|lower }}{{ text[1:] }}{% endmacro -%}
+
+{% for proc in procs %}
+{%- set questions = '(' + (['?'] * proc.params|length)|join(',') + ')' if proc.params|length > 0 else '' %}
+class {{ proc.name }} : public DBBindRAII<{{ proc.params|length }}, {{ proc.columns|length }}>
+{
+public:
+	{{ proc.name }}() noexcept
+		: DBBindRAII{L"{CALL dbo.sp{{ proc.name }}{{ questions }}}"}
+	{ }
+
+{% for param in proc.params %}
+	{%- set cpp_type = param.type | sql_to_cpp_type %}
+
+	{% if cpp_type == 'WCHAR' %}
+	template<int32 N> void In_{{ param.name }}(WCHAR(&v)[N]) { BindParam({{ loop.index - 1 }}, v); }
+	template<int32 N> void In_{{ param.name }}(const WCHAR(&v)[N]) { BindParam({{ loop.index - 1 }}, v); }
+	void In_{{ param.name }}(WCHAR* const v, const int32_t count) { BindParam({{ loop.index - 1 }}, v, count); }
+	void In_{{ param.name }}(const WCHAR* const v, const int32_t count) { BindParam({{ loop.index - 1 }}, v, count); }
+
+	{% elif cpp_type == 'varbinary' %}
+	template<typename T, int32_t N> void In_{{ param.name }}(T(&v)[N]) { BindParam({{ loop.index - 1 }}, v); }
+	template<typename T> void In_{{ param.name }}(T* const v, const int32_t count) { BindParam({{ loop.index - 1 }}, v, count); }
+
+	{% else %}
+	void In_{{ param.name }}({{ cpp_type }}& v) { BindParam({{ loop.index - 1 }}, v); }
+	void In_{{ param.name }}({{ cpp_type }}&& v)
+	{
+		m_{{ lower_first(param.name) }} = std::move(v);
+		BindParam({{ loop.index - 1 }}, m_{{ lower_first(param.name) }});
+	}
+	{% endif %}
+{% endfor %}
+{% if proc.columns|length > 0 %}
+{% for column in proc.columns %}
+	{%- set cpp_type = column.type | sql_to_cpp_type %}
+	{% if cpp_type == 'WCHAR' %}
+	template<int32_t N> void Out_{{ column.name }}(OUT WCHAR(&v)[N]) { BindCol({{ loop.index - 1 }}, v); }
+	{% else %}
+	void Out_{{ column.name }}(OUT {{ cpp_type }}& v) { BindCol({{ loop.index - 1 }}, v); }
+	{% endif %}
+{% endfor %}
+{% endif %}
+private:
+{% for param in proc.params %}
+	{% set cpp_type = param.type | sql_to_cpp_type %}
+	{% if cpp_type in ['int32', 'int64', 'TIMESTAMP_STRUCT'] %}
+	{{ cpp_type }} m_{{ lower_first(param.name) }} = {};
+	{% endif %}
+{% endfor %}
+};
+
+{% endfor %}
+
+
+
+

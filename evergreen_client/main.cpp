@@ -152,8 +152,8 @@ void ProcessLogin()
 
     if constexpr (true == g_bUseNetWork)
     {
-        Send(Create_c2s_LOGIN("Hello"));
-        NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
+        //Send(Create_c2s_LOGIN("Hello","asdasd"));
+        //NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
     }
 
     if constexpr (true == g_bUseNetWork)

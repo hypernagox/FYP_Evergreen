@@ -22,15 +22,18 @@ static NagiocpX::S_ptr<NagiocpX::SendBuffer> CreateSendBuffer(flatbuffers::FlatB
 }
 
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_LOGIN(
-    const std::string_view& name,
+    const std::string_view& id,
+    const std::string_view& pw,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
-    const auto name_offset = builder.CreateString(name);
+    const auto id_offset = builder.CreateString(id);
+    const auto pw_offset = builder.CreateString(pw);
     const auto serializedc2s_LOGIN = Nagox::Protocol::Createc2s_LOGIN(
         builder
-,        name_offset    );
+,        id_offset,
+        pw_offset    );
     builder.Finish(serializedc2s_LOGIN);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_LOGIN);

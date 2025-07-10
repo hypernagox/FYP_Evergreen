@@ -190,18 +190,27 @@ struct s2c_BOSS_ROOM_ENTERBuilder;
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_NAME = 4
+    VT_ID = 4,
+    VT_PW = 6
   };
-  const ::flatbuffers::String *name() const {
-    return GetPointer<const ::flatbuffers::String *>(VT_NAME);
+  const ::flatbuffers::String *id() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_ID);
   }
-  ::flatbuffers::String *mutable_name() {
-    return GetPointer<::flatbuffers::String *>(VT_NAME);
+  ::flatbuffers::String *mutable_id() {
+    return GetPointer<::flatbuffers::String *>(VT_ID);
+  }
+  const ::flatbuffers::String *pw() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_PW);
+  }
+  ::flatbuffers::String *mutable_pw() {
+    return GetPointer<::flatbuffers::String *>(VT_PW);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_NAME) &&
-           verifier.VerifyString(name()) &&
+           VerifyOffset(verifier, VT_ID) &&
+           verifier.VerifyString(id()) &&
+           VerifyOffset(verifier, VT_PW) &&
+           verifier.VerifyString(pw()) &&
            verifier.EndTable();
   }
 };
@@ -210,8 +219,11 @@ struct c2s_LOGINBuilder {
   typedef c2s_LOGIN Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_name(::flatbuffers::Offset<::flatbuffers::String> name) {
-    fbb_.AddOffset(c2s_LOGIN::VT_NAME, name);
+  void add_id(::flatbuffers::Offset<::flatbuffers::String> id) {
+    fbb_.AddOffset(c2s_LOGIN::VT_ID, id);
+  }
+  void add_pw(::flatbuffers::Offset<::flatbuffers::String> pw) {
+    fbb_.AddOffset(c2s_LOGIN::VT_PW, pw);
   }
   explicit c2s_LOGINBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -226,19 +238,24 @@ struct c2s_LOGINBuilder {
 
 inline ::flatbuffers::Offset<c2s_LOGIN> Createc2s_LOGIN(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    ::flatbuffers::Offset<::flatbuffers::String> name = 0) {
+    ::flatbuffers::Offset<::flatbuffers::String> id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> pw = 0) {
   c2s_LOGINBuilder builder_(_fbb);
-  builder_.add_name(name);
+  builder_.add_pw(pw);
+  builder_.add_id(id);
   return builder_.Finish();
 }
 
 inline ::flatbuffers::Offset<c2s_LOGIN> Createc2s_LOGINDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    const char *name = nullptr) {
-  auto name__ = name ? _fbb.CreateString(name) : 0;
+    const char *id = nullptr,
+    const char *pw = nullptr) {
+  auto id__ = id ? _fbb.CreateString(id) : 0;
+  auto pw__ = pw ? _fbb.CreateString(pw) : 0;
   return Nagox::Protocol::Createc2s_LOGIN(
       _fbb,
-      name__);
+      id__,
+      pw__);
 }
 
 struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

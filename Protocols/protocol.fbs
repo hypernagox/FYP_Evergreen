@@ -5,7 +5,8 @@ namespace Nagox.Protocol;
 
 table c2s_LOGIN
 {
-    name: string;
+    id: string;
+    pw: string;
 }
 
 table s2c_LOGIN

@@ -183,6 +183,9 @@ int main()
 	Common::DataRegistry::Load();
 	HarvestLoader::LoadHarvest({}, L"environment\\ExportedGameSpawns.json");
 	dtAllocSetCustom(custom_dt_alloc, ::je_free);
+
+	//NAGOX_ASSERT(Mgr(DBMgr)->ConnectQueryServer(L"127.0.0.1", 8888));
+
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 
 	PartyQuestTable::InitPartyQuestTable();

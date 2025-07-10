@@ -1,0 +1,61 @@
+{
+  "tables": [
+    {
+      "table": "Users",
+      "columns": [
+        { "name": "Id", "type": "NVARCHAR(64)", "nullable": false },
+        { "name": "Pw", "type": "NVARCHAR(64)", "nullable": false },
+        { "name": "Type", "type": "NVARCHAR(10)", "nullable": false },
+        { "name": "UID", "type": "INT", "nullable": false }
+      ],
+      "primary_key": ["Id"]
+    },
+    {
+      "table": "InventoryItems",
+      "columns": [
+        { "name": "InventoryItemID", "type": "INT", "nullable": false },
+        { "name": "CharacterID", "type": "NVARCHAR(64)", "nullable": false },
+        { "name": "ItemID", "type": "INT", "nullable": false },
+        { "name": "SlotIndex", "type": "INT", "nullable": false },
+        { "name": "Count", "type": "INT", "nullable": false }
+      ],
+      "primary_key": ["InventoryItemID"]
+    }
+  ],
+  "procedures": [
+    {
+      "name": "InsertUser",
+      "params": [
+        { "name": "Id", "type": "NVARCHAR(64)" },
+        { "name": "Pw", "type": "NVARCHAR(64)" },
+        { "name": "Type", "type": "NVARCHAR(10)" },
+        { "name": "UID", "type": "INT" }
+      ],
+      "body":  "IF NOT EXISTS (SELECT 1 FROM Users WHERE Id = @Id)\nBEGIN\n    INSERT INTO Users(Id, Pw, Type, UID) VALUES(@Id, @Pw, @Type, @UID);\nEND"
+    },
+    {
+      "name": "GetUserById",
+      "params": [
+        { "name": "Id", "type": "NVARCHAR(64)" }
+      ],
+      "columns": [
+        { "name": "Id", "type": "NVARCHAR(64)" },
+        { "name": "Pw", "type": "NVARCHAR(64)" },
+        { "name": "Type", "type": "NVARCHAR(10)" },
+        { "name": "UID", "type": "INT" }
+      ],
+      "body": "SELECT Id, Pw, Type, UID FROM Users WHERE Id = @Id;"
+    },
+    {
+      "name": "InsertInventoryItem",
+      "params": [
+        { "name": "InventoryItemID", "type": "INT" },
+        { "name": "CharacterID", "type": "NVARCHAR(64)" },
+        { "name": "ItemID", "type": "INT" },
+        { "name": "SlotIndex", "type": "INT" },
+        { "name": "Count", "type": "INT" }
+      ],
+      "body": "INSERT INTO InventoryItems(InventoryItemID, CharacterID, ItemID, SlotIndex, Count) VALUES(@InventoryItemID, @CharacterID, @ItemID, @SlotIndex, @Count);"
+    }
+  ]
+}

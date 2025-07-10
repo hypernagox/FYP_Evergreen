@@ -36,7 +36,7 @@ namespace NetHelper
 		void ProcessLogin()noexcept {
 			if (m_processLogin) {
 				m_processLogin();
-				while (0 == GetSessionID()) { DoNetworkIO(); }
+				//while (0 == GetSessionID()) { DoNetworkIO(); }
 			}
 		}
 	private:
