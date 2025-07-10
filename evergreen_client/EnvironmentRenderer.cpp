@@ -209,6 +209,27 @@ std::shared_ptr<udsdx::SceneObject> EnvironmentRenderer::AddTerrainInstances(std
         if (nKey.ends_with(".psd"))
             nKey.replace(nKey.end() - 4, nKey.end(), ".tga");
 
+        const char* branchKeywords[] = {
+            "branch",
+            "leaf",
+            "grass",
+            "weed",
+            "flower",
+            "plant",
+            "lavender",
+            "lily",
+            "lilly",
+            "papyrus"
+        };
+        for (const auto& keyword : branchKeywords)
+        {
+            if (aKey.find(keyword) != std::string::npos || nKey.find(keyword) != std::string::npos)
+            {
+				material.SetShader(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colorbranchinstanced.hlsl")));
+				break;
+			}
+		}
+
         if (auto it = m_textureMap.find(aKey); it != m_textureMap.end())
             material.SetSourceTexture(it->second);
         else
