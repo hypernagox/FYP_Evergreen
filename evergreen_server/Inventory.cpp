@@ -3,6 +3,10 @@
 #include "DropItem.h"
 #include "Item.h"
 #include "QuickSlot.h"
+#include "DBMgr.h"
+#include "DBContentsPacket.hpp"
+#include "ClientSession.h"
+#include "DataRegistry.h"
 
 bool Inventory::SwapEquipment(const Nagox::Enum::EQUIPMENT_TYPE equip_type, const uint32_t equip_id) noexcept
 {
@@ -87,6 +91,11 @@ Item* Inventory::AddDropItem(const DropItem* const drop_item_info) noexcept
 {
 	const auto item_detail_type = drop_item_info->GetDropItemDetailInfo();
 	const auto item_stack_size = drop_item_info->GetNumOfItemStack();
+	s2q_ADD_OR_UPDATE_ITEM pkt;
+	pkt.item_id = item_detail_type;
+	pkt.item_count = item_stack_size;
+	
+	RequestQueryServer(pkt);
 	return AddItem(item_detail_type, item_stack_size);
 }
 

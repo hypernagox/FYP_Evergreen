@@ -36,7 +36,7 @@ void ThreadMgr::Launch(const int32_t numOfThreads)
 						continue;
 					}
 					auto& bytes = dbInfo.bytes;
-					s2q_PacketHandler::g_fpPacketHandler[dbInfo.pkt_id](bytes.data(), (c_int32)bytes.size());
+					s2q_PacketHandler::g_fpPacketHandler[dbInfo.pkt_id]((char*)bytes.data());
 				}
 			});
 	}

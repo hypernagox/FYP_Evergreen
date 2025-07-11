@@ -137,8 +137,8 @@
   <ItemGroup>
     <ClCompile Include="DBBindRAII.cpp" />
     <ClCompile Include="DBConnectionHandle.cpp" />
+    <ClCompile Include="DBContentsPacket.cpp" />
     <ClCompile Include="DBMgr.cpp" />
-    <ClCompile Include="DBPacket.cpp" />
     <ClCompile Include="func.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetAddress.cpp" />
@@ -153,13 +153,14 @@
     <ClCompile Include="ThreadMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\DBContentsPacket.hpp" />
     <ClInclude Include="CoreMacro.h" />
     <ClInclude Include="DBBindRAII.h" />
     <ClInclude Include="DBConnectionHandle.h" />
     <ClInclude Include="DBMgr.h" />
-    <ClInclude Include="DBPacket.h" />
     <ClInclude Include="func.h" />
     <ClInclude Include="NetAddress.h" />
+    <ClInclude Include="DBPacketDefine.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Procedures.h" />
     <ClInclude Include="Receiver.h" />
@@ -171,6 +172,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\JsonGenerator\schema.json" />
+    <None Include="..\JsonGenerator\Templates\GenProcedures.j2" />
+    <None Include="..\JsonGenerator\Templates\Procedure.j2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -216,7 +216,6 @@
     <ClInclude Include="DBConnectionHandle.h" />
     <ClInclude Include="DBEvent.h" />
     <ClInclude Include="DBMgr.h" />
-    <ClInclude Include="DBPacket.h" />
     <ClInclude Include="DBPacketSender.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="GlobalEventQueue.h" />

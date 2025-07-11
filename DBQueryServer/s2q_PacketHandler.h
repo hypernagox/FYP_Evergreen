@@ -1,14 +1,16 @@
 #pragma once
 #include "pch.h"
-#include "DBPacket.h"
+#include "../DBContentsPacket.hpp"
 
 
-const bool Handle_Invalid(BYTE* const pBuff_, c_int32 len_);
+void Handle_Invalid(const char* const pBuff_);
 
 class s2q_PacketHandler
 {
 public:
-	static inline PacketHandlerFunc g_fpPacketHandler[UINT8_MAX] = {};
+	using PacketHandlerFunc = void(*)(const char* const);
+
+	static inline PacketHandlerFunc g_fpPacketHandler[UINT16_MAX] = {};
 
 	static void Init() noexcept
 	{
@@ -21,16 +23,16 @@ public:
 
 	static const PacketHandlerFunc* const GetPacketHandlerList()noexcept { return g_fpPacketHandler; }
 
-	static void AddProtocol(const uint8 pktID_, const PacketHandlerFunc fpPacketHandler_)noexcept
+	static void AddProtocol(const uint16 pktID_, const PacketHandlerFunc fpPacketHandler_)noexcept
 	{
 		NAGOX_ASSERT(nullptr == g_fpPacketHandler[pktID_] || Handle_Invalid == g_fpPacketHandler[pktID_]);
 		g_fpPacketHandler[pktID_] = fpPacketHandler_;
 	}
 
-	static const bool HandlePacket(BYTE* const pBuff_, c_int32 len_)noexcept
+	static void HandlePacket(const char* const pBuff_, c_int32 len_)noexcept
 	{
-		const DBPacketHeader* const header = reinterpret_cast<const DBPacketHeader* const>(pBuff_);
-		return g_fpPacketHandler[header->pkt_id](pBuff_, len_);
+		const DBContentsPacketHeader* const header = reinterpret_cast<const DBContentsPacketHeader* const>(pBuff_);
+		return g_fpPacketHandler[header->pkt_id](pBuff_);
 	}
 public:
 	s2q_PacketHandler() = delete;
@@ -40,3 +42,5 @@ public:
 	s2q_PacketHandler& operator=(s2q_PacketHandler&&) = delete;
 	~s2q_PacketHandler() = delete;
 };
+
+void AddProtocol(const uint16_t pktID_, void (*fpPacketHandler_)(const char* const))noexcept;

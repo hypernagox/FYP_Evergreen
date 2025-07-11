@@ -3,59 +3,41 @@
     {
       "table": "Users",
       "columns": [
-        { "name": "Id", "type": "NVARCHAR(64)", "nullable": false },
-        { "name": "Pw", "type": "NVARCHAR(64)", "nullable": false },
+        { "name": "Name", "type": "NVARCHAR(32)", "nullable": false },
+        { "name": "Pw", "type": "NVARCHAR(32)", "nullable": false },
         { "name": "Type", "type": "NVARCHAR(10)", "nullable": false },
-        { "name": "UID", "type": "INT", "nullable": false }
+        { "name": "UID", "type": "BIGINT", "nullable": false }
       ],
-      "primary_key": ["Id"]
+      "primary_key": ["Name"]
+    },
+    {
+      "table": "Name2UID",
+      "columns": [
+        { "name": "Name", "type": "NVARCHAR(32)", "nullable": false },
+        { "name": "UID", "type": "BIGINT", "nullable": false }
+      ],
+      "primary_key": ["Name"]
     },
     {
       "table": "InventoryItems",
       "columns": [
-        { "name": "InventoryItemID", "type": "INT", "nullable": false },
-        { "name": "CharacterID", "type": "NVARCHAR(64)", "nullable": false },
+        { "name": "CharacterUID", "type": "BIGINT", "nullable": false },
         { "name": "ItemID", "type": "INT", "nullable": false },
-        { "name": "SlotIndex", "type": "INT", "nullable": false },
         { "name": "Count", "type": "INT", "nullable": false }
       ],
-      "primary_key": ["InventoryItemID"]
+      "primary_key": ["CharacterUID", "ItemID"]
     }
   ],
   "procedures": [
     {
-      "name": "InsertUser",
+      "name": "UpsertInventoryItem",
       "params": [
-        { "name": "Id", "type": "NVARCHAR(64)" },
-        { "name": "Pw", "type": "NVARCHAR(64)" },
-        { "name": "Type", "type": "NVARCHAR(10)" },
-        { "name": "UID", "type": "INT" }
-      ],
-      "body":  "IF NOT EXISTS (SELECT 1 FROM Users WHERE Id = @Id)\nBEGIN\n    INSERT INTO Users(Id, Pw, Type, UID) VALUES(@Id, @Pw, @Type, @UID);\nEND"
-    },
-    {
-      "name": "GetUserById",
-      "params": [
-        { "name": "Id", "type": "NVARCHAR(64)" }
-      ],
-      "columns": [
-        { "name": "Id", "type": "NVARCHAR(64)" },
-        { "name": "Pw", "type": "NVARCHAR(64)" },
-        { "name": "Type", "type": "NVARCHAR(10)" },
-        { "name": "UID", "type": "INT" }
-      ],
-      "body": "SELECT Id, Pw, Type, UID FROM Users WHERE Id = @Id;"
-    },
-    {
-      "name": "InsertInventoryItem",
-      "params": [
-        { "name": "InventoryItemID", "type": "INT" },
-        { "name": "CharacterID", "type": "NVARCHAR(64)" },
+        { "name": "CharacterUID", "type": "BIGINT" },
         { "name": "ItemID", "type": "INT" },
-        { "name": "SlotIndex", "type": "INT" },
-        { "name": "Count", "type": "INT" }
+        { "name": "AddCount", "type": "INT" }
       ],
-      "body": "INSERT INTO InventoryItems(InventoryItemID, CharacterID, ItemID, SlotIndex, Count) VALUES(@InventoryItemID, @CharacterID, @ItemID, @SlotIndex, @Count);"
+   "body": "IF EXISTS (SELECT 1 FROM InventoryItems WHERE CharacterUID = @CharacterUID AND ItemID = @ItemID)\nBEGIN\n    UPDATE InventoryItems SET Count = Count + @AddCount WHERE CharacterUID = @CharacterUID AND ItemID = @ItemID;\nEND\nELSE\nBEGIN\n    INSERT INTO InventoryItems (CharacterUID, ItemID, Count) VALUES (@CharacterUID, @ItemID, @AddCount);\nEND"
     }
   ]
 }
+

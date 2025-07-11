@@ -2,7 +2,6 @@
 #include "DBMgr.h"
 #include "DBConnectionHandle.h"
 #include "ThreadMgr.h"
-#include "DBPacket.h"
 #include "DBPacketSender.h"
 #include "SocketUtils.h"
 #include "CoreGlobal.h"
@@ -48,6 +47,8 @@ namespace NagiocpX
 		if (m_dbHandle->Connect(m_environment, connectionString) == false)
 			return false;
 		
+		std::cout << "Connected to DB !" << std::endl;
+
 		m_queryThread = std::jthread{ &DBMgr::ExecuteQuery ,this };
 		
 		return true;
@@ -80,9 +81,14 @@ namespace NagiocpX
 
 	void DBMgr::ExecuteQuery() noexcept
 	{
+		if (SQL_NULL_HANDLE == m_environment)
+		{
+			return;
+		}
 		LSendBufferChunk = SendBufferMgr::Pop();
 		const bool& bStopFlag = Mgr(ThreadMgr)->GetStopFlagRef();
 		const auto iocpHandle = Mgr(CoreGlobal)->GetIocpCore().GetIocpHandle();
+		const auto db_event = m_packetSender;
 		XVector<S_ptr<DBEvent>> dbEvents;
 		for (;;)
 		{
@@ -98,11 +104,12 @@ namespace NagiocpX
 			for (const auto& dbEvent : dbEvents)
 			{
 				dbEvent->ExecuteQuery();
-				//m_dbHandle->Unbind();
+				m_dbHandle->Unbind();
 				//::PostQueuedCompletionStatus(iocpHandle, 0, 0, dbEvent->m_dbEvent.GetOverlappedAddr());
 			}
 			dbEvents.clear();
+			m_packetSender->Dispatch(0, 0);
 		}
-		//Mgr(ThreadMgr)->DestroyTLS();
+		Mgr(ThreadMgr)->DestroyTLS();
 	}
 }

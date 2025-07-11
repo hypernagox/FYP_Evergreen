@@ -2,7 +2,7 @@
 
 struct DBPacketInfo
 {
-	uint8_t pkt_id;
+	uint16_t pkt_id;
 	std::vector<BYTE> bytes;
 };
 
@@ -14,7 +14,7 @@ class ThreadMgr
 	~ThreadMgr();
 public:
 	virtual void Init()noexcept override;
-	void EnqueueDBPacket(const uint8_t pkt_id,std::vector<BYTE>&& bytes)noexcept
+	void EnqueueDBPacket(const uint16_t pkt_id,std::vector<BYTE>&& bytes)noexcept
 	{
 		m_dbInfoQueue.push({ pkt_id,std::move(bytes) });
 	}

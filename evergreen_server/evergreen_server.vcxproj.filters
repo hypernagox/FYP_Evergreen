@@ -399,6 +399,12 @@
     <ClInclude Include="BossRoom.h">
       <Filter>ClientSession\QuestRoom\BossRoom</Filter>
     </ClInclude>
+    <ClInclude Include="DBPacketDefine.h">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DBContentsPacket.hpp">
+      <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\enum.fbs">

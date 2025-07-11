@@ -73,13 +73,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(SolutionDir);$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)library\inc\;$(SolutionDir)common\;$(SolutionDir)NagiocpX\;$(SolutionDir)Protocols\;$(SolutionDir)library\inc\imgui\;$(SolutionDir)library\inc\imgui\backends\;$(SolutionDir);$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)library\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
@@ -222,7 +222,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="StatusSystem.cpp" />
-    <ClCompile Include="ClientSession.cpp" />
+    <ClCompile Include="ClientSession.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Collider_Common.cpp" />
     <ClCompile Include="ContentsBehaviorNode.cpp" />
     <ClCompile Include="ContentsField.cpp" />
@@ -268,6 +270,7 @@
     <ClCompile Include="Regenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\DBContentsPacket.hpp" />
     <ClInclude Include="..\Protocols\c2s_PacketHandler.h" />
     <ClInclude Include="..\Protocols\CreateBuffer4Server.h" />
     <ClInclude Include="..\Protocols\enum_generated.h" />
@@ -275,6 +278,7 @@
     <ClInclude Include="..\Protocols\protocol_generated.h" />
     <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="BossRoom.h" />
+    <ClInclude Include="DBPacketDefine.h" />
     <ClInclude Include="EquipmentSystem.h" />
     <ClInclude Include="HarvestLoader.h" />
     <ClInclude Include="Interaction.h" />

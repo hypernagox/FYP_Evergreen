@@ -46,4 +46,3 @@ friend class Singleton; \
 TYPE()noexcept = default; \
 ~TYPE()noexcept = default;
 
-using PacketHandlerFunc = const bool (*)(BYTE* const, c_int32);

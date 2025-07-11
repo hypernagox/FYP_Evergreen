@@ -116,7 +116,7 @@ def generate_header_from_procedures(procedures, template_dir="Templates", output
     )
     env.filters["sql_to_cpp_type"] = sql_to_cpp_type
 
-    template = env.get_template("Procedure.h")
+    template = env.get_template("Procedure.j2")
     result = template.render(procs=procedures)
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(result)

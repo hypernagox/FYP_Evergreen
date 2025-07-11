@@ -25,7 +25,7 @@
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 200001;
-constexpr const int32_t NUM_OF_MAX_USER = 5500;
+constexpr const int32_t NUM_OF_MAX_USER = 550;
 constexpr const uint32_t NUM_OF_CHANNELS = 60;
 
 extern std::vector<DirectX::BoundingBox> boxes;
@@ -104,7 +104,7 @@ public:
 		
 		for (int c = 0; c < 20; ++c)
 		{
-			for (int i = 0; i < 50000/20; ++i)
+			for (int i = 0; i < 5000/20; ++i)
 			{
 				EntityBuilder b;
 				b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
@@ -183,7 +183,7 @@ int main()
 	Common::DataRegistry::Load();
 	HarvestLoader::LoadHarvest({}, L"environment\\ExportedGameSpawns.json");
 	dtAllocSetCustom(custom_dt_alloc, ::je_free);
-
+	//NAGOX_ASSERT(Mgr(DBMgr)->Connect(L"DRIVER={ODBC Driver 18 for SQL Server};SERVER=(localdb)\\MSSQLLocalDB;DATABASE=localtest;Trusted_Connection=Yes;"));
 	//NAGOX_ASSERT(Mgr(DBMgr)->ConnectQueryServer(L"127.0.0.1", 8888));
 
 	NagiocpX::PrintKoreaRealTime("Server Start !");

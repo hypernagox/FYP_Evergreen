@@ -8,7 +8,7 @@ namespace NagiocpX
 	{
 		friend class DBMgr;
 	public:
-		DBEvent()noexcept = default;
+		DBEvent(S_ptr<Session> session)noexcept :m_pSession{ std::move(session) } {}
 		virtual ~DBEvent()noexcept = default;
 		DBEvent(DBEvent&& other)noexcept
 			:m_dbEvent{ std::move(other.m_dbEvent) }
@@ -21,6 +21,7 @@ namespace NagiocpX
 		void SetEventPtr()noexcept { m_dbEvent.SetIocpObject(SharedFromThis<DBEvent>()); }
 	protected:
 		bool m_bSuccess = false;
+		const S_ptr<Session> m_pSession;
 		NagiocpX::IocpEvent m_dbEvent{ NagiocpX::EVENT_TYPE::DB };
 	};
 }

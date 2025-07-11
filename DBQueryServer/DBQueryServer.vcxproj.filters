@@ -25,9 +25,6 @@
     <Filter Include="DBProtocols">
       <UniqueIdentifier>{4f60de54-089f-4fdc-9b4a-81f1666d9de4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DBProtocols\DBPacket">
-      <UniqueIdentifier>{a541a9ac-25cf-40e2-a8f5-bbe666d5e08c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DBProtocols\s2q_PacketHandler">
       <UniqueIdentifier>{9a49be6c-21a8-48e6-bf08-18f1699e225e}</UniqueIdentifier>
     </Filter>
@@ -37,6 +34,9 @@
     </Filter>
     <Filter Include="Procedures">
       <UniqueIdentifier>{0b08b673-f49a-41de-9b19-7dbbf3a23330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DBProtocols\DBContentsPacket">
+      <UniqueIdentifier>{a541a9ac-25cf-40e2-a8f5-bbe666d5e08c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -73,11 +73,11 @@
     <ClCompile Include="s2q_PacketHandler.cpp">
       <Filter>DBProtocols\s2q_PacketHandler</Filter>
     </ClCompile>
-    <ClCompile Include="DBPacket.cpp">
-      <Filter>DBProtocols\DBPacket</Filter>
-    </ClCompile>
     <ClCompile Include="Procedures.cpp">
       <Filter>Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="DBContentsPacket.cpp">
+      <Filter>DBProtocols\DBContentsPacket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,15 +120,24 @@
     <ClInclude Include="s2q_PacketHandler.h">
       <Filter>DBProtocols\s2q_PacketHandler</Filter>
     </ClInclude>
-    <ClInclude Include="DBPacket.h">
-      <Filter>DBProtocols\DBPacket</Filter>
-    </ClInclude>
     <ClInclude Include="Procedures.h">
       <Filter>Procedures</Filter>
+    </ClInclude>
+    <ClInclude Include="DBPacketDefine.h">
+      <Filter>DBProtocols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DBContentsPacket.hpp">
+      <Filter>DBProtocols\DBContentsPacket</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\JsonGenerator\schema.json">
+      <Filter>DBProtocols</Filter>
+    </None>
+    <None Include="..\JsonGenerator\Templates\GenProcedures.j2">
+      <Filter>DBProtocols</Filter>
+    </None>
+    <None Include="..\JsonGenerator\Templates\Procedure.j2">
       <Filter>DBProtocols</Filter>
     </None>
   </ItemGroup>

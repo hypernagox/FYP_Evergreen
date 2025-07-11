@@ -31,6 +31,7 @@ namespace NagiocpX
 		:public Singleton<ThreadMgr>
 	{
 		friend class Singleton;
+		friend class DBMgr;
 		ThreadMgr();
 		~ThreadMgr();
 		//struct LFQueueAllocator

@@ -315,9 +315,6 @@
     <ClInclude Include="DBPacketSender.h">
       <Filter>DB\DBPacketSender</Filter>
     </ClInclude>
-    <ClInclude Include="DBPacket.h">
-      <Filter>DB\DBProtocols</Filter>
-    </ClInclude>
     <ClInclude Include="DBEvent.h">
       <Filter>DB\DBProtocols</Filter>
     </ClInclude>

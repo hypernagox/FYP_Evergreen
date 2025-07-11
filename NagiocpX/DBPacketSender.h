@@ -12,7 +12,7 @@ namespace NagiocpX
 		{
 			//m_iocpEvent.ReleaseIocpObject();
 		}
-		DBPacketSender(const SOCKET s)noexcept :m_queryServerSocket{ s } {}
+		DBPacketSender(const SOCKET s)noexcept :m_queryServerSocket{ s }, m_sendEvent{ s } {}
 		virtual ~DBPacketSender()noexcept;
 	public:
 		HANDLE GetHandle()const noexcept { return reinterpret_cast<HANDLE>(m_queryServerSocket); }
@@ -32,9 +32,9 @@ namespace NagiocpX
 	private:
 		MPSCQueue<S_ptr<SendBuffer>> m_sendQueue;
 		std::atomic_bool m_bRegisterSend = false;
-		std::vector<S_ptr<SendBuffer>> m_sendVec;
+		XVector<S_ptr<SendBuffer>> m_sendVec;
 		const SOCKET m_queryServerSocket;
-		IocpEvent m_iocpEvent{ EVENT_TYPE::DB };
+		SendEvent m_sendEvent;
 	};
 }
 

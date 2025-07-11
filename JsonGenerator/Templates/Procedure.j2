@@ -1,4 +1,8 @@
-{%- macro lower_first(text) %}{{ text[0]|lower }}{{ text[1:] }}{% endmacro -%}
+#pragma once
+#include "pch.h"
+#include "DBBindRAII.h"
+
+{% macro lower_first(text) %}{{ text[0]|lower }}{{ text[1:] }}{% endmacro -%}
 
 {% for proc in procs %}
 {%- set questions = '(' + (['?'] * proc.params|length)|join(',') + ')' if proc.params|length > 0 else '' %}

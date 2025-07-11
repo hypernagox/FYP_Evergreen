@@ -1,6 +1,6 @@
-0: NagiocpX::LogStackTrace - 0x7ff7ef45f580
-1: std::thread::_Invoke<std::tuple<`main'::`2'::<lambda_1> >,0> - 0x7ff7ef4433a0
-2: configthreadlocale - 0x7ff9bf711b20
-3: BaseThreadInitThunk - 0x7ff9c0907360
-4: RtlUserThreadStart - 0x7ff9c18dcc70
-  2025-06-26 10:01:30 [LOG]: 
+0: NagiocpX::LogStackTrace - 0x7ff7fb31a410
+1: main - 0x7ff7fb2db690
+2: __scrt_common_main_seh - 0x7ff7fb336c1c
+3: BaseThreadInitThunk - 0x7ffee9e27360
+4: RtlUserThreadStart - 0x7ffeeba5cc70
+  2025-07-11 18:48:13 [LOG]: 

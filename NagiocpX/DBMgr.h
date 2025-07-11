@@ -3,7 +3,6 @@
 #include <sqlext.h>
 #include "DBEvent.h"
 #include "DBPacketSender.h"
-#include "DBPacket.h"
 #include "NetAddress.h"
 
 namespace NagiocpX
@@ -25,18 +24,25 @@ namespace NagiocpX
 		void Clear();
 
 		const DBConnectionHandle* const GetDBHandle()const noexcept { 
-			//return nullptr;
 			return m_dbHandle;
 		}
 		
 		void EnqueueDBEvent(S_ptr<DBEvent>&& dbEvent)noexcept
 		{
+			if (SQL_NULL_HANDLE == m_environment)
+			{
+				return;
+			}
 			m_dbEventQueue.emplace(std::move(dbEvent));
 			m_cv.notify_one();
 		}
 
 		void SendDBPacket(S_ptr<SendBuffer>&& pSendBuffer)noexcept
 		{
+			if (SQL_NULL_HANDLE == m_environment)
+			{
+				return;
+			}
 			m_packetSender->SendDBPacket(std::move(pSendBuffer));
 		}
 	private:
@@ -71,7 +77,11 @@ static void RequestQuery(DBEVENT&& db)noexcept
 }
 
 template <typename T>
-static void RequestQueryServer(T&& pkt)noexcept
+inline static void RequestQueryServer(T&& pkt)noexcept
 {
-	Mgr(DBMgr)->SendDBPacket(pkt.MakeSendBuffer());
+	constexpr const size_t packetSize = sizeof(T);
+	NagiocpX::S_ptr<NagiocpX::SendBuffer> sendBuffer = NagiocpX::SendBufferMgr::Open(packetSize);
+	::memcpy(sendBuffer->Buffer(), (char*)&pkt, packetSize);
+	sendBuffer->Close(packetSize);
+	Mgr(DBMgr)->SendDBPacket(std::move(sendBuffer));
 }

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Receiver.h"
 #include "ThreadMgr.h"
-#include "DBPacket.h"
+#include "../DBContentsPacket.hpp"
 
 Receiver::Receiver()
 {
@@ -85,12 +85,12 @@ const int32_t Receiver::ProcessDBPacket(BYTE* const buffer, c_int32 len) noexcep
     {
         const int32 dataSize = len - processLen;
 
-        if (dataSize < static_cast<c_int32>(sizeof(DBPacketHeader)))
+        if (dataSize < static_cast<c_int32>(sizeof(DBContentsPacketHeader)))
             break;
 
-        const DBPacketHeader* const __restrict header = reinterpret_cast<const DBPacketHeader* const>(buffer + processLen);
-        c_uint8 packetSize = header->pkt_size;
-        c_uint8 packetId = header->pkt_id;
+        const DBContentsPacketHeader* const __restrict header = reinterpret_cast<const DBContentsPacketHeader* const>(buffer + processLen);
+        c_uint16 packetSize = header->pkt_size;
+        c_uint16 packetId = header->pkt_id;
 
         if (dataSize < packetSize)
             break;

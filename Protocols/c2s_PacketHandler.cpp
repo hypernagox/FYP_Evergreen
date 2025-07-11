@@ -26,6 +26,7 @@
 #include "Skill.h"
 #include "ObjectIdentifier.h"
 #include "KillMonsterQuest.h"
+#include "DBMgr.h"
 
 using namespace NagiocpX;
 
@@ -41,6 +42,7 @@ static inline ClientSession* GetClientSession(const S_ptr<PacketSession>& sessio
 }
 const bool Handle_c2s_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
 {
+	GetClientSession(pSession_)->m_userName = *pkt_.id();
 	pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp());
 	return true;
 }

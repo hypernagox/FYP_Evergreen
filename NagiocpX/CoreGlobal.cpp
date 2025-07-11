@@ -56,7 +56,7 @@ namespace NagiocpX
 		Mgr(ThreadMgr)->RegisterDestroy();
 		Mgr(DeadLockDetector)->RegisterDestroy();
 		Mgr(TaskTimerMgr)->RegisterDestroy();
-		//Mgr(DBMgr)->RegisterDestroy();
+		Mgr(DBMgr)->RegisterDestroy();
 		Mgr(FieldMgr)->RegisterDestroy();
 
 
@@ -68,7 +68,7 @@ namespace NagiocpX
 		Mgr(DeadLockDetector)->Init();
 		Mgr(TaskTimerMgr)->Init();
 		//Mgr(SendBufferMgr)->Init();
-		//Mgr(DBMgr)->Init();
+		Mgr(DBMgr)->Init();
 		Mgr(FieldMgr)->Init();
 	}
 
