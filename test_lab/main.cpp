@@ -48,9 +48,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         g_object[i] = std::make_shared<SceneObject>();
         auto renderer = g_object[i]->AddComponent<MeshRenderer>();
-        renderer->SetMesh(res->Load<Mesh>(L"resource\\cube.yms"));
-        renderer->SetMaterial(udsdx::Material(res->Load<udsdx::Shader>(L"resource\\color.hlsl"), res->Load<udsdx::Texture>(L"resource\\UV_checker_Map_byValle.jpg")));
         g_scene->AddObject(g_object[i]);
+
+        for (int x = 0; x < 2; ++x)
+        {
+            for (int y = 0; y < 2; ++y)
+            {
+                for (int z = 0; z < 2; ++z)
+                {
+					auto instance = std::make_shared<SceneObject>();
+					instance->GetTransform()->SetLocalPosition(Vector3(x - 0.5f, y - 0.5f, z - 0.5f));
+					instance->GetTransform()->SetLocalScale(Vector3::One * 0.5f);
+					auto instanceRenderer = instance->AddComponent<MeshRenderer>();
+					instanceRenderer->SetMesh(res->Load<Mesh>(L"resource\\cube.yms"));
+					instanceRenderer->SetMaterial(udsdx::Material(res->Load<udsdx::Shader>(L"resource\\color.hlsl"), res->Load<udsdx::Texture>(L"resource\\UV_checker_Map_byValle.jpg")));
+					g_object[i]->AddChild(instance);
+				}
+            }
+        }
     }
 
     g_object[0]->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.0f, 2.0f));
@@ -61,7 +76,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     g_floorObject = std::make_shared<SceneObject>();
     g_floorObject->GetTransform()->SetLocalPosition(Vector3(0.0f, -1.5f, 0.0f));
-    g_floorObject->GetTransform()->SetLocalScale(Vector3(20.0f, 0.25f, 20.0f));
+    g_floorObject->GetTransform()->SetLocalScale(Vector3(10.0f, 0.25f, 10.0f));
     auto floorRenderer = g_floorObject->AddComponent<MeshRenderer>();
     floorRenderer->SetMesh(res->Load<Mesh>(L"resource\\cube.yms"));
     floorRenderer->SetMaterial(res->Load<udsdx::Shader>(L"resource\\colornotex.hlsl"));
@@ -80,12 +95,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     
     m_characterObject = std::make_shared<SceneObject>();
     m_characterObject->GetTransform()->SetLocalPositionY(-1.375f);
-    m_characterObject->GetTransform()->SetLocalScale(Vector3::One);
+    m_characterObject->GetTransform()->SetLocalScale(Vector3::One * 0.01f);
+    m_characterObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, PI, 0.0f));
     auto meshRenderer = m_characterObject->AddComponent<RiggedMeshRenderer>();
 
-    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\bear_new\\bear_tpose.yrms"));
-    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\bear_new\\bear_BaseColor.png")));
-    meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\bear_new\\bear_attack2.yac"), true);
+    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\character.yrms"));
+    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\character\\Body_Main.png")), 3);
+    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\character\\Cloth_Main.png")), 2);
+    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\character\\Extra_Main.png")), 0);
+    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\character\\Hat_Main.png")), 1);
+    meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\biped_attack1.yac"), true);
 
      g_scene->AddObject(m_characterObject);
 

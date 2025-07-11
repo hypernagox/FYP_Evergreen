@@ -26,6 +26,7 @@ namespace udsdx
 	class ScreenSpaceAO;
 	class DeferredRenderer;
 	class MotionBlur;
+	class PostProcessBloom;
 	class PostProcessFXAA;
 	class PostProcessOutline;
 	class BoundingCamera;
@@ -34,6 +35,7 @@ namespace udsdx
 	{
 		bool DrawSSAO = true;
 		bool DrawMotionBlur = true;
+		bool DrawBloom = true;
 		bool DrawFXAA = true;
 		bool DrawOutline = true;
 		bool DrawShadowMap = true;
@@ -65,6 +67,7 @@ namespace udsdx
 		const D3D12_GPU_VIRTUAL_ADDRESS& ConstantBufferView;
 		const D3D12_CPU_DESCRIPTOR_HANDLE& DepthStencilView;
 		const D3D12_CPU_DESCRIPTOR_HANDLE& RenderTargetView;
+
 		ID3D12Resource* RenderTargetResource;
 		ID3D12Resource* DepthStencilResource;
 
@@ -74,6 +77,7 @@ namespace udsdx
 		ShadowMap* RenderShadowMap;
 		ScreenSpaceAO* RenderScreenSpaceAO;
 		MotionBlur* RenderMotionBlur;
+		PostProcessBloom* RenderPostProcessBloom;
 		PostProcessFXAA* RenderPostProcessFXAA;
 		PostProcessOutline* RenderPostProcessOutline;
 

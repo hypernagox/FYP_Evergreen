@@ -41,7 +41,7 @@ namespace udsdx
 			}
 			else
 			{
-				ThrowIfFailed(::LoadFromWICFile(path.data(), WIC_FLAGS_IGNORE_SRGB, nullptr, image));
+				ThrowIfFailed(::LoadFromWICFile(path.data(), WIC_FLAGS_FORCE_SRGB, nullptr, image));
 			}
 
 			ScratchImage compressedImage;
@@ -55,7 +55,7 @@ namespace udsdx
 			// Generate MipMaps
 			ThrowIfFailed(::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_DEFAULT, mipChainLevels, mipChain));
 			// BC3 Compression
-			ThrowIfFailed(::CompressEx(mipChain.GetImages(), mipChain.GetImageCount(), mipChain.GetMetadata(), DXGI_FORMAT_BC3_UNORM, compressOptions, compressedImage, [&](size_t, size_t) { return true; }));
+			ThrowIfFailed(::CompressEx(mipChain.GetImages(), mipChain.GetImageCount(), mipChain.GetMetadata(), DXGI_FORMAT_BC3_UNORM_SRGB, compressOptions, compressedImage, [&](size_t, size_t) { return true; }));
 
 			ThrowIfFailed(::SaveToDDSFile(compressedImage.GetImages(), compressedImage.GetImageCount(), compressedImage.GetMetadata(), DDS_FLAGS_NONE, pathDds.c_str()));
 			std::filesystem::last_write_time(pathDds, std::filesystem::last_write_time(path));

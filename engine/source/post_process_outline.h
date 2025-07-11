@@ -8,8 +8,8 @@ namespace udsdx
 	{
 	public:
 		PostProcessOutline(ID3D12Device* device, ID3D12GraphicsCommandList* cmdList);
-		PostProcessOutline(const MotionBlur& rhs) = delete;
-		MotionBlur& operator=(const MotionBlur& rhs) = delete;
+		PostProcessOutline(const PostProcessOutline& rhs) = delete;
+		PostProcessOutline& operator=(const PostProcessOutline& rhs) = delete;
 		~PostProcessOutline() = default;
 
 		void Pass(RenderParam& param);

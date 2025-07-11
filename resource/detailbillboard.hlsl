@@ -5,23 +5,20 @@
 
 float4 PSDeferred(VertexOut pin) : SV_Target
 {
-    float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
+	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
+	float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
+
+	float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
 	// Compute world space position from depth value.
 	float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
     float4 PosW = mul(PosNDC, gViewProjInverse);
 	PosW /= PosW.w;
 
 	float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
-	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
-	float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
-
-	// Sky color. #142743
-	float4 skyColor = float4(0.178f, 0.257f, 0.363f, 1.0f);
-	float shadowValue = ShadowValue(PosW, normalW);
-	float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
-	gBuffer1Color.rgb = gBuffer1Color.rgb * lerp(skyColor, 1.0f.xxxx, shadowValue) * AOFactor;
-
-	return float4(gBuffer1Color.rgb, 1.0f);
+	gBuffer1Color.rgb = pow(gBuffer1Color.rgb, gamma);
+    
+	float3 fColor = (AmbientLight(pin)+ ShadowValue(PosW, normalW)) * gBuffer1Color.rgb;
+	return float4(fColor, 1.0f);
 }
 
 #else

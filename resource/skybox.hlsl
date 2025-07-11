@@ -4,7 +4,9 @@
 
 float4 PSDeferred(VertexOut pin) : SV_Target
 {
-	return gBuffer1.Sample(gsamPointClamp, pin.TexC);
+	float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
+	gBuffer1Color.rgb = pow(gBuffer1Color.rgb, gamma);
+	return gBuffer1Color * 1.5f;
 }
 
 #else

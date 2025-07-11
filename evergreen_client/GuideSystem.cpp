@@ -168,9 +168,13 @@ const bool GuideSystem::SetHarvestState(const uint32_t server_id, const uint32_t
 			shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl"));
 		for (MeshRenderer* renderer : harvest->GetComponentsInChildren<MeshRenderer>())
 		{
-			udsdx::Material material = renderer->GetMaterial();
-			material.SetShader(shader);
-			renderer->SetMaterial(material);
+			size_t size = renderer->GetMesh()->GetSubmeshes().size();
+			for (size_t i = 0; i < size; ++i)
+			{
+				udsdx::Material material = renderer->GetMaterial(static_cast<int>(i));
+				material.SetShader(shader);
+				renderer->SetMaterial(material, i);
+			}
 		}
 		return true;
 	}

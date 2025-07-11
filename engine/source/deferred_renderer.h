@@ -32,6 +32,9 @@ namespace udsdx
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetDepthBufferSrv() const { return m_depthBufferGpuSrv; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetStencilBufferSrv() const { return m_stencilBufferGpuSrv; }
 		CD3DX12_CPU_DESCRIPTOR_HANDLE GetDepthBufferDsv() const { return m_depthBufferCpuDsv; }
+		CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetRTVView() const { return m_targetViewCpuRtv; }
+		CD3DX12_GPU_DESCRIPTOR_HANDLE GetRenderTargetSrv() const { return m_targetViewGpuSrv; }
+		ID3D12Resource*				  GetRenderTargetResource() const { return m_targetBuffer.Get(); }
 		ID3D12RootSignature* GetRootSignature() const { return m_renderRootSignature.Get(); }
 
 	public:
@@ -66,7 +69,13 @@ namespace udsdx
 		std::array<CD3DX12_CPU_DESCRIPTOR_HANDLE, NUM_GBUFFERS> m_gBuffersCpuRtv;
 
 		// Depth buffer
+		ComPtr<ID3D12Resource> m_targetBuffer;
 		ComPtr<ID3D12Resource> m_depthBuffer;
+
+		CD3DX12_CPU_DESCRIPTOR_HANDLE m_targetViewCpuRtv;
+		CD3DX12_CPU_DESCRIPTOR_HANDLE m_targetViewCpuSrv;
+		CD3DX12_GPU_DESCRIPTOR_HANDLE m_targetViewGpuSrv;
+
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_depthBufferCpuSrv;
 		CD3DX12_GPU_DESCRIPTOR_HANDLE m_depthBufferGpuSrv;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE m_stencilBufferCpuSrv;

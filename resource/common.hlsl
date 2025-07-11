@@ -307,6 +307,8 @@ float ShadowValue(float4 posW, float3 normalW, float bias = 0.0f)
 		return 1.0f;
 }
 
+static const float gamma = 2.2f;
+
 float3 ReconstructNormal(float2 np)
 {
 	float3 n;
@@ -315,8 +317,31 @@ float3 ReconstructNormal(float2 np)
 	return n;
 }
 
-float4 PSDeferredDefault(VertexOut pin)
+float3 AmbientLight(VertexOut pin)
 {
+	// Sky color. #133771
+	float3 skyColor = pow(float3(0.357f, 0.404f, 0.467f), gamma);
+	float aoFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
+
+	return skyColor.rgb * aoFactor;
+}
+
+float3 DiffuseLight(VertexOut pin)
+{
+	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
+	float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
+
+    float3 lightColor = 1.0f;
+	float lambertian = max(dot(normalW, -gDirLight), 0.0);
+	float lightPower = 2.0f;
+	return lightColor * lambertian * lightPower;
+}
+
+float4 PSDeferredDefault(VertexOut pin) : SV_Target
+{
+	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
+	float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
+
 	float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
 	// Compute world space position from depth value.
 	float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
@@ -324,16 +349,10 @@ float4 PSDeferredDefault(VertexOut pin)
 	PosW /= PosW.w;
 
 	float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
-	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
-	float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
+	gBuffer1Color.rgb = pow(gBuffer1Color.rgb, gamma);
 
-	// Sky color. #142743
-	float4 skyColor = float4(0.178f, 0.257f, 0.363f, 1.0f);
-	float diffuse = saturate(dot(normalW, -gDirLight) * 1.5f);
-	float shadowValue = ShadowValue(PosW, normalW);
-	float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
-	gBuffer1Color.rgb = gBuffer1Color.rgb * lerp(skyColor, 1.0f.xxxx, min(shadowValue, diffuse)) * AOFactor;
-	return float4(gBuffer1Color.rgb, 1.0f);
+	float3 fColor = (AmbientLight(pin) + min(ShadowValue(PosW, normalW), DiffuseLight(pin))) * gBuffer1Color.rgb;
+	return float4(fColor, 1.0f);
 }
 
 #endif

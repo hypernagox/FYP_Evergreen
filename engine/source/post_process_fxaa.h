@@ -8,8 +8,8 @@ namespace udsdx
 	{
 	public:
 		PostProcessFXAA(ID3D12Device* device, ID3D12GraphicsCommandList* cmdList);
-		PostProcessFXAA(const MotionBlur& rhs) = delete;
-		MotionBlur& operator=(const MotionBlur& rhs) = delete;
+		PostProcessFXAA(const PostProcessFXAA& rhs) = delete;
+		PostProcessFXAA& operator=(const PostProcessFXAA& rhs) = delete;
 		~PostProcessFXAA() = default;
 
 		void Pass(RenderParam& param);

@@ -18,6 +18,7 @@
 #include "screen_space_ao.h"
 #include "deferred_renderer.h"
 #include "motion_blur.h"
+#include "post_process_bloom.h"
 #include "post_process_fxaa.h"
 #include "post_process_outline.h"
 
@@ -173,6 +174,8 @@ namespace udsdx
 		// Create Motion Blur
 		m_motionBlur = std::make_unique<MotionBlur>(m_d3dDevice.Get(), m_commandList.Get());
 		m_motionBlur->BuildPipelineState();
+		m_postProcessBloom = std::make_unique<PostProcessBloom>(m_d3dDevice.Get(), m_commandList.Get());
+		m_postProcessBloom->BuildPipelineState();
 		m_postProcessFXAA = std::make_unique<PostProcessFXAA>(m_d3dDevice.Get(), m_commandList.Get());
 		m_postProcessFXAA->BuildPipelineState();
 		m_postProcessOutline = std::make_unique<PostProcessOutline>(m_d3dDevice.Get(), m_commandList.Get());
@@ -277,14 +280,14 @@ namespace udsdx
 		ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(m_srvHeap.GetAddressOf())));
 
 		D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
-		rtvHeapDesc.NumDescriptors = 16;
+		rtvHeapDesc.NumDescriptors = 32;
 		rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 		rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		rtvHeapDesc.NodeMask = 0;
 		ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_rtvHeap.GetAddressOf())));
 
 		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
-		dsvHeapDesc.NumDescriptors = 16;
+		dsvHeapDesc.NumDescriptors = 32;
 		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		dsvHeapDesc.NodeMask = 0;
@@ -317,6 +320,7 @@ namespace udsdx
 		m_shadowMap->BuildDescriptors(descriptorParam, m_d3dDevice.Get());
 		m_screenSpaceAO->BuildDescriptors(descriptorParam, m_depthStencilBuffer.Get());
 		m_motionBlur->BuildDescriptors(descriptorParam);
+		m_postProcessBloom->BuildDescriptors(descriptorParam);
 		m_postProcessFXAA->BuildDescriptors(descriptorParam);
 		m_postProcessOutline->BuildDescriptors(descriptorParam);
 
@@ -644,6 +648,7 @@ namespace udsdx
 			.RenderShadowMap = m_shadowMap.get(),
 			.RenderScreenSpaceAO = m_screenSpaceAO.get(),
 			.RenderMotionBlur = m_motionBlur.get(),
+			.RenderPostProcessBloom = m_postProcessBloom.get(),
 			.RenderPostProcessFXAA = m_postProcessFXAA.get(),
 			.RenderPostProcessOutline = m_postProcessOutline.get(),
 
@@ -954,6 +959,8 @@ namespace udsdx
 		m_screenSpaceAO->RebuildDescriptors(m_depthStencilBuffer.Get());
 		m_motionBlur->OnResize(width, height);
 		m_motionBlur->RebuildDescriptors();
+		m_postProcessBloom->OnResize(width, height);
+		m_postProcessBloom->RebuildDescriptors();
 		m_postProcessFXAA->OnResize(width, height);
 		m_postProcessFXAA->RebuildDescriptors();
 		m_postProcessOutline->OnResize(width, height);
@@ -1034,7 +1041,7 @@ namespace udsdx
 		// Update the histogram data
 		for (size_t i = 0; i < frameTimes.size(); ++i)
 		{
-			int targetIndex = (frameTimes[i] / smoothMaxFrameTime) * frameTimeHistogram.size();
+			int targetIndex = static_cast<int>((frameTimes[i] / smoothMaxFrameTime) * frameTimeHistogram.size());
 			if (targetIndex >= 0 && targetIndex < frameTimeHistogram.size())
 			{
 				frameTimeHistogram[targetIndex]++;
@@ -1050,8 +1057,21 @@ namespace udsdx
 		ImGui::Checkbox("Draw Shadow Map", &m_renderOptions.DrawShadowMap);
 		bool changeSSAO = ImGui::Checkbox("Draw SSAO", &m_renderOptions.DrawSSAO);
 		ImGui::Checkbox("Draw Motion Blur", &m_renderOptions.DrawMotionBlur);
+		ImGui::Checkbox("Draw Post Process Bloom", &m_renderOptions.DrawBloom);
 		ImGui::Checkbox("Draw Post Process FXAA", &m_renderOptions.DrawFXAA);
 		ImGui::Checkbox("Draw Post Process Outline", &m_renderOptions.DrawOutline);
+
+		static float exposure = m_postProcessBloom->GetExposure();
+		if (ImGui::SliderFloat("Exposure", &exposure, 0.0f, 10.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+		{
+			m_postProcessBloom->SetExposure(exposure);
+		}
+		
+		static float bloomStrength = m_postProcessBloom->GetBloomStrength();
+		if (ImGui::SliderFloat("Bloom Strength", &bloomStrength, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+		{
+			m_postProcessBloom->SetBloomStrength(bloomStrength);
+		}
 		
 		// Draw combobox for shadow map resolution. the options are (256, 512, 1024, 2048, 4096, 8192).
 		static const char* shadowMapResolutions[] = { "256", "512", "1024", "2048", "4096", "8192" };

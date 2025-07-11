@@ -14,6 +14,7 @@
 #include "input.h"
 #include "deferred_renderer.h"
 #include "motion_blur.h"
+#include "post_process_bloom.h"
 #include "post_process_fxaa.h"
 #include "post_process_outline.h"
 #include "gui_element.h"
@@ -274,6 +275,12 @@ namespace udsdx
 		RenderSceneObjects(param, RenderGroup::Forward, 1);
 
 		param.Renderer->PassBufferPostProcess(param);
+
+		// Bloom pass
+		if (param.RenderOptions->DrawBloom)
+		{
+			param.RenderPostProcessBloom->Pass(param);
+		}
 
 		// FXAA pass
 		if (param.RenderOptions->DrawFXAA)

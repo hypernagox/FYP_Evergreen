@@ -285,7 +285,7 @@ namespace udsdx
 		psoDesc.NumRenderTargets = 1;
 		psoDesc.SampleDesc.Count = 1;
 		psoDesc.SampleDesc.Quality = 0;
-		psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		psoDesc.RTVFormats[0] = DXGI_FORMAT_R11G11B10_FLOAT;
 		psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 		std::wstring defines[] = {

@@ -293,11 +293,10 @@ namespace udsdx
 
 		// Create the render target view
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+		rtvDesc.Format = AO_FORMAT;
 		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-		rtvDesc.Format = NORMAL_FORMAT;
 		rtvDesc.Texture2D.MipSlice = 0;
 		rtvDesc.Texture2D.PlaneSlice = 0;
-		rtvDesc.Format = AO_FORMAT;
 		m_device->CreateRenderTargetView(m_ssaomap.Get(), &rtvDesc, m_ssaomapCpuRtv);
 	}
 

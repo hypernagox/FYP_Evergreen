@@ -223,7 +223,7 @@ cbuffer cbPerShadow : register(b1)
 	float3 gDirLight;
 };
 
-cbuffer cbPerFrame : register(b4)
+cbuffer cbPerFrame : register(b2)
 {
     float gTime;
     float gDeltaTime;
@@ -253,7 +253,7 @@ struct VertexOut
 	uint InstanceID : SV_InstanceID;
 };
 
-float ShadowValue(float4 posW, float3 normalW, int level)
+float ShadowValue(float4 posW, float3 normalW, int level, float bias = 0.0f)
 {
 	float4 shadowPosH = mul(mul(posW, gLightViewProjClip[level]), gTex);
 
@@ -264,7 +264,7 @@ float ShadowValue(float4 posW, float3 normalW, int level)
 	if (max(shadowPosH.x, shadowPosH.y) < 1.0f && min(shadowPosH.x, shadowPosH.y) > 0.0f)
 	{
 		// Depth in NDC space.
-		float depth = shadowPosH.z;
+		float depth = shadowPosH.z - bias;
 
 		uint width, height, numMips;
 		gShadowMap.GetDimensions(0, width, height, numMips);
@@ -289,23 +289,25 @@ float ShadowValue(float4 posW, float3 normalW, int level)
 	return percentLit / 9.0f;
 }
 
-float ShadowValue(float4 posW, float3 normalW)
+float ShadowValue(float4 posW, float3 normalW, float bias = 0.0f)
 {
 	float distanceW0 = length(posW.xyz - gLightPosW[0].xyz);
 	float distanceW1 = length(posW.xyz - gLightPosW[1].xyz);
 	float distanceW2 = length(posW.xyz - gLightPosW[2].xyz);
 	float distanceW3 = length(posW.xyz - gLightPosW[3].xyz);
 	if (distanceW0 < gShadowDistance[0])
-		return lerp(ShadowValue(posW, normalW, 0), ShadowValue(posW, normalW, 1), saturate((distanceW0 - gShadowDistance[0]) / (0.1f * gShadowDistance[0]) + 1.0f));
+		return lerp(ShadowValue(posW, normalW, 0, bias), ShadowValue(posW, normalW, 1, bias), saturate((distanceW0 - gShadowDistance[0]) / (0.1f * gShadowDistance[0]) + 1.0f));
 	else if (distanceW1 < gShadowDistance[1])
-		return lerp(ShadowValue(posW, normalW, 1), ShadowValue(posW, normalW, 2), saturate((distanceW1 - gShadowDistance[1]) / (0.1f * (gShadowDistance[1] - gShadowDistance[0])) + 1.0f));
+		return lerp(ShadowValue(posW, normalW, 1, bias), ShadowValue(posW, normalW, 2, bias), saturate((distanceW1 - gShadowDistance[1]) / (0.1f * (gShadowDistance[1] - gShadowDistance[0])) + 1.0f));
 	else if (distanceW2 < gShadowDistance[2])
-		return lerp(ShadowValue(posW, normalW, 2), ShadowValue(posW, normalW, 3), saturate((distanceW2 - gShadowDistance[2]) / (0.1f * (gShadowDistance[2] - gShadowDistance[1])) + 1.0f));
+		return lerp(ShadowValue(posW, normalW, 2, bias), ShadowValue(posW, normalW, 3, bias), saturate((distanceW2 - gShadowDistance[2]) / (0.1f * (gShadowDistance[2] - gShadowDistance[1])) + 1.0f));
 	else if (distanceW3 < gShadowDistance[3])
-		return lerp(ShadowValue(posW, normalW, 3), 1.0f, saturate((distanceW3 - gShadowDistance[3]) / (0.1f * (gShadowDistance[3] - gShadowDistance[2])) + 1.0f));
+		return lerp(ShadowValue(posW, normalW, 3, bias), 1.0f, saturate((distanceW3 - gShadowDistance[3]) / (0.1f * (gShadowDistance[3] - gShadowDistance[2])) + 1.0f));
 	else
 		return 1.0f;
 }
+
+static const float gamma = 2.2f;
 
 float3 ReconstructNormal(float2 np)
 {
@@ -315,8 +317,31 @@ float3 ReconstructNormal(float2 np)
 	return n;
 }
 
+float3 AmbientLight(VertexOut pin)
+{
+	// Sky color. #133771
+	float3 skyColor = pow(float3(0.357f, 0.404f, 0.467f), gamma);
+	float aoFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
+
+	return skyColor.rgb * aoFactor;
+}
+
+float3 DiffuseLight(VertexOut pin)
+{
+	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
+	float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
+
+    float3 lightColor = 1.0f;
+	float lambertian = max(dot(normalW, -gDirLight), 0.0);
+	float lightPower = 2.0f;
+	return lightColor * lambertian * lightPower;
+}
+
 float4 PSDeferredDefault(VertexOut pin) : SV_Target
 {
+	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
+	float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
+
 	float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
 	// Compute world space position from depth value.
 	float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
@@ -324,17 +349,10 @@ float4 PSDeferredDefault(VertexOut pin) : SV_Target
 	PosW /= PosW.w;
 
 	float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
-	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
-	float3 normalW = normalize(mul(normalV, transpose((float3x3)gView)));
+	gBuffer1Color.rgb = pow(gBuffer1Color.rgb, gamma);
 
-	// Sky color. #142743
-	float4 skyColor = float4(0.178f, 0.257f, 0.363f, 1.0f);
-	float diffuse = saturate(dot(normalW, -gDirLight) * 1.5f);
-	float shadowValue = ShadowValue(PosW, normalW);
-	float AOFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
-	gBuffer1Color.rgb = gBuffer1Color.rgb * lerp(skyColor, 1.0f.xxxx, min(shadowValue, diffuse)) * AOFactor;
-
-	return float4(gBuffer1Color.rgb, 1.0f);
+	float3 fColor = (AmbientLight(pin) + min(ShadowValue(PosW, normalW), DiffuseLight(pin))) * gBuffer1Color.rgb;
+	return float4(fColor, 1.0f);
 }
 
 #endif

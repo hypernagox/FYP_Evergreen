@@ -2,14 +2,18 @@
 
 #ifdef DEFERRED
 
+float NdcDepthToViewDepth(float z_ndc)
+{
+	float viewZ = gProj[3][2] / (z_ndc - gProj[2][2]);
+	return viewZ;
+}
+
 float4 PSDeferred(VertexOut pin) : SV_Target
 {
-    float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
-    float blinkFactor = abs(frac(gTime - depth * 10.0f) - 0.5f) * 2.0f;
-    blinkFactor *= blinkFactor;
-    blinkFactor *= blinkFactor;
+    float depth = NdcDepthToViewDepth(gBufferDSV.Sample(gsamPointClamp, pin.TexC).r);
+    float blinkFactor = pow(frac(-gTime * 0.25f + depth * 0.01f), 8.0f);
 
-	return PSDeferredDefault(pin) + blinkFactor * 0.25f;
+	return PSDeferredDefault(pin) * (1.0f + blinkFactor * 16.0f);
 }
 
 #else

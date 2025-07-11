@@ -40,17 +40,22 @@ namespace udsdx
 			descriptorParam.RtvCpuHandle.Offset(1, descriptorParam.RtvDescriptorSize);
         }
 
-		m_depthBufferCpuSrv = descriptorParam.SrvCpuHandle;
-		m_depthBufferGpuSrv = descriptorParam.SrvGpuHandle;
+		m_targetViewCpuRtv = descriptorParam.RtvCpuHandle;
+		m_targetViewCpuSrv = descriptorParam.SrvCpuHandle;
+		m_targetViewGpuSrv = descriptorParam.SrvGpuHandle;
+
+		m_depthBufferCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		m_depthBufferGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
 		m_stencilBufferCpuSrv = descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		m_stencilBufferGpuSrv = descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
-		descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 		descriptorParam.SrvCpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
+		descriptorParam.SrvGpuHandle.Offset(1, descriptorParam.CbvSrvUavDescriptorSize);
 
 		m_depthBufferCpuDsv = descriptorParam.DsvCpuHandle;
 
+		descriptorParam.RtvCpuHandle.Offset(1, descriptorParam.RtvDescriptorSize);
 		descriptorParam.DsvCpuHandle.Offset(1, descriptorParam.DsvDescriptorSize);
     }
 
@@ -174,6 +179,22 @@ namespace udsdx
             m_device->CreateRenderTargetView(m_gBuffers[i].Get(), &rtvDesc, m_gBuffersCpuRtv[i]);
 		}
 
+		{
+			D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+			rtvDesc.Format = DXGI_FORMAT_R11G11B10_FLOAT;
+			rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+			m_device->CreateRenderTargetView(m_targetBuffer.Get(), &rtvDesc, m_targetViewCpuRtv);
+
+			D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+			srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+			srvDesc.Format = DXGI_FORMAT_R11G11B10_FLOAT;
+			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+			srvDesc.Texture2D.MipLevels = 1;
+
+			m_device->CreateShaderResourceView(m_targetBuffer.Get(), &srvDesc, m_targetViewCpuSrv);
+		}
+
 		// Create the depth buffer view
 		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		m_device->CreateShaderResourceView(m_depthBuffer.Get(), &srvDesc, m_depthBufferCpuSrv);
@@ -220,6 +241,38 @@ namespace udsdx
 				D3D12_RESOURCE_STATE_GENERIC_READ,
 				&clearValue,
 				IID_PPV_ARGS(&m_gBuffers[i])));
+		}
+
+		// Create the intermediate render target view
+		{
+			D3D12_RESOURCE_DESC renderTargetDesc;
+			renderTargetDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+			renderTargetDesc.Alignment = 0;
+			renderTargetDesc.Width = m_width;
+			renderTargetDesc.Height = m_height;
+			renderTargetDesc.DepthOrArraySize = 1;
+			renderTargetDesc.MipLevels = 1;
+
+			renderTargetDesc.Format = DXGI_FORMAT_R11G11B10_FLOAT;
+			renderTargetDesc.SampleDesc.Count = 1;
+			renderTargetDesc.SampleDesc.Quality = 0;
+			renderTargetDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+			renderTargetDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
+			D3D12_CLEAR_VALUE clearValue;
+			clearValue.Format = DXGI_FORMAT_R11G11B10_FLOAT;
+			clearValue.Color[0] = 0.0f;
+			clearValue.Color[1] = 0.0f;
+			clearValue.Color[2] = 0.0f;
+
+			ThrowIfFailed(m_device->CreateCommittedResource(
+				&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+				D3D12_HEAP_FLAG_NONE,
+				&renderTargetDesc,
+				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				&clearValue,
+				IID_PPV_ARGS(&m_targetBuffer)
+			));
 		}
 
         m_depthBuffer.Reset();
@@ -312,7 +365,7 @@ namespace udsdx
 
 		pCommandList->SetGraphicsRootSignature(m_renderRootSignature.Get());
 
-		pCommandList->OMSetRenderTargets(1, &renderParam.RenderTargetView, true, &renderParam.DepthStencilView);
+		pCommandList->OMSetRenderTargets(1, &m_targetViewCpuRtv, true, &renderParam.DepthStencilView);
 
 		pCommandList->RSSetViewports(1, &renderParam.Viewport);
 		pCommandList->RSSetScissorRects(1, &renderParam.ScissorRect);
