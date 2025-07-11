@@ -4,6 +4,7 @@
 #include "GameGUIFacade.h"
 #include "LogFloatGUI.h"
 #include "RequestPopupGUI.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -20,7 +21,7 @@ void QuestGUI::OnInitialize()
 		GetSceneObject()->AddChild(m_questListPanel);
 
 		auto incrementQuestButton = std::make_shared<SceneObject>();
-		m_incrementQuestButton = incrementQuestButton->AddComponent<GUIButton>();
+		m_incrementQuestButton = incrementQuestButton->AddComponent<GUISimpleButton>();
 		incrementQuestButton->GetTransform()->SetLocalPosition(Vector3(80.0f, -250.0f, 0.0f));
 		m_incrementQuestButton->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_arrow_R.png")), true);
 		m_incrementQuestButton->SetClickCallback([&]() {
@@ -31,7 +32,7 @@ void QuestGUI::OnInitialize()
 		m_questListPanel->AddChild(incrementQuestButton);
 
 		auto decrementQuestButton = std::make_shared<SceneObject>();
-		m_decrementQuestButton = decrementQuestButton->AddComponent<GUIButton>();
+		m_decrementQuestButton = decrementQuestButton->AddComponent<GUISimpleButton>();
 		decrementQuestButton->GetTransform()->SetLocalPosition(Vector3(-80.0f, -250.0f, 0.0f));
 		m_decrementQuestButton->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_arrow_L.png")), true);
 		m_decrementQuestButton->SetClickCallback([&]() {
@@ -48,7 +49,7 @@ void QuestGUI::OnInitialize()
 			auto questNameObj = std::make_shared<SceneObject>();
 			auto questDescObj = std::make_shared<SceneObject>();
 
-			m_questList[i].ButtonPanel = questContentObj->AddComponent<GUIButton>();
+			m_questList[i].ButtonPanel = questContentObj->AddComponent<GUISimpleButton>();
 			m_questList[i].ButtonPanel->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_slot_1.png")), true);
 
 			m_questList[i].IconImage = questImageObj->AddComponent<GUIImage>();
@@ -84,7 +85,7 @@ void QuestGUI::OnInitialize()
 		}
 
 		auto exitButton = std::make_shared<SceneObject>();
-		auto exitButtonRenderer = exitButton->AddComponent<GUIButton>();
+		auto exitButtonRenderer = exitButton->AddComponent<GUISimpleButton>();
 		exitButton->GetTransform()->SetLocalPosition(Vector3(175.0f, 250.0f, 0.0f));
 		exitButtonRenderer->SetSize(Vector2(50.0f, 50.0f));
 		exitButtonRenderer->SetClickCallback([&]() {
@@ -122,7 +123,7 @@ void QuestGUI::OnInitialize()
 		m_partyListPanel->AddChild(selectedQuestObj);
 
 		auto incrementQuestButton = std::make_shared<SceneObject>();
-		m_incrementPartyButton = incrementQuestButton->AddComponent<GUIButton>();
+		m_incrementPartyButton = incrementQuestButton->AddComponent<GUISimpleButton>();
 		incrementQuestButton->GetTransform()->SetLocalPosition(Vector3(80.0f, -180.0f, 0.0f));
 		m_incrementPartyButton->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_arrow_R.png")), true);
 		m_incrementPartyButton->SetClickCallback([&]() {
@@ -133,7 +134,7 @@ void QuestGUI::OnInitialize()
 		m_partyListPanel->AddChild(incrementQuestButton);
 
 		auto decrementQuestButton = std::make_shared<SceneObject>();
-		m_decrementPartyButton = decrementQuestButton->AddComponent<GUIButton>();
+		m_decrementPartyButton = decrementQuestButton->AddComponent<GUISimpleButton>();
 		decrementQuestButton->GetTransform()->SetLocalPosition(Vector3(-80.0f, -180.0f, 0.0f));
 		m_decrementPartyButton->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_arrow_L.png")), true);
 		m_decrementPartyButton->SetClickCallback([&]() {
@@ -144,7 +145,7 @@ void QuestGUI::OnInitialize()
 		m_partyListPanel->AddChild(decrementQuestButton);
 
 		auto partyCreateButton = std::make_shared<SceneObject>();
-		auto partyCreateButtonRenderer = partyCreateButton->AddComponent<GUIButton>();
+		auto partyCreateButtonRenderer = partyCreateButton->AddComponent<GUISimpleButton>();
 		partyCreateButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -240.0f, 0.0f));
 		partyCreateButtonRenderer->SetClickCallback([this]() {
 			GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Append(GetSceneObject(), m_partyCreatePanel);
@@ -159,7 +160,7 @@ void QuestGUI::OnInitialize()
 			auto partyNameObj = std::make_shared<SceneObject>();
 			auto partyLeaderObj = std::make_shared<SceneObject>();
 
-			m_partyList[i].ButtonPanel = questContentObj->AddComponent<GUIButton>();
+			m_partyList[i].ButtonPanel = questContentObj->AddComponent<GUISimpleButton>();
 			m_partyList[i].ButtonPanel->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_slot_1.png")), true);
 
 			m_partyList[i].IconImage = questImageObj->AddComponent<GUIImage>();
@@ -195,7 +196,7 @@ void QuestGUI::OnInitialize()
 		}
 
 		auto exitButton = std::make_shared<SceneObject>();
-		auto exitButtonRenderer = exitButton->AddComponent<GUIButton>();
+		auto exitButtonRenderer = exitButton->AddComponent<GUISimpleButton>();
 		exitButton->GetTransform()->SetLocalPosition(Vector3(175.0f, 250.0f, 0.0f));
 		exitButtonRenderer->SetSize(Vector2(50.0f, 50.0f));
 		exitButtonRenderer->SetClickCallback([&]() {
@@ -214,7 +215,7 @@ void QuestGUI::OnInitialize()
 		GetSceneObject()->AddChild(m_partyCreatePanel);
 
 		auto createButton = std::make_shared<SceneObject>();
-		auto createButtonRenderer = createButton->AddComponent<GUIButton>();
+		auto createButtonRenderer = createButton->AddComponent<GUISimpleButton>();
 		createButton->GetTransform()->SetLocalPosition(Vector3(-100.0f, -70.0f, 0.0f));
 		createButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_opinion_yes.png")), true);
 		createButtonRenderer->SetClickCallback([&]() {
@@ -226,7 +227,7 @@ void QuestGUI::OnInitialize()
 		m_partyCreatePanel->AddChild(createButton);
 
 		auto cancelButton = std::make_shared<SceneObject>();
-		auto cancelButtonRenderer = cancelButton->AddComponent<GUIButton>();
+		auto cancelButtonRenderer = cancelButton->AddComponent<GUISimpleButton>();
 		cancelButton->GetTransform()->SetLocalPosition(Vector3(100.0f, -70.0f, 0.0f));
 		cancelButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_opinion_no.png")), true);
 		cancelButtonRenderer->SetClickCallback([&]() {

@@ -465,6 +465,7 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</IncludeInUnityFile>
     </ClCompile>
     <ClCompile Include="GuideSystem.cpp" />
+    <ClCompile Include="GUISimpleButton.cpp" />
     <ClCompile Include="InteractionFloatGUI.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="InteractiveEntity.cpp" />
@@ -556,6 +557,7 @@
     <ClInclude Include="GizmoSectorRenderer.h" />
     <ClInclude Include="GizmoSphereRenderer.h" />
     <ClInclude Include="GuideSystem.h" />
+    <ClInclude Include="GUISimpleButton.h" />
     <ClInclude Include="InteractionFloatGUI.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="InteractiveEntity.h" />

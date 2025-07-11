@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PlayerInventoryGUI.h"
 #include "AuthenticPlayer.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -19,7 +20,7 @@ void PlayerInventoryGUI::OnInitialize()
 		float y = (i / NUM_COLUMNS - (NUM_ROWS - 1) / 2.0f) * -81.0f + 8.0f;
 
 		m_slotBackground[i] = std::make_shared<SceneObject>();
-		auto uiRenderer = m_slotBackground[i]->AddComponent<GUIButton>();
+		auto uiRenderer = m_slotBackground[i]->AddComponent<GUISimpleButton>();
 		m_slotBackground[i]->GetTransform()->SetLocalPosition(Vector3(x, y, 0.0f));
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\item_slot.png")));
 		uiRenderer->SetSize(Vector2(80, 80));
@@ -66,7 +67,7 @@ void PlayerInventoryGUI::UpdateSlotContents(AuthenticPlayer* target, const std::
 		{
 			const std::string& key = DATA_TABLE->GetItemName(id);
 			udsdx::Texture* texture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring,"Item", key, "Icon")));
-			m_slotBackground[counter]->GetComponent<GUIButton>()->SetClickCallback([this, target, id]() {
+			m_slotBackground[counter]->GetComponent<GUISimpleButton>()->SetClickCallback([this, target, id]() {
 				SelectInventorySlot(target, id);
 			});
 			m_slotContents[counter]->GetComponent<GUIImage>()->SetTexture(texture);
@@ -79,7 +80,7 @@ void PlayerInventoryGUI::UpdateSlotContents(AuthenticPlayer* target, const std::
 
 	while (counter < NUM_ROWS * NUM_COLUMNS)
 	{
-		m_slotBackground[counter]->GetComponent<GUIButton>()->SetClickCallback(nullptr);
+		m_slotBackground[counter]->GetComponent<GUISimpleButton>()->SetClickCallback(nullptr);
 		m_slotContents[counter]->GetComponent<GUIImage>()->SetTexture(nullptr);
 		m_slotText[counter]->GetComponent<GUIText>()->SetText(L"");
 		counter++;

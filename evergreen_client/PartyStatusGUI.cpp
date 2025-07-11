@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PartyStatusGUI.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -26,7 +27,7 @@ void PartyStatusGUI::OnInitialize()
 	m_panel->AddChild(m_titleText);
 
 	m_leavePartyButton = std::make_shared<SceneObject>();
-	auto leavePartyButtonRenderer = m_leavePartyButton->AddComponent<GUIButton>();
+	auto leavePartyButtonRenderer = m_leavePartyButton->AddComponent<GUISimpleButton>();
 	m_leavePartyButton->GetTransform()->SetLocalPosition(Vector3(220.0f, 140.0f, 0.0f));
 	leavePartyButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_complete.png")));
 	leavePartyButtonRenderer->SetSize(Vector2(30, 30));

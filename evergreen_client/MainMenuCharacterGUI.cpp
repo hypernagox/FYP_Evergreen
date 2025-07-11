@@ -2,6 +2,7 @@
 #include "MainMenuCharacterGUI.h"
 #include "GameGUIFacade.h"
 #include "TransitionOverlayGUI.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -16,7 +17,7 @@ void MainMenuCharacterGUI::OnInitialize()
 		m_nextButton = std::make_shared<SceneObject>();
 		m_nextButton->GetTransform()->SetLocalPosition(Vector3(200.0f, -480.0f, 0.0f));
 
-		auto buttonComponent = m_nextButton->AddComponent<GUIButton>();
+		auto buttonComponent = m_nextButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_arrow_R.png")));
 		buttonComponent->SetSize(Vector2(50.0f, 50.0f));
 		buttonComponent->SetClickCallback([this]() {
@@ -29,7 +30,7 @@ void MainMenuCharacterGUI::OnInitialize()
 		m_prevButton = std::make_shared<SceneObject>();
 		m_prevButton->GetTransform()->SetLocalPosition(Vector3(-200.0f, -480.0f, 0.0f));
 
-		auto buttonComponent = m_prevButton->AddComponent<GUIButton>();
+		auto buttonComponent = m_prevButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_arrow_L.png")));
 		buttonComponent->SetSize(Vector2(50.0f, 50.0f));
 		buttonComponent->SetClickCallback([this]() {
@@ -42,7 +43,7 @@ void MainMenuCharacterGUI::OnInitialize()
 		m_selectButton = std::make_shared<SceneObject>();
 		m_selectButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -480.0f, 0.0f));
 
-		auto buttonComponent = m_selectButton->AddComponent<GUIButton>();
+		auto buttonComponent = m_selectButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(200.0f, 50.0f));
 		buttonComponent->SetClickCallback([this]() {

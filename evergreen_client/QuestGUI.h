@@ -2,12 +2,14 @@
 
 #include "pch.h"
 
+class GUISimpleButton;
+
 class QuestGUI : public udsdx::Component
 {
 private:
 	struct QuestContent
 	{
-		udsdx::GUIButton* ButtonPanel;
+		GUISimpleButton* ButtonPanel;
 		udsdx::GUIImage* IconImage;
 		udsdx::GUIText* NameText;
 		udsdx::GUIText* DescriptionText;
@@ -15,7 +17,7 @@ private:
 
 	struct PartyContent
 	{
-		udsdx::GUIButton* ButtonPanel;
+		GUISimpleButton* ButtonPanel;
 		udsdx::GUIImage* IconImage;
 		udsdx::GUIText* NameText;
 		udsdx::GUIText* DescriptionText;
@@ -55,10 +57,10 @@ private:
 
 	udsdx::GUIText* m_selectedQuestText;
 
-	udsdx::GUIButton* m_incrementQuestButton;
-	udsdx::GUIButton* m_decrementQuestButton;
-	udsdx::GUIButton* m_incrementPartyButton;
-	udsdx::GUIButton* m_decrementPartyButton;
+	GUISimpleButton* m_incrementQuestButton;
+	GUISimpleButton* m_decrementQuestButton;
+	GUISimpleButton* m_incrementPartyButton;
+	GUISimpleButton* m_decrementPartyButton;
 
 	std::vector<uint32_t> m_partyTableCache;
 };

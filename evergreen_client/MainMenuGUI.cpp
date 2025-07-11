@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MainMenuGUI.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -30,7 +31,7 @@ void MainMenuGUI::OnInitialize()
 		m_playButton = std::make_shared<SceneObject>();
 		m_playButton->GetTransform()->SetLocalPosition(Vector3(-480.0f, -300.0f, 0.0f));
 
-		auto buttonComponent = m_playButton->AddComponent<GUIButton>();
+		auto buttonComponent = m_playButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(200.0f, 50.0f));
 		buttonComponent->SetClickCallback([this]() {
@@ -51,7 +52,7 @@ void MainMenuGUI::OnInitialize()
 		m_exitButton = std::make_shared<SceneObject>();
 		m_exitButton->GetTransform()->SetLocalPosition(Vector3(-480.0f, -360.0f, 0.0f));
 
-		auto buttonComponent = m_exitButton->AddComponent<GUIButton>();
+		auto buttonComponent = m_exitButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(200.0f, 50.0f));
 		buttonComponent->SetClickCallback([this]() {

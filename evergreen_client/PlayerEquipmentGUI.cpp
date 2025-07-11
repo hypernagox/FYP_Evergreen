@@ -2,6 +2,7 @@
 #include "PlayerEquipmentGUI.h"
 #include "AuthenticPlayer.h"
 #include "PopupGUIManager.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -27,7 +28,7 @@ void PlayerEquipmentGUI::OnInitialize()
 		float y = 115.0f - i * 78.0f;
 
 		m_slotContents[i] = std::make_shared<SceneObject>();
-		auto renderer = m_slotContents[i]->AddComponent<GUIButton>();
+		auto renderer = m_slotContents[i]->AddComponent<GUISimpleButton>();
 		m_slotContents[i]->GetTransform()->SetLocalPosition(Vector3(-162.0f, y, 0.0f));
 		renderer->SetSize(Vector2(60, 60));
 		renderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\icon_priestequipment_1.png")));
@@ -43,7 +44,7 @@ void PlayerEquipmentGUI::OnInitialize()
 	}
 
 	auto exitButton = std::make_shared<SceneObject>();
-	auto exitButtonRenderer = exitButton->AddComponent<GUIButton>();
+	auto exitButtonRenderer = exitButton->AddComponent<GUISimpleButton>();
 	exitButton->GetTransform()->SetLocalPosition(Vector3(175.0f, 250.0f, 0.0f));
 	exitButtonRenderer->SetSize(Vector2(50.0f, 50.0f));
 	exitButtonRenderer->SetClickCallback([&]() {
@@ -59,7 +60,7 @@ void PlayerEquipmentGUI::UpdateSlotContents(AuthenticPlayer* target, int index, 
 {
 	itemIDCache[index] = id;
 
-	auto slotContents = m_slotContents[index]->GetComponent<GUIButton>();
+	auto slotContents = m_slotContents[index]->GetComponent<GUISimpleButton>();
 	auto slotText = m_slotText[index]->GetComponent<GUIText>();
 
 	m_slotContents[index]->SetActive(id >= 0);

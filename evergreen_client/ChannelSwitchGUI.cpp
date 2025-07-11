@@ -3,6 +3,7 @@
 #include "GameGUIFacade.h"
 #include "LogFloatGUI.h"
 #include "NetworkMgr.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -27,7 +28,7 @@ void ChannelSwitchGUI::OnInitialize()
 		{
 			ChannelButton button;
 			button.ButtonPanel = std::make_shared<SceneObject>();
-			auto buttonRenderer = button.ButtonPanel->AddComponent<GUIButton>();
+			auto buttonRenderer = button.ButtonPanel->AddComponent<GUISimpleButton>();
 			button.ButtonPanel->GetTransform()->SetLocalPosition(Vector3(-340.0f + col * 180.0f, 100.0f - row * 80.0f, 0.0f));
 			buttonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\channel\\channel.png")), true);
 			m_panel->AddChild(button.ButtonPanel);
@@ -53,14 +54,14 @@ void ChannelSwitchGUI::OnInitialize()
 	}
 
 	m_incrementPageButton = std::make_shared<SceneObject>();
-	auto incrementPageButtonRenderer = m_incrementPageButton->AddComponent<GUIButton>();
+	auto incrementPageButtonRenderer = m_incrementPageButton->AddComponent<GUISimpleButton>();
 	m_incrementPageButton->GetTransform()->SetLocalPosition(Vector3(100.0f, -200.0f, 0.0f));
 	incrementPageButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\channel\\channel_arrow_R.png")), true);
 	incrementPageButtonRenderer->SetClickCallback([this]() { SwitchChannelPage((m_currentPage + 1) % PageCount); });
 	m_panel->AddChild(m_incrementPageButton);
 
 	m_decrementPageButton = std::make_shared<SceneObject>();
-	auto decrementPageButtonRenderer = m_decrementPageButton->AddComponent<GUIButton>();
+	auto decrementPageButtonRenderer = m_decrementPageButton->AddComponent<GUISimpleButton>();
 	m_decrementPageButton->GetTransform()->SetLocalPosition(Vector3(-100.0f, -200.0f, 0.0f));
 	decrementPageButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\channel\\channel_arrow_L.png")), true);
 	decrementPageButtonRenderer->SetClickCallback([this]() { SwitchChannelPage((m_currentPage - 1 + PageCount) % PageCount); });
@@ -89,7 +90,7 @@ void ChannelSwitchGUI::SwitchChannelPage(int page)
 
 		button.ChannelText->GetComponent<GUIText>()->SetText(std::format(L"Ch. {0:02}", channelIndex + 1));
 
-		auto buttonComponent = button.ButtonPanel->GetComponent<GUIButton>();
+		auto buttonComponent = button.ButtonPanel->GetComponent<GUISimpleButton>();
 		if (channelIndex == m_currentChannel)
 			buttonComponent->SetInteractable(false);
 		else

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "PlayerCraftGUI.h"
 #include "AuthenticPlayer.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -52,7 +53,7 @@ void PlayerCraftGUI::OnInitialize()
 		recipeGUI.Panel->AddChild(recipeGUI.OutputSlotText);
 
 		recipeGUI.CraftButton = std::make_shared<SceneObject>();
-		auto craftButtonRenderer = recipeGUI.CraftButton->AddComponent<GUIButton>();
+		auto craftButtonRenderer = recipeGUI.CraftButton->AddComponent<GUISimpleButton>();
 		recipeGUI.CraftButton->GetTransform()->SetLocalPosition(Vector3(160.0f, 0.0f, 0.0f));
 		craftButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_complete.png")));
 		craftButtonRenderer->SetSize(Vector2(100, 100));
@@ -66,7 +67,7 @@ void PlayerCraftGUI::OnInitialize()
 			auto iconPath = GET_DATA(std::wstring, "Item", combine.itemName, "Icon");
 
 			auto inputSlotBackground = recipeGUI.InputSlotBackground.emplace_back(std::make_shared<SceneObject>());
-			auto inputBackgroundRenderer = inputSlotBackground->AddComponent<GUIImage>();
+			auto inputBackgroundRenderer = inputSlotBackground->AddComponent<GUISimpleButton>();
 			inputSlotBackground->GetTransform()->SetLocalPosition(Vector3(x, -25.0f, 0.0f));
 			inputBackgroundRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\item_slot.png")));
 			inputBackgroundRenderer->SetSize(Vector2(60, 60));
@@ -117,7 +118,7 @@ void PlayerCraftGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vect
 			}
 		}
 
-		auto buttonComponent = m_recipePanels[i].CraftButton->GetComponent<GUIButton>();
+		auto buttonComponent = m_recipePanels[i].CraftButton->GetComponent<GUISimpleButton>();
 
 		// 조건이 충족될 경우 버튼을 활성화하고 클릭 시 레시피를 제작하는 콜백을 설정
 		buttonComponent->SetInteractable(available);

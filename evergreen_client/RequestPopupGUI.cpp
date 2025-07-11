@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "RequestPopupGUI.h"
 #include "PopupGUIManager.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -32,7 +33,7 @@ void RequestPopupGUI::OnInitialize()
 	m_panel->AddChild(m_text);
 
 	m_acceptButton = std::make_shared<SceneObject>();
-	auto acceptButtonRenderer = m_acceptButton->AddComponent<GUIButton>();
+	auto acceptButtonRenderer = m_acceptButton->AddComponent<GUISimpleButton>();
 	m_acceptButton->GetTransform()->SetLocalPosition(Vector3(-100.0f, -80.0f, 0.0f));
 	acceptButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_select.png")));
 	acceptButtonRenderer->SetSize(Vector2(160.0f, 60.0f));
@@ -50,7 +51,7 @@ void RequestPopupGUI::OnInitialize()
 	acceptButtonText->SetText(L"Accept");
 
 	m_cancelButton = std::make_shared<SceneObject>();
-	auto cancelButtonRenderer = m_cancelButton->AddComponent<GUIButton>();
+	auto cancelButtonRenderer = m_cancelButton->AddComponent<GUISimpleButton>();
 	m_cancelButton->GetTransform()->SetLocalPosition(Vector3(100.0f, -80.0f, 0.0f));
 	cancelButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_select.png")));
 	cancelButtonRenderer->SetSize(Vector2(160.0f, 60.0f));

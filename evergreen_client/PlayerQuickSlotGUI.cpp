@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PlayerQuickSlotGUI.h"
+#include "GUISimpleButton.h"
 
 using namespace udsdx;
 
@@ -8,7 +9,7 @@ void PlayerQuickSlotGUI::OnInitialize()
 	for (int i = 0; i < MAX_QUICK_SLOT; i++)
 	{
 		m_slotBackground[i] = std::make_shared<SceneObject>();
-		auto uiRenderer = m_slotBackground[i]->AddComponent<GUIButton>();
+		auto uiRenderer = m_slotBackground[i]->AddComponent<GUISimpleButton>();
 		m_slotBackground[i]->GetTransform()->SetLocalPosition(Vector3(640.0f + 120.0f * i, -400.0f, 0.0f));
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(std::format(L"gui\\quickslot_{0}.png", i + 1))));
 		uiRenderer->SetSize(Vector2(105, 136));
