@@ -77,7 +77,7 @@ bool Inventory::CraftItem(const ItemRecipeData& recipe_info) noexcept
 	{
 		for (const auto [item, number] : item_and_number)
 		{
-			item->m_numOfItemStack -= number;
+			DecItemStack(item->m_itemDetailType, number);
 			std::cout << (int)item->m_numOfItemStack << std::endl;
 		}
 		AddItem(recipe_info.resultItemID, recipe_info.numOfResultItem);
@@ -90,6 +90,11 @@ void Inventory::DecItemStack(const int8_t item_type, const int cnt) noexcept
 	if (const auto item = FindItem(item_type))
 	{
 		item->m_numOfItemStack -= cnt;
+		s2q_ADD_OR_UPDATE_ITEM pkt;
+		pkt.item_id = item_type;
+		pkt.item_count = -cnt;
+		pkt.pkt_db_uid = GetOwnerEntityRaw()->GetClientSession()->m_db_uid;
+		RequestQueryServer(pkt);
 		if (0 >= item->m_numOfItemStack)
 		{
 			const auto idx = FindItemIndex(item_type);
