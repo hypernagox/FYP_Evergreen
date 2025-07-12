@@ -86,6 +86,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// Terrain Data: 나무, 바위, 건물 등 지형에 배치할 오브젝트의 위치를 담는 자료 구조
     auto terrainData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedInstance.json"), 1.0f, 0.01f);
 
+    auto res = INSTANCE(Resource);
+
     g_defaultEnvironmentParam.HeightMap = heightMap.get();
     g_defaultEnvironmentParam.TerrainDetail = terrainDetail.get();
     g_defaultEnvironmentParam.TerrainData = terrainData.get();
@@ -93,15 +95,54 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_defaultEnvironmentParam.TerrainHeight = GET_DATA(float, "GlobalValues", "TerrainHeight", "Value");
     g_defaultEnvironmentParam.TerrainOffset = -g_defaultEnvironmentParam.TerrainSize * 0.5f;
 
+    g_defaultEnvironmentParam.TerrainSplatMaps[0] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_0.tga"));
+    g_defaultEnvironmentParam.TerrainSplatMaps[1] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_1.tga"));
+
+    g_defaultEnvironmentParam.TerrainDiffuseMaps[0] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_0.png"));
+    g_defaultEnvironmentParam.TerrainDiffuseMaps[1] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_1.tga"));
+    g_defaultEnvironmentParam.TerrainDiffuseMaps[2] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_2.png"));
+    g_defaultEnvironmentParam.TerrainDiffuseMaps[3] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_3.png"));
+    g_defaultEnvironmentParam.TerrainDiffuseMaps[4] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_soil_01_BC_SM.tga"));
+    g_defaultEnvironmentParam.TerrainDiffuseMaps[5] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_moss_01_BC_SM.tga"));
+    g_defaultEnvironmentParam.TerrainDiffuseMaps[6] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Grass_and_Clover.tif"));
+
+    g_defaultEnvironmentParam.TerrainNormalMaps[0] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_0.png"));
+    g_defaultEnvironmentParam.TerrainNormalMaps[1] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_1.png"));
+    g_defaultEnvironmentParam.TerrainNormalMaps[2] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_2.png"));
+    g_defaultEnvironmentParam.TerrainNormalMaps[3] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_3.png"));
+    g_defaultEnvironmentParam.TerrainNormalMaps[4] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_soil_01_N.png"));
+    g_defaultEnvironmentParam.TerrainNormalMaps[5] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_5.png"));
+    g_defaultEnvironmentParam.TerrainNormalMaps[6] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_6.tif"));
+
     auto dungeonHeightMap = std::make_unique<HeightMap>(RESOURCE_PATH(L"terrain_boss.raw"), 4097, 4097);
+    auto dungeonTerrainDetail = std::make_unique<TerrainDetail>(dungeonHeightMap.get(), RESOURCE_PATH(L"environment\\Terrain_Detail_Dungeon.raw"), 1024, 1024, 16, INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
     auto dungeonData = std::make_unique<TerrainData>(RESOURCE_PATH(L"environment\\ExportedDungeonInstance.json"), 1.0f, 0.01f);
 
     g_dungeonEnvironmentParam.HeightMap = dungeonHeightMap.get();
-    g_dungeonEnvironmentParam.TerrainDetail = nullptr;
+    g_dungeonEnvironmentParam.TerrainDetail = dungeonTerrainDetail.get();
     g_dungeonEnvironmentParam.TerrainData = dungeonData.get();
     g_dungeonEnvironmentParam.TerrainSize = GET_DATA(float, "GlobalValues", "DungeonTerrainSize", "Value");
     g_dungeonEnvironmentParam.TerrainHeight = GET_DATA(float, "GlobalValues", "DungeonTerrainHeight", "Value");
     g_dungeonEnvironmentParam.TerrainOffset = -g_dungeonEnvironmentParam.TerrainSize * 0.5f;
+
+    g_dungeonEnvironmentParam.TerrainSplatMaps[0] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainDungeonSplatmap_0.tga"));
+    g_dungeonEnvironmentParam.TerrainSplatMaps[1] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainDungeonSplatmap_1.tga"));
+
+    g_dungeonEnvironmentParam.TerrainDiffuseMaps[0] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Grass_and_Clover.tif"));
+    g_dungeonEnvironmentParam.TerrainDiffuseMaps[1] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_3.png"));
+    g_dungeonEnvironmentParam.TerrainDiffuseMaps[2] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_soil_01_BC_SM.tga"));
+    g_dungeonEnvironmentParam.TerrainDiffuseMaps[3] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_1.tga"));
+    g_dungeonEnvironmentParam.TerrainDiffuseMaps[4] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_0.png"));
+    g_dungeonEnvironmentParam.TerrainDiffuseMaps[5] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_moss_01_BC_SM.tga"));
+    g_dungeonEnvironmentParam.TerrainDiffuseMaps[6] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_2.png"));
+
+    g_dungeonEnvironmentParam.TerrainNormalMaps[0] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_6.tif"));
+    g_dungeonEnvironmentParam.TerrainNormalMaps[1] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_3.png"));
+    g_dungeonEnvironmentParam.TerrainNormalMaps[2] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_soil_01_N.png"));
+    g_dungeonEnvironmentParam.TerrainNormalMaps[3] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_1.png"));
+    g_dungeonEnvironmentParam.TerrainNormalMaps[4] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_0.png"));
+    g_dungeonEnvironmentParam.TerrainNormalMaps[5] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_5.png"));
+    g_dungeonEnvironmentParam.TerrainNormalMaps[6] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_2.png"));
 
     auto mainScene = std::make_shared<MainScene>();
 

@@ -122,22 +122,25 @@ void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
     m_terrainMesh->UploadBuffers(INSTANCE(Core)->GetDevice(), INSTANCE(Core)->GetCommandList());
 
     udsdx::Material terrainMaterial(res->Load<Shader>(RESOURCE_PATH(L"terrain.hlsl")));
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_0.tga")), 0);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSplatmap_1.tga")), 1);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_0.png")), 2);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_1.tga")), 3);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_2.png")), 4);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainSrc_3.png")), 5);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_soil_01_BC_SM.tga")), 6);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_moss_01_BC_SM.tga")), 7);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\Grass_and_Clover.tif")), 8);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_0.png")), 9);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_1.png")), 10);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_2.png")), 11);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_3.png")), 12);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\T_ground_soil_01_N.png")), 13);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_5.png")), 14);
-    terrainMaterial.SetSourceTexture(res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_6.tif")), 15);
+
+    terrainMaterial.SetSourceTexture(parameters.TerrainSplatMaps[0], 0);
+    terrainMaterial.SetSourceTexture(parameters.TerrainSplatMaps[1], 1);
+
+    terrainMaterial.SetSourceTexture(parameters.TerrainDiffuseMaps[0], 2);
+    terrainMaterial.SetSourceTexture(parameters.TerrainDiffuseMaps[1], 3);
+    terrainMaterial.SetSourceTexture(parameters.TerrainDiffuseMaps[2], 4);
+    terrainMaterial.SetSourceTexture(parameters.TerrainDiffuseMaps[3], 5);
+    terrainMaterial.SetSourceTexture(parameters.TerrainDiffuseMaps[4], 6);
+    terrainMaterial.SetSourceTexture(parameters.TerrainDiffuseMaps[5], 7);
+    terrainMaterial.SetSourceTexture(parameters.TerrainDiffuseMaps[6], 8);
+
+    terrainMaterial.SetSourceTexture(parameters.TerrainNormalMaps[0], 9);
+    terrainMaterial.SetSourceTexture(parameters.TerrainNormalMaps[1], 10);
+    terrainMaterial.SetSourceTexture(parameters.TerrainNormalMaps[2], 11);
+    terrainMaterial.SetSourceTexture(parameters.TerrainNormalMaps[3], 12);
+    terrainMaterial.SetSourceTexture(parameters.TerrainNormalMaps[4], 13);
+    terrainMaterial.SetSourceTexture(parameters.TerrainNormalMaps[5], 14);
+    terrainMaterial.SetSourceTexture(parameters.TerrainNormalMaps[6], 15);
 
     if (parameters.TerrainDetail != nullptr)
     {
@@ -147,7 +150,7 @@ void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
         terrainDetailRenderer->SetMaterial(udsdx::Material(res->Load<udsdx::Shader>(RESOURCE_PATH(L"detailbillboard.hlsl")), res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Grass.tga"))));
 
         terrainDetailObj->GetTransform()->SetLocalPosition(terrainPos);
-        terrainDetailObj->GetTransform()->SetLocalScale(terrainScale);
+        terrainDetailObj->GetTransform()->SetLocalScale(Vector3(TerrainSize, TerrainHeight, TerrainSize));
 
         GetSceneObject()->AddChild(terrainDetailObj);
     }

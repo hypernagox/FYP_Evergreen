@@ -5,6 +5,7 @@
 class HeightMap;
 class TerrainData;
 class TerrainDetail;
+class udsdx::Texture;
 
 struct EnvironmentParameters
 {
@@ -12,6 +13,10 @@ public:
 	HeightMap* HeightMap;
 	TerrainData* TerrainData;
 	TerrainDetail* TerrainDetail;
+	udsdx::Texture* TerrainSplatMaps[2];
+	udsdx::Texture* TerrainDiffuseMaps[7];
+	udsdx::Texture* TerrainNormalMaps[7];
+
 	float TerrainSize;
 	float TerrainHeight;
 	float TerrainOffset;

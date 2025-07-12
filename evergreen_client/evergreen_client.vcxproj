@@ -278,6 +278,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <StackReserveSize>67108864</StackReserveSize>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -304,6 +305,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <StackReserveSize>67108864</StackReserveSize>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Debug\compiled_shaders" "$(OutDir)compiled_shaders" /E /I /Y</Command>
@@ -337,6 +339,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <StackReserveSize>67108864</StackReserveSize>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -367,6 +370,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <StackReserveSize>67108864</StackReserveSize>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -397,6 +401,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <StackReserveSize>67108864</StackReserveSize>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Release\compiled_shaders" "$(OutDir)compiled_shaders" /E /I /Y</Command>
