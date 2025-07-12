@@ -15,6 +15,10 @@ DECLARE_PACKET_FUNC(s2q_ADD_OR_UPDATE_ITEM)
 	std::cout << "½ÇÇà\n";
 	{
 		UpsertInventoryItem up;
+		std::cout <<"UID: " <<pkt_.pkt_db_uid << std::endl;
+		std::cout <<"Item ID: " <<pkt_.item_id << std::endl;
+		std::cout <<"Count: " <<pkt_.item_count << std::endl;
+
 		up.In_CharacterUID(pkt_.pkt_db_uid);
 		up.In_ItemID(pkt_.item_id);
 		up.In_AddCount(pkt_.item_count);

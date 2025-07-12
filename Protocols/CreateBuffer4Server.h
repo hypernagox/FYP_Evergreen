@@ -14,6 +14,9 @@ static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { retu
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_LOGIN(
     const uint32_t obj_id,
     const uint64_t server_time_stamp,
+    const Nagox::Enum::LOGIN_RESULT& login_result,
+    const Vector<int> item_ids,
+    const Vector<int> item_counts,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PING_PONG(

@@ -1,7 +1,6 @@
 #pragma once
 #include "PacketSession.h"
 #include "QuestRoom.h"
-#include "DBEvent.h"
 
 class PartyQuestSystem;
 
@@ -28,7 +27,7 @@ public:
 	//template<typename T = ClientSession>
 	//NagiocpX::S_ptr<T> SharedFromThis()const noexcept { return NagiocpX::S_ptr<T>{this}; }
 	NagiocpX::XString m_userName = "No Name";
+	int64_t m_db_uid = 0;
 private:
 	
 };
-

@@ -184,7 +184,10 @@ int main()
 	HarvestLoader::LoadHarvest({}, L"environment\\ExportedGameSpawns.json");
 	dtAllocSetCustom(custom_dt_alloc, ::je_free);
 	//NAGOX_ASSERT(Mgr(DBMgr)->Connect(L"DRIVER={ODBC Driver 18 for SQL Server};SERVER=(localdb)\\MSSQLLocalDB;DATABASE=localtest;Trusted_Connection=Yes;"));
-	//NAGOX_ASSERT(Mgr(DBMgr)->ConnectQueryServer(L"127.0.0.1", 8888));
+	//if (!Mgr(DBMgr)->ConnectQueryServer(L"127.0.0.1", 8888))
+	//{
+	//	std::cout << "Fail To Connect Query Server\n";
+	//}
 
 	NagiocpX::PrintKoreaRealTime("Server Start !");
 

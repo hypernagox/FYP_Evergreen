@@ -20,9 +20,8 @@ namespace NagiocpX
 		void SendDBPacket(S_ptr<SendBuffer> pSendBuffer)noexcept
 		{
 			m_sendQueue.emplace(std::move(pSendBuffer));
-			if (false == m_bRegisterSend.exchange(true, std::memory_order_relaxed))
+			if (false == m_bRegisterSend.exchange(true))
 			{
-				std::atomic_thread_fence(std::memory_order_acquire);
 				RegisterDBPacket();
 			}
 		}

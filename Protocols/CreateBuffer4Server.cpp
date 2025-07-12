@@ -24,16 +24,25 @@ static NagiocpX::S_ptr<NagiocpX::SendBuffer> CreateSendBuffer(flatbuffers::FlatB
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_LOGIN(
     const uint32_t obj_id,
     const uint64_t server_time_stamp,
+    const Nagox::Enum::LOGIN_RESULT& login_result,
+    const Vector<int> item_ids,
+    const Vector<int> item_counts,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto obj_id_value = obj_id;
     const auto server_time_stamp_value = server_time_stamp;
+    const auto login_result_value = login_result;
+    const auto item_ids_offset = builder.CreateVector(item_ids);
+    const auto item_counts_offset = builder.CreateVector(item_counts);
     const auto serializeds2c_LOGIN = Nagox::Protocol::Creates2c_LOGIN(
         builder
 ,        obj_id_value,
-        server_time_stamp_value    );
+        server_time_stamp_value,
+        login_result_value,
+        item_ids_offset,
+        item_counts_offset    );
     builder.Finish(serializeds2c_LOGIN);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_LOGIN);

@@ -40,6 +40,39 @@ flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 
 const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_)
 {
+	// 히어로의 초기화시점이 생각과 달라서 서버오브젝트 매니저에 값을 기록해뒀다가 씬 진입할 때 사용
+	// 추가정보 더 올 예정 (직업 등..)
+	const auto res = pkt_.login_result();
+	const auto& item_ids = *pkt_.item_ids();
+	const auto& item_counts = *pkt_.item_counts();
+	const auto num = (int)item_ids.size();
+	for (int i = 0; i < num; ++i)
+	{
+		Mgr(ServerObjectMgr)->init_item_ids.emplace_back(item_ids[i]);
+		Mgr(ServerObjectMgr)->init_item_counts.emplace_back(item_counts[i]);
+	}
+	switch (res)
+	{
+	case Nagox::Enum::LOGIN_RESULT_FAIL:
+	{
+		// TODO: 비번틀림 로그인 시도 다시하기 
+		break;
+	}
+	case Nagox::Enum::LOGIN_RESULT_NEWBIE:
+	{
+		// TODO: 뉴비라서 캐릭터 선택창으로
+		break;
+	}
+	case Nagox::Enum::LOGIN_RESULT_OLDBIE:
+	{
+		// TODO: 채널만고르고 넘어가면 됨
+		// 전사인지 프리스트인지 종류도 같이 올것
+		break;
+	}
+	default:
+		break;
+	}
+	std::cout << "도착\n";
 	NetMgr(NetworkMgr)->SetSessionID(pkt_.obj_id());
 	// TODO: 아이디 통일
 	// g_heroObj->GetComponent<ServerObject>()->SetObjID(pkt_.obj_id());

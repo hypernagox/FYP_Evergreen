@@ -16,6 +16,42 @@ static_assert(FLATBUFFERS_VERSION_MAJOR == 25 &&
 namespace Nagox {
 namespace Enum {
 
+enum LOGIN_RESULT : uint8_t {
+  LOGIN_RESULT_FAIL = 0,
+  LOGIN_RESULT_NEWBIE = 1,
+  LOGIN_RESULT_OLDBIE = 2,
+  LOGIN_RESULT_NONE = 3,
+  LOGIN_RESULT_MIN = LOGIN_RESULT_FAIL,
+  LOGIN_RESULT_MAX = LOGIN_RESULT_NONE
+};
+
+inline const LOGIN_RESULT (&EnumValuesLOGIN_RESULT())[4] {
+  static const LOGIN_RESULT values[] = {
+    LOGIN_RESULT_FAIL,
+    LOGIN_RESULT_NEWBIE,
+    LOGIN_RESULT_OLDBIE,
+    LOGIN_RESULT_NONE
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesLOGIN_RESULT() {
+  static const char * const names[5] = {
+    "FAIL",
+    "NEWBIE",
+    "OLDBIE",
+    "NONE",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameLOGIN_RESULT(LOGIN_RESULT e) {
+  if (::flatbuffers::IsOutRange(e, LOGIN_RESULT_FAIL, LOGIN_RESULT_NONE)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesLOGIN_RESULT()[index];
+}
+
 enum GROUP_TYPE : uint8_t {
   GROUP_TYPE_PLAYER = 0,
   GROUP_TYPE_MONSTER = 1,

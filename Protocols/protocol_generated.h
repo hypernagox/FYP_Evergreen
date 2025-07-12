@@ -262,7 +262,10 @@ struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_OBJ_ID = 4,
-    VT_SERVER_TIME_STAMP = 6
+    VT_SERVER_TIME_STAMP = 6,
+    VT_LOGIN_RESULT = 8,
+    VT_ITEM_IDS = 10,
+    VT_ITEM_COUNTS = 12
   };
   uint32_t obj_id() const {
     return GetField<uint32_t>(VT_OBJ_ID, 0);
@@ -276,10 +279,33 @@ struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_server_time_stamp(uint64_t _server_time_stamp = 0) {
     return SetField<uint64_t>(VT_SERVER_TIME_STAMP, _server_time_stamp, 0);
   }
+  Nagox::Enum::LOGIN_RESULT login_result() const {
+    return static_cast<Nagox::Enum::LOGIN_RESULT>(GetField<uint8_t>(VT_LOGIN_RESULT, 0));
+  }
+  bool mutate_login_result(Nagox::Enum::LOGIN_RESULT _login_result = static_cast<Nagox::Enum::LOGIN_RESULT>(0)) {
+    return SetField<uint8_t>(VT_LOGIN_RESULT, static_cast<uint8_t>(_login_result), 0);
+  }
+  const ::flatbuffers::Vector<int32_t> *item_ids() const {
+    return GetPointer<const ::flatbuffers::Vector<int32_t> *>(VT_ITEM_IDS);
+  }
+  ::flatbuffers::Vector<int32_t> *mutable_item_ids() {
+    return GetPointer<::flatbuffers::Vector<int32_t> *>(VT_ITEM_IDS);
+  }
+  const ::flatbuffers::Vector<int32_t> *item_counts() const {
+    return GetPointer<const ::flatbuffers::Vector<int32_t> *>(VT_ITEM_COUNTS);
+  }
+  ::flatbuffers::Vector<int32_t> *mutable_item_counts() {
+    return GetPointer<::flatbuffers::Vector<int32_t> *>(VT_ITEM_COUNTS);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_OBJ_ID, 4) &&
            VerifyField<uint64_t>(verifier, VT_SERVER_TIME_STAMP, 8) &&
+           VerifyField<uint8_t>(verifier, VT_LOGIN_RESULT, 1) &&
+           VerifyOffset(verifier, VT_ITEM_IDS) &&
+           verifier.VerifyVector(item_ids()) &&
+           VerifyOffset(verifier, VT_ITEM_COUNTS) &&
+           verifier.VerifyVector(item_counts()) &&
            verifier.EndTable();
   }
 };
@@ -293,6 +319,15 @@ struct s2c_LOGINBuilder {
   }
   void add_server_time_stamp(uint64_t server_time_stamp) {
     fbb_.AddElement<uint64_t>(s2c_LOGIN::VT_SERVER_TIME_STAMP, server_time_stamp, 0);
+  }
+  void add_login_result(Nagox::Enum::LOGIN_RESULT login_result) {
+    fbb_.AddElement<uint8_t>(s2c_LOGIN::VT_LOGIN_RESULT, static_cast<uint8_t>(login_result), 0);
+  }
+  void add_item_ids(::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_ids) {
+    fbb_.AddOffset(s2c_LOGIN::VT_ITEM_IDS, item_ids);
+  }
+  void add_item_counts(::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_counts) {
+    fbb_.AddOffset(s2c_LOGIN::VT_ITEM_COUNTS, item_counts);
   }
   explicit s2c_LOGINBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -308,11 +343,35 @@ struct s2c_LOGINBuilder {
 inline ::flatbuffers::Offset<s2c_LOGIN> Creates2c_LOGIN(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t obj_id = 0,
-    uint64_t server_time_stamp = 0) {
+    uint64_t server_time_stamp = 0,
+    Nagox::Enum::LOGIN_RESULT login_result = Nagox::Enum::LOGIN_RESULT_FAIL,
+    ::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_ids = 0,
+    ::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_counts = 0) {
   s2c_LOGINBuilder builder_(_fbb);
   builder_.add_server_time_stamp(server_time_stamp);
+  builder_.add_item_counts(item_counts);
+  builder_.add_item_ids(item_ids);
   builder_.add_obj_id(obj_id);
+  builder_.add_login_result(login_result);
   return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_LOGIN> Creates2c_LOGINDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t obj_id = 0,
+    uint64_t server_time_stamp = 0,
+    Nagox::Enum::LOGIN_RESULT login_result = Nagox::Enum::LOGIN_RESULT_FAIL,
+    const std::vector<int32_t> *item_ids = nullptr,
+    const std::vector<int32_t> *item_counts = nullptr) {
+  auto item_ids__ = item_ids ? _fbb.CreateVector<int32_t>(*item_ids) : 0;
+  auto item_counts__ = item_counts ? _fbb.CreateVector<int32_t>(*item_counts) : 0;
+  return Nagox::Protocol::Creates2c_LOGIN(
+      _fbb,
+      obj_id,
+      server_time_stamp,
+      login_result,
+      item_ids__,
+      item_counts__);
 }
 
 struct c2s_PING_PONG FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

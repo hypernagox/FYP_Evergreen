@@ -29,6 +29,18 @@ int8_t Inventory::FindItemIndex(const int8_t item_type) const noexcept
 	return -1;
 }
 
+Item* Inventory::AddItem2Inventory(Item* const item) noexcept
+{
+	// TODO: 스레드 세이프 하지 않다면 바꾸어야 함
+	if (!item)return nullptr;
+	if (NUM_OF_MAX_INVENTORY_ITEM <= m_curNumOfItems)return nullptr;
+	m_curItemPos = FindItemPos();
+	if (-1 == m_curItemPos)return nullptr;
+	m_items[m_curItemPos] = item;
+	++m_curNumOfItems;
+	return item;
+}
+
 Inventory::~Inventory()
 {
 	for (int i = 0; i < NUM_OF_MAX_INVENTORY_ITEM; ++i) {
@@ -68,6 +80,7 @@ bool Inventory::CraftItem(const ItemRecipeData& recipe_info) noexcept
 			item->m_numOfItemStack -= number;
 			std::cout << (int)item->m_numOfItemStack << std::endl;
 		}
+		AddItem(recipe_info.resultItemID, recipe_info.numOfResultItem);
 	}
 	return flag;
 }
@@ -91,18 +104,21 @@ Item* Inventory::AddDropItem(const DropItem* const drop_item_info) noexcept
 {
 	const auto item_detail_type = drop_item_info->GetDropItemDetailInfo();
 	const auto item_stack_size = drop_item_info->GetNumOfItemStack();
-	s2q_ADD_OR_UPDATE_ITEM pkt;
-	pkt.item_id = item_detail_type;
-	pkt.item_count = item_stack_size;
-	
-	RequestQueryServer(pkt);
 	return AddItem(item_detail_type, item_stack_size);
 }
 
-Item* Inventory::AddItem(const int item_id, const int stack_size) noexcept
+Item* Inventory::AddItem(const int item_id, const int stack_size, const bool bSend2QueryServer) noexcept
 {
 	const auto item_detail_type = (int8_t)item_id;
 	const auto item_stack_size = (int8_t)stack_size;
+	if (bSend2QueryServer)
+	{
+		s2q_ADD_OR_UPDATE_ITEM pkt;
+		pkt.item_id = item_detail_type;
+		pkt.item_count = item_stack_size;
+		pkt.pkt_db_uid = GetOwnerEntityRaw()->GetClientSession()->m_db_uid;
+		RequestQueryServer(pkt);
+	}
 	if (const auto exist_item = FindItem(item_detail_type))
 	{
 		if (exist_item->m_numOfItemStack < 0) {

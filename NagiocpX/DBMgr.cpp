@@ -7,7 +7,7 @@
 #include "CoreGlobal.h"
 #include "IocpCore.h"
 #include "NetAddress.h"
-#include "ThreadMgr.h"
+#include "GlobalEventQueue.h"
 
 namespace NagiocpX
 {
@@ -33,7 +33,7 @@ namespace NagiocpX
 
 	void DBMgr::Init() noexcept
 	{
-		//Mgr(CoreGlobal)->GetIocpCore().RegisterIOCP(m_packetSender.get(), 0);
+		Mgr(CoreGlobal)->GetIocpCore().RegisterIOCP(m_packetSender.get(), 0);
 	}
 
 	bool DBMgr::Connect(const std::wstring_view connectionString)
@@ -88,7 +88,6 @@ namespace NagiocpX
 		LSendBufferChunk = SendBufferMgr::Pop();
 		const bool& bStopFlag = Mgr(ThreadMgr)->GetStopFlagRef();
 		const auto iocpHandle = Mgr(CoreGlobal)->GetIocpCore().GetIocpHandle();
-		const auto db_event = m_packetSender;
 		XVector<S_ptr<DBEvent>> dbEvents;
 		for (;;)
 		{
@@ -104,12 +103,17 @@ namespace NagiocpX
 			for (const auto& dbEvent : dbEvents)
 			{
 				dbEvent->ExecuteQuery();
-				m_dbHandle->Unbind();
-				//::PostQueuedCompletionStatus(iocpHandle, 0, 0, dbEvent->m_dbEvent.GetOverlappedAddr());
+				GlobalEventQueue::PushGlobalEvent(&dbEvent->m_dbEvent);
 			}
 			dbEvents.clear();
 			m_packetSender->Dispatch(0, 0);
 		}
 		Mgr(ThreadMgr)->DestroyTLS();
+	}
+
+	void DBMgr::UnBind()noexcept
+	{
+		if (nullptr == m_dbHandle)return;
+		m_dbHandle->Unbind();
 	}
 }

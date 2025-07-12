@@ -1,5 +1,13 @@
 namespace Nagox.Enum;
 
+enum LOGIN_RESULT: ubyte
+{
+    FAIL = 0,
+    NEWBIE = 1,
+    OLDBIE = 2,
+    NONE = 3
+}
+
 enum GROUP_TYPE: ubyte
 {
     PLAYER = 0,

@@ -13,6 +13,9 @@ table s2c_LOGIN
 {
     obj_id: uint32;
     server_time_stamp: uint64;
+    login_result: Nagox.Enum.LOGIN_RESULT;
+    item_ids: [int];
+    item_counts: [int];
 }
 
 table c2s_PING_PONG

@@ -29,15 +29,15 @@
     }
   ],
   "procedures": [
-    {
-      "name": "UpsertInventoryItem",
-      "params": [
-        { "name": "CharacterUID", "type": "BIGINT" },
-        { "name": "ItemID", "type": "INT" },
-        { "name": "AddCount", "type": "INT" }
-      ],
-   "body": "IF EXISTS (SELECT 1 FROM InventoryItems WHERE CharacterUID = @CharacterUID AND ItemID = @ItemID)\nBEGIN\n    UPDATE InventoryItems SET Count = Count + @AddCount WHERE CharacterUID = @CharacterUID AND ItemID = @ItemID;\nEND\nELSE\nBEGIN\n    INSERT INTO InventoryItems (CharacterUID, ItemID, Count) VALUES (@CharacterUID, @ItemID, @AddCount);\nEND"
-    }
-  ]
+  {
+    "name": "UpsertInventoryItem",
+    "params": [
+      { "name": "CharacterUID", "type": "BIGINT" },
+      { "name": "ItemID", "type": "INT" },
+      { "name": "AddCount", "type": "INT" }
+    ],
+    "body": "IF EXISTS (SELECT 1 FROM InventoryItems WHERE CharacterUID = @CharacterUID AND ItemID = @ItemID)\nBEGIN\n    UPDATE InventoryItems\n    SET Count = Count + @AddCount\n    WHERE CharacterUID = @CharacterUID AND ItemID = @ItemID;\n\n    DELETE FROM InventoryItems\n    WHERE CharacterUID = @CharacterUID AND ItemID = @ItemID AND Count <= 0;\nEND\nELSE\nBEGIN\n    IF @AddCount > 0\n    BEGIN\n        INSERT INTO InventoryItems (CharacterUID, ItemID, Count)\n        VALUES (@CharacterUID, @ItemID, @AddCount);\n    END\nEND"
+  }
+]
 }
 

@@ -38,7 +38,7 @@ public:
 	void DecItemStack(const int8_t item_type, const int cnt)noexcept;
 public:
 	Item* AddDropItem(const DropItem* const drop_item_info)noexcept;
-	Item* AddItem(const int item_id, const int stack_size)noexcept;
+	Item* AddItem(const int item_id, const int stack_size, const bool bSend2QueryServer = true)noexcept;
 	bool SetQuickSlotItem(const uint8_t item_id, const uint8_t quick_idx)noexcept;
 	
 	// 퀵슬롯 아이템 사용에 성공했다면 해당 아이템의 ID를, 실패했다면 -1를 반환한다.
@@ -64,16 +64,7 @@ private:
 	QuickSlot m_quickSlot;
 	EquipmentSystem m_equipSystem;
 private:
-	Item* AddItem2Inventory(Item* const item)noexcept {
-		// TODO: 스레드 세이프 하지 않다면 바꾸어야 함
-		if (!item)return nullptr;
-		if (NUM_OF_MAX_INVENTORY_ITEM <= m_curNumOfItems)return nullptr;
-		m_curItemPos = FindItemPos();
-		if (-1 == m_curItemPos)return nullptr;
-		m_items[m_curItemPos] = item;
-		++m_curNumOfItems;
-		return item;
-	}
+	Item* AddItem2Inventory(Item* const item)noexcept;
 };
 
 

@@ -29,7 +29,7 @@ namespace NagiocpX
 		
 		void EnqueueDBEvent(S_ptr<DBEvent>&& dbEvent)noexcept
 		{
-			if (SQL_NULL_HANDLE == m_environment)
+			if (IsNotConnectQueryServer())
 			{
 				return;
 			}
@@ -39,17 +39,19 @@ namespace NagiocpX
 
 		void SendDBPacket(S_ptr<SendBuffer>&& pSendBuffer)noexcept
 		{
-			if (SQL_NULL_HANDLE == m_environment)
+			if (IsNotConnectQueryServer())
 			{
 				return;
 			}
 			m_packetSender->SendDBPacket(std::move(pSendBuffer));
 		}
+		void UnBind()noexcept;
+		inline const bool IsNotConnectQueryServer()const noexcept { return SQL_NULL_HANDLE == m_environment; }
 	private:
 		void ExecuteQuery()noexcept;
 	private:
-		DBConnectionHandle* const m_dbHandle;
 		const S_ptr<DBPacketSender> m_packetSender;
+		DBConnectionHandle* const m_dbHandle;
 		MPSCQueue<S_ptr<DBEvent>> m_dbEventQueue;
 		std::mutex m_mt;
 		std::condition_variable m_cv;
@@ -61,16 +63,18 @@ namespace NagiocpX
 }
 
 template <typename DBEVENT> requires std::derived_from<DBEVENT, NagiocpX::DBEvent>
-static void RequestQuery(DBEVENT& db)noexcept
+inline static void RequestQuery(DBEVENT& db)noexcept
 {
+	if (Mgr(DBMgr)->IsNotConnectQueryServer())return;
 	NagiocpX::S_ptr<NagiocpX::DBEvent> dbEvent = NagiocpX::MakeShared<DBEVENT>(std::move(db));
 	dbEvent->SetEventPtr();
 	Mgr(DBMgr)->EnqueueDBEvent(std::move(dbEvent));
 }
 
 template <typename DBEVENT> requires std::derived_from<DBEVENT, NagiocpX::DBEvent>
-static void RequestQuery(DBEVENT&& db)noexcept
+inline static void RequestQuery(DBEVENT&& db)noexcept
 {
+	if (Mgr(DBMgr)->IsNotConnectQueryServer())return;
 	NagiocpX::S_ptr<NagiocpX::DBEvent> dbEvent = NagiocpX::MakeShared<DBEVENT>(std::move(db));
 	dbEvent->SetEventPtr();
 	Mgr(DBMgr)->EnqueueDBEvent(std::move(dbEvent));
@@ -79,6 +83,7 @@ static void RequestQuery(DBEVENT&& db)noexcept
 template <typename T>
 inline static void RequestQueryServer(T&& pkt)noexcept
 {
+	if (Mgr(DBMgr)->IsNotConnectQueryServer())return;
 	constexpr const size_t packetSize = sizeof(T);
 	NagiocpX::S_ptr<NagiocpX::SendBuffer> sendBuffer = NagiocpX::SendBufferMgr::Open(packetSize);
 	::memcpy(sendBuffer->Buffer(), (char*)&pkt, packetSize);

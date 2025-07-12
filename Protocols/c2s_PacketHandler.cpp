@@ -27,6 +27,7 @@
 #include "ObjectIdentifier.h"
 #include "KillMonsterQuest.h"
 #include "DBMgr.h"
+#include "DBContentsEvent.h"
 
 using namespace NagiocpX;
 
@@ -43,7 +44,19 @@ static inline ClientSession* GetClientSession(const S_ptr<PacketSession>& sessio
 const bool Handle_c2s_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
 {
 	GetClientSession(pSession_)->m_userName = *pkt_.id();
-	pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp());
+	if(!Mgr(DBMgr)->IsNotConnectQueryServer())
+	{
+		DB_PlayerLogin d{ pSession_ };
+		d.m_name = Common::DataRegistry::Str2Wstr(GetClientSession(pSession_)->m_userName);
+		d.m_pw = Common::DataRegistry::Str2Wstr(*pkt_.pw());
+		RequestQuery(d);
+	}
+	else
+	{
+		pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp()
+			, Nagox::Enum::LOGIN_RESULT_NONE, {}, {});
+	}
+	//pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp());
 	return true;
 }
 
@@ -321,7 +334,7 @@ const bool Handle_c2s_CRAFT_ITEM(const NagiocpX::S_ptr<NagiocpX::PacketSession>&
 	{
 		if (inv->CraftItem(recipe_info))
 		{
-			inv->AddItem(recipe_info.resultItemID, recipe_info.numOfResultItem);
+			//inv->AddItem(recipe_info.resultItemID, recipe_info.numOfResultItem);
 			pSession_->SendAsync(Create_s2c_CRAFT_ITEM(recipe_id));
 			std::cout << "조합 결과 ID: " << recipe_info.resultItemID << " 개수: " << recipe_info.numOfResultItem << '\n';
 		}

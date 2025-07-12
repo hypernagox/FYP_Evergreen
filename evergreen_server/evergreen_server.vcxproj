@@ -191,6 +191,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="DBContentsEvent.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="EquipmentSystem.cpp" />
     <ClCompile Include="HarvestLoader.cpp" />
     <ClCompile Include="Interaction.cpp">
@@ -278,6 +282,7 @@
     <ClInclude Include="..\Protocols\protocol_generated.h" />
     <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="BossRoom.h" />
+    <ClInclude Include="DBContentsEvent.h" />
     <ClInclude Include="DBPacketDefine.h" />
     <ClInclude Include="EquipmentSystem.h" />
     <ClInclude Include="HarvestLoader.h" />

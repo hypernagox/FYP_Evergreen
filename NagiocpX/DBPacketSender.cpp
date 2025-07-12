@@ -19,7 +19,7 @@ namespace NagiocpX
 
 		m_sendVec.reserve(temp.size());
 
-		m_bRegisterSend.store(false, std::memory_order_seq_cst);
+		m_bRegisterSend.store(false);
 
 		if (!m_sendQueue.empty_single() && false == m_bRegisterSend.exchange(true))
 			RegisterDBPacket();
@@ -35,9 +35,9 @@ namespace NagiocpX
 		const auto num = static_cast<const DWORD>(wsabuf_storage.size());
 		const auto bufs = reinterpret_cast<WSABUF*>(wsabuf_storage.data());
 
-		if (num == 0)
+		if (0 == num)
 		{
-			m_bRegisterSend.store(false, std::memory_order_release);
+			m_bRegisterSend.store(false);
 			return;
 		}
 

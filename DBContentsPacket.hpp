@@ -16,7 +16,7 @@ struct DBContentsPacketHeader
 {
     uint16_t pkt_size;
     uint16_t pkt_id;
-    uint64_t pkt_db_uid;
+    int64_t pkt_db_uid;
 };
 
 // 패킷 구조체 이름과 동일하게 만들어야 편하다

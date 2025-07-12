@@ -11,17 +11,19 @@ namespace NagiocpX
 		DBEvent(S_ptr<Session> session)noexcept :m_pSession{ std::move(session) } {}
 		virtual ~DBEvent()noexcept = default;
 		DBEvent(DBEvent&& other)noexcept
-			:m_dbEvent{ std::move(other.m_dbEvent) }
+			:m_pSession{ std::move(other.m_pSession) }
 		{}
 	public:
-		virtual void BindData()noexcept {}
+		void UnBind()noexcept;
 		virtual void ExecuteQuery()noexcept = 0;
 		virtual void Dispatch(NagiocpX::IocpEvent* const iocpEvent_, c_int32 numOfBytes)noexcept = 0;
 	public:
 		void SetEventPtr()noexcept { m_dbEvent.SetIocpObject(SharedFromThis<DBEvent>()); }
+		template<typename T = class ClientSession>
+		inline const auto GetClientSession()const noexcept { return static_cast<T* const>(m_pSession.get()); }
 	protected:
 		bool m_bSuccess = false;
-		const S_ptr<Session> m_pSession;
+		S_ptr<Session> m_pSession;
 		NagiocpX::IocpEvent m_dbEvent{ NagiocpX::EVENT_TYPE::DB };
 	};
 }

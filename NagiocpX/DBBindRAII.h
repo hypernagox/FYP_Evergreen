@@ -24,7 +24,7 @@ namespace NagiocpX
 		{}
 
 		DBBindRAII(DBBindRAII&& other)noexcept
-			: m_dbConnection{ other.m_dbConnection }
+			: m_dbConnection{ std::exchange(other.m_dbConnection, nullptr) }
 			, m_query{ std::move(other.m_query) }
 			, m_paramFlag{ 0 }
 			, m_columnFlag{ 0 }
@@ -32,11 +32,6 @@ namespace NagiocpX
 			, m_columnIndex{ 0 }
 		{}
 
-		void UnBind()noexcept { 
-			if (nullptr == m_dbConnection)return;
-			m_dbConnection->Unbind();
-			m_dbConnection = nullptr;
-		}
 		~DBBindRAII()noexcept {
 			UnBind();
 		}
@@ -142,14 +137,19 @@ namespace NagiocpX
 			m_dbConnection->BindCol(idx + 1, value, size32(T) * N, &m_columnIndex[idx]);
 			m_columnFlag |= (1LL << idx);
 		}
-
 	private:
-		const DBConnectionHandle* m_dbConnection;
-		XWString m_query;
-		SQLLEN m_paramIndex[ParamCount > 0 ? ParamCount : 1];
-		SQLLEN m_columnIndex[ColumnCount > 0 ? ColumnCount : 1];
-		uint64 m_paramFlag;
-		uint64 m_columnFlag;
+		void UnBind()noexcept {
+			if (nullptr == m_dbConnection)return;
+			m_dbConnection->Unbind();
+			m_dbConnection = nullptr;
+		}
+	private:
+		const DBConnectionHandle* m_dbConnection = {};
+		XWString m_query = {};
+		SQLLEN m_paramIndex[ParamCount > 0 ? ParamCount : 1] = {};
+		SQLLEN m_columnIndex[ColumnCount > 0 ? ColumnCount : 1] = {};
+		uint64 m_paramFlag = {};
+		uint64 m_columnFlag = {};
 	};
 }
 

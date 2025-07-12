@@ -152,6 +152,9 @@
     <Filter Include="ClientSession\QuestRoom\BossRoom">
       <UniqueIdentifier>{0b7a6947-a9f6-41c8-8c09-147cb16309ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ClientSession\DBContentsEvent">
+      <UniqueIdentifier>{781ff71b-96ab-45df-9d94-17e03e965934}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -270,6 +273,9 @@
     </ClCompile>
     <ClCompile Include="BossRoom.cpp">
       <Filter>ClientSession\QuestRoom\BossRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="DBContentsEvent.cpp">
+      <Filter>ClientSession\DBContentsEvent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -404,6 +410,9 @@
     </ClInclude>
     <ClInclude Include="..\DBContentsPacket.hpp">
       <Filter>Protocols\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="DBContentsEvent.h">
+      <Filter>ClientSession\DBContentsEvent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

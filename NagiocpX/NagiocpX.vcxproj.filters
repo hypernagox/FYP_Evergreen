@@ -623,6 +623,9 @@
     <ClCompile Include="..\library\inc\imgui\imgui_widgets.cpp">
       <Filter>Manager\ImGUIMgr\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="DBEvent.cpp">
+      <Filter>DB\DBProtocols</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="delay_loop.asm">
