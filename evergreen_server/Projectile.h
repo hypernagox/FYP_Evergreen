@@ -20,7 +20,7 @@ public:
 	Vector3 m_pos = {};
 	Vector3 m_speed = {};
 	NagiocpX::Timer m_timer;
-
+	uint8_t m_proj_type = 0;
 	static constexpr const float MAX_DIST = 10.f * 10.f;
 };
 

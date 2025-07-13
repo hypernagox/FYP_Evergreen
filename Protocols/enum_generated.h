@@ -126,33 +126,36 @@ enum MONSTER_TYPE : uint8_t {
   MONSTER_TYPE_SHEEP = 1,
   MONSTER_TYPE_BEAR = 2,
   MONSTER_TYPE_GOBLIN = 3,
+  MONSTER_TYPE_BOSS = 4,
   MONSTER_TYPE_MIN = MONSTER_TYPE_FOX,
-  MONSTER_TYPE_MAX = MONSTER_TYPE_GOBLIN
+  MONSTER_TYPE_MAX = MONSTER_TYPE_BOSS
 };
 
-inline const MONSTER_TYPE (&EnumValuesMONSTER_TYPE())[4] {
+inline const MONSTER_TYPE (&EnumValuesMONSTER_TYPE())[5] {
   static const MONSTER_TYPE values[] = {
     MONSTER_TYPE_FOX,
     MONSTER_TYPE_SHEEP,
     MONSTER_TYPE_BEAR,
-    MONSTER_TYPE_GOBLIN
+    MONSTER_TYPE_GOBLIN,
+    MONSTER_TYPE_BOSS
   };
   return values;
 }
 
 inline const char * const *EnumNamesMONSTER_TYPE() {
-  static const char * const names[5] = {
+  static const char * const names[6] = {
     "FOX",
     "SHEEP",
     "BEAR",
     "GOBLIN",
+    "BOSS",
     nullptr
   };
   return names;
 }
 
 inline const char *EnumNameMONSTER_TYPE(MONSTER_TYPE e) {
-  if (::flatbuffers::IsOutRange(e, MONSTER_TYPE_FOX, MONSTER_TYPE_GOBLIN)) return "";
+  if (::flatbuffers::IsOutRange(e, MONSTER_TYPE_FOX, MONSTER_TYPE_BOSS)) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesMONSTER_TYPE()[index];
 }

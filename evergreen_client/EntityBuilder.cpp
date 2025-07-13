@@ -65,11 +65,27 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
 	switch (b->obj_type)
 	{
+	// TODO: 보스는 여기서 만든다. 임시로 큰 여우로 해둠
+	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BOSS:
+	{
+		auto instance = std::make_shared<udsdx::SceneObject>();
+		instance->GetTransform()->SetLocalPosition(b->obj_pos);
+		instance->GetTransform()->SetLocalScale(5.f);
+		auto monsterComponent = instance->AddComponent<MonsterFox>();
+		auto serverComponent = instance->AddComponent<ServerObject>();
+		serverComponent->SetObjID(builder->obj_id);
+
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		moveInterpolator->InitInterpolator(b->obj_pos);
+
+		return instance;
+		break;
+	}
+	
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_FOX:
 	{
 		auto instance = std::make_shared<udsdx::SceneObject>();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
-
 		auto monsterComponent = instance->AddComponent<MonsterFox>();
 		auto serverComponent = instance->AddComponent<ServerObject>();
 		serverComponent->SetObjID(builder->obj_id);

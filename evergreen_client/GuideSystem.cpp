@@ -173,7 +173,7 @@ const bool GuideSystem::SetHarvestState(const uint32_t server_id, const uint32_t
 			{
 				udsdx::Material material = renderer->GetMaterial(static_cast<int>(i));
 				material.SetShader(shader);
-				renderer->SetMaterial(material, i);
+				renderer->SetMaterial(material, static_cast<int>(i));
 			}
 		}
 		return true;

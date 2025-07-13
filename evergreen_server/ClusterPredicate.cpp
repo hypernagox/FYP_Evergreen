@@ -31,7 +31,7 @@ bool ClusterPredicate::Filter4Session(const ContentsEntity* const a, const Conte
 	const auto a_pos = a->GetComp<PositionComponent>()->pos;
 	const auto b_pos = b->GetComp<PositionComponent>()->pos;
 	
-	return  CommonMath::IsInDistanceDX(a_pos, b_pos, DISTANCE_FILTER);
+	return CommonMath::IsInDistanceDX(a_pos, b_pos, DISTANCE_FILTER) || a->GetDetailType() == Nagox::Enum::MONSTER_TYPE_BOSS;
 }
 
 bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsEntity* const b) const noexcept
@@ -44,7 +44,8 @@ bool ClusterPredicate::Filter4NPC(const ContentsEntity* const a, const ContentsE
 	//a_pos.y = b_pos.y = 0.f;
 
 	const auto dist = Vector3::DistanceSquared(a_pos, b_pos);
-	const bool bRes = (DISTANCE_FILTER * DISTANCE_FILTER) >= dist;
+	const bool bRes = (DISTANCE_FILTER * DISTANCE_FILTER) >= dist
+		|| b->GetDetailType() == Nagox::Enum::MONSTER_TYPE_BOSS;
 	if (bRes)
 	{
 		if (const auto npc_timer = b->GetIocpComponent<NagiocpX::TickTimer>())

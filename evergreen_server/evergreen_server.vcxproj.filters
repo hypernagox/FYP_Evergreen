@@ -155,6 +155,9 @@
     <Filter Include="ClientSession\DBContentsEvent">
       <UniqueIdentifier>{781ff71b-96ab-45df-9d94-17e03e965934}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ClientSession\QuestRoom\BossRoom\BossBehaviorNode">
+      <UniqueIdentifier>{41eb2450-ae2d-4b43-ac70-07da39ebd5d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -276,6 +279,9 @@
     </ClCompile>
     <ClCompile Include="DBContentsEvent.cpp">
       <Filter>ClientSession\DBContentsEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="BossBehaviorNode.cpp">
+      <Filter>ClientSession\QuestRoom\BossRoom\BossBehaviorNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -413,6 +419,9 @@
     </ClInclude>
     <ClInclude Include="DBContentsEvent.h">
       <Filter>ClientSession\DBContentsEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="BossBehaviorNode.h">
+      <Filter>ClientSession\QuestRoom\BossRoom\BossBehaviorNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

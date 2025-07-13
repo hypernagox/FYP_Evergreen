@@ -187,6 +187,10 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)evergreen_server\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)evergreen_server\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="BossBehaviorNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="BossRoom.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -281,6 +285,7 @@
     <ClInclude Include="..\Protocols\protocol_define.h" />
     <ClInclude Include="..\Protocols\protocol_generated.h" />
     <ClInclude Include="..\Protocols\struct_generated.h" />
+    <ClInclude Include="BossBehaviorNode.h" />
     <ClInclude Include="BossRoom.h" />
     <ClInclude Include="DBContentsEvent.h" />
     <ClInclude Include="DBPacketDefine.h" />

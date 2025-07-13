@@ -28,7 +28,8 @@ enum MONSTER_TYPE : ubyte
 {   FOX = 0,
     SHEEP = 1,
     BEAR = 2,
-    GOBLIN = 3
+    GOBLIN = 3,
+    BOSS = 4
 }
 
 enum SKILL_TYPE : ubyte

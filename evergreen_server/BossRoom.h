@@ -14,5 +14,9 @@ public:
 	//virtual void NotifyQuestClear(NagiocpX::ContentsEntity* const entity)const noexcept override;
 	//virtual void NotifyQuestFail(NagiocpX::ContentsEntity* const entity)const noexcept override;
 	virtual void InitQuestField()noexcept override;
+
+	S_ptr<ContentsEntity> CreateBoss()noexcept;
+public:
+	S_ptr<ContentsEntity> m_boss;
 };
 

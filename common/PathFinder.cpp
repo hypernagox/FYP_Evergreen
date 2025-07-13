@@ -5,6 +5,7 @@
 #include "Navigator.h"
 
 thread_local std::unordered_map<uint64_t, std::pair<ZeroInt, std::array<dtPolyRef, 10>>> tl_poly_vec;
+constinit thread_local float straightPathRaw[10 * 3] = {};
 
 namespace Common
 {
@@ -21,7 +22,7 @@ namespace Common
         //float t;
         //float hitNormal[3];
 
-       const  auto start_poly = m_agent->GetCurCell().GetPolyRef();
+       const auto start_poly = m_agent->GetCurCell().GetPolyRef();
 
        //dtStatus status = nav_q->raycast(start_poly, &start_z_pos.x, &dest_z_pos.x, nav_f, &t, hitNormal, path, &pathCount, 10);
        //
@@ -66,9 +67,7 @@ namespace Common
            pathCount = num_path.first;
        }
 
-        // TODO: 매직넘버
-        constinit thread_local float straightPathRaw[PATH_COUNT * 3] = {};
-
+       extern constinit thread_local float straightPathRaw[PATH_COUNT * 3];
        // thread_local DirectX::SimpleMath::Vector3 straightPath[10];
         const auto straightPath = (Vector3*)straightPathRaw;
         unsigned char straightPathFlags[PATH_COUNT];

@@ -311,21 +311,45 @@ const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSessio
 const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_FIRE_PROJ& pkt_)
 {
 	// TODO: 개 쌉 하드코딩 + 매넘
-	const auto shoot_obj_id = pkt_.shoot_obj_id();
-	const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
-	auto s = std::make_shared<SceneObject>();
-	s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
-	s->GetTransform()->SetLocalScale(0.25f);
+	// TODO: 이 패킷은 FIRE_NON_TARGET으로 바뀔듯
+	// 0번이 투사체
+	// 1번이 지금 보스 범위공격으로 생각중
+	if (pkt_.proj_type() == 0)
+	{
+		const auto shoot_obj_id = pkt_.shoot_obj_id();
+		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
+		auto s = std::make_shared<SceneObject>();
+		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
+		s->GetTransform()->SetLocalScale(0.25f);
 
-	auto gizmoRenderer = s->AddComponent<MeshRenderer>();
-	gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
-	gizmoRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+		auto gizmoRenderer = s->AddComponent<MeshRenderer>();
+		gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
+		gizmoRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
 
-	auto so = s->AddComponent<ServerObject>();
-	const auto proj = so->AddComp<Projectile>();
-	proj->m_speed = ::ToOriginVec3(pkt_.vel());
-	so->SetObjID((uint32_t)pkt_.proj_id());
-	Mgr(ServerObjectMgr)->AddObject(s);
+		auto so = s->AddComponent<ServerObject>();
+		const auto proj = so->AddComp<Projectile>();
+		proj->m_speed = ::ToOriginVec3(pkt_.vel());
+		so->SetObjID((uint32_t)pkt_.proj_id());
+		Mgr(ServerObjectMgr)->AddObject(s);
+	}
+	else if (pkt_.proj_type() == 1)
+	{
+		const auto shoot_obj_id = pkt_.shoot_obj_id();
+		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
+		auto s = std::make_shared<SceneObject>();
+		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
+		s->GetTransform()->SetLocalScale(2.5f);
+	
+		auto gizmoRenderer = s->AddComponent<MeshRenderer>();
+		gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
+		gizmoRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+	
+		auto so = s->AddComponent<ServerObject>();
+		const auto proj = so->AddComp<Projectile>();
+		proj->m_speed = ::ToOriginVec3(pkt_.vel());
+		so->SetObjID((uint32_t)pkt_.proj_id());
+		Mgr(ServerObjectMgr)->AddObject(s);
+	}
 
 	return true;
 }
@@ -676,11 +700,6 @@ const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSe
 	// 이렇게 바꾼다.
 
 	ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Dungeon);
-	ServerObjectMgr::GetInst()->GetMainHero()->GetTransform()->SetLocalPosition(
-		Vector3{
-		-18.6008f,
-		13.17f,
-		-225.3794f });
 	ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 	
 	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);

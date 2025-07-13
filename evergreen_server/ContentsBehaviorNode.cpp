@@ -178,14 +178,14 @@ NodeStatus ChaseNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickT
 
     const float dt_ = bt_root_timer->GetFloatDT();
 
-    const auto dx2 = cur_pos.x + dir.x * 5.2f * dt_;
-    const auto dy2 = cur_pos.y + dir.y * 5.2f * dt_;
-    const auto dz2 = cur_pos.z + dir.z * 5.2f * dt_;
-    Vector3 dest_pos2{ dx2, dy2, dz2 };
+   //const auto dx2 = cur_pos.x + dir.x * 5.2f * dt_;
+   //const auto dy2 = cur_pos.y + dir.y * 5.2f * dt_;
+   //const auto dz2 = cur_pos.z + dir.z * 5.2f * dt_;
+   //Vector3 dest_pos2{ dx2, dy2, dz2 };
 
     //pOwnerEntity->GetComp<PositionComponent>()->vel = dir;
 
-    pOwnerEntity->GetComp<PositionComponent>()->AdjustMovement(dt_, dir);
+    pOwnerEntity->GetComp<PositionComponent>()->AdjustMovement(dt_, dir, 5.2f);
 
    // pOwnerEntity->GetComp<NaviAgent>()->SetCellPos(dt_, cur_pos, dest_pos2);
    
@@ -261,7 +261,7 @@ NodeStatus PatrolNode::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
         if(!m_bStop || !prev_init)
         {
             m_accTime -= dt_;
-            pOwnerEntity->GetComp<PositionComponent>()->AdjustMovement(dt_, m_dir * 0.001f);
+            pOwnerEntity->GetComp<PositionComponent>()->AdjustMovement(dt_, m_dir * 0.001f, 2.5f);
             pOwnerEntity->GetComp<PositionComponent>()->body_angle = atan2f(m_dir.x, m_dir.z) * 180.f / 3.141592f;
             bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(pOwnerEntity));
         }

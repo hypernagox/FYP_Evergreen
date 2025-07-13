@@ -253,7 +253,7 @@ void QuestGUI::RequestPartyList(int questID)
 
 void QuestGUI::FetchQuestList()
 {
-	m_numQuests = PartyQuestTable::GetPartyQuestSize();
+	m_numQuests = static_cast<int>(PartyQuestTable::GetPartyQuestSize());
 
 	m_incrementQuestButton->SetInteractable(GetNumQuestPages() > 1);
 	m_decrementQuestButton->SetInteractable(GetNumQuestPages() > 1);
@@ -262,7 +262,7 @@ void QuestGUI::FetchQuestList()
 void QuestGUI::FetchPartyList(const std::vector<uint32_t>& table)
 {
 	m_partyTableCache = table;
-	m_numParties = table.size();
+	m_numParties = static_cast<int>(table.size());
 
 	m_standByText->SetActive(false);
 	for (const auto& partyGUI : m_partyList)

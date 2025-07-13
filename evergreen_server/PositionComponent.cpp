@@ -15,7 +15,7 @@ std::pair<float, float> PositionComponent::GetXZWithOffsetGlobal(const ContentsE
     return entity->GetComp<PositionComponent>()->GetXZWithOffset();
 }
 
-void PositionComponent::AdjustMovement(const float dt, const Vector3 desired_dir) noexcept
+void PositionComponent::AdjustMovement(const float dt, const Vector3 desired_dir, const float MOVE_SPEED) noexcept
 {
     //TODO: 매직넘버
     Vector3 steer = desired_dir;
@@ -27,7 +27,7 @@ void PositionComponent::AdjustMovement(const float dt, const Vector3 desired_dir
     constexpr const float COMBINED_RADIUS = 2.5f + 3.5f;
     constexpr const float COMBINED_RADIUS_SQ = COMBINED_RADIUS * COMBINED_RADIUS;
     constexpr const float HARD_PUSH_DIST_SQ = 1.5f;
-    constexpr const float MOVE_SPEED = 2.5f;
+   // constexpr const float MOVE_SPEED = 2.5f;
 
     for (const auto cluster : clusters)
     {
