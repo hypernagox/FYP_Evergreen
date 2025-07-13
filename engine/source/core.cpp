@@ -741,7 +741,7 @@ namespace udsdx
 
 	LRESULT Core::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{ ZoneScoped;
-		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		if (m_drawImGUIElements && ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
 		{
 			return true;
 		}

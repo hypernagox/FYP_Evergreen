@@ -105,6 +105,24 @@ namespace udsdx
 				ImVec2(cornersScreen[end].x, cornersScreen[end].y),
 				drawColor);
 		}
+
+		std::string submeshInfo;
+		const auto& submeshes = m_mesh->GetSubmeshes();
+		if (!submeshes.empty())
+		{
+			submeshInfo = "Submesh Count: " + std::to_string(submeshes.size());
+			for (size_t i = 0; i < submeshes.size(); ++i)
+			{
+				submeshInfo += "\nSubmesh " + std::to_string(i) + ": " +
+					"Index Count: " + std::to_string(submeshes[i].IndexCount) +
+					", Start Index: " + std::to_string(submeshes[i].StartIndexLocation) +
+					", Base Vertex: " + std::to_string(submeshes[i].BaseVertexLocation);
+			}
+		}
+		drawList->AddText(
+			ImVec2(cornersScreen[0].x, cornersScreen[0].y - 20.0f),
+			drawColor,
+			submeshInfo.c_str());
 	}
 
 	void MeshRenderer::SetMesh(Mesh* mesh)

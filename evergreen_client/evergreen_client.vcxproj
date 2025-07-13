@@ -482,6 +482,7 @@
     <ClCompile Include="MinimapRenderer.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterBear.cpp" />
+    <ClCompile Include="MonsterBoss.cpp" />
     <ClCompile Include="MonsterFox.cpp" />
     <ClCompile Include="MonsterHPPanel.cpp" />
     <ClCompile Include="MonsterRenderer.cpp" />
@@ -573,6 +574,7 @@
     <ClInclude Include="MinimapRenderer.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterBear.h" />
+    <ClInclude Include="MonsterBoss.h" />
     <ClInclude Include="MonsterFox.h" />
     <ClInclude Include="MonsterHPPanel.h" />
     <ClInclude Include="MonsterRenderer.h" />

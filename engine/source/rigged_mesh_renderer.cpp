@@ -120,6 +120,24 @@ namespace udsdx
 				ImVec2(cornersScreen[end].x, cornersScreen[end].y),
 				drawColor);
 		}
+
+		std::string submeshInfo;
+		const auto& submeshes = m_riggedMesh->GetSubmeshes();
+		if (!submeshes.empty())
+		{
+			submeshInfo = "Submesh Count: " + std::to_string(submeshes.size());
+			for (size_t i = 0; i < submeshes.size(); ++i)
+			{
+				submeshInfo += "\nSubmesh " + submeshes[i].Name + ": " +
+					"Index Count: " + std::to_string(submeshes[i].IndexCount) +
+					", Start Index: " + std::to_string(submeshes[i].StartIndexLocation) +
+					", Base Vertex: " + std::to_string(submeshes[i].BaseVertexLocation);
+			}
+		}
+		drawList->AddText(
+			ImVec2(cornersScreen[0].x, cornersScreen[0].y),
+			drawColor,
+			submeshInfo.c_str());
 	}
 
 	void RiggedMeshRenderer::Render(RenderParam& param, int parameter)

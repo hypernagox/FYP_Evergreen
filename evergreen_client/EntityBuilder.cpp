@@ -5,6 +5,7 @@
 #include "PlayerRenderer.h"
 #include "MonsterFox.h"
 #include "MonsterBear.h"
+#include "MonsterBoss.h"
 #include "MoveInterpolator.h"
 #include "DropItem.h"
 #include "DropItemRenderer.h"
@@ -70,8 +71,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	{
 		auto instance = std::make_shared<udsdx::SceneObject>();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
-		instance->GetTransform()->SetLocalScale(5.f);
-		auto monsterComponent = instance->AddComponent<MonsterFox>();
+		auto monsterComponent = instance->AddComponent<MonsterBoss>();
 		auto serverComponent = instance->AddComponent<ServerObject>();
 		serverComponent->SetObjID(builder->obj_id);
 

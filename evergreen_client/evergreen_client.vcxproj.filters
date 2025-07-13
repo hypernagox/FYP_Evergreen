@@ -318,6 +318,9 @@
     <ClCompile Include="GUISimpleButton.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="MonsterBoss.cpp">
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -538,6 +541,9 @@
     </ClInclude>
     <ClInclude Include="GUISimpleButton.h">
       <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterBoss.h">
+      <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
