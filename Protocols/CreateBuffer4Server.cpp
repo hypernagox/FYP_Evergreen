@@ -612,3 +612,40 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_ROOM_ENTER(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_BOSS_ROOM_ENTER);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_FLY(
+    const Nagox::Struct::Vec3& target_pos,
+    const Nagox::Enum::BOSS_FLY_TYPE& boss_fly_type,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto target_pos_offset = &target_pos;
+    const auto boss_fly_type_value = boss_fly_type;
+    const auto serializeds2c_BOSS_FLY = Nagox::Protocol::Creates2c_BOSS_FLY(
+        builder
+,        target_pos_offset,
+        boss_fly_type_value    );
+    builder.Finish(serializeds2c_BOSS_FLY);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_BOSS_FLY);
+}
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_MOVE(
+    const Nagox::Struct::Vec3& target_pos,
+    const float boss_speed,
+    const Nagox::Enum::BOSS_MOVE_TYPE& boss_move_type,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto target_pos_offset = &target_pos;
+    const auto boss_speed_value = boss_speed;
+    const auto boss_move_type_value = boss_move_type;
+    const auto serializeds2c_BOSS_MOVE = Nagox::Protocol::Creates2c_BOSS_MOVE(
+        builder
+,        target_pos_offset,
+        boss_speed_value,
+        boss_move_type_value    );
+    builder.Finish(serializeds2c_BOSS_MOVE);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_BOSS_MOVE);
+}

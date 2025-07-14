@@ -48,13 +48,14 @@ public:
 	const auto GetMainHero()const noexcept { return m_mainHero->GetComponent<ServerObject>(); }
 
 	std::map<int, int> m_weaponMap;
-
+	auto& GetBossPtr()noexcept { return m_boss; }
+	const auto& GetBossPtr()const noexcept { return m_boss; }
 public:
 	// 로그인 시 받았던 정보들 모임
 	std::string m_type; // 직업정보이긴한데 enum으로 교체예정
 	std::vector<int> init_item_ids;
 	std::vector<int> init_item_counts;
-
+	std::shared_ptr<udsdx::SceneObject> m_boss;
 private:
 	std::shared_ptr<GameScene> targetScene;
 	std::unordered_map<uint64_t, std::shared_ptr<udsdx::SceneObject>> m_mapServerObj;
@@ -63,3 +64,4 @@ private:
 	uint64_t m_mainHeroID = 0;
 };
 
+#define GET_BOSS (ServerObjectMgr::GetInst()->GetBossPtr())

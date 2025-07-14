@@ -20,7 +20,8 @@ const Vector3 g_jump_shoot_pos[]
 	Vector3(-52.685413F,14.0523615F,-211.08817F),
 	Vector3(-30.660482F,14.17017F,-214.1239F)
 };
-constexpr const size_t g_num_of_rand_pos = sizeof(g_jump_shoot_pos) / sizeof(g_jump_shoot_pos[0]);
+constexpr const size_t g_num_of_rand_pos = sizeof(g_jump_shoot_pos) / sizeof(g_jump_shoot_pos[0]); \
+static constinit int g_pos_idx = 0;
 const Vector3 g_reset_pos = Vector3(-47.336597F, 18.003374F, -244.53511F);
 
 S_ptr<ContentsEntity> cur_target = {};
@@ -138,7 +139,9 @@ NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 
 	boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
 	
-	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(boss_entity));
+	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1)
+	);
 
 	return NodeStatus::RUNNING;
 }
@@ -195,20 +198,16 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 
 NodeStatus SelectJumpPoint::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
-	// TODO: 순간이동보단 고속이동
-	static constinit bool flag = true;
-	static XDeque<int> d;
-	if (flag)
+	const auto DT = bt_root_timer->GetFloatDT();
+	m_accTime -= DT;
+	if (0.f < m_accTime)
 	{
-		for (auto i = 0; i < g_num_of_rand_pos; ++i)
-		{
-			d.emplace_back(i);
-		}
-		flag = false;
+		return NodeStatus::RUNNING;
 	}
-	const auto idx = d.front();
-	d.pop_front();
-	d.push_back(idx);
+	m_accTime = 1.f;
+	// TODO: 순간이동보단 고속이동
+	const auto idx = g_pos_idx;
+	g_pos_idx = (g_pos_idx + 1) % g_num_of_rand_pos;
 
 	const auto target_pos = g_jump_shoot_pos[idx];
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
@@ -217,7 +216,9 @@ NodeStatus SelectJumpPoint::Tick(const ComponentSystemNPC* const owner_comp_sys,
 	boss_entity->GetComp<PositionComponent>()->pos = target_pos;
 	boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
 
-	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(boss_entity));
+	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+		Create_s2c_BOSS_FLY(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos),Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_1)
+	);
 	return NodeStatus::SUCCESS;
 }
 
@@ -232,7 +233,9 @@ NodeStatus ResetPos::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTi
 	boss_entity->GetComp<PositionComponent>()->pos = target_pos;
 	boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
 
-	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(boss_entity));
+	
+	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+		Create_s2c_BOSS_FLY(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_2));
 	return NodeStatus::SUCCESS;
 }
 
@@ -270,7 +273,7 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 		proj.timer->SelectObjList(player_list);
 		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
 	}
-	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), NagiocpX::MoveBroadcaster::CreateMovePacket(boss_entity));
+	
 	m_accTime = .5f;
 	--count;
 	if (count == 0)

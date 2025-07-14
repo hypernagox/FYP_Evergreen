@@ -707,3 +707,32 @@ const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSe
 	std::cout << "보스방 입장함\n";
 	return true;
 }
+
+const bool Handle_s2c_BOSS_FLY(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_FLY& pkt_)
+{
+	// TODO: 목적지와 어떤 비행?? 타입인지 온다.
+	// 이 코드가 온순간 서버에서는 이미 해당위치로 순간이동 한 뒤이기 때문에 클라에서는 뭔가 공중으로 간다던지해서
+	// 떄려도 공격 안맞을 것 같아야 함.
+	const auto boss_fly_type = pkt_.boss_fly_type();
+	const auto& boss_ptr = GET_BOSS;
+	const auto target_pos = ToOriginVec3(pkt_.target_pos());
+	// TODO: 이렇게 옮기는게 아니라 뭔가 애니메이션 후 옮기기
+	// 서버도 이거 시간 맞춰서 타이머 돌려서 클라에서 이동 다 되었다고 판단 될때까지 다른 패킷은 보류 할 것
+	boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateForcedMoveData(target_pos);
+	return true;
+}
+
+const bool Handle_s2c_BOSS_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_MOVE& pkt_)
+{
+	// TODO: 보스 이동후 위치와 속도 그리고 어떤 이동타입인지 온다.
+	// 움직이는 방향에 대해서 회전각은 클라에서 처리 필요
+	
+	const auto boss_move_type = pkt_.boss_move_type();
+	const auto& boss_ptr = GET_BOSS;
+	const auto target_pos = ToOriginVec3(pkt_.target_pos());
+	
+	//std::cout << std::format("x:{},y:{},z{}\n", target_pos.x, target_pos.y, target_pos.z);
+	boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateNewMoveDataOnlyPos(target_pos);
+	
+	return true;
+}

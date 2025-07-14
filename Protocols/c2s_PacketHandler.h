@@ -67,6 +67,8 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_NOTIFY_USER_DETAIL_INFO = 1030,
     s2c_FORCED_MOVE = 1031,
     s2c_BOSS_ROOM_ENTER = 1032,
+    s2c_BOSS_FLY = 1033,
+    s2c_BOSS_MOVE = 1034,
 };
 
 class NagiocpX::PacketSession;

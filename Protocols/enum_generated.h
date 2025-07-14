@@ -217,6 +217,102 @@ inline const char *EnumNameEQUIPMENT_TYPE(EQUIPMENT_TYPE e) {
   return EnumNamesEQUIPMENT_TYPE()[index];
 }
 
+enum NON_TARGET_TYPE : uint8_t {
+  NON_TARGET_TYPE_PRIEST_PROJ = 0,
+  NON_TARGET_TYPE_GOBLIN_PROJ = 1,
+  NON_TARGET_TYPE_BOSS_PROJ_1 = 2,
+  NON_TARGET_TYPE_BOSS_PROJ_2 = 3,
+  NON_TARGET_TYPE_MIN = NON_TARGET_TYPE_PRIEST_PROJ,
+  NON_TARGET_TYPE_MAX = NON_TARGET_TYPE_BOSS_PROJ_2
+};
+
+inline const NON_TARGET_TYPE (&EnumValuesNON_TARGET_TYPE())[4] {
+  static const NON_TARGET_TYPE values[] = {
+    NON_TARGET_TYPE_PRIEST_PROJ,
+    NON_TARGET_TYPE_GOBLIN_PROJ,
+    NON_TARGET_TYPE_BOSS_PROJ_1,
+    NON_TARGET_TYPE_BOSS_PROJ_2
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesNON_TARGET_TYPE() {
+  static const char * const names[5] = {
+    "PRIEST_PROJ",
+    "GOBLIN_PROJ",
+    "BOSS_PROJ_1",
+    "BOSS_PROJ_2",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameNON_TARGET_TYPE(NON_TARGET_TYPE e) {
+  if (::flatbuffers::IsOutRange(e, NON_TARGET_TYPE_PRIEST_PROJ, NON_TARGET_TYPE_BOSS_PROJ_2)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesNON_TARGET_TYPE()[index];
+}
+
+enum BOSS_FLY_TYPE : uint8_t {
+  BOSS_FLY_TYPE_BOSS_FLY_TYPE_1 = 0,
+  BOSS_FLY_TYPE_BOSS_FLY_TYPE_2 = 1,
+  BOSS_FLY_TYPE_MIN = BOSS_FLY_TYPE_BOSS_FLY_TYPE_1,
+  BOSS_FLY_TYPE_MAX = BOSS_FLY_TYPE_BOSS_FLY_TYPE_2
+};
+
+inline const BOSS_FLY_TYPE (&EnumValuesBOSS_FLY_TYPE())[2] {
+  static const BOSS_FLY_TYPE values[] = {
+    BOSS_FLY_TYPE_BOSS_FLY_TYPE_1,
+    BOSS_FLY_TYPE_BOSS_FLY_TYPE_2
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesBOSS_FLY_TYPE() {
+  static const char * const names[3] = {
+    "BOSS_FLY_TYPE_1",
+    "BOSS_FLY_TYPE_2",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameBOSS_FLY_TYPE(BOSS_FLY_TYPE e) {
+  if (::flatbuffers::IsOutRange(e, BOSS_FLY_TYPE_BOSS_FLY_TYPE_1, BOSS_FLY_TYPE_BOSS_FLY_TYPE_2)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesBOSS_FLY_TYPE()[index];
+}
+
+enum BOSS_MOVE_TYPE : uint8_t {
+  BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1 = 0,
+  BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_2 = 1,
+  BOSS_MOVE_TYPE_MIN = BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1,
+  BOSS_MOVE_TYPE_MAX = BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_2
+};
+
+inline const BOSS_MOVE_TYPE (&EnumValuesBOSS_MOVE_TYPE())[2] {
+  static const BOSS_MOVE_TYPE values[] = {
+    BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1,
+    BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_2
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesBOSS_MOVE_TYPE() {
+  static const char * const names[3] = {
+    "BOSS_MOVE_TYPE_1",
+    "BOSS_MOVE_TYPE_2",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameBOSS_MOVE_TYPE(BOSS_MOVE_TYPE e) {
+  if (::flatbuffers::IsOutRange(e, BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_2)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesBOSS_MOVE_TYPE()[index];
+}
+
 }  // namespace Enum
 }  // namespace Nagox
 

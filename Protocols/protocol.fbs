@@ -340,3 +340,16 @@ table s2c_FORCED_MOVE
 table s2c_BOSS_ROOM_ENTER
 {
 }
+
+table s2c_BOSS_FLY
+{
+    target_pos: Nagox.Struct.Vec3;
+    boss_fly_type : Nagox.Enum.BOSS_FLY_TYPE;
+}
+
+table s2c_BOSS_MOVE
+{
+    target_pos: Nagox.Struct.Vec3;
+    boss_speed : float;
+    boss_move_type : Nagox.Enum.BOSS_MOVE_TYPE;
+}

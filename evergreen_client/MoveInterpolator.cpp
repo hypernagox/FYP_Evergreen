@@ -12,6 +12,7 @@ void MoveInterpolator::Update() noexcept
 	const auto move_data = m_interpolator.GetInterPolatedData();
 	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(move_data.body_angleY * DEG2RAD + PI, 0.0f, 0.0f);
 
+	// TODO: 보스는 서버에서 위치말곤 관리를 안할거라 보스의 경우 여기서 하드코딩이 좀 필요할 가능성 있음
 	owner_player->SetPosition(move_data.pos);
 	owner_player->SetVelocity(move_data.vel);
 	owner_player->SetAcceleration(move_data.accel);
@@ -52,7 +53,8 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	m_interpolator.GetCurData().vel = move_data.vel;
 	// m_interpolator.GetCurData().body_angleY = move_data.body_angleY;
 
-	owner_player->SetPosition(pos);
+	// TODO: 여기서 셋포지션하면 이상할 것 같은데 일단 관찰
+	//owner_player->SetPosition(pos);
 	owner_player->SetVelocity(vel);
 	owner_player->SetAcceleration(accel);
 	owner_player->SetRotation(rotation);
@@ -70,6 +72,15 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	// TOOD: 지형보정 방식은 앞으로 바뀔 듯 해요
 	// auto move_data = m_interpolator.GetInterPolatedData();
 	//root_obj->GetTransform()->SetLocalPosition(move_data.pos);
+}
+
+void MoveInterpolator::UpdateNewMoveDataOnlyPos(const Vector3& dest_pos) noexcept
+{
+	const auto owner_player = m_owner->GetSceneObject()->GetComponent<EntityMovement>();
+	auto move_data = m_interpolator.GetInterPolatedData();
+	// TODO: 각도나 가속도는 여기서 정하던가 아니면 여기서 정한건 무시해야함
+	m_interpolator.UpdateNewData(MoveData{ dest_pos, {}, {}, {} });
+	m_interpolator.GetCurData().pos = move_data.pos;
 }
 
 void MoveInterpolator::UpdateForcedMoveData(const Vector3& pos) noexcept

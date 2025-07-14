@@ -185,3 +185,14 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FORCED_MOVE(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_ROOM_ENTER(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_FLY(
+    const Nagox::Struct::Vec3& target_pos,
+    const Nagox::Enum::BOSS_FLY_TYPE& boss_fly_type,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_MOVE(
+    const Nagox::Struct::Vec3& target_pos,
+    const float boss_speed,
+    const Nagox::Enum::BOSS_MOVE_TYPE& boss_move_type,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

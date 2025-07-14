@@ -77,7 +77,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 
 		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 		moveInterpolator->InitInterpolator(b->obj_pos);
-
+		GET_BOSS = instance;
 		return instance;
 		break;
 	}

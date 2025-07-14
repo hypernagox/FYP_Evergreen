@@ -42,3 +42,23 @@ enum EQUIPMENT_TYPE : ubyte
     WEAPON = 0,
     ARMOR = 1
 }
+
+enum NON_TARGET_TYPE : ubyte
+{
+    PRIEST_PROJ = 0,
+    GOBLIN_PROJ = 1,
+    BOSS_PROJ_1 = 2,
+    BOSS_PROJ_2 = 3
+}
+
+enum BOSS_FLY_TYPE : ubyte
+{
+    BOSS_FLY_TYPE_1 = 0,
+    BOSS_FLY_TYPE_2 = 1
+}
+
+enum BOSS_MOVE_TYPE : ubyte
+{
+    BOSS_MOVE_TYPE_1 = 0,
+    BOSS_MOVE_TYPE_2 = 1
+}

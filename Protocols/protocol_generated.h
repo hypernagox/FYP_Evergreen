@@ -187,6 +187,12 @@ struct s2c_FORCED_MOVEBuilder;
 struct s2c_BOSS_ROOM_ENTER;
 struct s2c_BOSS_ROOM_ENTERBuilder;
 
+struct s2c_BOSS_FLY;
+struct s2c_BOSS_FLYBuilder;
+
+struct s2c_BOSS_MOVE;
+struct s2c_BOSS_MOVEBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -3377,6 +3383,133 @@ struct s2c_BOSS_ROOM_ENTERBuilder {
 inline ::flatbuffers::Offset<s2c_BOSS_ROOM_ENTER> Creates2c_BOSS_ROOM_ENTER(
     ::flatbuffers::FlatBufferBuilder &_fbb) {
   s2c_BOSS_ROOM_ENTERBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct s2c_BOSS_FLY FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_BOSS_FLYBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_POS = 4,
+    VT_BOSS_FLY_TYPE = 6
+  };
+  const Nagox::Struct::Vec3 *target_pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_target_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  Nagox::Enum::BOSS_FLY_TYPE boss_fly_type() const {
+    return static_cast<Nagox::Enum::BOSS_FLY_TYPE>(GetField<uint8_t>(VT_BOSS_FLY_TYPE, 0));
+  }
+  bool mutate_boss_fly_type(Nagox::Enum::BOSS_FLY_TYPE _boss_fly_type = static_cast<Nagox::Enum::BOSS_FLY_TYPE>(0)) {
+    return SetField<uint8_t>(VT_BOSS_FLY_TYPE, static_cast<uint8_t>(_boss_fly_type), 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_TARGET_POS, 4) &&
+           VerifyField<uint8_t>(verifier, VT_BOSS_FLY_TYPE, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_BOSS_FLYBuilder {
+  typedef s2c_BOSS_FLY Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_pos(const Nagox::Struct::Vec3 *target_pos) {
+    fbb_.AddStruct(s2c_BOSS_FLY::VT_TARGET_POS, target_pos);
+  }
+  void add_boss_fly_type(Nagox::Enum::BOSS_FLY_TYPE boss_fly_type) {
+    fbb_.AddElement<uint8_t>(s2c_BOSS_FLY::VT_BOSS_FLY_TYPE, static_cast<uint8_t>(boss_fly_type), 0);
+  }
+  explicit s2c_BOSS_FLYBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_BOSS_FLY> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_BOSS_FLY>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_BOSS_FLY> Creates2c_BOSS_FLY(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const Nagox::Struct::Vec3 *target_pos = nullptr,
+    Nagox::Enum::BOSS_FLY_TYPE boss_fly_type = Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_1) {
+  s2c_BOSS_FLYBuilder builder_(_fbb);
+  builder_.add_target_pos(target_pos);
+  builder_.add_boss_fly_type(boss_fly_type);
+  return builder_.Finish();
+}
+
+struct s2c_BOSS_MOVE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_BOSS_MOVEBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_POS = 4,
+    VT_BOSS_SPEED = 6,
+    VT_BOSS_MOVE_TYPE = 8
+  };
+  const Nagox::Struct::Vec3 *target_pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_target_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  float boss_speed() const {
+    return GetField<float>(VT_BOSS_SPEED, 0.0f);
+  }
+  bool mutate_boss_speed(float _boss_speed = 0.0f) {
+    return SetField<float>(VT_BOSS_SPEED, _boss_speed, 0.0f);
+  }
+  Nagox::Enum::BOSS_MOVE_TYPE boss_move_type() const {
+    return static_cast<Nagox::Enum::BOSS_MOVE_TYPE>(GetField<uint8_t>(VT_BOSS_MOVE_TYPE, 0));
+  }
+  bool mutate_boss_move_type(Nagox::Enum::BOSS_MOVE_TYPE _boss_move_type = static_cast<Nagox::Enum::BOSS_MOVE_TYPE>(0)) {
+    return SetField<uint8_t>(VT_BOSS_MOVE_TYPE, static_cast<uint8_t>(_boss_move_type), 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_TARGET_POS, 4) &&
+           VerifyField<float>(verifier, VT_BOSS_SPEED, 4) &&
+           VerifyField<uint8_t>(verifier, VT_BOSS_MOVE_TYPE, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_BOSS_MOVEBuilder {
+  typedef s2c_BOSS_MOVE Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_pos(const Nagox::Struct::Vec3 *target_pos) {
+    fbb_.AddStruct(s2c_BOSS_MOVE::VT_TARGET_POS, target_pos);
+  }
+  void add_boss_speed(float boss_speed) {
+    fbb_.AddElement<float>(s2c_BOSS_MOVE::VT_BOSS_SPEED, boss_speed, 0.0f);
+  }
+  void add_boss_move_type(Nagox::Enum::BOSS_MOVE_TYPE boss_move_type) {
+    fbb_.AddElement<uint8_t>(s2c_BOSS_MOVE::VT_BOSS_MOVE_TYPE, static_cast<uint8_t>(boss_move_type), 0);
+  }
+  explicit s2c_BOSS_MOVEBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_BOSS_MOVE> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_BOSS_MOVE>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_BOSS_MOVE> Creates2c_BOSS_MOVE(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const Nagox::Struct::Vec3 *target_pos = nullptr,
+    float boss_speed = 0.0f,
+    Nagox::Enum::BOSS_MOVE_TYPE boss_move_type = Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1) {
+  s2c_BOSS_MOVEBuilder builder_(_fbb);
+  builder_.add_boss_speed(boss_speed);
+  builder_.add_target_pos(target_pos);
+  builder_.add_boss_move_type(boss_move_type);
   return builder_.Finish();
 }
 
