@@ -545,6 +545,9 @@
     <ClInclude Include="MonsterBoss.h">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="CustomStateTransition.hpp">
+      <Filter>Header Files\func</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\enum.fbs">

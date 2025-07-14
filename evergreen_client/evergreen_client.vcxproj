@@ -543,6 +543,7 @@
     <ClInclude Include="AuthenticPlayer.h" />
     <ClInclude Include="BezierMovement.h" />
     <ClInclude Include="ChannelSwitchGUI.h" />
+    <ClInclude Include="CustomStateTransition.hpp" />
     <ClInclude Include="DamageCountGUI.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DropItem.h" />

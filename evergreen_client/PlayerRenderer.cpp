@@ -13,18 +13,21 @@ void PlayerRenderer::OnInitialize()
 
 	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "GlobalValues", "CharacterScale", "Value"));
 
+	m_bodyObj = std::make_shared<SceneObject>();
+	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
+
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(to); });
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::AttackEnd, 0.25f);
-	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::AttackEnd, AnimationState::Idle, 0.3f);
+	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::AttackEnd, AnimationState::Idle, m_renderer);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::AttackEnd, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
-	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Idle, 0.365f);
+	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Idle, m_renderer);
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Death, m_stateMachine->GetConditionRefBool("Death"), true);
 
@@ -50,7 +53,7 @@ void PlayerRenderer::OnInitialize()
 		m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(runState, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
 	}
 
-	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Death, AnimationState::Idle, 2.f);
+	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::Death, AnimationState::Idle, m_renderer);
 
 	m_stateMachine->SetStateUpdateFp(AnimationState::Attack, [this]() {
 		static bool flags[4];
@@ -59,9 +62,6 @@ void PlayerRenderer::OnInitialize()
 
 void PlayerRenderer::InitializeWarrior()
 {
-	m_bodyObj = std::make_shared<SceneObject>();
-
-	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"Zelda\\zelda.yrms")));
 
 	m_transformBody = m_bodyObj->GetTransform();
@@ -77,9 +77,6 @@ void PlayerRenderer::InitializeWarrior()
 
 void PlayerRenderer::InitializePriest()
 {
-	m_bodyObj = std::make_shared<SceneObject>();
-
-	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
 	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"priest\\priest.yrms")));
 
 	m_transformBody = m_bodyObj->GetTransform();

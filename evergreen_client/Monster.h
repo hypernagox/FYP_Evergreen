@@ -19,6 +19,7 @@ protected:
 	};
 
 protected:
+	RiggedMeshRenderer* m_renderer = nullptr;
 	std::shared_ptr<SceneObject> m_rendererObj;
 	EntityMovement* m_entityMovement;
 

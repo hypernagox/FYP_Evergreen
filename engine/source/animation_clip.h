@@ -6,9 +6,11 @@
 namespace udsdx
 {
 	struct Bone;
+	class AnimationClip;
 
-	struct Animation
+	class Animation
 	{
+	private:
 		struct Channel
 		{
 			std::string Name{};
@@ -22,12 +24,22 @@ namespace udsdx
 			std::vector<Vector3> Scales{};
 		};
 
-		std::string Name{};
+	public:
+		Animation() = delete;
+		Animation(const AnimationClip* clip, std::ifstream& fileStream);
+		void PopulateTransforms(float animationTime, std::vector<Matrix4x4>& out) const;
+		void PopulateTransforms(float animationTime, const std::vector<int>& boneMap, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const;
+		float GetAnimationDuration() const { return m_duration / m_ticksPerSecond; }
+		std::string_view GetName() const { return m_name; }
+		const AnimationClip* GetAnimationClip() const { return m_clip; }
 
-		float Duration = 0.0f;
-		float TicksPerSecond = 1.0f;
+	private:
+		const AnimationClip* m_clip = nullptr;
+		std::vector<Channel> m_channels;
+		std::string m_name;
 
-		std::vector<Channel> Channels{};
+		float m_duration = 0.0f;
+		float m_ticksPerSecond = 30.0f;
 	};
 
 	class AnimationClip : public ResourceObject
@@ -36,16 +48,16 @@ namespace udsdx
 		AnimationClip(const std::filesystem::path& resourcePath);
 
 	public:
-		void PopulateTransforms(float animationTime, std::vector<Matrix4x4>& out) const;
-		void PopulateTransforms(float animationTime, const std::vector<std::string>& boneNames, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const;
+		void PopulateBoneMap(const std::vector<std::string>& boneNames, std::vector<int>& out) const;
 		int GetBoneIndex(std::string_view boneName) const;
 		const std::vector<Bone>& GetBones() const { return m_bones; };
 		const std::vector<int>& GetBoneParents() const { return m_boneParents; }
+		const Animation& GetAnimation(std::string_view name) const;
+		const Animation& GetAnimation() const;
 		UINT GetBoneCount() const;
-		float GetAnimationDuration() const;
 
 	protected:
-		Animation m_animation;
+		std::unordered_map<std::string, Animation> m_animations;
 
 		std::vector<Bone> m_bones;
 		std::vector<int> m_boneParents;

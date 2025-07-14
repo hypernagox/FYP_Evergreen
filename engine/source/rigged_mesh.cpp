@@ -128,12 +128,6 @@ namespace udsdx
 		}
 	}
 
-	void RiggedMesh::PopulateTransforms(int submeshIndex, const AnimationClip& animationClip, float animationTime, std::vector<Matrix4x4>& out) const
-	{
-		const Submesh& submesh = m_submeshes[submeshIndex];
-		animationClip.PopulateTransforms(animationTime, submesh.BoneNodeIDs, submesh.BoneOffsets, out);
-	}
-
 	int RiggedMesh::GetBoneIndex(std::string_view boneName) const
 	{
 		auto iter = m_boneIndexMap.find(boneName.data());

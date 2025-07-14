@@ -8,10 +8,10 @@ using namespace udsdx;
 class MonsterBoss : public Monster
 {
 protected:
-	udsdx::RiggedMeshRenderer* m_riggedMeshRenderer;
+	AnimationClip* m_animation;
 
 public:
-
 	void OnInitialize() override;
+	void Update(const Time& time, Scene& scene) override;
 	virtual void OnAnimationStateChange(AnimationState from, AnimationState to) override;
 };

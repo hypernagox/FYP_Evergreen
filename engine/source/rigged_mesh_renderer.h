@@ -7,6 +7,7 @@ namespace udsdx
 {
 	class RiggedMesh;
 	class AnimationClip;
+	class Animation;
 
 	class RiggedMeshRenderer : public RendererBase
 	{
@@ -25,7 +26,10 @@ namespace udsdx
 	public:
 		RiggedMesh* GetMesh() const;
 		void SetMesh(RiggedMesh* mesh);
-		void SetAnimation(AnimationClip* animationClip, bool loop = false, bool forcePlay = false);
+		void SetAnimation(const AnimationClip* animationClip, bool loop = false, bool forcePlay = false);
+		void SetAnimation(const AnimationClip* animationClip, std::string_view animationName, bool loop = false, bool forcePlay = false);
+		void SetAnimation(const Animation* animation, bool loop = false, bool forcePlay = false);
+		bool IsAnimationPlaying() const;
 
 		Matrix4x4 PopulateTransform(std::string_view boneName);
 		void PopulateTransforms(std::vector<Matrix4x4>& out);
@@ -34,8 +38,12 @@ namespace udsdx
 	protected:
 		RiggedMesh* m_riggedMesh = nullptr;
 
-		AnimationClip* m_animation = nullptr;
-		AnimationClip* m_prevAnimation = nullptr;
+		const Animation* m_animation = nullptr;
+		const Animation* m_prevAnimation = nullptr;
+
+		std::vector<std::vector<int>> m_boneMapCache;
+		std::vector<std::vector<int>> m_prevBoneMapCache;
+
 		bool m_loop = false;
 		float m_animationTime = 0.0f;
 		float m_prevAnimationTime = 0.0f;

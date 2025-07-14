@@ -20,11 +20,8 @@ namespace udsdx
 
 		// Matrices for default pose (no animation)
 		void PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out) const;
-		void PopulateTransforms(int submeshIndex, const AnimationClip& animationClip, float animationTime, std::vector<Matrix4x4>& out) const;
 		int GetBoneIndex(std::string_view boneName) const;
 		UINT GetBoneCount() const;
-
-		CD3DX12_GPU_DESCRIPTOR_HANDLE GetBoneGpuSrv() const;
 
 	protected:
 		std::vector<Bone> m_bones;

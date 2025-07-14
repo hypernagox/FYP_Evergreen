@@ -58,86 +58,146 @@ namespace udsdx
 			m_boneParents[i] = parentIndex;
 		}
 
+		size_t animationCount = 0;
+		file.read(reinterpret_cast<char*>(&animationCount), sizeof(size_t));
+
+		for (size_t i = 0; i < animationCount; ++i)
+		{
+			Animation animationDest = Animation(this, file);
+			m_animations.emplace(animationDest.GetName().data(), std::move(animationDest));
+		}
+	}
+
+	void AnimationClip::PopulateBoneMap(const std::vector<std::string>& boneNames, std::vector<int>& out) const
+	{
+		out.resize(boneNames.size());
+		for (UINT i = 0; i < out.size(); ++i)
+		{
+			out[i] = GetBoneIndex(boneNames[i]);
+		}
+	}
+
+	int AnimationClip::GetBoneIndex(std::string_view boneName) const
+	{
+		auto it = m_boneIndexMap.find(boneName.data());
+		if (it == m_boneIndexMap.end())
+		{
+			return -1;
+		}
+		return it->second;
+	}
+
+	const Animation& AnimationClip::GetAnimation(std::string_view name) const
+	{
+		auto it = m_animations.find(name.data());
+		if (it == m_animations.end())
+		{
+			DebugConsole::LogError("Animation not found: " + std::string(name));
+			throw std::runtime_error("Animation not found");
+		}
+		return it->second;
+	}
+
+	const Animation& AnimationClip::GetAnimation() const
+	{
+		if (m_animations.empty())
+		{
+			DebugConsole::LogError("No animations available in the clip.");
+			throw std::runtime_error("No animations available");
+		}
+		return m_animations.begin()->second;
+	}
+
+	UINT AnimationClip::GetBoneCount() const
+	{
+		return static_cast<UINT>(m_bones.size());
+	}
+
+	Animation::Animation(const AnimationClip* clip, std::ifstream& fileStream) : m_clip(clip)
+	{
 		// Read animation data
 		size_t nameLength = 0;
-		file.read(reinterpret_cast<char*>(&nameLength), sizeof(size_t));
-		m_animation.Name.resize(nameLength);
-		file.read(m_animation.Name.data(), nameLength);
-		file.read(reinterpret_cast<char*>(&m_animation.TicksPerSecond), sizeof(float));
-		file.read(reinterpret_cast<char*>(&m_animation.Duration), sizeof(float));
+		fileStream.read(reinterpret_cast<char*>(&nameLength), sizeof(size_t));
+		m_name.resize(nameLength);
+		fileStream.read(m_name.data(), nameLength);
+		fileStream.read(reinterpret_cast<char*>(&m_ticksPerSecond), sizeof(float));
+		fileStream.read(reinterpret_cast<char*>(&m_duration), sizeof(float));
 		size_t channelCount = 0;
 
-		file.read(reinterpret_cast<char*>(&channelCount), sizeof(size_t));
-		m_animation.Channels.resize(channelCount);
+		fileStream.read(reinterpret_cast<char*>(&channelCount), sizeof(size_t));
+		m_channels.resize(channelCount);
 		for (size_t i = 0; i < channelCount; ++i)
 		{
-			Animation::Channel& channel = m_animation.Channels[i];
+			Animation::Channel& channel = m_channels[i];
 			size_t channelNameLength = 0;
-			file.read(reinterpret_cast<char*>(&channelNameLength), sizeof(size_t));
+			fileStream.read(reinterpret_cast<char*>(&channelNameLength), sizeof(size_t));
 			channel.Name.resize(channelNameLength);
-			file.read(channel.Name.data(), channelNameLength);
+			fileStream.read(channel.Name.data(), channelNameLength);
 
 			size_t positionKeyCount = 0;
-			file.read(reinterpret_cast<char*>(&positionKeyCount), sizeof(size_t));
+			fileStream.read(reinterpret_cast<char*>(&positionKeyCount), sizeof(size_t));
 			channel.PositionTimestamps.resize(positionKeyCount);
 			channel.Positions.resize(positionKeyCount);
 			for (size_t j = 0; j < positionKeyCount; ++j)
 			{
-				file.read(reinterpret_cast<char*>(&channel.PositionTimestamps[j]), sizeof(float));
-				file.read(reinterpret_cast<char*>(&channel.Positions[j]), sizeof(Vector3));
+				fileStream.read(reinterpret_cast<char*>(&channel.PositionTimestamps[j]), sizeof(float));
+				fileStream.read(reinterpret_cast<char*>(&channel.Positions[j]), sizeof(Vector3));
 			}
 			size_t rotationKeyCount = 0;
-			file.read(reinterpret_cast<char*>(&rotationKeyCount), sizeof(size_t));
+			fileStream.read(reinterpret_cast<char*>(&rotationKeyCount), sizeof(size_t));
 			channel.RotationTimestamps.resize(rotationKeyCount);
 			channel.Rotations.resize(rotationKeyCount);
 			for (size_t j = 0; j < rotationKeyCount; ++j)
 			{
-				file.read(reinterpret_cast<char*>(&channel.RotationTimestamps[j]), sizeof(float));
-				file.read(reinterpret_cast<char*>(&channel.Rotations[j]), sizeof(Quaternion));
+				fileStream.read(reinterpret_cast<char*>(&channel.RotationTimestamps[j]), sizeof(float));
+				fileStream.read(reinterpret_cast<char*>(&channel.Rotations[j]), sizeof(Quaternion));
 			}
 			size_t scaleKeyCount = 0;
-			file.read(reinterpret_cast<char*>(&scaleKeyCount), sizeof(size_t));
+			fileStream.read(reinterpret_cast<char*>(&scaleKeyCount), sizeof(size_t));
 			channel.ScaleTimestamps.resize(scaleKeyCount);
 			channel.Scales.resize(scaleKeyCount);
 			for (size_t j = 0; j < scaleKeyCount; ++j)
 			{
-				file.read(reinterpret_cast<char*>(&channel.ScaleTimestamps[j]), sizeof(float));
-				file.read(reinterpret_cast<char*>(&channel.Scales[j]), sizeof(Vector3));
+				fileStream.read(reinterpret_cast<char*>(&channel.ScaleTimestamps[j]), sizeof(float));
+				fileStream.read(reinterpret_cast<char*>(&channel.Scales[j]), sizeof(Vector3));
 			}
 		}
 	}
 
-	void AnimationClip::PopulateTransforms(float animationTime, std::vector<Matrix4x4>& out) const
+	void Animation::PopulateTransforms(float animationTime, std::vector<Matrix4x4>& out) const
 	{
-		std::vector<std::string> boneNames;
+		std::vector<int> boneMap;
 		std::vector<Matrix4x4> boneOffsets;
 
-		boneNames.reserve(m_bones.size());
-		boneOffsets.reserve(m_bones.size());
+		boneMap.reserve(m_clip->GetBoneCount());
+		boneOffsets.reserve(m_clip->GetBoneCount());
 
-		for (const Bone& bone : m_bones)
+		int index = 0;
+		for (const Bone& bone : m_clip->GetBones())
 		{
-			boneNames.push_back(bone.Name);
+			boneMap.push_back(index++);
 			boneOffsets.push_back(Matrix4x4::Identity);
 		}
 
-		PopulateTransforms(animationTime, boneNames, boneOffsets, out);
+		PopulateTransforms(animationTime, boneMap, boneOffsets, out);
 	}
 
-	void AnimationClip::PopulateTransforms(float animationTime, const std::vector<std::string>& boneNames, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const
+	void Animation::PopulateTransforms(float animationTime, const std::vector<int>& boneMap, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const
 	{
-		float animationTicks = animationTime * m_animation.TicksPerSecond;
-		std::vector<Matrix4x4> in(m_bones.size());
+		UINT boneCount = static_cast<UINT>(m_clip->GetBoneCount());
 
-		for (UINT i = 0; i < m_bones.size(); ++i)
+		float animationTicks = animationTime * m_ticksPerSecond;
+		std::vector<Matrix4x4> in(boneCount);
+
+		for (UINT i = 0; i < boneCount; ++i)
 		{
-			const Bone& bone = m_bones[i];
-			const Animation::Channel& channel = m_animation.Channels[i];
+			const Bone& bone = m_clip->GetBones().at(i);
+			const Animation::Channel& channel = m_channels[i];
 
 			XMMATRIX tParent = XMMatrixIdentity();
-			if (m_boneParents[i] != -1)
+			if (m_clip->GetBoneParents().at(i) != -1)
 			{
-				tParent = XMLoadFloat4x4(&in[m_boneParents[i]]);
+				tParent = XMLoadFloat4x4(&in[m_clip->GetBoneParents().at(i)]);
 			}
 
 			XMMATRIX tLocal;
@@ -167,33 +227,13 @@ namespace udsdx
 			XMStoreFloat4x4(&in[i], tLocal * tParent);
 		}
 
-		out.resize(boneNames.size());
+		out.resize(boneMap.size());
 		for (UINT i = 0; i < out.size(); ++i)
 		{
-			int boneID = GetBoneIndex(boneNames[i]);
+			int boneID = boneMap[i];
 			XMMATRIX boneTransform = boneID >= 0 ? XMLoadFloat4x4(&in[boneID]) : XMMatrixIdentity();
 			XMMATRIX boneOffset = XMLoadFloat4x4(&boneOffsets[i]);
 			XMStoreFloat4x4(&out[i], XMMatrixTranspose(boneOffset * boneTransform));
 		}
-	}
-
-	int AnimationClip::GetBoneIndex(std::string_view boneName) const
-	{
-		auto it = m_boneIndexMap.find(boneName.data());
-		if (it == m_boneIndexMap.end())
-		{
-			return -1;
-		}
-		return it->second;
-	}
-
-	UINT AnimationClip::GetBoneCount() const
-	{
-		return static_cast<UINT>(m_bones.size());
-	}
-
-	float AnimationClip::GetAnimationDuration() const
-	{
-		return m_animation.Duration / m_animation.TicksPerSecond;
 	}
 }

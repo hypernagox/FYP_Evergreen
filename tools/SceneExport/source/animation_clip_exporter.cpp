@@ -33,7 +33,7 @@ void AnimationClipExporter::Export(const aiScene& scene, const std::filesystem::
 	std::vector<Bone> m_bones;
 	std::unordered_map<std::string, int> m_boneIndexMap;
 	std::vector<int> m_boneParents;
-	Animation m_animation;
+	std::vector<Animation> m_animations;
 
 	// Depth-first traversal of the scene graph to collect the bones
 	std::vector<std::pair<aiNode*, int>> nodeStack;
@@ -66,48 +66,52 @@ void AnimationClipExporter::Export(const aiScene& scene, const std::filesystem::
 	unsigned int numNodes = static_cast<unsigned int>(m_bones.size());
 
 	// The engine only supports one animation for now
-	auto animationSrc = model->mAnimations[0];
-
-	m_animation.Name = animationSrc->mName.C_Str();
-	m_animation.TicksPerSecond = static_cast<float>(animationSrc->mTicksPerSecond != 0 ? animationSrc->mTicksPerSecond : 1);
-	m_animation.Duration = static_cast<float>(animationSrc->mDuration);
-	m_animation.Channels.resize(numNodes);
-
-	for (unsigned int i = 0; i < animationSrc->mNumChannels; ++i)
+	for (unsigned int i = 0; i < model->mNumAnimations; ++i)
 	{
-		auto channelSrc = animationSrc->mChannels[i];
-		Animation::Channel channel;
+		auto animationSrc = model->mAnimations[i];
+		Animation& m_animation = m_animations.emplace_back();
 
-		channel.Name = channelSrc->mNodeName.C_Str();
+		m_animation.Name = animationSrc->mName.C_Str();
+		m_animation.TicksPerSecond = static_cast<float>(animationSrc->mTicksPerSecond != 0 ? animationSrc->mTicksPerSecond : 1);
+		m_animation.Duration = static_cast<float>(animationSrc->mDuration);
+		m_animation.Channels.resize(numNodes);
 
-		for (unsigned int j = 0; j < channelSrc->mNumPositionKeys; ++j)
+		for (unsigned int i = 0; i < animationSrc->mNumChannels; ++i)
 		{
-			auto key = channelSrc->mPositionKeys[j];
-			channel.PositionTimestamps.push_back(static_cast<float>(key.mTime));
-			channel.Positions.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z);
-		}
+			auto channelSrc = animationSrc->mChannels[i];
+			Animation::Channel channel;
 
-		for (unsigned int j = 0; j < channelSrc->mNumRotationKeys; ++j)
-		{
-			auto key = channelSrc->mRotationKeys[j];
-			channel.RotationTimestamps.push_back(static_cast<float>(key.mTime));
-			channel.Rotations.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w);
-		}
+			channel.Name = channelSrc->mNodeName.C_Str();
 
-		for (unsigned int j = 0; j < channelSrc->mNumScalingKeys; ++j)
-		{
-			auto key = channelSrc->mScalingKeys[j];
-			channel.ScaleTimestamps.push_back(static_cast<float>(key.mTime));
-			channel.Scales.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z);
-		}
+			for (unsigned int j = 0; j < channelSrc->mNumPositionKeys; ++j)
+			{
+				auto key = channelSrc->mPositionKeys[j];
+				channel.PositionTimestamps.push_back(static_cast<float>(key.mTime));
+				channel.Positions.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z);
+			}
 
-		auto it = m_boneIndexMap.find(channel.Name);
-		if (it == m_boneIndexMap.end())
-		{
-			std::cout << "[WARNING]\tChannel " + channel.Name + " not found in bone list." << std::endl;
-			continue;
+			for (unsigned int j = 0; j < channelSrc->mNumRotationKeys; ++j)
+			{
+				auto key = channelSrc->mRotationKeys[j];
+				channel.RotationTimestamps.push_back(static_cast<float>(key.mTime));
+				channel.Rotations.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w);
+			}
+
+			for (unsigned int j = 0; j < channelSrc->mNumScalingKeys; ++j)
+			{
+				auto key = channelSrc->mScalingKeys[j];
+				channel.ScaleTimestamps.push_back(static_cast<float>(key.mTime));
+				channel.Scales.emplace_back(key.mValue.x, key.mValue.y, key.mValue.z);
+			}
+
+			auto it = m_boneIndexMap.find(channel.Name);
+			if (it == m_boneIndexMap.end())
+			{
+				std::cout << "[WARNING]\tChannel " + channel.Name + " not found in bone list." << std::endl;
+				continue;
+			}
+			m_animation.Channels[it->second] = channel;
 		}
-		m_animation.Channels[it->second] = channel;
 	}
 
 	// Write the number of bones
@@ -127,43 +131,48 @@ void AnimationClipExporter::Export(const aiScene& scene, const std::filesystem::
 		file.write(reinterpret_cast<const char*>(&parent), sizeof(int));
 	}
 
-	// Write the animation data
-	size_t nameLength = m_animation.Name.size();
-	file.write(reinterpret_cast<const char*>(&nameLength), sizeof(size_t));
-	file.write(m_animation.Name.c_str(), m_animation.Name.size());
-	file.write(reinterpret_cast<const char*>(&m_animation.TicksPerSecond), sizeof(float));
-	file.write(reinterpret_cast<const char*>(&m_animation.Duration), sizeof(float));
-
-	size_t channelCount = m_animation.Channels.size();
-	file.write(reinterpret_cast<const char*>(&channelCount), sizeof(size_t));
-	for (const auto& channel : m_animation.Channels)
+	size_t animationCount = m_animations.size();
+	file.write(reinterpret_cast<const char*>(&animationCount), sizeof(size_t));
+	for (const auto& m_animation : m_animations)
 	{
-		size_t channelNameLength = channel.Name.size();
-		file.write(reinterpret_cast<const char*>(&channelNameLength), sizeof(size_t));
-		file.write(channel.Name.c_str(), channel.Name.size());
-		size_t positionKeyCount = channel.PositionTimestamps.size();
-		file.write(reinterpret_cast<const char*>(&positionKeyCount), sizeof(size_t));
-		for (size_t j = 0; j < positionKeyCount; ++j)
+		// Write the animation data
+		size_t nameLength = m_animation.Name.size();
+		file.write(reinterpret_cast<const char*>(&nameLength), sizeof(size_t));
+		file.write(m_animation.Name.c_str(), m_animation.Name.size());
+		file.write(reinterpret_cast<const char*>(&m_animation.TicksPerSecond), sizeof(float));
+		file.write(reinterpret_cast<const char*>(&m_animation.Duration), sizeof(float));
+
+		size_t channelCount = m_animation.Channels.size();
+		file.write(reinterpret_cast<const char*>(&channelCount), sizeof(size_t));
+		for (const auto& channel : m_animation.Channels)
 		{
-			float timestamp = channel.PositionTimestamps[j];
-			file.write(reinterpret_cast<const char*>(&timestamp), sizeof(float));
-			file.write(reinterpret_cast<const char*>(&channel.Positions[j]), sizeof(XMFLOAT3));
-		}
-		size_t rotationKeyCount = channel.RotationTimestamps.size();
-		file.write(reinterpret_cast<const char*>(&rotationKeyCount), sizeof(size_t));
-		for (size_t j = 0; j < rotationKeyCount; ++j)
-		{
-			float timestamp = channel.RotationTimestamps[j];
-			file.write(reinterpret_cast<const char*>(&timestamp), sizeof(float));
-			file.write(reinterpret_cast<const char*>(&channel.Rotations[j]), sizeof(XMFLOAT4));
-		}
-		size_t scaleKeyCount = channel.ScaleTimestamps.size();
-		file.write(reinterpret_cast<const char*>(&scaleKeyCount), sizeof(size_t));
-		for (size_t j = 0; j < scaleKeyCount; ++j)
-		{
-			float timestamp = channel.ScaleTimestamps[j];
-			file.write(reinterpret_cast<const char*>(&timestamp), sizeof(float));
-			file.write(reinterpret_cast<const char*>(&channel.Scales[j]), sizeof(XMFLOAT3));
+			size_t channelNameLength = channel.Name.size();
+			file.write(reinterpret_cast<const char*>(&channelNameLength), sizeof(size_t));
+			file.write(channel.Name.c_str(), channel.Name.size());
+			size_t positionKeyCount = channel.PositionTimestamps.size();
+			file.write(reinterpret_cast<const char*>(&positionKeyCount), sizeof(size_t));
+			for (size_t j = 0; j < positionKeyCount; ++j)
+			{
+				float timestamp = channel.PositionTimestamps[j];
+				file.write(reinterpret_cast<const char*>(&timestamp), sizeof(float));
+				file.write(reinterpret_cast<const char*>(&channel.Positions[j]), sizeof(XMFLOAT3));
+			}
+			size_t rotationKeyCount = channel.RotationTimestamps.size();
+			file.write(reinterpret_cast<const char*>(&rotationKeyCount), sizeof(size_t));
+			for (size_t j = 0; j < rotationKeyCount; ++j)
+			{
+				float timestamp = channel.RotationTimestamps[j];
+				file.write(reinterpret_cast<const char*>(&timestamp), sizeof(float));
+				file.write(reinterpret_cast<const char*>(&channel.Rotations[j]), sizeof(XMFLOAT4));
+			}
+			size_t scaleKeyCount = channel.ScaleTimestamps.size();
+			file.write(reinterpret_cast<const char*>(&scaleKeyCount), sizeof(size_t));
+			for (size_t j = 0; j < scaleKeyCount; ++j)
+			{
+				float timestamp = channel.ScaleTimestamps[j];
+				file.write(reinterpret_cast<const char*>(&timestamp), sizeof(float));
+				file.write(reinterpret_cast<const char*>(&channel.Scales[j]), sizeof(XMFLOAT3));
+			}
 		}
 	}
 }

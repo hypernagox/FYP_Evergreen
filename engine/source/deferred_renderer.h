@@ -41,9 +41,9 @@ namespace udsdx
 		static constexpr UINT NUM_GBUFFERS = 3;
 
 		static constexpr DXGI_FORMAT GBUFFER_FORMATS[NUM_GBUFFERS] = {
-			DXGI_FORMAT_R8G8B8A8_UNORM,
-			DXGI_FORMAT_R16G16_SNORM,
-			DXGI_FORMAT_R16G16_SNORM,
+			DXGI_FORMAT_R8G8B8A8_UNORM, // RGB: Albedo color
+			DXGI_FORMAT_R16G16_SNORM,   // RG: Packed View normal vector
+			DXGI_FORMAT_R8G8B8A8_SNORM, // RG: Screenspace motion vector, B: Metallic, A: Roughness
 		};
 
 		static constexpr float GBUFFER_CLEAR_VALUES[NUM_GBUFFERS][4] = {

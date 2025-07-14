@@ -55,7 +55,7 @@ namespace udsdx
 
 		std::vector<Matrix4x4> boneTransforms;
 		PopulateTransforms(boneTransforms);
-		const auto& boneParents = m_animation->GetBoneParents();
+		const auto& boneParents = m_animation->GetAnimationClip()->GetBoneParents();
 
 		std::vector<ImVec2> boneScreenPositions(boneTransforms.size());
 
@@ -209,29 +209,52 @@ namespace udsdx
 	{
 		m_riggedMesh = mesh;
 
+		const auto& submeshes = mesh->GetSubmeshes();
 		size_t numSubmeshes = mesh->GetSubmeshes().size();
-		for (auto& buffer : m_constantBuffers)
+
+		if (m_animation != nullptr)
 		{
-			buffer.resize(numSubmeshes);
-			for (auto& subBuffer : buffer)
+			m_boneMapCache.resize(numSubmeshes);
+			for (size_t submeshIndex = 0; submeshIndex < numSubmeshes; ++submeshIndex)
 			{
-				subBuffer = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
+				m_animation->GetAnimationClip()->PopulateBoneMap(submeshes[submeshIndex].BoneNodeIDs, m_boneMapCache[submeshIndex]);
 			}
 		}
-		for (auto& buffer : m_prevConstantBuffers)
+		if (m_prevAnimation != nullptr)
 		{
-			buffer.resize(numSubmeshes);
-			for (auto& subBuffer : buffer)
+			m_prevBoneMapCache.resize(numSubmeshes);
+			for (size_t submeshIndex = 0; submeshIndex < numSubmeshes; ++submeshIndex)
 			{
-				subBuffer = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
+				m_prevAnimation->GetAnimationClip()->PopulateBoneMap(submeshes[submeshIndex].BoneNodeIDs, m_prevBoneMapCache[submeshIndex]);
+			}
+		}
+
+		for (size_t index = 0; index < FrameResourceCount; ++index)
+		{
+			m_constantBuffers[index].resize(numSubmeshes);
+			m_prevConstantBuffers[index].resize(numSubmeshes);
+			for (size_t subIndex = 0; subIndex < numSubmeshes; ++subIndex)
+			{
+				m_constantBuffers[index][subIndex] = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
+				m_prevConstantBuffers[index][subIndex] = std::make_unique<UploadBuffer<BoneConstants>>(INSTANCE(Core)->GetDevice(), 1, true);
 			}
 		}
 		m_boneConstantsCache.resize(numSubmeshes);
 	}
 
-	void RiggedMeshRenderer::SetAnimation(AnimationClip* animationClip, bool loop, bool forcePlay)
+	void RiggedMeshRenderer::SetAnimation(const AnimationClip* animationClip, bool loop, bool forcePlay)
 	{
-		if (!forcePlay && m_animation == animationClip)
+		SetAnimation(&animationClip->GetAnimation(), loop, forcePlay);
+	}
+
+	void RiggedMeshRenderer::SetAnimation(const AnimationClip* animationClip, std::string_view animationName, bool loop, bool forcePlay)
+	{
+		SetAnimation(&animationClip->GetAnimation(animationName), loop, forcePlay);
+	}
+
+	void RiggedMeshRenderer::SetAnimation(const Animation* animation, bool loop, bool forcePlay)
+	{
+		if (!forcePlay && m_animation == animation)
 		{
 			return;
 		}
@@ -243,21 +266,35 @@ namespace udsdx
 			m_prevAnimationTime = m_animationTime;
 			m_animationTime = 0.0f;
 			m_transitionFactor = 0.0f;
+			m_prevBoneMapCache = m_boneMapCache;
 		}
 		// If the animation is blending, but the new animation is previous one
-		else if (animationClip == m_prevAnimation)
+		else if (animation == m_prevAnimation)
 		{
 			m_prevAnimation = m_animation;
 			m_transitionFactor = 1.0f - m_transitionFactor;
 			std::swap(m_animationTime, m_prevAnimationTime);
+			std::swap(m_boneMapCache, m_prevBoneMapCache);
 		}
 		// If the animation is blending, but the new animation is different from previous one
 		else
 		{
 			m_animationTime = 0.0f;
 		}
-		m_animation = animationClip;
+		m_animation = animation;
 		m_loop = loop;
+
+		const auto& submeshes = m_riggedMesh->GetSubmeshes();
+		m_boneMapCache.resize(submeshes.size());
+		for (size_t submeshIndex = 0; submeshIndex < submeshes.size(); ++submeshIndex)
+		{
+			animation->GetAnimationClip()->PopulateBoneMap(submeshes[submeshIndex].BoneNodeIDs, m_boneMapCache[submeshIndex]);
+		}
+	}
+
+	bool RiggedMeshRenderer::IsAnimationPlaying() const
+	{
+		return m_animation != nullptr && (m_loop || m_animationTime < m_animation->GetAnimationDuration());
 	}
 
 	static constexpr float SmoothStep(float t)
@@ -291,6 +328,7 @@ namespace udsdx
 	Matrix4x4 RiggedMeshRenderer::PopulateTransform(std::string_view boneName)
 	{
 		std::vector<std::string> names;
+		std::vector<int> boneIndices;
 		std::vector<Matrix4x4> offsets;
 		std::vector<Matrix4x4> out;
 
@@ -303,13 +341,14 @@ namespace udsdx
 		}
 		else
 		{
+			m_animation->GetAnimationClip()->PopulateBoneMap(names, boneIndices);
 			float animationTime = m_loop ? fmodf(m_animationTime, m_animation->GetAnimationDuration()) : m_animationTime;
-			m_animation->PopulateTransforms(animationTime, names, offsets, out);
+			m_animation->PopulateTransforms(animationTime, boneIndices, offsets, out);
 		}
 		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
 		{
 			std::vector<Matrix4x4> prevTransforms;
-			m_prevAnimation->PopulateTransforms(m_prevAnimationTime, names, offsets, prevTransforms);
+			m_prevAnimation->PopulateTransforms(m_prevAnimationTime, boneIndices, offsets, prevTransforms);
 			float t = SmoothStep(std::clamp(m_transitionFactor, 0.0f, 1.0f));
 			out[0] = Matrix4x4::Lerp(prevTransforms[0], out[0], t);
 		}
@@ -318,6 +357,8 @@ namespace udsdx
 
 	void RiggedMeshRenderer::PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out)
 	{
+		const auto& submesh = m_riggedMesh->GetSubmeshes()[submeshIndex];
+
 		if (m_animation == nullptr)
 		{
 			m_riggedMesh->PopulateTransforms(submeshIndex, out);
@@ -325,12 +366,12 @@ namespace udsdx
 		else
 		{
 			float animationTime = m_loop ? fmodf(m_animationTime, m_animation->GetAnimationDuration()) : m_animationTime;
-			m_riggedMesh->PopulateTransforms(submeshIndex, *m_animation, animationTime, out);
+			m_animation->PopulateTransforms(animationTime, m_boneMapCache[submeshIndex], submesh.BoneOffsets, out);
 		}
 		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
 		{
 			std::vector<Matrix4x4> prevTransforms;
-			m_riggedMesh->PopulateTransforms(submeshIndex, *m_prevAnimation, m_prevAnimationTime, prevTransforms);
+			m_prevAnimation->PopulateTransforms(m_prevAnimationTime, m_prevBoneMapCache[submeshIndex], submesh.BoneOffsets, prevTransforms);
 			float t = SmoothStep(std::clamp(m_transitionFactor, 0.0f, 1.0f));
 			for (size_t i = 0; i < out.size(); ++i)
 			{

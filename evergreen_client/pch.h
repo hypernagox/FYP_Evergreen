@@ -25,3 +25,4 @@
 #include "resource.h"
 #include "define.h"
 #include "func.h"
+#include "CustomStateTransition.hpp"

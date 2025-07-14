@@ -61,7 +61,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 					instance->GetTransform()->SetLocalScale(Vector3::One * 0.5f);
 					auto instanceRenderer = instance->AddComponent<MeshRenderer>();
 					instanceRenderer->SetMesh(res->Load<Mesh>(L"resource\\cube.yms"));
-					instanceRenderer->SetMaterial(udsdx::Material(res->Load<udsdx::Shader>(L"resource\\color.hlsl"), res->Load<udsdx::Texture>(L"resource\\UV_checker_Map_byValle.jpg")));
+					instanceRenderer->SetMaterial(udsdx::Material(res->Load<udsdx::Shader>(L"resource\\color.hlsl"), res->Load<udsdx::Texture>(L"resource\\UV_checker_Map_byValle.png")));
 					g_object[i]->AddChild(instance);
 				}
             }
@@ -107,6 +107,57 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\biped_attack1.yac"), true);
 
      g_scene->AddObject(m_characterObject);
+
+     {
+         auto dragonObject = std::make_shared<SceneObject>();
+         auto dragonRenderer = dragonObject->AddComponent<RiggedMeshRenderer>();
+         dragonRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\dragon\\model.yrms"));
+         {
+             udsdx::Material mat = udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\colorPBR.hlsl"));
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonBody_albedoOpacity.png"), 0);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonBody_normal.png"), 1);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonBody_metallicRoughness.png"), 2);
+             dragonRenderer->SetMaterial(mat, 5);
+         }
+         {
+             udsdx::Material mat = udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\colorPBR.hlsl"));
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonCarapace_albedoOpacity.png"), 0);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonCarapace_normal.png"), 1);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonCarapace_metallicRoughness.png"), 2);
+             dragonRenderer->SetMaterial(mat, 4);
+         }
+         {
+             udsdx::Material mat = udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\colorPBR.hlsl"));
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonFins_albedoOpacity.png"), 0);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonFins_normal.png"), 1);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonFins_metallicRoughness.png"), 2);
+             dragonRenderer->SetMaterial(mat, 3);
+         }
+         {
+             udsdx::Material mat = udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\colorPBR.hlsl"));
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonHeadB_albedoOpacity.png"), 0);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonHeadB_normal.png"), 1);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonHeadB_metallicRoughness.png"), 2);
+             dragonRenderer->SetMaterial(mat, 2);
+         }
+         {
+             udsdx::Material mat = udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\colorPBR.hlsl"));
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonSpikes_albedoOpacity.png"), 0);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonSpikes_normal.png"), 1);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonSpikes_metallicRoughness.png"), 2);
+             dragonRenderer->SetMaterial(mat, 1);
+         }
+         {
+             udsdx::Material mat = udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\colorPBR.hlsl"));
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonTailB_albedoOpacity.png"), 0);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonTailB_normal.png"), 1);
+             mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonTailB_metallicRoughness.png"), 2);
+             dragonRenderer->SetMaterial(mat, 0);
+         }
+         dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_animations.yac"), "Idle Break", true, false);
+
+         g_scene->AddObject(dragonObject);
+     }
 
     return UpdownStudio::Run(g_scene, nCmdShow);
 }

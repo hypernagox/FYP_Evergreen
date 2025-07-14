@@ -162,8 +162,8 @@ PixelOut PS(GeometryOut pin)
      
     pOut.Buffer1 = texColor;
     pOut.Buffer2 = PackNormal(float3(0.0f, 0.0f, -1.0f));
-    pOut.Buffer3 = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
-	pOut.Buffer3 /= max(length(pOut.Buffer3), 1.0f);
+    pOut.Buffer3.rg = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
+	pOut.Buffer3.rg /= max(length(pOut.Buffer3.rg), 1.0f);
     return pOut;
 }
 

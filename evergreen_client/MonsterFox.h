@@ -8,8 +8,6 @@ using namespace udsdx;
 class MonsterFox : public Monster
 {
 protected:
-	udsdx::RiggedMeshRenderer* m_riggedMeshRenderer;
-
 	MonsterHPPanel* m_hpPanel;
 
 public:
