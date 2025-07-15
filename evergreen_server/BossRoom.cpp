@@ -4,6 +4,9 @@
 #include "BossBehaviorNode.h"
 #include "Navigator.h"
 #include "PathFinder_Common.h"
+#include "HP.h"
+#include "Collider_Common.h"
+#include "Death.h"
 
 using namespace NagiocpX;
 
@@ -35,7 +38,16 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 		boss_entity->GetComp<NaviAgent>()->Init(pos, NAVI_MESH_TYPE::BOSS_ROOM);
 		boss_entity->AddComp<PathFinder>()->SetAgent(agent->GetAgentConcreate());
 	}
-	
+	// 충돌체 및 HP 설정
+	{
+		const auto boss_hp = boss_entity->AddComp<HP>();
+		boss_hp->InitHP(500);
+		const auto boss_col = boss_entity->AddComp<OBBCollider>();
+		boss_col->SetOBB(boss_entity->GetComp<PositionComponent>(), Vector3{ 3,3,6 });
+		boss_col->m_collider.m_extent = Vector3{ 3,3,6 };
+		boss_col->m_collider.m_offSet = Vector3{ 0,1.25f,0 };
+		const auto boss_death = boss_entity->AddComp<MonsterDeath>();
+	}
 	const auto bt_timer = boss_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>());
 
 	const auto& bt_root = bt_timer->GetRootNode();
@@ -47,8 +59,9 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 		
 		const auto melee_node = bt_root->AddChild<SequenceNode>();
 		const auto choice_atk = melee_node->AddChild<SelectPattern>();
-		choice_atk->m_count = 10;
-		choice_atk->m_probability = .1f;
+		choice_atk->m_count = 2;
+		choice_atk->m_probability = .5f;
+		choice_atk->m_origin_prob = .5f;
 		const auto melee_atk_node = melee_node->AddChild<SequenceNode>();
 		melee_atk_node->AddChild<SelectTarget>();
 		melee_atk_node->AddChild<MoveToTarget>();
@@ -60,7 +73,8 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 
 		const auto fire_node = bt_root->AddChild<SequenceNode>();
 		const auto choice_atk = fire_node->AddChild<SelectPattern>();
-		choice_atk->m_probability = .1f;
+		choice_atk->m_probability = .6f;
+		choice_atk->m_origin_prob = .6f;
 		const auto fire_ball_node = fire_node->AddChild<SequenceNode>();
 		fire_node->AddChild<SelectJumpPoint>();
 		fire_node->AddChild<ShootFireBall>();
@@ -71,6 +85,9 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 	{
 
 		const auto meteor_node = bt_root->AddChild<SequenceNode>();
+		//const auto choice_atk = meteor_node->AddChild<SelectPattern>();
+		//choice_atk->m_probability = .6f;
+		//choice_atk->m_origin_prob = .6f;
 		meteor_node->AddChild<SetMeteorPos>();
 		meteor_node->AddChild<FireMeteor>();
 		meteor_node->AddChild<ResetPos>();

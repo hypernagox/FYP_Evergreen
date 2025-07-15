@@ -74,7 +74,10 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 		auto monsterComponent = instance->AddComponent<MonsterBoss>();
 		auto serverComponent = instance->AddComponent<ServerObject>();
 		serverComponent->SetObjID(builder->obj_id);
-
+		const auto col = instance->AddComponent<GizmoBoxRenderer>();
+		col->SetSize(Vector3{ 3,3,6 });
+		col->SetOffset(Vector3{ 0,1.25f,0 });
+		
 		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 		moveInterpolator->InitInterpolator(b->obj_pos);
 		GET_BOSS = instance;

@@ -718,7 +718,8 @@ const bool Handle_s2c_BOSS_FLY(const NetHelper::S_ptr<NetHelper::PacketSession>&
 	const auto target_pos = ToOriginVec3(pkt_.target_pos());
 	// TODO: 이렇게 옮기는게 아니라 뭔가 애니메이션 후 옮기기
 	// 서버도 이거 시간 맞춰서 타이머 돌려서 클라에서 이동 다 되었다고 판단 될때까지 다른 패킷은 보류 할 것
-	boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateForcedMoveData(target_pos);
+	//boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateForcedMoveData(target_pos);
+	boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateNewMoveDataOnlyPos(target_pos);
 	return true;
 }
 

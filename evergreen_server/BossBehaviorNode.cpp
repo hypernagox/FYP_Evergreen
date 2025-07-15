@@ -31,15 +31,18 @@ NodeStatus SelectPattern::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	const float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 	if (r < m_probability)
 	{
-		if (max_count == m_count++)
+		//if (max_count == m_count++)
 		{
-			m_count = 0;
-			return NodeStatus::FAILURE;
+			//m_count = 0;
+			m_probability = m_origin_prob;
+			//return NodeStatus::FAILURE;
 		}
+		m_probability = std::max(0.f, m_probability - 0.5f);
 		return NodeStatus::SUCCESS;
 	}
 	else
 	{
+		m_probability = m_origin_prob;
 		return NodeStatus::FAILURE;
 	}
 }
@@ -59,7 +62,7 @@ NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 	// 유저에게 이동
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	const auto DT = bt_root_timer->GetFloatDT();
-	constexpr const float BOSS_SPEED = 20.f;
+	constexpr const float BOSS_SPEED = 10.f;
 	constexpr const float MELLE_ATK_DIST = 2.f;
 
 	const auto target_pos_comp = cur_target->GetComp<PositionComponent>();

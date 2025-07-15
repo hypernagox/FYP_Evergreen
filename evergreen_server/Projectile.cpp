@@ -24,19 +24,19 @@ NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 	const DirectX::BoundingSphere s{ pos,RADIUS };
 	const auto& owner = m_owner;
 
-	//for (const auto& [obj,col] : m_obj_list)
-	//{
-	//	if (obj->GetPrimaryGroupType() == Nagox::Enum::GROUP_TYPE_HARVEST)continue;
-	//	if (col->GetCollider()->IsIntersect(s))
-	//	{
-	//		obj->GetComp<HP>()->PostDoDmg(2, owner);
-	//		isHit = true;
-	//	}
-	//}
+	for (const auto& [obj,col] : m_obj_list)
+	{
+		if (obj->GetPrimaryGroupType() == Nagox::Enum::GROUP_TYPE_HARVEST)continue;
+		if (col->GetCollider()->IsIntersect(s))
+		{
+			obj->GetComp<HP>()->PostDoDmg(2, owner);
+			isHit = true;
+		}
+	}
 
 	const auto delta = m_speed * dt;
 	m_accDist += delta.LengthSquared();
-	//if (isHit)return NagiocpX::ROUTINE_RESULT::STOP;
+	if (isHit)return NagiocpX::ROUTINE_RESULT::STOP;
 	if (MAX_DIST <= m_accDist)return NagiocpX::ROUTINE_RESULT::STOP;
 	m_pos = m_pos + m_speed * dt;
 	return NagiocpX::ROUTINE_RESULT::STILL_RUNNIG;

@@ -11,6 +11,7 @@ public:
 	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept{}
 public:
 	float m_probability = .5f;
+	float m_origin_prob = .5f;
 	int m_count = 0;
 	int max_count = 3;
 };
