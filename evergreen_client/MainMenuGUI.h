@@ -14,7 +14,9 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_panel;
 	std::shared_ptr<udsdx::SceneObject> m_verticalPanel;
 	std::shared_ptr<udsdx::SceneObject> m_titleImage;
+	std::shared_ptr<udsdx::SceneObject> m_versionText;
 	std::shared_ptr<udsdx::SceneObject> m_playButton;
+	std::shared_ptr<udsdx::SceneObject> m_optionsButton;
 	std::shared_ptr<udsdx::SceneObject> m_exitButton;
 
 	udsdx::GUIImage* m_backgroundImage = nullptr;

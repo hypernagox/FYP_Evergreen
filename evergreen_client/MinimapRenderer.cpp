@@ -344,5 +344,5 @@ void MinimapRenderer::SetMinimapEnvironment(const EnvironmentParameters& environ
 	m_worldMatrix = (
 		Matrix4x4::CreateScale(environmentParams.TerrainSize) *
 		Matrix4x4::CreateTranslation(environmentParams.TerrainOffset, 0.0f, environmentParams.TerrainOffset)).Transpose();
-	m_projectionMatrix = Matrix4x4::CreateOrthographic(256.0f, 256.0f, -1000.0f, 1000.0f).Transpose();
+	XMStoreFloat4x4(&m_projectionMatrix, XMMatrixTranspose(XMMatrixOrthographicLH(256.0f, 256.0f, -1000.0f, 1000.0f)));
 }

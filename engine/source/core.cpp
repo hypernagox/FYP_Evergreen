@@ -1051,8 +1051,13 @@ namespace udsdx
 
 		// Draw the histogram
 		ImGui::Begin("Frame Time Histogram");
+		// Set plot color to white (without outlines)
+		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_PlotHistogramHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.5f));
 		ImGui::PlotHistogram("Frame Times", frameTimes.data(), static_cast<int>(frameTimes.size()), 0, nullptr, 0.0f, smoothMaxFrameTime, ImVec2(0.0f, 100.0f));
 		ImGui::PlotLines("Frame Time Histogram", frameTimeHistogram.data(), static_cast<int>(frameTimeHistogram.size()), 0, nullptr, 0.0f, maxHistogramValue, ImVec2(0.0f, 100.0f));
+		ImGui::PopStyleColor(2);
+
 
 		ImGui::Checkbox("Draw Shadow Map", &m_renderOptions.DrawShadowMap);
 		bool changeSSAO = ImGui::Checkbox("Draw SSAO", &m_renderOptions.DrawSSAO);

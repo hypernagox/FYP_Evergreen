@@ -17,7 +17,7 @@ void TransitionOverlayGUI::OnInitialize()
 	messageText->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 	messageText->SetRaycastTarget(false);
 	messageText->SetAlignment(GUIText::Alignment::LowerRight);
-	m_messageText->GetTransform()->SetLocalPosition(Vector3(940.0f, -520.0f, 0.0f));
+	m_messageText->GetTransform()->SetLocalPosition(Vector3(1260.0f, -700.0f, 0.0f));
 
 	m_panel->AddChild(m_messageText);
 }

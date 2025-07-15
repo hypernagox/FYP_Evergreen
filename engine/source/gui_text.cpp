@@ -7,7 +7,7 @@ namespace udsdx
 {
 	void GUIText::Render(RenderParam& param)
 	{
-		const float height = 1080.0f;
+		const float height = RefScreenSize.y;
 		const float width = height * param.AspectRatio;
 		float ratio = param.Viewport.Height / height;
 		Vector3 position = GetTransform()->GetWorldPosition() * Vector3(ratio, -ratio, 1.0f) + Vector3(param.Viewport.Width / 2.0f, param.Viewport.Height / 2.0f, 0.0f);

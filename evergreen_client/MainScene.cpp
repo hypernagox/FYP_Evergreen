@@ -23,6 +23,29 @@ INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
     switch (message)
     {
     case WM_INITDIALOG:
+        {
+            HWND hParent = GetParent(hDlg);
+            if (!hParent)
+                hParent = GetDesktopWindow();
+
+            RECT parentRect;
+            GetWindowRect(hParent, &parentRect);
+
+            RECT dlgRect;
+            GetWindowRect(hDlg, &dlgRect);
+
+            int dlgWidth = dlgRect.right - dlgRect.left;
+            int dlgHeight = dlgRect.bottom - dlgRect.top;
+
+            int parentWidth = parentRect.right - parentRect.left;
+            int parentHeight = parentRect.bottom - parentRect.top;
+
+            int newX = parentRect.left + (parentWidth - dlgWidth) / 2;
+            int newY = parentRect.top + (parentHeight - dlgHeight) / 2;
+
+            SetWindowPos(hDlg, HWND_TOP, newX, newY, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+        }
+
         pIdPassword = reinterpret_cast<std::string*>(lParam);
         return TRUE;
 

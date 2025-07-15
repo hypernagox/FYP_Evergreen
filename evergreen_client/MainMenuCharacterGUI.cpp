@@ -14,8 +14,18 @@ void MainMenuCharacterGUI::OnInitialize()
 	}
 
 	{
+		auto backgroundObj = std::make_shared<SceneObject>();
+		auto backgroundRenderer = backgroundObj->AddComponent<GUIImage>();
+		backgroundRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
+		backgroundRenderer->SetColor(Color(0.0f, 0.0f, 0.0f, 0.8f));
+		backgroundRenderer->SetSize(Vector2(8192.0f, 120.0f));
+		backgroundObj->GetTransform()->SetLocalPosition(Vector3(0.0f, -660.0f, 0.0f));
+		m_panel->AddChild(backgroundObj);
+	}
+
+	{
 		m_nextButton = std::make_shared<SceneObject>();
-		m_nextButton->GetTransform()->SetLocalPosition(Vector3(200.0f, -480.0f, 0.0f));
+		m_nextButton->GetTransform()->SetLocalPosition(Vector3(200.0f, -660.0f, 0.0f));
 
 		auto buttonComponent = m_nextButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_arrow_R.png")));
@@ -28,7 +38,7 @@ void MainMenuCharacterGUI::OnInitialize()
 
 	{
 		m_prevButton = std::make_shared<SceneObject>();
-		m_prevButton->GetTransform()->SetLocalPosition(Vector3(-200.0f, -480.0f, 0.0f));
+		m_prevButton->GetTransform()->SetLocalPosition(Vector3(-200.0f, -660.0f, 0.0f));
 
 		auto buttonComponent = m_prevButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_arrow_L.png")));
@@ -41,7 +51,7 @@ void MainMenuCharacterGUI::OnInitialize()
 
 	{
 		m_selectButton = std::make_shared<SceneObject>();
-		m_selectButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -480.0f, 0.0f));
+		m_selectButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -660.0f, 0.0f));
 
 		auto buttonComponent = m_selectButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));

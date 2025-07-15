@@ -13,8 +13,17 @@ struct GeometryIn
 struct GeometryOut
 {
 	float4 PosH         : SV_POSITION;
+	float2 ScreenTex    : TEXCOORD0;
 	float4 PosW         : POSITION0;
-	float2 Tex          : TEXCOORD;
+	float2 Tex          : TEXCOORD1;
+};
+
+static const float4x4 gTex =
+{
+        0.5f, 0.0f, 0.0f, 0.0f,
+	    0.0f, -0.5f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 1.0f, 0.0f,
+	    0.5f, 0.5f, 0.0f, 1.0f
 };
 
 [maxvertexcount(6)]
@@ -53,6 +62,7 @@ void GS(point GeometryIn input[1], inout TriangleStream<GeometryOut> triStream)
         output.PosW = float4(worldPos, 1.0);
         output.PosH = mul(viewPos, gProj);
         output.Tex = uvs[idx];
+	    output.ScreenTex = mul(output.PosH, gTex).xy / output.PosH.w;
         triStream.Append(output);
     }
 }

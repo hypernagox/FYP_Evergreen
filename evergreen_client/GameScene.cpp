@@ -210,7 +210,7 @@ void GameScene::OnAttach()
         textRenderer->SetText(GET_DATA(std::wstring, "Script", "Intro", "Start"));
         textRenderer->SetFont(resource->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
         textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
-        m_playerInterfaceGroup->AddChild(textObj);
+        // m_playerInterfaceGroup->AddChild(textObj);
 
         auto damageCountObj = std::make_shared<SceneObject>();
         auto damageCountRenderer = damageCountObj->AddComponent<DamageCountGUI>();
@@ -236,14 +236,15 @@ void GameScene::OnAttach()
 
         auto minimapObj = std::make_shared<SceneObject>();
         auto minimapImage = minimapObj->AddComponent<GUIImage>();
-        minimapImage->SetTexture(m_minimapRenderer->GetRenderTargetTexture(), true);
-        minimapObj->GetTransform()->SetLocalPosition(Vector3(-300.0f, -300.0f, 0.0f));
+        minimapImage->SetTexture(m_minimapRenderer->GetRenderTargetTexture());
+        minimapImage->SetSize(Vector2(360.0f, 360.0f));
+        minimapObj->GetTransform()->SetLocalPosition(Vector3(-1060.0f, -480.0f, 0.0f));
 
         {
             auto minimapBackground = std::make_shared<SceneObject>();
             auto minimapBackgroundRenderer = minimapBackground->AddComponent<GUIImage>();
             minimapBackgroundRenderer->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_outline_gradation.png")));
-            minimapBackgroundRenderer->SetSize(Vector2(360.0f, 360.0f));
+            minimapBackgroundRenderer->SetSize(Vector2(365.0f, 365.0f));
 
             auto minimapMarkerObj = std::make_shared<SceneObject>();
             minimapMarkerObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 16.0f, 0.0f));

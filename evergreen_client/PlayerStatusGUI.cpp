@@ -8,21 +8,21 @@ void PlayerStatusGUI::OnInitialize()
     {
         m_healthBackground = std::make_shared<SceneObject>();
         auto uiRenderer = m_healthBackground->AddComponent<GUIImage>();
-        m_healthBackground->GetTransform()->SetLocalPosition(Vector3(-640.0f, -480.0f, 0.0f));
+        m_healthBackground->GetTransform()->SetLocalPosition(Vector3(-720.0f, -630.0f, 0.0f));
         uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\health_background.png")), true);
     }
 
     {
         m_healthFill = std::make_shared<SceneObject>();
         m_healthFillRenderer = m_healthFill->AddComponent<GUIImage>();
-        m_healthFill->GetTransform()->SetLocalPosition(Vector3(-622.5f, -480.0f, 0.0f));
+        m_healthFill->GetTransform()->SetLocalPosition(Vector3(-702.5f, -630.0f, 0.0f));
         m_healthFillRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\health_fill.png")), true);
         m_healthFillWidthCache = static_cast<float>(m_healthFillRenderer->GetSize().x);
     }
 
     {
         m_textObj = std::make_shared<SceneObject>();
-        m_textObj->GetTransform()->SetLocalPosition(Vector3(-622.5f, -480.0f, 0.0f));
+        m_textObj->GetTransform()->SetLocalPosition(Vector3(-702.5f, -630.0f, 0.0f));
         m_textRenderer = m_textObj->AddComponent<GUIText>();
         m_textRenderer->SetText(L"## / ##");
         m_textRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
@@ -47,7 +47,7 @@ void PlayerStatusGUI::SetCurrentHealth(int value)
     Vector2 size = m_healthFillRenderer->GetSize();
     size.x = m_healthFillWidthCache * factor;
     m_healthFillRenderer->SetSize(size);
-    m_healthFill->GetTransform()->SetLocalPosition(Vector3(-622.5f + (size.x - m_healthFillWidthCache) / 2.0f, -480.0f, 0.0f));
+    m_healthFill->GetTransform()->SetLocalPosition(Vector3(-702.5f + (size.x - m_healthFillWidthCache) / 2.0f, -630.0f, 0.0f));
     m_textRenderer->SetText(std::format(L"{0:02} / {1:02}", m_currentHealth, m_maxHealth));
 }
 

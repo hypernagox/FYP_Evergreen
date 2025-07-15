@@ -8,7 +8,7 @@ using namespace udsdx;
 void RequestPopupGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
-	m_panel->GetTransform()->SetLocalPosition(Vector3(0.0f, -240.0f, 0.0f));
+	m_panel->GetTransform()->SetLocalPosition(Vector3(0.0f, -420.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_0_entry.png")));
 	uiRenderer->SetSize(Vector2(420.0f, 240.0f));

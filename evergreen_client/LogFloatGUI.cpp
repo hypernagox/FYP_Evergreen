@@ -6,9 +6,9 @@ using namespace udsdx;
 void LogFloatGUI::OnInitialize()
 {
 	m_panel = std::make_shared<SceneObject>();
-	m_panel->GetTransform()->SetLocalPosition(Vector3(-640.0f, -240.0f, 0.0f));
+	m_panel->GetTransform()->SetLocalPosition(Vector3(-620.0f, -420.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\alpha_gradient_black.png")));
 	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
 	GetSceneObject()->AddChild(m_panel);
 
@@ -26,8 +26,9 @@ void LogFloatGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 	m_elapsedTime += time.deltaTime;
 	Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
 	color.A(m_alwaysVisible ? 1.0f : std::clamp(5.0f - m_elapsedTime, 0.0f, 1.0f));
-	m_panel->GetComponent<GUIImage>()->SetColor(color);
 	m_floatText->GetComponent<GUIText>()->SetColor(color);
+	color.A(color.A() * 0.5f);
+	m_panel->GetComponent<GUIImage>()->SetColor(color);
 }
 
 void LogFloatGUI::AddText(const std::wstring& text)

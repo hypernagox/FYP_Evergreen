@@ -15,7 +15,7 @@ void DamageCountGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 		m_timer.Update(DT);
 		for (auto& [life, countObj, targetPos, velocity] : m_countObjects)
 		{
-			velocity.y -= 9.8f * time.deltaTime;
+			// velocity.y -= 9.8f * time.deltaTime;
 			targetPos += velocity * time.deltaTime;
 			life -= time.deltaTime;
 
@@ -27,8 +27,19 @@ void DamageCountGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 				Vector3 screenPos = Vector3::Transform(viewPos, camera->GetProjMatrix(aspectRatio));
 				screenPos.x *= GUIElement::RefScreenSize.y * aspectRatio * 0.5f;
 				screenPos.y *= GUIElement::RefScreenSize.y * 0.5f;
-				countObj->GetTransform()->SetLocalPosition(Vector3(screenPos.x, screenPos.y, 0.0f));
-				countObj->GetComponent<GUIText>()->SetColor(Vector4(1.0f, 1.0f, 1.0f, life));
+
+				auto urd = std::uniform_real_distribution(-1.0f, 1.0f);
+				auto uid = std::uniform_int_distribution<int>(0, 3);
+				Vector3 offset = Vector3(urd(randomEngine), urd(randomEngine), 0.0f) * 10.0f * life;
+				Vector3 colors[] = {
+					Vector3(1.0f, 1.0f, 1.0f), // White
+					Vector3(1.0f, 0.0f, 0.0f), // Red
+					Vector3(1.0f, 0.5f, 0.0f), // Orange
+					Vector3(1.0f, 1.0f, 0.0f), // Yellow
+				};
+				Vector3 color = life > 0.5f ? colors[uid(randomEngine)] : colors[0];
+				countObj->GetTransform()->SetLocalPosition(Vector3(screenPos.x, screenPos.y, 0.0f) + offset);
+				countObj->GetComponent<GUIText>()->SetColor(Vector4(color.x, color.y, color.z, std::pow(life, 0.5f)));
 			}
 			else
 				countObj->SetActive(false);
@@ -56,16 +67,17 @@ void DamageCountGUI::AddCountObject(const Vector3& targetPos, unsigned int damag
 		m_timer.RegisterEvent((float)i * DMG_DELTA_STEP, [=]() {
 			std::shared_ptr<SceneObject> countObj = std::make_shared<SceneObject>();
 			auto nameRenderer = countObj->AddComponent<GUIText>();
-			nameRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"impact.spritefont")));
+			nameRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"sansman.spritefont")));
 			nameRenderer->SetRaycastTarget(false);
 			nameRenderer->SetText(std::to_wstring(damageCount / 5));
 			GetSceneObject()->AddChild(countObj);
 
 			auto urd = std::uniform_real_distribution(-1.0f, 1.0f);
-			Vector3 velocity = Vector3(urd(randomEngine), 3.0f, urd(randomEngine));
+			Vector3 velocity = Vector3::Up * 0.5f;
+			Vector3 offset = Vector3(urd(randomEngine), urd(randomEngine) + 1.0f, urd(randomEngine));
 
-			m_countObjects.emplace_back(1.0f, countObj, targetPos, velocity);
-			m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uihover.wav"))->CreateInstance();
+			m_countObjects.emplace_back(1.0f, countObj, targetPos + offset, velocity);
+			m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\hit_light.wav"))->CreateInstance();
 			m_soundInstance->SetVolume(0.5f);
 			m_soundInstance->Play();
 

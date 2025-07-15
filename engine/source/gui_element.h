@@ -10,7 +10,7 @@ namespace udsdx
 	class GUIElement : public Component
 	{
 	public:
-		static constexpr Vector2 RefScreenSize = Vector2(1920, 1080);
+		static constexpr Vector2 RefScreenSize = Vector2(2560, 1440);
 
 	public:
 		void UpdateEvent(bool hover);
