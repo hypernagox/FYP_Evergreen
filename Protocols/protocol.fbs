@@ -145,6 +145,7 @@ table s2c_FIRE_PROJ
    proj_type : uint8;
    pos: Nagox.Struct.Vec3;
    vel: Nagox.Struct.Vec3;
+   radius : float;
 }
 
 table c2s_ACQUIRE_ITEM
@@ -322,6 +323,7 @@ table c2s_CHANGE_EQUIPMENT
 table s2c_NOTIFY_USER_DETAIL_INFO
 {
     obj_id : uint32;
+    user_name : string;
     weapon_id : uint32;
     armor_id : uint32;
 }

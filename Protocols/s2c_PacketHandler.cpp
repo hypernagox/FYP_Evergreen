@@ -315,6 +315,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	// TODO: 이 패킷은 FIRE_NON_TARGET으로 바뀔듯
 	// 0번이 투사체
 	// 1번이 지금 보스 범위공격으로 생각중
+	const auto proj_rad = pkt_.radius();
 	if (pkt_.proj_type() == 0)
 	{
 		const auto shoot_obj_id = pkt_.shoot_obj_id();
@@ -339,7 +340,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
 		auto s = std::make_shared<SceneObject>();
 		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
-		s->GetTransform()->SetLocalScale(2.5f);
+		s->GetTransform()->SetLocalScale(proj_rad);
 	
 		auto gizmoRenderer = s->AddComponent<MeshRenderer>();
 		gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
@@ -659,6 +660,9 @@ const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::
 		if (const auto renderer = obj->GetComponent<PlayerRenderer>())
 		{
 			// TODO: 무기 외의 정보도 동기화 필요함
+			std::string user_name;
+			for (const auto ch : *pkt_.user_name())user_name.push_back(ch);
+
 			renderer->SetPlayerWeapon(DATA_TABLE->GetWeaponIDStr(pkt_.weapon_id()));
 			renderer->SetEquipmentState(armor_id > 0);
 		}

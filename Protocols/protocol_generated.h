@@ -1529,7 +1529,8 @@ struct s2c_FIRE_PROJ FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
     VT_PROJ_ID = 6,
     VT_PROJ_TYPE = 8,
     VT_POS = 10,
-    VT_VEL = 12
+    VT_VEL = 12,
+    VT_RADIUS = 14
   };
   uint64_t shoot_obj_id() const {
     return GetField<uint64_t>(VT_SHOOT_OBJ_ID, 0);
@@ -1561,6 +1562,12 @@ struct s2c_FIRE_PROJ FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   Nagox::Struct::Vec3 *mutable_vel() {
     return GetStruct<Nagox::Struct::Vec3 *>(VT_VEL);
   }
+  float radius() const {
+    return GetField<float>(VT_RADIUS, 0.0f);
+  }
+  bool mutate_radius(float _radius = 0.0f) {
+    return SetField<float>(VT_RADIUS, _radius, 0.0f);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint64_t>(verifier, VT_SHOOT_OBJ_ID, 8) &&
@@ -1568,6 +1575,7 @@ struct s2c_FIRE_PROJ FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
            VerifyField<uint8_t>(verifier, VT_PROJ_TYPE, 1) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_POS, 4) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_VEL, 4) &&
+           VerifyField<float>(verifier, VT_RADIUS, 4) &&
            verifier.EndTable();
   }
 };
@@ -1591,6 +1599,9 @@ struct s2c_FIRE_PROJBuilder {
   void add_vel(const Nagox::Struct::Vec3 *vel) {
     fbb_.AddStruct(s2c_FIRE_PROJ::VT_VEL, vel);
   }
+  void add_radius(float radius) {
+    fbb_.AddElement<float>(s2c_FIRE_PROJ::VT_RADIUS, radius, 0.0f);
+  }
   explicit s2c_FIRE_PROJBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -1608,10 +1619,12 @@ inline ::flatbuffers::Offset<s2c_FIRE_PROJ> Creates2c_FIRE_PROJ(
     uint64_t proj_id = 0,
     uint8_t proj_type = 0,
     const Nagox::Struct::Vec3 *pos = nullptr,
-    const Nagox::Struct::Vec3 *vel = nullptr) {
+    const Nagox::Struct::Vec3 *vel = nullptr,
+    float radius = 0.0f) {
   s2c_FIRE_PROJBuilder builder_(_fbb);
   builder_.add_proj_id(proj_id);
   builder_.add_shoot_obj_id(shoot_obj_id);
+  builder_.add_radius(radius);
   builder_.add_vel(vel);
   builder_.add_pos(pos);
   builder_.add_proj_type(proj_type);
@@ -3193,14 +3206,21 @@ struct s2c_NOTIFY_USER_DETAIL_INFO FLATBUFFERS_FINAL_CLASS : private ::flatbuffe
   typedef s2c_NOTIFY_USER_DETAIL_INFOBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_OBJ_ID = 4,
-    VT_WEAPON_ID = 6,
-    VT_ARMOR_ID = 8
+    VT_USER_NAME = 6,
+    VT_WEAPON_ID = 8,
+    VT_ARMOR_ID = 10
   };
   uint32_t obj_id() const {
     return GetField<uint32_t>(VT_OBJ_ID, 0);
   }
   bool mutate_obj_id(uint32_t _obj_id = 0) {
     return SetField<uint32_t>(VT_OBJ_ID, _obj_id, 0);
+  }
+  const ::flatbuffers::String *user_name() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_USER_NAME);
+  }
+  ::flatbuffers::String *mutable_user_name() {
+    return GetPointer<::flatbuffers::String *>(VT_USER_NAME);
   }
   uint32_t weapon_id() const {
     return GetField<uint32_t>(VT_WEAPON_ID, 0);
@@ -3217,6 +3237,8 @@ struct s2c_NOTIFY_USER_DETAIL_INFO FLATBUFFERS_FINAL_CLASS : private ::flatbuffe
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_OBJ_ID, 4) &&
+           VerifyOffset(verifier, VT_USER_NAME) &&
+           verifier.VerifyString(user_name()) &&
            VerifyField<uint32_t>(verifier, VT_WEAPON_ID, 4) &&
            VerifyField<uint32_t>(verifier, VT_ARMOR_ID, 4) &&
            verifier.EndTable();
@@ -3229,6 +3251,9 @@ struct s2c_NOTIFY_USER_DETAIL_INFOBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_obj_id(uint32_t obj_id) {
     fbb_.AddElement<uint32_t>(s2c_NOTIFY_USER_DETAIL_INFO::VT_OBJ_ID, obj_id, 0);
+  }
+  void add_user_name(::flatbuffers::Offset<::flatbuffers::String> user_name) {
+    fbb_.AddOffset(s2c_NOTIFY_USER_DETAIL_INFO::VT_USER_NAME, user_name);
   }
   void add_weapon_id(uint32_t weapon_id) {
     fbb_.AddElement<uint32_t>(s2c_NOTIFY_USER_DETAIL_INFO::VT_WEAPON_ID, weapon_id, 0);
@@ -3250,13 +3275,30 @@ struct s2c_NOTIFY_USER_DETAIL_INFOBuilder {
 inline ::flatbuffers::Offset<s2c_NOTIFY_USER_DETAIL_INFO> Creates2c_NOTIFY_USER_DETAIL_INFO(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t obj_id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> user_name = 0,
     uint32_t weapon_id = 0,
     uint32_t armor_id = 0) {
   s2c_NOTIFY_USER_DETAIL_INFOBuilder builder_(_fbb);
   builder_.add_armor_id(armor_id);
   builder_.add_weapon_id(weapon_id);
+  builder_.add_user_name(user_name);
   builder_.add_obj_id(obj_id);
   return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_NOTIFY_USER_DETAIL_INFO> Creates2c_NOTIFY_USER_DETAIL_INFODirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t obj_id = 0,
+    const char *user_name = nullptr,
+    uint32_t weapon_id = 0,
+    uint32_t armor_id = 0) {
+  auto user_name__ = user_name ? _fbb.CreateString(user_name) : 0;
+  return Nagox::Protocol::Creates2c_NOTIFY_USER_DETAIL_INFO(
+      _fbb,
+      obj_id,
+      user_name__,
+      weapon_id,
+      armor_id);
 }
 
 struct c2s_CHANGE_CHANNEL FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

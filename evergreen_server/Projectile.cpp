@@ -19,9 +19,8 @@ NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 	m_timer.Update();
 	const auto dt = m_timer.GetDT();
 	const auto pos = m_pos;
-	constexpr const float RADIUS = 1.5f;
 	bool isHit = false;
-	const DirectX::BoundingSphere s{ pos,RADIUS };
+	const DirectX::BoundingSphere s{ pos,m_radius };
 	const auto& owner = m_owner;
 
 	for (const auto& [obj,col] : m_obj_list)
@@ -49,7 +48,7 @@ void PlayerProjectile::StartRoutine() noexcept
 		m_owner->GetObjectID(),
 		m_proj_id,
 		m_proj_type,
-		::ToFlatVec(m_pos), ::ToFlatVec(m_speed)
+		::ToFlatVec(m_pos), ::ToFlatVec(m_speed),m_radius
 	);
 
 	m_owner->GetComp<NagiocpX::MoveBroadcaster>()->BroadcastPacket(pkt);
@@ -70,7 +69,7 @@ void MonProjectile::StartRoutine() noexcept
 		m_owner->GetObjectID(),
 		m_proj_id,
 		m_proj_type,
-		::ToFlatVec(m_pos), ::ToFlatVec(m_speed)
+		::ToFlatVec(m_pos), ::ToFlatVec(m_speed), m_radius
 	);
 	for (const auto& [obj, col] : m_obj_list) {
 		obj->GetSession()->SendAsync(pkt);

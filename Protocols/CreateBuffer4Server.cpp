@@ -284,6 +284,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FIRE_PROJ(
     const uint8_t proj_type,
     const Nagox::Struct::Vec3& pos,
     const Nagox::Struct::Vec3& vel,
+    const float radius,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
@@ -293,13 +294,15 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FIRE_PROJ(
     const auto proj_type_value = proj_type;
     const auto pos_offset = &pos;
     const auto vel_offset = &vel;
+    const auto radius_value = radius;
     const auto serializeds2c_FIRE_PROJ = Nagox::Protocol::Creates2c_FIRE_PROJ(
         builder
 ,        shoot_obj_id_value,
         proj_id_value,
         proj_type_value,
         pos_offset,
-        vel_offset    );
+        vel_offset,
+        radius_value    );
     builder.Finish(serializeds2c_FIRE_PROJ);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_FIRE_PROJ);
@@ -565,6 +568,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHANGE_HARVEST_STATE(
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_USER_DETAIL_INFO(
     const uint32_t obj_id,
+    const std::string_view& user_name,
     const uint32_t weapon_id,
     const uint32_t armor_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr
@@ -572,11 +576,13 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_USER_DETAIL_INFO(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto obj_id_value = obj_id;
+    const auto user_name_offset = builder.CreateString(user_name);
     const auto weapon_id_value = weapon_id;
     const auto armor_id_value = armor_id;
     const auto serializeds2c_NOTIFY_USER_DETAIL_INFO = Nagox::Protocol::Creates2c_NOTIFY_USER_DETAIL_INFO(
         builder
 ,        obj_id_value,
+        user_name_offset,
         weapon_id_value,
         armor_id_value    );
     builder.Finish(serializeds2c_NOTIFY_USER_DETAIL_INFO);

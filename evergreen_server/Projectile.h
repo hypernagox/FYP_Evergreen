@@ -17,6 +17,7 @@ public:
 	S_ptr<ContentsEntity> m_owner;
 	const uint32_t m_proj_id = (uint32_t)IDGenerator::GenerateID();
 	float m_accDist = 0.f;
+	float m_radius = 1.5f;
 	Vector3 m_pos = {};
 	Vector3 m_speed = {};
 	NagiocpX::Timer m_timer;

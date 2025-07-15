@@ -94,6 +94,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_FIRE_PROJ(
     const uint8_t proj_type,
     const Nagox::Struct::Vec3& pos,
     const Nagox::Struct::Vec3& vel,
+    const float radius,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ACQUIRE_ITEM(
@@ -173,6 +174,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHANGE_HARVEST_STATE(
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_USER_DETAIL_INFO(
     const uint32_t obj_id,
+    const std::string_view& user_name,
     const uint32_t weapon_id,
     const uint32_t armor_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
