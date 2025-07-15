@@ -4,12 +4,10 @@ void MonsterFox::OnInitialize()
 {
 	Monster::OnInitialize();
 
-	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"fox\\fox.yrms")));
+	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"fox\\model.yrms")));
 	m_renderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"fox\\fox_high_DefaultMaterial_BaseColor.png"))));
 	m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"fox\\fox_idle.yac")), true);
-
-	m_rendererObj->GetTransform()->SetLocalPosition(Vector3::Up * -0.05f);
-	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One / 48.0f);
+	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "GlobalValues", "CharacterScale", "Value"));
 
 	InitializeMonster("Fox");
 }

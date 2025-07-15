@@ -4,7 +4,7 @@ void MonsterBear::OnInitialize()
 {
 	Monster::OnInitialize();
 
-	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"bear\\bear_tpose.yrms")));
+	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"bear\\model.yrms")));
 	m_renderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"bear\\bear_BaseColor.png"))));
 	m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"bear\\bear_idle.yac")), true);
 
