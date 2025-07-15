@@ -86,3 +86,28 @@ public:
 	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
 public:
 };
+
+class SetMeteorPos
+	:public ActionNode
+{
+public:
+	// TODO: 맵 중앙 위로 날아감
+	NodeStatus Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
+	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
+public:
+	float m_accTime = 1.f;
+	
+};
+
+class FireMeteor
+	:public ActionNode
+{
+public:
+	// TODO: 메테오 N회 발사
+	NodeStatus Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
+	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
+public:
+	int count = 30;
+	float m_accTime = .3f;
+	float m_accTime2 = 2.5f;
+};

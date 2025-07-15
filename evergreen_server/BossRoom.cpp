@@ -48,7 +48,7 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 		const auto melee_node = bt_root->AddChild<SequenceNode>();
 		const auto choice_atk = melee_node->AddChild<SelectPattern>();
 		choice_atk->m_count = 10;
-		choice_atk->m_probability = .5f;
+		choice_atk->m_probability = .1f;
 		const auto melee_atk_node = melee_node->AddChild<SequenceNode>();
 		melee_atk_node->AddChild<SelectTarget>();
 		melee_atk_node->AddChild<MoveToTarget>();
@@ -60,13 +60,20 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 
 		const auto fire_node = bt_root->AddChild<SequenceNode>();
 		const auto choice_atk = fire_node->AddChild<SelectPattern>();
-		choice_atk->m_probability = 7.f;
+		choice_atk->m_probability = .1f;
 		const auto fire_ball_node = fire_node->AddChild<SequenceNode>();
 		fire_node->AddChild<SelectJumpPoint>();
 		fire_node->AddChild<ShootFireBall>();
 		fire_node->AddChild<ResetPos>();
 	}
 
-	
+	// Áß¾Ó ¸ÞÅ×¿À
+	{
+
+		const auto meteor_node = bt_root->AddChild<SequenceNode>();
+		meteor_node->AddChild<SetMeteorPos>();
+		meteor_node->AddChild<FireMeteor>();
+		meteor_node->AddChild<ResetPos>();
+	}
 	return boss_entity;
 }

@@ -282,3 +282,81 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	}
 	return NodeStatus::RUNNING;
 }
+
+NodeStatus SetMeteorPos::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
+{
+	const auto DT = bt_root_timer->GetFloatDT();
+	m_accTime -= DT;
+	if (0.f < m_accTime)
+	{
+		return NodeStatus::RUNNING;
+	}
+	
+	const auto target_pos = g_reset_pos + Vector3{ 0,10,0 };
+	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+	const auto dir = CommonMath::Normalized(target_pos - boss_entity->GetComp<PositionComponent>()->pos);
+
+	boss_entity->GetComp<PositionComponent>()->pos = target_pos;
+	boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
+
+	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+		Create_s2c_BOSS_FLY(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_1)
+	);
+	m_accTime = 1.f;
+	return NodeStatus::SUCCESS;
+}
+
+NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
+{
+	const auto& player_list = bt_root_timer->GetTempVecForInsightObj();
+	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+	if (player_list.empty())return NodeStatus::FAILURE;
+	const auto DT = bt_root_timer->GetFloatDT();
+	
+	m_accTime2 -= DT;
+	if (0.f < m_accTime2)
+	{
+		return NodeStatus::RUNNING;
+	}
+	if (0 == count)
+	{
+		count = 30;
+		m_accTime = .5f;
+		m_accTime2 = 2.5f;
+		return NodeStatus::SUCCESS;
+	}
+	m_accTime -= DT;
+	if (0.f < m_accTime)
+	{
+		return NodeStatus::RUNNING;
+	}
+	
+	const auto target_idx = rand() % player_list.size();
+	const auto target_user = player_list[target_idx];
+	const auto target_pos_comp = target_user->GetComp<PositionComponent>();
+	const auto target_mid_pos = target_pos_comp->pos;
+	Vector3 fire_pos = target_mid_pos;
+	for (int i = 0; i < 3; ++i)
+	{
+		NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::BOSS_ROOM)->findRandomPointAroundCircle(
+			&target_mid_pos.x,
+			20.f,
+			&fire_pos.x
+		);
+
+		const auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(10);
+
+		proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos);
+
+		auto dir = fire_pos - proj.timer->m_pos;
+		dir.Normalize();
+
+		proj.timer->m_speed = dir * 15.f;
+
+		proj.timer->SelectObjList(player_list);
+		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
+	}
+	--count;
+	m_accTime = .3f;
+	return NodeStatus::RUNNING;
+}
