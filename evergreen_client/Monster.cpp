@@ -67,4 +67,9 @@ void Monster::OnHit(int afterHealth)
 {
 	m_hp = afterHealth;
 	m_hpPanel->SetHPFraction(static_cast<float>(afterHealth) / m_maxHP);
+
+	if (m_hp <= 0)
+	{
+		GetSceneObject()->SetActive(false);
+	}
 }

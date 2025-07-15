@@ -39,6 +39,7 @@ void DamageCountGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 				};
 				Vector3 color = life > 0.5f ? colors[uid(randomEngine)] : colors[0];
 				countObj->GetTransform()->SetLocalPosition(Vector3(screenPos.x, screenPos.y, 0.0f) + offset);
+				countObj->GetTransform()->SetLocalScale(1.0f + std::pow(life, 8.0f) * 3.0f);
 				countObj->GetComponent<GUIText>()->SetColor(Vector4(color.x, color.y, color.z, std::pow(life, 0.5f)));
 			}
 			else
