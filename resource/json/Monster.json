@@ -6,5 +6,9 @@
   "Bear": {
     "hp": 10,
     "DropItem": "Meat"
+  },
+  "Boss": {
+    "hp": 500,
+    "DropItem": "Meat"
   }
 }

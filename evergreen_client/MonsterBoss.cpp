@@ -52,6 +52,7 @@ void MonsterBoss::OnInitialize()
         mat.SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"dragon\\DragonTailB_metallicRoughness.png")), 2);
         m_renderer->SetMaterial(mat, 0);
     }
+    InitializeMonster("Boss");
 }
 
 void MonsterBoss::Update(const Time& time, Scene& scene)

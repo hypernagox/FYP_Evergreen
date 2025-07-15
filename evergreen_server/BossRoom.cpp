@@ -41,7 +41,7 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 	// 충돌체 및 HP 설정
 	{
 		const auto boss_hp = boss_entity->AddComp<HP>();
-		boss_hp->InitHP(50);
+		boss_hp->InitHP(GET_DATA(int, "Monster", "Boss", "hp"));
 		const auto boss_col = boss_entity->AddComp<OBBCollider>();
 		boss_col->SetOBB(boss_entity->GetComp<PositionComponent>(), Vector3{ 3,3,6 });
 		boss_col->m_collider.m_extent = Vector3{ 3,3,6 };
