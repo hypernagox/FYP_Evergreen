@@ -372,6 +372,11 @@ const bool Handle_s2c_ACQUIRE_ITEM(const NetHelper::S_ptr<NetHelper::PacketSessi
 		// 획득한 사람이 현재 클라이언트일 경우
 		if (auto playerComp = targetObject->GetComponent<AuthenticPlayer>())
 		{
+			static std::unique_ptr<SoundEffectInstance> g_menuSound;
+			g_menuSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\pickup.wav"))->CreateInstance();
+			g_menuSound->SetVolume(0.5f);
+			g_menuSound->Play();
+
 			playerComp->OnModifyInventory(item_id, item_count);
 			INSTANCE(GameGUIFacade)->LogFloat->AddText(GET_DATA(std::wstring,"Item", DATA_TABLE->GetItemName(item_id), "Name") + L"을(를) " + std::to_wstring(item_count) + L"개 획득하였습니다.");
 		}

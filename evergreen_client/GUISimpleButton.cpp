@@ -8,7 +8,7 @@ void GUISimpleButton::OnMouseEnter()
 	if (GetInteractable())
 	{
 		m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uihover.wav"))->CreateInstance();
-		m_soundInstance->SetVolume(0.5f);
+		m_soundInstance->SetVolume(0.25f);
 		m_soundInstance->Play();
 	}
 
@@ -25,7 +25,7 @@ void GUISimpleButton::OnMouseRelease()
 	if (GetInteractable())
 	{
 		m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uiselect.wav"))->CreateInstance();
-		m_soundInstance->SetVolume(0.5f);
+		m_soundInstance->SetVolume(0.25f);
 		m_soundInstance->Play();
 	}
 

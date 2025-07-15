@@ -179,6 +179,6 @@ void PopupGUIManager::PlaySound(bool mode)
 		m_menuSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uiopen.wav"))->CreateInstance();
 	else
 		m_menuSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\uiclose.wav"))->CreateInstance();
-	m_menuSound->SetVolume(0.5f);
+	m_menuSound->SetVolume(0.25f);
 	m_menuSound->Play();
 }

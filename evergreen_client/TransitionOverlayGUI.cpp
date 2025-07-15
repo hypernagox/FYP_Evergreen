@@ -52,6 +52,8 @@ void TransitionOverlayGUI::BeginFadeOut()
 
 void TransitionOverlayGUI::AppendTransition(std::function<void()> callback, std::wstring_view message)
 {
+	static std::unique_ptr<SoundEffectInstance> g_menuSound;
+
 	m_transitionCallbacks.push_back(callback);
 	m_messageText->GetComponent<GUIText>()->SetText(message.data());
 
@@ -60,5 +62,9 @@ void TransitionOverlayGUI::AppendTransition(std::function<void()> callback, std:
 		m_transitionDurationRemain = TransitionDuration * 2.0f;
 		m_panel->SetActive(true);
 		m_messageText->SetActive(true);
+
+		g_menuSound = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\transition.wav"))->CreateInstance();
+		g_menuSound->SetVolume(0.5f);
+		g_menuSound->Play();
 	}
 }
