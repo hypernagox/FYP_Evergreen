@@ -5,6 +5,7 @@
 #include "ClusterPredicate.h"
 #include "Cluster.h"
 #include "ClusterInfoHelper.h"
+#include "ClientSession.h"
 
 S_ptr<SendBuffer> ObjectIdentifier::CreateNotifyDetailPacket() const noexcept
 {
@@ -17,6 +18,7 @@ S_ptr<SendBuffer> ObjectIdentifier::CreateNotifyDetailPacket() const noexcept
 	//std::cout << weapon_ptr->id << std::endl;
 	auto pkt = Create_s2c_NOTIFY_USER_DETAIL_INFO(
 		owner->GetObjectID(),
+		owner->GetClientSession()->m_userName,
 		weapon_ptr->id,
 		armor_ptr->id
 	);

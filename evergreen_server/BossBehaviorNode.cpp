@@ -207,6 +207,7 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		proj.timer->m_accDist = 99.9f;
 		proj.timer->SelectObjList(bt_root_timer->GetTempVecForInsightObj());
 		proj.timer->m_speed = CommonMath::Normalized(Vector3{dx,dy,dz}) * 10.f;
+		proj.timer->m_radius = 2.f;
 		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
 		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), cur_target->GetObjectID(), 1));
 		// TODO: ÁøÂ¥ HP±ğ±â
