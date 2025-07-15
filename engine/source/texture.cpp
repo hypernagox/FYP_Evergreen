@@ -50,6 +50,12 @@ namespace udsdx
 			compressOptions.threshold = TEX_THRESHOLD_DEFAULT;
 			compressOptions.alphaWeight = TEX_ALPHA_WEIGHT_DEFAULT;
 
+			// Assertion for image size (for block compression)
+			if (image.GetMetadata().width % 4 || image.GetMetadata().height % 4)
+			{
+				throw std::runtime_error("Texture size must be a multiple of 4 for block compression");
+			}
+
 			ScratchImage mipChain;
 			const size_t mipChainLevels = static_cast<size_t>(std::log2(std::max(image.GetMetadata().width, image.GetMetadata().height))) + 1;
 
