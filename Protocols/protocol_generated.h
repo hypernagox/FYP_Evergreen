@@ -193,6 +193,9 @@ struct s2c_BOSS_FLYBuilder;
 struct s2c_BOSS_MOVE;
 struct s2c_BOSS_MOVEBuilder;
 
+struct s2c_BOSS_PROJ_MARK;
+struct s2c_BOSS_PROJ_MARKBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -3510,6 +3513,50 @@ inline ::flatbuffers::Offset<s2c_BOSS_MOVE> Creates2c_BOSS_MOVE(
   builder_.add_boss_speed(boss_speed);
   builder_.add_target_pos(target_pos);
   builder_.add_boss_move_type(boss_move_type);
+  return builder_.Finish();
+}
+
+struct s2c_BOSS_PROJ_MARK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_BOSS_PROJ_MARKBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_MARK_POS = 4
+  };
+  const Nagox::Struct::Vec3 *mark_pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_MARK_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_mark_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_MARK_POS);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_MARK_POS, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_BOSS_PROJ_MARKBuilder {
+  typedef s2c_BOSS_PROJ_MARK Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_mark_pos(const Nagox::Struct::Vec3 *mark_pos) {
+    fbb_.AddStruct(s2c_BOSS_PROJ_MARK::VT_MARK_POS, mark_pos);
+  }
+  explicit s2c_BOSS_PROJ_MARKBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_BOSS_PROJ_MARK> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_BOSS_PROJ_MARK>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_BOSS_PROJ_MARK> Creates2c_BOSS_PROJ_MARK(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const Nagox::Struct::Vec3 *mark_pos = nullptr) {
+  s2c_BOSS_PROJ_MARKBuilder builder_(_fbb);
+  builder_.add_mark_pos(mark_pos);
   return builder_.Finish();
 }
 

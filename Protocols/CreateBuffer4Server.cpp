@@ -649,3 +649,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_MOVE(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_BOSS_MOVE);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_PROJ_MARK(
+    const Nagox::Struct::Vec3& mark_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto mark_pos_offset = &mark_pos;
+    const auto serializeds2c_BOSS_PROJ_MARK = Nagox::Protocol::Creates2c_BOSS_PROJ_MARK(
+        builder
+,        mark_pos_offset    );
+    builder.Finish(serializeds2c_BOSS_PROJ_MARK);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_BOSS_PROJ_MARK);
+}

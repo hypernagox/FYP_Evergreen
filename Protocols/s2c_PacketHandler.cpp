@@ -205,7 +205,8 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 		monster->OnHit(hit_after_hp);
 
 		auto damageCount = INSTANCE(GameGUIFacade)->DamageCount;
-		damageCount->AddCountObject(hit_obj_ptr->GetTransform()->GetLocalPosition(), static_cast<unsigned int>(before_hp) - hit_after_hp);
+		// TODO: 스킬의 연타 횟수가 패킷으로 오거나 json으로 몇 연타인지 미리 정의
+		damageCount->AddCountObject(hit_obj_ptr->GetTransform()->GetLocalPosition(), static_cast<unsigned int>(before_hp) - hit_after_hp, 5);
 	}
 	if (const auto player = hit_obj_ptr->GetComponent<PlayerRenderer>())
 	{
@@ -734,6 +735,16 @@ const bool Handle_s2c_BOSS_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>
 	
 	//std::cout << std::format("x:{},y:{},z{}\n", target_pos.x, target_pos.y, target_pos.z);
 	boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateNewMoveDataOnlyPos(target_pos);
+	
+	return true;
+}
+
+const bool Handle_s2c_BOSS_PROJ_MARK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_PROJ_MARK& pkt_)
+{
+	// TODO: 기즈모가 안그려짐 보스 메테오 투사체의 지면위치가 여기에 옴(f12 눌러야하는듯)
+	// 그려진다쳐도 구의 y스케일만 압축해서 원으로 그리려했는데 그 기능이 없음
+	
+	const auto proj_mark_pos = ToOriginVec3(pkt_.mark_pos());
 	
 	return true;
 }

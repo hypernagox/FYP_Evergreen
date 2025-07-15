@@ -41,7 +41,7 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 	// 충돌체 및 HP 설정
 	{
 		const auto boss_hp = boss_entity->AddComp<HP>();
-		boss_hp->InitHP(500);
+		boss_hp->InitHP(50);
 		const auto boss_col = boss_entity->AddComp<OBBCollider>();
 		boss_col->SetOBB(boss_entity->GetComp<PositionComponent>(), Vector3{ 3,3,6 });
 		boss_col->m_collider.m_extent = Vector3{ 3,3,6 };
@@ -60,8 +60,8 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 		const auto melee_node = bt_root->AddChild<SequenceNode>();
 		const auto choice_atk = melee_node->AddChild<SelectPattern>();
 		choice_atk->m_count = 2;
-		choice_atk->m_probability = .5f;
-		choice_atk->m_origin_prob = .5f;
+		choice_atk->m_probability = .6f;
+		choice_atk->m_origin_prob = .6f;
 		const auto melee_atk_node = melee_node->AddChild<SequenceNode>();
 		melee_atk_node->AddChild<SelectTarget>();
 		melee_atk_node->AddChild<MoveToTarget>();

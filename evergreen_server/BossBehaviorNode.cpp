@@ -25,10 +25,23 @@ static constinit int g_pos_idx = 0;
 const Vector3 g_reset_pos = Vector3(-47.336597F, 18.003374F, -244.53511F);
 
 S_ptr<ContentsEntity> cur_target = {};
+int g_cur_target_idx = 0;
+float g_cur_target_acc[3]{ 5.f,5.f,5.f };
 
 NodeStatus SelectPattern::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
+	const auto DT = bt_root_timer->GetFloatDT();
 	const float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+	const auto& player_list = bt_root_timer->GetTempVecForInsightObj();
+	// TODO: 적당한 유저 찾기
+	if (player_list.empty())return NodeStatus::FAILURE;
+	g_cur_target_acc[g_cur_target_idx] -= DT;
+	if (0.f >= g_cur_target_acc[g_cur_target_idx])
+	{
+		g_cur_target_acc[g_cur_target_idx] = 5.f;
+		g_cur_target_idx = (g_cur_target_idx + 1) % player_list.size();
+	}
+	cur_target = player_list[g_cur_target_idx]->SharedFromThis();
 	if (r < m_probability)
 	{
 		//if (max_count == m_count++)
@@ -51,14 +64,22 @@ NodeStatus SelectTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 {
 	const auto& player_list = bt_root_timer->GetTempVecForInsightObj();
 	// TODO: 적당한 유저 찾기
+	const auto DT = bt_root_timer->GetFloatDT();
 	if(player_list.empty())return NodeStatus::FAILURE;
-	cur_target = player_list[0]->SharedFromThis();
+	g_cur_target_acc[g_cur_target_idx] -= DT;
+	if (0.f >= g_cur_target_acc[g_cur_target_idx])
+	{
+		g_cur_target_acc[g_cur_target_idx] = 5.f;
+		g_cur_target_idx = (g_cur_target_idx + 1) % player_list.size();
+	}
+	cur_target = player_list[g_cur_target_idx]->SharedFromThis();
 	return NodeStatus::SUCCESS;
 }
 
 NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
 	if(!cur_target)return NodeStatus::FAILURE;
+	const auto& player_list = bt_root_timer->GetTempVecForInsightObj();
 	// 유저에게 이동
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	const auto DT = bt_root_timer->GetFloatDT();
@@ -70,7 +91,13 @@ NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 
 	const auto target_pos = target_pos_comp->pos;
 	const auto boss_pos = boss_pos_comp->pos;
-
+	g_cur_target_acc[g_cur_target_idx] -= DT;
+	if (0.f >= g_cur_target_acc[g_cur_target_idx])
+	{
+		g_cur_target_acc[g_cur_target_idx] = 5.f;
+		g_cur_target_idx = (g_cur_target_idx + 1) % player_list.size();
+	}
+	cur_target = player_list[g_cur_target_idx]->SharedFromThis();
 	if (CommonMath::IsInDistanceDX(target_pos, boss_pos, MELLE_ATK_DIST))return NodeStatus::SUCCESS;
 	extern constinit thread_local float straightPathRaw[10 * 3];
 	std::span<Vector3> path_point;
@@ -181,7 +208,7 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		proj.timer->SelectObjList(bt_root_timer->GetTempVecForInsightObj());
 		proj.timer->m_speed = CommonMath::Normalized(Vector3{dx,dy,dz}) * 10.f;
 		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
-		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), awaker->GetObjectID(), 1));
+		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), cur_target->GetObjectID(), 1));
 		// TODO: 진짜 HP깎기
 		m_accTime = 2.f;
 		if (m_count == 0)
@@ -339,13 +366,14 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	const auto target_pos_comp = target_user->GetComp<PositionComponent>();
 	const auto target_mid_pos = target_pos_comp->pos;
 	Vector3 fire_pos = target_mid_pos;
-	for (int i = 0; i < 3; ++i)
+	const auto nav_mesh = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::BOSS_ROOM);
+	const auto nav_q = nav_mesh->GetNavMeshQuery();
+	for (int i = 0; i < 5; ++i)
 	{
-		NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::BOSS_ROOM)->findRandomPointAroundCircle(
-			&target_mid_pos.x,
-			20.f,
-			&fire_pos.x
-		);
+		nav_mesh->findRandomPointAroundCircle(
+			&owner_comp_sys->GetComp<PositionComponent>()->pos.x,
+			30.f,
+			&fire_pos.x);
 
 		const auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(10);
 
@@ -354,10 +382,18 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		auto dir = fire_pos - proj.timer->m_pos;
 		dir.Normalize();
 
+		for (const auto user : player_list)
+		{
+			user->GetSession()->SendAsync(Create_s2c_BOSS_PROJ_MARK(
+				ToFlatVec(fire_pos)
+			));
+		}
+
 		proj.timer->m_speed = dir * 15.f;
 
 		proj.timer->SelectObjList(player_list);
 		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
+		
 	}
 	--count;
 	m_accTime = .3f;

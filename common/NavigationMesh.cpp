@@ -73,13 +73,13 @@ namespace Common
 	{
 		dtPolyRef ref;
 		dtPolyRef m_startRef = 0;
-		dtQueryFilter m_filter;
+		//dtQueryFilter m_filter;
 		//m_filter.setIncludeFlags(0xffff);
 		//m_filter.setExcludeFlags(0);
 
 		const auto nav_q = GetNavMeshQuery();
-		nav_q->findNearestPoly(pos, m_polyPickExt, &m_filter, &m_startRef, 0);
-		const dtStatus status = nav_q->findRandomPointAroundCircle(m_startRef, pos, radius, &m_filter, frand, &ref, outPos);
+		nav_q->findNearestPoly(pos, m_polyPickExt, m_filter, &m_startRef, 0);
+		const dtStatus status = nav_q->findRandomPointAroundCircle(m_startRef, pos, radius, m_filter, frand, &ref, outPos);
 		if (dtStatusSucceed(status))
 		{
 			return 1;

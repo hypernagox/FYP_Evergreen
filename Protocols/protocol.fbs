@@ -353,3 +353,8 @@ table s2c_BOSS_MOVE
     boss_speed : float;
     boss_move_type : Nagox.Enum.BOSS_MOVE_TYPE;
 }
+
+table s2c_BOSS_PROJ_MARK
+{
+   mark_pos: Nagox.Struct.Vec3;
+}

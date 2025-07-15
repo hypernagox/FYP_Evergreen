@@ -43,6 +43,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_BOSS_ROOM_ENTER = 1032,
     s2c_BOSS_FLY = 1033,
     s2c_BOSS_MOVE = 1034,
+    s2c_BOSS_PROJ_MARK = 1035,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -113,6 +114,7 @@ const bool Handle_s2c_FORCED_MOVE(const NetHelper::S_ptr<NetHelper::PacketSessio
 const bool Handle_s2c_BOSS_ROOM_ENTER(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_ROOM_ENTER& pkt_);
 const bool Handle_s2c_BOSS_FLY(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_FLY& pkt_);
 const bool Handle_s2c_BOSS_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_MOVE& pkt_);
+const bool Handle_s2c_BOSS_PROJ_MARK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_PROJ_MARK& pkt_);
 
 class s2c_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const BYTE* const, const int32_t);
@@ -154,6 +156,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_ROOM_ENTER, Nagox::Protocol::s2c_BOSS_ROOM_ENTER, Handle_s2c_BOSS_ROOM_ENTER>();
         RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_FLY, Nagox::Protocol::s2c_BOSS_FLY, Handle_s2c_BOSS_FLY>();
         RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_MOVE, Nagox::Protocol::s2c_BOSS_MOVE, Handle_s2c_BOSS_MOVE>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_PROJ_MARK, Nagox::Protocol::s2c_BOSS_PROJ_MARK, Handle_s2c_BOSS_PROJ_MARK>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;
