@@ -11,7 +11,7 @@ class ServerObject;
 class GameScene : public udsdx::Scene
 {
 public:
-	enum class GameSceneType
+	enum class GameSceneType : std::uint8_t
 	{
 		Default,
 		Dungeon
@@ -32,6 +32,7 @@ public:
 	void OnTogglePause(bool isPaused);
 	void OnTogglePlayerMode(bool spectatorMode);
 	void AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj);
+	void AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj, GameSceneType type);
 	void AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj);
 	bool GetSpectatorMode() const { return m_bSpectatorMode; }
 	void RequestChangeGameScene(GameSceneType type);
@@ -43,7 +44,7 @@ public:
 
 private:
 	GameSceneType m_sceneType = GameSceneType::Default;
-	std::shared_ptr<udsdx::SceneObject> m_activeObjectGroup;
+	std::array<std::shared_ptr<udsdx::SceneObject>, 2> m_activeObjectGroups;
 
 	std::shared_ptr<udsdx::SceneObject> m_defaultEnvironmentObject;
 	std::shared_ptr<udsdx::SceneObject> m_dungeonEnvironmentObject;

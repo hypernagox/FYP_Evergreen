@@ -74,8 +74,9 @@ void GameScene::OnAttach()
     };
     auto& cell = m_heroServerObject->GetNaviAgent()->GetCurCell();
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(start_pos);
-
-    m_activeObjectGroup = std::make_shared<SceneObject>();
+    
+    for (auto& objectGroup : m_activeObjectGroups)
+        objectGroup = std::make_shared<SceneObject>();
 
     m_heroObj->GetTransform()->SetLocalPosition(start_pos);
 
@@ -108,7 +109,7 @@ void GameScene::OnAttach()
         interactiveEntity->SetInteractionText(L"제작하기");
         interactiveEntity->SetInteractionCallback([this]() { m_popupGUIManager->Append(m_craftObj); });
 
-        AddActiveObject(m_craftTableObj);
+        AddActiveObject(m_craftTableObj, GameSceneType::Default);
     }
 
     {
@@ -146,7 +147,7 @@ void GameScene::OnAttach()
                 });
         }
 
-        AddActiveObject(treeObj);
+        AddActiveObject(treeObj, GameSceneType::Default);
         GuideSystem::GetInst()->AddHarvestMeshObject(treeObj);
 
         m_defaultEnvironmentObject = std::make_shared<SceneObject>();
@@ -174,7 +175,7 @@ void GameScene::OnAttach()
             for (auto& instance : prototype["instances"])
             {
                 auto harvestObject = environmentRenderer->AddHarvestObject(instance);
-                AddActiveObject(harvestObject);
+                AddActiveObject(harvestObject, GameSceneType::Default);
                 GuideSystem::GetInst()->AddHarvestMeshObject(harvestObject);
             }
         }
@@ -470,7 +471,8 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
 
     AddObject(m_heroObj);
     AddObject(m_spectatorObj);
-    AddObject(m_activeObjectGroup);
+    for (const auto& objectGroup : m_activeObjectGroups)
+        AddObject(objectGroup);
     m_focusAgentObj->SetActive(true);
 
     OnTogglePause(false);
@@ -555,7 +557,12 @@ void GameScene::OnTogglePlayerMode(bool spectatorMode)
 
 void GameScene::AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj)
 {
-	m_activeObjectGroup->AddChild(obj);
+    AddActiveObject(obj, m_sceneType);
+}
+
+void GameScene::AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj, GameSceneType type)
+{
+    m_activeObjectGroups[static_cast<std::uint8_t>(type)]->AddChild(obj);
 }
 
 void GameScene::AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj)
@@ -580,6 +587,10 @@ void GameScene::ChangeGameScene(GameSceneType type)
 
     m_defaultEnvironmentObject->SetActive(false);
     m_dungeonEnvironmentObject->SetActive(false);
+
+    m_activeObjectGroups[0]->SetActive(type == GameSceneType::Default);
+    m_activeObjectGroups[1]->SetActive(type == GameSceneType::Dungeon);
+
     switch (type)
 	{
 		case GameSceneType::Default:
@@ -606,7 +617,7 @@ void GameScene::AddMinimapMark(const Vector3& position)
 
 std::vector<InteractiveEntity*> GameScene::GetInteractiveEntities() const
 {
-	return m_activeObjectGroup->GetComponentsInChildren<InteractiveEntity>();
+	return m_activeObjectGroups[static_cast<std::uint8_t>(m_sceneType)]->GetComponentsInChildren<InteractiveEntity>();
 }
 
 Camera* GameScene::GetMainCamera() const
