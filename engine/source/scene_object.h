@@ -20,9 +20,7 @@ namespace udsdx
 		};
 
 	public:
-		static void Enumerate(const std::shared_ptr<SceneObject>& root, std::function<void(const std::shared_ptr<SceneObject>&)> callback);
-		static void EnumerateUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene);
-		static void EnumeratePostUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene);
+		static void Enumerate(const std::shared_ptr<SceneObject>& root, std::function<void(const std::shared_ptr<SceneObject>&)> callback, bool onlyActive = true);
 
 	public:
 		SceneObject();
@@ -33,7 +31,7 @@ namespace udsdx
 	public:
 		Transform* GetTransform();
 		void Update(const Time& time, Scene& scene);
-		bool PostUpdate(const Time& time, Scene& scene);
+		void PostUpdate(const Time& time, Scene& scene);
 		void OnDrawGizmos(const Camera* target);
 
 	public:
@@ -118,16 +116,12 @@ namespace udsdx
 
 		void RemoveAllComponents();
 
-	private:
-		void DetachFromHierarchy();
-
 	protected:
 		bool m_active = true;
 		Transform m_transform = Transform();
 		std::vector<std::unique_ptr<Component, ComponentDeleter>> m_components;
 
 	protected:
-		bool m_detachDirty = false;
 		SceneObject* m_parent = nullptr;
 		std::shared_ptr<SceneObject> m_sibling = nullptr;
 		std::shared_ptr<SceneObject> m_child = nullptr;

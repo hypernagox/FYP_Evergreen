@@ -42,7 +42,7 @@ namespace udsdx
 	void Scene::Update(const Time& time)
 	{ ZoneScoped;
 	    UpdateGUIElementEvent(time);
-		SceneObject::EnumerateUpdate(m_rootObject, time, *this);
+		SceneObject::Enumerate(m_rootObject, [&time, this](const std::shared_ptr<SceneObject>& sceneObject) { sceneObject->Update(time, *this); });
 	}
 
 	void Scene::PostUpdate(const Time& time)
@@ -56,7 +56,8 @@ namespace udsdx
 		m_renderShadowObjectQueue.clear();
 		m_renderGUIObjectQueue.clear();
 
-		SceneObject::EnumeratePostUpdate(m_rootObject, time, *this);
+		UpdateSceneObjectCache();
+		SceneObject::Enumerate(m_rootObject, [&time, this](const std::shared_ptr<SceneObject>& sceneObject) { sceneObject->PostUpdate(time, *this); });
 	}
 
 	void Scene::OnDrawGizmos()
@@ -108,7 +109,7 @@ namespace udsdx
 		Vector3 viewRight = viewUp.Cross(viewForward);
 
 		std::array<std::pair<Vector3, ImColor>, 3> lines = {
-			std::make_pair(viewRight,	ImColor(1.0f, 0.0f, 0.0f, 1.0f)),	// Red for right
+			std::make_pair(viewRight,	ImColor(1.0f, 0.0f, 0.0f, 1.0f)),		// Red for right
 			std::make_pair(viewUp,		ImColor(0.0f, 1.0f, 0.0f, 1.0f)),		// Green for up
 			std::make_pair(viewForward, ImColor(0.0f, 0.0f, 1.0f, 1.0f))		// Blue for forward
 		};
@@ -188,6 +189,22 @@ namespace udsdx
 	void Scene::AddObject(std::shared_ptr<SceneObject> object)
 	{
 		m_rootObject->AddChild(object);
+	}
+
+	void Scene::UpdateSceneObjectCache()
+	{
+		size_t index = 0;
+		SceneObject::Enumerate(m_rootObject, [this, &index](const std::shared_ptr<SceneObject>& object) {
+				if (index >= m_objectsCache.size())
+				{
+					m_objectsCache.emplace_back(object);
+				}
+				else
+				{
+					m_objectsCache[index] = object;
+				}
+				index++;
+			}, false);
 	}
 
 	void Scene::EnqueueRenderCamera(Camera* camera)

@@ -7,7 +7,7 @@
 
 namespace udsdx
 {
-	void SceneObject::Enumerate(const std::shared_ptr<SceneObject>& root, std::function<void(const std::shared_ptr<SceneObject>&)> callback)
+	void SceneObject::Enumerate(const std::shared_ptr<SceneObject>& root, std::function<void(const std::shared_ptr<SceneObject>&)> callback, bool onlyActive)
 	{
 		static std::stack<std::shared_ptr<SceneObject>> s;
 		size_t sBase = s.size();
@@ -27,47 +27,9 @@ namespace udsdx
 				// node is guaranteed to have an instance
 				node = s.top();
 				s.pop();
-				if (node->m_active)
+				if (!onlyActive || node->m_active)
 				{
 					callback(node);
-					node = node->m_child;
-				}
-				else
-				{
-					node = nullptr;
-				}
-			}
-		}
-	}
-
-	void SceneObject::EnumerateUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene)
-	{
-		Enumerate(root, [&](const std::shared_ptr<SceneObject>& node) { node->Update(time, scene); });
-	}
-
-	void SceneObject::EnumeratePostUpdate(const std::shared_ptr<SceneObject>& root, const Time& time, Scene& scene)
-	{
-		static std::stack<std::shared_ptr<SceneObject>> s;
-		size_t sBase = s.size();
-		std::shared_ptr<SceneObject> node = root;
-
-		// Perform in-order traversal (sibiling-node-child)
-		// Since the order of the siblings is reversed, it needs to visit the siblings first
-		while (s.size() > sBase || node != nullptr)
-		{
-			if (node != nullptr)
-			{
-				s.emplace(node);
-				node = node->m_sibling;
-			}
-			else
-			{
-				node = s.top();
-				s.pop();
-
-				// SceneObject::PostUpdate() returns true if the node is still valid and active
-				if (node->PostUpdate(time, scene))
-				{
 					node = node->m_child;
 				}
 				else
@@ -98,44 +60,10 @@ namespace udsdx
 		m_components.clear();
 	}
 
-	void SceneObject::DetachFromHierarchy()
-	{
-		INSTANCE(Core)->FlushCommandQueue();
-
-		m_transform.m_parent = nullptr;
-		if (m_parent != nullptr)
-		{
-			auto childrenContainer = m_parent->m_transform.m_children;
-			auto it = std::find(childrenContainer.begin(), childrenContainer.end(), &m_transform);
-			if (it != childrenContainer.end())
-			{
-				childrenContainer.erase(it);
-			}
-		}
-
-		if (m_sibling != nullptr)
-		{
-			m_sibling->m_parent = m_parent;
-		}
-		if (m_parent->m_sibling.get() == this)
-		{
-			m_parent->m_sibling = m_sibling;
-		}
-		if (m_parent->m_child.get() == this)
-		{
-			m_parent->m_child = m_sibling;
-		}
-
-		m_parent = nullptr;
-		m_sibling = nullptr;
-
-		m_detachDirty = false;
-	}
-
 	void SceneObject::Update(const Time& time, Scene& scene)
 	{
 		// Update components
-		for (auto& component : m_components)
+		for (const auto& component : m_components)
 		{
 			if (component->GetActive())
 			{
@@ -144,31 +72,19 @@ namespace udsdx
 		}
 	}
 
-	bool SceneObject::PostUpdate(const Time& time, Scene& scene)
+	void SceneObject::PostUpdate(const Time& time, Scene& scene)
 	{
-		if (m_detachDirty)
-		{
-			DetachFromHierarchy();
-			return false;
-		}
-		if (!m_active)
-		{
-			return false;
-		}
-
 		// Validate SRT matrix
 		m_transform.ValidateSRTMatrices();
 
 		// Update components
-		for (auto& component : m_components)
+		for (const auto& component : m_components)
 		{
 			if (component->GetActive())
 			{
 				component->PostUpdate(time, scene);
 			}
 		}
-
-		return true;
 	}
 
 	void SceneObject::OnDrawGizmos(const Camera* target)
@@ -296,7 +212,42 @@ namespace udsdx
 
 	void SceneObject::RemoveFromParent()
 	{
-		m_detachDirty = true;
+		if (m_parent == nullptr)
+		{
+			return;
+		}
+
+		if (GetActiveInHierarchy())
+		{
+			INSTANCE(Core)->FlushCommandQueue();
+		}
+
+		m_transform.m_parent = nullptr;
+		if (m_parent != nullptr)
+		{
+			auto childrenContainer = m_parent->m_transform.m_children;
+			auto it = std::find(childrenContainer.begin(), childrenContainer.end(), &m_transform);
+			if (it != childrenContainer.end())
+			{
+				childrenContainer.erase(it);
+			}
+		}
+
+		if (m_sibling != nullptr)
+		{
+			m_sibling->m_parent = m_parent;
+		}
+		if (m_parent->m_sibling.get() == this)
+		{
+			m_parent->m_sibling = m_sibling;
+		}
+		if (m_parent->m_child.get() == this)
+		{
+			m_parent->m_child = m_sibling;
+		}
+
+		m_parent = nullptr;
+		m_sibling = nullptr;
 	}
 
 	const SceneObject* SceneObject::GetParent() const

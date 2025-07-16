@@ -546,6 +546,7 @@ namespace udsdx
 		}
 		m_scene = scene;
 		m_scene->OnAttach();
+		m_scene->UpdateSceneObjectCache();
 	}
 
 	void Core::AcquireNextFrameResource()
