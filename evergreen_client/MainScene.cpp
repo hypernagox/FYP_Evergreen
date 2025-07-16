@@ -196,6 +196,10 @@ void MainScene::OnAttach()
 
         INSTANCE(GameGUIFacade)->TransitionOverlay = m_transitionOverlayGUI;
     }
+
+    INSTANCE(Core)->GetRenderOptionsRef().FogDensity = 15.85f;
+    INSTANCE(Core)->GetRenderOptionsRef().FogHeightFalloff = 0.08f;
+    INSTANCE(Core)->GetRenderOptionsRef().FogDistanceStart = 60.0f;
 }
 
 void MainScene::EnterCharacterSelection()

@@ -16,8 +16,12 @@ float4 PSDeferred(VertexOut pin) : SV_Target
 
 	float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
 	gBuffer1Color.rgb = pow(gBuffer1Color.rgb, gamma);
+
+    float3 skyColor = pow(float3(0.357f, 0.404f, 0.467f), gamma);
+	float aoFactor = gSSAOMap.Sample(gsamPointClamp, pin.TexC).r;
     
-	float3 fColor = (AmbientLight(pin)+ ShadowValue(PosW, normalW)) * gBuffer1Color.rgb;
+	float3 fColor = aoFactor * (skyColor + ShadowValue(PosW, normalW)) * gBuffer1Color.rgb;
+	fColor = ApplyFog(fColor, PosW.xyz);
 	return float4(fColor, 1.0f);
 }
 
@@ -28,7 +32,7 @@ struct GeometryOut {
 	float4 PosW     : POSITION0;
     float4 PrevPosH : POSITION1;
 	float2 Tex      : TEXCOORD0;
-	float3 NormalW  : NORMAL;
+	float3 NormalV  : NORMAL;
 };
 
 // Random function
@@ -91,7 +95,7 @@ static const float3x3 rot1 = float3x3(
 
 static const float3x3 rot2 = float3x3(
     -0.55, -0.39, 0.74,
-    0.33, -0.91, -0.24,
+    0.33, -0.91, -0.24, 
     0.77, 0.12, 0.63
 );
 
@@ -126,6 +130,7 @@ void GS(point VertexOut input[1], uint primitiveID : SV_PRIMITIVEID, inout Trian
     float3 up = normalize(float3(gView[0].y, gView[1].y, gView[2].y) + float3(0.0f, 1.0f, 0.0f));
     float3 look = -normalize(float3(gView[0].z, gView[1].z, gView[2].z));
     float3 right = normalize(cross(up, look));
+    look = cross(right, up); // Recompute look to ensure orthogonality
     float3x3 uvw = float3x3(right, up, look);
 
     float windOffset = simplex3d_fractal(float3(input[0].PosW.xy * 0.1f + gTime * -0.1f, gTime * 0.01f)) * 2.0f;
@@ -145,6 +150,7 @@ void GS(point VertexOut input[1], uint primitiveID : SV_PRIMITIVEID, inout Trian
         output.PosH = mul(output.PosW, gViewProj);
         output.PrevPosH = mul(output.PosW, gPrevViewProj);
         output.Tex = input[0].Tex + float2(i / 2, 1 - i % 2) * 0.5f;
+        output.NormalV = normalize(mul(look, gView));
         outStream.Append(output);
     }
 }
@@ -161,7 +167,7 @@ PixelOut PS(GeometryOut pin)
     clip(texColor.a - 0.1f);
      
     pOut.Buffer1 = texColor;
-    pOut.Buffer2 = PackNormal(float3(0.0f, 0.0f, -1.0f));
+    pOut.Buffer2 = PackNormal(pin.NormalV);
     pOut.Buffer3.rg = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
 	pOut.Buffer3.rg /= max(length(pOut.Buffer3.rg), 1.0f);
     return pOut;

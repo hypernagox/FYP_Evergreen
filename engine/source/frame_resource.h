@@ -38,6 +38,11 @@ namespace udsdx
 		float DeltaTime = 0.0f;
 		float MotionBlurFactor = 0.0f;
 		float MotionBlurRadius = 0.0f;
+		Color FogColor = Color();
+		Color FogSunColor = Color();
+		float FogDensity = 0.0f;
+		float FogHeightFalloff = 0.0f;
+		float FogDistanceStart = 0.0f;
 	};
 
 	class FrameResource

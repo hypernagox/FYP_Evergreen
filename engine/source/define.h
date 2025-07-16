@@ -40,6 +40,11 @@ namespace udsdx
 		bool DrawOutline = true;
 		bool DrawShadowMap = true;
 		unsigned int ShadowMapSize = 4096u;
+		Color FogColor = Color(1.381f, 1.691f, 2.000f, 1.0f);
+		Color FogSunColor = Color(2.000f, 1.433f, 0.987f, 1.0f);
+		float FogDensity = 0.002f;
+		float FogHeightFalloff = 0.008f;
+		float FogDistanceStart = 20.0f;
 	};
 
 	struct RenderParam

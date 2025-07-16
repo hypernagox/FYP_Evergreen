@@ -734,6 +734,11 @@ namespace udsdx
 		passConstants.DeltaTime = m_timeMeasure->GetTime().deltaTime;
 		passConstants.MotionBlurFactor = MotionBlur::BlurTimeScale / m_timeMeasure->GetTime().deltaTime;
 		passConstants.MotionBlurRadius = static_cast<float>(MotionBlur::MaxBlurRadius);
+		passConstants.FogColor = m_renderOptions.FogColor;
+		passConstants.FogSunColor = m_renderOptions.FogSunColor;
+		passConstants.FogDensity = m_renderOptions.FogDensity;
+		passConstants.FogHeightFalloff = m_renderOptions.FogHeightFalloff;
+		passConstants.FogDistanceStart = m_renderOptions.FogDistanceStart;
 
 		auto frameResource = CurrentFrameResource();
 		frameResource->GetObjectCB()->CopyData(0, passConstants);
@@ -1097,6 +1102,12 @@ namespace udsdx
 			ExecuteAndFlushDirectCommandList();
 		}
 
+		ImGui::ColorPicker4("Fog Color", reinterpret_cast<float*>(&m_renderOptions.FogColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_AlphaOpaque | ImGuiColorEditFlags_HDR);
+		ImGui::ColorPicker4("Fog Sun Color", reinterpret_cast<float*>(&m_renderOptions.FogSunColor), ImGuiColorEditFlags_Float | ImGuiColorEditFlags_AlphaOpaque | ImGuiColorEditFlags_HDR);
+		ImGui::SliderFloat("Fog Density", &m_renderOptions.FogDensity, 0.0f, 10000.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("Fog Height Falloff", &m_renderOptions.FogHeightFalloff, 0.0f, 10000.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("Fog Distance Start", &m_renderOptions.FogDistanceStart, 0.0f, 100.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+
 		// Set window position to top left corner
 		ImGui::SetWindowPos(ImVec2(0, 0));
 		// Set window size and makes it resizable
@@ -1243,6 +1254,11 @@ namespace udsdx
 		m_srvHeapSize = static_cast<UINT>(param.SrvCpuHandle.ptr - m_srvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_cbvSrvUavDescriptorSize;
 		m_rtvHeapSize = static_cast<UINT>(param.RtvCpuHandle.ptr - m_rtvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_rtvDescriptorSize;
 		m_dsvHeapSize = static_cast<UINT>(param.DsvCpuHandle.ptr - m_dsvHeap->GetCPUDescriptorHandleForHeapStart().ptr) / m_dsvDescriptorSize;
+	}
+
+	RenderOptions& Core::GetRenderOptionsRef()
+	{
+		return m_renderOptions;
 	}
 
 	int Core::GetClientPosX() const

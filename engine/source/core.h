@@ -75,6 +75,7 @@ namespace udsdx
 
 		DescriptorParam GetDescriptorParameters() const;
 		void ApplyDescriptorParameters(const DescriptorParam& param);
+		RenderOptions& GetRenderOptionsRef();
 
 		int GetClientPosX() const;
 		int GetClientPosY() const;

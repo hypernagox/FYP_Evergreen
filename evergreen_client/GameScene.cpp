@@ -599,6 +599,9 @@ void GameScene::ChangeGameScene(GameSceneType type)
             m_minimapRenderer->SetMinimapMesh(m_defaultEnvironmentObject->GetComponent<EnvironmentRenderer>()->GetTerrainMesh());
             m_minimapRenderer->SetMinimapEnvironment(g_defaultEnvironmentParam);
             m_heroComponent->SetEnvironment(&g_defaultEnvironmentParam);
+
+            INSTANCE(Core)->GetRenderOptionsRef().FogDensity = 15.85f;
+            INSTANCE(Core)->GetRenderOptionsRef().FogHeightFalloff = 0.08f;
 			break;
 		case GameSceneType::Dungeon:
             m_heroServerObject->SetNavigationMesh(NAVI_MESH_TYPE::BOSS_ROOM);
@@ -606,6 +609,9 @@ void GameScene::ChangeGameScene(GameSceneType type)
             m_minimapRenderer->SetMinimapMesh(m_dungeonEnvironmentObject->GetComponent<EnvironmentRenderer>()->GetTerrainMesh());
             m_minimapRenderer->SetMinimapEnvironment(g_dungeonEnvironmentParam);
             m_heroComponent->SetEnvironment(&g_dungeonEnvironmentParam);
+
+            INSTANCE(Core)->GetRenderOptionsRef().FogDensity = 10.0f;
+            INSTANCE(Core)->GetRenderOptionsRef().FogHeightFalloff = 0.015f;
 			break;
 	}
 }

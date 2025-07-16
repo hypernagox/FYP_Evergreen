@@ -10,8 +10,12 @@ float NdcDepthToViewDepth(float z_ndc)
 
 float4 PSDeferred(VertexOut pin) : SV_Target
 {
-    float depth = NdcDepthToViewDepth(gBufferDSV.Sample(gsamPointClamp, pin.TexC).r);
-    float blinkFactor = pow(frac(-gTime * 0.25f + depth * 0.01f), 8.0f);
+	float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
+	// Compute world space position from depth value.
+	float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
+    float4 PosW = mul(PosNDC, gViewProjInverse);
+	PosW /= PosW.w;
+    float blinkFactor = pow(frac(-gTime * 0.25f + PosW.x * 0.001f), 8.0f);
 
 	return PSDeferredDefault(pin) * (1.0f + blinkFactor * 16.0f);
 }

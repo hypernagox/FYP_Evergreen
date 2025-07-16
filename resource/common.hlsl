@@ -48,6 +48,11 @@ cbuffer cbPerFrame : register(b4)
     float gDeltaTime;
     float gMotionBlurFactor;
     float gMotionBlurRadius;
+	float4 gFogColor;
+	float4 gFogSunColor;
+	float gFogDensity;
+	float gFogHeightFalloff;
+	float gFogDistanceStart;
 };
 
 static const float Bayer8x8[64] =
@@ -229,6 +234,11 @@ cbuffer cbPerFrame : register(b2)
     float gDeltaTime;
     float gMotionBlurFactor;
     float gMotionBlurRadius;
+	float4 gFogColor;
+	float4 gFogSunColor;
+	float gFogDensity;
+	float gFogHeightFalloff;
+	float gFogDistanceStart;
 };
 
 // Nonnumeric values cannot be added to a cbuffer.
@@ -337,6 +347,18 @@ float3 DiffuseLight(VertexOut pin)
 	return lightColor * lambertian * lightPower;
 }
 
+float3 ApplyFog(float3 col, float3 worldPos)
+{
+    float distance = max(0.0f, length(worldPos - gEyePosW) - gFogDistanceStart);
+	float3 direction = normalize(worldPos - gEyePosW);
+    float sunAmount = max(dot(direction, -gDirLight), 0.0f);
+
+	float fogAmount = saturate((gFogHeightFalloff * gFogDensity) * exp(-(gEyePosW.y + gFogDistanceStart * direction.y) / gFogDensity) * (1.0f - exp(-distance * direction.y / gFogDensity)) / direction.y);
+    float3 fogColor = lerp(gFogColor.rgb, gFogSunColor.rgb, pow(sunAmount, 2.0f));
+	
+    return lerp(col, fogColor, fogAmount);
+}
+
 float4 PSDeferredDefault(VertexOut pin) : SV_Target
 {
 	float3 normalV = ReconstructNormal(gBuffer2.Sample(gsamPointClamp, pin.TexC).xy);
@@ -352,6 +374,7 @@ float4 PSDeferredDefault(VertexOut pin) : SV_Target
 	gBuffer1Color.rgb = pow(gBuffer1Color.rgb, gamma);
 
 	float3 fColor = (AmbientLight(pin) + min(ShadowValue(PosW, normalW), DiffuseLight(pin))) * gBuffer1Color.rgb;
+	fColor = ApplyFog(fColor, PosW.xyz);
 	return float4(fColor, 1.0f);
 }
 
