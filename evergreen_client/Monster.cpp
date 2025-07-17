@@ -46,6 +46,10 @@ void Monster::Update(const Time& time, Scene& scene)
 	{
 		gameScene->AddMinimapMark(GetTransform()->GetLocalPosition());
 	}
+
+	m_renderer->SetBoneModifier("Bip001 Spine1", Matrix4x4::CreateFromYawPitchRoll(0.0f, 0.0f, -PIDIV4 * m_hitfactor));
+	m_renderer->SetBoneModifier("mixamorig:Spine1", Matrix4x4::CreateFromYawPitchRoll(0.0f, PIDIV4 * m_hitfactor, 0.0f));
+	m_hitfactor = std::lerp(m_hitfactor, 0.0f, time.deltaTime * 16.0f);
 }
 
 void Monster::OnAttackToPlayer()
@@ -67,6 +71,7 @@ void Monster::OnHit(int afterHealth)
 {
 	m_hp = afterHealth;
 	m_hpPanel->SetHPFraction(static_cast<float>(afterHealth) / m_maxHP);
+	m_hitfactor = 1.0f;
 
 	if (m_hp <= 0)
 	{

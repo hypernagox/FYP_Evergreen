@@ -182,7 +182,7 @@ namespace udsdx
 		PopulateTransforms(animationTime, boneMap, boneOffsets, out);
 	}
 
-	void Animation::PopulateTransforms(float animationTime, const std::vector<int>& boneMap, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const
+	void Animation::PopulateTransforms(float animationTime, const std::vector<int>& boneMap, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out, const std::map<int, Matrix4x4>& modifiers) const
 	{
 		UINT boneCount = static_cast<UINT>(m_clip->GetBoneCount());
 
@@ -222,6 +222,11 @@ namespace udsdx
 				XMVECTOR s = XMVectorLerp(s0, s1, sf);
 
 				tLocal = XMMatrixAffineTransformation(s, XMVectorZero(), q, p);
+				if (modifiers.find(i) != modifiers.end())
+				{
+					XMMATRIX modifier = XMLoadFloat4x4(&modifiers.at(i));
+					tLocal = tLocal * modifier;
+				}
 			}
 
 			XMStoreFloat4x4(&in[i], tLocal * tParent);

@@ -28,7 +28,7 @@ namespace udsdx
 		Animation() = delete;
 		Animation(const AnimationClip* clip, std::ifstream& fileStream);
 		void PopulateTransforms(float animationTime, std::vector<Matrix4x4>& out) const;
-		void PopulateTransforms(float animationTime, const std::vector<int>& boneMap, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out) const;
+		void PopulateTransforms(float animationTime, const std::vector<int>& boneMap, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out, const std::map<int, Matrix4x4>& modifiers = {}) const;
 		float GetAnimationDuration() const { return m_duration / m_ticksPerSecond; }
 		std::string_view GetName() const { return m_name; }
 		const AnimationClip* GetAnimationClip() const { return m_clip; }

@@ -28,6 +28,7 @@ protected:
 
 	int m_hp = 10;
 	int m_maxHP = 10;
+	float m_hitfactor = 0.0f;
 	Vector3 m_lastPosition = Vector3::Zero;
 
 public:

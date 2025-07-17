@@ -29,6 +29,8 @@ namespace udsdx
 		void SetAnimation(const AnimationClip* animationClip, bool loop = false, bool forcePlay = false);
 		void SetAnimation(const AnimationClip* animationClip, std::string_view animationName, bool loop = false, bool forcePlay = false);
 		void SetAnimation(const Animation* animation, bool loop = false, bool forcePlay = false);
+		void SetBoneModifier(std::string_view boneName, const Matrix4x4& transform);
+		void ClearBoneModifiers();
 		bool IsAnimationPlaying() const;
 
 		Matrix4x4 PopulateTransform(std::string_view boneName);
@@ -52,6 +54,7 @@ namespace udsdx
 		std::array<std::vector<std::unique_ptr<UploadBuffer<BoneConstants>>>, FrameResourceCount> m_constantBuffers;
 		std::array<std::vector<std::unique_ptr<UploadBuffer<BoneConstants>>>, FrameResourceCount> m_prevConstantBuffers;
 		std::vector<BoneConstants> m_boneConstantsCache;
+		std::map<int, Matrix4x4> m_boneModifiers;
 		bool m_constantBuffersDirty = true;
 	};
 }
