@@ -7,9 +7,9 @@
 #include "QuestSystem.h"
 #include "StatusSystem.h"
 
-void HP::PostDoDmg(const int dmg_, NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject) noexcept
+void HP::PostDoDmg(const int dmg_, NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject, const int hit_count) noexcept
 {
-	EnqueueCompTask(&HP::DoDmg, dmg_, std::move(atkObject));
+	EnqueueCompTask(&HP::DoDmg, dmg_, std::move(atkObject), int{ hit_count });
 }
 
 void HP::PostDoHeal(const int heal_) noexcept
@@ -17,7 +17,7 @@ void HP::PostDoHeal(const int heal_) noexcept
 	EnqueueCompTask(&HP::DoHeal, heal_);
 }
 
-void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject) noexcept
+void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject, const int hit_count) noexcept
 {
 	const auto owner = GetOwnerEntityRaw();
 	if (0 >= m_hp)return;
@@ -35,12 +35,12 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 				owner
 			);
 			//std::cout << "µ¥¹ÌÁö :" << result_dmg << "!!\n";
-			atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), origin_hp - result_dmg));
+			atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), origin_hp - result_dmg, hit_count));
 		}
 		else if (owner->GetSession())
 		{
 			const auto cur_dmg = std::max(dmg_ - owner->GetComp<StatusSystem>()->GetDEF(), 0);
-			owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - cur_dmg));
+			owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - cur_dmg, hit_count));
 			m_hp -= cur_dmg;
 		}
 		else

@@ -88,6 +88,7 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_WARRIOR)
 	{
 		entity->GetComp<StatusSystem>()->SetSkill<WarriorDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
+		entity->GetComp<StatusSystem>()->SetSkill<WarriorSkill_1>(Nagox::Enum::SKILL_TYPE_SKILL_1);
 
 		entity->GetComp<Inventory>()->SwapEquipment(
 			Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
@@ -97,6 +98,8 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	else if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_PRIEST)
 	{
 		entity->GetComp<StatusSystem>()->SetSkill<PriestDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
+		entity->GetComp<StatusSystem>()->SetSkill<PriestSkill_1>(Nagox::Enum::SKILL_TYPE_SKILL_1);
+
 		entity->GetComp<Inventory>()->SwapEquipment(
 			Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
 			DATA_TABLE->GetWeaponIDInt("Staff Priest")

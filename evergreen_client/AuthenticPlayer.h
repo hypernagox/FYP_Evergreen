@@ -82,12 +82,12 @@ private:
 	void UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime);
 	void UpdateCameraTransformDebug(Transform* pCameraTransfrom, float deltaTime);
 	void RequestQuest();
-
+	const bool CanAttack()const noexcept;
 public:
 	void OnInitialize() override;
 	void Update(const Time& time, Scene& scene) override;
 
-	void DoAttack();
+	void DoAttack(const Nagox::Enum::SKILL_TYPE skill_type);
 	void TryClickScreen();
 
 	Vector3 GetPlayerLook() const noexcept;

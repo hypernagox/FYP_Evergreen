@@ -958,7 +958,8 @@ struct s2c_NOTIFY_HIT_DMG FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table
   typedef s2c_NOTIFY_HIT_DMGBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_HIT_OBJ_ID = 4,
-    VT_HIT_AFTER_HP = 6
+    VT_HIT_AFTER_HP = 6,
+    VT_HIT_COUNT = 8
   };
   uint64_t hit_obj_id() const {
     return GetField<uint64_t>(VT_HIT_OBJ_ID, 0);
@@ -972,10 +973,17 @@ struct s2c_NOTIFY_HIT_DMG FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table
   bool mutate_hit_after_hp(int32_t _hit_after_hp = 0) {
     return SetField<int32_t>(VT_HIT_AFTER_HP, _hit_after_hp, 0);
   }
+  int32_t hit_count() const {
+    return GetField<int32_t>(VT_HIT_COUNT, 0);
+  }
+  bool mutate_hit_count(int32_t _hit_count = 0) {
+    return SetField<int32_t>(VT_HIT_COUNT, _hit_count, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint64_t>(verifier, VT_HIT_OBJ_ID, 8) &&
            VerifyField<int32_t>(verifier, VT_HIT_AFTER_HP, 4) &&
+           VerifyField<int32_t>(verifier, VT_HIT_COUNT, 4) &&
            verifier.EndTable();
   }
 };
@@ -989,6 +997,9 @@ struct s2c_NOTIFY_HIT_DMGBuilder {
   }
   void add_hit_after_hp(int32_t hit_after_hp) {
     fbb_.AddElement<int32_t>(s2c_NOTIFY_HIT_DMG::VT_HIT_AFTER_HP, hit_after_hp, 0);
+  }
+  void add_hit_count(int32_t hit_count) {
+    fbb_.AddElement<int32_t>(s2c_NOTIFY_HIT_DMG::VT_HIT_COUNT, hit_count, 0);
   }
   explicit s2c_NOTIFY_HIT_DMGBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -1004,9 +1015,11 @@ struct s2c_NOTIFY_HIT_DMGBuilder {
 inline ::flatbuffers::Offset<s2c_NOTIFY_HIT_DMG> Creates2c_NOTIFY_HIT_DMG(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint64_t hit_obj_id = 0,
-    int32_t hit_after_hp = 0) {
+    int32_t hit_after_hp = 0,
+    int32_t hit_count = 0) {
   s2c_NOTIFY_HIT_DMGBuilder builder_(_fbb);
   builder_.add_hit_obj_id(hit_obj_id);
+  builder_.add_hit_count(hit_count);
   builder_.add_hit_after_hp(hit_after_hp);
   return builder_.Finish();
 }

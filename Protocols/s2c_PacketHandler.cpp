@@ -201,12 +201,12 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 	{
 		// TODO: 현재체력과 힛 애프터의 차이가 필요,
 		// 이 수치를 기록하고 관리할 클래스 있어야함
-		int before_hp = monster->GetHP();
-		monster->OnHit(hit_after_hp);
-
+		const int before_hp = monster->GetHP();
+		monster->OnHit(before_hp, hit_after_hp);
+		const auto hit_count = pkt_.hit_count();
 		auto damageCount = INSTANCE(GameGUIFacade)->DamageCount;
 		// TODO: 스킬의 연타 횟수가 패킷으로 오거나 json으로 몇 연타인지 미리 정의
-		damageCount->AddCountObject(hit_obj_ptr->GetTransform()->GetLocalPosition(), static_cast<unsigned int>(before_hp) - hit_after_hp, 5);
+		damageCount->AddCountObject(hit_obj_ptr->GetTransform()->GetLocalPosition(), static_cast<unsigned int>(before_hp) - hit_after_hp, hit_count);
 	}
 	if (const auto player = hit_obj_ptr->GetComponent<PlayerRenderer>())
 	{
@@ -236,6 +236,11 @@ const bool Handle_s2c_MONSTER_AGGRO_END(const NetHelper::S_ptr<NetHelper::Packet
 const bool Handle_s2c_PLAYER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PLAYER_ATTACK& pkt_)
 {
 	//if (g_heroObj->GetComponent<ServerObject>()->GetObjID() == pkt_.atk_player_id())return true;
+
+	// TODO: 좌클스킬 우클스킬 딱 두개만 있을듯 패킷에 기본스킬인지 우클스킬인지 올 것
+	// 좌클스킬인지 우클스킬인지에 따라 다른 애니메이션 또는 이펙트
+
+	const auto skill_type = pkt_.atk_type();
 	const auto atk_player = Mgr(ServerObjectMgr)->GetServerObj(pkt_.atk_player_id());
 	if (!atk_player)return true;
 

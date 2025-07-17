@@ -34,7 +34,8 @@ enum MONSTER_TYPE : ubyte
 
 enum SKILL_TYPE : ubyte
 {
-    DEFAULT = 0
+    DEFAULT = 0,
+    SKILL_1 = 1
 }
 
 enum EQUIPMENT_TYPE : ubyte

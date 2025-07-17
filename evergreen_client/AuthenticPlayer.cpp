@@ -272,17 +272,9 @@ void AuthenticPlayer::UpdateCameraTransformDebug(Transform* pCameraTransfrom, fl
 
 void AuthenticPlayer::TryClickScreen()
 {
-	// 플레이어가 공격 중인 상태 (쿨타임을 기다려야한다)
-	if (PlayerRenderer::AnimationState::Attack == m_playerRenderer->GetCurrentState())
-		return;
-	// 경직상태에선 공격 못함
-	if (PlayerRenderer::AnimationState::Hit == m_playerRenderer->GetCurrentState())
-		return;
-	// 죽는모션도 마찬가지임
-	if (PlayerRenderer::AnimationState::Death == m_playerRenderer->GetCurrentState())
-		return;
+	if (!CanAttack())return;
 	m_playerRenderer->Attack();
-	DoAttack();
+	DoAttack(Nagox::Enum::SKILL_TYPE_DEFAULT);
 	//std::cout << "공격 시도\n";
 }
 
@@ -335,7 +327,7 @@ void AuthenticPlayer::OnInitialize()
 	m_entityMovement->SetFriction(40.0f);
 }
 
-void AuthenticPlayer::DoAttack()
+void AuthenticPlayer::DoAttack(const Nagox::Enum::SKILL_TYPE skill_type)
 {
 	if constexpr (g_bUseNetWork)
 	{
@@ -343,7 +335,7 @@ void AuthenticPlayer::DoAttack()
 		m_bSendFlag = true;
 		Send(
 			Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition())
-			,Nagox::Enum::SKILL_TYPE::SKILL_TYPE_DEFAULT)
+			, skill_type)
 		);
 	}
 }
@@ -355,6 +347,20 @@ void AuthenticPlayer::RequestQuest()
 	{	
 		Send(Create_c2s_REQUEST_QUEST(0));
 	}
+}
+
+const bool AuthenticPlayer::CanAttack() const noexcept
+{
+	// 플레이어가 공격 중인 상태 (쿨타임을 기다려야한다)
+	if (PlayerRenderer::AnimationState::Attack == m_playerRenderer->GetCurrentState())
+		return false;
+	// 경직상태에선 공격 못함
+	if (PlayerRenderer::AnimationState::Hit == m_playerRenderer->GetCurrentState())
+		return false;
+	// 죽는모션도 마찬가지임
+	if (PlayerRenderer::AnimationState::Death == m_playerRenderer->GetCurrentState())
+		return false;
+	return true;
 }
 
 void AuthenticPlayer::Update(const Time& time, Scene& scene)
@@ -442,9 +448,16 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	}
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::Y))
 	{
+		if (!CanAttack())return;
+		// 렌더러 매개변수로 공격종류값도 넣어줘야할것같은데
+		m_playerRenderer->Attack();
+		DoAttack(Nagox::Enum::SKILL_TYPE_SKILL_1);
+		// TODO: 우클로 하려했는데 모르겠다 2번째 스킬에 대한 키 정하기 필요
+		
 		//GetTransform()->SetLocalPosition(Vector3(312.29892F, 85.07235F, 138.55077F));
-		Send(Create_c2s_REQUEST_QUEST(Common::CommonQuestTable::GetCommonQuestInfo(L"여우 곰 잡기").quest_id));
+		//Send(Create_c2s_REQUEST_QUEST(Common::CommonQuestTable::GetCommonQuestInfo(L"여우 곰 잡기").quest_id));
 	}
+	
 	GuideSystem::GetInst()->UpdateGuideSystem();
 	// 무브패킷 센드 업데이트
 	m_bSendFlag |=

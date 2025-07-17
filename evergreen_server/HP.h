@@ -20,7 +20,7 @@ public:
 	int GetCurHP()const { return m_hp; }
 	int GetMaxHP()const { return m_maxHP; }
 public:
-	void PostDoDmg(const int dmg_, NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject)noexcept;
+	void PostDoDmg(const int dmg_, NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject, const int hit_count = 1)noexcept;
 	void PostDoHeal(const int heal_)noexcept;
 public:
 	void ProcessCleanUp()noexcept override {
@@ -28,7 +28,7 @@ public:
 		m_bIsRebirth = false;
 	}
 private:
-	void DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject)noexcept;
+	void DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject, const int hit_count)noexcept;
 	void DoHeal(const int heal_)noexcept;
 private:
 	int m_hp = -1;

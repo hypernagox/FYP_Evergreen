@@ -41,7 +41,19 @@ class WarriorDefaultAttack
 	virtual bool ExecuteSkill(class StatusSystem* const use_entity_system)noexcept override;
 };
 
+class WarriorSkill_1
+	:public Skill
+{
+	virtual bool ExecuteSkill(class StatusSystem* const use_entity_system)noexcept override;
+};
+
 class PriestDefaultAttack
+	:public Skill
+{
+	virtual bool ExecuteSkill(class StatusSystem* const use_entity_system)noexcept override;
+};
+
+class PriestSkill_1
 	:public Skill
 {
 	virtual bool ExecuteSkill(class StatusSystem* const use_entity_system)noexcept override;

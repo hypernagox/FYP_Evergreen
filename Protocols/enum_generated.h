@@ -162,27 +162,30 @@ inline const char *EnumNameMONSTER_TYPE(MONSTER_TYPE e) {
 
 enum SKILL_TYPE : uint8_t {
   SKILL_TYPE_DEFAULT = 0,
+  SKILL_TYPE_SKILL_1 = 1,
   SKILL_TYPE_MIN = SKILL_TYPE_DEFAULT,
-  SKILL_TYPE_MAX = SKILL_TYPE_DEFAULT
+  SKILL_TYPE_MAX = SKILL_TYPE_SKILL_1
 };
 
-inline const SKILL_TYPE (&EnumValuesSKILL_TYPE())[1] {
+inline const SKILL_TYPE (&EnumValuesSKILL_TYPE())[2] {
   static const SKILL_TYPE values[] = {
-    SKILL_TYPE_DEFAULT
+    SKILL_TYPE_DEFAULT,
+    SKILL_TYPE_SKILL_1
   };
   return values;
 }
 
 inline const char * const *EnumNamesSKILL_TYPE() {
-  static const char * const names[2] = {
+  static const char * const names[3] = {
     "DEFAULT",
+    "SKILL_1",
     nullptr
   };
   return names;
 }
 
 inline const char *EnumNameSKILL_TYPE(SKILL_TYPE e) {
-  if (::flatbuffers::IsOutRange(e, SKILL_TYPE_DEFAULT, SKILL_TYPE_DEFAULT)) return "";
+  if (::flatbuffers::IsOutRange(e, SKILL_TYPE_DEFAULT, SKILL_TYPE_SKILL_1)) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesSKILL_TYPE()[index];
 }

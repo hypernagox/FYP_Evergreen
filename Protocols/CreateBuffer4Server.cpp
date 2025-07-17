@@ -156,16 +156,19 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_ATTACK(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_HIT_DMG(
     const uint64_t hit_obj_id,
     const int32_t hit_after_hp,
+    const int32_t hit_count,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto hit_obj_id_value = hit_obj_id;
     const auto hit_after_hp_value = hit_after_hp;
+    const auto hit_count_value = hit_count;
     const auto serializeds2c_NOTIFY_HIT_DMG = Nagox::Protocol::Creates2c_NOTIFY_HIT_DMG(
         builder
 ,        hit_obj_id_value,
-        hit_after_hp_value    );
+        hit_after_hp_value,
+        hit_count_value    );
     builder.Finish(serializeds2c_NOTIFY_HIT_DMG);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_NOTIFY_HIT_DMG);

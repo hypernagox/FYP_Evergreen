@@ -54,6 +54,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_ATTACK(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_HIT_DMG(
     const uint64_t hit_obj_id,
     const int32_t hit_after_hp,
+    const int32_t hit_count,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_MONSTER_AGGRO_START(

@@ -57,6 +57,11 @@ void DamageCountGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 				break;
 		}
 	}
+	else
+	{
+		// TODO: 업데이트 하면 안될 때 밀어줘야 이전 이벤트가 갑자기 뜬금포로 나타나는 일이 없지 않을까?
+		m_timer.ClearEvents();
+	}
 	
 }
 
@@ -70,7 +75,7 @@ void DamageCountGUI::AddCountObject(const Vector3& targetPos, unsigned int damag
 			auto nameRenderer = countObj->AddComponent<GUIText>();
 			nameRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"sansman.spritefont")));
 			nameRenderer->SetRaycastTarget(false);
-			nameRenderer->SetText(std::to_wstring(damageCount / 5));
+			nameRenderer->SetText(std::to_wstring(damageCount / hit_count));
 			GetSceneObject()->AddChild(countObj);
 
 			auto urd = std::uniform_real_distribution(-1.0f, 1.0f);

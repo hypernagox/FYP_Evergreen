@@ -80,6 +80,7 @@ table s2c_NOTIFY_HIT_DMG
 {
     hit_obj_id : uint64;
     hit_after_hp : int32;
+    hit_count : int32;
 }
 
 table s2c_MONSTER_AGGRO_START
