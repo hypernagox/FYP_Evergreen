@@ -202,7 +202,7 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 		// TODO: 현재체력과 힛 애프터의 차이가 필요,
 		// 이 수치를 기록하고 관리할 클래스 있어야함
 		const int before_hp = monster->GetHP();
-		monster->OnHit(before_hp, hit_after_hp);
+		monster->OnHit(hit_after_hp);
 		const auto hit_count = pkt_.hit_count();
 		auto damageCount = INSTANCE(GameGUIFacade)->DamageCount;
 		// TODO: 스킬의 연타 횟수가 패킷으로 오거나 json으로 몇 연타인지 미리 정의
@@ -760,5 +760,20 @@ const bool Handle_s2c_BOSS_PROJ_MARK(const NetHelper::S_ptr<NetHelper::PacketSes
 	
 	const auto proj_mark_pos = ToOriginVec3(pkt_.mark_pos());
 	
+	return true;
+}
+
+const bool Handle_s2c_HEAL(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_HEAL& pkt_)
+{
+	// TODO: 힐 받은 사람 주위에 이펙트나 숫자 또는 애니메이션
+	const auto healed_user_id = pkt_.target_obj_id();
+	const auto heal_val = pkt_.heal_val();
+	const auto healed_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(healed_user_id);
+	if (!healed_obj_ptr)
+	{
+		return true;
+	}
+	auto damageCount = INSTANCE(GameGUIFacade)->DamageCount;
+	damageCount->AddCountObject(healed_obj_ptr->GetTransform()->GetLocalPosition(), -1);
 	return true;
 }

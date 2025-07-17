@@ -207,9 +207,43 @@ bool WarriorSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcep
 
 bool PriestSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
 {
-	// TODO: 수정가능성있음
-	
-	// 이거는 힐로 할듯
+	const auto pOwner = use_entity_system->GetOwnerEntityRaw();
 
+	const auto pos_comp = pOwner->GetComp<PositionComponent>();
+	const auto owner_pos = pos_comp->pos;
+	XVector<S_ptr<ContentsEntity>> users;
+	XVector<uint32_t> healed_user_ids;
+	{
+		const auto& user_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListSession();
+		users.reserve(user_list.size());
+		healed_user_ids.reserve(user_list.size());
+		for (const auto [id, player] : user_list)
+		{
+			auto user = GetSessionEntity(id);
+			if (!user)continue;
+			const auto other_pos = user->GetComp<PositionComponent>()->pos;
+			if (CommonMath::IsInDistanceDX(other_pos, owner_pos, 5.f))
+			{
+				user->GetComp<HP>()->PostDoHeal(3);
+				healed_user_ids.emplace_back(user->GetObjectID());
+			}
+			users.emplace_back(std::move(user));
+		}
+		for (const auto healed_user_id : healed_user_ids)
+		{
+			for (const auto& user : users)
+			{
+				auto heal_pkt = Create_s2c_HEAL(
+					healed_user_id,
+					3
+				);
+				user->GetSession()->SendAsync(heal_pkt);
+				pOwner->GetSession()->SendAsync(std::move(heal_pkt));
+			}
+		}
+	}
+	{
+		pOwner->GetComp<MoveBroadcaster>()->BroadcastPacket(Create_s2c_PLAYER_ATTACK(pOwner->GetObjectID64(), pos_comp->body_angle, ToFlatVec(pos_comp->pos), Nagox::Enum::SKILL_TYPE_SKILL_1));
+	}
 	return true;
 }

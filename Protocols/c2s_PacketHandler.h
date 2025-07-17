@@ -70,6 +70,7 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_BOSS_FLY = 1033,
     s2c_BOSS_MOVE = 1034,
     s2c_BOSS_PROJ_MARK = 1035,
+    s2c_HEAL = 1036,
 };
 
 class NagiocpX::PacketSession;

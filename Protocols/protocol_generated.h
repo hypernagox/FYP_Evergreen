@@ -196,6 +196,9 @@ struct s2c_BOSS_MOVEBuilder;
 struct s2c_BOSS_PROJ_MARK;
 struct s2c_BOSS_PROJ_MARKBuilder;
 
+struct s2c_HEAL;
+struct s2c_HEALBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -3612,6 +3615,63 @@ inline ::flatbuffers::Offset<s2c_BOSS_PROJ_MARK> Creates2c_BOSS_PROJ_MARK(
     const Nagox::Struct::Vec3 *mark_pos = nullptr) {
   s2c_BOSS_PROJ_MARKBuilder builder_(_fbb);
   builder_.add_mark_pos(mark_pos);
+  return builder_.Finish();
+}
+
+struct s2c_HEAL FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_HEALBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_OBJ_ID = 4,
+    VT_HEAL_VAL = 6
+  };
+  uint32_t target_obj_id() const {
+    return GetField<uint32_t>(VT_TARGET_OBJ_ID, 0);
+  }
+  bool mutate_target_obj_id(uint32_t _target_obj_id = 0) {
+    return SetField<uint32_t>(VT_TARGET_OBJ_ID, _target_obj_id, 0);
+  }
+  int32_t heal_val() const {
+    return GetField<int32_t>(VT_HEAL_VAL, 0);
+  }
+  bool mutate_heal_val(int32_t _heal_val = 0) {
+    return SetField<int32_t>(VT_HEAL_VAL, _heal_val, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_TARGET_OBJ_ID, 4) &&
+           VerifyField<int32_t>(verifier, VT_HEAL_VAL, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_HEALBuilder {
+  typedef s2c_HEAL Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_obj_id(uint32_t target_obj_id) {
+    fbb_.AddElement<uint32_t>(s2c_HEAL::VT_TARGET_OBJ_ID, target_obj_id, 0);
+  }
+  void add_heal_val(int32_t heal_val) {
+    fbb_.AddElement<int32_t>(s2c_HEAL::VT_HEAL_VAL, heal_val, 0);
+  }
+  explicit s2c_HEALBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_HEAL> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_HEAL>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_HEAL> Creates2c_HEAL(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_obj_id = 0,
+    int32_t heal_val = 0) {
+  s2c_HEALBuilder builder_(_fbb);
+  builder_.add_heal_val(heal_val);
+  builder_.add_target_obj_id(target_obj_id);
   return builder_.Finish();
 }
 

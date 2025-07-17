@@ -361,3 +361,9 @@ table s2c_BOSS_PROJ_MARK
 {
    mark_pos: Nagox.Struct.Vec3;
 }
+
+table s2c_HEAL
+{
+   target_obj_id : uint32;
+   heal_val : int32;
+}

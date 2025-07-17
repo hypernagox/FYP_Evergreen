@@ -203,3 +203,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_PROJ_MARK(
     const Nagox::Struct::Vec3& mark_pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_HEAL(
+    const uint32_t target_obj_id,
+    const int32_t heal_val,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

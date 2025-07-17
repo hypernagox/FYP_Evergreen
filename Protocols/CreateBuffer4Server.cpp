@@ -672,3 +672,20 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_PROJ_MARK(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_BOSS_PROJ_MARK);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_HEAL(
+    const uint32_t target_obj_id,
+    const int32_t heal_val,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto target_obj_id_value = target_obj_id;
+    const auto heal_val_value = heal_val;
+    const auto serializeds2c_HEAL = Nagox::Protocol::Creates2c_HEAL(
+        builder
+,        target_obj_id_value,
+        heal_val_value    );
+    builder.Finish(serializeds2c_HEAL);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_HEAL);
+}
