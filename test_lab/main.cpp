@@ -159,6 +159,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
          g_scene->AddObject(dragonObject);
      }
 
+     {
+         auto planeObject = std::make_shared<SceneObject>();
+         auto planeRenderer = planeObject->AddComponent<MeshRenderer>();
+         planeRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(L"resource\\plane.yms"));
+         udsdx::Material waterMaterial(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\water.hlsl"));
+         waterMaterial.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\Water.png"), 0);
+         waterMaterial.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\Flow Speed Noise.png"), 1);
+         waterMaterial.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\Water Derivative Height.png"), 2);
+         planeRenderer->SetMaterial(waterMaterial);
+         planeObject->GetTransform()->SetLocalPositionY(-10.0f);
+         planeObject->GetTransform()->SetLocalScale(0.01f);
+         g_scene->AddObject(planeObject);
+     }
+
     return UpdownStudio::Run(g_scene, nCmdShow);
 }
 

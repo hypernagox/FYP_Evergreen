@@ -161,10 +161,17 @@ void GameScene::OnAttach()
         AddObject(m_dungeonEnvironmentObject);
 
         auto dungeonWaterObj = std::make_shared<SceneObject>();
-        dungeonWaterObj->GetTransform()->SetLocalPosition(Vector3(338.0f, 11.3f, 448.0f));
+        dungeonWaterObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 11.3f, 0.0f));
+        dungeonWaterObj->GetTransform()->SetLocalScale(0.01f);
         auto dungeonWaterRenderer = dungeonWaterObj->AddComponent<MeshRenderer>();
         dungeonWaterRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\plane.yms")));
-        dungeonWaterRenderer->SetMaterial(resource->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+
+        udsdx::Material waterMaterial(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"water.hlsl")));
+        waterMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Water.png")), 0);
+        waterMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Flow Speed Noise.png")), 1);
+        waterMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Water Derivative Height.png")), 2);
+        dungeonWaterRenderer->SetMaterial(waterMaterial);
+
         m_dungeonEnvironmentObject->AddChild(dungeonWaterObj);
 
         std::ifstream file(RESOURCE_PATH(L"environment\\ExportedGameSpawns.json"));

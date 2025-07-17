@@ -46,7 +46,7 @@ float4 PSDeferred(VertexOut pin) : SV_Target
     float G = G_V * G_L;
 
     // Fresnel Equation (Schlick's Approximation)
-    float3 F = F0 + (1.0f - F0) * pow(1.0f - max(dot(H, V), 0.0f), 5.0f);
+    float3 F = F0 + (1.0f - F0) * pow(1.0f - max(dot(N, V), 0.0f), 5.0f);
 
     // Specular Term
     float3 specular = (D * G * F) / (4.0f * max(NdotV, 0.001f) * max(NdotL, 0.001f));

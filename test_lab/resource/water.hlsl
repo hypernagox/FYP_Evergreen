@@ -19,7 +19,7 @@ float4 PSDeferred(VertexOut pin) : SV_Target
     float3 albedo     = gbuffer1.rgb;
 	float3 normalV    = ReconstructNormal(gbuffer2.xy);
     float3 normalWS   = normalize(mul(normalV, (float3x3)gViewInverse));
-    float  smoothness = gbuffer3.a;
+    float  smoothness = 1.0f - gbuffer3.a;
     float  metallic   = gbuffer3.b;
 
     float3 N = normalWS;
@@ -31,7 +31,7 @@ float4 PSDeferred(VertexOut pin) : SV_Target
 
     // Normal Distribution Function (GGX/Trowbridge-Reitz)
     float NdotH = max(dot(N, H), 0.0f);
-    float alpha = max(0.001f, smoothness);
+    float alpha = max(0.001f, smoothness * smoothness);
     float alphaSqr = alpha * alpha;
     float denom = (NdotH * NdotH) * (alphaSqr - 1.0f) + 1.0f;
     float D = alphaSqr / (PI * denom * denom);
@@ -60,7 +60,10 @@ float4 PSDeferred(VertexOut pin) : SV_Target
     float3 color = (diffuse + specular) * radiance * NdotL * ShadowValue(PosW, normalWS);
 
     // Ambient Term (you may replace with IBL or ambient light color)
-    float3 ambient = AmbientLight(pin) * albedo;
+	float3 skyColor = pow(float3(0.357f, 0.404f, 0.467f), gamma);
+    float3 ambientDiffuse = skyColor * albedo;
+    float3 ambientSpecular = skyColor * F * (1.0F - smoothness); // Roughness 기반으로 감소
+    float3 ambient = (ambientDiffuse + ambientSpecular);
     color += ambient;
 
     return float4(color, 1.0f);
@@ -68,8 +71,8 @@ float4 PSDeferred(VertexOut pin) : SV_Target
 
 #else
 
-Texture2D gNormalTex : register(t1);
-Texture2D gMetallicTex : register(t2);
+Texture2D gFlowTex : register(t1);
+Texture2D gDerivTex : register(t2);
 
 VertexOut VS(VertexIn vin)
 {
@@ -79,29 +82,69 @@ VertexOut VS(VertexIn vin)
     return vout;
 }
 
+float3 FlowUVW (float2 uv, float2 flowVector, float2 jump, float flowOffset, float tiling, float time, bool flowB)
+{
+	float phaseOffset = flowB ? 0.5 : 0;
+	float progress = frac(time + phaseOffset);
+	float3 uvw;
+	uvw.xy = uv - flowVector * (progress + flowOffset);
+	uvw.xy *= tiling;
+	uvw.xy += phaseOffset;
+	uvw.xy += (time - progress) * jump;
+	uvw.z = 1 - abs(1 - 2 * progress);
+	return uvw;
+}
+
+float3 UnpackDerivativeHeight (float4 textureData)
+{
+	float3 dh = textureData.agb;
+	dh.xy = dh.xy * 2 - 1;
+	return dh;
+}
+
+static float _FlowStrength = 0.02f;
+static float _HeightScale = 1.0f;
+static float _HeightScaleModulated = 9.0f;
+static float _Speed = 0.2f;
+static float _UJump = 0.202f;
+static float _VJump = 0.202f;
+static float _Tiling = 10.0f;
+static float _FlowOffset = 0.0f;
+static float4 _Color = float4(0.1568f, 0.4549f, 0.6235f, 1.0f);
+
 PixelOut PS(VertexOut pin)
 {
 	PixelOut pOut;
 
-    float3 normalW = normalize(pin.NormalW);
+	float3 flow = float3(gFlowTex.Sample(gSampler, pin.Tex).rgb);
+	flow.xy = flow.xy * 2 - 1;
+	flow *= _FlowStrength;
+	float noise = gFlowTex.Sample(gSampler, pin.Tex).a;
+	float time = gTime * _Speed + noise;
+	float2 jump = float2(_UJump, _VJump);
 
-    // Normal mapping
-    float4 normalMapSample = gNormalTex.Sample(gSampler, pin.Tex);
-    float3 normal = NormalSampleToWorldSpace(normalMapSample.rgb, normalW, pin.TangentW.xyz);
-    normal = mul(normal, (float3x3)gView);
-    float4 texColor = gMainTex.Sample(gSampler, pin.Tex);
+	float3 uvwA = FlowUVW(pin.Tex, flow.xy, jump, _FlowOffset, _Tiling, time, false);
+	float3 uvwB = FlowUVW(pin.Tex, flow.xy, jump, _FlowOffset, _Tiling, time, true);
+
+	float finalHeightScale = flow.z * _HeightScaleModulated + _HeightScale;
+
+	float3 dhA = UnpackDerivativeHeight(gDerivTex.Sample(gSampler, uvwA.xy)) * (uvwA.z * finalHeightScale);
+	float3 dhB = UnpackDerivativeHeight(gDerivTex.Sample(gSampler, uvwB.xy)) * (uvwB.z * finalHeightScale);
+
+	float4 texA = gMainTex.Sample(gSampler, uvwA.xy) * uvwA.z;
+	float4 texB = gMainTex.Sample(gSampler, uvwB.xy) * uvwB.z;
+	
     float4 posH = mul(pin.PosW, gViewProj);
     posH /= posH.w;
     pin.PrevPosH /= pin.PrevPosH.w;
     float4 posDelta = posH - pin.PrevPosH;
-    
-    clip(texColor.a - 0.1f);
      
-    pOut.Buffer1 = texColor;
-    pOut.Buffer2 = PackNormal(normal);
-    pOut.Buffer3.rg = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
-	pOut.Buffer3.rg /= max(length(pOut.Buffer3.rg), 1.0f);
-    pOut.Buffer3.ba = gMetallicTex.Sample(gSampler, pin.Tex).ra;
+    pOut.Buffer1 = (texA + texB) * _Color;
+    pOut.Buffer2 = PackNormal(mul(normalize(float3(-(dhA.x + dhB.x), 1.0f, -(dhA.y + dhB.y))), gView));
+
+    pOut.Buffer3.xy = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
+	pOut.Buffer3.xy /= max(length(pOut.Buffer3.xy), 1.0f);
+	pOut.Buffer3.zw = float2(0.0f, 0.75f);
 
     return pOut;
 }
