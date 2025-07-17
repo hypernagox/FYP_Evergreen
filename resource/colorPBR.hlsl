@@ -24,7 +24,7 @@ float4 PSDeferred(VertexOut pin) : SV_Target
 
     float3 N = normalWS;
     float3 L = -gDirLight;
-    float3 V = -gViewInverse[2].xyz;
+    float3 V = normalize(gEyePosW.xyz - PosW.xyz);
     float3 H = normalize(L + V); // Half vector
 
     float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), albedo, metallic);
@@ -46,7 +46,7 @@ float4 PSDeferred(VertexOut pin) : SV_Target
     float G = G_V * G_L;
 
     // Fresnel Equation (Schlick's Approximation)
-    float3 F = F0 + (1.0f - F0) * pow(1.0f - max(dot(N, V), 0.0f), 5.0f);
+    float3 F = F0 + (1.0f - F0) * pow(1.0f - saturate(dot(H, V)), 5.0f);
 
     // Specular Term
     float3 specular = (D * G * F) / (4.0f * max(NdotV, 0.001f) * max(NdotL, 0.001f));

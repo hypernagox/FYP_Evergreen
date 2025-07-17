@@ -75,8 +75,12 @@ void GameScene::OnAttach()
     auto& cell = m_heroServerObject->GetNaviAgent()->GetCurCell();
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(start_pos);
     
-    for (auto& objectGroup : m_activeObjectGroups)
+    m_activeObjectGroup = std::make_shared<SceneObject>();
+    for (auto& objectGroup : m_activeObjectSubGroups)
+    {
         objectGroup = std::make_shared<SceneObject>();
+        m_activeObjectGroup->AddChild(objectGroup);
+    }
 
     m_heroObj->GetTransform()->SetLocalPosition(start_pos);
 
@@ -478,8 +482,7 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
 
     AddObject(m_heroObj);
     AddObject(m_spectatorObj);
-    for (const auto& objectGroup : m_activeObjectGroups)
-        AddObject(objectGroup);
+    AddObject(m_activeObjectGroup);
     m_focusAgentObj->SetActive(true);
 
     OnTogglePause(false);
@@ -564,12 +567,12 @@ void GameScene::OnTogglePlayerMode(bool spectatorMode)
 
 void GameScene::AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj)
 {
-    AddActiveObject(obj, m_sceneType);
+    m_activeObjectGroup->AddChild(obj);
 }
 
 void GameScene::AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj, GameSceneType type)
 {
-    m_activeObjectGroups[static_cast<std::uint8_t>(type)]->AddChild(obj);
+    m_activeObjectSubGroups[static_cast<std::uint8_t>(type)]->AddChild(obj);
 }
 
 void GameScene::AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj)
@@ -595,8 +598,8 @@ void GameScene::ChangeGameScene(GameSceneType type)
     m_defaultEnvironmentObject->SetActive(false);
     m_dungeonEnvironmentObject->SetActive(false);
 
-    m_activeObjectGroups[0]->SetActive(type == GameSceneType::Default);
-    m_activeObjectGroups[1]->SetActive(type == GameSceneType::Dungeon);
+    m_activeObjectSubGroups[0]->SetActive(type == GameSceneType::Default);
+    m_activeObjectSubGroups[1]->SetActive(type == GameSceneType::Dungeon);
 
     switch (type)
 	{
@@ -630,7 +633,7 @@ void GameScene::AddMinimapMark(const Vector3& position)
 
 std::vector<InteractiveEntity*> GameScene::GetInteractiveEntities() const
 {
-	return m_activeObjectGroups[static_cast<std::uint8_t>(m_sceneType)]->GetComponentsInChildren<InteractiveEntity>();
+	return m_activeObjectGroup->GetComponentsInChildren<InteractiveEntity>();
 }
 
 Camera* GameScene::GetMainCamera() const

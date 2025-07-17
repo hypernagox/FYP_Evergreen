@@ -44,7 +44,8 @@ public:
 
 private:
 	GameSceneType m_sceneType = GameSceneType::Default;
-	std::array<std::shared_ptr<udsdx::SceneObject>, 2> m_activeObjectGroups;
+	std::shared_ptr<udsdx::SceneObject> m_activeObjectGroup;
+	std::array<std::shared_ptr<udsdx::SceneObject>, 2> m_activeObjectSubGroups;
 
 	std::shared_ptr<udsdx::SceneObject> m_defaultEnvironmentObject;
 	std::shared_ptr<udsdx::SceneObject> m_dungeonEnvironmentObject;
