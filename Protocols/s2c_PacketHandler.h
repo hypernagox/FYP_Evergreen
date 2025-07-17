@@ -45,6 +45,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_BOSS_MOVE = 1034,
     s2c_BOSS_PROJ_MARK = 1035,
     s2c_HEAL = 1036,
+    s2c_DASH = 1037,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -71,6 +72,7 @@ enum class CREATE_PKT_ID : uint16_t {
     c2s_CHANGE_HARVEST_STATE = 1020,
     c2s_CHANGE_EQUIPMENT = 1021,
     c2s_CHANGE_CHANNEL = 1022,
+    c2s_DASH = 1023,
 };
 
 class NetHelper::PacketSession;
@@ -117,6 +119,7 @@ const bool Handle_s2c_BOSS_FLY(const NetHelper::S_ptr<NetHelper::PacketSession>&
 const bool Handle_s2c_BOSS_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_MOVE& pkt_);
 const bool Handle_s2c_BOSS_PROJ_MARK(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_PROJ_MARK& pkt_);
 const bool Handle_s2c_HEAL(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_HEAL& pkt_);
+const bool Handle_s2c_DASH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_DASH& pkt_);
 
 class s2c_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const BYTE* const, const int32_t);
@@ -160,6 +163,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_MOVE, Nagox::Protocol::s2c_BOSS_MOVE, Handle_s2c_BOSS_MOVE>();
         RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_PROJ_MARK, Nagox::Protocol::s2c_BOSS_PROJ_MARK, Handle_s2c_BOSS_PROJ_MARK>();
         RegisterHandler<HANDLE_PKT_ID::s2c_HEAL, Nagox::Protocol::s2c_HEAL, Handle_s2c_HEAL>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_DASH, Nagox::Protocol::s2c_DASH, Handle_s2c_DASH>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

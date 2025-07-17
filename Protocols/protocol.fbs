@@ -367,3 +367,14 @@ table s2c_HEAL
    target_obj_id : uint32;
    heal_val : int32;
 }
+
+table c2s_DASH
+{
+    target_pos: Nagox.Struct.Vec3;
+}
+
+table s2c_DASH
+{
+    dash_obj_id  : uint32;
+    target_pos: Nagox.Struct.Vec3;
+}

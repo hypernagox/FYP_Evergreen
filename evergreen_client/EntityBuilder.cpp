@@ -17,6 +17,7 @@
 #include "InteractiveEntity.h"
 #include "GizmoSectorRenderer.h"
 #include "GizmoBoxRenderer.h"
+#include "ForcedMovement.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 
@@ -44,6 +45,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Player(EntityBuild
 	}
 
 	auto serverComponent = instance->AddComponent<ServerObject>();
+	serverComponent->AddComp<ForcedMovement>();
 	auto interactiveEntity = instance->AddComponent<InteractiveEntity>();
 	interactiveEntity->SetInteractionText(L"상호작용 (파티초대)");
 	interactiveEntity->SetInteractionCallback([id = builder->obj_id]() {

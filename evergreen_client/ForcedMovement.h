@@ -8,14 +8,18 @@ public:
 	CONSTRUCTOR_SERVER_COMPONENT(ForcedMovement)
 public:
 	virtual void Update()noexcept override;
-
+	void CheckDash()noexcept;
 public:
-	const auto IsForcedMovement()const noexcept { return m_forcedMovementFlag; }
-	//void SetForcedMovement(const Nagox::Protocol::s2c_FORCED_MOVEMENT& forced_movement)noexcept;
-private:
-	bool m_forcedMovementFlag = false;
+	const auto IsForcedMovement()const noexcept { return m_bIsForcedMovement; }
+	void SetForcedMovement(const Vector3& dest_pos)noexcept;
+public:
+	bool m_bIsForcedMovement = false;
 	Vector3 m_dir = {};
+	Vector3 m_dest = {};
 	float m_dist = 0.f;
 	float m_speed = 0.f;
+	float acc1 = 5.f;
+	float acc2 = 0.f;
+	bool speed_flag = false;
 };
 

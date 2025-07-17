@@ -20,7 +20,7 @@
 #include "TransitionOverlayGUI.h"
 #include "EnvironmentRenderer.h"
 #include "CommonQuestTable.h"
-#include "EnvironmentRenderer.h"
+#include "ForcedMovement.h"
 
 bool IsWithinDistance(const DirectX::SimpleMath::Vector3& currentPosition,
 	const DirectX::SimpleMath::Vector3& targetPosition,
@@ -323,7 +323,7 @@ void AuthenticPlayer::OnInitialize()
 	m_entityMovement = AddComponent<EntityMovement>();
 	m_playerRenderer = AddComponent<PlayerRenderer>();
 	m_pServerObject = AddComponent<ServerObject>();
-
+	m_pServerObject->AddComp<ForcedMovement>();
 	m_entityMovement->SetFriction(40.0f);
 }
 
@@ -398,38 +398,45 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	const auto input_handler = sceneObject->GetComponent<InputHandler>();
 	m_bSendFlag = input_handler->IsKeyHit();
 
-	static float acc1 = 5.f;
-	static float acc2 = 0.f;
-	static bool speed_flag = false;
-	acc1 = std::max(acc1 - DT, 0.f);
-	if (!speed_flag && INSTANCE(Input)->GetKeyDown(Keyboard::Space))
+	//static float acc1 = 5.f;
+	//static float acc2 = 0.f;
+	//static bool speed_flag = false;
+	//acc1 = std::max(acc1 - DT, 0.f);
+	//if (!speed_flag && INSTANCE(Input)->GetKeyDown(Keyboard::Space))
+	//{
+	//	speed_flag = true;
+	//	acc2 = .125f;
+	//	GetSceneObject()->GetComponent<EntityMovement>()->SetFriction(0.f);
+	//	const auto v = GetSceneObject()->GetComponent<EntityMovement>()->GetVelocity();
+	//	GetSceneObject()->GetComponent<EntityMovement>()->SetVelocity(v * 5.f);
+	//	GetSceneObject()->GetComponent<EntityMovement>()->m_factor = 10.f;
+	//}
+	//if (speed_flag)
+	//{
+	//	acc2 -= DT;
+	//	if (acc2 <= 0.f)
+	//	{
+	//		GetSceneObject()->GetComponent<EntityMovement>()->SetFriction(20.f);
+	//		GetSceneObject()->GetComponent<EntityMovement>()->m_factor = 1.f;
+	//		speed_flag = false;
+	//		acc1 = 5.f;
+	//	}
+	//}
+	const auto fm = sceneObject->GetComponent<ServerObject>()->GetComp<ForcedMovement>();
+	fm->CheckDash();
+	if (fm->IsForcedMovement())
 	{
-		speed_flag = true;
-		acc2 = .125f;
-		GetSceneObject()->GetComponent<EntityMovement>()->SetFriction(0.f);
-		const auto v = GetSceneObject()->GetComponent<EntityMovement>()->GetVelocity();
-		GetSceneObject()->GetComponent<EntityMovement>()->SetVelocity(v * 5.f);
-		GetSceneObject()->GetComponent<EntityMovement>()->m_factor = 10.f;
+		fm->Update();
 	}
-	if (speed_flag)
+	else
 	{
-		acc2 -= DT;
-		if (acc2 <= 0.f)
-		{
-			GetSceneObject()->GetComponent<EntityMovement>()->SetFriction(20.f);
-			GetSceneObject()->GetComponent<EntityMovement>()->m_factor = 1.f;
-			speed_flag = false;
-			acc1 = 5.f;
-		}
+		const auto navi = GetSceneObject()->GetComponent<ServerObject>()->GetNaviAgent();
+		const auto prev_pos = GetSceneObject()->GetComponent<EntityMovement>()->prev_pos;
+		Vector3 temp = prev_pos;
+		navi->SetCellPos(DT, prev_pos, transform->GetLocalPosition(), temp);
+		transform->SetLocalPosition(temp);
+		GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
 	}
-
-	const auto navi = GetSceneObject()->GetComponent<ServerObject>()->GetNaviAgent();
-	const auto prev_pos = GetSceneObject()->GetComponent<EntityMovement>()->prev_pos;
-	Vector3 temp = prev_pos;
-	navi->SetCellPos(DT, prev_pos, transform->GetLocalPosition(), temp);
-	transform->SetLocalPosition(temp);
-	GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
-
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	{
 		const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();

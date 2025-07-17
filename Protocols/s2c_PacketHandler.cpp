@@ -28,6 +28,7 @@
 #include "Naviagent.h"
 #include "GameScene.h"
 #include "TransitionOverlayGUI.h"
+#include "ForcedMovement.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -775,5 +776,23 @@ const bool Handle_s2c_HEAL(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 	}
 	auto damageCount = INSTANCE(GameGUIFacade)->DamageCount;
 	damageCount->AddCountObject(healed_obj_ptr->GetTransform()->GetLocalPosition(), -1);
+	return true;
+}
+
+const bool Handle_s2c_DASH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_DASH& pkt_)
+{
+	const auto dash_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(pkt_.dash_obj_id());
+	if (!dash_obj_ptr)
+	{
+		return true;
+	}
+	if (const auto fm = dash_obj_ptr->GetComp<ForcedMovement>())
+	{
+		if (const auto mi = dash_obj_ptr->GetComp<MoveInterpolator>())
+		{
+			dash_obj_ptr->GetComp<MoveInterpolator>()->UpdateNewMoveDataOnlyPos(ToOriginVec3(pkt_.target_pos()));
+			fm->SetForcedMovement(ToOriginVec3(pkt_.target_pos()));
+		}
+	}
 	return true;
 }

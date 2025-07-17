@@ -613,4 +613,12 @@ const bool Handle_c2s_CHANGE_CHANNEL(const NagiocpX::S_ptr<NagiocpX::PacketSessi
 	return true;
 }
 
+const bool Handle_c2s_DASH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_DASH& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+	const auto cluster = owner->GetCurCluster();
+	cluster->Broadcast(Create_s2c_DASH(owner->GetObjectID(), *pkt_.target_pos()));
+	return true;
+}
+
 

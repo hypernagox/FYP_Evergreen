@@ -208,3 +208,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_HEAL(
     const int32_t heal_val,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_DASH(
+    const uint32_t dash_obj_id,
+    const Nagox::Struct::Vec3& target_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

@@ -381,3 +381,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_CHANNEL(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_CHANNEL);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_DASH(
+    const Nagox::Struct::Vec3& target_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto target_pos_offset = &target_pos;
+    const auto serializedc2s_DASH = Nagox::Protocol::Createc2s_DASH(
+        builder
+,        target_pos_offset    );
+    builder.Finish(serializedc2s_DASH);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_DASH);
+}

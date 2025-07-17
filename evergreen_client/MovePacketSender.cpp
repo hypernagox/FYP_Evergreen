@@ -7,6 +7,7 @@
 #include "ServerTimeMgr.h"
 #include "ServerObjectMgr.h"
 #include "GameScene.h"
+#include "ForcedMovement.h"
 
 extern Vector3 g_curPos;
 
@@ -29,6 +30,7 @@ void MovePacketSender::Update() noexcept
 
 	if (flag || m_sendInterval <= m_accTime)
 	{
+		//if (m_owner->GetComp<ForcedMovement>()->IsForcedMovement())return;
 		NetMgr(ServerTimeMgr)->SetTimeStampByName("MOVE_PKT");
 		
 		const auto pos = positionTarget->GetTransform()->GetWorldPosition();

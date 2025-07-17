@@ -199,6 +199,12 @@ struct s2c_BOSS_PROJ_MARKBuilder;
 struct s2c_HEAL;
 struct s2c_HEALBuilder;
 
+struct c2s_DASH;
+struct c2s_DASHBuilder;
+
+struct s2c_DASH;
+struct s2c_DASHBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -3672,6 +3678,107 @@ inline ::flatbuffers::Offset<s2c_HEAL> Creates2c_HEAL(
   s2c_HEALBuilder builder_(_fbb);
   builder_.add_heal_val(heal_val);
   builder_.add_target_obj_id(target_obj_id);
+  return builder_.Finish();
+}
+
+struct c2s_DASH FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_DASHBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_TARGET_POS = 4
+  };
+  const Nagox::Struct::Vec3 *target_pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_target_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_TARGET_POS, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_DASHBuilder {
+  typedef c2s_DASH Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_target_pos(const Nagox::Struct::Vec3 *target_pos) {
+    fbb_.AddStruct(c2s_DASH::VT_TARGET_POS, target_pos);
+  }
+  explicit c2s_DASHBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_DASH> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_DASH>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_DASH> Createc2s_DASH(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const Nagox::Struct::Vec3 *target_pos = nullptr) {
+  c2s_DASHBuilder builder_(_fbb);
+  builder_.add_target_pos(target_pos);
+  return builder_.Finish();
+}
+
+struct s2c_DASH FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_DASHBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_DASH_OBJ_ID = 4,
+    VT_TARGET_POS = 6
+  };
+  uint32_t dash_obj_id() const {
+    return GetField<uint32_t>(VT_DASH_OBJ_ID, 0);
+  }
+  bool mutate_dash_obj_id(uint32_t _dash_obj_id = 0) {
+    return SetField<uint32_t>(VT_DASH_OBJ_ID, _dash_obj_id, 0);
+  }
+  const Nagox::Struct::Vec3 *target_pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_target_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_TARGET_POS);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_DASH_OBJ_ID, 4) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_TARGET_POS, 4) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_DASHBuilder {
+  typedef s2c_DASH Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_dash_obj_id(uint32_t dash_obj_id) {
+    fbb_.AddElement<uint32_t>(s2c_DASH::VT_DASH_OBJ_ID, dash_obj_id, 0);
+  }
+  void add_target_pos(const Nagox::Struct::Vec3 *target_pos) {
+    fbb_.AddStruct(s2c_DASH::VT_TARGET_POS, target_pos);
+  }
+  explicit s2c_DASHBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_DASH> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_DASH>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_DASH> Creates2c_DASH(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t dash_obj_id = 0,
+    const Nagox::Struct::Vec3 *target_pos = nullptr) {
+  s2c_DASHBuilder builder_(_fbb);
+  builder_.add_target_pos(target_pos);
+  builder_.add_dash_obj_id(dash_obj_id);
   return builder_.Finish();
 }
 

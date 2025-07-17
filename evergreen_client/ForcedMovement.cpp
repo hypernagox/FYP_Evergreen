@@ -3,50 +3,87 @@
 #include "ServerObject.h"
 #include "EntityMovement.h"
 #include "MoveInterpolator.h"
+#include "NavigationMesh.h"
+#include "NaviAgent.h"
+#include "MovePacketSender.h"
 
 void ForcedMovement::Update()noexcept
 {
-	//return;
-	//if (!m_forcedMovementFlag)return;
-	//const auto navi = m_owner->GetComponent<ServerObject>()->m_pNaviAgent;
-	//
-	//const auto movement_dist = m_speed * DT;
-	//const auto movement = m_dir * movement_dist;
-	//
-	//const auto transform = m_owner->GetTransform();
-	//const auto cur_pos = transform->GetWorldPosition();
-	//const auto new_pos = cur_pos + movement;
-	//Vector3 moved = cur_pos;
-	//navi->SetCellPos(DT, cur_pos, new_pos, moved);
-	//transform->SetLocalPosition(moved);
-	//m_dist -= (moved-cur_pos).Length();
-	//if (0.f >= m_dist) 
-	//{ 
-	//	m_forcedMovementFlag = false; 
-	//	m_owner->GetComponent<EntityMovement>()->m_factor = 1.f;
-	//	m_owner->GetComponent<EntityMovement>()->SetFriction(40.f);
-	//}
+	if (!m_bIsForcedMovement)return;
+	const auto owner = m_owner->GetSceneObject();
+	acc1 = std::max(acc1 - DT, 0.f);
+	
+	if (speed_flag)
+	{
+		const auto ms = m_owner->GetComp<MovePacketSender>();
+		if (ms)
+		{
+			ms->SetSendInterval(0.f);
+		}
+		const auto navi = owner->GetComponent<ServerObject>()->GetNaviAgent();
+		const auto transform = owner->GetTransform();
+		const auto prev_pos = transform->GetLocalPosition();
+		const auto post_pos = prev_pos + m_dir * DT * 10.f;
+		Vector3 temp = prev_pos;
+		navi->SetCellPos(DT, prev_pos, post_pos, temp);
+		transform->SetLocalPosition(temp);
+		owner->GetComponent<EntityMovement>()->prev_pos = temp;
+		acc2 -= DT;
+		if (acc2 <= 0.f)
+		{
+			speed_flag = false;
+			m_bIsForcedMovement = false;
+			acc1 = 5.f;
+			acc2 = .1f;
+			if (ms)
+			{
+				ms->SetSendInterval(0.1f);
+			}
+		}
+	}
 }
 
-//void ForcedMovement::SetForcedMovement(const Nagox::Protocol::s2c_FORCED_MOVEMENT& forced_movement) noexcept
-//{
-//	//return;
-//	//m_forcedMovementFlag = true;
-//	//const auto start_pos = ToOriginVec3(forced_movement.start_pos());
-//	//const auto dest_pos = ToOriginVec3(forced_movement.dest_pos());
-//	//m_speed = forced_movement.speed();
-//	//const auto dir = dest_pos - start_pos;
-//	//m_dir = CommonMath::Normalized(dir);
-//	//m_owner->GetComponent<EntityMovement>()->SetVelocity(m_dir * m_speed);
-//	//m_dist = dir.Length();
-//	//auto& interpolator = m_owner->GetComp<MoveInterpolator>()->GetInterpolatorConcrete();
-//	//interpolator.GetNewData().vel = m_dir * m_speed;
-//	//interpolator.GetNewData().pos = dest_pos;
-//	//interpolator.GetCurData().vel = m_dir * m_speed;
-//	//auto data = interpolator.GetNewData();
-//	//data.pos = dest_pos;
-//	//data.vel = m_dir * m_speed;
-//	//interpolator.UpdateNewData(data);
-//	//m_owner->GetComponent<EntityMovement>()->SetFriction(0.f);
-//	//m_owner->GetComponent<EntityMovement>()->m_factor = 10.f;
-//}
+void ForcedMovement::CheckDash() noexcept
+{
+	if (!speed_flag && INSTANCE(Input)->GetKeyDown(Keyboard::Space))
+	{
+
+		acc2 = .1f;
+		const auto owner = m_owner->GetSceneObject();
+		const auto prev_pos = m_owner->GetTransform()->GetLocalPosition();
+		const auto vel = CommonMath::Normalized(owner->GetComponent<EntityMovement>()->GetVelocity());
+		m_dest = prev_pos + vel * 5.f;
+		auto temp = m_dest;
+		m_owner->GetNaviAgent()->ForcedMovement(
+			prev_pos,
+			temp,
+			m_dest
+		);
+		m_dir = CommonMath::Normalized(m_dest - prev_pos);
+		const auto c = m_dir.Dot(vel);
+		if (0.f >= c)return;
+		m_bIsForcedMovement = true;
+		speed_flag = true;
+		Send(Create_c2s_DASH(ToFlatVec3(m_dest)));
+	}
+}
+
+void ForcedMovement::SetForcedMovement(const Vector3& dest_pos) noexcept
+{
+	acc2 = .1f;
+	const auto owner = m_owner->GetSceneObject();
+	const auto prev_pos = m_owner->GetTransform()->GetLocalPosition();
+	const auto vel = CommonMath::Normalized(dest_pos - prev_pos);
+	m_dest = prev_pos + vel * 2.f;
+	auto temp = m_dest;
+	m_owner->GetNaviAgent()->ForcedMovement(
+		prev_pos,
+		temp,
+		m_dest
+	);
+	m_dir = CommonMath::Normalized(m_dest - prev_pos);
+	//const auto c = m_dir.Dot(vel);
+	//if (0.f >= c)return;
+	m_bIsForcedMovement = true;
+	speed_flag = true;
+}

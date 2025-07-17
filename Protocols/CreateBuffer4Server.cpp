@@ -689,3 +689,20 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_HEAL(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_HEAL);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_DASH(
+    const uint32_t dash_obj_id,
+    const Nagox::Struct::Vec3& target_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto dash_obj_id_value = dash_obj_id;
+    const auto target_pos_offset = &target_pos;
+    const auto serializeds2c_DASH = Nagox::Protocol::Creates2c_DASH(
+        builder
+,        dash_obj_id_value,
+        target_pos_offset    );
+    builder.Finish(serializeds2c_DASH);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_DASH);
+}

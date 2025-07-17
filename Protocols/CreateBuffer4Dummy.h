@@ -114,3 +114,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_CHANNEL(
     const uint32_t dest_channel_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_DASH(
+    const Nagox::Struct::Vec3& target_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
