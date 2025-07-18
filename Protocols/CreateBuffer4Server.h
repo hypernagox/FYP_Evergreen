@@ -86,6 +86,11 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_REQUEST_QUEST(
     const bool is_accept,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PROCESS_COMMON_QUEST(
+    const uint64_t quest_id,
+    const Nagox::Enum::MONSTER_TYPE& mon_type,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CLEAR_QUEST(
     const uint64_t quest_id,
     const uint8_t is_clear,

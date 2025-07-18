@@ -270,6 +270,23 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_REQUEST_QUEST(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_REQUEST_QUEST);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PROCESS_COMMON_QUEST(
+    const uint64_t quest_id,
+    const Nagox::Enum::MONSTER_TYPE& mon_type,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto quest_id_value = quest_id;
+    const auto mon_type_value = mon_type;
+    const auto serializeds2c_PROCESS_COMMON_QUEST = Nagox::Protocol::Creates2c_PROCESS_COMMON_QUEST(
+        builder
+,        quest_id_value,
+        mon_type_value    );
+    builder.Finish(serializeds2c_PROCESS_COMMON_QUEST);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PROCESS_COMMON_QUEST);
+}
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CLEAR_QUEST(
     const uint64_t quest_id,
     const uint8_t is_clear,

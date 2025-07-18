@@ -161,12 +161,16 @@ class QuestGenerator(QWidget):
                     cppfile.write(
                         f"    if ( key_entity->GetEntityInfo().GetObjectDetailType() == Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_{m.upper()} ) {{\n")
                     cppfile.write(f"        m_{m}_count = std::max( 0, m_{m}_count - 1 );\n")
+                    cppfile.write("        if (const auto session = clear_entity->GetSession()) {\n")
+                    cppfile.write(
+                        f"            session->SendAsync(Create_s2c_PROCESS_COMMON_QUEST({qid}, (Nagox::Enum::MONSTER_TYPE)key_entity->GetEntityInfo().GetObjectDetailType()));\n")
+                    cppfile.write("        }\n")
                     cppfile.write("    }\n")
                 conds = " && ".join([f"m_{m}_count == 0" for m in midict])
                 cppfile.write(f"    if ( {conds} ) {{\n")
-                cppfile.write("        if ( const auto session = clear_entity->GetSession() ) {\n")
-                cppfile.write(f"            session->SendAsync( Create_s2c_CLEAR_QUEST( {qid}, false ) );\n")
-                cppfile.write("        }\n        return true;\n    }\n")
+                cppfile.write("        //if ( const auto session = clear_entity->GetSession() ) {\n")
+                cppfile.write(f"            //session->SendAsync( Create_s2c_CLEAR_QUEST( {qid}, false ) );\n")
+                cppfile.write("       // }\n        return true;\n    }\n")
                 cppfile.write("    return false;\n}\n")
 
                 cppfile.write(f"\nvoid {cname}::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {{\n")

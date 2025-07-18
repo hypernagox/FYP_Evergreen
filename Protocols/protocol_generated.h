@@ -76,6 +76,9 @@ struct c2s_REQUEST_QUESTBuilder;
 struct s2c_REQUEST_QUEST;
 struct s2c_REQUEST_QUESTBuilder;
 
+struct s2c_PROCESS_COMMON_QUEST;
+struct s2c_PROCESS_COMMON_QUESTBuilder;
+
 struct s2c_CLEAR_QUEST;
 struct s2c_CLEAR_QUESTBuilder;
 
@@ -1514,6 +1517,63 @@ inline ::flatbuffers::Offset<s2c_REQUEST_QUEST> Creates2c_REQUEST_QUEST(
   s2c_REQUEST_QUESTBuilder builder_(_fbb);
   builder_.add_quest_id(quest_id);
   builder_.add_is_accept(is_accept);
+  return builder_.Finish();
+}
+
+struct s2c_PROCESS_COMMON_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_PROCESS_COMMON_QUESTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_QUEST_ID = 4,
+    VT_MON_TYPE = 6
+  };
+  uint64_t quest_id() const {
+    return GetField<uint64_t>(VT_QUEST_ID, 0);
+  }
+  bool mutate_quest_id(uint64_t _quest_id = 0) {
+    return SetField<uint64_t>(VT_QUEST_ID, _quest_id, 0);
+  }
+  Nagox::Enum::MONSTER_TYPE mon_type() const {
+    return static_cast<Nagox::Enum::MONSTER_TYPE>(GetField<uint8_t>(VT_MON_TYPE, 0));
+  }
+  bool mutate_mon_type(Nagox::Enum::MONSTER_TYPE _mon_type = static_cast<Nagox::Enum::MONSTER_TYPE>(0)) {
+    return SetField<uint8_t>(VT_MON_TYPE, static_cast<uint8_t>(_mon_type), 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_QUEST_ID, 8) &&
+           VerifyField<uint8_t>(verifier, VT_MON_TYPE, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_PROCESS_COMMON_QUESTBuilder {
+  typedef s2c_PROCESS_COMMON_QUEST Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_quest_id(uint64_t quest_id) {
+    fbb_.AddElement<uint64_t>(s2c_PROCESS_COMMON_QUEST::VT_QUEST_ID, quest_id, 0);
+  }
+  void add_mon_type(Nagox::Enum::MONSTER_TYPE mon_type) {
+    fbb_.AddElement<uint8_t>(s2c_PROCESS_COMMON_QUEST::VT_MON_TYPE, static_cast<uint8_t>(mon_type), 0);
+  }
+  explicit s2c_PROCESS_COMMON_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_PROCESS_COMMON_QUEST> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_PROCESS_COMMON_QUEST>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_PROCESS_COMMON_QUEST> Creates2c_PROCESS_COMMON_QUEST(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t quest_id = 0,
+    Nagox::Enum::MONSTER_TYPE mon_type = Nagox::Enum::MONSTER_TYPE_FOX) {
+  s2c_PROCESS_COMMON_QUESTBuilder builder_(_fbb);
+  builder_.add_quest_id(quest_id);
+  builder_.add_mon_type(mon_type);
   return builder_.Finish();
 }
 

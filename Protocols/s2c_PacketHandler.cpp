@@ -287,6 +287,14 @@ const bool Handle_s2c_REQUEST_QUEST(const NetHelper::S_ptr<NetHelper::PacketSess
 	return true;
 }
 
+const bool Handle_s2c_PROCESS_COMMON_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PROCESS_COMMON_QUEST& pkt_)
+{
+	// TODO: 퀘스트 id 와 잡은 몹 종류
+	const auto quest_info = Common::CommonQuestTable::GetCommonQuestInfo(pkt_.quest_id());
+	const auto mon_type = pkt_.mon_type();
+	return true;
+}
+
 const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CLEAR_QUEST& pkt_)
 {
 	if (pkt_.is_clear())
@@ -307,7 +315,7 @@ const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSessio
 	}
 	else
 	{
-		// false라면 퀘스트 경과가 오는데 이건 없앨수 있음 예: 여우1마리 2마리 .. 카운팅같은거
+		// false 일 경우 포기 실패 등등.. 
 	}
 	
 	return true;
