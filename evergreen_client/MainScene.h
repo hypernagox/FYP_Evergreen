@@ -13,8 +13,10 @@ public:
 
 	// 게임 시작 시 캐릭터를 선택하는 단계
 	void EnterCharacterSelection();
+	void OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int characterType);
 
-	void EnterGame(unsigned int character);
+	void TransitionEnterGame();
+	void EnterGame();
 	void ExitGame();
 
 private:
@@ -31,5 +33,8 @@ private:
 	PopupGUIManager* m_popupGUIManager;
 	TransitionOverlayGUI* m_transitionOverlayGUI;
 
-	int m_currentChannelID = 0;
+	bool m_firstLoginAttempt = true;
+	unsigned int m_currentCharacterType = 0;
+	unsigned int m_currentChannelID = 0;
+	bool m_needCharacterSelection = false;
 };

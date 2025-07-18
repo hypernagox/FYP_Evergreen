@@ -150,38 +150,45 @@ void AuthenticPlayer::SetQuickSlotItem(int index, uint8_t itemID)
 	// 클라이언트 GUI에게 해당 퀵슬롯에 대한 아이템을 설정한다.
 	m_quickSlot[index] = itemID;
 	m_playerQuickSlotGUI->UpdateSlotContents(m_quickSlot, m_inventory);
-	Send(
-		Create_c2s_REQUEST_QUICK_SLOT(itemID, (uint8_t)index)
-	);
+	Send(Create_c2s_REQUEST_QUICK_SLOT(itemID, (uint8_t)index));
 	// TODO: 클라이언트가 서버에게 해당 퀵슬롯에 대한 아이템 설정을 요청한다.
 }
 
-void AuthenticPlayer::SetPlayerWeapon(std::string_view weaponKey, uint8_t itemID)
+void AuthenticPlayer::SetPlayerWeapon(int weaponID, bool sendPacket)
 {
 	// TODO: 서버에 플레이어의 무기를 설정하는 패킷을 전송한다.
 	// 이때 플레이어의 무기 정보는 ID(int) 로 전송되어야하며
 	// 인자로써 주어진 weaponKey를 ID로 매핑하는 수단이 필요하다.
 
-	
-	const int weaponID = DATA_TABLE->GetWeaponIDInt(weaponKey); // TODO: weaponKey를 ID로 매핑하는 로직 필요
-	// Send(Create_c2s_SET_PLAYER_WEAPON(weaponID)); // 예시로 서버에 무기 설정 요청 패킷을 전송하는 코드
-	Send(
-		Create_c2s_CHANGE_EQUIPMENT(
-			Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
-			weaponID)
-	);
-	// 자신의 플레이어 렌더러의 무기 모델을 설정하는 코드
-	m_playerRenderer->SetPlayerWeapon(weaponKey);
-	m_playerEquipmentGUI->UpdateSlotContents(this, 0, itemID); // 0번 인덱스는 무기 슬롯으로 가정
+	if (sendPacket)
+	{
+		Send(Create_c2s_CHANGE_EQUIPMENT(Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON, weaponID));
+	}
+
+	if (weaponID >= 0)
+	{
+		auto itemID = DATA_TABLE->GetItemID(GET_DATA(std::string, "Weapon", DATA_TABLE->GetWeaponIDStr(weaponID), "ItemKey"));
+
+		// 자신의 플레이어 렌더러의 무기 모델을 설정하는 코드
+		m_playerRenderer->SetPlayerWeapon(weaponID);
+		m_playerEquipmentGUI->UpdateSlotContents(this, 0, itemID); // 0번 인덱스는 무기 슬롯으로 가정
+	}
 }
 
-void AuthenticPlayer::SetPlayerArmor(std::string_view armorKey, int itemID)
+void AuthenticPlayer::SetPlayerArmor(int armorID, bool sendPacket)
 {
-	const int temp_armor_id = itemID >= 0;
-	Send(Create_c2s_CHANGE_EQUIPMENT(Nagox::Enum::EQUIPMENT_TYPE_ARMOR, temp_armor_id));
+	if (sendPacket)
+	{
+		Send(Create_c2s_CHANGE_EQUIPMENT(Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_ARMOR, armorID));
+	}
 
-	m_playerRenderer->SetEquipmentState(temp_armor_id > 0);
-	m_playerEquipmentGUI->UpdateSlotContents(this, 1, itemID); // 1번 인덱스는 갑옷 슬롯으로 가정
+	if (armorID >= 0)
+	{
+		auto itemID = DATA_TABLE->GetItemID(GET_DATA(std::string, "Armor", DATA_TABLE->GetArmorIDStr(armorID), "ItemKey"));
+
+		m_playerRenderer->SetPlayerArmor(armorID);
+		m_playerEquipmentGUI->UpdateSlotContents(this, 1, itemID); // 1번 인덱스는 갑옷 슬롯으로 가정
+	}
 }
 
 void AuthenticPlayer::UseQuickSlotItem(int index)

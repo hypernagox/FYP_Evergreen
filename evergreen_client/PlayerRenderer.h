@@ -53,7 +53,6 @@ public:
 	void InitializePriest();
 
 	Transform* const GetRenderObjTransform() const noexcept { return m_rendererObj->GetTransform(); }
-	void SetEquipmentState(bool isEquipped);
 	void SetRotation(const Quaternion& rotation) { m_rendererObj->GetTransform()->SetLocalRotation(rotation); }
 	void SetAnimation(AnimationClip* animationClip, bool loop, bool forcePlay) { m_renderer->SetAnimation(animationClip, loop, forcePlay); }
 	void SetViewDirection(float yaw, float pitch);
@@ -65,5 +64,7 @@ public:
 	bool TrySetState(AnimationState state) { return m_stateMachine->TrySetState(state); }
 	AnimationState GetCurrentState() const { return m_stateMachine->GetCurrentState(); }
 	bool GetIsRunning() const;
-	void SetPlayerWeapon(std::string_view weaponName);
+
+	void SetPlayerWeapon(int weaponID);
+	void SetPlayerArmor(int armorID);
 };

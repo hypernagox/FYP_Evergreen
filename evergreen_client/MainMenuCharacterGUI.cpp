@@ -74,15 +74,11 @@ void MainMenuCharacterGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void MainMenuCharacterGUI::EnterGame()
 {
-	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([this]() {
-		m_panel->SetActive(false);
-		if (m_enterGameCallback)
-		{
-			m_enterGameCallback(m_selectIndex);
-		}
-		},
-		std::format(L"서버 입장 중 ...")
-	);
+	m_panel->SetActive(false);
+	if (m_enterGameCallback)
+	{
+		m_enterGameCallback(m_selectIndex);
+	}
 }
 
 void MainMenuCharacterGUI::SetSelectIndex(unsigned int index)

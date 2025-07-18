@@ -29,6 +29,7 @@
 #include "GameScene.h"
 #include "TransitionOverlayGUI.h"
 #include "ForcedMovement.h"
+#include "MainScene.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -43,6 +44,7 @@ const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pS
 {
 	// 히어로의 초기화시점이 생각과 달라서 서버오브젝트 매니저에 값을 기록해뒀다가 씬 진입할 때 사용
 	// 추가정보 더 올 예정 (직업 등..)
+
 	const auto res = pkt_.login_result();
 	const auto& item_ids = *pkt_.item_ids();
 	const auto& item_counts = *pkt_.item_counts();
@@ -52,27 +54,11 @@ const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pS
 	// ServerObjectMgr에서 로그인을 할 때마다 이전 init_item_counts와 init_item_ids를 초기화해야한다.
 	// 그렇지 않을경우 이전의 로그인할 때 플레이어게 넣어줘야할 아이템 정보가 누적되어 n배씩(n = MainScene에서 GameScene으로 넘어간 횟수) 아이템 개수가 많아진다.
 	Mgr(ServerObjectMgr)->PrepareLoginData(pkt_);
-	switch (res)
-	{
-	case Nagox::Enum::LOGIN_RESULT_FAIL:
-	{
-		// TODO: 비번틀림 로그인 시도 다시하기 
-		break;
-	}
-	case Nagox::Enum::LOGIN_RESULT_NEWBIE:
-	{
-		// TODO: 뉴비라서 캐릭터 선택창으로
-		break;
-	}
-	case Nagox::Enum::LOGIN_RESULT_OLDBIE:
-	{
-		// TODO: 채널만고르고 넘어가면 됨
-		// 전사인지 프리스트인지 종류도 같이 올것
-		break;
-	}
-	default:
-		break;
-	}
+
+	// TODO: 플레이어가 이미 등록된 경우 PrepareLoginData()와 더불어 캐릭터 타입(직업)을 해당 인자로 넘겨준다. (AuthenticPlayer는 생성과 동시에 초기화되어야함)
+	unsigned int characterType = 0;
+	Mgr(ServerObjectMgr)->GetTargetMainScene()->OnLoginResult(res, characterType);
+
 	std::cout << "도착\n";
 	NetMgr(NetworkMgr)->SetSessionID(pkt_.obj_id());
 	// TODO: 아이디 통일
@@ -307,7 +293,6 @@ const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSessio
 		{
 			if (const auto playerComp = Mgr(ServerObjectMgr)->GetMainHero()->GetComponent<AuthenticPlayer>())
 			{
-
 				playerComp->OnModifyInventory((uint8_t)item_id, num);
 			}
 		}
@@ -670,23 +655,24 @@ const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::
 {
 	// TODO: 여기에 이 유저의 무기 / 갑옷 정수 id가 온다.
 	// 갑옷이 지금 미정인데, 여기에서 바꾸면된다
-	const auto armor_id = pkt_.armor_id();
 	//std::cout << (pkt_.weapon_id()) << std::endl;
+	
+	// TODO: 무기 외의 정보도 동기화 필요함
+	std::string user_name;
+	for (const auto ch : *pkt_.user_name())user_name.push_back(ch);
+
 	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id()))
 	{
 		if (const auto renderer = obj->GetComponent<PlayerRenderer>())
 		{
-			// TODO: 무기 외의 정보도 동기화 필요함
-			std::string user_name;
-			for (const auto ch : *pkt_.user_name())user_name.push_back(ch);
-
-			renderer->SetPlayerWeapon(DATA_TABLE->GetWeaponIDStr(pkt_.weapon_id()));
-			renderer->SetEquipmentState(armor_id > 0);
+			// TODO: 플레이어 이름 변경을 위한 네임태그 컴포넌트 수집
+			renderer->SetPlayerWeapon(pkt_.weapon_id());
+			renderer->SetPlayerArmor(pkt_.armor_id());
 		}
 	}
 	else
 	{
-		ServerObjectMgr::GetInst()->m_weaponMap[pkt_.obj_id()] = pkt_.weapon_id();
+		ServerObjectMgr::GetInst()->m_equipmentMap[pkt_.obj_id()] = std::make_tuple(pkt_.weapon_id(), pkt_.armor_id(), user_name);
 	}
 	return true;
 }

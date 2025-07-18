@@ -74,9 +74,6 @@ void PlayerEquipmentGUI::UpdateSlotContents(AuthenticPlayer* target, int index, 
 		udsdx::Texture* texture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Item", key, "Icon")));
 		std::wstring itemName = GET_DATA(std::wstring, "Item", key, "Name");
 		slotContents->SetTexture(texture);
-		slotContents->SetClickCallback([this, target, index]() {
-			SelectEquipmentSlot(target, index);
-		});
 		slotText->SetText(itemName);
 	}
 
@@ -94,12 +91,4 @@ void PlayerEquipmentGUI::UpdateSlotContents(AuthenticPlayer* target, int index, 
 		statTextContent += L"¹æ¾î·Â: +1\n";
 	}
 	m_statText->GetComponent<GUIText>()->SetText(statTextContent);
-}
-
-void PlayerEquipmentGUI::SelectEquipmentSlot(AuthenticPlayer* target, int index)
-{
-	if (index == 1)
-	{
-		target->SetPlayerArmor("Armor", -1);
-	}
 }

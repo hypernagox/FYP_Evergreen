@@ -69,10 +69,8 @@ void PlayerRenderer::InitializeWarrior()
 
 	m_transformBody->SetLocalPositionY(-5.5f);
 
-	SetPlayerWeapon("Master Sword");
 	OnAnimationStateChange(AnimationState::Idle);
 	m_characterType = CharacterType::Warrior;
-	SetEquipmentState(false);
 }
 
 void PlayerRenderer::InitializePriest()
@@ -84,10 +82,8 @@ void PlayerRenderer::InitializePriest()
 
 	m_transformBody->SetLocalPositionY(-5.5f);
 
-	SetPlayerWeapon("Staff Priest");
 	OnAnimationStateChange(AnimationState::Idle);
 	m_characterType = CharacterType::Priest;
-	SetEquipmentState(false);
 }
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)
@@ -112,27 +108,6 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 	m_stateMachine->Update(time.deltaTime);
 
 	UpdateViewDirection(time.deltaTime);
-}
-
-void PlayerRenderer::SetEquipmentState(bool isEquipped)
-{
-	Shader* shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl"));
-
-	switch (m_characterType)
-	{
-		case CharacterType::Warrior:
-			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"Zelda\\zelda_body_BaseColor_Armor.png" : L"Zelda\\zelda_body_BaseColor.png"))), 0);
-			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png"))), 1);
-			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png"))), 2);
-			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png"))), 3);
-			break;
-		case CharacterType::Priest:
-			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_2a.png" : L"priest\\priest_diffuse_2.png"))), 0);
-			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_0a.png" : L"priest\\priest_diffuse_0.png"))), 1);
-			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(isEquipped ? L"priest\\priest_diffuse_2a.png" : L"priest\\priest_diffuse_2.png"))), 2);
-			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_1.png"))), 3);
-			break;
-	}
 }
 
 void PlayerRenderer::SetViewDirection(float yaw, float pitch)
@@ -252,8 +227,10 @@ bool PlayerRenderer::GetIsRunning() const
 		m_stateMachine->GetCurrentState() == AnimationState::RunRightBackward;
 }
 
-void PlayerRenderer::SetPlayerWeapon(std::string_view weaponName)
+void PlayerRenderer::SetPlayerWeapon(int weaponID)
 {
+	const std::string& weaponName = DATA_TABLE->GetWeaponIDStr(weaponID);
+
 	auto& scaleJson = GET_DATA(nlohmann::ordered_json, "Weapon", weaponName, "Scale");
 	auto& rotationJson = GET_DATA(nlohmann::ordered_json, "Weapon", weaponName, "Rotation");
 	auto& positionJson = GET_DATA(nlohmann::ordered_json, "Weapon", weaponName, "Position");
@@ -262,15 +239,38 @@ void PlayerRenderer::SetPlayerWeapon(std::string_view weaponName)
 	if (toolRenderer == nullptr)
 	{
 		toolRenderer = m_bodyObj->AddComponent<RiggedPropRenderer>();
-
-		toolRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "ModelDiffuse")))));
 		toolRenderer->SetBoneName("Bip001 R Hand");
 	}
 
-	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring,"Weapon", weaponName, "Model"))));
+	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "Model"))));
+	toolRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "ModelDiffuse")))));
 	toolRenderer->SetPropLocalTransform(
 		Matrix4x4::CreateScale(scaleJson["X"], scaleJson["Y"], scaleJson["Z"]) *
 		Matrix4x4::CreateFromYawPitchRoll(rotationJson["Y"] * DEG2RAD, rotationJson["X"] * DEG2RAD, rotationJson["Z"] * DEG2RAD) *
 		Matrix4x4::CreateTranslation(positionJson["X"], positionJson["Y"], positionJson["Z"])
 		);
+}
+
+void PlayerRenderer::SetPlayerArmor(int armorID)
+{
+	std::string armorName = DATA_TABLE->GetArmorIDStr(armorID);
+	std::wstring texturePostfix = GET_DATA(std::wstring, "Armor", armorName, "TexturePostfix");
+
+	Shader* shader = INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl"));
+
+	switch (m_characterType)
+	{
+	case CharacterType::Warrior:
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_body_BaseColor" + texturePostfix + L".png"))), 0);
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_hair_BaseColor.png"))), 1);
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_eye_BaseColor.png"))), 2);
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Zelda\\zelda_face_BaseColor.png"))), 3);
+		break;
+	case CharacterType::Priest:
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_2" + texturePostfix + L".png"))), 0);
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_0" + texturePostfix + L".png"))), 1);
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_2" + texturePostfix + L".png"))), 2);
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_1.png"))), 3);
+		break;
+	}
 }

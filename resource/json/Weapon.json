@@ -18,7 +18,8 @@
       "Z": 0.125
     },
     "atk": 1,
-    "def": 0
+    "def": 0,
+    "ItemKey": "Sword Excalibur"
   },
   "Bow": {
     "Model": "weapon\\zelda bow\\ancientbow.yms",
@@ -39,7 +40,8 @@
       "Z": 24.0
     },
     "atk": 2,
-    "def": 0
+    "def": 0,
+    "ItemKey": "Bow"
   },
   "Master Sword": {
     "Model": "weapon\\zelda sword\\zeldasword.yms",
@@ -60,7 +62,8 @@
       "Z": 16.0
     },
     "atk": 3,
-    "def": 0
+    "def": 0,
+    "ItemKey": "Master Sword"
   },
   "Staff Priest": {
     "Model": "weapon\\priest staff\\priest_staff.yms",
@@ -81,6 +84,7 @@
       "Z": 0.75
     },
     "atk": 4,
-    "def": 0
+    "def": 0,
+    "ItemKey": "Staff Priest"
   }
 }

@@ -97,7 +97,7 @@ void GameScene::OnAttach()
 
     {
         m_craftTableObj = std::make_shared<SceneObject>();
-        m_craftTableObj->GetTransform()->SetLocalPosition(Vector3(-123.22470092773438f, 75.68199920654297f, 16.593002319335939));
+        m_craftTableObj->GetTransform()->SetLocalPosition(Vector3(-123.22470092773438f, 75.68199920654297f, 16.593002319335939f));
         m_craftTableObj->GetTransform()->SetLocalRotation(Quaternion(0.0f, 1.0f, 0.0f, 0.0f));
         m_craftTableObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 0.01f);
 
@@ -504,10 +504,7 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
     {
         // TODO: 여기서 캐릭터 종류를 넣어주세요
         Nagox::Enum::PLAYER_TYPE player_type = character ? Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_PRIEST : Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_WARRIOR;
-        std::cout << (int)m_currentChannelID << std::endl;
-        Send(Create_c2s_ENTER
-        (ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition())
-            , player_type, m_currentChannelID));
+        Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition()), player_type, m_currentChannelID));
     }
 
     m_heroComponent->FixCameraAnchor();
@@ -531,6 +528,7 @@ void GameScene::ExitGame()
     // NAVIGATION->GetNavMesh(NAVI_MESH_NUM::NUM_0)->FreeNavMeshQuery();
 
     std::shared_ptr<MainScene> mainScene = std::make_shared<MainScene>();
+    ServerObjectMgr::GetInst()->SetTargetMainScene(mainScene);
     INSTANCE(Core)->SetScene(mainScene);
 }
 

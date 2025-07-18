@@ -55,10 +55,13 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Player(EntityBuild
 
 	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 	moveInterpolator->InitInterpolator(b->obj_pos);
-	if (ServerObjectMgr::GetInst()->m_weaponMap.contains(b->obj_id))
+	if (ServerObjectMgr::GetInst()->m_equipmentMap.contains(b->obj_id))
 	{
-		playerComponent->SetPlayerWeapon(DATA_TABLE->GetWeaponIDStr(ServerObjectMgr::GetInst()->m_weaponMap[b->obj_id]));
-		ServerObjectMgr::GetInst()->m_weaponMap.erase(b->obj_id);
+		const auto& [weapon_id, armor_id, username] = ServerObjectMgr::GetInst()->m_equipmentMap[b->obj_id];
+		// TODO: 플레이어 이름 변경을 위한 네임태그 컴포넌트 수집
+		playerComponent->SetPlayerWeapon(weapon_id);
+		playerComponent->SetPlayerArmor(armor_id);
+		ServerObjectMgr::GetInst()->m_equipmentMap.erase(b->obj_id);
 	}
 	return instance;
 }

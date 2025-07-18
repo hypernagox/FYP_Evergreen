@@ -2,11 +2,37 @@
   "Warrior": {
     "hp": 5,
     "atk": 1,
-    "name": "abcd",
+    "name": "전사",
     "position": {
       "x": 1.0,
       "y": 2.0,
       "z": 3.0
-    }
+    },
+    "InitWeaponKey": "Master Sword",
+    "InitArmorKey": "Zelda Armor 1"
+  },
+  "Priest": {
+    "hp": 4,
+    "atk": 2,
+    "name": "사제",
+    "position": {
+      "x": 4.0,
+      "y": 5.0,
+      "z": 6.0
+    },
+    "InitWeaponKey": "Staff Priest",
+    "InitArmorKey": "Priest Armor 1"
+  },
+  "Gunner": {
+    "hp": 3,
+    "atk": 3,
+    "name": "거너",
+    "position": {
+      "x": 7.0,
+      "y": 8.0,
+      "z": 9.0
+    },
+    "InitWeaponKey": "Master Sword",
+    "InitArmorKey": "Zelda Armor 1"
   }
 }

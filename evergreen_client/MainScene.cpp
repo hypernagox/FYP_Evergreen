@@ -154,11 +154,14 @@ void MainScene::OnAttach()
 
                     // TODO: 여기서 로그인 처리 로직 실행
                     //
-                   // Send(Create_c2s_LOGIN(userId, userPw));
-                    NetMgr(NetworkMgr)->ProcessLogin();
+                    // Send(Create_c2s_LOGIN(userId, userPw));
+                    if (m_firstLoginAttempt)
+                    {
+                        NetMgr(NetworkMgr)->ProcessLogin();
+                        m_firstLoginAttempt = false;
+                    }
                     Send(Create_c2s_LOGIN(userId, userPw));
                     NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
-                    m_popupGUIManager->Append(m_channelSwitchObj);
                 }
             }
             else
@@ -174,8 +177,15 @@ void MainScene::OnAttach()
         channelSwitchComp->SetPanelGraphic(true);
         channelSwitchComp->SetChannelSelectedCallback([this](int channelID) {
             m_currentChannelID = channelID;
-            m_popupGUIManager->Pop();
-            EnterCharacterSelection();
+            if (m_needCharacterSelection)
+            {
+                m_popupGUIManager->Pop();
+                EnterCharacterSelection();
+            }
+            else
+            {
+                TransitionEnterGame();
+            }
             });
         m_channelSwitchObj->SetActive(false);
         m_interfaceGroup->AddChild(m_channelSwitchObj);
@@ -186,7 +196,10 @@ void MainScene::OnAttach()
         mainMenuCharacterComp->SetCharacterShowCallback([this](unsigned int character) {
             m_mainMenuCameraObject->GetComponent<PlayerSelect>()->SetShowingCharacter(character);
             });
-        mainMenuCharacterComp->SetEnterGameCallback([this](unsigned int character) { EnterGame(character); });
+        mainMenuCharacterComp->SetEnterGameCallback([this](unsigned int character) {
+            m_currentCharacterType = character;
+            TransitionEnterGame();
+            });
         m_interfaceGroup->AddChild(m_playerSelectObj);
 
         auto transitionOverlayObj = std::make_shared<SceneObject>();
@@ -211,11 +224,51 @@ void MainScene::EnterCharacterSelection()
     m_playerSelectObj->SetActive(true);
 }
 
-void MainScene::EnterGame(unsigned int character)
+void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int characterType)
+{
+    m_currentCharacterType = characterType;
+
+    switch (result)
+    {
+    case Nagox::Enum::LOGIN_RESULT_FAIL:
+    {
+        // TODO: 비번틀림 로그인 시도 다시하기 
+
+        MessageBox(INSTANCE(Core)->GetMainWindow(), L"로그인 실패: 비밀번호가 틀렸습니다.", L"로그인 실패", MB_OK | MB_ICONWARNING);
+        break;
+    }
+    case Nagox::Enum::LOGIN_RESULT_NEWBIE:
+    {
+        // TODO: 뉴비라서 캐릭터 선택창으로
+
+        m_needCharacterSelection = true;
+        m_popupGUIManager->Append(m_channelSwitchObj);
+        break;
+    }
+    case Nagox::Enum::LOGIN_RESULT_OLDBIE:
+    {
+        // TODO: 채널만고르고 넘어가면 됨
+        // 전사인지 프리스트인지 종류도 같이 올것
+
+        m_needCharacterSelection = false;
+        m_popupGUIManager->Append(m_channelSwitchObj);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void MainScene::TransitionEnterGame()
+{
+    INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([this]() { EnterGame(); }, std::format(L"서버 입장 중 ...") );
+}
+
+void MainScene::EnterGame()
 {
     std::shared_ptr<GameScene> gameScene = std::make_shared<GameScene>();
     INSTANCE(Core)->SetScene(gameScene);
-    gameScene->EnterGame(gameScene, character, m_currentChannelID);
+    gameScene->EnterGame(gameScene, m_currentCharacterType, m_currentChannelID);
 }
 
 void MainScene::ExitGame()

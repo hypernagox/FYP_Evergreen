@@ -141,6 +141,14 @@ namespace Common
                             }
                         }
 
+                        if ("Armor" == category)
+                        {
+                            static constinit int g_armor_id = 0;
+                            const auto aid = g_armor_id++;
+                            table.m_mapArmorID[entityName] = aid;
+                            table.m_mapArmorIDStr[aid] = entityName;
+                        }
+
                         const auto entity_idx = entity_start_index++;
                         table.m_str2detail_id.try_emplace(entityName, entity_idx);
                         table.m_detailType2str[category].try_emplace(entity_idx, entityName);

@@ -120,6 +120,12 @@ namespace Common
 		const auto GetWeaponIDStr(const int weapon_id)const noexcept {
 			return m_mapWeaponIDStr.find(weapon_id)->second;
 		}
+		const auto GetArmorIDInt(const std::string_view armor_str)const noexcept {
+			return m_mapArmorID.find(armor_str.data())->second;
+		}
+		const auto GetArmorIDStr(const int armor_id)const noexcept {
+			return m_mapArmorIDStr.find(armor_id)->second;
+		}
 		const auto& GetEquipStat(const std::string_view equip_str)const noexcept{
 			return m_mapEquipStat.find(GetWeaponIDInt(equip_str))->second;
 		}
@@ -159,6 +165,8 @@ namespace Common
 		//TODO: 임시 무기 id
 		std::map<std::string, int> m_mapWeaponID;
 		std::map<int, std::string> m_mapWeaponIDStr;
+		std::map<std::string, int> m_mapArmorID;
+		std::map<int, std::string> m_mapArmorIDStr;
 		std::map<int, EquipmentStat> m_mapEquipStat;
 	};
 

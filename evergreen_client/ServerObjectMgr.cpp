@@ -25,7 +25,7 @@ void ServerObjectMgr::AddObject(EntityBuilderBase* b)
 	// ServerObjectMgr에 의해 네트워크로부터 생성된 객체의 생명주기가 관리되어지는 조건으로 간주
 
 	// 씬이 지정되어 있지 않다면 추가할 수 없다.
-	if (targetScene == nullptr)
+	if (m_targetScene == nullptr)
 	{
 		std::cout << "Target Scene is not set" << std::endl;
 		return;
@@ -41,7 +41,7 @@ void ServerObjectMgr::AddObject(EntityBuilderBase* b)
 
 		// 빌더에서 만들어진 씬 오브젝트는 '무조건' ServerObject Component를 추가한 상태이어야 한다.
 		m_mapServerObj.emplace(b->obj_id, instance); // 서버 오브젝트를 추가한다.
-		targetScene->AddActiveObject(instance);
+		m_targetScene->AddActiveObject(instance);
 	}
 }
 
@@ -49,7 +49,7 @@ void ServerObjectMgr::AddObject(std::shared_ptr<SceneObject> scene_obj)
 {
 	const auto so = scene_obj->GetComponent<ServerObject>();
 	m_mapServerObj.emplace(so->GetObjID(), scene_obj);
-	targetScene->AddActiveObject(scene_obj);
+	m_targetScene->AddActiveObject(scene_obj);
 }
 
 void ServerObjectMgr::RemoveObject(const uint64_t id)
@@ -78,7 +78,7 @@ void ServerObjectMgr::RemoveObject(const uint64_t id)
 	// 뭔가 없는데 지우라고 했다거나 이런 기대하지 않은 동작에 대한 예외처리가
 	// 앞으로의 대부분의 로직 대부분에 필요하다
 
-	if (targetScene == nullptr)
+	if (m_targetScene == nullptr)
 	{
 		std::cout << "Target Scene is not set" << std::endl;
 		return;
@@ -106,7 +106,7 @@ void ServerObjectMgr::SetTargetScene(const std::shared_ptr<GameScene>& scene) no
 	// 그런 경우 이전에 지정되었던 씬에서 사용했던 정보를 모두 지우거나, 새로운 씬에서 그 정보를 그대로 가져오게끔 할 수 있게 해야한다.
 	// 무결성 유지에 유의
 
-	targetScene = scene;
+	m_targetScene = scene;
 }
 
 void ServerObjectMgr::PrepareLoginData(const Nagox::Protocol::s2c_LOGIN& pkt_)
@@ -145,12 +145,11 @@ void ServerObjectMgr::LoadInitDataFromDB()
 	if (-1 != equip_weapon_id)
 	{
 		std::cout << equip_weapon_id << std::endl;
-		const auto weapon_name = DATA_TABLE->GetWeaponIDStr(equip_weapon_id);
-		std::cout << weapon_name << std::endl;
-		hero->GetPlayerRenderer()->SetPlayerWeapon(weapon_name);
+		hero->SetPlayerWeapon(equip_weapon_id, false);
 	}
 	if (-1 != equip_armor_id)
 	{
-		// TODO: 방어구도 바꿔주기
+		std::cout << equip_armor_id << std::endl;
+		hero->SetPlayerArmor(equip_armor_id, false);
 	}
 }

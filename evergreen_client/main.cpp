@@ -145,6 +145,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_dungeonEnvironmentParam.TerrainNormalMaps[6] = res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\TerrainNorm_2.png"));
 
     auto mainScene = std::make_shared<MainScene>();
+    ServerObjectMgr::GetInst()->SetTargetMainScene(mainScene);
 
     if constexpr (true == g_bUseNetWork)
     {

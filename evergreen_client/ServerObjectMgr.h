@@ -4,6 +4,7 @@
 #include "EntityBuilder.h"
 
 class ServerObject;
+class MainScene;
 class GameScene;
 using udsdx::Component;
 using udsdx::SceneObject;
@@ -34,8 +35,12 @@ public:
 	Component* const GetServerObjComp(const uint64_t id) const noexcept;
 	SceneObject* const GetServerObjRoot(const uint64_t id) const noexcept;
 
-	std::shared_ptr<GameScene> GetTargetScene() const noexcept { return targetScene; }
+	std::shared_ptr<MainScene> GetTargetMainScene() const noexcept { return m_targetMainScene; }
+	void SetTargetMainScene(const std::shared_ptr<MainScene>& scene) noexcept { m_targetMainScene = scene; }
+
+	std::shared_ptr<GameScene> GetTargetScene() const noexcept { return m_targetScene; }
 	void SetTargetScene(const std::shared_ptr<GameScene>& scene) noexcept;
+
 	void Clear()noexcept { m_mapServerObj.clear(); }
 	void SetMainHero(const uint32_t id, std::shared_ptr<udsdx::SceneObject> hero) {
 		if (m_mainHero) {
@@ -47,7 +52,8 @@ public:
 	}
 	const auto GetMainHero()const noexcept { return m_mainHero->GetComponent<ServerObject>(); }
 
-	std::map<int, int> m_weaponMap;
+	std::map<uint32_t, std::tuple<uint32_t, uint32_t, std::string>> m_equipmentMap;
+
 	auto& GetBossPtr()noexcept { return m_boss; }
 	const auto& GetBossPtr()const noexcept { return m_boss; }
 
@@ -62,7 +68,9 @@ public:
 	int equip_weapon_id = -1; // -1이면 없는거로
 	int equip_armor_id = -1; // -1이면 없는거로
 private:
-	std::shared_ptr<GameScene> targetScene;
+	//
+	std::shared_ptr<MainScene> m_targetMainScene;
+	std::shared_ptr<GameScene> m_targetScene;
 	std::unordered_map<uint64_t, std::shared_ptr<udsdx::SceneObject>> m_mapServerObj;
 	std::shared_ptr<udsdx::SceneObject> m_mainHero;
 	std::unordered_set<uint64_t> m_in_active_list;
