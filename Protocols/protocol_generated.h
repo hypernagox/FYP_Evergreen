@@ -283,7 +283,9 @@ struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
     VT_SERVER_TIME_STAMP = 6,
     VT_LOGIN_RESULT = 8,
     VT_ITEM_IDS = 10,
-    VT_ITEM_COUNTS = 12
+    VT_ITEM_COUNTS = 12,
+    VT_EQUIP_WEAPON_ID = 14,
+    VT_EQUIP_ARMOR_ID = 16
   };
   uint32_t obj_id() const {
     return GetField<uint32_t>(VT_OBJ_ID, 0);
@@ -315,6 +317,18 @@ struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   ::flatbuffers::Vector<int32_t> *mutable_item_counts() {
     return GetPointer<::flatbuffers::Vector<int32_t> *>(VT_ITEM_COUNTS);
   }
+  int32_t equip_weapon_id() const {
+    return GetField<int32_t>(VT_EQUIP_WEAPON_ID, 0);
+  }
+  bool mutate_equip_weapon_id(int32_t _equip_weapon_id = 0) {
+    return SetField<int32_t>(VT_EQUIP_WEAPON_ID, _equip_weapon_id, 0);
+  }
+  int32_t equip_armor_id() const {
+    return GetField<int32_t>(VT_EQUIP_ARMOR_ID, 0);
+  }
+  bool mutate_equip_armor_id(int32_t _equip_armor_id = 0) {
+    return SetField<int32_t>(VT_EQUIP_ARMOR_ID, _equip_armor_id, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_OBJ_ID, 4) &&
@@ -324,6 +338,8 @@ struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
            verifier.VerifyVector(item_ids()) &&
            VerifyOffset(verifier, VT_ITEM_COUNTS) &&
            verifier.VerifyVector(item_counts()) &&
+           VerifyField<int32_t>(verifier, VT_EQUIP_WEAPON_ID, 4) &&
+           VerifyField<int32_t>(verifier, VT_EQUIP_ARMOR_ID, 4) &&
            verifier.EndTable();
   }
 };
@@ -347,6 +363,12 @@ struct s2c_LOGINBuilder {
   void add_item_counts(::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_counts) {
     fbb_.AddOffset(s2c_LOGIN::VT_ITEM_COUNTS, item_counts);
   }
+  void add_equip_weapon_id(int32_t equip_weapon_id) {
+    fbb_.AddElement<int32_t>(s2c_LOGIN::VT_EQUIP_WEAPON_ID, equip_weapon_id, 0);
+  }
+  void add_equip_armor_id(int32_t equip_armor_id) {
+    fbb_.AddElement<int32_t>(s2c_LOGIN::VT_EQUIP_ARMOR_ID, equip_armor_id, 0);
+  }
   explicit s2c_LOGINBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -364,9 +386,13 @@ inline ::flatbuffers::Offset<s2c_LOGIN> Creates2c_LOGIN(
     uint64_t server_time_stamp = 0,
     Nagox::Enum::LOGIN_RESULT login_result = Nagox::Enum::LOGIN_RESULT_FAIL,
     ::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_ids = 0,
-    ::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_counts = 0) {
+    ::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_counts = 0,
+    int32_t equip_weapon_id = 0,
+    int32_t equip_armor_id = 0) {
   s2c_LOGINBuilder builder_(_fbb);
   builder_.add_server_time_stamp(server_time_stamp);
+  builder_.add_equip_armor_id(equip_armor_id);
+  builder_.add_equip_weapon_id(equip_weapon_id);
   builder_.add_item_counts(item_counts);
   builder_.add_item_ids(item_ids);
   builder_.add_obj_id(obj_id);
@@ -380,7 +406,9 @@ inline ::flatbuffers::Offset<s2c_LOGIN> Creates2c_LOGINDirect(
     uint64_t server_time_stamp = 0,
     Nagox::Enum::LOGIN_RESULT login_result = Nagox::Enum::LOGIN_RESULT_FAIL,
     const std::vector<int32_t> *item_ids = nullptr,
-    const std::vector<int32_t> *item_counts = nullptr) {
+    const std::vector<int32_t> *item_counts = nullptr,
+    int32_t equip_weapon_id = 0,
+    int32_t equip_armor_id = 0) {
   auto item_ids__ = item_ids ? _fbb.CreateVector<int32_t>(*item_ids) : 0;
   auto item_counts__ = item_counts ? _fbb.CreateVector<int32_t>(*item_counts) : 0;
   return Nagox::Protocol::Creates2c_LOGIN(
@@ -389,7 +417,9 @@ inline ::flatbuffers::Offset<s2c_LOGIN> Creates2c_LOGINDirect(
       server_time_stamp,
       login_result,
       item_ids__,
-      item_counts__);
+      item_counts__,
+      equip_weapon_id,
+      equip_armor_id);
 }
 
 struct c2s_PING_PONG FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

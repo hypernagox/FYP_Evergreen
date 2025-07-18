@@ -7,6 +7,9 @@
 #include "Queueabler.h"
 #include "ObjectIdentifier.h"
 #include "DataRegistry.h"
+#include "DBMgr.h"
+#include "DBContentsPacket.hpp"
+#include "ClientSession.h"
 
 EquipmentSystem::EquipmentSystem() noexcept
 {
@@ -63,7 +66,8 @@ int EquipmentSystem::ApplyAtk(
 bool EquipmentSystem::SwapEquipment(
 	class ContentsEntity* const owner,
 	const Nagox::Enum::EQUIPMENT_TYPE equip_type, 
-	const uint32_t equip_id) noexcept
+	const uint32_t equip_id,
+	const bool use_db) noexcept
 {
 	// TODO: 추후 변경 필요
 	// TODO: 유효성 검사
@@ -78,7 +82,22 @@ bool EquipmentSystem::SwapEquipment(
 		{
 			e->def = equip_id;
 		}
-		owner->GetComp<ObjectIdentifier>()->BroadcastNotifyEquipmentChange();
+		if (use_db)
+		{
+			s2q_SWAP_EQUIPMENT pkt;
+			if (Nagox::Enum::EQUIPMENT_TYPE_WEAPON == equip_type)
+			{
+				pkt.equip_type = 0;
+			}
+			else if (Nagox::Enum::EQUIPMENT_TYPE_ARMOR == equip_type)
+			{
+				pkt.equip_type = 1;
+			}
+			pkt.equip_id = equip_id;
+			pkt.pkt_db_uid = owner->GetClientSession()->m_db_uid;
+			RequestQueryServer(pkt);
+			owner->GetComp<ObjectIdentifier>()->BroadcastNotifyEquipmentChange();
+		}
 		return true;
 	}
 	else

@@ -513,15 +513,8 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
     m_heroComponent->FixCameraAnchor();
     m_tutorialObj->SetActive(true);
 
-    // TODO: 서버로 부터 받은 DB정보로 인벤토리 초기화
-    // 껏다키면 상관이없는데 리턴메인하고 돌아오면 템이 딱 두배가 됨 당연히 서버랑은 무관 서버에서는 갯 수 멀쩡함
-    const auto& item_ids = ServerObjectMgr::GetInst()->init_item_ids;
-    const auto& item_counts = ServerObjectMgr::GetInst()->init_item_counts;
-    const auto num = (int)item_ids.size();
-    for (int i = 0; i < num; ++i)
-    {
-        m_heroComponent->OnModifyInventory(item_ids[i], item_counts[i]);
-    }
+
+    ServerObjectMgr::GetInst()->LoadInitDataFromDB();
 }
 
 void GameScene::ExitGame()

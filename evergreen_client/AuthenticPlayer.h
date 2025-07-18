@@ -120,6 +120,7 @@ public:
 	void RequestQuestStart();
 	void RequestQuestEnd();
 
+	const auto GetPlayerRenderer()noexcept { return m_playerRenderer; }
 public:
 	const auto& GetStatusGUI()const noexcept { return m_playerStatusGUI; }
 };

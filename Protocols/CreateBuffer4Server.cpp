@@ -27,6 +27,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_LOGIN(
     const Nagox::Enum::LOGIN_RESULT& login_result,
     const Vector<int> item_ids,
     const Vector<int> item_counts,
+    const int32_t equip_weapon_id,
+    const int32_t equip_armor_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
@@ -36,13 +38,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_LOGIN(
     const auto login_result_value = login_result;
     const auto item_ids_offset = builder.CreateVector(item_ids);
     const auto item_counts_offset = builder.CreateVector(item_counts);
+    const auto equip_weapon_id_value = equip_weapon_id;
+    const auto equip_armor_id_value = equip_armor_id;
     const auto serializeds2c_LOGIN = Nagox::Protocol::Creates2c_LOGIN(
         builder
 ,        obj_id_value,
         server_time_stamp_value,
         login_result_value,
         item_ids_offset,
-        item_counts_offset    );
+        item_counts_offset,
+        equip_weapon_id_value,
+        equip_armor_id_value    );
     builder.Finish(serializeds2c_LOGIN);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_LOGIN);

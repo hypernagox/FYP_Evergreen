@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DBContentsEvent.h"
 #include "Inventory.h"
+#include "EquipmentSystem.h"
 
 void DB_PlayerLogin::ExecuteQuery() noexcept
 {
@@ -25,6 +26,10 @@ void DB_PlayerLogin::ExecuteQuery() noexcept
         dbInsertUser.BindParam(1, m_pw);
         dbInsertUser.BindParam(2, t);
 
+        dbInsertUser.BindParam(3, m_weapon_id);
+        dbInsertUser.BindParam(4, m_armor_id);
+      
+
         const auto v2 = dbInsertUser.Execute();
 
         dbSelectUID.BindParam(0, m_name);
@@ -46,7 +51,6 @@ void DB_PlayerLogin::ExecuteQuery() noexcept
     else
     {
         // Step 3: 비밀번호 확인
-       
         wchar_t storedPw[64] = {};
         dbPwCheck.BindParam(0, m_name);
         dbPwCheck.BindCol(0, storedPw);
@@ -77,6 +81,20 @@ void DB_PlayerLogin::ExecuteQuery() noexcept
                     m_item_counts.emplace_back(count);
                 }
             }
+
+            UnBind();
+            dbSelectEquip.BindParam(0, m_db_uid);
+            int weaponID = -1;
+            int armorID = -1;
+            dbSelectEquip.BindCol(0, weaponID);
+            dbSelectEquip.BindCol(1, armorID);
+
+            if (dbSelectEquip.Execute() && dbSelectEquip.Fetch())
+            {
+                m_weapon_id = weaponID;
+                m_armor_id = armorID;
+            }
+
             m_result = LoginResult::SUCCESS;
         }
         else
@@ -113,6 +131,15 @@ void DB_PlayerLogin::Dispatch(NagiocpX::IocpEvent* const iocpEvent_, c_int32 num
         {
             inventory->AddItem(m_item_ids[i], m_item_counts[i], false);
         }
+        const auto equip_sys = inventory->GetEquipmentSystem();
+        if (-1 != m_weapon_id)
+        {
+            equip_sys->SwapEquipment(owner_entity, Nagox::Enum::EQUIPMENT_TYPE_WEAPON, m_weapon_id, false);
+        }
+        if (-1 != m_armor_id)
+        {
+            equip_sys->SwapEquipment(owner_entity, Nagox::Enum::EQUIPMENT_TYPE_ARMOR, m_armor_id, false);
+        }
        
     }
         break;
@@ -133,7 +160,9 @@ void DB_PlayerLogin::Dispatch(NagiocpX::IocpEvent* const iocpEvent_, c_int32 num
             Mgr(TimeMgr)->GetServerTimeStamp(),
             res,
             std::move(m_item_ids),
-            std::move(m_item_counts)
+            std::move(m_item_counts),
+            m_weapon_id,
+            m_armor_id
         )
     );
 }

@@ -23,6 +23,7 @@ struct DBContentsPacketHeader
 enum class PKT_ID : uint16
 {
     s2q_ADD_OR_UPDATE_ITEM,
+    s2q_SWAP_EQUIPMENT,
 
     END,
 };
@@ -60,6 +61,15 @@ struct s2q_ADD_OR_UPDATE_ITEM
     int item_id;
     int item_count;
     DECLARE_PACKET(s2q_ADD_OR_UPDATE_ITEM);
+
+};
+
+struct s2q_SWAP_EQUIPMENT
+    :public DBContentsPacketHeader
+{
+    int equip_type;
+    int equip_id;
+    DECLARE_PACKET(s2q_SWAP_EQUIPMENT);
 
 };
 

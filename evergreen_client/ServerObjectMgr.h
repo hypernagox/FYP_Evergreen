@@ -50,12 +50,17 @@ public:
 	std::map<int, int> m_weaponMap;
 	auto& GetBossPtr()noexcept { return m_boss; }
 	const auto& GetBossPtr()const noexcept { return m_boss; }
+
+	void PrepareLoginData(const Nagox::Protocol::s2c_LOGIN& pkt_);
+	void LoadInitDataFromDB();
 public:
 	// 로그인 시 받았던 정보들 모임
 	std::string m_type; // 직업정보이긴한데 enum으로 교체예정
 	std::vector<int> init_item_ids;
 	std::vector<int> init_item_counts;
 	std::shared_ptr<udsdx::SceneObject> m_boss;
+	int equip_weapon_id = -1; // -1이면 없는거로
+	int equip_armor_id = -1; // -1이면 없는거로
 private:
 	std::shared_ptr<GameScene> targetScene;
 	std::unordered_map<uint64_t, std::shared_ptr<udsdx::SceneObject>> m_mapServerObj;

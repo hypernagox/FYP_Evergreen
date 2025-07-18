@@ -16,6 +16,8 @@ table s2c_LOGIN
     login_result: Nagox.Enum.LOGIN_RESULT;
     item_ids: [int];
     item_counts: [int];
+    equip_weapon_id : int32;
+    equip_armor_id : int32;
 }
 
 table c2s_PING_PONG

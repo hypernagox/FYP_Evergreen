@@ -6,6 +6,9 @@
 #include "EntityBuilder.h"
 #include "GuideSystem.h"
 #include "GameScene.h"
+#include "AuthenticPlayer.h"
+#include "PlayerRenderer.h"
+#include "DataRegistry.h"
 
 ServerObjectMgr::ServerObjectMgr()
 {
@@ -104,4 +107,49 @@ void ServerObjectMgr::SetTargetScene(const std::shared_ptr<GameScene>& scene) no
 	// 무결성 유지에 유의
 
 	targetScene = scene;
+}
+
+void ServerObjectMgr::PrepareLoginData(const Nagox::Protocol::s2c_LOGIN& pkt_)
+{
+	const auto res = pkt_.login_result();
+	const auto& item_ids = *pkt_.item_ids();
+	const auto& item_counts = *pkt_.item_counts();
+	const auto num = (int)item_ids.size();
+
+	init_item_counts.clear();
+	init_item_ids.clear();
+	equip_weapon_id = equip_armor_id = -1;
+
+	for (int i = 0; i < num; ++i)
+	{
+		init_item_ids.emplace_back(item_ids[i]);
+		init_item_counts.emplace_back(item_counts[i]);
+	}
+
+	equip_weapon_id = pkt_.equip_weapon_id();
+	equip_armor_id = pkt_.equip_armor_id();
+}
+
+void ServerObjectMgr::LoadInitDataFromDB()
+{ 
+	const auto& item_ids = ServerObjectMgr::GetInst()->init_item_ids;
+	const auto& item_counts = ServerObjectMgr::GetInst()->init_item_counts;
+	const auto num = (int)item_ids.size();
+	const auto hero = m_mainHero->GetComponent<AuthenticPlayer>();
+	for (int i = 0; i < num; ++i)
+	{
+		hero->OnModifyInventory(item_ids[i], item_counts[i]);
+	}
+	
+	if (-1 != equip_weapon_id)
+	{
+		std::cout << equip_weapon_id << std::endl;
+		const auto weapon_name = DATA_TABLE->GetWeaponIDStr(equip_weapon_id);
+		std::cout << weapon_name << std::endl;
+		hero->GetPlayerRenderer()->SetPlayerWeapon(weapon_name);
+	}
+	if (-1 != equip_armor_id)
+	{
+		// TODO: 방어구도 바꿔주기
+	}
 }

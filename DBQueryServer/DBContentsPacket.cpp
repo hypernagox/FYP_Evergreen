@@ -12,7 +12,7 @@ void AddProtocol(const uint16 pktID_, void (*fpPacketHandler_)(const char* const
 
 DECLARE_PACKET_FUNC(s2q_ADD_OR_UPDATE_ITEM)
 {
-	std::cout << "실행\n";
+	//std::cout << "실행\n";
 	{
 		UpsertInventoryItem up;
 		std::cout <<"UID: " <<pkt_.pkt_db_uid << std::endl;
@@ -23,5 +23,29 @@ DECLARE_PACKET_FUNC(s2q_ADD_OR_UPDATE_ITEM)
 		up.In_ItemID(pkt_.item_id);
 		up.In_AddCount(pkt_.item_count);
 		up.Execute();
+	}
+}
+
+DECLARE_PACKET_FUNC(s2q_SWAP_EQUIPMENT)
+{
+	std::cout << "실행\n";
+	{
+		// 장비 종류
+		// 0이면 무기 1이면 방어구로
+		if (0 == pkt_.equip_type)
+		{
+			EquipWeapon e;
+			e.In_CharacterUID(pkt_.pkt_db_uid);
+			e.In_ItemID(pkt_.equip_id);
+			e.Execute();
+		}
+		else if (1 == pkt_.equip_type)
+		{
+			EquipArmor e;
+			e.In_CharacterUID(pkt_.pkt_db_uid);
+			e.In_ItemID(pkt_.equip_id);
+			e.Execute();
+		}
+		
 	}
 }

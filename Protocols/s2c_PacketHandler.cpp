@@ -46,17 +46,12 @@ const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pS
 	const auto res = pkt_.login_result();
 	const auto& item_ids = *pkt_.item_ids();
 	const auto& item_counts = *pkt_.item_counts();
+	
 	const auto num = (int)item_ids.size();
 
 	// ServerObjectMgr에서 로그인을 할 때마다 이전 init_item_counts와 init_item_ids를 초기화해야한다.
 	// 그렇지 않을경우 이전의 로그인할 때 플레이어게 넣어줘야할 아이템 정보가 누적되어 n배씩(n = MainScene에서 GameScene으로 넘어간 횟수) 아이템 개수가 많아진다.
-	Mgr(ServerObjectMgr)->init_item_counts.clear();
-	Mgr(ServerObjectMgr)->init_item_ids.clear();
-	for (int i = 0; i < num; ++i)
-	{
-		Mgr(ServerObjectMgr)->init_item_ids.emplace_back(item_ids[i]);
-		Mgr(ServerObjectMgr)->init_item_counts.emplace_back(item_counts[i]);
-	}
+	Mgr(ServerObjectMgr)->PrepareLoginData(pkt_);
 	switch (res)
 	{
 	case Nagox::Enum::LOGIN_RESULT_FAIL:

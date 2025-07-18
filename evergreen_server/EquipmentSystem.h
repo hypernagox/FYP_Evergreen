@@ -59,7 +59,8 @@ public:
 	bool SwapEquipment(
 		class ContentsEntity* const owner,
 		const Nagox::Enum::EQUIPMENT_TYPE equip_type,
-		const uint32_t equip_id)noexcept;
+		const uint32_t equip_id,
+		const bool use_db = true)noexcept;
 private:
 	Equipment* m_arrEquip[(int)Nagox::Enum::EQUIPMENT_TYPE_MAX + 1]{ nullptr };
 };

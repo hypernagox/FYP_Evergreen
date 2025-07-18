@@ -36,6 +36,58 @@ private:
 	int32 m_addCount = {};
 };
 
+class EquipWeapon : public DBBindRAII<2, 0>
+{
+public:
+	EquipWeapon() noexcept
+		: DBBindRAII{L"{CALL dbo.spEquipWeapon(?,?)}"}
+	{ }
+
+
+	void In_CharacterUID(int64& v) { BindParam(0, v); }
+	void In_CharacterUID(int64&& v)
+	{
+		m_characterUID = std::move(v);
+		BindParam(0, m_characterUID);
+	}
+
+	void In_ItemID(int32& v) { BindParam(1, v); }
+	void In_ItemID(int32&& v)
+	{
+		m_itemID = std::move(v);
+		BindParam(1, m_itemID);
+	}
+private:
+	int64 m_characterUID = {};
+	int32 m_itemID = {};
+};
+
+class EquipArmor : public DBBindRAII<2, 0>
+{
+public:
+	EquipArmor() noexcept
+		: DBBindRAII{L"{CALL dbo.spEquipArmor(?,?)}"}
+	{ }
+
+
+	void In_CharacterUID(int64& v) { BindParam(0, v); }
+	void In_CharacterUID(int64&& v)
+	{
+		m_characterUID = std::move(v);
+		BindParam(0, m_characterUID);
+	}
+
+	void In_ItemID(int32& v) { BindParam(1, v); }
+	void In_ItemID(int32&& v)
+	{
+		m_itemID = std::move(v);
+		BindParam(1, m_itemID);
+	}
+private:
+	int64 m_characterUID = {};
+	int32 m_itemID = {};
+};
+
 
 
 

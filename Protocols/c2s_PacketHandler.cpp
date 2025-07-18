@@ -54,7 +54,7 @@ const bool Handle_c2s_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	else
 	{
 		pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp()
-			, Nagox::Enum::LOGIN_RESULT_NONE, {}, {});
+			, Nagox::Enum::LOGIN_RESULT_NONE, {}, {}, -1, -1);
 	}
 	//pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp());
 	return true;
