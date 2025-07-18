@@ -12,20 +12,39 @@ namespace udsdx
 	constexpr float RAD2DEG = 180.0f / PI;
 
 	// Linear interpolation
-	template <typename T>
-	inline T Lerp(const T a, const T b, const T t)
+	template <typename TV, typename TT>
+	inline TV Lerp(const TV a, const TV b, const TT t)
 	{
 		return a + (b - a) * t;
 	}
 
 	// Cosine interpolation approximation
-	template <typename T>
-	inline T Cerp(const T a, const T b, const T t)
+	template <typename TV, typename TT>
+	inline TV Cerp(const TV a, const TV b, const TT t)
 	{
-		T ct = std::clamp<T>(t, 0, 1);
-		T tt = ct * 2 > 1 ? 1 - ct : ct;
+		TT ct = std::clamp<TT>(t, 0, 1);
+		TT tt = ct * 2 > 1 ? 1 - ct : ct;
 		tt = tt * tt;
 		tt = tt * tt * 8;
-		return Lerp<T>(a, b, ct * 2 > 1 ? 1 - tt : tt);
+		return Lerp<TV, TT>(a, b, ct * 2 > 1 ? 1 - tt : tt);
+	}
+
+	// Wrap Around Interpolation [-180, 180]
+	inline float LerpAngle(const float a, const float b, const float t)
+	{
+		float delta = std::fmodf((b - a + 540.0f), 360.0f) - 180.0f;
+		return std::fmodf((a + delta * t + 180.0f), 360.0f) - 180.0f;
+	}
+
+	// Wrap Around Interpolation [-¥ð, ¥ð]
+	inline float LerpAngleRadian(const float a, const float b, const float t)
+	{
+		float delta = std::fmodf((b - a + PI2 + PI), PI2) - PI;
+		return std::fmodf((a + delta * t + PI), PI2) - PI;
+	}
+
+	static constexpr float SmoothStep(float t)
+	{
+		return t * t * (3.0f - 2.0f * t);
 	}
 }

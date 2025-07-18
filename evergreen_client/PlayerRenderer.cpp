@@ -105,10 +105,13 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 		const float moveAngle = std::atan2f(forward.x, forward.z) - std::atan2f(acceleration.x, acceleration.z);
 		moveAngleInt = static_cast<int>(moveAngle * 4.0f / PI + 12.5f) % 8;
 	}
+
 	float magnitude = Vector2(acceleration.x, acceleration.z).LengthSquared();
 	*m_stateMachine->GetConditionRefFloat("MoveSpeed") = magnitude;
 	*m_stateMachine->GetConditionRefInt("MoveAngle") = moveAngleInt;
 	m_stateMachine->Update(time.deltaTime);
+
+	UpdateViewDirection(time.deltaTime);
 }
 
 void PlayerRenderer::SetEquipmentState(bool isEquipped)
@@ -130,6 +133,27 @@ void PlayerRenderer::SetEquipmentState(bool isEquipped)
 			m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_1.png"))), 3);
 			break;
 	}
+}
+
+void PlayerRenderer::SetViewDirection(float yaw, float pitch)
+{
+	Vector3 rendererAxis = m_rendererObj->GetTransform()->GetLocalRotation().ToEuler();
+	m_viewYawTarget = LerpAngleRadian(0.0f, yaw * DEG2RAD - rendererAxis.y + PI, 0.4f);
+	m_viewPitchTarget = LerpAngleRadian(0.0f, pitch * DEG2RAD - rendererAxis.x, 0.4f);
+}
+
+void PlayerRenderer::UpdateViewDirection(float deltaTime)
+{
+	m_viewYaw = LerpAngleRadian(m_viewYaw, m_viewYawTarget, deltaTime * 8.0f);
+	m_viewPitch = LerpAngleRadian(m_viewPitch, m_viewPitchTarget, deltaTime * 8.0f);
+
+	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(0.0f, m_viewYaw, m_viewPitch);
+	rotation = Quaternion::Slerp(Quaternion::Identity, rotation, 0.25f);
+	Matrix4x4 rotationMatrix = Matrix4x4::CreateFromQuaternion(rotation);
+	m_renderer->SetBoneModifier("Bip001 Spine1", rotationMatrix);
+	m_renderer->SetBoneModifier("Bip001 Spine2", rotationMatrix);
+	m_renderer->SetBoneModifier("Bip001 Neck", rotationMatrix);
+	m_renderer->SetBoneModifier("Bip001 Head", rotationMatrix);
 }
 
 void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)

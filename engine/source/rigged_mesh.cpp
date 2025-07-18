@@ -104,27 +104,16 @@ namespace udsdx
 		BoundingBox::CreateFromPoints(m_bounds, vertices.size(), &vertices[0].position, sizeof(RiggedVertex));
 	}
 
-	void RiggedMesh::PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out) const
+	void RiggedMesh::PopulateTransforms(std::vector<Matrix4x4>& out) const
 	{
-		std::vector<Matrix4x4> in(m_bones.size());
+		out.resize(m_bones.size());
 
-		for (UINT i = 0; i < in.size(); ++i)
-		{
-			const Bone& bone = m_bones[i];
-			XMMATRIX tParent = m_boneParents[i] < 0 ? XMMatrixIdentity() : XMLoadFloat4x4(&in[m_boneParents[i]]);
-			XMMATRIX tLocal = XMLoadFloat4x4(&bone.Transform);
-			XMStoreFloat4x4(&in[i], XMMatrixMultiply(tLocal, tParent));
-		}
-
-		const Submesh& submesh = m_submeshes[submeshIndex];
-
-		out.resize(submesh.BoneNodeIDs.size());
 		for (UINT i = 0; i < out.size(); ++i)
 		{
-			UINT boneID = GetBoneIndex(submesh.BoneNodeIDs[i]);
-			XMMATRIX boneTransform = XMLoadFloat4x4(&in[boneID]);
-			XMMATRIX boneOffset = XMLoadFloat4x4(&submesh.BoneOffsets[i]);
-			XMStoreFloat4x4(&out[i], XMMatrixTranspose(boneTransform * boneOffset));
+			const Bone& bone = m_bones[i];
+			XMMATRIX tParent = m_boneParents[i] < 0 ? XMMatrixIdentity() : XMLoadFloat4x4(&out[m_boneParents[i]]);
+			XMMATRIX tLocal = XMLoadFloat4x4(&bone.Transform);
+			XMStoreFloat4x4(&out[i], XMMatrixMultiply(tLocal, tParent));
 		}
 	}
 
@@ -139,5 +128,20 @@ namespace udsdx
 	UINT RiggedMesh::GetBoneCount() const
 	{
 		return static_cast<UINT>(m_bones.size());
+	}
+	std::vector<std::string> RiggedMesh::GetBoneNames() const
+	{
+		std::vector<std::string> boneNames;
+		boneNames.reserve(m_bones.size());
+		for (const auto& bone : m_bones)
+		{
+			boneNames.emplace_back(bone.Name);
+		}
+		return boneNames;
+	}
+
+	const std::vector<int>& RiggedMesh::GetBoneParents() const
+	{
+		return m_boneParents;
 	}
 }

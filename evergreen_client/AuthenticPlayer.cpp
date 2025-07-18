@@ -57,7 +57,8 @@ void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 		m_entityMovement->AddVelocity(vWorldDelta *= .1f);
 	else
 		m_entityMovement->AddAcceleration(vWorldDelta);
-	m_rendererBodyAngleY = std::lerp(m_rendererBodyAngleY, m_cameraAngleAxis.y, deltaTime * 8.0f);
+	
+	m_rendererBodyAngleY = udsdx::LerpAngle(m_rendererBodyAngleY, m_cameraAngleAxis.y, deltaTime * 8.0f);
 }
 
 void AuthenticPlayer::FixCameraAnchor()
@@ -211,7 +212,9 @@ void AuthenticPlayer::RequestQuestEnd()
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
 	// Region: Camera Rotation Control
-	m_cameraAngleAxisSmooth = Vector3::Lerp(m_cameraAngleAxisSmooth, m_cameraAngleAxis, std::min(deltaTime * 16.0f, 1.0f));
+	float t = std::min(deltaTime * 16.0f, 1.0f);
+	m_cameraAngleAxisSmooth.x = udsdx::LerpAngle(m_cameraAngleAxisSmooth.x, m_cameraAngleAxis.x, t);
+	m_cameraAngleAxisSmooth.y = udsdx::LerpAngle(m_cameraAngleAxisSmooth.y, m_cameraAngleAxis.y, t);
 	m_cameraAnchor->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(m_cameraAngleAxisSmooth * DEG2RAD));
 
 	// Region: Mouse Scrolling Control
@@ -385,6 +388,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		Vector3 delta = Vector3(mouse_dy, mouse_dx, 0.0f);
 		m_cameraAngleAxis += delta * m_fCamSensivity;
 		m_cameraAngleAxis.x = std::clamp(m_cameraAngleAxis.x, -80.0f, 80.0f);
+		m_cameraAngleAxis.y = std::fmod(m_cameraAngleAxis.y + 180.0f, 360.0f) - 180.0f;
 	}
 
 	if (m_bDebugCamera)
@@ -393,6 +397,10 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		UpdateCameraTransform(m_cameraObj->GetTransform(), time.deltaTime);
 
 	const bool vec3int_equal = vPrevState.x == m_vCurState.x && vPrevState.y == m_vCurState.y && vPrevState.z == m_vCurState.z;
+
+	float yaw = m_cameraAngleAxis.y;
+	float pitch = m_cameraAngleAxis.x;
+	m_playerRenderer->SetViewDirection(yaw, pitch);
 
 	auto sceneObject = GetSceneObject();
 	const auto input_handler = sceneObject->GetComponent<InputHandler>();

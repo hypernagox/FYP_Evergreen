@@ -167,22 +167,19 @@ namespace udsdx
 	void Animation::PopulateTransforms(float animationTime, std::vector<Matrix4x4>& out) const
 	{
 		std::vector<int> boneMap;
-		std::vector<Matrix4x4> boneOffsets;
 
 		boneMap.reserve(m_clip->GetBoneCount());
-		boneOffsets.reserve(m_clip->GetBoneCount());
 
 		int index = 0;
 		for (const Bone& bone : m_clip->GetBones())
 		{
 			boneMap.push_back(index++);
-			boneOffsets.push_back(Matrix4x4::Identity);
 		}
 
-		PopulateTransforms(animationTime, boneMap, boneOffsets, out);
+		PopulateTransforms(animationTime, boneMap, out);
 	}
 
-	void Animation::PopulateTransforms(float animationTime, const std::vector<int>& boneMap, const std::vector<Matrix4x4>& boneOffsets, std::vector<Matrix4x4>& out, const std::map<int, Matrix4x4>& modifiers) const
+	void Animation::PopulateTransforms(float animationTime, const std::vector<int>& boneMap, std::vector<Matrix4x4>& out, const std::map<std::string_view, Matrix4x4>& modifiers) const
 	{
 		UINT boneCount = static_cast<UINT>(m_clip->GetBoneCount());
 
@@ -222,9 +219,9 @@ namespace udsdx
 				XMVECTOR s = XMVectorLerp(s0, s1, sf);
 
 				tLocal = XMMatrixAffineTransformation(s, XMVectorZero(), q, p);
-				if (modifiers.find(i) != modifiers.end())
+				if (modifiers.find(bone.Name) != modifiers.end())
 				{
-					XMMATRIX modifier = XMLoadFloat4x4(&modifiers.at(i));
+					XMMATRIX modifier = XMLoadFloat4x4(&modifiers.at(bone.Name));
 					tLocal = tLocal * modifier;
 				}
 			}
@@ -237,8 +234,7 @@ namespace udsdx
 		{
 			int boneID = boneMap[i];
 			XMMATRIX boneTransform = boneID >= 0 ? XMLoadFloat4x4(&in[boneID]) : XMMatrixIdentity();
-			XMMATRIX boneOffset = XMLoadFloat4x4(&boneOffsets[i]);
-			XMStoreFloat4x4(&out[i], XMMatrixTranspose(boneOffset * boneTransform));
+			XMStoreFloat4x4(&out[i], boneTransform);
 		}
 	}
 }

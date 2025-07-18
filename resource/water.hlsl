@@ -140,7 +140,7 @@ PixelOut PS(VertexOut pin)
     float4 posDelta = posH - pin.PrevPosH;
      
     pOut.Buffer1 = (texA + texB) * _Color;
-    pOut.Buffer2 = PackNormal(mul(normalize(float3(-(dhA.x + dhB.x), 1.0f, -(dhA.y + dhB.y))), gView));
+    pOut.Buffer2 = PackNormal(mul(normalize(float3(-(dhA.x + dhB.x), 1.0f, -(dhA.y + dhB.y))), (float3x3)gView));
 
     pOut.Buffer3.xy = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
 	pOut.Buffer3.xy /= max(length(pOut.Buffer3.xy), 1.0f);

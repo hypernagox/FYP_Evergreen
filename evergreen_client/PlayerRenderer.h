@@ -35,6 +35,11 @@ protected:
 	std::shared_ptr<SceneObject> m_rendererObj;
 	std::shared_ptr<SceneObject> m_bodyObj;
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
+
+	float m_viewYaw = 0.0f;
+	float m_viewPitch = 0.0f;
+	float m_viewYawTarget = 0.0f;
+	float m_viewPitchTarget = 0.0f;
 	
 public:
 	CharacterType m_characterType = CharacterType::Warrior;
@@ -51,6 +56,8 @@ public:
 	void SetEquipmentState(bool isEquipped);
 	void SetRotation(const Quaternion& rotation) { m_rendererObj->GetTransform()->SetLocalRotation(rotation); }
 	void SetAnimation(AnimationClip* animationClip, bool loop, bool forcePlay) { m_renderer->SetAnimation(animationClip, loop, forcePlay); }
+	void SetViewDirection(float yaw, float pitch);
+	void UpdateViewDirection(float deltaTime);
 	void OnAnimationStateChange(const AnimationState& state);
 	void Attack() { *m_stateMachine->GetConditionRefBool("Attack") = true; }
 	void Hit() { *m_stateMachine->GetConditionRefBool("Hit") = true; }

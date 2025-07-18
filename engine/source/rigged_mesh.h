@@ -19,9 +19,11 @@ namespace udsdx
 		RiggedMesh(const std::filesystem::path& resourcePath);
 
 		// Matrices for default pose (no animation)
-		void PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out) const;
+		void PopulateTransforms(std::vector<Matrix4x4>& out) const;
 		int GetBoneIndex(std::string_view boneName) const;
 		UINT GetBoneCount() const;
+		std::vector<std::string> GetBoneNames() const;
+		const std::vector<int>& GetBoneParents() const;
 
 	protected:
 		std::vector<Bone> m_bones;

@@ -19,6 +19,8 @@ namespace udsdx
 	{
 		RendererBase::PostUpdate(time, scene);
 
+		CacheBoneTransforms();
+
 		int submeshCount = m_riggedMesh ? static_cast<int>(std::min(m_riggedMesh->GetSubmeshes().size(), m_materials.size())) : 0;
 		for (int i = 0; i < submeshCount; ++i)
 		{
@@ -53,23 +55,20 @@ namespace udsdx
 			return;
 		}
 
-		std::vector<Matrix4x4> boneTransforms;
-		PopulateTransforms(boneTransforms);
-		const auto& boneParents = m_animation->GetAnimationClip()->GetBoneParents();
+		const auto& boneParents = m_riggedMesh->GetBoneParents();
+		std::vector<ImVec2> boneScreenPositions(m_boneTransformCache.size());
 
-		std::vector<ImVec2> boneScreenPositions(boneTransforms.size());
-
-		for (size_t index = 0; index < boneParents.size(); ++index)
+		for (size_t index = 0; index < m_boneTransformCache.size(); ++index)
 		{
-			const auto& bone = boneTransforms[index];
+			const auto& bone = m_boneTransformCache[index];
 
-			Vector3 worldPosition = Vector3::Transform(Vector3(bone.m[0][3], bone.m[1][3], bone.m[2][3]), m_transformCache);
+			Vector3 worldPosition = Vector3::Transform(Vector3(bone.m[3][0], bone.m[3][1], bone.m[3][2]), m_transformCache);
 			Vector2 screenPosition = target->ToScreenPosition(worldPosition);
 			boneScreenPositions[index] = ImVec2(screenPosition.x, screenPosition.y);
 		}
 
 		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
-		for (size_t index = 0; index < boneParents.size(); ++index)
+		for (size_t index = 0; index < boneScreenPositions.size(); ++index)
 		{
 			const auto& parentIndex = boneParents[index];
 
@@ -173,7 +172,12 @@ namespace udsdx
 			for (size_t index = 0; index < submeshes.size(); ++index)
 			{
 				std::vector<Matrix4x4> boneTransforms;
-				PopulateTransforms(static_cast<int>(index), boneTransforms);
+				for (size_t boneIndex = 0; boneIndex < m_submeshBoneMapCache[index].size(); ++boneIndex)
+				{
+					Matrix4x4 boneTransform = m_boneTransformCache[m_submeshBoneMapCache[index][boneIndex]];
+					Matrix4x4 finalTransform = submeshes[index].BoneOffsets[boneIndex] * boneTransform;
+					boneTransforms.emplace_back(finalTransform.Transpose());
+				}
 
 				BoneConstants boneConstants;
 				memcpy(boneConstants.BoneTransforms, boneTransforms.data(), boneTransforms.size() * sizeof(Matrix4x4));
@@ -214,18 +218,20 @@ namespace udsdx
 
 		if (m_animation != nullptr)
 		{
-			m_boneMapCache.resize(numSubmeshes);
-			for (size_t submeshIndex = 0; submeshIndex < numSubmeshes; ++submeshIndex)
-			{
-				m_animation->GetAnimationClip()->PopulateBoneMap(submeshes[submeshIndex].BoneNodeIDs, m_boneMapCache[submeshIndex]);
-			}
+			m_animation->GetAnimationClip()->PopulateBoneMap(m_riggedMesh->GetBoneNames(), m_boneMapCache);
 		}
 		if (m_prevAnimation != nullptr)
 		{
-			m_prevBoneMapCache.resize(numSubmeshes);
-			for (size_t submeshIndex = 0; submeshIndex < numSubmeshes; ++submeshIndex)
+			m_prevAnimation->GetAnimationClip()->PopulateBoneMap(m_riggedMesh->GetBoneNames(), m_prevBoneMapCache);
+		}
+
+		for (size_t index = 0; index < numSubmeshes; ++index)
+		{
+			auto& cache = m_submeshBoneMapCache.emplace_back();
+			cache.resize(submeshes[index].BoneNodeIDs.size());
+			for (size_t boneIndex = 0; boneIndex < submeshes[index].BoneNodeIDs.size(); ++boneIndex)
 			{
-				m_prevAnimation->GetAnimationClip()->PopulateBoneMap(submeshes[submeshIndex].BoneNodeIDs, m_prevBoneMapCache[submeshIndex]);
+				cache[boneIndex] = m_riggedMesh->GetBoneIndex(submeshes[index].BoneNodeIDs[boneIndex]);
 			}
 		}
 
@@ -267,6 +273,7 @@ namespace udsdx
 			m_animationTime = 0.0f;
 			m_transitionFactor = 0.0f;
 			m_prevBoneMapCache = m_boneMapCache;
+			animation->GetAnimationClip()->PopulateBoneMap(m_riggedMesh->GetBoneNames(), m_boneMapCache);
 		}
 		// If the animation is blending, but the new animation is previous one
 		else if (animation == m_prevAnimation)
@@ -280,26 +287,26 @@ namespace udsdx
 		else
 		{
 			m_animationTime = 0.0f;
+			animation->GetAnimationClip()->PopulateBoneMap(m_riggedMesh->GetBoneNames(), m_boneMapCache);
 		}
 		m_animation = animation;
 		m_loop = loop;
-
-		const auto& submeshes = m_riggedMesh->GetSubmeshes();
-		m_boneMapCache.resize(submeshes.size());
-		for (size_t submeshIndex = 0; submeshIndex < submeshes.size(); ++submeshIndex)
-		{
-			animation->GetAnimationClip()->PopulateBoneMap(submeshes[submeshIndex].BoneNodeIDs, m_boneMapCache[submeshIndex]);
-		}
 	}
 
 	void RiggedMeshRenderer::SetBoneModifier(std::string_view boneName, const Matrix4x4& transform)
 	{
-		int boneIndex = m_animation->GetAnimationClip()->GetBoneIndex(boneName);
-		if (boneIndex < 0)
+		m_boneModifiers[boneName] = transform;
+	}
+
+	const Matrix4x4& RiggedMeshRenderer::GetBoneTransform(std::string_view boneName) const
+	{
+		int boneIndex = m_riggedMesh->GetBoneIndex(boneName);
+		if (boneIndex < 0 || boneIndex >= static_cast<int>(m_boneTransformCache.size()))
 		{
-			return;
+			static Matrix4x4 identity;
+			return identity; // Return identity matrix if bone not found
 		}
-		m_boneModifiers[boneIndex] = transform;
+		return m_boneTransformCache[boneIndex];
 	}
 
 	void RiggedMeshRenderer::ClearBoneModifiers()
@@ -307,91 +314,31 @@ namespace udsdx
 		m_boneModifiers.clear();
 	}
 
+	void RiggedMeshRenderer::CacheBoneTransforms()
+	{
+		if (m_animation == nullptr)
+		{
+			m_riggedMesh->PopulateTransforms(m_boneTransformCache);
+		}
+		else
+		{
+			float animationTime = m_loop ? fmodf(m_animationTime, m_animation->GetAnimationDuration()) : m_animationTime;
+			m_animation->PopulateTransforms(animationTime, m_boneMapCache, m_boneTransformCache, m_boneModifiers);
+		}
+		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
+		{
+			std::vector<Matrix4x4> prevTransforms;
+			m_prevAnimation->PopulateTransforms(m_prevAnimationTime, m_prevBoneMapCache, prevTransforms, m_boneModifiers);
+			float t = SmoothStep(std::clamp(m_transitionFactor, 0.0f, 1.0f));
+			for (size_t i = 0; i < m_boneTransformCache.size(); ++i)
+			{
+				m_boneTransformCache[i] = Matrix4x4::Lerp(prevTransforms[i], m_boneTransformCache[i], t);
+			}
+		}
+	}
+
 	bool RiggedMeshRenderer::IsAnimationPlaying() const
 	{
 		return m_animation != nullptr && (m_loop || m_animationTime < m_animation->GetAnimationDuration());
-	}
-
-	static constexpr float SmoothStep(float t)
-	{
-		return t * t * (3.0f - 2.0f * t);
-	}
-
-	void RiggedMeshRenderer::PopulateTransforms(std::vector<Matrix4x4>& out)
-	{
-		if (m_animation == nullptr)
-		{
-			out.emplace_back(Matrix4x4::Identity);
-		}
-		else
-		{
-			float animationTime = m_loop ? fmodf(m_animationTime, m_animation->GetAnimationDuration()) : m_animationTime;
-			m_animation->PopulateTransforms(animationTime, out);
-		}
-		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
-		{
-			std::vector<Matrix4x4> prevTransforms;
-			m_prevAnimation->PopulateTransforms(m_prevAnimationTime, prevTransforms);
-			float t = SmoothStep(std::clamp(m_transitionFactor, 0.0f, 1.0f));
-			for (size_t i = 0; i < out.size(); ++i)
-			{
-				out[i] = Matrix4x4::Lerp(prevTransforms[i], out[i], t);
-			}
-		}
-	}
-
-	Matrix4x4 RiggedMeshRenderer::PopulateTransform(std::string_view boneName)
-	{
-		std::vector<std::string> names;
-		std::vector<int> boneIndices;
-		std::vector<Matrix4x4> offsets;
-		std::vector<Matrix4x4> out;
-
-		names.emplace_back(boneName.data());
-		offsets.emplace_back(Matrix4x4::Identity);
-
-		if (m_animation == nullptr)
-		{
-			out.emplace_back(Matrix4x4::Identity);
-		}
-		else
-		{
-			m_animation->GetAnimationClip()->PopulateBoneMap(names, boneIndices);
-			float animationTime = m_loop ? fmodf(m_animationTime, m_animation->GetAnimationDuration()) : m_animationTime;
-			m_animation->PopulateTransforms(animationTime, boneIndices, offsets, out);
-		}
-		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
-		{
-			std::vector<Matrix4x4> prevTransforms;
-			m_prevAnimation->PopulateTransforms(m_prevAnimationTime, boneIndices, offsets, prevTransforms);
-			float t = SmoothStep(std::clamp(m_transitionFactor, 0.0f, 1.0f));
-			out[0] = Matrix4x4::Lerp(prevTransforms[0], out[0], t);
-		}
-		return out[0];
-	}
-
-	void RiggedMeshRenderer::PopulateTransforms(int submeshIndex, std::vector<Matrix4x4>& out)
-	{
-		const auto& submesh = m_riggedMesh->GetSubmeshes()[submeshIndex];
-
-		if (m_animation == nullptr)
-		{
-			m_riggedMesh->PopulateTransforms(submeshIndex, out);
-		}
-		else
-		{
-			float animationTime = m_loop ? fmodf(m_animationTime, m_animation->GetAnimationDuration()) : m_animationTime;
-			m_animation->PopulateTransforms(animationTime, m_boneMapCache[submeshIndex], submesh.BoneOffsets, out, m_boneModifiers);
-		}
-		if (m_transitionFactor < 1.0f && m_prevAnimation != nullptr)
-		{
-			std::vector<Matrix4x4> prevTransforms;
-			m_prevAnimation->PopulateTransforms(m_prevAnimationTime, m_prevBoneMapCache[submeshIndex], submesh.BoneOffsets, prevTransforms, m_boneModifiers);
-			float t = SmoothStep(std::clamp(m_transitionFactor, 0.0f, 1.0f));
-			for (size_t i = 0; i < out.size(); ++i)
-			{
-				out[i] = Matrix4x4::Lerp(prevTransforms[i], out[i], t);
-			}
-		}
 	}
 }
