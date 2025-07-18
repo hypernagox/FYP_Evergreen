@@ -12,7 +12,7 @@ void AddProtocol(const uint16 pktID_, void (*fpPacketHandler_)(const char* const
 
 DECLARE_PACKET_FUNC(s2q_ADD_OR_UPDATE_ITEM)
 {
-	//std::cout << "실행\n";
+	std::cout << "s2q_ADD_OR_UPDATE_ITEM\n";
 	{
 		UpsertInventoryItem up;
 		std::cout <<"UID: " <<pkt_.pkt_db_uid << std::endl;
@@ -28,7 +28,7 @@ DECLARE_PACKET_FUNC(s2q_ADD_OR_UPDATE_ITEM)
 
 DECLARE_PACKET_FUNC(s2q_SWAP_EQUIPMENT)
 {
-	std::cout << "실행\n";
+	std::cout << "s2q_SWAP_EQUIPMENT\n";
 	{
 		// 장비 종류
 		// 0이면 무기 1이면 방어구로
@@ -46,6 +46,7 @@ DECLARE_PACKET_FUNC(s2q_SWAP_EQUIPMENT)
 			e.In_ItemID(pkt_.equip_id);
 			e.Execute();
 		}
-		
+		std::cout << "UID: " << pkt_.pkt_db_uid << std::endl;
+		std::cout << "Equip ID: " << pkt_.equip_id << std::endl;
 	}
 }

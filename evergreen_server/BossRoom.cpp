@@ -60,8 +60,8 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 		const auto melee_node = bt_root->AddChild<SequenceNode>();
 		const auto choice_atk = melee_node->AddChild<SelectPattern>();
 		choice_atk->m_count = 2;
-		choice_atk->m_probability = .6f;
-		choice_atk->m_origin_prob = .6f;
+		choice_atk->m_probability = .9f;
+		choice_atk->m_origin_prob = .9f;
 		const auto melee_atk_node = melee_node->AddChild<SequenceNode>();
 		melee_atk_node->AddChild<SelectTarget>();
 		melee_atk_node->AddChild<MoveToTarget>();

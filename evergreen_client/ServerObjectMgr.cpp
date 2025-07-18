@@ -116,6 +116,7 @@ void ServerObjectMgr::PrepareLoginData(const Nagox::Protocol::s2c_LOGIN& pkt_)
 	const auto& item_counts = *pkt_.item_counts();
 	const auto num = (int)item_ids.size();
 
+	// -1은 미착용 상태
 	init_item_counts.clear();
 	init_item_ids.clear();
 	equip_weapon_id = equip_armor_id = -1;
