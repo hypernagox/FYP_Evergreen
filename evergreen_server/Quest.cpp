@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "Quest.h"
 #include "KillMonsterQuest.h"
+#include "Inventory.h"
+#include "CommonQuestTable.h"
+#include "DataRegistry.h"
 
 Quest* const Quest::CreateQuest(const uint64_t quest_id) noexcept
 {
@@ -13,4 +16,13 @@ Quest* const Quest::CreateQuest(const uint64_t quest_id) noexcept
     };
 
     return g_quest_list[quest_id]();
+}
+void Quest::ProcessReward(NagiocpX::ContentsEntity* const clear_entity, const uint64_t quest_id) noexcept
+{
+    const auto& quest_reward_info = Common::CommonQuestTable::GetCommonQuestInfo(quest_id);
+    const auto entity_inventory = clear_entity->GetComp<Inventory>();
+    for (const auto& [item_name, item_id, amount] : quest_reward_info.reward_info)
+    {
+        entity_inventory->AddItem(item_id, amount);
+    }
 }

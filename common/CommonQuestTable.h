@@ -18,6 +18,7 @@ namespace Common
 		};
 		struct QuestRewardInfo {
 			std::wstring item_name;
+			int item_id;
 			int item_count;
 		};
 		int quest_id;

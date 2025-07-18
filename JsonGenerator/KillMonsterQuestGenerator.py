@@ -171,7 +171,7 @@ class QuestGenerator(QWidget):
 
                 cppfile.write(f"\nvoid {cname}::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {{\n")
                 cppfile.write("    if ( const auto session = clear_entity->GetSession() ) {\n")
-                cppfile.write("        session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );\n")
+                cppfile.write("        Quest::ProcessReward(clear_entity, m_questKey);\n        session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );\n")
                 cppfile.write("    }\n}\n")
 
         QUEST_FACTORY_FILE = "../evergreen_server/Quest.cpp"
@@ -181,6 +181,9 @@ class QuestGenerator(QWidget):
             f.write("#include \"pch.h\"\n")
             f.write("#include \"Quest.h\"\n")
             f.write("#include \"KillMonsterQuest.h\"\n")
+            f.write("#include \"Inventory.h\"\n")
+            f.write("#include \"CommonQuestTable.h\"\n")
+            f.write("#include \"DataRegistry.h\"\n")
             f.write("\n")
             f.write("Quest* const Quest::CreateQuest(const uint64_t quest_id) noexcept\n")
             f.write("{\n")
@@ -191,6 +194,18 @@ class QuestGenerator(QWidget):
             f.write("    };\n\n")
             f.write("    return g_quest_list[quest_id]();\n")
             f.write("}\n")
+
+            f.write(
+                "void Quest::ProcessReward(NagiocpX::ContentsEntity* const clear_entity, const uint64_t quest_id) noexcept\n")
+            f.write("{\n")
+            f.write("    const auto& quest_reward_info = Common::CommonQuestTable::GetCommonQuestInfo(quest_id);\n")
+            f.write("    const auto entity_inventory = clear_entity->GetComp<Inventory>();\n")
+            f.write("    for (const auto& [item_name, item_id, amount] : quest_reward_info.reward_info)\n")
+            f.write("    {\n")
+            f.write("        entity_inventory->AddItem(item_id, amount);\n")
+            f.write("    }\n")
+            f.write("}\n")
+
 
         QMessageBox.information(self, "성공", "헤더, CPP, 팩토리 파일이 생성되었습니다!")
 

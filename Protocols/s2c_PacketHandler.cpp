@@ -291,15 +291,18 @@ const bool Handle_s2c_CLEAR_QUEST(const NetHelper::S_ptr<NetHelper::PacketSessio
 {
 	if (pkt_.is_clear())
 	{
+		std::cout << "퀘스트 클리어 !\n";
 		// TODO: 보상정보도 여기에있음 골드 템 다 포함
 		const auto quest_info = Common::CommonQuestTable::GetCommonQuestInfo(pkt_.quest_id());
-		std::cout << "보상 목록:\n";
-		for (const auto& [item, num] : quest_info.reward_info)
+		
+		for (const auto& [item_name, item_id, num] : quest_info.reward_info)
 		{
-			std::wcout << item << L" " << num << L"개\n";
+			if (const auto playerComp = Mgr(ServerObjectMgr)->GetMainHero()->GetComponent<AuthenticPlayer>())
+			{
+
+				playerComp->OnModifyInventory((uint8_t)item_id, num);
+			}
 		}
-		std::cout << "골드: " << quest_info.reward_gold << "원\n";
-		std::cout << "퀘스트 클리어 !" << std::endl;
 
 	}
 	else

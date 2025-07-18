@@ -38,7 +38,8 @@ namespace Common
 			for (const auto& [item, count] : q.at("rewards").items())
 			{
 				auto str = Common::DataRegistry::Str2Wstr(item);
-				info.reward_info.emplace_back(std::move(str), count.get<int>());
+				const auto item_id = DATA_TABLE->GetItemID(item);
+				info.reward_info.emplace_back(std::move(str), item_id, count.get<int>());
 			}
 
 			m_id2QuestInfo[info.quest_id] = info;

@@ -13,6 +13,7 @@ public:
 	const auto GetQuestKey()const noexcept { return m_questKey; }
 public:
 	static Quest* const CreateQuest(const uint64_t quest_id)noexcept;
+	static void ProcessReward(NagiocpX::ContentsEntity* const clear_entity, const uint64_t quest_id)noexcept;
 protected:
 	const uint64_t m_questKey;
 };

@@ -15,6 +15,7 @@ bool KillFoxQuest::OnAchieve( NagiocpX::ContentsEntity* const key_entity, Nagioc
 
 void KillFoxQuest::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {
     if ( const auto session = clear_entity->GetSession() ) {
+        Quest::ProcessReward(clear_entity, m_questKey);
         session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );
     }
 }
@@ -34,6 +35,7 @@ bool KillBearQuest::OnAchieve( NagiocpX::ContentsEntity* const key_entity, Nagio
 
 void KillBearQuest::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {
     if ( const auto session = clear_entity->GetSession() ) {
+        Quest::ProcessReward(clear_entity, m_questKey);
         session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );
     }
 }
@@ -56,6 +58,7 @@ bool KillBearFoxQuest::OnAchieve( NagiocpX::ContentsEntity* const key_entity, Na
 
 void KillBearFoxQuest::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {
     if ( const auto session = clear_entity->GetSession() ) {
+        Quest::ProcessReward(clear_entity, m_questKey);
         session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );
     }
 }
@@ -75,6 +78,7 @@ bool ManyFoxKillQuest::OnAchieve( NagiocpX::ContentsEntity* const key_entity, Na
 
 void ManyFoxKillQuest::OnReward( NagiocpX::ContentsEntity* const clear_entity ) noexcept {
     if ( const auto session = clear_entity->GetSession() ) {
+        Quest::ProcessReward(clear_entity, m_questKey);
         session->SendAsync( Create_s2c_CLEAR_QUEST( m_questKey, true ) );
     }
 }
