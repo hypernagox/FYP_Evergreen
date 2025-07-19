@@ -30,6 +30,7 @@
 #include "TransitionOverlayGUI.h"
 #include "ForcedMovement.h"
 #include "MainScene.h"
+#include "MonsterBoss.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -724,10 +725,24 @@ const bool Handle_s2c_BOSS_FLY(const NetHelper::S_ptr<NetHelper::PacketSession>&
 	const auto boss_fly_type = pkt_.boss_fly_type();
 	const auto& boss_ptr = GET_BOSS;
 	const auto target_pos = ToOriginVec3(pkt_.target_pos());
+	const auto component = boss_ptr->GetComponent<MonsterBoss>();
+
+	switch (boss_fly_type)
+	{
+	case Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_1:
+		component->OnTakeoffAtPosition(target_pos);
+		break;
+	case Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_2:
+		component->OnLandingAtPosition(target_pos);
+		break;
+	}
+
 	// TODO: 이렇게 옮기는게 아니라 뭔가 애니메이션 후 옮기기
 	// 서버도 이거 시간 맞춰서 타이머 돌려서 클라에서 이동 다 되었다고 판단 될때까지 다른 패킷은 보류 할 것
 	//boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateForcedMoveData(target_pos);
-	boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateNewMoveDataOnlyPos(target_pos);
+	std::cout << std::format("x:{},y:{},z{}\n", target_pos.x, target_pos.y, target_pos.z);
+	std::cout << "보스 비행 타입: " << boss_fly_type << std::endl;
+	// boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateNewMoveDataOnlyPos(target_pos);
 	return true;
 }
 

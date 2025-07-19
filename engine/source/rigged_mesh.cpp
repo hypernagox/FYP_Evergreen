@@ -129,6 +129,7 @@ namespace udsdx
 	{
 		return static_cast<UINT>(m_bones.size());
 	}
+
 	std::vector<std::string> RiggedMesh::GetBoneNames() const
 	{
 		std::vector<std::string> boneNames;

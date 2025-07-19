@@ -154,7 +154,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
              mat.SetSourceTexture(res->Load<udsdx::Texture>(L"resource\\dragon\\DragonTailB_metallicRoughness.png"), 2);
              dragonRenderer->SetMaterial(mat, 0);
          }
-         dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_animations.yac"), "Idle Break", true, false);
+
+         dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_animations.yac"), "Fly", true, false);
+         dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_flight.yac"), "Run Landing", true, false);
 
          g_scene->AddObject(dragonObject);
      }

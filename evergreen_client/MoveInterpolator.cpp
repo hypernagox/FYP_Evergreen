@@ -79,7 +79,13 @@ void MoveInterpolator::UpdateNewMoveDataOnlyPos(const Vector3& dest_pos) noexcep
 	const auto owner_player = m_owner->GetSceneObject()->GetComponent<EntityMovement>();
 	auto move_data = m_interpolator.GetInterPolatedData();
 	// TODO: 각도나 가속도는 여기서 정하던가 아니면 여기서 정한건 무시해야함
-	m_interpolator.UpdateNewData(MoveData{ dest_pos, {}, {}, {} });
+
+	Vector3 delta = dest_pos - owner_player->GetPosition();
+	delta.y = 0.0f;
+	delta.Normalize();
+	float bodyAngleY = std::atan2(delta.x, delta.z) * RAD2DEG;
+
+	m_interpolator.UpdateNewData(MoveData{ dest_pos, bodyAngleY, {}, {} });
 	m_interpolator.GetCurData().pos = move_data.pos;
 }
 

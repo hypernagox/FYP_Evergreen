@@ -289,8 +289,14 @@ namespace udsdx
 			m_animationTime = 0.0f;
 			animation->GetAnimationClip()->PopulateBoneMap(m_riggedMesh->GetBoneNames(), m_boneMapCache);
 		}
+
 		m_animation = animation;
 		m_loop = loop;
+	}
+
+	void RiggedMeshRenderer::SetTransitionFactor(float factor)
+	{
+		m_transitionFactor = factor;
 	}
 
 	void RiggedMeshRenderer::SetBoneModifier(std::string_view boneName, const Matrix4x4& transform)

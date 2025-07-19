@@ -12,9 +12,17 @@ class Monster : public Component
 protected:
 	enum class AnimationState
 	{
+		// General states
 		Idle,
 		Run,
 		Attack,
+
+		// Boss specific states
+		BossTakeoff,
+		BossLanding,
+		BossFlyIdle,
+		BossFlyRun,
+		BossFlyAttack,
 		Size
 	};
 
