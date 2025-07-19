@@ -75,6 +75,7 @@ private:
 
 	std::unique_ptr<MinimapRenderer> m_minimapRenderer;
 	std::vector<Vector3> m_minimapMarks;
+	std::unique_ptr<SoundEffectInstance> m_ambienceSound;
 
 	int m_currentChannelID = 0;
 };

@@ -372,11 +372,15 @@ void GameScene::OnAttach()
         AddObject(navMeshVisualizer);
     }
 
+    m_ambienceSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\ambience.wav"))->CreateInstance();
+    m_ambienceSound->Play(true);
+
     ChangeGameScene(GameSceneType::Default);
 }
 
 void GameScene::OnDetach()
 {
+    m_ambienceSound->Stop();
     m_minimapRenderer->OnDetach();
 }
 
