@@ -502,9 +502,24 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
 
     if constexpr (true == g_bUseNetWork)
     {
-        // TODO: 여기서 캐릭터 종류를 넣어주세요
-        Nagox::Enum::PLAYER_TYPE player_type = character ? Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_PRIEST : Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_WARRIOR;
+        Nagox::Enum::PLAYER_TYPE player_type = Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_WARRIOR;
+        switch (character)
+        {
+        case 0:
+            player_type = Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_WARRIOR;
+            break;
+        case 1:
+            player_type = Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_PRIEST;
+            break;
+        case 2:
+            // TODO: 거너로 바꾸기
+            player_type = Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_PRIEST;
+            break;
+        default:
+            break;
+        }
         Send(Create_c2s_ENTER(ToFlatVec3(m_heroObj->GetTransform()->GetLocalPosition()), player_type, m_currentChannelID));
+        NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
     }
 
     m_heroComponent->FixCameraAnchor();

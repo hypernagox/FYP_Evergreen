@@ -16,6 +16,12 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_LOGIN(
     const std::string_view& pw,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_REGISTER_ACCOUNT(
+    const std::string_view& id,
+    const std::string_view& pw,
+    const std::string_view& class_type,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PING_PONG(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;

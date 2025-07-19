@@ -9,29 +9,30 @@ static inline consteval const uint16_t net_etoi(const T eType_) noexcept { retur
 
 enum class HANDLE_PKT_ID : uint16_t {
     c2s_LOGIN = 1000,
-    c2s_PING_PONG = 1001,
-    c2s_ENTER = 1002,
-    c2s_MOVE = 1003,
-    c2s_PLAYER_ATTACK = 1004,
-    c2s_PLAYER_DEATH = 1005,
-    c2s_REQUEST_QUEST = 1006,
-    c2s_ACQUIRE_ITEM = 1007,
-    c2s_REQUEST_QUICK_SLOT = 1008,
-    c2s_USE_QUICK_SLOT_ITEM = 1009,
-    c2s_CRAFT_ITEM = 1010,
-    c2s_REGISTER_PARTY_QUEST = 1011,
-    c2s_ACQUIRE_PARTY_LIST = 1012,
-    c2s_INVITE_PARTY_QUEST = 1013,
-    c2s_INVITE_PARTY_RESULT = 1014,
-    c2s_PARTY_JOIN_REQUEST = 1015,
-    c2s_PARTY_JOIN_REQUEST_RESULT = 1016,
-    c2s_QUEST_START = 1017,
-    c2s_QUEST_END = 1018,
-    c2s_PARTY_OUT = 1019,
-    c2s_CHANGE_HARVEST_STATE = 1020,
-    c2s_CHANGE_EQUIPMENT = 1021,
-    c2s_CHANGE_CHANNEL = 1022,
-    c2s_DASH = 1023,
+    c2s_REGISTER_ACCOUNT = 1001,
+    c2s_PING_PONG = 1002,
+    c2s_ENTER = 1003,
+    c2s_MOVE = 1004,
+    c2s_PLAYER_ATTACK = 1005,
+    c2s_PLAYER_DEATH = 1006,
+    c2s_REQUEST_QUEST = 1007,
+    c2s_ACQUIRE_ITEM = 1008,
+    c2s_REQUEST_QUICK_SLOT = 1009,
+    c2s_USE_QUICK_SLOT_ITEM = 1010,
+    c2s_CRAFT_ITEM = 1011,
+    c2s_REGISTER_PARTY_QUEST = 1012,
+    c2s_ACQUIRE_PARTY_LIST = 1013,
+    c2s_INVITE_PARTY_QUEST = 1014,
+    c2s_INVITE_PARTY_RESULT = 1015,
+    c2s_PARTY_JOIN_REQUEST = 1016,
+    c2s_PARTY_JOIN_REQUEST_RESULT = 1017,
+    c2s_QUEST_START = 1018,
+    c2s_QUEST_END = 1019,
+    c2s_PARTY_OUT = 1020,
+    c2s_CHANGE_HARVEST_STATE = 1021,
+    c2s_CHANGE_EQUIPMENT = 1022,
+    c2s_CHANGE_CHANNEL = 1023,
+    c2s_DASH = 1024,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -84,6 +85,7 @@ flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept;
 static inline const bool Handle_Invalid(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const BYTE* const pBuff_, const int32_t len_) noexcept { return false; }
 
 const bool Handle_c2s_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_);
+const bool Handle_c2s_REGISTER_ACCOUNT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REGISTER_ACCOUNT& pkt_);
 const bool Handle_c2s_PING_PONG(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_PING_PONG& pkt_);
 const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_ENTER& pkt_);
 const bool Handle_c2s_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_);
@@ -114,6 +116,7 @@ class c2s_PacketHandler {
 public:
     static void Init() noexcept {
         RegisterHandler<HANDLE_PKT_ID::c2s_LOGIN, Nagox::Protocol::c2s_LOGIN, Handle_c2s_LOGIN>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_REGISTER_ACCOUNT, Nagox::Protocol::c2s_REGISTER_ACCOUNT, Handle_c2s_REGISTER_ACCOUNT>();
         RegisterHandler<HANDLE_PKT_ID::c2s_PING_PONG, Nagox::Protocol::c2s_PING_PONG, Handle_c2s_PING_PONG>();
         RegisterHandler<HANDLE_PKT_ID::c2s_ENTER, Nagox::Protocol::c2s_ENTER, Handle_c2s_ENTER>();
         RegisterHandler<HANDLE_PKT_ID::c2s_MOVE, Nagox::Protocol::c2s_MOVE, Handle_c2s_MOVE>();

@@ -19,6 +19,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_LOGIN(
     const Vector<int> item_counts,
     const int32_t equip_weapon_id,
     const int32_t equip_armor_id,
+    const std::string_view& class_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PING_PONG(

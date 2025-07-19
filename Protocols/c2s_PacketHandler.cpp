@@ -54,7 +54,7 @@ const bool Handle_c2s_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	else
 	{
 		pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp()
-			, Nagox::Enum::LOGIN_RESULT_NONE, {}, {}, -1, -1);
+			, Nagox::Enum::LOGIN_RESULT_NONE, {}, {}, -1, -1, {});
 	}
 	//pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp());
 	return true;
@@ -64,6 +64,21 @@ const bool Handle_c2s_PING_PONG(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 {
 	//std::cout << Mgr(TimeMgr)->GetServerTimeStamp() << std::endl;
 	pSession_ << Create_s2c_PING_PONG(Mgr(TimeMgr)->GetServerTimeStamp());
+	return true;
+}
+
+const bool Handle_c2s_REGISTER_ACCOUNT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_REGISTER_ACCOUNT& pkt_)
+{
+	GetClientSession(pSession_)->m_userName = *pkt_.id();
+	if (!Mgr(DBMgr)->IsNotConnectQueryServer())
+	{
+		DB_NewPlayerInsert d{ pSession_ };
+		d.m_name = Common::DataRegistry::Str2Wstr(GetClientSession(pSession_)->m_userName);
+		d.m_pw = Common::DataRegistry::Str2Wstr(*pkt_.pw());
+		d.m_class_type = Common::DataRegistry::Str2Wstr(*pkt_.class_type());
+		RequestQuery(d);
+	}
+
 	return true;
 }
 
@@ -90,20 +105,20 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 		entity->GetComp<StatusSystem>()->SetSkill<WarriorDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
 		entity->GetComp<StatusSystem>()->SetSkill<WarriorSkill_1>(Nagox::Enum::SKILL_TYPE_SKILL_1);
 
-		entity->GetComp<Inventory>()->SwapEquipment(
-			Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
-			DATA_TABLE->GetWeaponIDInt("Master Sword")
-		);
+		//entity->GetComp<Inventory>()->SwapEquipment(
+		//	Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
+		//	DATA_TABLE->GetWeaponIDInt("Master Sword")
+		//);
 	}
 	else if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_PRIEST)
 	{
 		entity->GetComp<StatusSystem>()->SetSkill<PriestDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
 		entity->GetComp<StatusSystem>()->SetSkill<PriestSkill_1>(Nagox::Enum::SKILL_TYPE_SKILL_1);
 
-		entity->GetComp<Inventory>()->SwapEquipment(
-			Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
-			DATA_TABLE->GetWeaponIDInt("Staff Priest")
-		);
+		//entity->GetComp<Inventory>()->SwapEquipment(
+		//	Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
+		//	DATA_TABLE->GetWeaponIDInt("Staff Priest")
+		//);
 	}
 
 	//g_sector->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER)

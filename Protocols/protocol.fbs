@@ -9,6 +9,13 @@ table c2s_LOGIN
     pw: string;
 }
 
+table c2s_REGISTER_ACCOUNT
+{
+    id: string;
+    pw: string;
+    class_type: string;
+}
+
 table s2c_LOGIN
 {
     obj_id: uint32;
@@ -18,6 +25,7 @@ table s2c_LOGIN
     item_counts: [int];
     equip_weapon_id : int32;
     equip_armor_id : int32;
+    class_type: string;
 }
 
 table c2s_PING_PONG

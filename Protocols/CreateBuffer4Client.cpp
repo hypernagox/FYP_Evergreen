@@ -38,6 +38,26 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_LOGIN(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_LOGIN);
 }
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_REGISTER_ACCOUNT(
+    const std::string_view& id,
+    const std::string_view& pw,
+    const std::string_view& class_type,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto id_offset = builder.CreateString(id);
+    const auto pw_offset = builder.CreateString(pw);
+    const auto class_type_offset = builder.CreateString(class_type);
+    const auto serializedc2s_REGISTER_ACCOUNT = Nagox::Protocol::Createc2s_REGISTER_ACCOUNT(
+        builder
+,        id_offset,
+        pw_offset,
+        class_type_offset    );
+    builder.Finish(serializedc2s_REGISTER_ACCOUNT);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REGISTER_ACCOUNT);
+}
 NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_PING_PONG(
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {

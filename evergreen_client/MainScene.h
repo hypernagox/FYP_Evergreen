@@ -37,4 +37,10 @@ private:
 	unsigned int m_currentCharacterType = 0;
 	unsigned int m_currentChannelID = 0;
 	bool m_needCharacterSelection = false;
+	bool m_register_account = false;
+
+
+	std::string m_userId;
+	std::string m_userPw;
+	std::string m_class_type;
 };

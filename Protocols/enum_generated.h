@@ -18,8 +18,8 @@ namespace Enum {
 
 enum LOGIN_RESULT : uint8_t {
   LOGIN_RESULT_FAIL = 0,
-  LOGIN_RESULT_NEWBIE = 1,
-  LOGIN_RESULT_OLDBIE = 2,
+  LOGIN_RESULT_SUCCESS = 1,
+  LOGIN_RESULT_DUPLICATE = 2,
   LOGIN_RESULT_NONE = 3,
   LOGIN_RESULT_MIN = LOGIN_RESULT_FAIL,
   LOGIN_RESULT_MAX = LOGIN_RESULT_NONE
@@ -28,8 +28,8 @@ enum LOGIN_RESULT : uint8_t {
 inline const LOGIN_RESULT (&EnumValuesLOGIN_RESULT())[4] {
   static const LOGIN_RESULT values[] = {
     LOGIN_RESULT_FAIL,
-    LOGIN_RESULT_NEWBIE,
-    LOGIN_RESULT_OLDBIE,
+    LOGIN_RESULT_SUCCESS,
+    LOGIN_RESULT_DUPLICATE,
     LOGIN_RESULT_NONE
   };
   return values;
@@ -38,8 +38,8 @@ inline const LOGIN_RESULT (&EnumValuesLOGIN_RESULT())[4] {
 inline const char * const *EnumNamesLOGIN_RESULT() {
   static const char * const names[5] = {
     "FAIL",
-    "NEWBIE",
-    "OLDBIE",
+    "SUCCESS",
+    "DUPLICATE",
     "NONE",
     nullptr
   };

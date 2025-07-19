@@ -22,6 +22,9 @@ namespace Protocol {
 struct c2s_LOGIN;
 struct c2s_LOGINBuilder;
 
+struct c2s_REGISTER_ACCOUNT;
+struct c2s_REGISTER_ACCOUNTBuilder;
+
 struct s2c_LOGIN;
 struct s2c_LOGINBuilder;
 
@@ -279,6 +282,94 @@ inline ::flatbuffers::Offset<c2s_LOGIN> Createc2s_LOGINDirect(
       pw__);
 }
 
+struct c2s_REGISTER_ACCOUNT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_REGISTER_ACCOUNTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ID = 4,
+    VT_PW = 6,
+    VT_CLASS_TYPE = 8
+  };
+  const ::flatbuffers::String *id() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_ID);
+  }
+  ::flatbuffers::String *mutable_id() {
+    return GetPointer<::flatbuffers::String *>(VT_ID);
+  }
+  const ::flatbuffers::String *pw() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_PW);
+  }
+  ::flatbuffers::String *mutable_pw() {
+    return GetPointer<::flatbuffers::String *>(VT_PW);
+  }
+  const ::flatbuffers::String *class_type() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_CLASS_TYPE);
+  }
+  ::flatbuffers::String *mutable_class_type() {
+    return GetPointer<::flatbuffers::String *>(VT_CLASS_TYPE);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_ID) &&
+           verifier.VerifyString(id()) &&
+           VerifyOffset(verifier, VT_PW) &&
+           verifier.VerifyString(pw()) &&
+           VerifyOffset(verifier, VT_CLASS_TYPE) &&
+           verifier.VerifyString(class_type()) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_REGISTER_ACCOUNTBuilder {
+  typedef c2s_REGISTER_ACCOUNT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_id(::flatbuffers::Offset<::flatbuffers::String> id) {
+    fbb_.AddOffset(c2s_REGISTER_ACCOUNT::VT_ID, id);
+  }
+  void add_pw(::flatbuffers::Offset<::flatbuffers::String> pw) {
+    fbb_.AddOffset(c2s_REGISTER_ACCOUNT::VT_PW, pw);
+  }
+  void add_class_type(::flatbuffers::Offset<::flatbuffers::String> class_type) {
+    fbb_.AddOffset(c2s_REGISTER_ACCOUNT::VT_CLASS_TYPE, class_type);
+  }
+  explicit c2s_REGISTER_ACCOUNTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_REGISTER_ACCOUNT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_REGISTER_ACCOUNT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_REGISTER_ACCOUNT> Createc2s_REGISTER_ACCOUNT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<::flatbuffers::String> id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> pw = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> class_type = 0) {
+  c2s_REGISTER_ACCOUNTBuilder builder_(_fbb);
+  builder_.add_class_type(class_type);
+  builder_.add_pw(pw);
+  builder_.add_id(id);
+  return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<c2s_REGISTER_ACCOUNT> Createc2s_REGISTER_ACCOUNTDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const char *id = nullptr,
+    const char *pw = nullptr,
+    const char *class_type = nullptr) {
+  auto id__ = id ? _fbb.CreateString(id) : 0;
+  auto pw__ = pw ? _fbb.CreateString(pw) : 0;
+  auto class_type__ = class_type ? _fbb.CreateString(class_type) : 0;
+  return Nagox::Protocol::Createc2s_REGISTER_ACCOUNT(
+      _fbb,
+      id__,
+      pw__,
+      class_type__);
+}
+
 struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -288,7 +379,8 @@ struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
     VT_ITEM_IDS = 10,
     VT_ITEM_COUNTS = 12,
     VT_EQUIP_WEAPON_ID = 14,
-    VT_EQUIP_ARMOR_ID = 16
+    VT_EQUIP_ARMOR_ID = 16,
+    VT_CLASS_TYPE = 18
   };
   uint32_t obj_id() const {
     return GetField<uint32_t>(VT_OBJ_ID, 0);
@@ -332,6 +424,12 @@ struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_equip_armor_id(int32_t _equip_armor_id = 0) {
     return SetField<int32_t>(VT_EQUIP_ARMOR_ID, _equip_armor_id, 0);
   }
+  const ::flatbuffers::String *class_type() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_CLASS_TYPE);
+  }
+  ::flatbuffers::String *mutable_class_type() {
+    return GetPointer<::flatbuffers::String *>(VT_CLASS_TYPE);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_OBJ_ID, 4) &&
@@ -343,6 +441,8 @@ struct s2c_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
            verifier.VerifyVector(item_counts()) &&
            VerifyField<int32_t>(verifier, VT_EQUIP_WEAPON_ID, 4) &&
            VerifyField<int32_t>(verifier, VT_EQUIP_ARMOR_ID, 4) &&
+           VerifyOffset(verifier, VT_CLASS_TYPE) &&
+           verifier.VerifyString(class_type()) &&
            verifier.EndTable();
   }
 };
@@ -372,6 +472,9 @@ struct s2c_LOGINBuilder {
   void add_equip_armor_id(int32_t equip_armor_id) {
     fbb_.AddElement<int32_t>(s2c_LOGIN::VT_EQUIP_ARMOR_ID, equip_armor_id, 0);
   }
+  void add_class_type(::flatbuffers::Offset<::flatbuffers::String> class_type) {
+    fbb_.AddOffset(s2c_LOGIN::VT_CLASS_TYPE, class_type);
+  }
   explicit s2c_LOGINBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -391,9 +494,11 @@ inline ::flatbuffers::Offset<s2c_LOGIN> Creates2c_LOGIN(
     ::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_ids = 0,
     ::flatbuffers::Offset<::flatbuffers::Vector<int32_t>> item_counts = 0,
     int32_t equip_weapon_id = 0,
-    int32_t equip_armor_id = 0) {
+    int32_t equip_armor_id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> class_type = 0) {
   s2c_LOGINBuilder builder_(_fbb);
   builder_.add_server_time_stamp(server_time_stamp);
+  builder_.add_class_type(class_type);
   builder_.add_equip_armor_id(equip_armor_id);
   builder_.add_equip_weapon_id(equip_weapon_id);
   builder_.add_item_counts(item_counts);
@@ -411,9 +516,11 @@ inline ::flatbuffers::Offset<s2c_LOGIN> Creates2c_LOGINDirect(
     const std::vector<int32_t> *item_ids = nullptr,
     const std::vector<int32_t> *item_counts = nullptr,
     int32_t equip_weapon_id = 0,
-    int32_t equip_armor_id = 0) {
+    int32_t equip_armor_id = 0,
+    const char *class_type = nullptr) {
   auto item_ids__ = item_ids ? _fbb.CreateVector<int32_t>(*item_ids) : 0;
   auto item_counts__ = item_counts ? _fbb.CreateVector<int32_t>(*item_counts) : 0;
+  auto class_type__ = class_type ? _fbb.CreateString(class_type) : 0;
   return Nagox::Protocol::Creates2c_LOGIN(
       _fbb,
       obj_id,
@@ -422,7 +529,8 @@ inline ::flatbuffers::Offset<s2c_LOGIN> Creates2c_LOGINDirect(
       item_ids__,
       item_counts__,
       equip_weapon_id,
-      equip_armor_id);
+      equip_armor_id,
+      class_type__);
 }
 
 struct c2s_PING_PONG FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

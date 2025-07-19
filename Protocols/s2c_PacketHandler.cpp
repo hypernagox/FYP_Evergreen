@@ -58,6 +58,22 @@ const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pS
 
 	// TODO: 플레이어가 이미 등록된 경우 PrepareLoginData()와 더불어 캐릭터 타입(직업)을 해당 인자로 넘겨준다. (AuthenticPlayer는 생성과 동시에 초기화되어야함)
 	unsigned int characterType = 0;
+	std::string class_type;
+	for (const auto ch : *pkt_.class_type())class_type.push_back(ch);
+	
+	if ("Warrior" == class_type)
+	{
+		characterType = 0;
+	}
+	else if ("Priest" == class_type)
+	{
+		characterType = 1;
+	}
+	else if ("Gunner" == class_type)
+	{
+		// TODO: 신캐릭추가하면 바뀌어야함
+		characterType = 1;
+	}
 	Mgr(ServerObjectMgr)->GetTargetMainScene()->OnLoginResult(res, characterType);
 
 	std::cout << "도착\n";

@@ -149,23 +149,31 @@ void MainScene::OnAttach()
                 if (ret == IDLOGIN || ret == IDREGISTER)
                 {
                     // 사용자가 입력 완료
-                    std::string userId = credentials[0];
-                    std::string userPw = credentials[1];
+                    m_userId.clear(); m_userPw.clear(); m_class_type.clear();
+                    m_userId = credentials[0];
+                    m_userPw = credentials[1];
 
                     switch (ret)
                     {
                     case IDLOGIN:
+                        m_register_account = false;
                         // TODO: 여기서 로그인 처리 로직 실행
                         if (m_firstLoginAttempt)
                         {
                             NetMgr(NetworkMgr)->ProcessLogin();
                             m_firstLoginAttempt = false;
                         }
-                        Send(Create_c2s_LOGIN(userId, userPw));
-                        NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
+                        Send(Create_c2s_LOGIN(m_userId, m_userPw));
                         break;
                     case IDREGISTER:
+                        m_register_account = true;
                         // TODO: 여기서 회원가입 처리 로직 실행
+                        if (m_firstLoginAttempt)
+                        {
+                            NetMgr(NetworkMgr)->ProcessLogin();
+                            m_firstLoginAttempt = false;
+                        }
+                        EnterCharacterSelection();
                         break;
                     }
                 }
@@ -232,31 +240,58 @@ void MainScene::EnterCharacterSelection()
 
 void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int characterType)
 {
+    extern bool g_is_register_success;
+    g_is_register_success = false;
     m_currentCharacterType = characterType;
-
+   
     switch (result)
     {
     case Nagox::Enum::LOGIN_RESULT_FAIL:
     {
         // TODO: 비번틀림 로그인 시도 다시하기 
 
-        MessageBox(INSTANCE(Core)->GetMainWindow(), L"로그인 실패: ID 또는 비밀번호가 틀렸습니다.", L"로그인 실패", MB_OK | MB_ICONWARNING);
+        MessageBox(INSTANCE(Core)->GetMainWindow(), L"로그인 실패: ID 또는 비밀번호를 다시 확인해주세요.", L"로그인 실패", MB_OK | MB_ICONWARNING);
         break;
     }
-    case Nagox::Enum::LOGIN_RESULT_NEWBIE:
+    case Nagox::Enum::LOGIN_RESULT_NONE:
     {
-        // TODO: 뉴비라서 캐릭터 선택창으로
+        // TODO: 비번틀림 로그인 시도 다시하기 
 
-        m_needCharacterSelection = true;
-        m_popupGUIManager->Append(m_channelSwitchObj);
+        MessageBox(INSTANCE(Core)->GetMainWindow(), L"로그인 실패: 존재하지 않는 ID 입니다.", L"로그인 실패", MB_OK | MB_ICONWARNING);
         break;
     }
-    case Nagox::Enum::LOGIN_RESULT_OLDBIE:
+    case Nagox::Enum::LOGIN_RESULT_DUPLICATE:
     {
-        // TODO: 채널만고르고 넘어가면 됨
-        // 전사인지 프리스트인지 종류도 같이 올것
-
+        // TODO: 비번틀림 로그인 시도 다시하기 
+        g_is_register_success = false;
+        MessageBox(INSTANCE(Core)->GetMainWindow(), L"계정 생성 실패: 이미 존재하는 ID입니다.", L"계정 생성 실패", MB_OK | MB_ICONWARNING);
+        break;
+    }
+    case Nagox::Enum::LOGIN_RESULT_SUCCESS:
+    {
+        // TODO: 인게임 내에서 자기직업이 뭔지 혹시 알아야할수도있어서 일단 해둠
+        switch (characterType)
+        {
+        case 0:
+        {
+            m_class_type = "Warrior";
+        }
+        break;
+        case 1:
+        {
+            m_class_type = "Priest";
+        }
+        break;
+        case 2:
+        {
+            m_class_type = "Gunner";
+        }
+        break;
+        default:
+            break;
+        }
         m_needCharacterSelection = false;
+        g_is_register_success = true;
         m_popupGUIManager->Append(m_channelSwitchObj);
         break;
     }
@@ -270,8 +305,44 @@ void MainScene::TransitionEnterGame()
     INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([this]() { EnterGame(); }, std::format(L"서버 입장 중 ...") );
 }
 
+bool g_is_register_success = false;
+
 void MainScene::EnterGame()
 {
+    extern bool g_is_register_success;
+    if (m_register_account)
+    {
+        switch (m_currentCharacterType)
+        {
+        case 0:
+        {
+            m_class_type = "Warrior";
+        }
+        break;
+        case 1:
+        {
+            m_class_type = "Priest";
+        }
+        break;
+        case 2:
+        {
+            m_class_type = "Gunner";
+        }
+        break;
+        default:
+            break;
+        }
+        Send(Create_c2s_REGISTER_ACCOUNT(m_userId, m_userPw, m_class_type));
+        while (NetMgr(NetworkMgr)->GetSessionID() == 0)
+        {
+            NetMgr(NetworkMgr)->DoNetworkIO();
+        }
+        // TODO: 중복아이디라면 실패하고 다시 돌아가야함
+        if (false == g_is_register_success)
+        {
+            return;
+        }
+    }
     std::shared_ptr<GameScene> gameScene = std::make_shared<GameScene>();
     INSTANCE(Core)->SetScene(gameScene);
     gameScene->EnterGame(gameScene, m_currentCharacterType, m_currentChannelID);

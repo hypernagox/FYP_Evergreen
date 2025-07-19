@@ -3,8 +3,8 @@ namespace Nagox.Enum;
 enum LOGIN_RESULT: ubyte
 {
     FAIL = 0,
-    NEWBIE = 1,
-    OLDBIE = 2,
+    SUCCESS = 1,
+    DUPLICATE = 2,
     NONE = 3
 }
 

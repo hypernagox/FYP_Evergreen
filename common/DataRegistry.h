@@ -65,6 +65,7 @@ namespace Common
 		}
 	public:
 		static const std::wstring& Str2Wstr(const std::string_view str) noexcept;
+		static const std::string& Wstr2Str(const std::wstring_view wstr) noexcept;
 	public:
 		// 레시피 종류 개수
 		const size_t GetRecipeCount() const noexcept {
