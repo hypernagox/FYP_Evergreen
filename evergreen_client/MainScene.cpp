@@ -255,12 +255,6 @@ void MainScene::EnterCharacterSelection(bool enter)
 
 void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int characterType)
 {
-    // 로그인이 아닌 회원가입 시에는 WaitRegisterResult의 결과를 따른다.
-    if (m_needCharacterSelection)
-    {
-        return;
-    }
-
     extern bool g_is_register_success;
     g_is_register_success = false;
     m_currentCharacterType = characterType;
@@ -281,13 +275,13 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
         MessageBox(INSTANCE(Core)->GetMainWindow(), L"로그인 실패: 존재하지 않는 ID 입니다.", L"로그인 실패", MB_OK | MB_ICONWARNING);
         break;
     }
-    //case Nagox::Enum::LOGIN_RESULT_DUPLICATE:
-    //{
-    //    // TODO: 비번틀림 로그인 시도 다시하기 
-    //    g_is_register_success = false;
-    //    MessageBox(INSTANCE(Core)->GetMainWindow(), L"계정 생성 실패: 이미 존재하는 ID입니다.", L"계정 생성 실패", MB_OK | MB_ICONWARNING);
-    //    break;
-    //}
+    case Nagox::Enum::LOGIN_RESULT_DUPLICATE:
+    {
+        // TODO: 비번틀림 로그인 시도 다시하기 
+        g_is_register_success = false;
+        MessageBox(INSTANCE(Core)->GetMainWindow(), L"계정 생성 실패: 이미 존재하는 ID입니다.", L"계정 생성 실패", MB_OK | MB_ICONWARNING);
+        break;
+    }
     case Nagox::Enum::LOGIN_RESULT_SUCCESS:
     {
         // TODO: 인게임 내에서 자기직업이 뭔지 혹시 알아야할수도있어서 일단 해둠
@@ -312,7 +306,10 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
             break;
         }
         g_is_register_success = true;
-        m_popupGUIManager->Append(m_channelSwitchObj);
+        if (!m_needCharacterSelection)
+        {
+            m_popupGUIManager->Append(m_channelSwitchObj);
+        }
         break;
     }
     default:
@@ -353,7 +350,6 @@ bool MainScene::WaitRegisterResult()
         // TODO: 중복아이디라면 실패하고 다시 돌아가야함
         if (false == g_is_register_success)
         {
-            MessageBox(INSTANCE(Core)->GetMainWindow(), L"계정 생성 실패: 이미 존재하는 ID입니다.", L"계정 생성 실패", MB_OK | MB_ICONWARNING);
             return false;
         }
     }
