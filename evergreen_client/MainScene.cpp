@@ -50,7 +50,7 @@ INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         return TRUE;
 
     case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK)
+        if (LOWORD(wParam) == IDLOGIN || LOWORD(wParam) == IDREGISTER)
         {
             char id[100] = {};
             char password[100] = {};
@@ -62,7 +62,7 @@ INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
             pIdPassword[0] = id;
             pIdPassword[1] = password;
 
-            EndDialog(hDlg, IDOK);
+            EndDialog(hDlg, LOWORD(wParam));
             return TRUE;
         }
         else if (LOWORD(wParam) == IDCANCEL)
@@ -146,22 +146,28 @@ void MainScene::OnAttach()
                     reinterpret_cast<LPARAM>(&credentials)
                 );
 
-                if (ret == IDOK)
+                if (ret == IDLOGIN || ret == IDREGISTER)
                 {
                     // 사용자가 입력 완료
                     std::string userId = credentials[0];
                     std::string userPw = credentials[1];
 
-                    // TODO: 여기서 로그인 처리 로직 실행
-                    //
-                    // Send(Create_c2s_LOGIN(userId, userPw));
-                    if (m_firstLoginAttempt)
+                    switch (ret)
                     {
-                        NetMgr(NetworkMgr)->ProcessLogin();
-                        m_firstLoginAttempt = false;
+                    case IDLOGIN:
+                        // TODO: 여기서 로그인 처리 로직 실행
+                        if (m_firstLoginAttempt)
+                        {
+                            NetMgr(NetworkMgr)->ProcessLogin();
+                            m_firstLoginAttempt = false;
+                        }
+                        Send(Create_c2s_LOGIN(userId, userPw));
+                        NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
+                        break;
+                    case IDREGISTER:
+                        // TODO: 여기서 회원가입 처리 로직 실행
+                        break;
                     }
-                    Send(Create_c2s_LOGIN(userId, userPw));
-                    NetMgr(ServerTimeMgr)->InitAndWaitServerTimeStamp([]()noexcept {NetMgr(NetworkMgr)->Send(Create_c2s_PING_PONG()); });
                 }
             }
             else
@@ -234,7 +240,7 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
     {
         // TODO: 비번틀림 로그인 시도 다시하기 
 
-        MessageBox(INSTANCE(Core)->GetMainWindow(), L"로그인 실패: 비밀번호가 틀렸습니다.", L"로그인 실패", MB_OK | MB_ICONWARNING);
+        MessageBox(INSTANCE(Core)->GetMainWindow(), L"로그인 실패: ID 또는 비밀번호가 틀렸습니다.", L"로그인 실패", MB_OK | MB_ICONWARNING);
         break;
     }
     case Nagox::Enum::LOGIN_RESULT_NEWBIE:

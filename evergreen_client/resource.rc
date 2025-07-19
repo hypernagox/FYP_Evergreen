@@ -4,6 +4,7 @@
 
 #include "resource.h"
 #include <windows.h>
+
 /////////////////////////////////////////////////////////////////////////////
 // Neutral resources
 
@@ -45,12 +46,13 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Login"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,121,56,50,14
+    DEFPUSHBUTTON   "Login",IDLOGIN,121,56,50,14
     EDITTEXT        IDC_EDIT_ID,33,15,132,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_PASSWORD,33,34,132,14,ES_PASSWORD | ES_AUTOHSCROLL
     LTEXT           "ID:",IDC_STATIC,15,18,11,8
     LTEXT           "PW:",IDC_STATIC,15,36,14,8
     PUSHBUTTON      "Cancel",IDCANCEL,176,56,50,14
+    DEFPUSHBUTTON   "Register",IDREGISTER,7,56,50,14
 END
 
 
