@@ -6,7 +6,6 @@ class MainMenuCharacterGUI : public udsdx::Component
 {
 public:
 	void OnInitialize() override;
-	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void SetCharacterShowCallback(std::function<void(unsigned int)> callback) { m_characterShowCallback = callback; }
 	void SetEnterGameCallback(std::function<void(unsigned int)> callback) { m_enterGameCallback = callback; }
 	void EnterGame();

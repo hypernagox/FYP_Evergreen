@@ -113,9 +113,13 @@ void MainScene::OnAttach()
         m_mainMenuCameraObject->GetTransform()->SetLocalPosition(Vector3(0.0f, 120.0f, 0.0f));
         m_mainMenuCameraObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PIDIV4, PIDIV4, 0));
 
+        m_characterSelectObject = std::make_shared<SceneObject>();
+        auto playerSelect = m_characterSelectObject->AddComponent<PlayerSelect>();
+        playerSelect->SetTargetTransform(m_mainMenuCameraObject->GetTransform());
+        m_mainMenuCameraObject->AddChild(m_characterSelectObject);
+
         auto camera = m_mainMenuCameraObject->AddComponent<CameraPerspective>();
         camera->SetFov(PI / 4.0f);
-        camera->SetClipOffset(Vector2(1.0f / 3.0f, 0.0f));
 
         auto bezierMovement = m_mainMenuCameraObject->AddComponent<BezierMovement>();
         bezierMovement->LoadSpline(RESOURCE_PATH(L"environment\\CameraPathSpline.json"));
@@ -134,55 +138,7 @@ void MainScene::OnAttach()
 
         m_mainMenuObj = std::make_shared<SceneObject>();
         auto mainMenuComp = m_mainMenuObj->AddComponent<MainMenuGUI>();
-        mainMenuComp->SetEnterGameCallback([this]() {
-            if constexpr (g_bUseNetWork)
-            {
-                std::string credentials[2]; // [0]: ID, [1]: Password
-                INT_PTR ret = DialogBoxParam(
-                    INSTANCE(Core)->GetInstance(),
-                    MAKEINTRESOURCE(IDD_LOGIN_DIALOG),
-                    INSTANCE(Core)->GetMainWindow(),
-                    LoginDialogProc,
-                    reinterpret_cast<LPARAM>(&credentials)
-                );
-
-                if (ret == IDLOGIN || ret == IDREGISTER)
-                {
-                    // 사용자가 입력 완료
-                    m_userId.clear(); m_userPw.clear(); m_class_type.clear();
-                    m_userId = credentials[0];
-                    m_userPw = credentials[1];
-
-                    switch (ret)
-                    {
-                    case IDLOGIN:
-                        m_register_account = false;
-                        // TODO: 여기서 로그인 처리 로직 실행
-                        if (m_firstLoginAttempt)
-                        {
-                            NetMgr(NetworkMgr)->ProcessLogin();
-                            m_firstLoginAttempt = false;
-                        }
-                        Send(Create_c2s_LOGIN(m_userId, m_userPw));
-                        break;
-                    case IDREGISTER:
-                        m_register_account = true;
-                        // TODO: 여기서 회원가입 처리 로직 실행
-                        if (m_firstLoginAttempt)
-                        {
-                            NetMgr(NetworkMgr)->ProcessLogin();
-                            m_firstLoginAttempt = false;
-                        }
-                        EnterCharacterSelection();
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                EnterCharacterSelection();
-            }
-            });
+        mainMenuComp->SetEnterGameCallback([this]() { OnLoginDialog(); });
         mainMenuComp->SetExitGameCallback([this]() { ExitGame(); });
         m_interfaceGroup->AddChild(m_mainMenuObj);
 
@@ -194,12 +150,10 @@ void MainScene::OnAttach()
             if (m_needCharacterSelection)
             {
                 m_popupGUIManager->Pop();
-                EnterCharacterSelection();
+                EnterCharacterSelection(true);
             }
             else
-            {
                 TransitionEnterGame();
-            }
             });
         m_channelSwitchObj->SetActive(false);
         m_interfaceGroup->AddChild(m_channelSwitchObj);
@@ -208,11 +162,14 @@ void MainScene::OnAttach()
         m_playerSelectObj->SetActive(false);
         auto mainMenuCharacterComp = m_playerSelectObj->AddComponent<MainMenuCharacterGUI>();
         mainMenuCharacterComp->SetCharacterShowCallback([this](unsigned int character) {
-            m_mainMenuCameraObject->GetComponent<PlayerSelect>()->SetShowingCharacter(character);
+            m_characterSelectObject->GetComponent<PlayerSelect>()->SetShowingCharacter(character);
             });
         mainMenuCharacterComp->SetEnterGameCallback([this](unsigned int character) {
             m_currentCharacterType = character;
-            TransitionEnterGame();
+            if (WaitRegisterResult())
+                TransitionEnterGame();
+            else
+                EnterCharacterSelection(false);
             });
         m_interfaceGroup->AddChild(m_playerSelectObj);
 
@@ -227,19 +184,83 @@ void MainScene::OnAttach()
     INSTANCE(Core)->GetRenderOptionsRef().FogDensity = 15.85f;
     INSTANCE(Core)->GetRenderOptionsRef().FogHeightFalloff = 0.08f;
     INSTANCE(Core)->GetRenderOptionsRef().FogDistanceStart = 60.0f;
+
+    EnterCharacterSelection(false);
 }
 
-void MainScene::EnterCharacterSelection()
+void MainScene::OnLoginDialog()
 {
-    m_mainMenuObj->SetActive(false);
-    m_mainMenuCameraObject->GetComponent<CameraPerspective>()->SetClipOffset(Vector2::Zero);
-    m_mainMenuCameraObject->GetComponent<BezierMovement>()->SetActive(false);
-    m_mainMenuCameraObject->AddComponent<PlayerSelect>();
-    m_playerSelectObj->SetActive(true);
+    if constexpr (g_bUseNetWork)
+    {
+        if (m_firstLoginAttempt)
+        {
+            NetMgr(NetworkMgr)->ProcessLogin();
+            m_firstLoginAttempt = false;
+        }
+
+        std::string credentials[2]; // [0]: ID, [1]: Password
+        INT_PTR ret = DialogBoxParam(
+            INSTANCE(Core)->GetInstance(),
+            MAKEINTRESOURCE(IDD_LOGIN_DIALOG),
+            INSTANCE(Core)->GetMainWindow(),
+            LoginDialogProc,
+            reinterpret_cast<LPARAM>(&credentials)
+        );
+
+        if (ret == IDLOGIN || ret == IDREGISTER)
+        {
+            // 사용자가 입력 완료
+            m_userId.clear(); m_userPw.clear(); m_class_type.clear();
+            m_userId = credentials[0];
+            m_userPw = credentials[1];
+
+            if (m_userId.empty() || m_userPw.empty())
+            {
+                MessageBox(INSTANCE(Core)->GetMainWindow(), L"ID와 비밀번호를 입력해주세요.", L"입력 오류", MB_OK | MB_ICONWARNING);
+            }
+            else
+            {
+                switch (ret)
+                {
+                case IDLOGIN:
+                    m_register_account = false;
+                    m_needCharacterSelection = false;
+                    // 여기서 로그인 처리 로직 실행
+                    Send(Create_c2s_LOGIN(m_userId, m_userPw));
+                    break;
+                case IDREGISTER:
+                    m_register_account = true;
+                    m_needCharacterSelection = true;
+                    // 여기서 회원가입 처리 로직 실행
+                    m_popupGUIManager->Append(m_channelSwitchObj);
+                    break;
+                }
+            }
+        }
+    }
+    else
+    {
+        EnterCharacterSelection(true);
+    }
+}
+
+void MainScene::EnterCharacterSelection(bool enter)
+{
+    m_mainMenuObj->SetActive(!enter);
+    m_mainMenuCameraObject->GetComponent<CameraPerspective>()->SetClipOffset(enter ? Vector2::Zero : Vector2(1.0f / 3.0f, 0.0f));
+    m_mainMenuCameraObject->GetComponent<BezierMovement>()->SetActive(!enter);
+    m_characterSelectObject->SetActive(enter);
+    m_playerSelectObj->SetActive(enter);
 }
 
 void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int characterType)
 {
+    // 로그인이 아닌 회원가입 시에는 WaitRegisterResult의 결과를 따른다.
+    if (m_needCharacterSelection)
+    {
+        return;
+    }
+
     extern bool g_is_register_success;
     g_is_register_success = false;
     m_currentCharacterType = characterType;
@@ -260,13 +281,13 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
         MessageBox(INSTANCE(Core)->GetMainWindow(), L"로그인 실패: 존재하지 않는 ID 입니다.", L"로그인 실패", MB_OK | MB_ICONWARNING);
         break;
     }
-    case Nagox::Enum::LOGIN_RESULT_DUPLICATE:
-    {
-        // TODO: 비번틀림 로그인 시도 다시하기 
-        g_is_register_success = false;
-        MessageBox(INSTANCE(Core)->GetMainWindow(), L"계정 생성 실패: 이미 존재하는 ID입니다.", L"계정 생성 실패", MB_OK | MB_ICONWARNING);
-        break;
-    }
+    //case Nagox::Enum::LOGIN_RESULT_DUPLICATE:
+    //{
+    //    // TODO: 비번틀림 로그인 시도 다시하기 
+    //    g_is_register_success = false;
+    //    MessageBox(INSTANCE(Core)->GetMainWindow(), L"계정 생성 실패: 이미 존재하는 ID입니다.", L"계정 생성 실패", MB_OK | MB_ICONWARNING);
+    //    break;
+    //}
     case Nagox::Enum::LOGIN_RESULT_SUCCESS:
     {
         // TODO: 인게임 내에서 자기직업이 뭔지 혹시 알아야할수도있어서 일단 해둠
@@ -290,7 +311,6 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
         default:
             break;
         }
-        m_needCharacterSelection = false;
         g_is_register_success = true;
         m_popupGUIManager->Append(m_channelSwitchObj);
         break;
@@ -300,14 +320,7 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
     }
 }
 
-void MainScene::TransitionEnterGame()
-{
-    INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([this]() { EnterGame(); }, std::format(L"서버 입장 중 ...") );
-}
-
-bool g_is_register_success = false;
-
-void MainScene::EnterGame()
+bool MainScene::WaitRegisterResult()
 {
     extern bool g_is_register_success;
     if (m_register_account)
@@ -340,9 +353,22 @@ void MainScene::EnterGame()
         // TODO: 중복아이디라면 실패하고 다시 돌아가야함
         if (false == g_is_register_success)
         {
-            return;
+            MessageBox(INSTANCE(Core)->GetMainWindow(), L"계정 생성 실패: 이미 존재하는 ID입니다.", L"계정 생성 실패", MB_OK | MB_ICONWARNING);
+            return false;
         }
     }
+    return true;
+}
+
+bool g_is_register_success = false;
+
+void MainScene::TransitionEnterGame()
+{
+    INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([this]() { EnterGame(); }, std::format(L"서버 입장 중 ...") );
+}
+
+void MainScene::EnterGame()
+{
     std::shared_ptr<GameScene> gameScene = std::make_shared<GameScene>();
     INSTANCE(Core)->SetScene(gameScene);
     gameScene->EnterGame(gameScene, m_currentCharacterType, m_currentChannelID);

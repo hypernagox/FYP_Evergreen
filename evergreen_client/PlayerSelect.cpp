@@ -6,15 +6,10 @@ using namespace udsdx;
 
 void PlayerSelect::OnInitialize()
 {
-	m_targetPosition = GetSceneObject()->GetTransform()->GetLocalPosition();
-	m_targetPosition.y = 256.0f;
-
 	m_characterObjects[0] = std::make_shared<SceneObject>();
 	{
 		auto playerRenderer = m_characterObjects[0]->AddComponent<PlayerRenderer>();
 		playerRenderer->InitializeWarrior();
-		playerRenderer->SetPlayerWeapon(DATA_TABLE->GetWeaponIDInt("Master Sword"));
-		playerRenderer->SetPlayerArmor(DATA_TABLE->GetArmorIDInt("Zelda Armor 1"));
 	}
 	GetSceneObject()->AddChild(m_characterObjects[0]);
 
@@ -22,8 +17,6 @@ void PlayerSelect::OnInitialize()
 	{
 		auto playerRenderer = m_characterObjects[1]->AddComponent<PlayerRenderer>();
 		playerRenderer->InitializePriest();
-		playerRenderer->SetPlayerWeapon(DATA_TABLE->GetWeaponIDInt("Staff Priest"));
-		playerRenderer->SetPlayerArmor(DATA_TABLE->GetArmorIDInt("Priest Armor 1"));
 	}
 	GetSceneObject()->AddChild(m_characterObjects[1]);
 
@@ -31,25 +24,30 @@ void PlayerSelect::OnInitialize()
 	{
 		auto playerRenderer = m_characterObjects[2]->AddComponent<PlayerRenderer>();
 		playerRenderer->InitializePriest();
-		playerRenderer->SetPlayerWeapon(DATA_TABLE->GetWeaponIDInt("Bow"));
-		playerRenderer->SetPlayerArmor(DATA_TABLE->GetArmorIDInt("Priest Armor 1"));
 	}
 	GetSceneObject()->AddChild(m_characterObjects[2]);
 
 	SetShowingCharacter(0);
 }
 
+void PlayerSelect::SetTargetTransform(udsdx::Transform* targetTransform)
+{
+	m_targetTransform = targetTransform;
+	m_targetPosition = targetTransform->GetLocalPosition();
+	m_targetPosition.y = 256.0f;
+}
+
 void PlayerSelect::Update(const Time& time, Scene& scene)
 {
 	targetRotaitonPivot = udsdx::LerpAngleRadian(targetRotaitonPivot, m_showingCharacterIndex * 2.0f * PI / m_characterObjects.size(), time.deltaTime * 8.0f);
 
-	Vector3 lastPosition = GetTransform()->GetLocalPosition();
+	Vector3 lastPosition = m_targetTransform->GetLocalPosition();
 	Vector3 currentPosition = Vector3::Lerp(lastPosition, m_targetPosition, time.deltaTime * 4.0f);
-	GetTransform()->SetLocalPosition(currentPosition);
+	m_targetTransform->SetLocalPosition(currentPosition);
 
-	Quaternion lastRotation = GetTransform()->GetLocalRotation();
+	Quaternion lastRotation = m_targetTransform->GetLocalRotation();
 	Quaternion currentRotation = Quaternion::Slerp(lastRotation, m_targetRotation, time.deltaTime * 4.0f);
-	GetTransform()->SetLocalRotation(currentRotation);
+	m_targetTransform->SetLocalRotation(currentRotation);
 
 	for (size_t i = 0; i < m_characterObjects.size(); ++i)
 	{

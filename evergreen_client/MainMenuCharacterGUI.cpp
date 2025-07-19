@@ -68,13 +68,8 @@ void MainMenuCharacterGUI::OnInitialize()
 	}
 }
 
-void MainMenuCharacterGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
-{
-}
-
 void MainMenuCharacterGUI::EnterGame()
 {
-	m_panel->SetActive(false);
 	if (m_enterGameCallback)
 	{
 		m_enterGameCallback(m_selectIndex);

@@ -71,6 +71,9 @@ void PlayerRenderer::InitializeWarrior()
 
 	OnAnimationStateChange(AnimationState::Idle);
 	m_characterType = CharacterType::Warrior;
+
+	SetPlayerWeapon(DATA_TABLE->GetWeaponIDInt(GET_DATA(std::string, "Player", "Warrior", "InitWeaponKey")));
+	SetPlayerArmor(DATA_TABLE->GetArmorIDInt(GET_DATA(std::string, "Player", "Warrior", "InitArmorKey")));
 }
 
 void PlayerRenderer::InitializePriest()
@@ -84,6 +87,9 @@ void PlayerRenderer::InitializePriest()
 
 	OnAnimationStateChange(AnimationState::Idle);
 	m_characterType = CharacterType::Priest;
+
+	SetPlayerWeapon(DATA_TABLE->GetWeaponIDInt(GET_DATA(std::string, "Player", "Priest", "InitWeaponKey")));
+	SetPlayerArmor(DATA_TABLE->GetArmorIDInt(GET_DATA(std::string, "Player", "Priest", "InitArmorKey")));
 }
 
 void PlayerRenderer::Update(const Time& time, Scene& scene)

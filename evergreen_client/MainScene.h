@@ -11,9 +11,12 @@ public:
 	MainScene();
 	void OnAttach() override;
 
+	// 멀티플레이어 버튼을 클릭했을 때 호출되는 함수
+	void OnLoginDialog();
 	// 게임 시작 시 캐릭터를 선택하는 단계
-	void EnterCharacterSelection();
+	void EnterCharacterSelection(bool enter);
 	void OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int characterType);
+	bool WaitRegisterResult();
 
 	void TransitionEnterGame();
 	void EnterGame();
@@ -24,6 +27,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_environmentLightObj;
 	std::shared_ptr<udsdx::SceneObject> m_skyboxObj;
 	std::shared_ptr<udsdx::SceneObject> m_mainMenuCameraObject;
+	std::shared_ptr<udsdx::SceneObject> m_characterSelectObject;
 
 	std::shared_ptr<udsdx::SceneObject> m_interfaceGroup;
 	std::shared_ptr<udsdx::SceneObject> m_mainMenuObj;
