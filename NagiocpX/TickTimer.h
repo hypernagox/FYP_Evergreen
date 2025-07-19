@@ -65,15 +65,15 @@ public:
 	{}
 	~TickTimerBT()noexcept { NagiocpX::xdelete<CompositeNode>(m_rootNode); }
 public:
-	void SetBTRevaluateInterval(const uint16_t bt_revaluate_interval)noexcept { m_btRevaluateInterval = bt_revaluate_interval; }
+	void SetBTRevaluateInterval(const uint32_t bt_revaluate_interval)noexcept { m_btRevaluateInterval = bt_revaluate_interval; }
 	template <typename T = CompositeNode>
 	constexpr inline T* const GetRootNode()const noexcept { return static_cast<T* const>(m_rootNode); }
 	virtual void ProcessCleanUp()noexcept override;
 protected:
 	virtual const NagiocpX::TIMER_STATE TimerUpdate(const S_ptr<NagiocpX::ContentsEntity> awaker)noexcept override;
 private:
-	uint16_t m_btRevaluateInterval = 2000;
-	uint16_t m_accBTRevaluateTime = 0;
+	uint32_t m_btRevaluateInterval = 2000;
+	uint32_t m_accBTRevaluateTime = 0;
 	NodeStatus m_prevStatus = NodeStatus::SUCCESS;
 	CompositeNode* const m_rootNode;
 };

@@ -2,6 +2,17 @@
 #include "BehaviorTree.hpp"
 #include "PositionComponent.h"
 
+class BossStorageNode
+	:public SelectorNode
+{
+public:
+	S_ptr<ContentsEntity> m_cur_target = {};
+	int m_pos_idx = 0;
+	int m_cur_target_idx = 0;
+	float m_cur_target_acc[3]{ 5.f,5.f,5.f };
+	bool m_prev_fire = false;
+};
+
 class SelectPattern
 	: public ConditionNode
 {
@@ -35,7 +46,8 @@ public:
 	NodeStatus Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
 	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
 public:
-
+	float m_accTime = 5.f;
+	bool flag = true;
 };
 
 // TODO: 리피터 노드가될수도 또는 다양한 근접공격
@@ -62,6 +74,8 @@ public:
 	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
 public:
 	float m_accTime = 1.f;
+	bool m_delay_flag = false;
+	float m_accTime2 = 1.f;
 };
 
 class ShootFireBall
@@ -85,6 +99,9 @@ public:
 	NodeStatus Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
 	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
 public:
+	bool m_delay_flag = false;
+	float m_accTime2 = 3.f;
+	bool flag = true;
 };
 
 class SetMeteorPos
@@ -96,6 +113,8 @@ public:
 	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
 public:
 	float m_accTime = 1.f;
+	bool m_delay_flag = false;
+	float m_accTime2 = 1.f;
 	
 };
 

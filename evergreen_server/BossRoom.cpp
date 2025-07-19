@@ -48,12 +48,12 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 		boss_col->m_collider.m_offSet = Vector3{ 0,1.25f,0 };
 		const auto boss_death = boss_entity->AddComp<MonsterDeath>();
 	}
-	const auto bt_timer = boss_entity->AddIocpComponent<TickTimerBT>(xnew<SelectorNode>());
+	const auto bt_timer = boss_entity->AddIocpComponent<TickTimerBT>(xnew<BossStorageNode>());
 
 	const auto& bt_root = bt_timer->GetRootNode();
 
 	bt_timer->SetTickInterval(1);
-	bt_timer->SetBTRevaluateInterval(UINT16_MAX);
+	bt_timer->SetBTRevaluateInterval(UINT32_MAX);
 	// 근거리공격
 	{
 		
@@ -76,14 +76,14 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 		choice_atk->m_probability = .6f;
 		choice_atk->m_origin_prob = .6f;
 		const auto fire_ball_node = fire_node->AddChild<SequenceNode>();
-		fire_node->AddChild<SelectJumpPoint>();
-		fire_node->AddChild<ShootFireBall>();
-		fire_node->AddChild<ResetPos>();
+		fire_ball_node->AddChild<SelectJumpPoint>();
+		fire_ball_node->AddChild<ShootFireBall>();
+		fire_ball_node->AddChild<ResetPos>();
 	}
 
 	// 중앙 메테오
 	{
-
+		 
 		const auto meteor_node = bt_root->AddChild<SequenceNode>();
 		//const auto choice_atk = meteor_node->AddChild<SelectPattern>();
 		//choice_atk->m_probability = .6f;

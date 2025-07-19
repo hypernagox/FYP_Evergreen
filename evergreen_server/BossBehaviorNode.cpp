@@ -21,27 +21,36 @@ const Vector3 g_jump_shoot_pos[]
 	Vector3(-30.660482F,14.17017F,-214.1239F)
 };
 constexpr const size_t g_num_of_rand_pos = sizeof(g_jump_shoot_pos) / sizeof(g_jump_shoot_pos[0]); \
-static constinit int g_pos_idx = 0;
 const Vector3 g_reset_pos = Vector3(-47.336597F, 18.003374F, -244.53511F);
 
-S_ptr<ContentsEntity> cur_target = {};
-int g_cur_target_idx = 0;
-float g_cur_target_acc[3]{ 5.f,5.f,5.f };
+
+
+static inline const float CalculateDelayTime(const Vector3& start, const Vector3& dest) {
+	return 2.5f + (Vector3::Distance(start, dest) / 10.f);
+}
+
+
 
 NodeStatus SelectPattern::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
 	const auto DT = bt_root_timer->GetFloatDT();
+	const auto boss_storage_node = static_cast<BossStorageNode* const>(bt_root_timer->GetRootNode());
+
 	const float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 	const auto& player_list = bt_root_timer->GetTempVecForInsightObj();
 	// TODO: 적당한 유저 찾기
+	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1)
+	);
 	if (player_list.empty())return NodeStatus::FAILURE;
-	g_cur_target_acc[g_cur_target_idx] -= DT;
-	if (0.f >= g_cur_target_acc[g_cur_target_idx])
+	boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx] -= DT;
+	if (0.f >= boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx])
 	{
-		g_cur_target_acc[g_cur_target_idx] = 5.f;
-		g_cur_target_idx = (g_cur_target_idx + 1) % player_list.size();
+		boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx] = 5.f;
+		boss_storage_node->m_cur_target_idx = (boss_storage_node->m_cur_target_idx + 1) % player_list.size();
 	}
-	cur_target = player_list[g_cur_target_idx]->SharedFromThis();
+	boss_storage_node->m_cur_target = player_list[boss_storage_node->m_cur_target_idx]->SharedFromThis();
 	if (r < m_probability)
 	{
 		//if (max_count == m_count++)
@@ -62,23 +71,25 @@ NodeStatus SelectPattern::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 
 NodeStatus SelectTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
+	const auto boss_storage_node = static_cast<BossStorageNode* const>(bt_root_timer->GetRootNode());
 	const auto& player_list = bt_root_timer->GetTempVecForInsightObj();
 	// TODO: 적당한 유저 찾기
 	const auto DT = bt_root_timer->GetFloatDT();
 	if(player_list.empty())return NodeStatus::FAILURE;
-	g_cur_target_acc[g_cur_target_idx] -= DT;
-	if (0.f >= g_cur_target_acc[g_cur_target_idx])
+	boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx] -= DT;
+	if (0.f >= boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx])
 	{
-		g_cur_target_acc[g_cur_target_idx] = 5.f;
-		g_cur_target_idx = (g_cur_target_idx + 1) % player_list.size();
+		boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx] = 5.f;
+		boss_storage_node->m_cur_target_idx = (boss_storage_node->m_cur_target_idx + 1) % player_list.size();
 	}
-	cur_target = player_list[g_cur_target_idx]->SharedFromThis();
+	boss_storage_node->m_cur_target = player_list[boss_storage_node->m_cur_target_idx]->SharedFromThis();
 	return NodeStatus::SUCCESS;
 }
 
 NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
-	if(!cur_target)return NodeStatus::FAILURE;
+	const auto boss_storage_node = static_cast<BossStorageNode* const>(bt_root_timer->GetRootNode());
+	if(!boss_storage_node->m_cur_target)return NodeStatus::FAILURE;
 	const auto& player_list = bt_root_timer->GetTempVecForInsightObj();
 	// 유저에게 이동
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
@@ -86,19 +97,26 @@ NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 	constexpr const float BOSS_SPEED = 10.f;
 	constexpr const float MELLE_ATK_DIST = 2.f;
 
-	const auto target_pos_comp = cur_target->GetComp<PositionComponent>();
+	
+	m_accTime = 5.f;
+	const auto target_pos_comp = boss_storage_node->m_cur_target->GetComp<PositionComponent>();
 	const auto boss_pos_comp = owner_comp_sys->GetComp<PositionComponent>();
-
+	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
 	const auto target_pos = target_pos_comp->pos;
 	const auto boss_pos = boss_pos_comp->pos;
-	g_cur_target_acc[g_cur_target_idx] -= DT;
-	if (0.f >= g_cur_target_acc[g_cur_target_idx])
+	boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx] -= DT;
+	if (0.f >= boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx])
 	{
-		g_cur_target_acc[g_cur_target_idx] = 5.f;
-		g_cur_target_idx = (g_cur_target_idx + 1) % player_list.size();
+		boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx] = 5.f;
+		boss_storage_node->m_cur_target_idx = (boss_storage_node->m_cur_target_idx + 1) % player_list.size();
 	}
-	cur_target = player_list[g_cur_target_idx]->SharedFromThis();
-	if (CommonMath::IsInDistanceDX(target_pos, boss_pos, MELLE_ATK_DIST))return NodeStatus::SUCCESS;
+	boss_storage_node->m_cur_target = player_list[boss_storage_node->m_cur_target_idx]->SharedFromThis();
+	if (CommonMath::IsInDistanceDX(target_pos, boss_pos, MELLE_ATK_DIST))
+	{
+		m_accTime = 5.f;
+		return NodeStatus::SUCCESS;
+	}
 	extern constinit thread_local float straightPathRaw[10 * 3];
 	std::span<Vector3> path_point;
 	{
@@ -136,7 +154,7 @@ NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 		int straightPathCount = 0;
 
 
-		status = nav_q->findStraightPath(&start_z_pos.x, &dest_z_pos.x, path, pathCount, &straightPath[0].x, straightPathFlags, straightPathPolys, &straightPathCount, PATH_COUNT);
+		status = nav_q->findStraightPath(&start_z_pos.x, &dest_z_pos.x, path, pathCount, &straightPath[0].x, straightPathFlags, straightPathPolys, &straightPathCount, 2);
 		if (dtStatusFailed(status))
 		{
 			//std::cout << "못 찾음\n";
@@ -178,8 +196,9 @@ NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 
 NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
-	if (!cur_target)return NodeStatus::FAILURE;
-	const auto dest_pos = cur_target->GetComp<PositionComponent>()->pos;
+	const auto boss_storage_node = static_cast<BossStorageNode* const>(bt_root_timer->GetRootNode());
+	if (!boss_storage_node->m_cur_target)return NodeStatus::FAILURE;
+	const auto dest_pos = boss_storage_node->m_cur_target->GetComp<PositionComponent>()->pos;
 	const auto cur_pos = owner_comp_sys->GetComp<PositionComponent>()->pos;
 	const auto DT = bt_root_timer->GetFloatDT();
 	const auto dx = dest_pos.x - cur_pos.x;
@@ -187,7 +206,11 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	const auto dz = dest_pos.z - cur_pos.z;
 
 	
-	const float m_attack_range = 10.f;
+	const float m_attack_range = 10.f;	
+	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1)
+	);
 	// TODO: 사거리 및 횟수
 	if (m_attack_range * m_attack_range <= dx * dx + dy * dy + dz * dz) 
 	{
@@ -224,7 +247,7 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 			proj.timer->m_radius = 2.f;
 		}
 		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
-		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), cur_target->GetObjectID(), 1));
+		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), boss_storage_node->m_cur_target->GetObjectID(), 1));
 		// TODO: 진짜 HP깎기
 		m_accTime = 2.f;
 		if (m_count == 0)
@@ -244,49 +267,117 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 
 NodeStatus SelectJumpPoint::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
+	const auto boss_storage_node = static_cast<BossStorageNode* const>(bt_root_timer->GetRootNode());
 	const auto DT = bt_root_timer->GetFloatDT();
 	m_accTime -= DT;
-	if (0.f < m_accTime)
+	if (m_delay_flag)
 	{
-		return NodeStatus::RUNNING;
+		m_accTime2 -= DT;
+		if (0.f >= m_accTime2)
+		{
+			m_accTime = 1.f;
+			m_delay_flag = false;
+			const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+			//bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+			//	Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1)
+			//);
+			return NodeStatus::SUCCESS;
+		}
+		else
+		{
+			const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+			//bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+			//	Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1)
+			//);
+			return NodeStatus::RUNNING;
+		}
 	}
+	//if (0.f < m_accTime)
+	//{
+	//	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+	//	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+	//		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1)
+	//	);
+	//	return NodeStatus::RUNNING;
+	//}
+	
 	m_accTime = 1.f;
 	// TODO: 순간이동보단 고속이동
-	const auto idx = g_pos_idx;
-	g_pos_idx = (g_pos_idx + 1) % g_num_of_rand_pos;
+	const auto idx = boss_storage_node->m_pos_idx;
+	boss_storage_node->m_pos_idx = (boss_storage_node->m_pos_idx + 1) % g_num_of_rand_pos;
 
 	const auto target_pos = g_jump_shoot_pos[idx];
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	const auto dir = CommonMath::Normalized(target_pos - boss_entity->GetComp<PositionComponent>()->pos);
-
+	m_accTime2 = std::max(CalculateDelayTime(boss_entity->GetComp<PositionComponent>()->pos, target_pos),5.f);
+	
 	boss_entity->GetComp<PositionComponent>()->pos = target_pos;
 	boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
 
 	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
 		Create_s2c_BOSS_FLY(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos),Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_1)
 	);
-	return NodeStatus::SUCCESS;
+	m_delay_flag = true;
+	boss_storage_node->m_prev_fire = true;
+	return NodeStatus::RUNNING;
 }
 
 NodeStatus ResetPos::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
+	const auto boss_storage_node = static_cast<BossStorageNode* const>(bt_root_timer->GetRootNode());
 	// TODO: 순간이동보단 고속이동
+	const auto DT = bt_root_timer->GetFloatDT();
+
+	if (m_delay_flag)
+	{
+		m_accTime2 -= DT;
+		if (0.f >= m_accTime2)
+		{
+			const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+			//m_accTime2 = 3.f;
+			flag = true;
+			const auto boss_pos_comp = owner_comp_sys->GetComp<PositionComponent>();
+			//const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+			boss_entity->GetComp<PositionComponent>()->pos = g_reset_pos;
+			bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
+			m_delay_flag = false;
+			return NodeStatus::SUCCESS;
+		}
+		else
+		{
+			const auto boss_pos_comp = owner_comp_sys->GetComp<PositionComponent>();
+			const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+			bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
+			return NodeStatus::RUNNING;
+		}
+	}
 	
 	const auto target_pos = g_reset_pos;
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	const auto dir = CommonMath::Normalized(target_pos - boss_entity->GetComp<PositionComponent>()->pos);
-
 	boss_entity->GetComp<PositionComponent>()->pos = target_pos;
+	
 	boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
 
-	
+	m_delay_flag = true;
+	std::cout << CalculateDelayTime(boss_entity->GetComp<PositionComponent>()->pos, target_pos) << std::endl;
+	m_accTime2 = std::max(CalculateDelayTime(boss_entity->GetComp<PositionComponent>()->pos, target_pos), 5.f);
+	if (boss_storage_node->m_prev_fire)
+	{
+		m_accTime2 = 12.5f;
+		boss_storage_node->m_prev_fire = false;
+	}
 	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-		Create_s2c_BOSS_FLY(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_2));
-	return NodeStatus::SUCCESS;
+		Create_s2c_BOSS_FLY(ToFlatVec(target_pos), Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_2));
+
+	return NodeStatus::RUNNING;
 }
 
 NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
+	const auto boss_storage_node = static_cast<BossStorageNode* const>(bt_root_timer->GetRootNode());
 	const auto& player_list = bt_root_timer->GetTempVecForInsightObj();
 	// TODO: 적당한 유저 찾기	
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
@@ -324,7 +415,9 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	--count;
 	if (count == 0)
 	{
-		m_accTime = 2.f;
+		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+			Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
+		m_accTime = 5.f;
 	}
 	return NodeStatus::RUNNING;
 }
@@ -332,10 +425,21 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 NodeStatus SetMeteorPos::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
 {
 	const auto DT = bt_root_timer->GetFloatDT();
-	m_accTime -= DT;
-	if (0.f < m_accTime)
+	if (m_delay_flag)
 	{
-		return NodeStatus::RUNNING;
+		m_accTime2 -= DT;
+		if (0.f >= m_accTime2)
+		{
+			m_delay_flag = false;
+			const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+			bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
+			return NodeStatus::SUCCESS;
+		}
+		else
+		{
+			return NodeStatus::RUNNING;
+		}
 	}
 	
 	const auto target_pos = g_reset_pos + Vector3{ 0,10,0 };
@@ -348,8 +452,10 @@ NodeStatus SetMeteorPos::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
 		Create_s2c_BOSS_FLY(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_1)
 	);
+	m_accTime2 = CalculateDelayTime(boss_entity->GetComp<PositionComponent>()->pos, target_pos);
 	m_accTime = 1.f;
-	return NodeStatus::SUCCESS;
+	m_delay_flag = true;
+	return NodeStatus::RUNNING;
 }
 
 NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
