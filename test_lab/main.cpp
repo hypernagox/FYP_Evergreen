@@ -34,19 +34,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     g_scene = std::make_shared<Scene>();
 
-    g_cameraObject = std::make_shared<SceneObject>();
+    g_cameraObject = SceneObject::MakeShared();
     g_cameraObject->GetTransform()->SetLocalPosition(Vector3(0.0f, 2.0f, -5.0f));
     auto camera = g_cameraObject->AddComponent<CameraPerspective>();
     g_scene->AddObject(g_cameraObject);
 
-    g_lightObject = std::make_shared<SceneObject>();
+    g_lightObject = SceneObject::MakeShared();
     auto light = g_lightObject->AddComponent<LightDirectional>();
     g_lightObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.25f, 1.0f, 0));
     g_scene->AddObject(g_lightObject);
 
     for (int i = 0; i < 3; ++i)
     {
-        g_object[i] = std::make_shared<SceneObject>();
+        g_object[i] = SceneObject::MakeShared();
         auto renderer = g_object[i]->AddComponent<MeshRenderer>();
         g_scene->AddObject(g_object[i]);
 
@@ -56,7 +56,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             {
                 for (int z = 0; z < 2; ++z)
                 {
-					auto instance = std::make_shared<SceneObject>();
+					auto instance = SceneObject::MakeShared();
 					instance->GetTransform()->SetLocalPosition(Vector3(x - 0.5f, y - 0.5f, z - 0.5f));
 					instance->GetTransform()->SetLocalScale(Vector3::One * 0.5f);
 					auto instanceRenderer = instance->AddComponent<MeshRenderer>();
@@ -74,7 +74,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_object[0]->GetTransform()->SetLocalScale(Vector3::One * 1.5f);
     g_object[1]->GetTransform()->SetLocalScale(Vector3::One * 1.5f);
 
-    g_floorObject = std::make_shared<SceneObject>();
+    g_floorObject = SceneObject::MakeShared();
     g_floorObject->GetTransform()->SetLocalPosition(Vector3(0.0f, -1.5f, 0.0f));
     g_floorObject->GetTransform()->SetLocalScale(Vector3(10.0f, 0.25f, 10.0f));
     auto floorRenderer = g_floorObject->AddComponent<MeshRenderer>();
@@ -83,7 +83,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_scene->AddObject(g_floorObject);
 
     {
-        auto skyboxObj = std::make_shared<SceneObject>();
+        auto skyboxObj = SceneObject::MakeShared();
         auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
         skyboxRenderer->SetVertexCount(6);
         skyboxRenderer->SetCastShadow(false);
@@ -93,23 +93,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         g_scene->AddObject(skyboxObj);
     }
     
-    m_characterObject = std::make_shared<SceneObject>();
+    m_characterObject = SceneObject::MakeShared();
     m_characterObject->GetTransform()->SetLocalPositionY(-1.375f);
-    m_characterObject->GetTransform()->SetLocalScale(Vector3::One * 0.01f);
-    m_characterObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, PI, 0.0f));
+    // m_characterObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, PI, 0.0f));
     auto meshRenderer = m_characterObject->AddComponent<RiggedMeshRenderer>();
 
-    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\character.yrms"));
-    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\character\\Body_Main.png")), 3);
-    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\character\\Cloth_Main.png")), 2);
-    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\character\\Extra_Main.png")), 0);
-    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\character\\Hat_Main.png")), 1);
-    meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\biped_attack1.yac"), true);
+    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\archer.yrms"));
+    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\char_1.png")), 0);
+    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\char_2.png")), 1);
+    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\char_3.png")), 2);
+    // meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\biped_attack1.yac"), true);
 
      g_scene->AddObject(m_characterObject);
 
      {
-         auto dragonObject = std::make_shared<SceneObject>();
+         auto dragonObject = SceneObject::MakeShared();
          auto dragonRenderer = dragonObject->AddComponent<RiggedMeshRenderer>();
          dragonRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\dragon\\model.yrms"));
          {
@@ -156,13 +154,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
          }
 
          dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_animations.yac"), "Fly", true, false);
-         dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_flight.yac"), "Run Landing", true, false);
+         dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_animations_flight.yac"), "Run Landing", true, false);
 
          g_scene->AddObject(dragonObject);
      }
 
      {
-         auto planeObject = std::make_shared<SceneObject>();
+         auto planeObject = SceneObject::MakeShared();
          auto planeRenderer = planeObject->AddComponent<MeshRenderer>();
          planeRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(L"resource\\plane.yms"));
          udsdx::Material waterMaterial(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\water.hlsl"));

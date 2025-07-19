@@ -290,8 +290,8 @@ void AuthenticPlayer::TryClickScreen()
 
 void AuthenticPlayer::OnInitialize()
 {
-	m_cameraAnchor = std::make_shared<SceneObject>();
-	m_cameraObj = std::make_shared<SceneObject>();
+	m_cameraAnchor = SceneObject::MakeShared();
+	m_cameraObj = SceneObject::MakeShared();
 
 	m_pCamera = m_cameraObj->AddComponent<CameraPerspective>();
 	m_pCamera->SetClearColor(Color(1.0f, 1.0f, 1.0f, 1.0f));

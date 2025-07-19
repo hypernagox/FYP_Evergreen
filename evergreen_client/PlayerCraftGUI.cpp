@@ -7,7 +7,7 @@ using namespace udsdx;
 
 void PlayerCraftGUI::OnInitialize()
 {
-	m_panel = std::make_shared<SceneObject>();
+	m_panel = SceneObject::MakeShared();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(-640.0f, 0.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
@@ -22,21 +22,21 @@ void PlayerCraftGUI::OnInitialize()
 
 		float y = id * -130.0f + 250.0f;
 		auto& recipeGUI = m_recipePanels.emplace_back();
-		recipeGUI.Panel = std::make_shared<SceneObject>();
+		recipeGUI.Panel = SceneObject::MakeShared();
 		recipeGUI.Panel->GetTransform()->SetLocalPositionY(y);
 		auto panelRenderer = recipeGUI.Panel->AddComponent<GUIImage>();
 		panelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
 		panelRenderer->SetSize(Vector2(460.0f, 120.0f));
 		m_panel->AddChild(recipeGUI.Panel);
 
-		recipeGUI.OutputSlotBackground = std::make_shared<SceneObject>();
+		recipeGUI.OutputSlotBackground = SceneObject::MakeShared();
 		auto outputBackgroundRenderer = recipeGUI.OutputSlotBackground->AddComponent<GUIImage>();
 		recipeGUI.OutputSlotBackground->GetTransform()->SetLocalPosition(Vector3(-160.0f, 0.0f, 0.0f));
 		outputBackgroundRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\item_slot.png")));
 		outputBackgroundRenderer->SetSize(Vector2(120, 120));
 		recipeGUI.Panel->AddChild(recipeGUI.OutputSlotBackground);
 
-		recipeGUI.OutputSlotContents = std::make_shared<SceneObject>();
+		recipeGUI.OutputSlotContents = SceneObject::MakeShared();
 		auto outputContentsRenderer = recipeGUI.OutputSlotContents->AddComponent<GUIImage>();
 		recipeGUI.OutputSlotContents->GetTransform()->SetLocalPosition(Vector3(-160.0f, 0.0f, 0.0f));
 		outputContentsRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(iconPath)));
@@ -44,7 +44,7 @@ void PlayerCraftGUI::OnInitialize()
 		outputContentsRenderer->SetRaycastTarget(false);
 		recipeGUI.Panel->AddChild(recipeGUI.OutputSlotContents);
 
-		recipeGUI.OutputSlotText = std::make_shared<SceneObject>();
+		recipeGUI.OutputSlotText = SceneObject::MakeShared();
 		auto outputText = recipeGUI.OutputSlotText->AddComponent<GUIText>();
 		outputText->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 		recipeGUI.OutputSlotText->GetTransform()->SetLocalPosition(Vector3(-120.0f, -40.0f, 0.0f));
@@ -52,7 +52,7 @@ void PlayerCraftGUI::OnInitialize()
 		outputText->SetText(L"1");
 		recipeGUI.Panel->AddChild(recipeGUI.OutputSlotText);
 
-		recipeGUI.CraftButton = std::make_shared<SceneObject>();
+		recipeGUI.CraftButton = SceneObject::MakeShared();
 		auto craftButtonRenderer = recipeGUI.CraftButton->AddComponent<GUISimpleButton>();
 		recipeGUI.CraftButton->GetTransform()->SetLocalPosition(Vector3(160.0f, 0.0f, 0.0f));
 		craftButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_complete.png")));
@@ -66,14 +66,14 @@ void PlayerCraftGUI::OnInitialize()
 			float x = j * 65.0f - 65.0f;
 			auto iconPath = GET_DATA(std::wstring, "Item", combine.itemName, "Icon");
 
-			auto inputSlotBackground = recipeGUI.InputSlotBackground.emplace_back(std::make_shared<SceneObject>());
+			auto inputSlotBackground = recipeGUI.InputSlotBackground.emplace_back(SceneObject::MakeShared());
 			auto inputBackgroundRenderer = inputSlotBackground->AddComponent<GUISimpleButton>();
 			inputSlotBackground->GetTransform()->SetLocalPosition(Vector3(x, -25.0f, 0.0f));
 			inputBackgroundRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\item_slot.png")));
 			inputBackgroundRenderer->SetSize(Vector2(60, 60));
 			recipeGUI.Panel->AddChild(inputSlotBackground);
 
-			auto inputSlotContents = recipeGUI.InputSlotContents.emplace_back(std::make_shared<SceneObject>());
+			auto inputSlotContents = recipeGUI.InputSlotContents.emplace_back(SceneObject::MakeShared());
 			auto inputContentsRenderer = inputSlotContents->AddComponent<GUIImage>();
 			inputSlotContents->GetTransform()->SetLocalPosition(Vector3(x, -25.0f, 0.0f));
 			inputContentsRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(iconPath)));
@@ -81,7 +81,7 @@ void PlayerCraftGUI::OnInitialize()
 			inputContentsRenderer->SetRaycastTarget(false);
 			recipeGUI.Panel->AddChild(inputSlotContents);
 
-			auto inputSlotText = recipeGUI.InputSlotText.emplace_back(std::make_shared<SceneObject>());
+			auto inputSlotText = recipeGUI.InputSlotText.emplace_back(SceneObject::MakeShared());
 			auto inputText = inputSlotText->AddComponent<GUIText>();
 			inputText->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 			inputSlotText->GetTransform()->SetLocalPosition(Vector3(x + 20.0f, -45.0f, 0.0f));

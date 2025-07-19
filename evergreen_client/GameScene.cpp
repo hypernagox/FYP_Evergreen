@@ -60,7 +60,7 @@ void GameScene::OnAttach()
     auto resource = INSTANCE(Resource);
     auto shader = resource->Load<Shader>(RESOURCE_PATH(L"color.hlsl"));
 
-    m_heroObj = std::make_shared<SceneObject>();
+    m_heroObj = SceneObject::MakeShared();
     m_heroComponent = m_heroObj->AddComponent<AuthenticPlayer>();
     auto entityInteraction = m_heroObj->AddComponent<EntityInteraction>();
     entityInteraction->SetTargetScene(this);
@@ -75,20 +75,20 @@ void GameScene::OnAttach()
     auto& cell = m_heroServerObject->GetNaviAgent()->GetCurCell();
     cell = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(start_pos);
     
-    m_activeObjectGroup = std::make_shared<SceneObject>();
+    m_activeObjectGroup = SceneObject::MakeShared();
     for (auto& objectGroup : m_activeObjectSubGroups)
     {
-        objectGroup = std::make_shared<SceneObject>();
+        objectGroup = SceneObject::MakeShared();
         m_activeObjectGroup->AddChild(objectGroup);
     }
 
     m_heroObj->GetTransform()->SetLocalPosition(start_pos);
 
-    m_spectatorObj = std::make_shared<SceneObject>();
+    m_spectatorObj = SceneObject::MakeShared();
     m_spectatorObj->AddComponent<SpectatorPlayer>();
 
 #pragma region Environment Initialization
-    m_environmentLightObj = std::make_shared<SceneObject>();
+    m_environmentLightObj = SceneObject::MakeShared();
     auto playerLight = m_environmentLightObj->AddComponent<LightDirectional>();
     Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
     m_environmentLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PIDIV4, 0) * Quaternion::CreateFromAxisAngle(n, 0.0f));
@@ -96,7 +96,7 @@ void GameScene::OnAttach()
     AddObject(m_environmentLightObj);
 
     {
-        m_craftTableObj = std::make_shared<SceneObject>();
+        m_craftTableObj = SceneObject::MakeShared();
         m_craftTableObj->GetTransform()->SetLocalPosition(Vector3(-123.22470092773438f, 75.68199920654297f, 16.593002319335939f));
         m_craftTableObj->GetTransform()->SetLocalRotation(Quaternion(0.0f, 1.0f, 0.0f, 0.0f));
         m_craftTableObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 0.01f);
@@ -117,7 +117,7 @@ void GameScene::OnAttach()
     }
 
     {
-        std::shared_ptr<SceneObject> treeObj = std::make_shared<SceneObject>();
+        std::shared_ptr<SceneObject> treeObj = SceneObject::MakeShared();
         auto treeRenderer = treeObj->AddComponent<MeshRenderer>();
 
         treeObj->GetTransform()->SetLocalScale(Vector3::One * 0.01f);
@@ -154,17 +154,17 @@ void GameScene::OnAttach()
         AddActiveObject(treeObj, GameSceneType::Default);
         GuideSystem::GetInst()->AddHarvestMeshObject(treeObj);
 
-        m_defaultEnvironmentObject = std::make_shared<SceneObject>();
+        m_defaultEnvironmentObject = SceneObject::MakeShared();
         auto environmentRenderer = m_defaultEnvironmentObject->AddComponent<EnvironmentRenderer>();
         environmentRenderer->Initialize(g_defaultEnvironmentParam);
         AddObject(m_defaultEnvironmentObject);
 
-        m_dungeonEnvironmentObject = std::make_shared<SceneObject>();
+        m_dungeonEnvironmentObject = SceneObject::MakeShared();
         auto dungeonEnvironmentRenderer = m_dungeonEnvironmentObject->AddComponent<EnvironmentRenderer>();
         dungeonEnvironmentRenderer->Initialize(g_dungeonEnvironmentParam);
         AddObject(m_dungeonEnvironmentObject);
 
-        auto dungeonWaterObj = std::make_shared<SceneObject>();
+        auto dungeonWaterObj = SceneObject::MakeShared();
         dungeonWaterObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 11.3f, 0.0f));
         dungeonWaterObj->GetTransform()->SetLocalScale(0.01f);
         auto dungeonWaterRenderer = dungeonWaterObj->AddComponent<MeshRenderer>();
@@ -197,7 +197,7 @@ void GameScene::OnAttach()
     }
 
     {
-        auto skyboxObj = std::make_shared<SceneObject>();
+        auto skyboxObj = SceneObject::MakeShared();
         auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
         skyboxRenderer->SetMaterial(udsdx::Material(resource->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"))));
         skyboxRenderer->SetVertexCount(6);
@@ -209,14 +209,14 @@ void GameScene::OnAttach()
 
 #pragma region GUI Initialization
     {
-        m_interfaceGroup = std::make_shared<SceneObject>();
-        m_playerInterfaceGroup = std::make_shared<SceneObject>();
+        m_interfaceGroup = SceneObject::MakeShared();
+        m_playerInterfaceGroup = SceneObject::MakeShared();
 
         AddObject(m_interfaceGroup);
         m_interfaceGroup->AddChild(m_playerInterfaceGroup);
         m_playerInterfaceGroup->SetActive(false);
 
-        auto textObj = std::make_shared<SceneObject>();
+        auto textObj = SceneObject::MakeShared();
         auto textRenderer = textObj->AddComponent<GUIText>();
         textObj->GetTransform()->SetLocalPosition(Vector3(-640, 480, 0));
         textRenderer->SetText(GET_DATA(std::wstring, "Script", "Intro", "Start"));
@@ -224,15 +224,15 @@ void GameScene::OnAttach()
         textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
         // m_playerInterfaceGroup->AddChild(textObj);
 
-        auto damageCountObj = std::make_shared<SceneObject>();
+        auto damageCountObj = SceneObject::MakeShared();
         auto damageCountRenderer = damageCountObj->AddComponent<DamageCountGUI>();
         m_playerInterfaceGroup->AddChild(damageCountObj);
 
-        m_playerTagObj = std::make_shared<SceneObject>();
+        m_playerTagObj = SceneObject::MakeShared();
         auto playerTagRenderer = m_playerTagObj->AddComponent<PlayerTagGUI>();
         m_playerInterfaceGroup->AddChild(m_playerTagObj);
 
-        m_focusAgentObj = std::make_shared<SceneObject>();
+        m_focusAgentObj = SceneObject::MakeShared();
         auto focusAgent = m_focusAgentObj->AddComponent<FocusAgentGUI>();
 
         focusAgent->SetSize(Vector2::One * 8192.0f);
@@ -246,19 +246,19 @@ void GameScene::OnAttach()
         auto popupInputHandler = m_popupGUIManager->AddComponent<InputHandler>();
         popupInputHandler->AddKeyFunc(Keyboard::Escape, KET_TAP, [this]() { m_popupGUIManager->Pop(); });
 
-        auto minimapObj = std::make_shared<SceneObject>();
+        auto minimapObj = SceneObject::MakeShared();
         auto minimapImage = minimapObj->AddComponent<GUIImage>();
         minimapImage->SetTexture(m_minimapRenderer->GetRenderTargetTexture());
         minimapImage->SetSize(Vector2(360.0f, 360.0f));
         minimapObj->GetTransform()->SetLocalPosition(Vector3(-1060.0f, -480.0f, 0.0f));
 
         {
-            auto minimapBackground = std::make_shared<SceneObject>();
+            auto minimapBackground = SceneObject::MakeShared();
             auto minimapBackgroundRenderer = minimapBackground->AddComponent<GUIImage>();
             minimapBackgroundRenderer->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_outline_gradation.png")));
             minimapBackgroundRenderer->SetSize(Vector2(365.0f, 365.0f));
 
-            auto minimapMarkerObj = std::make_shared<SceneObject>();
+            auto minimapMarkerObj = SceneObject::MakeShared();
             minimapMarkerObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 16.0f, 0.0f));
             auto minimapMarkerRenderer = minimapMarkerObj->AddComponent<GUIImage>();
             minimapMarkerRenderer->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_marker.png")));
@@ -270,65 +270,65 @@ void GameScene::OnAttach()
 
         m_playerInterfaceGroup->AddChild(minimapObj);
 
-        auto guiObj = std::make_shared<SceneObject>();
+        auto guiObj = SceneObject::MakeShared();
         auto guiRenderer = guiObj->AddComponent<PlayerStatusGUI>();
         m_playerInterfaceGroup->AddChild(guiObj);
         m_heroComponent->SetPlayerStatusGUI(guiRenderer);
 
-        auto quickSlotObj = std::make_shared<SceneObject>();
+        auto quickSlotObj = SceneObject::MakeShared();
         auto quickSlotRenderer = quickSlotObj->AddComponent<PlayerQuickSlotGUI>();
         m_playerInterfaceGroup->AddChild(quickSlotObj);
         m_heroComponent->SetPlayerQuickSlotGUI(quickSlotRenderer);
 
-        auto logFloatObj = std::make_shared<SceneObject>();
+        auto logFloatObj = SceneObject::MakeShared();
         auto logFloatComp = logFloatObj->AddComponent<LogFloatGUI>();
         logFloatComp->AddText(L"Welcome to the game!");
         m_playerInterfaceGroup->AddChild(logFloatObj);
 
-        m_tutorialObj = std::make_shared<SceneObject>();
+        m_tutorialObj = SceneObject::MakeShared();
         m_tutorialObj->AddComponent<TutorialUI>();
         m_tutorialObj->SetActive(false);
         m_playerInterfaceGroup->AddChild(m_tutorialObj);
 
-        m_inventoryObj = std::make_shared<SceneObject>();
+        m_inventoryObj = SceneObject::MakeShared();
         auto inventoryRenderer = m_inventoryObj->AddComponent<PlayerInventoryGUI>();
         m_playerInterfaceGroup->AddChild(m_inventoryObj);
         m_heroComponent->SetPlayerInventoryGUI(inventoryRenderer);
         m_inventoryObj->SetActive(false);
 
-        m_equipmentObj = std::make_shared<SceneObject>();
+        m_equipmentObj = SceneObject::MakeShared();
         auto equipmentRenderer = m_equipmentObj->AddComponent<PlayerEquipmentGUI>();
         m_playerInterfaceGroup->AddChild(m_equipmentObj);
         m_heroComponent->SetPlayerEquipmentGUI(equipmentRenderer);
         m_equipmentObj->SetActive(false);
 
-        m_craftObj = std::make_shared<SceneObject>();
+        m_craftObj = SceneObject::MakeShared();
         auto craftComp = m_craftObj->AddComponent<PlayerCraftGUI>();
         m_playerInterfaceGroup->AddChild(m_craftObj);
         m_heroComponent->SetPlayerCraftGUI(craftComp);
         m_craftObj->SetActive(false);
 
-        m_partyListObj = std::make_shared<SceneObject>();
+        m_partyListObj = SceneObject::MakeShared();
         auto questGUIComp = m_partyListObj->AddComponent<QuestGUI>();
         m_playerInterfaceGroup->AddChild(m_partyListObj);
         m_partyListObj->SetActive(false);
 
-        auto partyStatusObj = std::make_shared<SceneObject>();
+        auto partyStatusObj = SceneObject::MakeShared();
         auto partyStatusComp = partyStatusObj->AddComponent<PartyStatusGUI>();
         m_playerInterfaceGroup->AddChild(partyStatusObj);
 
-        auto EntityInteractionObj = std::make_shared<SceneObject>();
+        auto EntityInteractionObj = SceneObject::MakeShared();
         auto interactionFloatGUI = EntityInteractionObj->AddComponent<InteractionFloatGUI>();
         entityInteraction->SetInteractionFloatGUI(interactionFloatGUI);
         m_playerInterfaceGroup->AddChild(EntityInteractionObj);
 
-        m_pauseMenuObj = std::make_shared<SceneObject>();
+        m_pauseMenuObj = SceneObject::MakeShared();
         m_pauseMenuObj->SetActive(false);
         auto pauseMenuComp = m_pauseMenuObj->AddComponent<GamePauseGUI>();
         pauseMenuComp->SetExitGameCallback([this]() { ExitGame(); });
         m_interfaceGroup->AddChild(m_pauseMenuObj);
 
-        m_channelSwitchObj = std::make_shared<SceneObject>();
+        m_channelSwitchObj = SceneObject::MakeShared();
         auto channelSwitchComp = m_channelSwitchObj->AddComponent<ChannelSwitchGUI>();
         channelSwitchComp->SetPanelGraphic(false);
         channelSwitchComp->SetChannelSelectedCallback([this](int channelID) {
@@ -343,11 +343,11 @@ void GameScene::OnAttach()
         pauseMenuComp->SetChannelSwitchGUI(m_channelSwitchObj);
         m_interfaceGroup->AddChild(m_channelSwitchObj);
 
-        auto requestPopupObj = std::make_shared<SceneObject>();
+        auto requestPopupObj = SceneObject::MakeShared();
         auto requestPopupComp = requestPopupObj->AddComponent<RequestPopupGUI>();
         m_interfaceGroup->AddChild(requestPopupObj);
 
-        auto transitionOverlayObj = std::make_shared<SceneObject>();
+        auto transitionOverlayObj = SceneObject::MakeShared();
         auto transitionOverlayComp = transitionOverlayObj->AddComponent<TransitionOverlayGUI>();
         transitionOverlayComp->BeginFadeOut();
         m_interfaceGroup->AddChild(transitionOverlayObj);
@@ -364,7 +364,7 @@ void GameScene::OnAttach()
 
     if (false)
     {
-        auto navMeshVisualizer = std::make_shared<SceneObject>();
+        auto navMeshVisualizer = SceneObject::MakeShared();
         auto navMeshRenderer = navMeshVisualizer->AddComponent<MeshRenderer>();
         navMeshRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"navmesh.yms")));
         navMeshRenderer->SetMaterial(udsdx::Material(resource->Load<udsdx::Shader>(RESOURCE_PATH(L"color.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"Sprite-0001.png"))));

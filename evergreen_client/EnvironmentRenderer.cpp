@@ -144,7 +144,7 @@ void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
 
     if (parameters.TerrainDetail != nullptr)
     {
-        std::shared_ptr<SceneObject> terrainDetailObj = std::make_shared<SceneObject>();
+        std::shared_ptr<SceneObject> terrainDetailObj = SceneObject::MakeShared();
         auto terrainDetailRenderer = terrainDetailObj->AddComponent<TerrainDetailRenderer>();
         terrainDetailRenderer->SetTerrainDetail(parameters.TerrainDetail);
         terrainDetailRenderer->SetMaterial(udsdx::Material(res->Load<udsdx::Shader>(RESOURCE_PATH(L"detailbillboard.hlsl")), res->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Grass.tga"))));
@@ -180,7 +180,7 @@ void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
 
     if (parameters.HeightMap != nullptr)
     {
-        m_terrainObj = std::make_shared<SceneObject>();
+        m_terrainObj = SceneObject::MakeShared();
         m_terrainObj->GetTransform()->SetLocalPosition(terrainPos);
         m_terrainObj->GetTransform()->SetLocalScale(terrainScale);
         auto terrainRenderer = m_terrainObj->AddComponent<MeshRenderer>();
@@ -193,7 +193,7 @@ void EnvironmentRenderer::Initialize(const EnvironmentParameters& parameters)
 
 std::shared_ptr<udsdx::SceneObject> EnvironmentRenderer::AddTerrainInstances(std::filesystem::path path, TerrainData* terrainData)
 {
-    auto terrainInstance = std::make_shared<SceneObject>();
+    auto terrainInstance = SceneObject::MakeShared();
     auto terrainInstanceRenderer = terrainInstance->AddComponent<TerrainInstanceRenderer>();
     auto mesh = INSTANCE(Resource)->Load<udsdx::Mesh>(path.c_str());
 
@@ -257,7 +257,7 @@ std::shared_ptr<udsdx::SceneObject> EnvironmentRenderer::AddHarvestObject(const 
     const float terrainScale = 1.0f;
     const float instanceScale = 0.01f;
 
-    std::shared_ptr<SceneObject> harvestObj = std::make_shared<SceneObject>();
+    std::shared_ptr<SceneObject> harvestObj = SceneObject::MakeShared();
 
     Vector3 position = Vector3(instance["position"]["x"], instance["position"]["y"], instance["position"]["z"]);
     Quaternion rotation = Quaternion(instance["rotation"]["x"], instance["rotation"]["y"], instance["rotation"]["z"], instance["rotation"]["w"]);
@@ -273,7 +273,7 @@ std::shared_ptr<udsdx::SceneObject> EnvironmentRenderer::AddHarvestObject(const 
             continue;
         std::filesystem::path path = m_prefabMap[filename];
 
-        auto harvestModelObj = std::make_shared<SceneObject>();
+        auto harvestModelObj = SceneObject::MakeShared();
 
         auto mesh = INSTANCE(Resource)->Load<udsdx::Mesh>(path.c_str());
         std::vector<udsdx::Material> materials;

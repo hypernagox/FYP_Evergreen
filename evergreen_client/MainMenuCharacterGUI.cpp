@@ -9,12 +9,12 @@ using namespace udsdx;
 void MainMenuCharacterGUI::OnInitialize()
 {
 	{
-		m_panel = std::make_shared<SceneObject>();
+		m_panel = SceneObject::MakeShared();
 		GetSceneObject()->AddChild(m_panel);
 	}
 
 	{
-		auto backgroundObj = std::make_shared<SceneObject>();
+		auto backgroundObj = SceneObject::MakeShared();
 		auto backgroundRenderer = backgroundObj->AddComponent<GUIImage>();
 		backgroundRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
 		backgroundRenderer->SetColor(Color(0.0f, 0.0f, 0.0f, 0.8f));
@@ -24,7 +24,7 @@ void MainMenuCharacterGUI::OnInitialize()
 	}
 
 	{
-		m_nextButton = std::make_shared<SceneObject>();
+		m_nextButton = SceneObject::MakeShared();
 		m_nextButton->GetTransform()->SetLocalPosition(Vector3(200.0f, -660.0f, 0.0f));
 
 		auto buttonComponent = m_nextButton->AddComponent<GUISimpleButton>();
@@ -37,7 +37,7 @@ void MainMenuCharacterGUI::OnInitialize()
 	}
 
 	{
-		m_prevButton = std::make_shared<SceneObject>();
+		m_prevButton = SceneObject::MakeShared();
 		m_prevButton->GetTransform()->SetLocalPosition(Vector3(-200.0f, -660.0f, 0.0f));
 
 		auto buttonComponent = m_prevButton->AddComponent<GUISimpleButton>();
@@ -50,7 +50,7 @@ void MainMenuCharacterGUI::OnInitialize()
 	}
 
 	{
-		m_selectButton = std::make_shared<SceneObject>();
+		m_selectButton = SceneObject::MakeShared();
 		m_selectButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -660.0f, 0.0f));
 
 		auto buttonComponent = m_selectButton->AddComponent<GUISimpleButton>();

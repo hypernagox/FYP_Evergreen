@@ -7,6 +7,29 @@
 
 namespace udsdx
 {
+	unsigned long long g_sceneObjectCount = 0ULL;
+
+	int SceneObject::GarbageCollector::m_currentFrameResourceIndex = 1;
+	std::array<std::vector<SceneObject*>, FrameResourceCount + 1> SceneObject::GarbageCollector::m_garbage;
+
+	void SceneObject::GarbageCollector::Stash(SceneObject* object)
+	{
+		m_garbage[m_currentFrameResourceIndex].emplace_back(object);
+	}
+
+	void SceneObject::GarbageCollector::Collect(int frameResourceIndex)
+	{
+		m_currentFrameResourceIndex = FrameResourceCount;
+		for (SceneObject* object : m_garbage[frameResourceIndex])
+		{
+			// Caution: This operation will stash other objects into the garbage collector
+			delete object;
+		}
+		m_garbage[frameResourceIndex] = m_garbage[FrameResourceCount];
+		m_garbage[FrameResourceCount].clear();
+		m_currentFrameResourceIndex = frameResourceIndex;
+	}
+
 	void SceneObject::Enumerate(const std::shared_ptr<SceneObject>& root, std::function<void(const std::shared_ptr<SceneObject>&)> callback, bool onlyActive)
 	{
 		static std::stack<std::shared_ptr<SceneObject>> s;
@@ -40,14 +63,19 @@ namespace udsdx
 		}
 	}
 
+	std::shared_ptr<SceneObject> SceneObject::MakeShared()
+	{
+		return std::shared_ptr<SceneObject>(new SceneObject(), SceneObjectDeleter());
+	}
+
 	SceneObject::SceneObject()
 	{
-
+		++g_sceneObjectCount;
 	}
 
 	SceneObject::~SceneObject()
 	{
-
+		--g_sceneObjectCount;
 	}
 
 	Transform* SceneObject::GetTransform()
@@ -217,11 +245,6 @@ namespace udsdx
 			return;
 		}
 
-		if (GetActiveInHierarchy())
-		{
-			INSTANCE(Core)->FlushCommandQueue();
-		}
-
 		m_transform.m_parent = nullptr;
 		if (m_parent != nullptr)
 		{
@@ -274,9 +297,33 @@ namespace udsdx
 		return true;
 	}
 
+	bool SceneObject::GetActiveInScene() const
+	{
+		if (m_sceneRoot)
+		{
+			return m_active;
+		}
+
+		const SceneObject* node = this;
+		while (node != nullptr)
+		{
+			if (!node->m_active || !node->m_sceneRoot)
+			{
+				return false;
+			}
+			node = node->m_parent;
+		}
+		return true;
+	}
+
 	void SceneObject::SetActive(bool active)
 	{
 		m_active = active;
+	}
+
+	void SceneObject::SceneObjectDeleter::operator()(SceneObject* object) const
+	{
+		SceneObject::GarbageCollector::Stash(object);
 	}
 
 	void SceneObject::ComponentDeleter::operator()(Component* component) const

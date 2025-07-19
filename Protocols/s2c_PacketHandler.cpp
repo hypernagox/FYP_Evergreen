@@ -334,7 +334,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	{
 		const auto shoot_obj_id = pkt_.shoot_obj_id();
 		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
-		auto s = std::make_shared<SceneObject>();
+		auto s = SceneObject::MakeShared();
 		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
 		s->GetTransform()->SetLocalScale(0.25f);
 
@@ -352,7 +352,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	{
 		const auto shoot_obj_id = pkt_.shoot_obj_id();
 		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
-		auto s = std::make_shared<SceneObject>();
+		auto s = SceneObject::MakeShared();
 		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
 		s->GetTransform()->SetLocalScale(proj_rad);
 	

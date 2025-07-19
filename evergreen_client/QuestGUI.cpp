@@ -14,13 +14,13 @@ void QuestGUI::OnInitialize()
 
 #pragma region Quest List Panel
 	{
-		m_questListPanel = std::make_shared<SceneObject>();
+		m_questListPanel = SceneObject::MakeShared();
 		m_questListPanel->SetActive(false);
 		auto uiRenderer = m_questListPanel->AddComponent<GUIImage>();
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_questlist.png")), true);
 		GetSceneObject()->AddChild(m_questListPanel);
 
-		auto incrementQuestButton = std::make_shared<SceneObject>();
+		auto incrementQuestButton = SceneObject::MakeShared();
 		m_incrementQuestButton = incrementQuestButton->AddComponent<GUISimpleButton>();
 		incrementQuestButton->GetTransform()->SetLocalPosition(Vector3(80.0f, -250.0f, 0.0f));
 		m_incrementQuestButton->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_arrow_R.png")), true);
@@ -31,7 +31,7 @@ void QuestGUI::OnInitialize()
 			});
 		m_questListPanel->AddChild(incrementQuestButton);
 
-		auto decrementQuestButton = std::make_shared<SceneObject>();
+		auto decrementQuestButton = SceneObject::MakeShared();
 		m_decrementQuestButton = decrementQuestButton->AddComponent<GUISimpleButton>();
 		decrementQuestButton->GetTransform()->SetLocalPosition(Vector3(-80.0f, -250.0f, 0.0f));
 		m_decrementQuestButton->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_arrow_L.png")), true);
@@ -44,10 +44,10 @@ void QuestGUI::OnInitialize()
 
 		for (int i = 0; i < SIZE_QUEST_LIST; ++i)
 		{
-			auto questContentObj = std::make_shared<SceneObject>();
-			auto questImageObj = std::make_shared<SceneObject>();
-			auto questNameObj = std::make_shared<SceneObject>();
-			auto questDescObj = std::make_shared<SceneObject>();
+			auto questContentObj = SceneObject::MakeShared();
+			auto questImageObj = SceneObject::MakeShared();
+			auto questNameObj = SceneObject::MakeShared();
+			auto questDescObj = SceneObject::MakeShared();
 
 			m_questList[i].ButtonPanel = questContentObj->AddComponent<GUISimpleButton>();
 			m_questList[i].ButtonPanel->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_slot_1.png")), true);
@@ -84,7 +84,7 @@ void QuestGUI::OnInitialize()
 			m_questListPanel->AddChild(questContentObj);
 		}
 
-		auto exitButton = std::make_shared<SceneObject>();
+		auto exitButton = SceneObject::MakeShared();
 		auto exitButtonRenderer = exitButton->AddComponent<GUISimpleButton>();
 		exitButton->GetTransform()->SetLocalPosition(Vector3(175.0f, 250.0f, 0.0f));
 		exitButtonRenderer->SetSize(Vector2(50.0f, 50.0f));
@@ -97,13 +97,13 @@ void QuestGUI::OnInitialize()
 
 #pragma region Party List Panel
 	{
-		m_partyListPanel = std::make_shared<SceneObject>();
+		m_partyListPanel = SceneObject::MakeShared();
 		m_partyListPanel->SetActive(false);
 		auto uiRenderer = m_partyListPanel->AddComponent<GUIImage>();
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_find.png")), true);
 		GetSceneObject()->AddChild(m_partyListPanel);
 
-		m_standByText = std::make_shared<SceneObject>();
+		m_standByText = SceneObject::MakeShared();
 		m_standByText->SetActive(false);
 		auto standByText = m_standByText->AddComponent<GUIText>();
 		standByText->SetFont(font);
@@ -112,7 +112,7 @@ void QuestGUI::OnInitialize()
 		standByText->SetText(L". . .");
 		m_partyListPanel->AddChild(m_standByText);
 
-		auto selectedQuestObj = std::make_shared<SceneObject>();
+		auto selectedQuestObj = SceneObject::MakeShared();
 		m_selectedQuestText = selectedQuestObj->AddComponent<GUIText>();
 		m_selectedQuestText->SetFont(font);
 		m_selectedQuestText->GetTransform()->SetLocalPosition(Vector3(-180.0f, 182.0f, 0.0f));
@@ -122,7 +122,7 @@ void QuestGUI::OnInitialize()
 		m_selectedQuestText->SetColor(Color(0.125f, 0.125f, 0.125f, 1.0f));
 		m_partyListPanel->AddChild(selectedQuestObj);
 
-		auto incrementQuestButton = std::make_shared<SceneObject>();
+		auto incrementQuestButton = SceneObject::MakeShared();
 		m_incrementPartyButton = incrementQuestButton->AddComponent<GUISimpleButton>();
 		incrementQuestButton->GetTransform()->SetLocalPosition(Vector3(80.0f, -180.0f, 0.0f));
 		m_incrementPartyButton->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_arrow_R.png")), true);
@@ -133,7 +133,7 @@ void QuestGUI::OnInitialize()
 			});
 		m_partyListPanel->AddChild(incrementQuestButton);
 
-		auto decrementQuestButton = std::make_shared<SceneObject>();
+		auto decrementQuestButton = SceneObject::MakeShared();
 		m_decrementPartyButton = decrementQuestButton->AddComponent<GUISimpleButton>();
 		decrementQuestButton->GetTransform()->SetLocalPosition(Vector3(-80.0f, -180.0f, 0.0f));
 		m_decrementPartyButton->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_arrow_L.png")), true);
@@ -144,7 +144,7 @@ void QuestGUI::OnInitialize()
 			});
 		m_partyListPanel->AddChild(decrementQuestButton);
 
-		auto partyCreateButton = std::make_shared<SceneObject>();
+		auto partyCreateButton = SceneObject::MakeShared();
 		auto partyCreateButtonRenderer = partyCreateButton->AddComponent<GUISimpleButton>();
 		partyCreateButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -240.0f, 0.0f));
 		partyCreateButtonRenderer->SetClickCallback([this]() {
@@ -155,10 +155,10 @@ void QuestGUI::OnInitialize()
 
 		for (int i = 0; i < SIZE_PARTY_LIST; ++i)
 		{
-			auto questContentObj = std::make_shared<SceneObject>();
-			auto questImageObj = std::make_shared<SceneObject>();
-			auto partyNameObj = std::make_shared<SceneObject>();
-			auto partyLeaderObj = std::make_shared<SceneObject>();
+			auto questContentObj = SceneObject::MakeShared();
+			auto questImageObj = SceneObject::MakeShared();
+			auto partyNameObj = SceneObject::MakeShared();
+			auto partyLeaderObj = SceneObject::MakeShared();
 
 			m_partyList[i].ButtonPanel = questContentObj->AddComponent<GUISimpleButton>();
 			m_partyList[i].ButtonPanel->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_slot_1.png")), true);
@@ -195,7 +195,7 @@ void QuestGUI::OnInitialize()
 			m_partyListPanel->AddChild(questContentObj);
 		}
 
-		auto exitButton = std::make_shared<SceneObject>();
+		auto exitButton = SceneObject::MakeShared();
 		auto exitButtonRenderer = exitButton->AddComponent<GUISimpleButton>();
 		exitButton->GetTransform()->SetLocalPosition(Vector3(175.0f, 250.0f, 0.0f));
 		exitButtonRenderer->SetSize(Vector2(50.0f, 50.0f));
@@ -208,13 +208,13 @@ void QuestGUI::OnInitialize()
 
 #pragma region Party Create Panel
 	{
-		m_partyCreatePanel = std::make_shared<SceneObject>();
+		m_partyCreatePanel = SceneObject::MakeShared();
 		m_partyCreatePanel->SetActive(false);
 		auto uiRenderer = m_partyCreatePanel->AddComponent<GUIImage>();
 		uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_create.png")), true);
 		GetSceneObject()->AddChild(m_partyCreatePanel);
 
-		auto createButton = std::make_shared<SceneObject>();
+		auto createButton = SceneObject::MakeShared();
 		auto createButtonRenderer = createButton->AddComponent<GUISimpleButton>();
 		createButton->GetTransform()->SetLocalPosition(Vector3(-100.0f, -70.0f, 0.0f));
 		createButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_opinion_yes.png")), true);
@@ -226,7 +226,7 @@ void QuestGUI::OnInitialize()
 			});
 		m_partyCreatePanel->AddChild(createButton);
 
-		auto cancelButton = std::make_shared<SceneObject>();
+		auto cancelButton = SceneObject::MakeShared();
 		auto cancelButtonRenderer = cancelButton->AddComponent<GUISimpleButton>();
 		cancelButton->GetTransform()->SetLocalPosition(Vector3(100.0f, -70.0f, 0.0f));
 		cancelButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_opinion_no.png")), true);

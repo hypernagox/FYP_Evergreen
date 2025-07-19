@@ -6,13 +6,13 @@ using namespace udsdx;
 
 void MainMenuGUI::OnInitialize()
 {
-	m_panel = std::make_shared<SceneObject>();
+	m_panel = SceneObject::MakeShared();
 	m_backgroundImage = m_panel->AddComponent<GUIImage>();
 	m_backgroundImage->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
 	m_backgroundImage->SetSize(Vector2::One * 8192.0f);
 	GetSceneObject()->AddChild(m_panel);
 
-	auto verticalPanelFiller = std::make_shared<SceneObject>();
+	auto verticalPanelFiller = SceneObject::MakeShared();
 	verticalPanelFiller->GetTransform()->SetLocalPosition(Vector3(-2640.0f, 0.0f, 0.0f));
 	auto fillerComponent = verticalPanelFiller->AddComponent<GUIImage>();
 	fillerComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\square.png")));
@@ -20,7 +20,7 @@ void MainMenuGUI::OnInitialize()
 	fillerComponent->SetSize(Vector2(2560.0f, 1440.0f));
 	m_panel->AddChild(verticalPanelFiller);
 
-	m_verticalPanel = std::make_shared<SceneObject>();
+	m_verticalPanel = SceneObject::MakeShared();
 	m_verticalPanel->GetTransform()->SetLocalPosition(Vector3(-720.0f, 0.0f, 0.0f));
 	auto verticalPanelRenderer = m_verticalPanel->AddComponent<GUIImage>();
 	verticalPanelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\alpha_gradient_black.png")));
@@ -28,14 +28,14 @@ void MainMenuGUI::OnInitialize()
 	verticalPanelRenderer->SetColor(Vector4(1.0f, 1.0f, 1.0f, 0.8f));
 	m_panel->AddChild(m_verticalPanel);
 
-	m_titleImage = std::make_shared<SceneObject>();
+	m_titleImage = SceneObject::MakeShared();
 	m_titleImage->GetTransform()->SetLocalPosition(Vector3(-794.0f, 419.0f, 0.0f));
 	auto titleImageRenderer = m_titleImage->AddComponent<GUIImage>();
 	titleImageRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\title.png")));
 	titleImageRenderer->SetSize(Vector2(780.0f, 440.0f));
 	m_panel->AddChild(m_titleImage);
 
-	m_versionText = std::make_shared<SceneObject>();
+	m_versionText = SceneObject::MakeShared();
 	m_versionText->GetTransform()->SetLocalPosition(Vector3(-1260.0f, -700.0f, 0.0f));
 	auto versionText = m_versionText->AddComponent<GUIText>();
 	versionText->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
@@ -44,7 +44,7 @@ void MainMenuGUI::OnInitialize()
 	m_panel->AddChild(m_versionText);
 
 	{
-		m_playButton = std::make_shared<SceneObject>();
+		m_playButton = SceneObject::MakeShared();
 		m_playButton->GetTransform()->SetLocalPosition(Vector3(-1040.0f, -270.0f, 0.0f));
 
 		auto buttonComponent = m_playButton->AddComponent<GUISimpleButton>();
@@ -65,7 +65,7 @@ void MainMenuGUI::OnInitialize()
 	}
 
 	{
-		m_optionsButton = std::make_shared<SceneObject>();
+		m_optionsButton = SceneObject::MakeShared();
 		m_optionsButton->GetTransform()->SetLocalPosition(Vector3(-1040.0f, -365.0f, 0.0f));
 
 		auto buttonComponent = m_optionsButton->AddComponent<GUISimpleButton>();
@@ -80,7 +80,7 @@ void MainMenuGUI::OnInitialize()
 	}
 
 	{
-		m_exitButton = std::make_shared<SceneObject>();
+		m_exitButton = SceneObject::MakeShared();
 		m_exitButton->GetTransform()->SetLocalPosition(Vector3(-1040.0f, -460.0f, 0.0f));
 
 		auto buttonComponent = m_exitButton->AddComponent<GUISimpleButton>();

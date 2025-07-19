@@ -25,7 +25,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Player(EntityBuild
 {
 	const auto b = static_cast<DefaultEntityBuilder*>(builder); // 인간적으로 디폴트 빌더인걸 확신하고 그냥 지른다.
 
-	auto instance = std::make_shared<udsdx::SceneObject>();
+	auto instance = udsdx::SceneObject::MakeShared();
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
 	auto movement = instance->AddComponent<EntityMovement>();
@@ -74,7 +74,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	// TODO: 보스는 여기서 만든다. 임시로 큰 여우로 해둠
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BOSS:
 	{
-		auto instance = std::make_shared<udsdx::SceneObject>();
+		auto instance = udsdx::SceneObject::MakeShared();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
 		auto serverComponent = instance->AddComponent<ServerObject>();
 		serverComponent->SetObjID(builder->obj_id);
@@ -92,7 +92,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_FOX:
 	{
-		auto instance = std::make_shared<udsdx::SceneObject>();
+		auto instance = udsdx::SceneObject::MakeShared();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
 		auto monsterComponent = instance->AddComponent<MonsterFox>();
 		auto serverComponent = instance->AddComponent<ServerObject>();
@@ -111,7 +111,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	}
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BEAR:
 	{
-		auto instance = std::make_shared<udsdx::SceneObject>();
+		auto instance = udsdx::SceneObject::MakeShared();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
 		
 		auto monsterComponent = instance->AddComponent<MonsterBear>();
@@ -122,7 +122,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
 		//TODO: 매직넘버
-		std::shared_ptr<SceneObject> gizmoObject = std::make_shared<SceneObject>();
+		std::shared_ptr<SceneObject> gizmoObject = SceneObject::MakeShared();
 		gizmoObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PI, 0.0f, 0.0f));
 		instance->AddChild(gizmoObject);
 
@@ -136,7 +136,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	{
 		const auto b = static_cast<DefaultEntityBuilder*>(builder);
 
-		auto instance = std::make_shared<udsdx::SceneObject>();
+		auto instance = udsdx::SceneObject::MakeShared();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
 		instance->AddComponent<EntityMovement>();
@@ -161,7 +161,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderB
 	// TODO: 이제부턴 진짜 NPC임
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
 
-	auto instance = std::make_shared<udsdx::SceneObject>();
+	auto instance = udsdx::SceneObject::MakeShared();
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
 	instance->AddComponent<EntityMovement>();
@@ -181,7 +181,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
 	uint32_t owner_id = ServerObjectMgr::GetInst()->GetMainHero()->GetObjID();
 
-	auto instance = std::make_shared<udsdx::SceneObject>();
+	auto instance = udsdx::SceneObject::MakeShared();
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
 	auto serverComponent = instance->AddComponent<ServerObject>();
@@ -209,7 +209,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Harvest(EntityBuil
 {
 	// TODO: 종류 / 크기 ..
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
-	auto s = std::make_shared<SceneObject>();
+	auto s = SceneObject::MakeShared();
 
 	s->GetTransform()->SetLocalPosition(b->obj_pos);
 	

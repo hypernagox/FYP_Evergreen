@@ -71,7 +71,7 @@ void TutorialUI::OnInitialize()
 	m_tutorialUIs[(int)UI_TYPE::WASD]->m_gui->SetActive(true);
 	m_cur_gui = m_tutorialUIs[(int)UI_TYPE::WASD];
 
-	m_tutorialMark = std::make_shared<SceneObject>();
+	m_tutorialMark = SceneObject::MakeShared();
 	m_tutorialMark->GetTransform()->SetLocalPosition(Vector3(0, 630.0f, 0.0f));
 
 	auto uiRenderer = m_tutorialMark->AddComponent<GUIImage>();
@@ -123,7 +123,7 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void WASDTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
-	m_gui = std::make_shared<SceneObject>();
+	m_gui = SceneObject::MakeShared();
 	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
 	m_type = UI_TYPE::WASD;
 
@@ -166,7 +166,7 @@ UI_TYPE WASDTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void InventoryTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
-	m_gui = std::make_shared<SceneObject>();
+	m_gui = SceneObject::MakeShared();
 	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
 	m_type = UI_TYPE::INVENTORY;
 	auto uiRenderer = m_gui->AddComponent<GUIImage>();
@@ -186,7 +186,7 @@ UI_TYPE InventoryTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void NaviItemTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
-	m_gui = std::make_shared<SceneObject>();
+	m_gui = SceneObject::MakeShared();
 	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
 	m_type = UI_TYPE::NAVI_ITEM;
 	auto uiRenderer = m_gui->AddComponent<GUIImage>();
@@ -206,7 +206,7 @@ UI_TYPE NaviItemTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void NaviVillageTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
-	m_gui = std::make_shared<SceneObject>();
+	m_gui = SceneObject::MakeShared();
 	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
 	m_type = UI_TYPE::NAVI_VILLAGE;
 
@@ -236,7 +236,7 @@ UI_TYPE NaviVillageTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene
 
 void QuestTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
-	m_gui = std::make_shared<SceneObject>();
+	m_gui = SceneObject::MakeShared();
 	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
 	m_type = UI_TYPE::QUEST_1;
 
@@ -257,7 +257,7 @@ UI_TYPE QuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void PartyTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
-	m_gui = std::make_shared<SceneObject>();
+	m_gui = SceneObject::MakeShared();
 	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
 	m_type = UI_TYPE::PARTY;
 
@@ -278,7 +278,7 @@ UI_TYPE PartyTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 void AttackTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
 {
-	m_gui = std::make_shared<SceneObject>();
+	m_gui = SceneObject::MakeShared();
 	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
 	m_type = UI_TYPE::ATTACK;
 

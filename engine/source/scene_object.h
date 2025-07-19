@@ -13,16 +13,34 @@ namespace udsdx
 	{
 		friend class Scene;
 
+	public:
+		class GarbageCollector
+		{
+		public:
+			static void Stash(SceneObject* object);
+			static void Collect(int frameResourceIndex);
+
+		private:
+			static int m_currentFrameResourceIndex;
+			static std::array<std::vector<SceneObject*>, FrameResourceCount + 1> m_garbage;
+		};
+
 	private:
+		struct SceneObjectDeleter
+		{
+			void operator()(SceneObject* object) const;
+		};
+
 		struct ComponentDeleter
 		{
 			void operator()(Component* component) const;
 		};
-
+		
 	public:
 		static void Enumerate(const std::shared_ptr<SceneObject>& root, std::function<void(const std::shared_ptr<SceneObject>&)> callback, bool onlyActive = true);
+		static std::shared_ptr<SceneObject> MakeShared();
 
-	public:
+	private:
 		SceneObject();
 		SceneObject(const SceneObject& rhs) = delete;
 		SceneObject& operator=(const SceneObject& rhs) = delete;
@@ -42,6 +60,7 @@ namespace udsdx
 	public:
 		bool GetActive() const;
 		bool GetActiveInHierarchy() const;
+		bool GetActiveInScene() const;
 		void SetActive(bool active);
 
 	public:
@@ -118,6 +137,7 @@ namespace udsdx
 
 	protected:
 		bool m_active = true;
+		bool m_sceneRoot = false;
 		Transform m_transform = Transform();
 		std::vector<std::unique_ptr<Component, ComponentDeleter>> m_components;
 

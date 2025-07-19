@@ -6,14 +6,14 @@ using namespace udsdx;
 void PlayerStatusGUI::OnInitialize()
 {
     {
-        m_healthBackground = std::make_shared<SceneObject>();
+        m_healthBackground = SceneObject::MakeShared();
         auto uiRenderer = m_healthBackground->AddComponent<GUIImage>();
         m_healthBackground->GetTransform()->SetLocalPosition(Vector3(-720.0f, -630.0f, 0.0f));
         uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\health_background.png")), true);
     }
 
     {
-        m_healthFill = std::make_shared<SceneObject>();
+        m_healthFill = SceneObject::MakeShared();
         m_healthFillRenderer = m_healthFill->AddComponent<GUIImage>();
         m_healthFill->GetTransform()->SetLocalPosition(Vector3(-702.5f, -630.0f, 0.0f));
         m_healthFillRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\health_fill.png")), true);
@@ -21,7 +21,7 @@ void PlayerStatusGUI::OnInitialize()
     }
 
     {
-        m_textObj = std::make_shared<SceneObject>();
+        m_textObj = SceneObject::MakeShared();
         m_textObj->GetTransform()->SetLocalPosition(Vector3(-702.5f, -630.0f, 0.0f));
         m_textRenderer = m_textObj->AddComponent<GUIText>();
         m_textRenderer->SetText(L"## / ##");

@@ -7,14 +7,14 @@ using namespace udsdx;
 
 void RequestPopupGUI::OnInitialize()
 {
-	m_panel = std::make_shared<SceneObject>();
+	m_panel = SceneObject::MakeShared();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(0.0f, -420.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_0_entry.png")));
 	uiRenderer->SetSize(Vector2(420.0f, 240.0f));
 	GetSceneObject()->AddChild(m_panel);
 
-	m_titleText = std::make_shared<SceneObject>();
+	m_titleText = SceneObject::MakeShared();
 	auto titleTextRenderer = m_titleText->AddComponent<GUIText>();
 	titleTextRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 	m_titleText->GetTransform()->SetLocalPosition(Vector3(0.0f, 75.0f, 0.0f));
@@ -23,7 +23,7 @@ void RequestPopupGUI::OnInitialize()
 	titleTextRenderer->SetText(L"####");
 	m_panel->AddChild(m_titleText);
 
-	m_text = std::make_shared<SceneObject>();
+	m_text = SceneObject::MakeShared();
 	auto textRenderer = m_text->AddComponent<GUIText>();
 	textRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 	m_text->GetTransform()->SetLocalPosition(Vector3(0.0f, 20.0f, 0.0f));
@@ -32,7 +32,7 @@ void RequestPopupGUI::OnInitialize()
 	textRenderer->SetText(L"####");
 	m_panel->AddChild(m_text);
 
-	m_acceptButton = std::make_shared<SceneObject>();
+	m_acceptButton = SceneObject::MakeShared();
 	auto acceptButtonRenderer = m_acceptButton->AddComponent<GUISimpleButton>();
 	m_acceptButton->GetTransform()->SetLocalPosition(Vector3(-100.0f, -80.0f, 0.0f));
 	acceptButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_select.png")));
@@ -50,7 +50,7 @@ void RequestPopupGUI::OnInitialize()
 	acceptButtonText->SetAlignment(GUIText::Alignment::Center);
 	acceptButtonText->SetText(L"Accept");
 
-	m_cancelButton = std::make_shared<SceneObject>();
+	m_cancelButton = SceneObject::MakeShared();
 	auto cancelButtonRenderer = m_cancelButton->AddComponent<GUISimpleButton>();
 	m_cancelButton->GetTransform()->SetLocalPosition(Vector3(100.0f, -80.0f, 0.0f));
 	cancelButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_select.png")));

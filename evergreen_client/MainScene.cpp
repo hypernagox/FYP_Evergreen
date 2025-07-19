@@ -84,13 +84,13 @@ void MainScene::OnAttach()
     auto res = INSTANCE(Resource);
 
     {
-        m_environmentObject = std::make_shared<SceneObject>();
+        m_environmentObject = SceneObject::MakeShared();
         auto environmentRenderer = m_environmentObject->AddComponent<EnvironmentRenderer>();
         environmentRenderer->Initialize(g_defaultEnvironmentParam);
 
         AddObject(m_environmentObject);
 
-        m_environmentLightObj = std::make_shared<SceneObject>();
+        m_environmentLightObj = SceneObject::MakeShared();
         auto playerLight = m_environmentLightObj->AddComponent<LightDirectional>();
         Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
         m_environmentLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PIDIV4, 0) * Quaternion::CreateFromAxisAngle(n, 0.0f));
@@ -99,7 +99,7 @@ void MainScene::OnAttach()
     }
 
     {
-        auto skyboxObj = std::make_shared<SceneObject>();
+        auto skyboxObj = SceneObject::MakeShared();
         auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
         skyboxRenderer->SetMaterial(udsdx::Material(res->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")), res->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"))));
         skyboxRenderer->SetVertexCount(6);
@@ -109,11 +109,11 @@ void MainScene::OnAttach()
     }
 
     {
-        m_mainMenuCameraObject = std::make_shared<SceneObject>();
+        m_mainMenuCameraObject = SceneObject::MakeShared();
         m_mainMenuCameraObject->GetTransform()->SetLocalPosition(Vector3(0.0f, 120.0f, 0.0f));
         m_mainMenuCameraObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PIDIV4, PIDIV4, 0));
 
-        m_characterSelectObject = std::make_shared<SceneObject>();
+        m_characterSelectObject = SceneObject::MakeShared();
         auto playerSelect = m_characterSelectObject->AddComponent<PlayerSelect>();
         playerSelect->SetTargetTransform(m_mainMenuCameraObject->GetTransform());
         m_mainMenuCameraObject->AddChild(m_characterSelectObject);
@@ -129,20 +129,20 @@ void MainScene::OnAttach()
     }
 
     {
-        m_interfaceGroup = std::make_shared<SceneObject>();
+        m_interfaceGroup = SceneObject::MakeShared();
         AddObject(m_interfaceGroup);
 
         m_popupGUIManager = m_interfaceGroup->AddComponent<PopupGUIManager>();
         auto popupInputHandler = m_popupGUIManager->AddComponent<InputHandler>();
         popupInputHandler->AddKeyFunc(Keyboard::Escape, KET_TAP, [this]() { m_popupGUIManager->Pop(); });
 
-        m_mainMenuObj = std::make_shared<SceneObject>();
+        m_mainMenuObj = SceneObject::MakeShared();
         auto mainMenuComp = m_mainMenuObj->AddComponent<MainMenuGUI>();
         mainMenuComp->SetEnterGameCallback([this]() { OnLoginDialog(); });
         mainMenuComp->SetExitGameCallback([this]() { ExitGame(); });
         m_interfaceGroup->AddChild(m_mainMenuObj);
 
-        m_channelSwitchObj = std::make_shared<SceneObject>();
+        m_channelSwitchObj = SceneObject::MakeShared();
         auto channelSwitchComp = m_channelSwitchObj->AddComponent<ChannelSwitchGUI>();
         channelSwitchComp->SetPanelGraphic(true);
         channelSwitchComp->SetChannelSelectedCallback([this](int channelID) {
@@ -158,7 +158,7 @@ void MainScene::OnAttach()
         m_channelSwitchObj->SetActive(false);
         m_interfaceGroup->AddChild(m_channelSwitchObj);
 
-        m_playerSelectObj = std::make_shared<SceneObject>();
+        m_playerSelectObj = SceneObject::MakeShared();
         m_playerSelectObj->SetActive(false);
         auto mainMenuCharacterComp = m_playerSelectObj->AddComponent<MainMenuCharacterGUI>();
         mainMenuCharacterComp->SetCharacterShowCallback([this](unsigned int character) {
@@ -173,7 +173,7 @@ void MainScene::OnAttach()
             });
         m_interfaceGroup->AddChild(m_playerSelectObj);
 
-        auto transitionOverlayObj = std::make_shared<SceneObject>();
+        auto transitionOverlayObj = SceneObject::MakeShared();
         m_transitionOverlayGUI = transitionOverlayObj->AddComponent<TransitionOverlayGUI>();
         m_transitionOverlayGUI->BeginFadeOut();
         m_interfaceGroup->AddChild(transitionOverlayObj);

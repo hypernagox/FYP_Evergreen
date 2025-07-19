@@ -6,7 +6,7 @@
 
 void Monster::OnInitialize()
 {
-	m_rendererObj = std::make_shared<SceneObject>();
+	m_rendererObj = SceneObject::MakeShared();
 	m_renderer = m_rendererObj->AddComponent<RiggedMeshRenderer>();
 	GetSceneObject()->AddChild(m_rendererObj);
 
@@ -23,7 +23,7 @@ void Monster::OnInitialize()
 	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, m_renderer);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(from, to); });
 
-	auto hpPanelObj = std::make_shared<SceneObject>();
+	auto hpPanelObj = SceneObject::MakeShared();
 	hpPanelObj->GetTransform()->SetLocalPosition(Vector3::Up * 1.5f);
 	m_hpPanel = hpPanelObj->AddComponent<MonsterHPPanel>();
 	GetSceneObject()->AddChild(hpPanelObj);

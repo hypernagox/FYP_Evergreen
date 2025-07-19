@@ -26,7 +26,7 @@ GuideSystem::GuideSystem()
 			Matrix4x4 m = Matrix4x4(uv, vv, wv);
 
 			const auto position = v[i];
-			auto s = std::make_shared<udsdx::SceneObject>();
+			auto s = udsdx::SceneObject::MakeShared();
 			auto meshRenderer = s->AddComponent<udsdx::MeshRenderer>();
 			meshRenderer->SetCastShadow(false);
 			meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"path_arrow.yms")));

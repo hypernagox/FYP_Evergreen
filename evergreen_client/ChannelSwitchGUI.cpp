@@ -11,13 +11,13 @@ void ChannelSwitchGUI::OnInitialize()
 {
 	auto font = INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont"));
 
-	m_background = std::make_shared<SceneObject>();
+	m_background = SceneObject::MakeShared();
 	auto backgroundRenderer = m_background->AddComponent<GUIImage>();
 	backgroundRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
 	backgroundRenderer->SetSize(Vector2::One * 8192.0f);
 	GetSceneObject()->AddChild(m_background);
 
-	m_panel = std::make_shared<SceneObject>();
+	m_panel = SceneObject::MakeShared();
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\channel\\move_channel.png")), true);
 	GetSceneObject()->AddChild(m_panel);
@@ -27,13 +27,13 @@ void ChannelSwitchGUI::OnInitialize()
 		for (int col = 0; col < PageColumns; ++col)
 		{
 			ChannelButton button;
-			button.ButtonPanel = std::make_shared<SceneObject>();
+			button.ButtonPanel = SceneObject::MakeShared();
 			auto buttonRenderer = button.ButtonPanel->AddComponent<GUISimpleButton>();
 			button.ButtonPanel->GetTransform()->SetLocalPosition(Vector3(-340.0f + col * 180.0f, 100.0f - row * 80.0f, 0.0f));
 			buttonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\channel\\channel.png")), true);
 			m_panel->AddChild(button.ButtonPanel);
 
-			button.ChannelText = std::make_shared<SceneObject>();
+			button.ChannelText = SceneObject::MakeShared();
 			button.ChannelText->GetTransform()->SetLocalPosition(Vector3(-80.0f, 7.5f, 0.0f));
 			auto channelText = button.ChannelText->AddComponent<GUIText>();
 			channelText->SetFont(font);
@@ -42,7 +42,7 @@ void ChannelSwitchGUI::OnInitialize()
 			channelText->SetColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
 			button.ButtonPanel->AddChild(button.ChannelText);
 
-			button.StatusImage = std::make_shared<SceneObject>();
+			button.StatusImage = SceneObject::MakeShared();
 			auto statusImageRenderer = button.StatusImage->AddComponent<GUIImage>();
 			statusImageRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\channel\\server_state_01.png")), true);
 			statusImageRenderer->SetRaycastTarget(false);
@@ -53,14 +53,14 @@ void ChannelSwitchGUI::OnInitialize()
 		}
 	}
 
-	m_incrementPageButton = std::make_shared<SceneObject>();
+	m_incrementPageButton = SceneObject::MakeShared();
 	auto incrementPageButtonRenderer = m_incrementPageButton->AddComponent<GUISimpleButton>();
 	m_incrementPageButton->GetTransform()->SetLocalPosition(Vector3(100.0f, -200.0f, 0.0f));
 	incrementPageButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\channel\\channel_arrow_R.png")), true);
 	incrementPageButtonRenderer->SetClickCallback([this]() { SwitchChannelPage((m_currentPage + 1) % PageCount); });
 	m_panel->AddChild(m_incrementPageButton);
 
-	m_decrementPageButton = std::make_shared<SceneObject>();
+	m_decrementPageButton = SceneObject::MakeShared();
 	auto decrementPageButtonRenderer = m_decrementPageButton->AddComponent<GUISimpleButton>();
 	m_decrementPageButton->GetTransform()->SetLocalPosition(Vector3(-100.0f, -200.0f, 0.0f));
 	decrementPageButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\channel\\channel_arrow_L.png")), true);

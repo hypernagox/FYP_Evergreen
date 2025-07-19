@@ -7,6 +7,7 @@
 #include "frame_resource.h"
 #include "time_measure.h"
 #include "scene.h"
+#include "scene_object.h"
 #include "mesh.h"
 #include "shader.h"
 #include "frame_debug.h"
@@ -546,14 +547,13 @@ namespace udsdx
 		}
 		m_scene = scene;
 		m_scene->OnAttach();
-		m_scene->UpdateSceneObjectCache();
 	}
 
 	void Core::AcquireNextFrameResource()
 	{ ZoneScopedC(0x249EA0);
 		m_currFrameResourceIndex = (m_currFrameResourceIndex + 1) % FrameResourceCount;
-		auto frameResource = CurrentFrameResource();
 
+		auto frameResource = CurrentFrameResource();
 		if (frameResource->GetFence() != 0 && m_fence->GetCompletedValue() < frameResource->GetFence())
 		{
 			// Fire event when GPU hits current fence.
@@ -562,6 +562,8 @@ namespace udsdx
 			// Wait until the GPU hits current fence event is fired.
 			::WaitForSingleObject(m_fenceEvent, INFINITE);
 		}
+
+		SceneObject::GarbageCollector::Collect(m_currFrameResourceIndex);
 	}
 
 	void Core::Update()
@@ -1021,6 +1023,8 @@ namespace udsdx
 		ImGui_ImplWin32_Init(m_hMainWnd);
 	}
 
+	extern unsigned long long g_sceneObjectCount;
+
 	void Core::ImGuiNewFrame()
 	{
 		static std::array<float, 100> frameTimes;
@@ -1055,9 +1059,21 @@ namespace udsdx
 		}
 		float maxHistogramValue = *std::max_element(frameTimeHistogram.begin(), frameTimeHistogram.end()) * 1.25f;
 
+		static std::array<float, 100> frameTimesPsum;
+		std::copy(frameTimes.begin(), frameTimes.end(), frameTimesPsum.begin());
+		std::sort(frameTimesPsum.begin(), frameTimesPsum.end(), std::greater<float>());
+		for (size_t i = 1; i < frameTimesPsum.size(); ++i)
+		{
+			frameTimesPsum[i] += frameTimesPsum[i - 1];
+		}
+
 		// Draw the histogram
-		ImGui::Begin("Frame Time Histogram");
+		ImGui::Begin("Updown Studio Dubug Window");
 		// Set plot color to white (without outlines)
+		ImGui::Text("Frame Per Second 100%%: %.3f FPS", 100.0f / frameTimesPsum[99]);
+		ImGui::Text("Frame Per Second 10%%:  %.3f FPS", 10.0f / frameTimesPsum[9]);
+		ImGui::Text("Frame Per Second 1%%:   %.3f FPS", 1.0f / frameTimesPsum[0]);
+		ImGui::Text("Allocated SceneObjects: %llu", g_sceneObjectCount);
 		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_PlotHistogramHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.5f));
 		ImGui::PlotHistogram("Frame Times", frameTimes.data(), static_cast<int>(frameTimes.size()), 0, nullptr, 0.0f, smoothMaxFrameTime, ImVec2(0.0f, 100.0f));

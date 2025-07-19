@@ -8,7 +8,7 @@ using namespace udsdx;
 
 void MonsterRenderer::OnInitialize()
 {
-	m_rendererObject = std::make_shared<udsdx::SceneObject>();
+	m_rendererObject = udsdx::SceneObject::MakeShared();
 	m_rendererObject->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "GlobalValues", "CharacterScale", "Value"));
 
 	auto renderer = m_rendererObject->AddComponent<udsdx::RiggedMeshRenderer>();

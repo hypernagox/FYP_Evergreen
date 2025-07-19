@@ -8,14 +8,14 @@ using namespace udsdx;
 
 void PlayerEquipmentGUI::OnInitialize()
 {
-	m_panel = std::make_shared<SceneObject>();
+	m_panel = SceneObject::MakeShared();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(640.0f, 0.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\equipment.png")), true);
 	uiRenderer->SetSize(Vector2(452.0f, 600.0f));
 	GetSceneObject()->AddChild(m_panel);
 
-	m_statText = std::make_shared<SceneObject>();
+	m_statText = SceneObject::MakeShared();
 	auto text = m_statText->AddComponent<GUIText>();
 	text->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 	text->SetAlignment(GUIText::Alignment::UpperLeft);
@@ -27,14 +27,14 @@ void PlayerEquipmentGUI::OnInitialize()
 	{
 		float y = 115.0f - i * 78.0f;
 
-		m_slotContents[i] = std::make_shared<SceneObject>();
+		m_slotContents[i] = SceneObject::MakeShared();
 		auto renderer = m_slotContents[i]->AddComponent<GUISimpleButton>();
 		m_slotContents[i]->GetTransform()->SetLocalPosition(Vector3(-162.0f, y, 0.0f));
 		renderer->SetSize(Vector2(60, 60));
 		renderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\icon_priestequipment_1.png")));
 		m_panel->AddChild(m_slotContents[i]);
 
-		m_slotText[i] = std::make_shared<SceneObject>();
+		m_slotText[i] = SceneObject::MakeShared();
 		auto text = m_slotText[i]->AddComponent<GUIText>();
 		text->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 		text->SetAlignment(GUIText::Alignment::Left);
@@ -43,7 +43,7 @@ void PlayerEquipmentGUI::OnInitialize()
 		m_panel->AddChild(m_slotText[i]);
 	}
 
-	auto exitButton = std::make_shared<SceneObject>();
+	auto exitButton = SceneObject::MakeShared();
 	auto exitButtonRenderer = exitButton->AddComponent<GUISimpleButton>();
 	exitButton->GetTransform()->SetLocalPosition(Vector3(175.0f, 250.0f, 0.0f));
 	exitButtonRenderer->SetSize(Vector2(50.0f, 50.0f));

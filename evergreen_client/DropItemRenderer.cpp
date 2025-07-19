@@ -5,7 +5,7 @@ std::default_random_engine DropItemRenderer::randomEngine{};
 
 void DropItemRenderer::OnInitialize()
 {
-	m_rendererObject = std::make_shared<udsdx::SceneObject>();
+	m_rendererObject = udsdx::SceneObject::MakeShared();
 	m_meshRenderer = m_rendererObject->AddComponent<udsdx::MeshRenderer>();
 
 	GetSceneObject()->AddChild(m_rendererObject);

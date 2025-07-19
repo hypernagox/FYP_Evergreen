@@ -50,11 +50,6 @@ namespace udsdx
 			return 0; // Prevent the system from processing this message (It freezes the window if the default WindowProc is returned in this case)
 		}
 
-#if defined(DEBUG) || defined(_DEBUG)
-		// Print the message to the console
-		DebugConsole::Log(std::format("Message: {} wParam: {} lParam: {}", message, wParam, lParam));
-#endif // DEBUG
-
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 

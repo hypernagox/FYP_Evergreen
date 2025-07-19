@@ -6,14 +6,14 @@ using namespace udsdx;
 
 void InteractionFloatGUI::OnInitialize()
 {
-	m_panel = std::make_shared<SceneObject>();
+	m_panel = SceneObject::MakeShared();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 	uiRenderer->SetSize(Vector2(200.0f, 40.0f));
 	GetSceneObject()->AddChild(m_panel);
 
-	m_interactionText = std::make_shared<SceneObject>();
+	m_interactionText = SceneObject::MakeShared();
 	auto interactionText = m_interactionText->AddComponent<GUIText>();
 	interactionText->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 	m_interactionText->GetTransform()->SetLocalPosition(Vector3(90.0f, 0.0f, 0.0f));
@@ -22,7 +22,7 @@ void InteractionFloatGUI::OnInitialize()
 	interactionText->SetAlignment(GUIText::Alignment::Right);
 	m_panel->AddChild(m_interactionText);
 
-	m_interactionIcon = std::make_shared<SceneObject>();
+	m_interactionIcon = SceneObject::MakeShared();
 	auto interactionIconRenderer = m_interactionIcon->AddComponent<GUIImage>();
 	m_interactionIcon->GetTransform()->SetLocalPosition(Vector3(-80.0f, 0.0f, 0.0f));
 	interactionIconRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\key_E.png")));

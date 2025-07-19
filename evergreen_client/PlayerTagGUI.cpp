@@ -6,7 +6,7 @@ using namespace udsdx;
 
 void PlayerTagGUI::OnInitialize()
 {
-	m_nameObject = std::make_shared<SceneObject>();
+	m_nameObject = SceneObject::MakeShared();
 	auto nameRenderer = m_nameObject->AddComponent<GUIText>();
 	nameRenderer->SetText(L"Player Name");
 	nameRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));

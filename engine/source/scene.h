@@ -40,7 +40,6 @@ namespace udsdx
 
 		void UpdateGUIElementEvent(const Time& time);
 		void AddObject(std::shared_ptr<SceneObject> object);
-		void UpdateSceneObjectCache();
 
 	public:
 		void EnqueueRenderCamera(Camera* camera);
@@ -61,7 +60,6 @@ namespace udsdx
 
 	protected:
 		std::shared_ptr<SceneObject> m_rootObject;
-		std::vector<std::shared_ptr<SceneObject>> m_objectsCache;
 
 		std::vector<Camera*> m_renderCameraQueue;
 		std::vector<LightDirectional*> m_renderLightQueue;

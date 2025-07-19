@@ -27,7 +27,7 @@ namespace udsdx
 
 	Scene::Scene()
 	{
-		m_rootObject = std::make_shared<SceneObject>();
+		m_rootObject = SceneObject::MakeShared();
 	}
 
 	Scene::~Scene()
@@ -56,7 +56,6 @@ namespace udsdx
 		m_renderShadowObjectQueue.clear();
 		m_renderGUIObjectQueue.clear();
 
-		UpdateSceneObjectCache();
 		SceneObject::Enumerate(m_rootObject, [&time, this](const std::shared_ptr<SceneObject>& sceneObject) { sceneObject->PostUpdate(time, *this); });
 	}
 
@@ -189,22 +188,6 @@ namespace udsdx
 	void Scene::AddObject(std::shared_ptr<SceneObject> object)
 	{
 		m_rootObject->AddChild(object);
-	}
-
-	void Scene::UpdateSceneObjectCache()
-	{
-		size_t index = 0;
-		SceneObject::Enumerate(m_rootObject, [this, &index](const std::shared_ptr<SceneObject>& object) {
-				if (index >= m_objectsCache.size())
-				{
-					m_objectsCache.emplace_back(object);
-				}
-				else
-				{
-					m_objectsCache[index] = object;
-				}
-				index++;
-			}, false);
 	}
 
 	void Scene::EnqueueRenderCamera(Camera* camera)

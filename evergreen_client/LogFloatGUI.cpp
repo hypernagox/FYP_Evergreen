@@ -5,14 +5,14 @@ using namespace udsdx;
 
 void LogFloatGUI::OnInitialize()
 {
-	m_panel = std::make_shared<SceneObject>();
+	m_panel = SceneObject::MakeShared();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(-620.0f, -420.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\alpha_gradient_black.png")));
 	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
 	GetSceneObject()->AddChild(m_panel);
 
-	m_floatText = std::make_shared<SceneObject>();
+	m_floatText = SceneObject::MakeShared();
 	auto floatText = m_floatText->AddComponent<GUIText>();
 	floatText->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 	m_floatText->GetTransform()->SetLocalPosition(Vector3(-230.0f, -150.0f, 0.0f));

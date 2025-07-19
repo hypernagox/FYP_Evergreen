@@ -71,7 +71,7 @@ void DamageCountGUI::AddCountObject(const Vector3& targetPos, unsigned int damag
 	for (int i = 0; i < hit_count; ++i)
 	{
 		m_timer.RegisterEvent((float)i * DMG_DELTA_STEP, [=]() {
-			std::shared_ptr<SceneObject> countObj = std::make_shared<SceneObject>();
+			std::shared_ptr<SceneObject> countObj = SceneObject::MakeShared();
 			auto nameRenderer = countObj->AddComponent<GUIText>();
 			nameRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"sansman.spritefont")));
 			nameRenderer->SetRaycastTarget(false);

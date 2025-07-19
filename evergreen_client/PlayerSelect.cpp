@@ -6,21 +6,21 @@ using namespace udsdx;
 
 void PlayerSelect::OnInitialize()
 {
-	m_characterObjects[0] = std::make_shared<SceneObject>();
+	m_characterObjects[0] = SceneObject::MakeShared();
 	{
 		auto playerRenderer = m_characterObjects[0]->AddComponent<PlayerRenderer>();
 		playerRenderer->InitializeWarrior();
 	}
 	GetSceneObject()->AddChild(m_characterObjects[0]);
 
-	m_characterObjects[1] = std::make_shared<SceneObject>();
+	m_characterObjects[1] = SceneObject::MakeShared();
 	{
 		auto playerRenderer = m_characterObjects[1]->AddComponent<PlayerRenderer>();
 		playerRenderer->InitializePriest();
 	}
 	GetSceneObject()->AddChild(m_characterObjects[1]);
 
-	m_characterObjects[2] = std::make_shared<SceneObject>();
+	m_characterObjects[2] = SceneObject::MakeShared();
 	{
 		auto playerRenderer = m_characterObjects[2]->AddComponent<PlayerRenderer>();
 		playerRenderer->InitializePriest();

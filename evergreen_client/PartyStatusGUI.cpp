@@ -8,7 +8,7 @@ void PartyStatusGUI::OnInitialize()
 {
 	auto font = INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont"));
 
-	m_panel = std::make_shared<SceneObject>();
+	m_panel = SceneObject::MakeShared();
 	m_panel->GetTransform()->SetLocalPosition(Vector3(540.0f, 360.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
@@ -16,7 +16,7 @@ void PartyStatusGUI::OnInitialize()
 
 	GetSceneObject()->AddChild(m_panel);
 
-	m_titleText = std::make_shared<SceneObject>();
+	m_titleText = SceneObject::MakeShared();
 	auto titleText = m_titleText->AddComponent<GUIText>();
 	titleText->SetFont(font);
 	m_titleText->GetTransform()->SetLocalPosition(Vector3(-230.0f, 140.0f, 0.0f));
@@ -26,7 +26,7 @@ void PartyStatusGUI::OnInitialize()
 
 	m_panel->AddChild(m_titleText);
 
-	m_leavePartyButton = std::make_shared<SceneObject>();
+	m_leavePartyButton = SceneObject::MakeShared();
 	auto leavePartyButtonRenderer = m_leavePartyButton->AddComponent<GUISimpleButton>();
 	m_leavePartyButton->GetTransform()->SetLocalPosition(Vector3(220.0f, 140.0f, 0.0f));
 	leavePartyButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_complete.png")));
@@ -49,14 +49,14 @@ void PartyStatusGUI::OnInitialize()
 		float y = i * -70.0f + 90.0f;
 		auto& partyGUI = m_partyPanels.emplace_back();
 
-		partyGUI.Panel = std::make_shared<SceneObject>();
+		partyGUI.Panel = SceneObject::MakeShared();
 		partyGUI.Panel->GetTransform()->SetLocalPositionY(y);
 		auto panelRenderer = partyGUI.Panel->AddComponent<GUIImage>();
 		panelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
 		panelRenderer->SetSize(Vector2(460.0f, 60.0f));
 		m_panel->AddChild(partyGUI.Panel);
 
-		partyGUI.PartyMemberIDText = std::make_shared<SceneObject>();
+		partyGUI.PartyMemberIDText = SceneObject::MakeShared();
 		auto partyMemberIDText = partyGUI.PartyMemberIDText->AddComponent<GUIText>();
 		partyMemberIDText->SetFont(font);
 		partyGUI.PartyMemberIDText->GetTransform()->SetLocalPosition(Vector3(-220.0f, 0.0f, 0.0f));
@@ -65,7 +65,7 @@ void PartyStatusGUI::OnInitialize()
 		partyMemberIDText->SetAlignment(GUIText::Alignment::Left);
 		partyGUI.Panel->AddChild(partyGUI.PartyMemberIDText);
 
-		partyGUI.PartyLeaderIcon = std::make_shared<SceneObject>();
+		partyGUI.PartyLeaderIcon = SceneObject::MakeShared();
 		partyGUI.PartyLeaderIcon->GetTransform()->SetLocalPositionX(200.0f);
 		auto partyLeaderIcon = partyGUI.PartyLeaderIcon->AddComponent<GUIImage>();
 		partyLeaderIcon->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\leader.png")));

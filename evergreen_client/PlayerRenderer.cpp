@@ -7,13 +7,13 @@
 
 void PlayerRenderer::OnInitialize()
 {
-	m_rendererObj = std::make_shared<SceneObject>();
+	m_rendererObj = SceneObject::MakeShared();
 
 	GetSceneObject()->AddChild(m_rendererObj);
 
 	m_rendererObj->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "GlobalValues", "CharacterScale", "Value"));
 
-	m_bodyObj = std::make_shared<SceneObject>();
+	m_bodyObj = SceneObject::MakeShared();
 	m_renderer = m_bodyObj->AddComponent<RiggedMeshRenderer>();
 
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
