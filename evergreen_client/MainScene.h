@@ -42,6 +42,7 @@ private:
 	unsigned int m_currentChannelID = 0;
 	bool m_needCharacterSelection = false;
 	bool m_register_account = false;
+	bool m_isRegisterSuccess = false;
 
 
 	std::string m_userId;

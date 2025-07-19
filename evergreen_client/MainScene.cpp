@@ -255,8 +255,7 @@ void MainScene::EnterCharacterSelection(bool enter)
 
 void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int characterType)
 {
-    extern bool g_is_register_success;
-    g_is_register_success = false;
+    m_isRegisterSuccess = false;
     m_currentCharacterType = characterType;
    
     switch (result)
@@ -278,7 +277,7 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
     case Nagox::Enum::LOGIN_RESULT_DUPLICATE:
     {
         // TODO: 비번틀림 로그인 시도 다시하기 
-        g_is_register_success = false;
+        m_isRegisterSuccess = false;
         MessageBox(INSTANCE(Core)->GetMainWindow(), L"계정 생성 실패: 이미 존재하는 ID입니다.", L"계정 생성 실패", MB_OK | MB_ICONWARNING);
         break;
     }
@@ -305,7 +304,7 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
         default:
             break;
         }
-        g_is_register_success = true;
+        m_isRegisterSuccess = true;
         if (!m_needCharacterSelection)
         {
             m_popupGUIManager->Append(m_channelSwitchObj);
@@ -319,7 +318,6 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
 
 bool MainScene::WaitRegisterResult()
 {
-    extern bool g_is_register_success;
     if (m_register_account)
     {
         switch (m_currentCharacterType)
@@ -348,15 +346,13 @@ bool MainScene::WaitRegisterResult()
             NetMgr(NetworkMgr)->DoNetworkIO();
         }
         // TODO: 중복아이디라면 실패하고 다시 돌아가야함
-        if (false == g_is_register_success)
+        if (false == m_isRegisterSuccess)
         {
             return false;
         }
     }
     return true;
 }
-
-bool g_is_register_success = false;
 
 void MainScene::TransitionEnterGame()
 {
