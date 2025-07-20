@@ -56,7 +56,7 @@ bool PartyQuestSystem::MissionStart()
 		}
 	}
 
-	Sleep(500);
+	Sleep(1000);
 
 	room->InitQuestField();
 
@@ -113,7 +113,7 @@ void PartyQuestSystem::MissionEnd()
 		session->SendAsync(end_pkt);
 	}
 
-	Sleep(500);
+	Sleep(1000);
 
 	for (const auto& mem : m_member)
 	{

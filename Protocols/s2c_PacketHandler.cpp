@@ -590,13 +590,15 @@ const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>
 {
 	ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Default);
 	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
-	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.5f);
+	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
+	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {}, L"퀘스트를 종료하는 중 ...");
 	return true;
 }
 
 const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_START& pkt_)
 {
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
+	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {}, L"퀘스트를 시작하는 중 ...");
 	return true;
 }
 
@@ -641,7 +643,7 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
 	GuideSystem::GetInst()->ToggleFlag();
 	GuideSystem::GetInst()->SetGuidePath(Vector3(-44.4872F, 74.50986F, -59.177734F));
-	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.5f);
+	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	return true;
 }
 
@@ -670,14 +672,10 @@ const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::Pac
 
 const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_)
 {
-	// TODO: 여기에 이 유저의 무기 / 갑옷 정수 id가 온다.
-	// 갑옷이 지금 미정인데, 여기에서 바꾸면된다
-	//std::cout << (pkt_.weapon_id()) << std::endl;
-	
-	// TODO: 무기 외의 정보도 동기화 필요함
+	// TODO: 이름은 잘 가고 있으니 머리 위에 렌더링 필요
 	std::string user_name;
 	for (const auto ch : *pkt_.user_name())user_name.push_back(ch);
-
+	std::cout << "User Name: " << user_name << std::endl;
 	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id()))
 	{
 		if (const auto renderer = obj->GetComponent<PlayerRenderer>())

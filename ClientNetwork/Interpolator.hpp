@@ -17,7 +17,7 @@ namespace NetHelper
             const auto cur_time = GetTimeStampMilliseconds();
             const auto cur_param = GetInterpolationParam(cur_time);
             const auto diff = (float)(cur_time - m_prevUpdatedTimeForDT);
-            if (0.016f * 2.f >= diff)
+            if (0.016f * 1.f >= diff)
             {
                 m_fCurInterpolationParam = std::min(cur_param, m_fPrevInterpolationParam + 0.016f * (((diff / 16.f)) + 1.f));
             }

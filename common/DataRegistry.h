@@ -25,7 +25,7 @@ namespace Common
 	private:
 		DataRegistry()noexcept = default;
 	public:
-		static void Load(const std::wstring_view path = L"")noexcept;
+		static void Load(const std::wstring_view path = L"");
 		static const auto GetDataTable()noexcept { return g_table; }
 	public:
 		// 아이템 종류 개수

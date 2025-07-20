@@ -12,7 +12,7 @@ public:
 	void AppendTransition(std::function<void()> callback, std::wstring_view message);
 
 private:
-	constexpr static float TransitionDuration = 0.5f;
+	constexpr static float TransitionDuration = 1.f;
 
 	std::shared_ptr<udsdx::SceneObject> m_panel;
 	std::shared_ptr<udsdx::SceneObject> m_messageText;

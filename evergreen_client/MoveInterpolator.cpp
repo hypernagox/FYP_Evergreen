@@ -54,7 +54,7 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	// m_interpolator.GetCurData().body_angleY = move_data.body_angleY;
 
 	// TODO: 여기서 셋포지션하면 이상할 것 같은데 일단 관찰
-	//owner_player->SetPosition(pos);
+	owner_player->SetPosition(pos);
 	owner_player->SetVelocity(vel);
 	owner_player->SetAcceleration(accel);
 	owner_player->SetRotation(rotation);
@@ -87,6 +87,7 @@ void MoveInterpolator::UpdateNewMoveDataOnlyPos(const Vector3& dest_pos) noexcep
 
 	m_interpolator.UpdateNewData(MoveData{ dest_pos, bodyAngleY, {}, {} });
 	m_interpolator.GetCurData().pos = move_data.pos;
+	m_interpolator.GetCurData().body_angleY = move_data.body_angleY;
 }
 
 void MoveInterpolator::UpdateForcedMoveData(const Vector3& pos) noexcept

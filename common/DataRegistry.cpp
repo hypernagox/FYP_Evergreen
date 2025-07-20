@@ -9,7 +9,7 @@ namespace Common
     inline thread_local std::wstring wstr = {};
     inline thread_local std::string str = {};
 
-    void DataRegistry::Load(const std::wstring_view path) noexcept
+    void DataRegistry::Load(const std::wstring_view path)
     {
         static DataRegistry table;
         g_table = &table;
