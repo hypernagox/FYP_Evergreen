@@ -35,6 +35,7 @@ public:
 	void AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj, GameSceneType type);
 	void AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj);
 	bool GetSpectatorMode() const { return m_bSpectatorMode; }
+	std::shared_ptr<udsdx::SceneObject> GetHeroObject() const { return m_heroObj; }
 	void RequestChangeGameScene(GameSceneType type);
 	void ChangeGameScene(GameSceneType type);
 	void AddMinimapMark(const Vector3& position);

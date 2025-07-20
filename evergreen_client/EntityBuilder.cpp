@@ -19,6 +19,7 @@
 #include "GizmoBoxRenderer.h"
 #include "ForcedMovement.h"
 #include "PlayerTagGUI.h"
+#include "DropItemAcquireRenderer.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 
@@ -195,10 +196,16 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 	auto renderer = instance->AddComponent<DropItemRenderer>();
 	auto interactiveEntity = instance->AddComponent<InteractiveEntity>();
 	interactiveEntity->SetInteractionText(L"획득하기");
-	interactiveEntity->SetInteractionCallback([owner_id, id = builder->obj_id]() {
+	interactiveEntity->SetInteractionCallback([instance, owner_id, id = builder->obj_id]() {
 		// TODO: 플레이어가 상호작용을 통해 아이템을 주웠을 때의 코드 영역
 		// 기존 인자인 owner_id(줍는 플레이어)에 더해 프로토콜에서 주울 아이템의 id를 추가적으로 정의해주어야 한다.
-		// 
+		if (Scene* target = instance->GetScene())
+		{
+			std::shared_ptr<SceneObject> acquireObject = SceneObject::MakeShared();
+			auto renderer = acquireObject->AddComponent<DropItemAcquireRenderer>();
+			renderer->Initialize(instance->GetComponentsInChildren<MeshRenderer>()[0]);
+			target->AddObject(acquireObject);
+		}
 		 Send(Create_c2s_ACQUIRE_ITEM(owner_id, id));
 		});
 
