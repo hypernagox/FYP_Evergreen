@@ -53,6 +53,27 @@ namespace udsdx
 		return m_object.lock();
 	}
 
+	void Component::SetActive(bool active)
+	{
+		if (m_isActive == active)
+		{
+			return;
+		}
+
+		m_isActive = active;
+		if (GetSceneObject()->GetActiveInScene())
+		{
+			if (active)
+			{
+				OnActive();
+			}
+			else
+			{
+				OnInactive();
+			}
+		}
+	}
+
 	Transform* Component::GetTransform()
 	{
 		return GetSceneObject()->GetTransform();

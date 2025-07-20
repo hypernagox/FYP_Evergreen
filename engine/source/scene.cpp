@@ -28,6 +28,8 @@ namespace udsdx
 	Scene::Scene()
 	{
 		m_rootObject = SceneObject::MakeShared();
+		m_rootObject->m_sceneRoot = true;
+		m_rootObjectSub = SceneObject::MakeShared();
 	}
 
 	Scene::~Scene()
@@ -42,7 +44,7 @@ namespace udsdx
 	void Scene::Update(const Time& time)
 	{ ZoneScoped;
 	    UpdateGUIElementEvent(time);
-		SceneObject::Enumerate(m_rootObject, [&time, this](const std::shared_ptr<SceneObject>& sceneObject) { sceneObject->Update(time, *this); });
+		SceneObject::Enumerate(m_rootObjectSub, [&time, this](const std::shared_ptr<SceneObject>& sceneObject) { sceneObject->Update(time, *this); });
 	}
 
 	void Scene::PostUpdate(const Time& time)
@@ -56,7 +58,7 @@ namespace udsdx
 		m_renderShadowObjectQueue.clear();
 		m_renderGUIObjectQueue.clear();
 
-		SceneObject::Enumerate(m_rootObject, [&time, this](const std::shared_ptr<SceneObject>& sceneObject) { sceneObject->PostUpdate(time, *this); });
+		SceneObject::Enumerate(m_rootObjectSub, [&time, this](const std::shared_ptr<SceneObject>& sceneObject) { sceneObject->PostUpdate(time, *this); });
 	}
 
 	void Scene::OnDrawGizmos()
@@ -67,7 +69,7 @@ namespace udsdx
 
 		unsigned int activeObjectsCount = 0;
 		Camera* renderCamera = m_renderCameraQueue[0];
-		SceneObject::Enumerate(m_rootObject, [&activeObjectsCount, renderCamera](const std::shared_ptr<SceneObject>& object) {
+		SceneObject::Enumerate(m_rootObjectSub, [&activeObjectsCount, renderCamera](const std::shared_ptr<SceneObject>& object) {
 			activeObjectsCount++;
 			object->OnDrawGizmos(renderCamera);
 			});
@@ -165,7 +167,7 @@ namespace udsdx
 
 	void Scene::UpdateGUIElementEvent(const Time& time)
 	{
-		auto elements = m_rootObject->GetComponentsInChildren<GUIElement>();
+		auto elements = m_rootObjectSub->GetComponentsInChildren<GUIElement>();
 		int mx = INSTANCE(Input)->GetMouseX();
 		int my = INSTANCE(Input)->GetMouseY();
 
@@ -187,7 +189,21 @@ namespace udsdx
 
 	void Scene::AddObject(std::shared_ptr<SceneObject> object)
 	{
-		m_rootObject->AddChild(object);
+		m_rootObjectSub->AddChild(object);
+	}
+
+	void Scene::HandleAttach()
+	{
+		OnAttach();
+
+		m_rootObject->AddChild(m_rootObjectSub);
+	}
+
+	void Scene::HandleDetach()
+	{
+		OnDetach();
+
+		m_rootObjectSub->RemoveFromParent();
 	}
 
 	void Scene::EnqueueRenderCamera(Camera* camera)

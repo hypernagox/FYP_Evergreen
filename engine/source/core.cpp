@@ -301,9 +301,14 @@ namespace udsdx
 		{
 			// Ensure that the GPU is no longer referencing resources that are about to be destroyed.
 			FlushCommandQueue();
-			::CloseHandle(m_fenceEvent);
-
 			SetWindowFullscreen(false);
+
+			if (m_scene != nullptr)
+			{
+				m_scene->HandleDetach();
+			}
+
+			::CloseHandle(m_fenceEvent);
 
 			// Release the context
 			TracyD3D12Destroy(m_tracyQueueCtx);
@@ -543,10 +548,10 @@ namespace udsdx
 		FlushCommandQueue();
 		if (nullptr != m_scene)
 		{
-			m_scene->OnDetach();
+			m_scene->HandleDetach();
 		}
 		m_scene = scene;
-		m_scene->OnAttach();
+		m_scene->HandleAttach();
 	}
 
 	void Core::AcquireNextFrameResource()

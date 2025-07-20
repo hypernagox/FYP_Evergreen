@@ -61,6 +61,7 @@ namespace udsdx
 		bool GetActive() const;
 		bool GetActiveInHierarchy() const;
 		bool GetActiveInScene() const;
+		bool GetAttachedInScene() const;
 		void SetActive(bool active);
 
 	public:
@@ -93,10 +94,10 @@ namespace udsdx
 		std::vector<Component_T*> GetComponentsInChildren() const
 		{
 			std::vector<Component_T*> components;
-			Enumerate(m_child, [&](const std::shared_ptr<SceneObject>& node) {
+			Enumerate(std::const_pointer_cast<SceneObject>(shared_from_this()), [&](const std::shared_ptr<SceneObject>& node) {
 				if (Component_T* component = node->GetComponent<Component_T>())
 				{
-					components.push_back(component);
+					components.emplace_back(component);
 				}
 			});
 			return components;
@@ -137,12 +138,14 @@ namespace udsdx
 
 	protected:
 		bool m_active = true;
+		// Only true for the root SceneObject of a Scene
 		bool m_sceneRoot = false;
 		Transform m_transform = Transform();
 		std::vector<std::unique_ptr<Component, ComponentDeleter>> m_components;
 
 	protected:
 		SceneObject* m_parent = nullptr;
+		SceneObject* m_back = nullptr;
 		std::shared_ptr<SceneObject> m_sibling = nullptr;
 		std::shared_ptr<SceneObject> m_child = nullptr;
 	};
