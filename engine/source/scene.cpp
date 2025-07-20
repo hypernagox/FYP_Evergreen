@@ -28,7 +28,7 @@ namespace udsdx
 	Scene::Scene()
 	{
 		m_rootObject = SceneObject::MakeShared();
-		m_rootObject->m_sceneRoot = true;
+		m_rootObject->m_sceneRoot = this;
 		m_rootObjectSub = SceneObject::MakeShared();
 	}
 

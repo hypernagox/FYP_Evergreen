@@ -192,9 +192,6 @@
     <ClCompile Include="TerrainInstanceRenderer.cpp">
       <Filter>Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="MonsterHPPanel.cpp">
-      <Filter>NetEntity\ContentsEntity\Monster</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerStatusGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
@@ -321,6 +318,9 @@
     <ClCompile Include="MonsterBoss.cpp">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="MonsterHPPanel.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -412,9 +412,6 @@
     </ClInclude>
     <ClInclude Include="TerrainInstanceRenderer.h">
       <Filter>Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="MonsterHPPanel.h">
-      <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
     <ClInclude Include="PlayerStatusGUI.h">
       <Filter>Gui</Filter>
@@ -547,6 +544,9 @@
     </ClInclude>
     <ClInclude Include="CustomStateTransition.hpp">
       <Filter>Header Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterHPPanel.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

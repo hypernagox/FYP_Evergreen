@@ -10,6 +10,7 @@ void Monster::OnInitialize()
 	m_renderer = m_rendererObj->AddComponent<RiggedMeshRenderer>();
 	GetSceneObject()->AddChild(m_rendererObj);
 
+	m_hpPanel = AddComponent<MonsterHPPanel>();
 	m_entityMovement = GetSceneObject()->AddComponent<EntityMovement>();
 
 	m_stateMachine = std::make_unique<Common::StateMachine<AnimationState>>(AnimationState::Idle);
@@ -22,16 +23,12 @@ void Monster::OnInitialize()
 
 	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Idle, m_renderer);
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(from, to); });
-
-	auto hpPanelObj = SceneObject::MakeShared();
-	hpPanelObj->GetTransform()->SetLocalPosition(Vector3::Up * 1.5f);
-	m_hpPanel = hpPanelObj->AddComponent<MonsterHPPanel>();
-	GetSceneObject()->AddChild(hpPanelObj);
 }
 
 void Monster::InitializeMonster(std::string_view monsterType)
 {
 	m_maxHP = GET_DATA(int, "Monster", monsterType, "hp");
+	m_hpPanel->SetText(GET_DATA(std::wstring, "Monster", monsterType, "Name"));
 	m_hp = m_maxHP;
 }
 

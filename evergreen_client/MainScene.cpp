@@ -363,7 +363,7 @@ void MainScene::EnterGame()
 {
     std::shared_ptr<GameScene> gameScene = std::make_shared<GameScene>();
     INSTANCE(Core)->SetScene(gameScene);
-    gameScene->EnterGame(gameScene, m_currentCharacterType, m_currentChannelID);
+    gameScene->EnterGame(gameScene, m_currentCharacterType, m_currentChannelID, m_userId);
 }
 
 void MainScene::ExitGame()

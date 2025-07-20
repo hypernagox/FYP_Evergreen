@@ -18,6 +18,7 @@
 #include "GizmoSectorRenderer.h"
 #include "GizmoBoxRenderer.h"
 #include "ForcedMovement.h"
+#include "PlayerTagGUI.h"
 
 // string 등 무브시맨틱이 유효한 데이터라면 무브시맨틱을 적극 고려하자
 
@@ -55,12 +56,14 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Player(EntityBuild
 
 	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 	moveInterpolator->InitInterpolator(b->obj_pos);
+	auto playerTag = instance->AddComponent<PlayerTagGUI>();
 	if (ServerObjectMgr::GetInst()->m_equipmentMap.contains(b->obj_id))
 	{
 		const auto& [weapon_id, armor_id, username] = ServerObjectMgr::GetInst()->m_equipmentMap[b->obj_id];
 		// TODO: 플레이어 이름 변경을 위한 네임태그 컴포넌트 수집
 		playerComponent->SetPlayerWeapon(weapon_id);
 		playerComponent->SetPlayerArmor(armor_id);
+		playerTag->SetText(Common::DataRegistry::Str2Wstr(username));
 		ServerObjectMgr::GetInst()->m_equipmentMap.erase(b->obj_id);
 	}
 	return instance;
@@ -71,7 +74,6 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
 	switch (b->obj_type)
 	{
-	// TODO: 보스는 여기서 만든다. 임시로 큰 여우로 해둠
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BOSS:
 	{
 		auto instance = udsdx::SceneObject::MakeShared();
@@ -94,11 +96,11 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	{
 		auto instance = udsdx::SceneObject::MakeShared();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
-		auto monsterComponent = instance->AddComponent<MonsterFox>();
 		auto serverComponent = instance->AddComponent<ServerObject>();
-		serverComponent->SetObjID(builder->obj_id);
-
 		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		auto monsterComponent = instance->AddComponent<MonsterFox>();
+
+		serverComponent->SetObjID(builder->obj_id);
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
 		return instance;
@@ -113,12 +115,12 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 	{
 		auto instance = udsdx::SceneObject::MakeShared();
 		instance->GetTransform()->SetLocalPosition(b->obj_pos);
-		
-		auto monsterComponent = instance->AddComponent<MonsterBear>();
+
 		auto serverComponent = instance->AddComponent<ServerObject>();
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		auto monsterComponent = instance->AddComponent<MonsterBear>();
 		serverComponent->SetObjID(builder->obj_id);
 
-		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
 		//TODO: 매직넘버
@@ -141,9 +143,9 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 
 		instance->AddComponent<EntityMovement>();
 		auto serverComponent = instance->AddComponent<ServerObject>();
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 		serverComponent->SetObjID(builder->obj_id);
 
-		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
 		auto renderer = instance->AddComponent<MonsterRenderer>();

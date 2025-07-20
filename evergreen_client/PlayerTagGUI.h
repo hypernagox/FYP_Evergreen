@@ -6,12 +6,14 @@ class PlayerTagGUI : public udsdx::Component
 {
 public:
 	void OnInitialize() override;
+	void OnAttach() override;
+	void OnActive() override;
+	void OnInactive() override;
+	void OnDetach() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
-
-	void SetTargetPosition(const Vector3& targetPos) { m_targetPos = targetPos; }
+	void UpdateTransform(udsdx::Scene& scene);
+	void SetText(std::wstring_view text);
 
 private:
-	Vector3 m_targetPos = Vector3::Zero;
-
 	std::shared_ptr<udsdx::SceneObject> m_nameObject;
 };

@@ -61,6 +61,7 @@ namespace udsdx
 		bool GetActive() const;
 		bool GetActiveInHierarchy() const;
 		bool GetActiveInScene() const;
+		Scene* GetScene() const;
 		bool GetAttachedInScene() const;
 		void SetActive(bool active);
 
@@ -73,6 +74,16 @@ namespace udsdx
 			componentPtr->m_object = shared_from_this();
 			m_components.emplace_back(std::move(component));
 			componentPtr->OnInitialize();
+			bool attachedInScene = GetAttachedInScene();
+			bool activeInScene = GetActiveInScene();
+			if (attachedInScene)
+			{
+				componentPtr->OnAttach();
+			}
+			if (activeInScene)
+			{
+				componentPtr->OnActive();
+			}
 			return componentPtr;
 		}
 
@@ -138,8 +149,8 @@ namespace udsdx
 
 	protected:
 		bool m_active = true;
-		// Only true for the root SceneObject of a Scene
-		bool m_sceneRoot = false;
+		// Only has an instance for the root SceneObject of a Scene
+		Scene* m_sceneRoot = nullptr;
 		Transform m_transform = Transform();
 		std::vector<std::unique_ptr<Component, ComponentDeleter>> m_components;
 

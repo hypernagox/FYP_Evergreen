@@ -19,6 +19,7 @@
 #include <ClientNetworkPch.h>
 
 #include <PathManager.h>
+#include <DataRegistry.h>
 
 #include <updown_studio.h>
 

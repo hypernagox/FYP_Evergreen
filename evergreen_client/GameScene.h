@@ -26,7 +26,7 @@ public:
 	void Update(const udsdx::Time& time) override;
 	void Render(udsdx::RenderParam& param) override;
 	// 플레이어를 생성하고 월드에 추가하는 단계
-	void EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int character, int channelID);
+	void EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int character, int channelID, std::string_view username);
 	// 게임 종료
 	void ExitGame();
 	void OnTogglePause(bool isPaused);
@@ -57,6 +57,7 @@ private:
 
 	std::shared_ptr<udsdx::SceneObject> m_interfaceGroup;
 	std::shared_ptr<udsdx::SceneObject> m_playerInterfaceGroup;
+	std::shared_ptr<udsdx::SceneObject> m_playerInterfaceBackGroup;
 	std::shared_ptr<udsdx::SceneObject> m_focusAgentObj;
 	std::shared_ptr<udsdx::SceneObject> m_inventoryObj;
 	std::shared_ptr<udsdx::SceneObject> m_equipmentObj;
@@ -64,7 +65,6 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_craftObj;
 	std::shared_ptr<udsdx::SceneObject> m_pauseMenuObj;
 	std::shared_ptr<udsdx::SceneObject> m_partyListObj;
-	std::shared_ptr<udsdx::SceneObject> m_playerTagObj;
 	std::shared_ptr<udsdx::SceneObject> m_channelSwitchObj;
 
 	AuthenticPlayer* m_heroComponent;

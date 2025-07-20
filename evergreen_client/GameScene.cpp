@@ -66,6 +66,7 @@ void GameScene::OnAttach()
     entityInteraction->SetTargetScene(this);
     m_heroServerObject = m_heroObj->GetComponent<ServerObject>();
     m_heroServerObject->AddComp<MovePacketSender>();
+    m_heroObj->AddComponent<PlayerTagGUI>();
 
     Vector3 start_pos = Vector3{
         -315.8432f,
@@ -213,9 +214,11 @@ void GameScene::OnAttach()
     {
         m_interfaceGroup = SceneObject::MakeShared();
         m_playerInterfaceGroup = SceneObject::MakeShared();
+        m_playerInterfaceBackGroup = SceneObject::MakeShared();
 
         AddObject(m_interfaceGroup);
         m_interfaceGroup->AddChild(m_playerInterfaceGroup);
+        m_playerInterfaceGroup->AddChild(m_playerInterfaceBackGroup);
         m_playerInterfaceGroup->SetActive(false);
 
         auto textObj = SceneObject::MakeShared();
@@ -229,10 +232,6 @@ void GameScene::OnAttach()
         auto damageCountObj = SceneObject::MakeShared();
         auto damageCountRenderer = damageCountObj->AddComponent<DamageCountGUI>();
         m_playerInterfaceGroup->AddChild(damageCountObj);
-
-        m_playerTagObj = SceneObject::MakeShared();
-        auto playerTagRenderer = m_playerTagObj->AddComponent<PlayerTagGUI>();
-        m_playerInterfaceGroup->AddChild(m_playerTagObj);
 
         m_focusAgentObj = SceneObject::MakeShared();
         auto focusAgent = m_focusAgentObj->AddComponent<FocusAgentGUI>();
@@ -321,6 +320,7 @@ void GameScene::OnAttach()
 
         auto EntityInteractionObj = SceneObject::MakeShared();
         auto interactionFloatGUI = EntityInteractionObj->AddComponent<InteractionFloatGUI>();
+        EntityInteractionObj->SetActive(false);
         entityInteraction->SetInteractionFloatGUI(interactionFloatGUI);
         m_playerInterfaceGroup->AddChild(EntityInteractionObj);
 
@@ -438,8 +438,6 @@ void GameScene::Update(const Time& time)
         }
     }
 
-    m_playerTagObj->GetComponent<PlayerTagGUI>()->SetTargetPosition(m_heroObj->GetTransform()->GetWorldPosition() + Vector3::Up * 1.8f);
-
     Vector3 playerPosition = m_heroObj->GetTransform()->GetWorldPosition();
     Vector3 playerForward = Vector3::Transform(Vector3::Backward, GetMainCamera()->GetTransform()->GetWorldRotation());
     Vector3 playerForwardXZ = Vector3(playerForward.x, 0.0f, playerForward.z);
@@ -459,7 +457,7 @@ void GameScene::Render(udsdx::RenderParam& param)
     Scene::Render(param);
 }
 
-void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int character, int channelID)
+void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int character, int channelID, std::string_view username)
 {
     m_currentChannelID = channelID;
     m_channelSwitchObj->GetComponent<ChannelSwitchGUI>()->InitializeChannel(channelID);
@@ -478,6 +476,8 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
             playerRenderer->InitializePriest();
 			break;
     }
+    PlayerTagGUI* playerTag = m_heroObj->GetComponent<PlayerTagGUI>();
+    playerTag->SetText(Common::DataRegistry::Str2Wstr(username));
 
     m_popupGUIManager->SetOnPopEmptyCallback([this]() {
         m_popupGUIManager->Append(m_pauseMenuObj);
@@ -593,7 +593,7 @@ void GameScene::AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj, 
 
 void GameScene::AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj)
 {
-	m_playerInterfaceGroup->AddChild(obj);
+    m_playerInterfaceBackGroup->AddChild(obj);
 }
 
 void GameScene::RequestChangeGameScene(GameSceneType type)

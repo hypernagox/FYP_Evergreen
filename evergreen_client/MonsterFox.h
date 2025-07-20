@@ -7,9 +7,6 @@ using namespace udsdx;
 
 class MonsterFox : public Monster
 {
-protected:
-	MonsterHPPanel* m_hpPanel;
-
 public:
 	Transform* m_transformBody;
 

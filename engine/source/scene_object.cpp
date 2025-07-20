@@ -414,10 +414,10 @@ namespace udsdx
 			}
 			node = node->m_parent;
 		}
-		return node->m_active && node->m_sceneRoot;
+		return node->m_active && node->m_sceneRoot != nullptr;
 	}
 
-	bool SceneObject::GetAttachedInScene() const
+	Scene* SceneObject::GetScene() const
 	{
 		const SceneObject* node = this;
 		while (node->m_parent != nullptr)
@@ -425,6 +425,11 @@ namespace udsdx
 			node = node->m_parent;
 		}
 		return node->m_sceneRoot;
+	}
+
+	bool SceneObject::GetAttachedInScene() const
+	{
+		return GetScene() != nullptr;
 	}
 
 	void SceneObject::SetActive(bool active)

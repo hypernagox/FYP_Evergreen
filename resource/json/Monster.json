@@ -1,13 +1,16 @@
 {
   "Fox": {
+    "Name": "여우",
     "hp": 10,
     "DropItem": "Foxtail"
   },
   "Bear": {
+    "Name": "곰",
     "hp": 10,
     "DropItem": "Meat"
   },
   "Boss": {
+    "Name": "드래곤 (보스)",
     "hp": 500,
     "DropItem": "Meat"
   }

@@ -45,7 +45,7 @@ private:
 	bool m_isRegisterSuccess = false;
 
 
-	std::string m_userId;
+	std::string m_userId = "localuser";
 	std::string m_userPw;
 	std::string m_class_type;
 };

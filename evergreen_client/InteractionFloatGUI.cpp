@@ -30,6 +30,14 @@ void InteractionFloatGUI::OnInitialize()
 	m_panel->AddChild(m_interactionIcon);
 }
 
+void InteractionFloatGUI::OnActive()
+{
+	m_interactionSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\blip.wav"))->CreateInstance();
+	m_interactionSound->SetVolume(0.5f);
+	m_interactionSound->Play();
+	m_panel->GetTransform()->SetLocalScale(Vector3(0.0f, 1.0f, 1.0f));
+}
+
 void InteractionFloatGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	auto gameScene = dynamic_cast<GameScene*>(&scene);
@@ -49,6 +57,8 @@ void InteractionFloatGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 		else
 			m_panel->SetActive(false);
 	}
+	float x = m_panel->GetTransform()->GetLocalScale().x;
+	m_panel->GetTransform()->SetLocalScale(Vector3(std::lerp(x, 1.0f, time.deltaTime * 8.0f), 1.0f, 1.0f));
 }
 
 void InteractionFloatGUI::SetText(const std::wstring& text)

@@ -190,7 +190,7 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 					m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_attack4.yac")), false, true);
 					break;
 				}
-				m_attackState = (m_attackState + 1) % 4;
+				m_attackState = (m_attackState + 1) % 2;
 				break;
 			case CharacterType::Priest:
 				switch (m_attackState)

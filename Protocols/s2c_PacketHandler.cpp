@@ -31,6 +31,7 @@
 #include "ForcedMovement.h"
 #include "MainScene.h"
 #include "MonsterBoss.h"
+#include "PlayerTagGUI.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -686,6 +687,10 @@ const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::
 			// TODO: 플레이어 이름 변경을 위한 네임태그 컴포넌트 수집
 			renderer->SetPlayerWeapon(pkt_.weapon_id());
 			renderer->SetPlayerArmor(pkt_.armor_id());
+		}
+		if (const auto playerTag = obj->GetComponent<PlayerTagGUI>())
+		{
+			playerTag->SetText(Common::DataRegistry::Str2Wstr(user_name));
 		}
 	}
 	else
