@@ -430,6 +430,10 @@ void GameScene::Update(const Time& time)
         {
             ChangeGameScene(m_sceneType == GameSceneType::Default ? GameSceneType::Dungeon : GameSceneType::Default);
         }
+        if (INSTANCE(Input)->GetKeyDown(Keyboard::F1))
+        {
+            m_interfaceGroup->SetActive(!m_interfaceGroup->GetActive());
+        }
     }
 
     m_playerTagObj->GetComponent<PlayerTagGUI>()->SetTargetPosition(m_heroObj->GetTransform()->GetWorldPosition() + Vector3::Up * 1.8f);
