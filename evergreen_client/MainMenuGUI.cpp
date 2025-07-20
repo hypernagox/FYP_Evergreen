@@ -32,7 +32,7 @@ void MainMenuGUI::OnInitialize()
 	m_titleImage->GetTransform()->SetLocalPosition(Vector3(-794.0f, 419.0f, 0.0f));
 	auto titleImageRenderer = m_titleImage->AddComponent<GUIImage>();
 	titleImageRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\title.png")));
-	titleImageRenderer->SetSize(Vector2(780.0f, 440.0f));
+	titleImageRenderer->SetSize(Vector2(780.0f, 520.0f));
 	m_panel->AddChild(m_titleImage);
 
 	m_versionText = SceneObject::MakeShared();

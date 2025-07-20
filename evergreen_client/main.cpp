@@ -68,6 +68,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UpdownStudio::Initialize(hInstance, L"Evergreen");
     UpdownStudio::RegisterUpdateCallback(Update);
 
+    HICON hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(MAINICON));
+    SendMessage(INSTANCE(Core)->GetMainWindow(), WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+
     GuideSystem::GetInst()->Init();
     NAVIGATION->Init();
     NAVIGATION->InitTLS();
