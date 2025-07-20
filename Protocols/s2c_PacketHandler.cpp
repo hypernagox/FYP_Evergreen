@@ -592,6 +592,7 @@ const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>
 	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {}, L"퀘스트를 종료하는 중 ...");
+	GuideSystem::GetInst()->DisableClearTree();
 	return true;
 }
 
@@ -642,7 +643,9 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 
 	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
 	GuideSystem::GetInst()->ToggleFlag();
-	GuideSystem::GetInst()->SetGuidePath(Vector3(-44.4872F, 74.50986F, -59.177734F));
+	GuideSystem::GetInst()->AppearClearTree(Vector3(-20.861689F, 72.62489F, 46.038242F)
+	);
+	//GuideSystem::GetInst()->SetGuidePath(Vector3(-44.4872F, 74.50986F, -59.177734F));
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	return true;
 }

@@ -56,6 +56,25 @@ public:
 		}
 	}
 	Vector3 temp_force_pos = {};
+public:
+	const auto& GetClearTree()const noexcept { return m_clear_tree_obj; }
+	const auto& AppearClearTree(const Vector3& tree_pos)noexcept {
+		ToggleFlag();
+		m_guide_active_flag = true;
+		temp_force_pos = tree_pos;
+		m_clear_tree_obj->SetActive(true);
+		m_clear_tree_obj->GetTransform()->SetLocalPosition(tree_pos);
+		SetGuidePathInternal(tree_pos);
+		return m_clear_tree_obj;
+	}
+	void DisableClearTree()noexcept {
+		m_guide_active_flag = false;
+		temp_force_pos = Vector3::Zero;
+		m_clear_tree_obj->SetActive(false);
+	}
+	void SetClearTree(std::shared_ptr<udsdx::SceneObject> clear_tree)noexcept {
+		m_clear_tree_obj.swap(clear_tree);
+	}
 private:
 	void SetGuidePathInternal(const Vector3& target_pos);
 private:
@@ -76,5 +95,8 @@ private:
 
 	std::unordered_set<uint32_t> m_in_active_list;
 	std::unordered_set<uint32_t> m_active_list;
+
+
+	std::shared_ptr<udsdx::SceneObject> m_clear_tree_obj;
 };
 

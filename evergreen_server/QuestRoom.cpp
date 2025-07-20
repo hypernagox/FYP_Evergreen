@@ -181,7 +181,8 @@ void QuestRoom::CheckPartyQuestState()noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_HARVEST;
 		b.obj_type = 0;
-		auto p = Vector3(-42.968254F, 75.610634F, -87.984F);
+		auto p = Vector3(-20.861689F, 72.62489F, 46.038242F)
+			;
 		//p = m_ownerPartrySystem->m_member[0]->GetOwnerEntity()->GetComp<PositionComponent>()->pos;
 		b.x = p.x;
 		b.y = p.y;

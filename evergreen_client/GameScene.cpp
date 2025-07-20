@@ -119,30 +119,30 @@ void GameScene::OnAttach()
     {
         std::shared_ptr<SceneObject> treeObj = SceneObject::MakeShared();
         auto treeRenderer = treeObj->AddComponent<MeshRenderer>();
-
+        
         treeObj->GetTransform()->SetLocalScale(Vector3::One * 0.01f);
-        treeObj->GetTransform()->SetLocalPosition(Vector3(-42.968254f, 74.610634f, -87.984f));
+        treeObj->GetTransform()->SetLocalPosition(Vector3(-20.861689F, 72.62489F, 46.038242F));
         treeObj->SetActive(true);
-
+        
         treeRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"goldentree\\tree.yms")));
         treeRenderer->SetMaterial(shader);
-
+        
         {
             udsdx::Material treeMaterial(shader);
             treeMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\leaves_color.png")), 0);
             treeMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\leaves_nm.png")), 1);
-
+        
             treeRenderer->SetMaterial(treeMaterial, 0);
         }
-
+        
         {
             udsdx::Material treeMaterial(shader);
             treeMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\trunk_Base_color.png")), 0);
             treeMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"goldentree\\trunk_Normal_OpenGL.png")), 1);
-
+        
             treeRenderer->SetMaterial(treeMaterial, 1);
         }
-
+        
         {
             auto interactiveEntity = treeObj->AddComponent<InteractiveEntity>();
             interactiveEntity->SetInteractionText(L"보상 얻기");
@@ -150,9 +150,11 @@ void GameScene::OnAttach()
                 //Send(Create_c2s_CHANGE_HARVEST_STATE());
                 });
         }
-
+        
         AddActiveObject(treeObj, GameSceneType::Default);
+        treeObj->SetActive(false);
         GuideSystem::GetInst()->AddHarvestMeshObject(treeObj);
+        GuideSystem::GetInst()->SetClearTree(treeObj);
 
         m_defaultEnvironmentObject = SceneObject::MakeShared();
         auto environmentRenderer = m_defaultEnvironmentObject->AddComponent<EnvironmentRenderer>();
@@ -191,7 +193,7 @@ void GameScene::OnAttach()
             }
         }
 
-        GuideSystem::GetInst()->AddHarvestMeshObject(treeObj);
+       // GuideSystem::GetInst()->AddHarvestMeshObject(treeObj);
 
         m_minimapRenderer = std::make_unique<MinimapRenderer>(INSTANCE(Core)->GetDevice(), 256, 256);
     }
