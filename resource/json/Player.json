@@ -23,16 +23,16 @@
     "InitWeaponKey": "Staff Priest",
     "InitArmorKey": "Priest Armor 1"
   },
-  "Gunner": {
+  "Archer": {
     "hp": 3,
     "atk": 3,
-    "name": "거너",
+    "name": "궁수",
     "position": {
       "x": 7.0,
       "y": 8.0,
       "z": 9.0
     },
-    "InitWeaponKey": "Master Sword",
+    "InitWeaponKey": "Bow",
     "InitArmorKey": "Zelda Armor 1"
   }
 }

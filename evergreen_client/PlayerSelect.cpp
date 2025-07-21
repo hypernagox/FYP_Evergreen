@@ -23,7 +23,7 @@ void PlayerSelect::OnInitialize()
 	m_characterObjects[2] = SceneObject::MakeShared();
 	{
 		auto playerRenderer = m_characterObjects[2]->AddComponent<PlayerRenderer>();
-		playerRenderer->InitializePriest();
+		playerRenderer->InitializeArcher();
 	}
 	GetSceneObject()->AddChild(m_characterObjects[2]);
 
@@ -73,11 +73,17 @@ void PlayerSelect::SetShowingCharacter(unsigned int characterIndex)
 		}
 		if (i == characterIndex)
 		{
-			renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"Zelda\\stand_arguing.yac")), true, true);
+			if (i == 2)
+				renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"archer\\AnimationJog\\stand_arguing.yac")), true, true);
+			else
+				renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"Zelda\\stand_arguing.yac")), true, true);
 		}
 		else
 		{
-			renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.yac")), true, false);
+			if (i == 2)
+				renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"archer\\AnimationJog\\archer_idle.yac")), true, true);
+			else
+				renderer->SetAnimation(INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.yac")), true, false);
 		}
 	}
 }

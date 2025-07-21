@@ -11,6 +11,7 @@ public:
 	{
 		Warrior,
 		Priest,
+		Archer,
 	};
 	enum class AnimationState
 	{
@@ -51,6 +52,7 @@ public:
 
 	void InitializeWarrior();
 	void InitializePriest();
+	void InitializeArcher();
 
 	Transform* const GetRenderObjTransform() const noexcept { return m_rendererObj->GetTransform(); }
 	void SetRotation(const Quaternion& rotation) { m_rendererObj->GetTransform()->SetLocalRotation(rotation); }

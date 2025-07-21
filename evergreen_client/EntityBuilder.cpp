@@ -42,7 +42,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Player(EntityBuild
 		playerComponent->InitializePriest();
 		break;
 	default:
-		playerComponent->InitializePriest();
+		playerComponent->InitializeArcher();
 		break;
 	}
 

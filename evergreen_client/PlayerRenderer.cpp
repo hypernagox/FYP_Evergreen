@@ -92,6 +92,24 @@ void PlayerRenderer::InitializePriest()
 	SetPlayerArmor(DATA_TABLE->GetArmorIDInt(GET_DATA(std::string, "Player", "Priest", "InitArmorKey")));
 }
 
+void PlayerRenderer::InitializeArcher()
+{
+	m_renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"archer\\archer.yrms")));
+
+	m_transformBody = m_bodyObj->GetTransform();
+	m_rendererObj->AddChild(m_bodyObj);
+
+	m_rendererObj->GetTransform()->SetLocalScale(m_rendererObj->GetTransform()->GetLocalScale() * 2.25f);
+
+	m_transformBody->SetLocalPositionY(-5.5f);
+
+	OnAnimationStateChange(AnimationState::Idle);
+	m_characterType = CharacterType::Archer;
+
+	SetPlayerWeapon(DATA_TABLE->GetWeaponIDInt(GET_DATA(std::string, "Player", "Archer", "InitWeaponKey")));
+	SetPlayerArmor(DATA_TABLE->GetArmorIDInt(GET_DATA(std::string, "Player", "Archer", "InitArmorKey")));
+}
+
 void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
 	EntityMovement* entityMovement = GetComponent<EntityMovement>();
@@ -139,13 +157,28 @@ void PlayerRenderer::UpdateViewDirection(float deltaTime)
 
 void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 {
-	std::wstring jogPrefix = m_characterType == CharacterType::Warrior ? L"Zelda\\AnimationJog\\" : L"priest\\AnimationJog\\";
+	std::wstring jogPrefix;
+	switch (m_characterType)
+	{
+	case CharacterType::Warrior:
+		jogPrefix = L"Zelda\\AnimationJog\\";
+		break;
+	case CharacterType::Priest:
+		jogPrefix = L"priest\\AnimationJog\\";
+		break;
+	case CharacterType::Archer:
+		jogPrefix = L"archer\\AnimationJog\\";
+		break;
+	}
 
 	switch (state)
 	{
 	case AnimationState::Idle:
 		m_attackState = 0;
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.yac")), true);
+		if (m_characterType == CharacterType::Archer)
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"archer\\AnimationJog\\archer_idle.yac")), true);
+		else
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_stand.yac")), true);
 		break;
 	case AnimationState::RunForward:
 		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(jogPrefix + L"jog_forward_fast.yac")), true);
@@ -207,6 +240,9 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 				}
 				m_attackState = (m_attackState + 1) % 3;
 				break;
+			case CharacterType::Archer:
+				m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"archer\\AnimationJog\\archer_attack.yac")), false, true);
+				break;
 		}
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
 		break;
@@ -215,7 +251,10 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 		*m_stateMachine->GetConditionRefBool("Hit") = false;
 		break;
 	case AnimationState::Death:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_die.yac")), false);
+		if (m_characterType == CharacterType::Archer)
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"archer\\AnimationJog\\archer_death.yac")), false);
+		else
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_die.yac")), false);
 		*m_stateMachine->GetConditionRefBool("Death") = false;
 		break;
 	}
@@ -245,7 +284,10 @@ void PlayerRenderer::SetPlayerWeapon(int weaponID)
 	if (toolRenderer == nullptr)
 	{
 		toolRenderer = m_bodyObj->AddComponent<RiggedPropRenderer>();
-		toolRenderer->SetBoneName("Bip001 R Hand");
+		if (m_characterType == CharacterType::Archer)
+			toolRenderer->SetBoneName("mixamorig:LeftHand");
+		else
+			toolRenderer->SetBoneName("Bip001 R Hand");
 	}
 
 	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "Model"))));
@@ -277,6 +319,11 @@ void PlayerRenderer::SetPlayerArmor(int armorID)
 		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_0" + texturePostfix + L".png"))), 1);
 		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_2" + texturePostfix + L".png"))), 2);
 		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"priest\\priest_diffuse_1.png"))), 3);
+		break;
+	case CharacterType::Archer:
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"archer\\char_1.png"))), 1);
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"archer\\char_2.png"))), 0);
+		m_renderer->SetMaterial(udsdx::Material(shader, INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"archer\\char_3.png"))), 2);
 		break;
 	}
 }

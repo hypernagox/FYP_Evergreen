@@ -473,7 +473,7 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
             playerRenderer->InitializePriest();
             break;
         default:
-            playerRenderer->InitializePriest();
+            playerRenderer->InitializeArcher();
 			break;
     }
     PlayerTagGUI* playerTag = m_heroObj->GetComponent<PlayerTagGUI>();
