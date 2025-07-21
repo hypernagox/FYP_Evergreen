@@ -189,7 +189,7 @@
     <FxCompile>
       <ShaderModel>6.0</ShaderModel>
       <ObjectFileOutput>$(OutDir)compiled_shaders\%(Filename).cso</ObjectFileOutput>
-      <PreprocessorDefinitions>KERNEL_SIZE=32;BLUR_SAMPLE=16;MAX_BLUR_RADIUS=20</PreprocessorDefinitions>
+      <PreprocessorDefinitions>KERNEL_SIZE=32;BLUR_SAMPLE=16;MAX_BLUR_RADIUS=64</PreprocessorDefinitions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
@@ -218,7 +218,7 @@
     <FxCompile>
       <ShaderModel>6.0</ShaderModel>
       <ObjectFileOutput>$(OutDir)compiled_shaders\%(Filename).cso</ObjectFileOutput>
-      <PreprocessorDefinitions>KERNEL_SIZE=32;BLUR_SAMPLE=16;MAX_BLUR_RADIUS=20</PreprocessorDefinitions>
+      <PreprocessorDefinitions>KERNEL_SIZE=32;BLUR_SAMPLE=16;MAX_BLUR_RADIUS=64</PreprocessorDefinitions>
       <DisableOptimizations>true</DisableOptimizations>
       <EnableDebuggingInformation>true</EnableDebuggingInformation>
     </FxCompile>
@@ -249,7 +249,7 @@
     <FxCompile>
       <ShaderModel>6.0</ShaderModel>
       <ObjectFileOutput>$(OutDir)compiled_shaders\%(Filename).cso</ObjectFileOutput>
-      <PreprocessorDefinitions>KERNEL_SIZE=32;BLUR_SAMPLE=16;MAX_BLUR_RADIUS=20</PreprocessorDefinitions>
+      <PreprocessorDefinitions>KERNEL_SIZE=32;BLUR_SAMPLE=16;MAX_BLUR_RADIUS=64</PreprocessorDefinitions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -98,16 +98,16 @@ void GameScene::OnAttach()
 
     {
         m_craftTableObj = SceneObject::MakeShared();
-        m_craftTableObj->GetTransform()->SetLocalPosition(Vector3(-123.22470092773438f, 75.68199920654297f, 16.593002319335939f));
+        m_craftTableObj->GetTransform()->SetLocalPosition(Vector3(-123.2247f, 75.6820f, 16.5930f));
         m_craftTableObj->GetTransform()->SetLocalRotation(Quaternion(0.0f, 1.0f, 0.0f, 0.0f));
         m_craftTableObj->GetTransform()->SetLocalScale(Vector3(-1.0f, 1.0f, -1.0f) * 0.01f);
+
+        auto craftTableRenderer = m_craftTableObj->AddComponent<MeshRenderer>();
+        craftTableRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Village\\O_Table_B.yms")));
 
         udsdx::Material craftTableMaterial(shader);
         craftTableMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_D.tga")), 0);
         craftTableMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_N.tga")), 1);
-
-        auto craftTableRenderer = m_craftTableObj->AddComponent<MeshRenderer>();
-        craftTableRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Village\\O_Table_B.yms")));
         craftTableRenderer->SetMaterial(craftTableMaterial, 0);
 
         auto interactiveEntity = m_craftTableObj->AddComponent<InteractiveEntity>();
@@ -115,6 +115,30 @@ void GameScene::OnAttach()
         interactiveEntity->SetInteractionCallback([this]() { m_popupGUIManager->Append(m_craftObj); });
 
         AddActiveObject(m_craftTableObj, GameSceneType::Default);
+    }
+
+    {
+        m_jobBoardObj = SceneObject::MakeShared();
+        m_jobBoardObj->GetTransform()->SetLocalPosition(Vector3(-121.1282f, 76.0800f, 3.5771f));
+        m_jobBoardObj->GetTransform()->SetLocalRotation(Quaternion(0.0f, 0.1157f, 0.0f, 0.9932f));
+        m_jobBoardObj->GetTransform()->SetLocalScale(Vector3(-1.5303f, 1.5303f, -1.5303f) * 0.01f);
+
+        auto jobBoardRenderer = m_jobBoardObj->AddComponent<MeshRenderer>();
+        jobBoardRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"environment\\Village\\O_WoodJobBoard.yms")));
+
+        udsdx::Material craftTableMaterial(shader);
+        craftTableMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_D.tga")), 0);
+        craftTableMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_1\\M_Kit_1_N.tga")), 1);
+        jobBoardRenderer->SetMaterial(craftTableMaterial, 0);
+        craftTableMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_2\\M_Kit_2_D.tga")), 0);
+        craftTableMaterial.SetSourceTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"environment\\Maps\\M_Kit_2\\M_Kit_2_N.tga")), 1);
+        jobBoardRenderer->SetMaterial(craftTableMaterial, 1);
+
+        auto interactiveEntity = m_jobBoardObj->AddComponent<InteractiveEntity>();
+        interactiveEntity->SetInteractionText(L"퀘스트 확인하기");
+        interactiveEntity->SetInteractionCallback([this]() { m_popupGUIManager->Append(m_partyListObj, m_partyListObj->GetComponent<QuestGUI>()->GetQuestListPanel()); });
+
+        AddActiveObject(m_jobBoardObj, GameSceneType::Default);
     }
 
     {

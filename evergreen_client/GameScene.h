@@ -64,6 +64,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_equipmentObj;
 	std::shared_ptr<udsdx::SceneObject> m_tutorialObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftObj;
+	std::shared_ptr<udsdx::SceneObject> m_jobBoardObj;
 	std::shared_ptr<udsdx::SceneObject> m_pauseMenuObj;
 	std::shared_ptr<udsdx::SceneObject> m_partyListObj;
 	std::shared_ptr<udsdx::SceneObject> m_channelSwitchObj;

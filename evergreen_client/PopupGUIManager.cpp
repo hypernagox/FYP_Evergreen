@@ -23,6 +23,10 @@ void PopupGUIManager::Append(const std::shared_ptr<udsdx::SceneObject>& popup, c
 		{
 			if (!it->PopupPages.empty())
 			{
+				if (it->PopupPages.back() == page)
+				{
+					return;
+				}
 				it->PopupPages.back()->SetActive(false);
 			}
 			it->PopupPages.emplace_back(page);

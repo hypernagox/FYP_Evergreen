@@ -9,7 +9,7 @@ namespace udsdx
 	class MotionBlur
 	{
 	public:
-		constexpr const static UINT MaxBlurRadius = 20;
+		constexpr const static UINT MaxBlurRadius = 64;
 		constexpr const static float BlurTimeScale = 0.01f;
 
 	public:
