@@ -96,6 +96,11 @@ void PlayerInventoryGUI::SelectInventorySlot(AuthenticPlayer* target, int id)
 	else if (category == "Equipment")
 	{
 		const auto subcategory = GET_DATA(std::string, "Item", itemName, "Subcategory");
+
+		m_equipSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\equip.wav"))->CreateInstance();
+		m_equipSound->SetVolume(0.5f);
+		m_equipSound->Play();
+
 		if (subcategory == "Weapon")
 		{
 			auto weaponID = DATA_TABLE->GetWeaponIDInt(GET_DATA(std::string, "Item", itemName, "WeaponKey"));

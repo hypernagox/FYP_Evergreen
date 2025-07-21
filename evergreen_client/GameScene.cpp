@@ -271,6 +271,12 @@ void GameScene::OnAttach()
 
         m_playerInterfaceGroup->AddChild(minimapObj);
 
+        auto EntityInteractionObj = SceneObject::MakeShared();
+        auto interactionFloatGUI = EntityInteractionObj->AddComponent<InteractionFloatGUI>();
+        EntityInteractionObj->SetActive(false);
+        entityInteraction->SetInteractionFloatGUI(interactionFloatGUI);
+        m_playerInterfaceGroup->AddChild(EntityInteractionObj);
+
         auto guiObj = SceneObject::MakeShared();
         auto guiRenderer = guiObj->AddComponent<PlayerStatusGUI>();
         m_playerInterfaceGroup->AddChild(guiObj);
@@ -317,12 +323,6 @@ void GameScene::OnAttach()
         auto partyStatusObj = SceneObject::MakeShared();
         auto partyStatusComp = partyStatusObj->AddComponent<PartyStatusGUI>();
         m_playerInterfaceGroup->AddChild(partyStatusObj);
-
-        auto EntityInteractionObj = SceneObject::MakeShared();
-        auto interactionFloatGUI = EntityInteractionObj->AddComponent<InteractionFloatGUI>();
-        EntityInteractionObj->SetActive(false);
-        entityInteraction->SetInteractionFloatGUI(interactionFloatGUI);
-        m_playerInterfaceGroup->AddChild(EntityInteractionObj);
 
         m_pauseMenuObj = SceneObject::MakeShared();
         m_pauseMenuObj->SetActive(false);

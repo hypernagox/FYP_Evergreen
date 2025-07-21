@@ -642,7 +642,12 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 	// 퀘스트를 깨면 무조건 메인 월드로 나가게 되므로 항상 마을맵 이동 로직을 수행한다.
 	// 이미 마을이더라 하더라도 동작에는 문제가 없으나 추후 더 유연한 맵 이동 로직 요
 
-	std::cout << "퀘스트 ID: " << pkt_.party_quest_id() << "클리어 ! 나가려면 N키를 눌러주세요\n";
+	static std::unique_ptr<SoundEffectInstance> g_menuSound;
+	g_menuSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\quest_clear.wav"))->CreateInstance();
+	g_menuSound->SetVolume(0.5f);
+	g_menuSound->Play();
+
+	INSTANCE(GameGUIFacade)->LogFloat->AddText(L"퀘스트 클리어 ! 보상 나무를 따라가 보상을 확인하세요.");
 	GuideSystem::GetInst()->ToggleFlag();
 	GuideSystem::GetInst()->AppearClearTree(Vector3(-20.861689F, 72.62489F, 46.038242F)
 	);

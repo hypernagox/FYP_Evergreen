@@ -321,6 +321,9 @@
     <ClCompile Include="MonsterHPPanel.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="DropItemAcquireRenderer.cpp">
+      <Filter>NetEntity\ContentsEntity\DropItem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -547,6 +550,9 @@
     </ClInclude>
     <ClInclude Include="MonsterHPPanel.h">
       <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="DropItemAcquireRenderer.h">
+      <Filter>NetEntity\ContentsEntity\DropItem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

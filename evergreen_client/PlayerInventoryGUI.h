@@ -21,4 +21,6 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_slotContents[NUM_ROWS * NUM_COLUMNS];
 	std::shared_ptr<udsdx::SceneObject> m_slotText[NUM_ROWS * NUM_COLUMNS];
 	std::shared_ptr<udsdx::SceneObject> m_coinText;
+
+	std::unique_ptr<SoundEffectInstance> m_equipSound;
 };
