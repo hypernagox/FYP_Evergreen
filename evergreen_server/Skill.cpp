@@ -7,6 +7,7 @@
 #include "TimerRoutine.h"
 #include "Projectile.h"
 #include "StatusSystem.h"
+#include "Service.h"
 
 using namespace NagiocpX;
 
@@ -260,7 +261,8 @@ bool ArcherSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
 	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
 	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pos_comp->body_angle);
 	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
-	const auto& view_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
+	const auto broad_caster = pOwner->GetComp<MoveBroadcaster>();
+	const auto& view_list = broad_caster->GetViewListNPC();
 
 	const ContentsEntity* closestTarget = nullptr;
 	float minDistSq = std::numeric_limits<float>::max();
@@ -307,22 +309,33 @@ bool ArcherSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
 			}
 			
 		}
-		pOwner->GetComp<MoveBroadcaster>()->BroadcastPacket(
-			Create_s2c_PLAYER_ATTACK(
-				pOwner->GetObjectID64(),
-				pos_comp->body_angle,
-				ToFlatVec(pos_comp->pos),
-				Nagox::Enum::SKILL_TYPE_SKILL_1
-			)
+		auto pkt1 = Create_s2c_PLAYER_ATTACK(
+			pOwner->GetObjectID64(),
+			pos_comp->body_angle,
+			ToFlatVec(pos_comp->pos),
+			Nagox::Enum::SKILL_TYPE_SKILL_1
 		);
-		pOwner->GetSession()->SendAsync(
-			Create_s2c_ARROW_RAIN(
-				pOwner->GetObjectID64(),
-				pos_comp->body_angle,
-				ToFlatVec(centerPos),
-				Nagox::Enum::SKILL_TYPE_SKILL_1
-			)
+		auto pkt2 = Create_s2c_ARROW_RAIN(
+			pOwner->GetObjectID64(),
+			pos_comp->body_angle,
+			ToFlatVec(centerPos),
+			Nagox::Enum::SKILL_TYPE_SKILL_1
 		);
+		const auto owner_session = pOwner->GetSession();
+		owner_session->SendAsync(pkt1);
+		owner_session->SendAsync(pkt2);
+		const auto g_main_server = NagiocpX::ServerService::GetMainService();
+		const auto& session_list = broad_caster->GetViewListSession();
+		auto b = session_list.data();
+		const auto e = b + session_list.size();
+		while (e != b) {
+			if (const auto entity = g_main_server->GetSession((*b++).first))
+			{
+				const auto session = entity->GetSession();
+				session->SendAsync(pkt1);
+				session->SendAsync(pkt2);
+			}
+		}
 	}
 
 	
