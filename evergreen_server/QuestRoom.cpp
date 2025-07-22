@@ -15,7 +15,7 @@
 #include "Collider_Common.h"
 #include "HP.h"
 #include "Death.h"
-#include "Collider_Common.h"
+#include "Interaction.h"
 
 std::atomic_int aaaa;
 
@@ -75,7 +75,9 @@ QuestRoom::~QuestRoom() noexcept
 
 void QuestRoom::NotifyQuestClear(NagiocpX::ContentsEntity* const entity) const noexcept
 {
-	entity->GetSession()->SendAsync(Create_s2c_PARTY_QUEST_CLEAR(m_ownerPartrySystem->GetCurPartyQuestID()));
+	entity->GetSession()->SendAsync(
+		Create_s2c_PARTY_QUEST_CLEAR(m_ownerPartrySystem->GetCurPartyQuestID(), ToFlatVec(m_clear_tree_pos))
+	);
 }
 
 void QuestRoom::NotifyQuestFail(NagiocpX::ContentsEntity* const entity) const noexcept
@@ -181,14 +183,14 @@ void QuestRoom::CheckPartyQuestState()noexcept
 		EntityBuilder b;
 		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_HARVEST;
 		b.obj_type = 0;
-		auto p = Vector3(-20.861689F, 72.62489F, 46.038242F)
-			;
+		auto p = m_clear_tree_pos;
 		//p = m_ownerPartrySystem->m_member[0]->GetOwnerEntity()->GetComp<PositionComponent>()->pos;
 		b.x = p.x;
 		b.y = p.y;
 		b.z = p.z;
 		const auto m = EntityFactory::CreateClearTree(b);
 		m->SetDetailType(HARVEST_STATE::AVAILABLE);
+		m->GetComp<ClearTreeInteraction>()->SetNavMeshType(m_nav_mesh_type);
 		const auto pos = m->GetComp<PositionComponent>()->pos;
 		for (const auto& players : m_ownerPartrySystem->GetPartyMembers())
 		{
@@ -534,6 +536,7 @@ void InvadeQuest_1::InitQuestField() noexcept
 	}
 	SetTargetObject(Vector3(-3.6082437F, 81.624916F, -121.17864F));
 	StartUpdate(Vector3(-38.879353F, 75.17851F, -85.985756F));
+	SetClearTreePos(Vector3(-45.356216F, 87.45589F, -173.66286F));
 }
 
 void InvadeQuest_2::InitQuestField() noexcept
@@ -582,6 +585,7 @@ void InvadeQuest_2::InitQuestField() noexcept
 	}
 	SetTargetObject(Vector3(16.376675F, 70.53413F, -243.55034F));
 	StartUpdate(Vector3(-126.12132F, 81.613266F, -267.6741F));
+	SetClearTreePos(Vector3(26.943533F, 70.60607F, -241.96532F));
 }
 
 void NPCGuardQuest2::InitQuestField() noexcept

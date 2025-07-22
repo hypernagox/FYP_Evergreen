@@ -94,29 +94,32 @@ inline const char *EnumNameGROUP_TYPE(GROUP_TYPE e) {
 enum PLAYER_TYPE : uint8_t {
   PLAYER_TYPE_WARRIOR = 0,
   PLAYER_TYPE_PRIEST = 1,
+  PLAYER_TYPE_ARCHER = 2,
   PLAYER_TYPE_MIN = PLAYER_TYPE_WARRIOR,
-  PLAYER_TYPE_MAX = PLAYER_TYPE_PRIEST
+  PLAYER_TYPE_MAX = PLAYER_TYPE_ARCHER
 };
 
-inline const PLAYER_TYPE (&EnumValuesPLAYER_TYPE())[2] {
+inline const PLAYER_TYPE (&EnumValuesPLAYER_TYPE())[3] {
   static const PLAYER_TYPE values[] = {
     PLAYER_TYPE_WARRIOR,
-    PLAYER_TYPE_PRIEST
+    PLAYER_TYPE_PRIEST,
+    PLAYER_TYPE_ARCHER
   };
   return values;
 }
 
 inline const char * const *EnumNamesPLAYER_TYPE() {
-  static const char * const names[3] = {
+  static const char * const names[4] = {
     "WARRIOR",
     "PRIEST",
+    "ARCHER",
     nullptr
   };
   return names;
 }
 
 inline const char *EnumNamePLAYER_TYPE(PLAYER_TYPE e) {
-  if (::flatbuffers::IsOutRange(e, PLAYER_TYPE_WARRIOR, PLAYER_TYPE_PRIEST)) return "";
+  if (::flatbuffers::IsOutRange(e, PLAYER_TYPE_WARRIOR, PLAYER_TYPE_ARCHER)) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesPLAYER_TYPE()[index];
 }

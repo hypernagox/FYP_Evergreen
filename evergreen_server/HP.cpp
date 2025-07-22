@@ -29,6 +29,7 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 		if (atkObject->GetSession())
 		{
 			const int origin_hp = m_hp;
+			
 			const int result_dmg = atkObject->GetComp<StatusSystem>()->ApplyAtk(
 				origin_hp,
 				m_hp,

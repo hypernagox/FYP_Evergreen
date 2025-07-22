@@ -75,6 +75,7 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_BOSS_PROJ_MARK = 1036,
     s2c_HEAL = 1037,
     s2c_DASH = 1038,
+    s2c_ARROW_RAIN = 1039,
 };
 
 class NagiocpX::PacketSession;

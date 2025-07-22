@@ -127,10 +127,6 @@
     <Filter Include="ClientSession\QuestRoom\PathNPC">
       <UniqueIdentifier>{f77e96e5-80a9-4f2d-ab2a-d8d8d7031311}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Items\main">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Items\Interaction">
       <UniqueIdentifier>{4be9cf57-70ff-42b0-9b25-034aa9093ca7}</UniqueIdentifier>
     </Filter>
@@ -158,10 +154,14 @@
     <Filter Include="ClientSession\QuestRoom\BossRoom\BossBehaviorNode">
       <UniqueIdentifier>{41eb2450-ae2d-4b43-ac70-07da39ebd5d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="predefine\main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Items\main</Filter>
+      <Filter>predefine\main</Filter>
     </ClCompile>
     <ClCompile Include="ClientSession.cpp">
       <Filter>ClientSession</Filter>

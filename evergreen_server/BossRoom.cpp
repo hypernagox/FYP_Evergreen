@@ -18,8 +18,11 @@ void BossRoom::InitQuestField() noexcept
 		const auto pos = Vector3(-47.336597F, 18.003374F, -244.53511F);
 		EnterFieldWithFloatXYNPC(pos.x + 512.f, pos.z + 512.f, m_boss);
 	}
+	m_nav_mesh_type = NAVI_MESH_TYPE::BOSS_ROOM;
+	SetClearTreePos(Vector3(-47.336597F, 18.003374F, -244.53511F));
 	SetQuestBeginPos(Vector3(-19.447096F, 22.77558F, -284.62582F));
 	Broadcast2PartyMembers(Create_s2c_BOSS_ROOM_ENTER());
+	++m_mon_count;
 }
 
 S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept

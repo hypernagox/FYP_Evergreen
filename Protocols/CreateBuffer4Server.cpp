@@ -549,14 +549,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_OUT(
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_CLEAR(
     const int32_t party_quest_id,
+    const Nagox::Struct::Vec3& clear_tree_pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto party_quest_id_value = party_quest_id;
+    const auto clear_tree_pos_offset = &clear_tree_pos;
     const auto serializeds2c_PARTY_QUEST_CLEAR = Nagox::Protocol::Creates2c_PARTY_QUEST_CLEAR(
         builder
-,        party_quest_id_value    );
+,        party_quest_id_value,
+        clear_tree_pos_offset    );
     builder.Finish(serializeds2c_PARTY_QUEST_CLEAR);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_QUEST_CLEAR);
@@ -731,4 +734,27 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_DASH(
     builder.Finish(serializeds2c_DASH);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_DASH);
+}
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ARROW_RAIN(
+    const uint64_t atk_player_id,
+    const float body_angle,
+    const Nagox::Struct::Vec3& atk_pos,
+    const Nagox::Enum::SKILL_TYPE& atk_type,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto atk_player_id_value = atk_player_id;
+    const auto body_angle_value = body_angle;
+    const auto atk_pos_offset = &atk_pos;
+    const auto atk_type_value = atk_type;
+    const auto serializeds2c_ARROW_RAIN = Nagox::Protocol::Creates2c_ARROW_RAIN(
+        builder
+,        atk_player_id_value,
+        body_angle_value,
+        atk_pos_offset,
+        atk_type_value    );
+    builder.Finish(serializeds2c_ARROW_RAIN);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_ARROW_RAIN);
 }

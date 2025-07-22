@@ -247,3 +247,85 @@ bool PriestSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
 	}
 	return true;
 }
+
+bool ArcherDefaultAttack::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
+{
+	return true;
+}
+
+bool ArcherSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
+{
+	const auto pOwner = use_entity_system->GetOwnerEntityRaw();
+	const auto pos_comp = pOwner->GetComp<PositionComponent>();
+	constexpr Vector3 forward(0.0f, 0.0f, 1.0f);
+	const DirectX::SimpleMath::Matrix rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(pos_comp->body_angle);
+	const Vector3 rotatedForward = Vector3::Transform(forward, rotationMatrix);
+	const auto& view_list = pOwner->GetComp<MoveBroadcaster>()->GetViewListNPC();
+
+	const ContentsEntity* closestTarget = nullptr;
+	float minDistSq = std::numeric_limits<float>::max();
+
+	for (const auto npc : view_list)
+	{
+		const auto npcPosComp = npc->GetComp<PositionComponent>();
+		const auto npc_hp = npc->GetComp<HP>();
+
+		if (!npcPosComp || !npc_hp || npc->GetPrimaryGroupType() != Nagox::Enum::GROUP_TYPE_MONSTER)
+			continue;
+
+		const Vector3 toTarget = npcPosComp->pos - pos_comp->pos;
+		const float distSq = toTarget.LengthSquared();
+		if (distSq > 12.f * 12.f)
+			continue;
+
+		const float dot = rotatedForward.Dot(CommonMath::Normalized(toTarget));
+		if (dot < 0.5f) 
+			continue;
+
+		if (distSq < minDistSq)
+		{
+			minDistSq = distSq;
+			closestTarget = npc;
+		}
+	}
+
+	if (closestTarget)
+	{
+		const auto player = pOwner->SharedFromThis();
+		const auto centerPos = closestTarget->GetComp<PositionComponent>()->pos;
+
+		for (const auto npc : view_list)
+		{
+			const auto npcPosComp = npc->GetComp<PositionComponent>();
+			const auto npc_hp = npc->GetComp<HP>();
+			if (!npcPosComp || !npc_hp)
+				continue;
+			
+			if (CommonMath::IsInDistanceDX(npcPosComp->pos, centerPos, 10.f))
+			{
+				npc_hp->PostDoDmg(5, player, 5);
+			}
+			
+		}
+		pOwner->GetComp<MoveBroadcaster>()->BroadcastPacket(
+			Create_s2c_PLAYER_ATTACK(
+				pOwner->GetObjectID64(),
+				pos_comp->body_angle,
+				ToFlatVec(pos_comp->pos),
+				Nagox::Enum::SKILL_TYPE_SKILL_1
+			)
+		);
+		pOwner->GetSession()->SendAsync(
+			Create_s2c_ARROW_RAIN(
+				pOwner->GetObjectID64(),
+				pos_comp->body_angle,
+				ToFlatVec(centerPos),
+				Nagox::Enum::SKILL_TYPE_SKILL_1
+			)
+		);
+	}
+
+	
+
+	return true;
+}

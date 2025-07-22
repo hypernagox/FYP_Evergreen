@@ -298,7 +298,7 @@ void MainScene::OnLoginResult(Nagox::Enum::LOGIN_RESULT result, unsigned int cha
         break;
         case 2:
         {
-            m_class_type = "Gunner";
+            m_class_type = "Archer";
         }
         break;
         default:
@@ -334,7 +334,7 @@ bool MainScene::WaitRegisterResult()
         break;
         case 2:
         {
-            m_class_type = "Gunner";
+            m_class_type = "Archer";
         }
         break;
         default:

@@ -211,6 +211,9 @@ struct c2s_DASHBuilder;
 struct s2c_DASH;
 struct s2c_DASHBuilder;
 
+struct s2c_ARROW_RAIN;
+struct s2c_ARROW_RAINBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -3156,7 +3159,8 @@ inline ::flatbuffers::Offset<s2c_PARTY_OUT> Creates2c_PARTY_OUT(
 struct s2c_PARTY_QUEST_CLEAR FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_PARTY_QUEST_CLEARBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_PARTY_QUEST_ID = 4
+    VT_PARTY_QUEST_ID = 4,
+    VT_CLEAR_TREE_POS = 6
   };
   int32_t party_quest_id() const {
     return GetField<int32_t>(VT_PARTY_QUEST_ID, 0);
@@ -3164,9 +3168,16 @@ struct s2c_PARTY_QUEST_CLEAR FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Ta
   bool mutate_party_quest_id(int32_t _party_quest_id = 0) {
     return SetField<int32_t>(VT_PARTY_QUEST_ID, _party_quest_id, 0);
   }
+  const Nagox::Struct::Vec3 *clear_tree_pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_CLEAR_TREE_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_clear_tree_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_CLEAR_TREE_POS);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, VT_PARTY_QUEST_ID, 4) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_CLEAR_TREE_POS, 4) &&
            verifier.EndTable();
   }
 };
@@ -3177,6 +3188,9 @@ struct s2c_PARTY_QUEST_CLEARBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_party_quest_id(int32_t party_quest_id) {
     fbb_.AddElement<int32_t>(s2c_PARTY_QUEST_CLEAR::VT_PARTY_QUEST_ID, party_quest_id, 0);
+  }
+  void add_clear_tree_pos(const Nagox::Struct::Vec3 *clear_tree_pos) {
+    fbb_.AddStruct(s2c_PARTY_QUEST_CLEAR::VT_CLEAR_TREE_POS, clear_tree_pos);
   }
   explicit s2c_PARTY_QUEST_CLEARBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -3191,8 +3205,10 @@ struct s2c_PARTY_QUEST_CLEARBuilder {
 
 inline ::flatbuffers::Offset<s2c_PARTY_QUEST_CLEAR> Creates2c_PARTY_QUEST_CLEAR(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t party_quest_id = 0) {
+    int32_t party_quest_id = 0,
+    const Nagox::Struct::Vec3 *clear_tree_pos = nullptr) {
   s2c_PARTY_QUEST_CLEARBuilder builder_(_fbb);
+  builder_.add_clear_tree_pos(clear_tree_pos);
   builder_.add_party_quest_id(party_quest_id);
   return builder_.Finish();
 }
@@ -3977,6 +3993,89 @@ inline ::flatbuffers::Offset<s2c_DASH> Creates2c_DASH(
   s2c_DASHBuilder builder_(_fbb);
   builder_.add_target_pos(target_pos);
   builder_.add_dash_obj_id(dash_obj_id);
+  return builder_.Finish();
+}
+
+struct s2c_ARROW_RAIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_ARROW_RAINBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ATK_PLAYER_ID = 4,
+    VT_BODY_ANGLE = 6,
+    VT_ATK_POS = 8,
+    VT_ATK_TYPE = 10
+  };
+  uint64_t atk_player_id() const {
+    return GetField<uint64_t>(VT_ATK_PLAYER_ID, 0);
+  }
+  bool mutate_atk_player_id(uint64_t _atk_player_id = 0) {
+    return SetField<uint64_t>(VT_ATK_PLAYER_ID, _atk_player_id, 0);
+  }
+  float body_angle() const {
+    return GetField<float>(VT_BODY_ANGLE, 0.0f);
+  }
+  bool mutate_body_angle(float _body_angle = 0.0f) {
+    return SetField<float>(VT_BODY_ANGLE, _body_angle, 0.0f);
+  }
+  const Nagox::Struct::Vec3 *atk_pos() const {
+    return GetStruct<const Nagox::Struct::Vec3 *>(VT_ATK_POS);
+  }
+  Nagox::Struct::Vec3 *mutable_atk_pos() {
+    return GetStruct<Nagox::Struct::Vec3 *>(VT_ATK_POS);
+  }
+  Nagox::Enum::SKILL_TYPE atk_type() const {
+    return static_cast<Nagox::Enum::SKILL_TYPE>(GetField<uint8_t>(VT_ATK_TYPE, 0));
+  }
+  bool mutate_atk_type(Nagox::Enum::SKILL_TYPE _atk_type = static_cast<Nagox::Enum::SKILL_TYPE>(0)) {
+    return SetField<uint8_t>(VT_ATK_TYPE, static_cast<uint8_t>(_atk_type), 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_ATK_PLAYER_ID, 8) &&
+           VerifyField<float>(verifier, VT_BODY_ANGLE, 4) &&
+           VerifyField<Nagox::Struct::Vec3>(verifier, VT_ATK_POS, 4) &&
+           VerifyField<uint8_t>(verifier, VT_ATK_TYPE, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_ARROW_RAINBuilder {
+  typedef s2c_ARROW_RAIN Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_atk_player_id(uint64_t atk_player_id) {
+    fbb_.AddElement<uint64_t>(s2c_ARROW_RAIN::VT_ATK_PLAYER_ID, atk_player_id, 0);
+  }
+  void add_body_angle(float body_angle) {
+    fbb_.AddElement<float>(s2c_ARROW_RAIN::VT_BODY_ANGLE, body_angle, 0.0f);
+  }
+  void add_atk_pos(const Nagox::Struct::Vec3 *atk_pos) {
+    fbb_.AddStruct(s2c_ARROW_RAIN::VT_ATK_POS, atk_pos);
+  }
+  void add_atk_type(Nagox::Enum::SKILL_TYPE atk_type) {
+    fbb_.AddElement<uint8_t>(s2c_ARROW_RAIN::VT_ATK_TYPE, static_cast<uint8_t>(atk_type), 0);
+  }
+  explicit s2c_ARROW_RAINBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_ARROW_RAIN> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_ARROW_RAIN>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_ARROW_RAIN> Creates2c_ARROW_RAIN(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t atk_player_id = 0,
+    float body_angle = 0.0f,
+    const Nagox::Struct::Vec3 *atk_pos = nullptr,
+    Nagox::Enum::SKILL_TYPE atk_type = Nagox::Enum::SKILL_TYPE_DEFAULT) {
+  s2c_ARROW_RAINBuilder builder_(_fbb);
+  builder_.add_atk_player_id(atk_player_id);
+  builder_.add_atk_pos(atk_pos);
+  builder_.add_body_angle(body_angle);
+  builder_.add_atk_type(atk_type);
   return builder_.Finish();
 }
 

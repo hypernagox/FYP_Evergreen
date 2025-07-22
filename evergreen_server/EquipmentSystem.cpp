@@ -41,23 +41,23 @@ int EquipmentSystem::ApplyAtk(
 		result_dmg += equip->ApplyAtkEquipment(atk_obj, attacker_atk, victim_origin_hp, victim_hp, victim);
 	}
 	
-	if (const auto navi_agent = victim->GetComp<NaviAgent>())
-	{
-		if (const auto e = m_arrEquip[0])
-		{
-			if (DATA_TABLE->GetWeaponIDInt("Bow") == e->id)
-			{
-				// TODO: 장비옵션으로 넉백하기
-				const auto& atk_pos = atk_obj->GetComp<PositionComponent>()->pos;
-				const auto& victim_pos = victim->GetComp<PositionComponent>()->pos;
-				const auto dir = CommonMath::Normalized(victim_pos - atk_pos);
-				ClusterPredicate c;
-				victim->GetQueueabler()->EnqueueAsync(&NaviAgent::ForcedMovement, navi_agent, dir, 5.f);
-
-				victim->GetCurCluster()->Broadcast(c.ClusterPredicate::CreateMovePacket(victim));
-			}
-		}
-	}
+	//if (const auto navi_agent = victim->GetComp<NaviAgent>())
+	//{
+	//	if (const auto e = m_arrEquip[0])
+	//	{
+	//		if (DATA_TABLE->GetWeaponIDInt("Bow") == e->id)
+	//		{
+	//			// TODO: 장비옵션으로 넉백하기
+	//			const auto& atk_pos = atk_obj->GetComp<PositionComponent>()->pos;
+	//			const auto& victim_pos = victim->GetComp<PositionComponent>()->pos;
+	//			const auto dir = CommonMath::Normalized(victim_pos - atk_pos);
+	//			ClusterPredicate c;
+	//			victim->GetQueueabler()->EnqueueAsync(&NaviAgent::ForcedMovement, navi_agent, dir, 5.f);
+	//
+	//			victim->GetCurCluster()->Broadcast(c.ClusterPredicate::CreateMovePacket(victim));
+	//		}
+	//	}
+	//}
 	//std::cout << "Dmg: "<<result_dmg << std::endl;
 	victim_hp -= result_dmg;
 	return result_dmg;

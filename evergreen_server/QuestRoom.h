@@ -67,12 +67,15 @@ public:
 		++m_mon_count;
 		return temp_ptr;
 	}
+	void SetClearTreePos(const Vector3& pos)noexcept { m_clear_tree_pos = pos; }
 protected:
 	NagoxAtomic::Atomic<int8_t> m_mon_count{ 0 };
 	NagoxAtomic::Atomic<bool> m_isClear{ false };
 	NagoxAtomic::Atomic<int8_t> m_numOfMember{ 0 };
 	std::shared_ptr<PartyQuestSystem> m_ownerPartrySystem;
 	XMap<uint32_t, uint32_t> m_id2idx_table;
+	Vector3 m_clear_tree_pos = Vector3(-20.861689F, 72.62489F, 46.038242F);
+	NAVI_MESH_TYPE m_nav_mesh_type = NAVI_MESH_TYPE::MAIN_WORLD;
 };
 
 class NexusQuest

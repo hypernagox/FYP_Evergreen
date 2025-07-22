@@ -70,10 +70,14 @@ const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pS
 	{
 		characterType = 1;
 	}
-	else if ("Gunner" == class_type)
+	else if ("Archer" == class_type)
 	{
 		// TODO: 신캐릭추가하면 바뀌어야함
-		characterType = 1;
+		characterType = 2;
+	}
+	else
+	{
+		std::cout << "Invalid Class Type\n";
 	}
 	Mgr(ServerObjectMgr)->GetTargetMainScene()->OnLoginResult(res, characterType);
 
@@ -243,11 +247,12 @@ const bool Handle_s2c_PLAYER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSess
 	const auto skill_type = pkt_.atk_type();
 	const auto atk_player = Mgr(ServerObjectMgr)->GetServerObj(pkt_.atk_player_id());
 	if (!atk_player)return true;
-
+	
 	atk_player->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(pkt_.body_angle() * DEG2RAD + PI, 0.0f, 0.0f));
 	atk_player->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.atk_pos()));
 	//atk_player->GetComponent<PlayerRenderer>()->Attack();
 	atk_player->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Attack);
+	
 	return true;
 }
 
@@ -649,8 +654,9 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 
 	INSTANCE(GameGUIFacade)->LogFloat->AddText(L"퀘스트 클리어 ! 보상 나무를 따라가 보상을 확인하세요.");
 	GuideSystem::GetInst()->ToggleFlag();
-	GuideSystem::GetInst()->AppearClearTree(Vector3(-20.861689F, 72.62489F, 46.038242F)
-	);
+	GuideSystem::GetInst()->AppearClearTree(ToOriginVec3(pkt_.clear_tree_pos()));
+	//GuideSystem::GetInst()->AppearClearTree(Vector3(-20.861689F, 72.62489F, 46.038242F)
+	//);
 	//GuideSystem::GetInst()->SetGuidePath(Vector3(-44.4872F, 74.50986F, -59.177734F));
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	return true;
@@ -828,5 +834,56 @@ const bool Handle_s2c_DASH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 			fm->SetForcedMovement(ToOriginVec3(pkt_.target_pos()));
 		}
 	}
+	return true;
+}
+
+const bool Handle_s2c_ARROW_RAIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ARROW_RAIN& pkt_)
+{
+	constexpr const int arrowCount = 10;
+
+	const Vector3 offsets[arrowCount] =
+	{
+		Vector3(-2.0f, 22.0f, -1.0f),
+		Vector3(-1.0f, 18.5f, 1.0f),
+		Vector3(0.0f, 25.0f, 0.0f),
+		Vector3(1.2f, 21.0f, -0.8f),
+		Vector3(-1.5f, 20.0f, 1.5f),
+		Vector3(0.8f, 23.5f, 1.2f),
+		Vector3(-2.3f, 17.5f, -1.4f),
+		Vector3(0.5f, 24.0f, -1.8f),
+		Vector3(-0.7f, 19.0f, 0.9f),
+		Vector3(1.7f, 26.0f, 0.3f)
+	};
+
+	constexpr const float speeds[arrowCount] =
+	{
+		55.0f, 48.0f, 25.0f, 42.0f, 30.0f,
+		52.0f, 28.0f, 46.0f, 35.0f, 50.0f
+	};
+	//std::cout << "패킷옴";
+	const Vector3 center = ToOriginVec3(pkt_.atk_pos());
+
+	for (int i = 0; i < arrowCount; ++i)
+	{
+		const Vector3 spawnPos = center + offsets[i] - Vector3{ 0,5, 0 };
+		const Vector3 velocity = Vector3(0.0f, -1.0f, 0.0f) * speeds[i];
+
+		
+		
+		auto s = SceneObject::MakeShared();
+		s->GetTransform()->SetLocalPosition(spawnPos);
+		s->GetTransform()->SetLocalScale(.5f);
+
+		auto gizmoRenderer = s->AddComponent<MeshRenderer>();
+		gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
+		gizmoRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+		s->SetActive(true);
+		auto so = s->AddComponent<ServerObject>();
+		const auto proj = so->AddComp<Projectile>();
+		proj->m_speed = velocity;
+		//so->SetObjID((uint32_t)pkt_.proj_id());
+		Mgr(ServerObjectMgr)->AddObject(s);
+	}
+
 	return true;
 }

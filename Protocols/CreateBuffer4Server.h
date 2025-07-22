@@ -169,6 +169,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_OUT(
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_CLEAR(
     const int32_t party_quest_id,
+    const Nagox::Struct::Vec3& clear_tree_pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_MEMBERS_INFORMATION(
@@ -219,5 +220,12 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_HEAL(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_DASH(
     const uint32_t dash_obj_id,
     const Nagox::Struct::Vec3& target_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ARROW_RAIN(
+    const uint64_t atk_player_id,
+    const float body_angle,
+    const Nagox::Struct::Vec3& atk_pos,
+    const Nagox::Enum::SKILL_TYPE& atk_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;

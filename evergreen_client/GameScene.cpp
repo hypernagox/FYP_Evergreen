@@ -172,7 +172,8 @@ void GameScene::OnAttach()
             auto interactiveEntity = treeObj->AddComponent<InteractiveEntity>();
             interactiveEntity->SetInteractionText(L"보상 얻기");
             interactiveEntity->SetInteractionCallback([]() { 
-                //Send(Create_c2s_CHANGE_HARVEST_STATE());
+                // TODO: 보상나무의 매직넘버
+                Send(Create_c2s_CHANGE_HARVEST_STATE(0));
                 });
         }
         
@@ -546,8 +547,7 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
             player_type = Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_PRIEST;
             break;
         case 2:
-            // TODO: 거너로 바꾸기
-            player_type = Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_PRIEST;
+            player_type = Nagox::Enum::PLAYER_TYPE::PLAYER_TYPE_ARCHER;
             break;
         default:
             break;

@@ -70,6 +70,7 @@ public:
 	void DisableClearTree()noexcept {
 		m_guide_active_flag = false;
 		temp_force_pos = Vector3::Zero;
+		ResetGuideObjects();
 		m_clear_tree_obj->SetActive(false);
 	}
 	void SetClearTree(std::shared_ptr<udsdx::SceneObject> clear_tree)noexcept {

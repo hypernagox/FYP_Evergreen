@@ -1,5 +1,6 @@
 #pragma once
 #include "ContentsComponent.h"
+#include "Navigator.h"
 
 class ContentsEntity;
 
@@ -39,8 +40,10 @@ public:
 	ClearTreeInteraction(const auto pOwner) :Interaction{ pOwner } {}
 public:
 	virtual bool DoInteraction(ContentsEntity* const pEntity_)noexcept override;
+	void SetNavMeshType(const NAVI_MESH_TYPE nav_mesh_type) { m_nav_mesh_type = nav_mesh_type; }
 private:
 	std::mutex m_clear_tree_mutex;
 	int8_t m_num_of_reward_count = 5;
+	NAVI_MESH_TYPE m_nav_mesh_type = NAVI_MESH_TYPE::MAIN_WORLD;
 };
 

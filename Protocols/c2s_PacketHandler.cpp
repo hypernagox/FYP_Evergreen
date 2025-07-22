@@ -105,22 +105,21 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 		entity->GetComp<StatusSystem>()->SetSkill<WarriorDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
 		entity->GetComp<StatusSystem>()->SetSkill<WarriorSkill_1>(Nagox::Enum::SKILL_TYPE_SKILL_1);
 
-		//entity->GetComp<Inventory>()->SwapEquipment(
-		//	Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
-		//	DATA_TABLE->GetWeaponIDInt("Master Sword")
-		//);
+		
 	}
 	else if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_PRIEST)
 	{
 		entity->GetComp<StatusSystem>()->SetSkill<PriestDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
 		entity->GetComp<StatusSystem>()->SetSkill<PriestSkill_1>(Nagox::Enum::SKILL_TYPE_SKILL_1);
 
-		//entity->GetComp<Inventory>()->SwapEquipment(
-		//	Nagox::Enum::EQUIPMENT_TYPE::EQUIPMENT_TYPE_WEAPON,
-		//	DATA_TABLE->GetWeaponIDInt("Staff Priest")
-		//);
 	}
+	else if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_ARCHER)
+	{
+		entity->GetComp<StatusSystem>()->SetSkill<PriestDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
+		entity->GetComp<StatusSystem>()->SetSkill<ArcherSkill_1>(Nagox::Enum::SKILL_TYPE_SKILL_1)->SetCoolDown(500);
 
+
+	}
 	//g_sector->BroadCastParallel(Create_s2c_APPEAR_OBJECT(pSession_->GetOwnerObjectID(), *pkt_.pos(), Nagox::Enum::OBJECT_TYPE_PLAYER)
 	//	, s
 	//	, entity
@@ -583,11 +582,14 @@ const bool Handle_c2s_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::Packe
 	const auto owner = pSession_->GetOwnerEntity();
 	const auto& harvests = owner->GetComp<NagiocpX::MoveBroadcaster>()->GetViewListNPC();
 	const auto player_pos = owner->GetComp<PositionComponent>()->pos;
+	const auto harvest_id = pkt_.harvest_id();
+	
 	for (const auto& h : harvests)
 	{
 		if (h->GetPrimaryGroupType() != Nagox::Enum::GROUP_TYPE_HARVEST)continue;
 		const auto& harvest_pos = h->GetComp<PositionComponent>()->pos;
-		if (CommonMath::IsInDistanceDX(player_pos, harvest_pos, HARVEST_INTERACTION_DIST) && pkt_.harvest_id() == h->GetObjectID())
+		if ((CommonMath::IsInDistanceDX(player_pos, harvest_pos, HARVEST_INTERACTION_DIST) && harvest_id == h->GetObjectID())
+			|| harvest_id == 0)
 		{
 			if (h->GetComp<Interaction>()->DoInteraction(owner))
 			{

@@ -21,7 +21,8 @@ enum GROUP_TYPE: ubyte
 enum PLAYER_TYPE : ubyte
 {
     WARRIOR = 0,
-    PRIEST = 1
+    PRIEST = 1,
+    ARCHER = 2
 }
 
 enum MONSTER_TYPE : ubyte

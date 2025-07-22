@@ -47,6 +47,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_BOSS_PROJ_MARK = 1036,
     s2c_HEAL = 1037,
     s2c_DASH = 1038,
+    s2c_ARROW_RAIN = 1039,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -123,6 +124,7 @@ const bool Handle_s2c_BOSS_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 const bool Handle_s2c_BOSS_PROJ_MARK(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_PROJ_MARK& pkt_);
 const bool Handle_s2c_HEAL(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_HEAL& pkt_);
 const bool Handle_s2c_DASH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_DASH& pkt_);
+const bool Handle_s2c_ARROW_RAIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_ARROW_RAIN& pkt_);
 
 class s2c_DummyPacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -168,6 +170,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_PROJ_MARK, Nagox::Protocol::s2c_BOSS_PROJ_MARK, Handle_s2c_BOSS_PROJ_MARK>();
         RegisterHandler<HANDLE_PKT_ID::s2c_HEAL, Nagox::Protocol::s2c_HEAL, Handle_s2c_HEAL>();
         RegisterHandler<HANDLE_PKT_ID::s2c_DASH, Nagox::Protocol::s2c_DASH, Handle_s2c_DASH>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_ARROW_RAIN, Nagox::Protocol::s2c_ARROW_RAIN, Handle_s2c_ARROW_RAIN>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;
