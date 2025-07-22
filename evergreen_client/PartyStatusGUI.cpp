@@ -9,28 +9,17 @@ void PartyStatusGUI::OnInitialize()
 	auto font = INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont"));
 
 	m_panel = SceneObject::MakeShared();
-	m_panel->GetTransform()->SetLocalPosition(Vector3(540.0f, 360.0f, 0.0f));
+	m_panel->GetTransform()->SetLocalPosition(Vector3(1048.0f, -406.0f, 0.0f));
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
-	uiRenderer->SetSize(Vector2(480.0f, 320.0f));
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_member_list.png")), true);
 
 	GetSceneObject()->AddChild(m_panel);
 
-	m_titleText = SceneObject::MakeShared();
-	auto titleText = m_titleText->AddComponent<GUIText>();
-	titleText->SetFont(font);
-	m_titleText->GetTransform()->SetLocalPosition(Vector3(-230.0f, 140.0f, 0.0f));
-	titleText->SetRaycastTarget(false);
-	titleText->SetAlignment(GUIText::Alignment::Left);
-	titleText->SetText(L"Member List");
-
-	m_panel->AddChild(m_titleText);
-
 	m_leavePartyButton = SceneObject::MakeShared();
 	auto leavePartyButtonRenderer = m_leavePartyButton->AddComponent<GUISimpleButton>();
-	m_leavePartyButton->GetTransform()->SetLocalPosition(Vector3(220.0f, 140.0f, 0.0f));
-	leavePartyButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_complete.png")));
-	leavePartyButtonRenderer->SetSize(Vector2(30, 30));
+	m_leavePartyButton->GetTransform()->SetLocalPosition(Vector3(145.0f, 83.0f, 0.0f));
+	leavePartyButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
+	leavePartyButtonRenderer->SetSize(Vector2(110.0f, 35.0f));
 	leavePartyButtonRenderer->SetClickCallback([]() {
 		// TODO: 파티 리셋, 또는 탈퇴 패킷, 다만 현재 파퀘 진행중이라면 여기서도 좀 검증 필요
 		Send(Create_c2s_PARTY_OUT());
@@ -40,40 +29,72 @@ void PartyStatusGUI::OnInitialize()
 	leavePartyButtonText->SetFont(font);
 	leavePartyButtonText->SetRaycastTarget(false);
 	leavePartyButtonText->SetAlignment(GUIText::Alignment::Center);
-	leavePartyButtonText->SetText(L"Leave");
+	leavePartyButtonText->SetText(L"파티 탈퇴");
 
 	m_panel->AddChild(m_leavePartyButton);
 
 	for (int i = 0; i < 4; ++i)
 	{
-		float y = i * -70.0f + 90.0f;
+		float y = i * -38.0f + 38.0f;
 		auto& partyGUI = m_partyPanels.emplace_back();
 
 		partyGUI.Panel = SceneObject::MakeShared();
 		partyGUI.Panel->GetTransform()->SetLocalPositionY(y);
-		auto panelRenderer = partyGUI.Panel->AddComponent<GUIImage>();
-		panelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
-		panelRenderer->SetSize(Vector2(460.0f, 60.0f));
+		//auto panelRenderer = partyGUI.Panel->AddComponent<GUIImage>();
+		//panelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\common_background.png")));
+		//panelRenderer->SetSize(Vector2(460.0f, 60.0f));
 		m_panel->AddChild(partyGUI.Panel);
 
 		partyGUI.PartyMemberIDText = SceneObject::MakeShared();
 		auto partyMemberIDText = partyGUI.PartyMemberIDText->AddComponent<GUIText>();
 		partyMemberIDText->SetFont(font);
-		partyGUI.PartyMemberIDText->GetTransform()->SetLocalPosition(Vector3(-220.0f, 0.0f, 0.0f));
+		partyGUI.PartyMemberIDText->GetTransform()->SetLocalPosition(Vector3(-200.0f, 0.0f, 0.0f));
 		partyMemberIDText->SetRaycastTarget(false);
 		partyMemberIDText->SetText(L"Member ID");
 		partyMemberIDText->SetAlignment(GUIText::Alignment::Left);
 		partyGUI.Panel->AddChild(partyGUI.PartyMemberIDText);
-
-		partyGUI.PartyLeaderIcon = SceneObject::MakeShared();
-		partyGUI.PartyLeaderIcon->GetTransform()->SetLocalPositionX(200.0f);
-		auto partyLeaderIcon = partyGUI.PartyLeaderIcon->AddComponent<GUIImage>();
-		partyLeaderIcon->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\leader.png")));
-		partyLeaderIcon->SetSize(Vector2(40.0f, 40.0f));
-		partyGUI.Panel->AddChild(partyGUI.PartyLeaderIcon);
 	}
 
 	m_panel->SetActive(false);
+
+	m_dialogPanel = SceneObject::MakeShared();
+	m_dialogPanel->GetTransform()->SetLocalPosition(Vector3(1048.0f, -170.0f, 0.0f));
+	auto dialogPanelRenderer = m_dialogPanel->AddComponent<GUIImage>();
+	dialogPanelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\party_dialogue.png")), true);
+
+	m_dialogText = SceneObject::MakeShared();
+	auto dialogTextRenderer = m_dialogText->AddComponent<GUIText>();
+	dialogTextRenderer->SetFont(font);
+	dialogTextRenderer->SetRaycastTarget(false);
+	dialogTextRenderer->SetText(L"퀘스트 클리어!\nESC 키를 눌러 마우스를 활성화하세요.");
+	dialogTextRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
+	m_dialogText->GetTransform()->SetLocalPosition(Vector3(-190.0f, 60.0f, 0.0f));
+	m_dialogPanel->AddChild(m_dialogText);
+
+	m_dialogEnterButton = SceneObject::MakeShared();
+	auto dialogEnterButtonRenderer = m_dialogEnterButton->AddComponent<GUISimpleButton>();
+	m_dialogEnterButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -52.0f, 0.0f));
+	dialogEnterButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\button_enter_quest.png")), true);
+	dialogEnterButtonRenderer->SetClickCallback([this]() {
+		RequestQuestStart();
+	});
+	m_dialogPanel->AddChild(m_dialogEnterButton);
+
+	m_dialogExitButton = SceneObject::MakeShared();
+	auto dialogExitButtonRenderer = m_dialogExitButton->AddComponent<GUISimpleButton>();
+	m_dialogExitButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -52.0f, 0.0f));
+	dialogExitButtonRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\party_ui\\button_exit_quest.png")), true);
+	dialogExitButtonRenderer->SetClickCallback([this]() {
+		RequestQuestEnd();
+	});
+	m_dialogPanel->AddChild(m_dialogExitButton);
+
+	m_dialogEnterButton->SetActive(true);
+	m_dialogExitButton->SetActive(false);
+
+	GetSceneObject()->AddChild(m_dialogPanel);
+	m_dialogPanel->SetActive(false);
+
 }
 
 void PartyStatusGUI::InitializeContents(const std::vector<uint32_t>& table)
@@ -82,6 +103,8 @@ void PartyStatusGUI::InitializeContents(const std::vector<uint32_t>& table)
 	m_partyLeaderIndexCache = 0;
 	UpdatePartyPanels();
 	m_panel->SetActive(true);
+	m_dialogPanel->SetActive(m_partyMemberIDsCache[m_partyLeaderIndexCache] == NetMgr(NetworkMgr)->GetSessionID());
+	SetDialogPanelMode(false);
 }
 
 void PartyStatusGUI::AddPartyMember(uint32_t partyMemberID)
@@ -117,6 +140,44 @@ void PartyStatusGUI::SetPartyLeader(uint32_t partyLeaderID)
 void PartyStatusGUI::DisablePartyPanel()
 {
 	m_panel->SetActive(false);
+	m_dialogPanel->SetActive(false);
+}
+
+void PartyStatusGUI::OnQuestClear()
+{
+	m_dialogPanel->SetActive(m_partyMemberIDsCache[m_partyLeaderIndexCache] == NetMgr(NetworkMgr)->GetSessionID());
+	SetDialogPanelMode(true);
+}
+
+void PartyStatusGUI::SetDialogPanelMode(bool isEndDialogue)
+{
+	if (isEndDialogue)
+	{
+		m_dialogEnterButton->SetActive(false);
+		m_dialogExitButton->SetActive(true);
+		m_dialogText->GetComponent<GUIText>()->SetText(L"퀘스트 클리어!\n(ESC 키로 마우스를 활성화하세요.)");
+	}
+	else
+	{
+		m_dialogEnterButton->SetActive(true);
+		m_dialogExitButton->SetActive(false);
+		m_dialogText->GetComponent<GUIText>()->SetText(L"퀘스트를 시작합니다.\n(ESC 키로 마우스를 활성화하세요.)");
+	}
+}
+
+void PartyStatusGUI::RequestQuestStart()
+{
+	Send(Create_c2s_QUEST_START());
+	m_dialogPanel->SetActive(false);
+	//INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() { Send(Create_c2s_QUEST_START()); }, L"퀘스트를 시작하는 중 ...");
+}
+
+void PartyStatusGUI::RequestQuestEnd()
+{
+	Send(Create_c2s_QUEST_END());
+	m_dialogPanel->SetActive(m_partyMemberIDsCache[m_partyLeaderIndexCache] == NetMgr(NetworkMgr)->GetSessionID());
+	SetDialogPanelMode(false);
+	//INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() { Send(Create_c2s_QUEST_END()); }, L"퀘스트를 종료하는 중 ...");
 }
 
 void PartyStatusGUI::UpdatePartyPanels()
@@ -128,11 +189,9 @@ void PartyStatusGUI::UpdatePartyPanels()
 			m_partyPanels[i].PartyMemberIDText->SetActive(true);
 			auto partyMemberIDText = m_partyPanels[i].PartyMemberIDText->GetComponent<GUIText>();
 			partyMemberIDText->SetText(L"Member ID: " + std::to_wstring(m_partyMemberIDsCache[i]));
-			m_partyPanels[i].PartyLeaderIcon->SetActive(i == m_partyLeaderIndexCache);
 		}
 		else
 		{
-			m_partyPanels[i].PartyLeaderIcon->SetActive(false);
 			m_partyPanels[i].PartyMemberIDText->SetActive(false);
 		}
 	}

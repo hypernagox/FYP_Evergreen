@@ -9,7 +9,6 @@ private:
 	{
 		std::shared_ptr<udsdx::SceneObject> Panel;
 		std::shared_ptr<udsdx::SceneObject> PartyMemberIDText;
-		std::shared_ptr<udsdx::SceneObject> PartyLeaderIcon;
 	};
 
 public:
@@ -19,6 +18,11 @@ public:
 	void RemovePartyMember(uint32_t partyMemberID);
 	void SetPartyLeader(uint32_t partyLeaderID);
 	void DisablePartyPanel();
+	void OnQuestClear();
+	void SetDialogPanelMode(bool isEndDialogue);
+	
+	void RequestQuestStart();
+	void RequestQuestEnd();
 
 private:
 	void UpdatePartyPanels();
@@ -28,9 +32,12 @@ private:
 	uint32_t m_partyLeaderIndexCache = 0;
 
 	std::shared_ptr<udsdx::SceneObject> m_panel;
-	std::shared_ptr<udsdx::SceneObject> m_titleText;
 	std::shared_ptr<udsdx::SceneObject> m_leavePartyButton;
 
 	std::vector<PartyGUI> m_partyPanels;
-};
 
+	std::shared_ptr<udsdx::SceneObject> m_dialogPanel;
+	std::shared_ptr<udsdx::SceneObject> m_dialogText;
+	std::shared_ptr<udsdx::SceneObject> m_dialogEnterButton;
+	std::shared_ptr<udsdx::SceneObject> m_dialogExitButton;
+};
