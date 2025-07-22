@@ -69,8 +69,8 @@ void PlayerRenderer::InitializeWarrior()
 
 	m_transformBody->SetLocalPositionY(-5.5f);
 
-	OnAnimationStateChange(AnimationState::Idle);
 	m_characterType = CharacterType::Warrior;
+	OnAnimationStateChange(AnimationState::Idle);
 
 	SetPlayerWeapon(DATA_TABLE->GetWeaponIDInt(GET_DATA(std::string, "Player", "Warrior", "InitWeaponKey")));
 	SetPlayerArmor(DATA_TABLE->GetArmorIDInt(GET_DATA(std::string, "Player", "Warrior", "InitArmorKey")));
@@ -85,8 +85,8 @@ void PlayerRenderer::InitializePriest()
 
 	m_transformBody->SetLocalPositionY(-5.5f);
 
-	OnAnimationStateChange(AnimationState::Idle);
 	m_characterType = CharacterType::Priest;
+	OnAnimationStateChange(AnimationState::Idle);
 
 	SetPlayerWeapon(DATA_TABLE->GetWeaponIDInt(GET_DATA(std::string, "Player", "Priest", "InitWeaponKey")));
 	SetPlayerArmor(DATA_TABLE->GetArmorIDInt(GET_DATA(std::string, "Player", "Priest", "InitArmorKey")));
@@ -103,8 +103,8 @@ void PlayerRenderer::InitializeArcher()
 
 	m_transformBody->SetLocalPositionY(-5.5f);
 
-	OnAnimationStateChange(AnimationState::Idle);
 	m_characterType = CharacterType::Archer;
+	OnAnimationStateChange(AnimationState::Idle);
 
 	SetPlayerWeapon(DATA_TABLE->GetWeaponIDInt(GET_DATA(std::string, "Player", "Archer", "InitWeaponKey")));
 	SetPlayerArmor(DATA_TABLE->GetArmorIDInt(GET_DATA(std::string, "Player", "Archer", "InitArmorKey")));
@@ -146,13 +146,25 @@ void PlayerRenderer::UpdateViewDirection(float deltaTime)
 	m_viewYaw = LerpAngleRadian(m_viewYaw, m_viewYawTarget, deltaTime * 8.0f);
 	m_viewPitch = LerpAngleRadian(m_viewPitch, m_viewPitchTarget, deltaTime * 8.0f);
 
-	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(0.0f, m_viewYaw, m_viewPitch);
-	rotation = Quaternion::Slerp(Quaternion::Identity, rotation, 0.25f);
-	Matrix4x4 rotationMatrix = Matrix4x4::CreateFromQuaternion(rotation);
-	m_renderer->SetBoneModifier("Bip001 Spine1", rotationMatrix);
-	m_renderer->SetBoneModifier("Bip001 Spine2", rotationMatrix);
-	m_renderer->SetBoneModifier("Bip001 Neck", rotationMatrix);
-	m_renderer->SetBoneModifier("Bip001 Head", rotationMatrix);
+	{
+
+		Quaternion rotation = Quaternion::CreateFromYawPitchRoll(0.0f, m_viewYaw, m_viewPitch);
+		rotation = Quaternion::Slerp(Quaternion::Identity, rotation, 0.25f);
+		Matrix4x4 rotationMatrix = Matrix4x4::CreateFromQuaternion(rotation);
+		m_renderer->SetBoneModifier("Bip001 Spine1", rotationMatrix);
+		m_renderer->SetBoneModifier("Bip001 Spine2", rotationMatrix);
+		m_renderer->SetBoneModifier("Bip001 Neck", rotationMatrix);
+		m_renderer->SetBoneModifier("Bip001 Head", rotationMatrix);
+	}
+	{
+		Quaternion rotation = Quaternion::CreateFromYawPitchRoll(m_viewYaw, -m_viewPitch, 0.0f);
+		rotation = Quaternion::Slerp(Quaternion::Identity, rotation, 0.25f);
+		Matrix4x4 rotationMatrix = Matrix4x4::CreateFromQuaternion(rotation);
+		m_renderer->SetBoneModifier("mixamorig:Spine1", rotationMatrix);
+		m_renderer->SetBoneModifier("mixamorig:Spine2", rotationMatrix);
+		m_renderer->SetBoneModifier("mixamorig:Neck", rotationMatrix);
+		m_renderer->SetBoneModifier("mixamorig:Head", rotationMatrix);
+	}
 }
 
 void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)

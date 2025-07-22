@@ -522,6 +522,7 @@
     <ClCompile Include="TerrainInstanceRenderer.cpp" />
     <ClCompile Include="TransitionOverlayGUI.cpp" />
     <ClCompile Include="TutorialUI.cpp" />
+    <ClCompile Include="WorldSpaceGUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientNetwork\ClientNetwork.vcxproj">
@@ -631,6 +632,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">$(SolutionDir)Protocols\protocol_generated.h;%(Outputs)</Outputs>
     </CustomBuild>
     <None Include="..\Protocols\struct.fbs" />
+    <None Include="WorldSpaceGUI.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="gs_minimapmark_pass.hlsl">

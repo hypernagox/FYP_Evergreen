@@ -12,7 +12,7 @@ namespace udsdx
 {
 	void RendererBase::PostUpdate(const Time& time, Scene& scene)
 	{
-		UpdateTransformCache();
+		m_transformCacheDirty = true;
 	}
 
 	void RendererBase::SetMaterial(const Material& material, int index)
@@ -47,6 +47,20 @@ namespace udsdx
 	bool RendererBase::GetCastShadow() const
 	{
 		return m_castShadow;
+	}
+
+	void RendererBase::ValidateTransformCache()
+	{
+		if (m_transformCacheDirty)
+		{
+			UpdateTransformCache();
+			if (m_transformFirstValid)
+			{
+				UpdateTransformCache();
+				m_transformFirstValid = false;
+			}
+			m_transformCacheDirty = false;
+		}
 	}
 
 	void RendererBase::UpdateTransformCache()

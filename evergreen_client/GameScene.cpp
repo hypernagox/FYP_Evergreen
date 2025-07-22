@@ -177,7 +177,7 @@ void GameScene::OnAttach()
                 });
         }
         
-        AddActiveObject(treeObj, GameSceneType::Default);
+        AddActiveObject(treeObj);
         treeObj->SetActive(false);
         GuideSystem::GetInst()->AddHarvestMeshObject(treeObj);
         GuideSystem::GetInst()->SetClearTree(treeObj);

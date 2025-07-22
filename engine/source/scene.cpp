@@ -59,6 +59,7 @@ namespace udsdx
 		m_renderGUIObjectQueue.clear();
 
 		SceneObject::Enumerate(m_rootObjectSub, [&time, this](const std::shared_ptr<SceneObject>& sceneObject) { sceneObject->PostUpdate(time, *this); });
+		SceneObject::Enumerate(m_rootObjectSub, [&time, this](const std::shared_ptr<SceneObject>& sceneObject) { sceneObject->GetTransform()->ValidateSRTMatrices(); });
 	}
 
 	void Scene::OnDrawGizmos()
@@ -103,7 +104,7 @@ namespace udsdx
 			ImGui::TreePop();
 		}
 
-		Matrix4x4 viewMatrix = renderCamera->GetViewMatrix();
+		Matrix4x4 viewMatrix = renderCamera->GetViewMatrix(false);
 
 		Vector3 viewForward = Vector3::TransformNormal(Vector3::UnitZ, viewMatrix);
 		Vector3 viewUp = Vector3::TransformNormal(Vector3::UnitY, viewMatrix);
@@ -337,6 +338,7 @@ namespace udsdx
 			param.CommandList->SetPipelineState(pipelineState);
 			for (const auto& [object, parameter] : objects)
 			{
+				object->ValidateTransformCache();
 				object->Render(param, parameter);
 			}
 		}
@@ -361,6 +363,7 @@ namespace udsdx
 				for (const auto& [object, parameter] : objects)
 				{
 					param.CommandList->OMSetStencilRef(pipelineCount | (static_cast<UINT>(object->GetDrawOutline()) << 7));
+					object->ValidateTransformCache();
 					object->Render(param, parameter);
 				}
 			}

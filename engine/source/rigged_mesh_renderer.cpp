@@ -141,8 +141,6 @@ namespace udsdx
 
 	void RiggedMeshRenderer::Render(RenderParam& param, int parameter)
 	{
-		const auto& submeshes = m_riggedMesh->GetSubmeshes();
-
 		if (param.UseFrustumCulling)
 		{
 			// Perform frustum culling
@@ -154,6 +152,7 @@ namespace udsdx
 			}
 		}
 
+		const auto& submeshes = m_riggedMesh->GetSubmeshes();
 		ObjectConstants objectConstants;
 		objectConstants.World = m_transformCache.Transpose();
 		objectConstants.PrevWorld = m_prevTransformCache.Transpose();

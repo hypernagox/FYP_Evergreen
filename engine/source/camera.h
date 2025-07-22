@@ -58,7 +58,7 @@ namespace udsdx
 		D3D12_GPU_VIRTUAL_ADDRESS UpdateConstantBuffer(int frameResourceIndex, float width, float height);
 
 	public:
-		virtual Matrix4x4 GetViewMatrix() const;
+		virtual Matrix4x4 GetViewMatrix(bool validate = true) const;
 		virtual Matrix4x4 GetProjMatrix(float aspect) const = 0;
 		virtual std::unique_ptr<BoundingCamera> GetViewFrustumWorld(float aspect) const = 0;
 

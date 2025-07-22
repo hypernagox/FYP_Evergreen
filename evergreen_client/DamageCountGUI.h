@@ -13,7 +13,7 @@ public:
 private:
 	static std::default_random_engine randomEngine;
 
-	std::deque<std::tuple<float, std::shared_ptr<udsdx::SceneObject>, Vector3, Vector3>> m_countObjects;
+	std::deque<std::tuple<float, std::shared_ptr<udsdx::SceneObject>, std::shared_ptr<udsdx::SceneObject>, Vector3, Vector3>> m_countObjects;
 	EventTimer m_timer;
 	std::unique_ptr<DirectX::SoundEffectInstance> m_soundInstance;
 };

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MonsterHPPanel.h"
+#include "WorldSpaceGUI.h"
 #include "GameScene.h"
 
 void MonsterHPPanel::OnInitialize()
@@ -7,6 +8,14 @@ void MonsterHPPanel::OnInitialize()
 	m_panelObject = SceneObject::MakeShared();
 	auto panelRenderer = m_panelObject->AddComponent<GUIImage>();
 	panelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\monster_status\\panel.png")), true);
+
+	auto panelWorldTransform = AddComponent<WorldSpaceGUI>();
+	panelWorldTransform->SetSourceTransform(GetTransform());
+	panelWorldTransform->SetTargetObject(m_panelObject);
+	panelWorldTransform->SetAngleRange(30.0f);
+	panelWorldTransform->SetViewFar(30.0f);
+	panelWorldTransform->SetWorldOffset(Vector3::Up * 2.0f);
+	panelWorldTransform->SetScreenOffset(Vector3(117.0f, 40.0f, 0.0f));
 
 	m_levelObject = SceneObject::MakeShared();
 	auto levelRenderer = m_levelObject->AddComponent<GUIText>();
@@ -33,6 +42,7 @@ void MonsterHPPanel::OnInitialize()
 	m_panelObject->AddChild(m_textObject);
 	m_panelObject->AddChild(m_hpBarImpactObject);
 	m_panelObject->AddChild(m_hpBarObject);
+	m_panelObject->SetActive(false);
 }
 
 void MonsterHPPanel::OnAttach()
@@ -44,19 +54,8 @@ void MonsterHPPanel::OnAttach()
 		if (gameScene != nullptr)
 		{
 			gameScene->AddInterfaceObject(m_panelObject);
-			UpdateTransform(*scene);
 		}
 	}
-}
-
-void MonsterHPPanel::OnActive()
-{
-	m_panelObject->SetActive(true);
-}
-
-void MonsterHPPanel::OnInactive()
-{
-	m_panelObject->SetActive(false);
 }
 
 void MonsterHPPanel::OnDetach()
@@ -66,8 +65,6 @@ void MonsterHPPanel::OnDetach()
 
 void MonsterHPPanel::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	UpdateTransform(scene);
-
 	m_hpImpactTime -= time.deltaTime;
 	if (m_hpImpactTime <= 0.0f)
 		m_hpImpactFraction = std::lerp(m_hpImpactFraction, m_hpFraction, time.deltaTime * 8.0f);
@@ -77,27 +74,6 @@ void MonsterHPPanel::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 	m_hpBarObject->GetTransform()->SetLocalPosition(Vector3(std::lerp(49.0f - 84.0f, 49.0f, m_hpFraction), 2.0f, 0.0f));
 	m_hpBarObject->GetComponent<GUIImage>()->SetSize(Vector2(168.0f * m_hpFraction, 8.0f));
-}
-
-void MonsterHPPanel::UpdateTransform(udsdx::Scene& scene)
-{
-	auto gameScene = dynamic_cast<GameScene*>(&scene);
-	if (gameScene != nullptr)
-	{
-		auto camera = gameScene->GetMainCamera();
-		Vector3 viewPos = Vector3::Transform(GetTransform()->GetLocalPosition() + Vector3::Up * 2.0f, camera->GetViewMatrix());
-		if (viewPos.z > 0.0f && viewPos.z < 30.0f && (viewPos / viewPos.Length()).Dot(Vector3::Backward) > 0.866f) // 30 degrees
-		{
-			m_panelObject->SetActive(true);
-			float aspectRatio = INSTANCE(Core)->GetAspectRatio();
-			Vector3 screenPos = Vector3::Transform(viewPos, camera->GetProjMatrix(aspectRatio));
-			screenPos.x *= GUIElement::RefScreenSize.y * aspectRatio * 0.5f;
-			screenPos.y *= GUIElement::RefScreenSize.y * 0.5f;
-			m_panelObject->GetTransform()->SetLocalPosition(Vector3(screenPos.x + 117.0f, screenPos.y + 40.0f, 0.0f));
-		}
-		else
-			m_panelObject->SetActive(false);
-	}
 }
 
 void MonsterHPPanel::SetText(std::wstring_view text)

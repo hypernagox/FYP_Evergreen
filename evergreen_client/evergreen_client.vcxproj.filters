@@ -324,6 +324,9 @@
     <ClCompile Include="DropItemAcquireRenderer.cpp">
       <Filter>NetEntity\ContentsEntity\DropItem</Filter>
     </ClCompile>
+    <ClCompile Include="WorldSpaceGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -570,6 +573,9 @@
     </None>
     <None Include="..\Protocols\create_packet_template.h.j2">
       <Filter>Protocols\templates</Filter>
+    </None>
+    <None Include="WorldSpaceGUI.h">
+      <Filter>Gui</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

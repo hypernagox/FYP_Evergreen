@@ -133,9 +133,6 @@ namespace udsdx
 
 	void SceneObject::PostUpdate(const Time& time, Scene& scene)
 	{
-		// Validate SRT matrix
-		m_transform.ValidateSRTMatrices();
-
 		// Update components
 		for (const auto& component : m_components)
 		{
@@ -166,7 +163,7 @@ namespace udsdx
 		const float lineThickness = 4.0f;
 
 		float screenRatio = screenSize.x / screenSize.y;
-		Matrix4x4 viewMatrix = target->GetViewMatrix();
+		Matrix4x4 viewMatrix = target->GetViewMatrix(false);
 		Matrix4x4 projMatrix = target->GetProjMatrix(screenRatio);
 		Vector3 viewForward = Vector3(viewMatrix.m[2][0], viewMatrix.m[2][1], viewMatrix.m[2][2]);
 

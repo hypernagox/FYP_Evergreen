@@ -27,7 +27,7 @@ namespace udsdx
 
 		CameraConstants constants;
 		Matrix4x4 worldMat = GetTransform()->GetWorldSRTMatrix(false);
-		Matrix4x4 viewMat = GetViewMatrix();
+		Matrix4x4 viewMat = GetViewMatrix(false);
 		Matrix4x4 projMat = GetProjMatrix(aspect);
 		Matrix4x4 viewProjMat = viewMat * projMat;
 
@@ -47,9 +47,9 @@ namespace udsdx
 		return m_constantBuffers[frameResourceIndex]->Resource()->GetGPUVirtualAddress();
 	}
 
-	Matrix4x4 Camera::GetViewMatrix() const
+	Matrix4x4 Camera::GetViewMatrix(bool validate) const
 	{
-		XMMATRIX worldSRTMatrix = XMLoadFloat4x4(&GetSceneObject()->GetTransform()->GetWorldSRTMatrix(false));
+		XMMATRIX worldSRTMatrix = XMLoadFloat4x4(&GetSceneObject()->GetTransform()->GetWorldSRTMatrix(validate));
 		XMVECTOR eye = XMVector4Transform(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), worldSRTMatrix);
 		XMVECTOR at = XMVector4Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), worldSRTMatrix) + eye;
 		XMVECTOR up = XMVector4Transform(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), worldSRTMatrix);
@@ -70,7 +70,7 @@ namespace udsdx
 
 	const Vector3 Camera::ToViewPosition(const Vector3& worldPosition) const
 	{
-		return Vector3::Transform(worldPosition, GetViewMatrix());
+		return Vector3::Transform(worldPosition, GetViewMatrix(true));
 	}
 
 	const Vector2 Camera::ToScreenPosition(const Vector3& worldPosition) const
@@ -78,7 +78,7 @@ namespace udsdx
 		const int screenWidth = INSTANCE(Core)->GetClientWidth();
 		const int screenHeight = INSTANCE(Core)->GetClientHeight();
 
-		Vector3 screenPos = Vector3::Transform(worldPosition, GetViewMatrix() * GetProjMatrix(static_cast<float>(screenWidth) / screenHeight));
+		Vector3 screenPos = Vector3::Transform(worldPosition, GetViewMatrix(true) * GetProjMatrix(static_cast<float>(screenWidth) / screenHeight));
 		screenPos.x = (screenPos.x + 1.0f) * 0.5f;
 		screenPos.y = (1.0f - screenPos.y) * 0.5f;
 
@@ -96,7 +96,7 @@ namespace udsdx
 
 	std::unique_ptr<BoundingCamera> CameraPerspective::GetViewFrustumWorld(float aspect) const
 	{
-		return std::make_unique<BoundingCameraPerspective>(GetViewMatrix(), GetProjMatrix(aspect));
+		return std::make_unique<BoundingCameraPerspective>(GetViewMatrix(false), GetProjMatrix(aspect));
 	}
 
 	void CameraPerspective::SetFov(float fov)
@@ -138,7 +138,7 @@ namespace udsdx
 
 	std::unique_ptr<BoundingCamera> CameraOrthographic::GetViewFrustumWorld(float aspect) const
 	{
-		return std::make_unique<BoundingCameraOrthographic>(GetViewMatrix(), m_radius * 2.0f * aspect, m_radius * 2.0f, m_near, m_far);
+		return std::make_unique<BoundingCameraOrthographic>(GetViewMatrix(false), m_radius * 2.0f * aspect, m_radius * 2.0f, m_near, m_far);
 	}
 
 	void CameraOrthographic::SetNear(float fNear)

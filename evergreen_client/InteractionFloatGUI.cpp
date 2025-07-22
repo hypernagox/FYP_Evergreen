@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "InteractionFloatGUI.h"
 #include "GameScene.h"
+#include "WorldSpaceGUI.h"
 
 using namespace udsdx;
 
@@ -12,6 +13,9 @@ void InteractionFloatGUI::OnInitialize()
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 	uiRenderer->SetSize(Vector2(200.0f, 40.0f));
 	GetSceneObject()->AddChild(m_panel);
+
+	auto panelWorldTransform = AddComponent<WorldSpaceGUI>();
+	panelWorldTransform->SetTargetObject(m_panel);
 
 	m_interactionText = SceneObject::MakeShared();
 	auto interactionText = m_interactionText->AddComponent<GUIText>();
@@ -40,23 +44,7 @@ void InteractionFloatGUI::OnActive()
 
 void InteractionFloatGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	auto gameScene = dynamic_cast<GameScene*>(&scene);
-	if (gameScene != nullptr)
-	{
-		auto camera = gameScene->GetMainCamera();
-		Vector3 viewPos = Vector3::Transform(m_targetPos + Vector3::Up, camera->GetViewMatrix());
-		if (viewPos.z > 0.0f)
-		{
-			m_panel->SetActive(true);
-			float aspectRatio = INSTANCE(Core)->GetAspectRatio();
-			Vector3 screenPos = Vector3::Transform(viewPos, camera->GetProjMatrix(aspectRatio));
-			screenPos.x *= GUIElement::RefScreenSize.y * aspectRatio * 0.5f;
-			screenPos.y *= GUIElement::RefScreenSize.y * 0.5f;
-			GetTransform()->SetLocalPosition(Vector3(screenPos.x, screenPos.y, 0.0f));
-		}
-		else
-			m_panel->SetActive(false);
-	}
+	GetComponent<WorldSpaceGUI>()->SetWorldOffset(m_targetPos + Vector3::Up);
 	float x = m_panel->GetTransform()->GetLocalScale().x;
 	m_panel->GetTransform()->SetLocalScale(Vector3(std::lerp(x, 1.0f, time.deltaTime * 8.0f), 1.0f, 1.0f));
 }

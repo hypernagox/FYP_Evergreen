@@ -28,6 +28,7 @@ namespace udsdx
 		bool GetCastShadow() const;
 		bool GetDrawOutline() const { return m_drawOutline; }
 
+		void ValidateTransformCache();
 		virtual void UpdateTransformCache();
 
 	protected:
@@ -38,6 +39,8 @@ namespace udsdx
 		bool m_drawOutline = false;
 		RenderGroup m_renderGroup = RenderGroup::Deferred;
 
+		bool m_transformCacheDirty = true;
+		bool m_transformFirstValid = true;
 		Matrix4x4 m_transformCache = Matrix4x4::Identity;
 		Matrix4x4 m_prevTransformCache = Matrix4x4::Identity;
 	};

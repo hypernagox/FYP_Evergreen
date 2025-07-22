@@ -9,12 +9,9 @@ class MonsterHPPanel : public udsdx::Component
 public:
 	void OnInitialize() override;
 	void OnAttach() override;
-	void OnActive() override;
-	void OnInactive() override;
 	void OnDetach() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
-	void UpdateTransform(udsdx::Scene& scene);
 	float GetHPFraction() const noexcept { return m_hpFraction; }
 	void SetHPFraction(float value) noexcept { m_hpFraction = value; m_hpImpactTime = 0.5f; }
 	void SetText(std::wstring_view text);
@@ -30,4 +27,3 @@ protected:
 	float m_hpImpactFraction = 1.0f;
 	float m_hpImpactTime = 0.0f;
 };
-
