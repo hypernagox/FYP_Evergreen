@@ -206,18 +206,6 @@ void AuthenticPlayer::CraftItem(int recipeIndex)
 	DebugConsole::Log("아이템 조합 요청");
 }
 
-void AuthenticPlayer::RequestQuestStart()
-{
-	Send(Create_c2s_QUEST_START());
-	//INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() { Send(Create_c2s_QUEST_START()); }, L"퀘스트를 시작하는 중 ...");
-}
-
-void AuthenticPlayer::RequestQuestEnd()
-{
-	Send(Create_c2s_QUEST_END());
-	//INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() { Send(Create_c2s_QUEST_END()); }, L"퀘스트를 종료하는 중 ...");
-}
-
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
 	// Region: Camera Rotation Control
@@ -320,12 +308,6 @@ void AuthenticPlayer::OnInitialize()
 	input_handler->AddKeyFunc(Keyboard::D2, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 1);
 	input_handler->AddKeyFunc(Keyboard::D3, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 2);
 	input_handler->AddKeyFunc(Keyboard::D0, KEY_STATE::KET_TAP, &AuthenticPlayer::ToggleDebugCamera, this);
-
-	// 퀘 시작 요청
-	input_handler->AddKeyFunc(Keyboard::B, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuestStart, this);
-	// TODO: 퀘 클리어 판정이 아직 없어서 클라의 중단 요청
-	input_handler->AddKeyFunc(Keyboard::N, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuestEnd, this);
-
 
 	//input_handler->AddKeyFunc(Keyboard::Space, KEY_STATE::KET_TAP, &AuthenticPlayer::DoAttack, this);
 	input_handler->AddKeyFunc(Keyboard::CapsLock, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuest, this);

@@ -652,6 +652,7 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 	g_menuSound->SetVolume(0.5f);
 	g_menuSound->Play();
 
+	INSTANCE(GameGUIFacade)->PartyStatus->OnQuestClear();
 	INSTANCE(GameGUIFacade)->LogFloat->AddText(L"퀘스트 클리어 ! 보상 나무를 따라가 보상을 확인하세요.");
 	GuideSystem::GetInst()->ToggleFlag();
 	GuideSystem::GetInst()->AppearClearTree(ToOriginVec3(pkt_.clear_tree_pos()));

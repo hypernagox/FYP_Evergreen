@@ -246,14 +246,6 @@ void GameScene::OnAttach()
         m_playerInterfaceGroup->AddChild(m_playerInterfaceBackGroup);
         m_playerInterfaceGroup->SetActive(false);
 
-        auto textObj = SceneObject::MakeShared();
-        auto textRenderer = textObj->AddComponent<GUIText>();
-        textObj->GetTransform()->SetLocalPosition(Vector3(-640, 480, 0));
-        textRenderer->SetText(GET_DATA(std::wstring, "Script", "Intro", "Start"));
-        textRenderer->SetFont(resource->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
-        textRenderer->SetAlignment(GUIText::Alignment::UpperLeft);
-        // m_playerInterfaceGroup->AddChild(textObj);
-
         auto damageCountObj = SceneObject::MakeShared();
         auto damageCountRenderer = damageCountObj->AddComponent<DamageCountGUI>();
         m_playerInterfaceGroup->AddChild(damageCountObj);
@@ -263,6 +255,7 @@ void GameScene::OnAttach()
 
         focusAgent->SetSize(Vector2::One * 8192.0f);
         focusAgent->SetTryClickCallback([this]() {
+            INSTANCE(Input)->SetRelativeMouse(true);
             m_heroComponent->TryClickScreen();
             });
         m_playerInterfaceGroup->AddChild(m_focusAgentObj);
@@ -505,8 +498,12 @@ void GameScene::EnterGame(std::shared_ptr<GameScene> sharedScene, unsigned int c
     playerTag->SetText(Common::DataRegistry::Str2Wstr(username));
 
     m_popupGUIManager->SetOnPopEmptyCallback([this]() {
-        m_popupGUIManager->Append(m_pauseMenuObj);
-        OnTogglePause(true);
+        if (INSTANCE(Input)->GetMouseMode() == Mouse::Mode::MODE_ABSOLUTE)
+        {
+            m_popupGUIManager->Append(m_pauseMenuObj);
+            OnTogglePause(true);
+        }
+        INSTANCE(Input)->SetRelativeMouse(false);
         });
     m_popupGUIManager->SetOnFocusChangedCallback([this](bool focus) {
         INSTANCE(Input)->SetRelativeMouse(focus);
