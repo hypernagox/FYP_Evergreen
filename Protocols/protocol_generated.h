@@ -2644,7 +2644,8 @@ struct s2c_INVITE_PARTY_RESULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_TARGET_PARTY_LEADER_ID = 4,
     VT_TARGET_USER_ID = 6,
-    VT_INVITE_RESULT = 8
+    VT_INVITE_RESULT = 8,
+    VT_TARGET_USER_NAME = 10
   };
   uint32_t target_party_leader_id() const {
     return GetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, 0);
@@ -2664,11 +2665,19 @@ struct s2c_INVITE_PARTY_RESULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::
   bool mutate_invite_result(bool _invite_result = 0) {
     return SetField<uint8_t>(VT_INVITE_RESULT, static_cast<uint8_t>(_invite_result), 0);
   }
+  const ::flatbuffers::String *target_user_name() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_TARGET_USER_NAME);
+  }
+  ::flatbuffers::String *mutable_target_user_name() {
+    return GetPointer<::flatbuffers::String *>(VT_TARGET_USER_NAME);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_TARGET_PARTY_LEADER_ID, 4) &&
            VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
            VerifyField<uint8_t>(verifier, VT_INVITE_RESULT, 1) &&
+           VerifyOffset(verifier, VT_TARGET_USER_NAME) &&
+           verifier.VerifyString(target_user_name()) &&
            verifier.EndTable();
   }
 };
@@ -2686,6 +2695,9 @@ struct s2c_INVITE_PARTY_RESULTBuilder {
   void add_invite_result(bool invite_result) {
     fbb_.AddElement<uint8_t>(s2c_INVITE_PARTY_RESULT::VT_INVITE_RESULT, static_cast<uint8_t>(invite_result), 0);
   }
+  void add_target_user_name(::flatbuffers::Offset<::flatbuffers::String> target_user_name) {
+    fbb_.AddOffset(s2c_INVITE_PARTY_RESULT::VT_TARGET_USER_NAME, target_user_name);
+  }
   explicit s2c_INVITE_PARTY_RESULTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -2701,12 +2713,29 @@ inline ::flatbuffers::Offset<s2c_INVITE_PARTY_RESULT> Creates2c_INVITE_PARTY_RES
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t target_party_leader_id = 0,
     uint32_t target_user_id = 0,
-    bool invite_result = false) {
+    bool invite_result = false,
+    ::flatbuffers::Offset<::flatbuffers::String> target_user_name = 0) {
   s2c_INVITE_PARTY_RESULTBuilder builder_(_fbb);
+  builder_.add_target_user_name(target_user_name);
   builder_.add_target_user_id(target_user_id);
   builder_.add_target_party_leader_id(target_party_leader_id);
   builder_.add_invite_result(invite_result);
   return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_INVITE_PARTY_RESULT> Creates2c_INVITE_PARTY_RESULTDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_party_leader_id = 0,
+    uint32_t target_user_id = 0,
+    bool invite_result = false,
+    const char *target_user_name = nullptr) {
+  auto target_user_name__ = target_user_name ? _fbb.CreateString(target_user_name) : 0;
+  return Nagox::Protocol::Creates2c_INVITE_PARTY_RESULT(
+      _fbb,
+      target_party_leader_id,
+      target_user_id,
+      invite_result,
+      target_user_name__);
 }
 
 struct c2s_PARTY_JOIN_REQUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

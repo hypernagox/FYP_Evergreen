@@ -432,17 +432,24 @@ const bool Handle_c2s_INVITE_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketS
 const bool Handle_c2s_INVITE_PARTY_RESULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_INVITE_PARTY_RESULT& pkt_)
 {
 	const auto party_leader = GetSessionEntity(pkt_.target_party_leader_id());
-	auto pkt = Create_s2c_INVITE_PARTY_RESULT(pkt_.target_party_leader_id(), pSession_->GetSessionID(), pkt_.is_accept());
 	if (party_leader && party_leader->GetClientSession()->QueryPartyLeader())
 	{
 		// TODO: 파티장이나가면?
-		// 파티장에겐 ok / no 무조건 보냄
-		party_leader->GetClientSession()->SendAsync(pkt);
+		// 파티장에겐 ok / no 무조건 보냄 파티장에게 대상자의 아이디를 알려준다.
+		party_leader->GetClientSession()->SendAsync(Create_s2c_INVITE_PARTY_RESULT(
+			pkt_.target_party_leader_id(),
+			pSession_->GetSessionID(), pkt_.is_accept(),
+			GetClientSession(pSession_)->m_userName
+		));
 		if (pkt_.is_accept())
 		{
-			// 수락했다면 타겟에게도 보냄 + 파티에넣음
+			// 수락했다면 타겟에게도 보냄 + 파티에넣음 + 파티장의 이름을 알려준다.
 			party_leader->GetClientSession()->AcceptNewPlayer((pSession_->GetOwnerEntity()));
-			pSession_->SendAsync(pkt);
+			pSession_->SendAsync(Create_s2c_INVITE_PARTY_RESULT(
+				pkt_.target_party_leader_id(),
+				pSession_->GetSessionID(), pkt_.is_accept(),
+				party_leader->GetClientSession()->m_userName
+			));
 		}
 	}
 	return true;

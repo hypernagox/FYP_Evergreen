@@ -448,6 +448,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_INVITE_PARTY_RESULT(
     const uint32_t target_party_leader_id,
     const uint32_t target_user_id,
     const bool invite_result,
+    const std::string_view& target_user_name,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
@@ -455,10 +456,12 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_INVITE_PARTY_RESULT(
     const auto target_party_leader_id_value = target_party_leader_id;
     const auto target_user_id_value = target_user_id;
     const auto invite_result_value = invite_result;
+    const auto target_user_name_offset = builder.CreateString(target_user_name);
    const auto serializeds2c_INVITE_PARTY_RESULT = Nagox::Protocol::Creates2c_INVITE_PARTY_RESULT(
     builder,    target_party_leader_id_value
 ,     target_user_id_value
 ,     invite_result_value
+,     target_user_name_offset
     );
     builder.Finish(serializeds2c_INVITE_PARTY_RESULT);
 

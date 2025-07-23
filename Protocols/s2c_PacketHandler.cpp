@@ -516,42 +516,42 @@ const bool Handle_s2c_INVITE_PARTY_RESULT(const NetHelper::S_ptr<NetHelper::Pack
 	// 내가 초대 당한 사람이면 거절하면 안옴
 	// 아직은 그냥 가서 떄리면 무조건 신청이고, 신청당한 사람은 무조건 수락
 	
-	if (pSession_->GetSessionID() == pkt_.target_party_leader_id())
-	{
-		if (pkt_.invite_result())
-		{
-			std::cout << "아이디 " << pkt_.target_user_id() << "가 수락" << std::endl;
-		}
-		else
-		{
-			std::cout << "아이디 " << pkt_.target_user_id() << "가 거절" << std::endl;
-		}
-	}
-	else
-	{
-		if(pkt_.invite_result())
-			std::cout << "파티장 ID " << pkt_.target_party_leader_id() << " 인 파티 신청을 내가 받아줌\n";
-		else
-			std::cout << "파티장 ID " << pkt_.target_party_leader_id() << " 인 파티 신청 안받아줌 ㅅㄱ\n";
-	}
+	//if (pSession_->GetSessionID() == pkt_.target_party_leader_id())
+	//{
+	//	if (pkt_.invite_result())
+	//	{
+	//		std::cout << "아이디 " << pkt_.target_user_id() << "가 수락" << std::endl;
+	//	}
+	//	else
+	//	{
+	//		std::cout << "아이디 " << pkt_.target_user_id() << "가 거절" << std::endl;
+	//	}
+	//}
+	//else
+	//{
+	//	if(pkt_.invite_result())
+	//		std::cout << "파티장 ID " << pkt_.target_party_leader_id() << " 인 파티 신청을 내가 받아줌\n";
+	//	else
+	//		std::cout << "파티장 ID " << pkt_.target_party_leader_id() << " 인 파티 신청 안받아줌 ㅅㄱ\n";
+	//}
 
-	std::wstring name = std::to_wstring(pkt_.target_user_id());
-	std::wstring leaderName = std::to_wstring(pkt_.target_party_leader_id());
+	const auto target_name = GetOriginWString(pkt_.target_user_name());
+	
 	// 파티장일 경우
 	if (pSession_->GetSessionID() == pkt_.target_party_leader_id())
 	{
 		if (pkt_.invite_result())
-			INSTANCE(GameGUIFacade)->LogFloat->AddText(name + L" 님이 파티에 가입하였습니다.");
+			INSTANCE(GameGUIFacade)->LogFloat->AddText(target_name + L" 님이 파티에 가입하였습니다.");
 		else
-			INSTANCE(GameGUIFacade)->LogFloat->AddText(name + L" 님이 파티에 가입을 거절하였습니다.");
+			INSTANCE(GameGUIFacade)->LogFloat->AddText(target_name + L" 님이 파티에 가입을 거절하였습니다.");
 	}
 	// 초대를 받은 유저일 경우
 	else
 	{
 		if (pkt_.invite_result())
-			INSTANCE(GameGUIFacade)->LogFloat->AddText(L"파티(파티장 " + leaderName + L")에 가입하였습니다.");
+			INSTANCE(GameGUIFacade)->LogFloat->AddText(L"파티(파티장 " + target_name + L")에 가입하였습니다.");
 		else
-			INSTANCE(GameGUIFacade)->LogFloat->AddText(L"파티(파티장 " + leaderName + L")의 가입 초대를 거절하였습니다.");
+			INSTANCE(GameGUIFacade)->LogFloat->AddText(L"파티(파티장 " + target_name + L")의 가입 초대를 거절하였습니다.");
 	}
 
 	return true;

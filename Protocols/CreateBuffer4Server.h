@@ -143,6 +143,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_INVITE_PARTY_RESULT(
     const uint32_t target_party_leader_id,
     const uint32_t target_user_id,
     const bool invite_result,
+    const std::string_view& target_user_name,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_REQUEST(
