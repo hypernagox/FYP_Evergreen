@@ -59,9 +59,13 @@ public:
 
 	void PrepareLoginData(const Nagox::Protocol::s2c_LOGIN& pkt_);
 	void LoadInitDataFromDB();
+
+	void SetUsername(const std::wstring& username) noexcept { m_username = username; }
+	const std::wstring& GetUsername() const noexcept { return m_username; }
 public:
 	// 로그인 시 받았던 정보들 모임
 	std::string m_type; // 직업정보이긴한데 enum으로 교체예정
+	std::wstring m_username;
 	std::vector<int> init_item_ids;
 	std::vector<int> init_item_counts;
 	std::shared_ptr<udsdx::SceneObject> m_boss;

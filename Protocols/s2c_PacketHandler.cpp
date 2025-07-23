@@ -465,7 +465,11 @@ const bool Handle_s2c_REGISTER_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::Pac
 
 	std::vector<uint32_t> partyMemberIDs;
 	partyMemberIDs.emplace_back(pSession_->GetSessionID());
-	INSTANCE(GameGUIFacade)->PartyStatus->InitializeContents(partyMemberIDs);
+
+	std::vector<std::wstring> partyMemberNames;
+	partyMemberNames.emplace_back(ServerObjectMgr::GetInst()->GetUsername());
+
+	INSTANCE(GameGUIFacade)->PartyStatus->InitializeContents(partyMemberIDs, partyMemberNames);
 
 	return true;
 }
@@ -602,7 +606,7 @@ const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NetHelper::S_ptr<NetHelper::Pa
 {
 	std::wstring name = GetOriginWString(pkt_.target_user_name());
 	INSTANCE(GameGUIFacade)->LogFloat->AddText(L"ID " + name + L" 님이 파티에 참여하였습니다.");
-	INSTANCE(GameGUIFacade)->PartyStatus->AddPartyMember(pkt_.target_user_id());
+	INSTANCE(GameGUIFacade)->PartyStatus->AddPartyMember(pkt_.target_user_id(), name);
 	return true;
 }
 
@@ -688,13 +692,22 @@ const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NetHelper::S_ptr<NetHelper
 	std::vector<std::string> names;
 	for (const auto other_member_name : *pkt_.party_member_names())
 	{
-		auto name = GetOriginString(other_member_name);
-		std::cout << "파티원들 Name: " << name << '\n';
+		auto name = GetOriginWString(other_member_name);
+		std::wcout << L"파티원들 Name: " << name << L'\n';
 	}
 	std::vector<uint32_t> partyMemberIDs(pkt_.party_member_ids()->cbegin(), pkt_.party_member_ids()->cend());
 	partyMemberIDs.emplace_back(pSession_->GetSessionID());
+
+	std::vector<std::wstring> partyMemberNames;
+	for (const auto& other_member_name : *pkt_.party_member_names())
+	{
+		auto name = GetOriginWString(other_member_name);
+		partyMemberNames.emplace_back(name);
+	}
+	partyMemberNames.emplace_back(ServerObjectMgr::GetInst()->GetUsername());
+
 	auto partyStatus = INSTANCE(GameGUIFacade)->PartyStatus;
-	partyStatus->InitializeContents(partyMemberIDs);
+	partyStatus->InitializeContents(partyMemberIDs, partyMemberNames);
 
 	return true;
 }
@@ -709,7 +722,6 @@ const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::Pac
 
 const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_USER_DETAIL_INFO& pkt_)
 {
-	// TODO: 이름은 잘 가고 있으니 머리 위에 렌더링 필요
 	std::string user_name;
 	for (const auto ch : *pkt_.user_name())user_name.push_back(ch);
 	std::cout << "User Name: " << user_name << std::endl;

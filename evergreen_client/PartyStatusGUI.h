@@ -13,8 +13,8 @@ private:
 
 public:
 	void OnInitialize() override;
-	void InitializeContents(const std::vector<uint32_t>& table);
-	void AddPartyMember(uint32_t partyMemberID);
+	void InitializeContents(const std::vector<uint32_t>& table, const std::vector<std::wstring>& names);
+	void AddPartyMember(uint32_t partyMemberID, std::wstring_view partyMemberName);
 	void RemovePartyMember(uint32_t partyMemberID);
 	void SetPartyLeader(uint32_t partyLeaderID);
 	void DisablePartyPanel();
@@ -29,6 +29,7 @@ private:
 
 private:
 	std::vector<uint32_t> m_partyMemberIDsCache;
+	std::vector<std::wstring> m_partyMemberNamesCache;
 	uint32_t m_partyLeaderIndexCache = 0;
 
 	std::shared_ptr<udsdx::SceneObject> m_panel;

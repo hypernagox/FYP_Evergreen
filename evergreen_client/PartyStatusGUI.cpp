@@ -97,9 +97,10 @@ void PartyStatusGUI::OnInitialize()
 
 }
 
-void PartyStatusGUI::InitializeContents(const std::vector<uint32_t>& table)
+void PartyStatusGUI::InitializeContents(const std::vector<uint32_t>& table, const std::vector<std::wstring>& names)
 {
 	m_partyMemberIDsCache = table;
+	m_partyMemberNamesCache = names;
 	m_partyLeaderIndexCache = 0;
 	UpdatePartyPanels();
 	m_panel->SetActive(true);
@@ -107,18 +108,21 @@ void PartyStatusGUI::InitializeContents(const std::vector<uint32_t>& table)
 	SetDialogPanelMode(false);
 }
 
-void PartyStatusGUI::AddPartyMember(uint32_t partyMemberID)
+void PartyStatusGUI::AddPartyMember(uint32_t partyMemberID, std::wstring_view partyMemberName)
 {
 	m_partyMemberIDsCache.push_back(partyMemberID);
+	m_partyMemberNamesCache.push_back(partyMemberName.data());
 	UpdatePartyPanels();
 }
 
 void PartyStatusGUI::RemovePartyMember(uint32_t partyMemberID)
 {
-	auto it = std::remove(m_partyMemberIDsCache.begin(), m_partyMemberIDsCache.end(), partyMemberID);
+	auto it = std::find(m_partyMemberIDsCache.begin(), m_partyMemberIDsCache.end(), partyMemberID);
 	if (it != m_partyMemberIDsCache.end())
 	{
-		m_partyMemberIDsCache.erase(it, m_partyMemberIDsCache.end());
+		auto index = std::distance(m_partyMemberIDsCache.begin(), it);
+		m_partyMemberIDsCache.erase(m_partyMemberIDsCache.begin() + index);
+		m_partyMemberNamesCache.erase(m_partyMemberNamesCache.begin() + index);
 		UpdatePartyPanels();
 	}
 }
@@ -188,7 +192,7 @@ void PartyStatusGUI::UpdatePartyPanels()
 		{
 			m_partyPanels[i].PartyMemberIDText->SetActive(true);
 			auto partyMemberIDText = m_partyPanels[i].PartyMemberIDText->GetComponent<GUIText>();
-			partyMemberIDText->SetText(L"Member ID: " + std::to_wstring(m_partyMemberIDsCache[i]));
+			partyMemberIDText->SetText(m_partyMemberNamesCache[i]);
 		}
 		else
 		{
