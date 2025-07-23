@@ -806,6 +806,7 @@
 #define LANG_HAUSA                      0x68
 #define MAINICON                        104
 #define VK_NUMPAD9                      0x69
+#define IDD_CHAT_DIALOG                 105
 #define VK_MULTIPLY                     0x6A
 #define LANG_YORUBA                     0x6a
 #define VK_ADD                          0x6B
@@ -1260,6 +1261,8 @@
 #define WM_DDE_FIRST                    0x03E0
 #define IDC_EDIT_ID                     1000
 #define IDC_EDIT_PASSWORD               1001
+#define IDC_EDIT1                       1001
+#define IDC_CHAT                        1001
 #define CF_GDIOBJLAST                   0x03FF
 #define _WIN32_WINNT_NT4                0x0400
 #define _WIN32_IE_IE40                  0x0400
@@ -1619,9 +1622,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        105
+#define _APS_NEXT_RESOURCE_VALUE        107
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1001
+#define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -51,6 +51,69 @@ using namespace udsdx;
 extern EnvironmentParameters g_defaultEnvironmentParam;
 extern EnvironmentParameters g_dungeonEnvironmentParam;
 
+// 성긴 동기화 방식 스레드 간 채팅 내용 비동기 통신
+static std::queue<std::wstring> g_chatQueue;
+static std::mutex g_chatQueueMutex;
+
+INT_PTR CALLBACK ChatDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+    {
+        HWND hParent = GetParent(hDlg);
+        if (!hParent)
+            hParent = GetDesktopWindow();
+
+        RECT parentRect;
+        GetWindowRect(hParent, &parentRect);
+
+        RECT dlgRect;
+        GetWindowRect(hDlg, &dlgRect);
+
+        int dlgWidth = dlgRect.right - dlgRect.left;
+        int dlgHeight = dlgRect.bottom - dlgRect.top;
+
+        int parentWidth = parentRect.right - parentRect.left;
+        int parentHeight = parentRect.bottom - parentRect.top;
+
+        int newX = parentRect.left + (parentWidth - dlgWidth) / 2;
+        int newY = parentRect.top + (parentHeight - dlgHeight) / 2;
+
+        SetWindowPos(hDlg, HWND_TOP, newX, newY, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+
+        HWND hEdit = GetDlgItem(hDlg, IDC_CHAT);
+        SetFocus(hEdit);
+
+        return FALSE;
+    }
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK)
+        {
+            wchar_t context[1024] = {};
+            GetDlgItemTextW(hDlg, IDC_CHAT, context, 1024);
+
+            // 큐에 넣기
+            g_chatQueueMutex.lock();
+            // check whether the message is empty
+            if (wcslen(context) > 0)
+                g_chatQueue.emplace(context);
+            g_chatQueueMutex.unlock();
+
+            EndDialog(hDlg, LOWORD(wParam));
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, IDCANCEL);
+            return TRUE;
+        }
+        break;
+    }
+    return FALSE;
+}
+
 GameScene::GameScene() : Scene()
 {
 }
@@ -455,6 +518,26 @@ void GameScene::Update(const Time& time)
         {
             m_interfaceGroup->SetActive(!m_interfaceGroup->GetActive());
         }
+        if (INSTANCE(Input)->GetKeyDown(Keyboard::Enter))
+        {
+            if (INSTANCE(Input)->GetMouseMode() == Mouse::Mode::MODE_RELATIVE)
+                INSTANCE(Input)->SetRelativeMouse(false);
+            auto core = INSTANCE(Core);
+            HWND hDlg = CreateDialog(core->GetInstance(), MAKEINTRESOURCE(IDD_CHAT_DIALOG), core->GetMainWindow(), ChatDialogProc);
+            ShowWindow(hDlg, SW_SHOW);
+        }
+    }
+    if constexpr (true == g_bUseNetWork)
+    {
+        g_chatQueueMutex.lock();
+        while (!g_chatQueue.empty())
+        {
+            std::wstring chatMessage = g_chatQueue.front();
+            g_chatQueue.pop();
+
+            Send(Create_c2s_CHAT(Common::DataRegistry::Wstr2Str(chatMessage)));
+        }
+        g_chatQueueMutex.unlock();
     }
 
     Vector3 playerPosition = m_heroObj->GetTransform()->GetWorldPosition();

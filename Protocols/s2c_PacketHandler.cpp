@@ -928,8 +928,9 @@ const bool Handle_s2c_CHAT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 	const auto chat_user_id = pkt_.chat_user_id();
 	const auto chat_user_name = GetOriginWString(pkt_.char_user_name());
 	const auto chat_msg = GetOriginWString(pkt_.char_msg());
-	// ... 이후 여기서 출력하면 됨
 
+	// ... 이후 여기서 출력하면 됨
+	INSTANCE(GameGUIFacade)->LogFloat->AddText(L"[" + chat_user_name + L"]: " + chat_msg);
 
 	// TODO: 채팅 메세지 보내는법
 	// std::string my_chat_msg;

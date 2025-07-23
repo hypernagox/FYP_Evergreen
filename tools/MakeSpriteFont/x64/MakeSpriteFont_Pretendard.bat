@@ -1,1 +1,1 @@
-MakeSpriteFont "Pretendard Variable" pretendard.spritefont /FontSize:16 /CharacterRegion:32-126 /CharacterRegion:0xAC00-0xD7A3 /FontStyle:Bold /FastPack /NoPremultiply
+MakeSpriteFont "Pretendard Variable" pretendard.spritefont /FontSize:16 /CharacterRegion:32-126 /CharacterRegion:0x3131-0x318E /CharacterRegion:0xAC00-0xD7A3 /FontStyle:Bold /FastPack /NoPremultiply
