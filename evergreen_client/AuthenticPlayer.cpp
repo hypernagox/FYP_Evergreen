@@ -231,7 +231,7 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	m_cameraAnchorLastPosition = m_cameraAnchor->GetTransform()->GetWorldPosition();
 
 	// Region: Camera Z Distance / Screen Offset Control
-	bool focused = INSTANCE(Input)->GetMouseRightButton();
+	bool focused = false; // INSTANCE(Input)->GetMouseRightButton();
 	float distanceTarget = focused ? 1.0f : m_cameraDistance;
 
 	m_cameraDistanceSmooth = std::lerp(m_cameraDistanceSmooth, -distanceTarget, deltaTime * 8.0f);
@@ -270,11 +270,20 @@ void AuthenticPlayer::UpdateCameraTransformDebug(Transform* pCameraTransfrom, fl
 	m_cameraObj->GetTransform()->SetLocalPosition(Vector3::Forward * 64.0f);
 }
 
-void AuthenticPlayer::TryClickScreen()
+void AuthenticPlayer::TryClickScreen(int mouse)
 {
-	if (!CanAttack())return;
-	m_playerRenderer->Attack();
-	DoAttack(Nagox::Enum::SKILL_TYPE_DEFAULT);
+	if (!CanAttack())
+		return;
+	switch (mouse)
+	{
+	case 0: // 왼쪽 마우스 버튼
+		m_playerRenderer->Attack();
+		DoAttack(Nagox::Enum::SKILL_TYPE_DEFAULT);
+		break;
+	case 1: // 오른쪽 마우스 버튼
+		m_playerRenderer->Attack();
+		DoAttack(Nagox::Enum::SKILL_TYPE_SKILL_1);
+	}
 	//std::cout << "공격 시도\n";
 }
 
@@ -451,17 +460,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 			GuideSystem::GetInst()->temp_force_pos = { -119.499115f,75,13.64f };
 		else
 			GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
-	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::Y))
-	{
-		if (!CanAttack())return;
-		// 렌더러 매개변수로 공격종류값도 넣어줘야할것같은데
-		m_playerRenderer->Attack();
-		DoAttack(Nagox::Enum::SKILL_TYPE_SKILL_1);
-		// TODO: 우클로 하려했는데 모르겠다 2번째 스킬에 대한 키 정하기 필요
-		
-		//GetTransform()->SetLocalPosition(Vector3(312.29892F, 85.07235F, 138.55077F));
-		//Send(Create_c2s_REQUEST_QUEST(Common::CommonQuestTable::GetCommonQuestInfo(L"여우 곰 잡기").quest_id));
 	}
 
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::O))

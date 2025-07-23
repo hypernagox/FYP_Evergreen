@@ -254,9 +254,9 @@ void GameScene::OnAttach()
         auto focusAgent = m_focusAgentObj->AddComponent<FocusAgentGUI>();
 
         focusAgent->SetSize(Vector2::One * 8192.0f);
-        focusAgent->SetTryClickCallback([this]() {
+        focusAgent->SetTryClickCallback([this](int mouse) {
             INSTANCE(Input)->SetRelativeMouse(true);
-            m_heroComponent->TryClickScreen();
+            m_heroComponent->TryClickScreen(mouse);
             });
         m_playerInterfaceGroup->AddChild(m_focusAgentObj);
         m_focusAgentObj->SetActive(false);

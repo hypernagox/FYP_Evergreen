@@ -13,7 +13,7 @@ namespace udsdx
 	{
 	public:
 		void Render(RenderParam& param) override;
-		void OnMouseRelease() override;
+		void OnMouseRelease(int mouse) override;
 
 	public:
 		bool GetInteractable() const { return m_interactable; }

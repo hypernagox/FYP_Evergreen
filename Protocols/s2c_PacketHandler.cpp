@@ -257,7 +257,8 @@ const bool Handle_s2c_PLAYER_ATTACK(const NetHelper::S_ptr<NetHelper::PacketSess
 
 	const auto skill_type = pkt_.atk_type();
 	const auto atk_player = Mgr(ServerObjectMgr)->GetServerObj(pkt_.atk_player_id());
-	if (!atk_player)return true;
+	if (!atk_player || NetMgr(NetworkMgr)->GetSessionID() == pkt_.atk_player_id())
+		return true;
 	
 	atk_player->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(pkt_.body_angle() * DEG2RAD + PI, 0.0f, 0.0f));
 	atk_player->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.atk_pos()));

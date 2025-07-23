@@ -17,7 +17,7 @@ namespace udsdx
 			}
 			else
 			{
-				m_mousePressing = false;
+				m_leftMousePressing = false;
 				OnMouseExit();
 			}
 		}
@@ -27,13 +27,33 @@ namespace udsdx
 			OnMouseHover();
 			if (INSTANCE(Input)->GetMouseLeftButtonDown())
 			{
-				m_mousePressing = true;
-				OnMousePress();
+				m_leftMousePressing = true;
+				OnMousePress(0);
 			}
-			if (m_mousePressing && INSTANCE(Input)->GetMouseLeftButtonUp())
+			if (m_leftMousePressing && INSTANCE(Input)->GetMouseLeftButtonUp())
 			{
-				m_mousePressing = false;
-				OnMouseRelease();
+				m_leftMousePressing = false;
+				OnMouseRelease(0);
+			}
+			if (INSTANCE(Input)->GetMouseRightButtonDown())
+			{
+				m_rightMousePressing = true;
+				OnMousePress(1);
+			}
+			if (m_rightMousePressing && INSTANCE(Input)->GetMouseRightButtonUp())
+			{
+				m_rightMousePressing = false;
+				OnMouseRelease(1);
+			}
+			if (INSTANCE(Input)->GetMouseMiddleButtonDown())
+			{
+				m_middleMousePressing = true;
+				OnMousePress(2);
+			}
+			if (m_middleMousePressing && INSTANCE(Input)->GetMouseMiddleButtonUp())
+			{
+				m_middleMousePressing = false;
+				OnMouseRelease(2);
 			}
 		}
 	}

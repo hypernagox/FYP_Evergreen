@@ -40,7 +40,7 @@ namespace udsdx
 		}
 	}
 
-	void GUIButton::OnMouseRelease()
+	void GUIButton::OnMouseRelease(int mouse)
 	{
 		if (m_interactable && m_clickCallback)
 		{

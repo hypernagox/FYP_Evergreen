@@ -88,7 +88,7 @@ public:
 	void Update(const Time& time, Scene& scene) override;
 
 	void DoAttack(const Nagox::Enum::SKILL_TYPE skill_type);
-	void TryClickScreen();
+	void TryClickScreen(int mouse);
 
 	Vector3 GetPlayerLook() const noexcept;
 	Camera* GetCameraComponent() const noexcept { return m_pCamera; }

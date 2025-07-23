@@ -20,7 +20,7 @@ void GUISimpleButton::Render(udsdx::RenderParam& param)
 	GUIButton::Render(param);
 }
 
-void GUISimpleButton::OnMouseRelease()
+void GUISimpleButton::OnMouseRelease(int mouse)
 {
 	if (GetInteractable())
 	{
@@ -29,5 +29,5 @@ void GUISimpleButton::OnMouseRelease()
 		m_soundInstance->Play();
 	}
 
-	GUIButton::OnMouseRelease();
+	GUIButton::OnMouseRelease(mouse);
 }

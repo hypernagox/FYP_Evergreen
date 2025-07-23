@@ -21,8 +21,8 @@ namespace udsdx
 		virtual void OnMouseEnter() { };
 		virtual void OnMouseHover() { };
 		virtual void OnMouseExit() { };
-		virtual void OnMousePress() { };
-		virtual void OnMouseRelease() { };
+		virtual void OnMousePress(int mouse) { };
+		virtual void OnMouseRelease(int mouse) { };
 
 	public:
 		Vector2 GetSize() const { return m_size; }
@@ -31,7 +31,10 @@ namespace udsdx
 		bool GetRaycastTarget() const { return m_raycastTarget; }
 
 		bool GetMouseHovering() const { return m_mouseHovering; }
-		bool GetMousePressing() const { return m_mousePressing; }
+		bool GetMousePressing() const { return m_leftMousePressing || m_rightMousePressing || m_middleMousePressing; }
+		bool GetLeftMousePressing() const { return m_leftMousePressing; }
+		bool GetRightMousePressing() const { return m_rightMousePressing; }
+		bool GetMiddleMousePressing() const { return m_middleMousePressing; }
 
 	public:
 		void SetSize(const Vector2& value) { m_size = value; }
@@ -44,6 +47,8 @@ namespace udsdx
 		bool m_raycastTarget = true;
 
 		bool m_mouseHovering = false;
-		bool m_mousePressing = false;
+		bool m_leftMousePressing = false;
+		bool m_rightMousePressing = false;
+		bool m_middleMousePressing = false;
 	};
 }
