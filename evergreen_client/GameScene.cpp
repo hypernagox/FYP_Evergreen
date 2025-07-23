@@ -255,7 +255,8 @@ void GameScene::OnAttach()
 
         focusAgent->SetSize(Vector2::One * 8192.0f);
         focusAgent->SetTryClickCallback([this](int mouse) {
-            INSTANCE(Input)->SetRelativeMouse(true);
+            if (INSTANCE(Input)->GetMouseMode() == Mouse::Mode::MODE_ABSOLUTE)
+                INSTANCE(Input)->SetRelativeMouse(true);
             m_heroComponent->TryClickScreen(mouse);
             });
         m_playerInterfaceGroup->AddChild(m_focusAgentObj);
