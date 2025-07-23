@@ -8,6 +8,11 @@
 #include "Projectile.h"
 #include "StatusSystem.h"
 #include "Service.h"
+#include "ClusterPredicate.h"
+#include "NaviAgent_Common.h"
+#include "Queueabler.h"
+#include "Cluster.h"
+#include "ClusterInfoHelper.h"
 
 using namespace NagiocpX;
 
@@ -148,7 +153,7 @@ bool WarriorSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcep
 	rotatedForward.y = 0.f;
 	auto ppp = pos_comp->pos;
 	ppp.y += 2.f;
-	Common::Sphere sp{ &ppp ,1.f };
+	Common::Sphere sp{ &ppp ,2.5f };
 	//std::cout << "Player Pos: ";
 	//PrintVector3(pos_comp->pos);
 	//Common::Fan fan{ pos_comp->pos ,rotatedForward,30.f,4.f };
@@ -165,7 +170,7 @@ bool WarriorSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcep
 			{
 				if (const auto pCol = pmon->GetComp<Collider>())
 				{
-					const auto owner = pCol->GetOwnerEntity();
+					const auto owner = pCol->GetOwnerEntityRaw();
 
 					if (sp.IsCollision(pCol->GetCollider()))
 						//if (pCol->IsCollision(box))
@@ -175,6 +180,15 @@ bool WarriorSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcep
 						//owner->TryOnDestroy();
 						//std::cout << "Hit Pos: ";
 						//PrintVector3(pCol->GetPosComp()->pos);
+						if (const auto navi_agent = owner->GetComp<NaviAgent>())
+						{
+							const auto& atk_pos = ppp;
+							const auto& victim_pos = owner->GetComp<PositionComponent>()->pos;
+							const auto dir = CommonMath::Normalized(victim_pos - atk_pos);
+							ClusterPredicate c;
+							owner->GetQueueabler()->EnqueueAsync(&NaviAgent::ForcedMovement, navi_agent, dir, 10.f);
+							owner->GetComp<ClusterInfoHelper>()->BroadcastCluster(c.ClusterPredicate::CreateMovePacket(owner));
+						}
 						owner->GetComp<HP>()->PostDoDmg(1, pOwner->SharedFromThis(), 5);
 						isHit = true;
 					}
