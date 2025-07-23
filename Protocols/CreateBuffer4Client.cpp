@@ -410,3 +410,17 @@ NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_DASH(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_DASH);
 }
+NetHelper::S_ptr<NetHelper::SendBuffer> Create_c2s_CHAT(
+    const std::string_view& chat_msg,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto chat_msg_offset = builder.CreateString(chat_msg);
+   const auto serializedc2s_CHAT = Nagox::Protocol::Createc2s_CHAT(
+    builder,    chat_msg_offset
+    );
+    builder.Finish(serializedc2s_CHAT);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHAT);
+}

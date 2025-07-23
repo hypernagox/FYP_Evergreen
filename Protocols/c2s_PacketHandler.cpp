@@ -647,4 +647,13 @@ const bool Handle_c2s_DASH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSess
 	return true;
 }
 
+const bool Handle_c2s_CHAT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CHAT& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+	owner->GetComp<ClusterInfoHelper>()->BroadcastAllCluster(
+		Create_s2c_CHAT(owner->GetObjectID(), owner->GetClientSession()->m_userName, *pkt_.chat_msg())
+	);
+	return true;
+}
+
 

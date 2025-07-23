@@ -408,3 +408,15 @@ table s2c_ARROW_RAIN
     atk_pos: Nagox.Struct.Vec3;
     atk_type : Nagox.Enum.SKILL_TYPE;
 }
+
+table c2s_CHAT
+{
+    chat_msg : string;
+}
+
+table s2c_CHAT
+{
+    chat_user_id : uint32;
+    char_user_name : string;
+    char_msg : string;
+}

@@ -236,3 +236,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ARROW_RAIN(
     const Nagox::Enum::SKILL_TYPE& atk_type,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHAT(
+    const uint32_t chat_user_id,
+    const std::string_view& char_user_name,
+    const std::string_view& char_msg,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

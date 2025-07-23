@@ -48,6 +48,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_HEAL = 1037,
     s2c_DASH = 1038,
     s2c_ARROW_RAIN = 1039,
+    s2c_CHAT = 1040,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -76,6 +77,7 @@ enum class CREATE_PKT_ID : uint16_t {
     c2s_CHANGE_EQUIPMENT = 1022,
     c2s_CHANGE_CHANNEL = 1023,
     c2s_DASH = 1024,
+    c2s_CHAT = 1025,
 };
 
 class NetHelper::PacketSession;
@@ -125,6 +127,7 @@ const bool Handle_s2c_BOSS_PROJ_MARK(const NetHelper::S_ptr<NetHelper::PacketSes
 const bool Handle_s2c_HEAL(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_HEAL& pkt_);
 const bool Handle_s2c_DASH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_DASH& pkt_);
 const bool Handle_s2c_ARROW_RAIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ARROW_RAIN& pkt_);
+const bool Handle_s2c_CHAT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHAT& pkt_);
 
 class s2c_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const BYTE* const, const int32_t);
@@ -171,6 +174,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_HEAL, Nagox::Protocol::s2c_HEAL, Handle_s2c_HEAL>();
         RegisterHandler<HANDLE_PKT_ID::s2c_DASH, Nagox::Protocol::s2c_DASH, Handle_s2c_DASH>();
         RegisterHandler<HANDLE_PKT_ID::s2c_ARROW_RAIN, Nagox::Protocol::s2c_ARROW_RAIN, Handle_s2c_ARROW_RAIN>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_CHAT, Nagox::Protocol::s2c_CHAT, Handle_s2c_CHAT>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

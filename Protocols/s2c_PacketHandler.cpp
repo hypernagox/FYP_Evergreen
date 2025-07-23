@@ -921,3 +921,19 @@ const bool Handle_s2c_ARROW_RAIN(const NetHelper::S_ptr<NetHelper::PacketSession
 
 	return true;
 }
+
+const bool Handle_s2c_CHAT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHAT& pkt_)
+{
+	// TODO: 채팅친 유저의 이름과 내용이 패킷으로 온다. 여기서 출력
+	const auto chat_user_id = pkt_.chat_user_id();
+	const auto chat_user_name = GetOriginWString(pkt_.char_user_name());
+	const auto chat_msg = GetOriginWString(pkt_.char_msg());
+	// ... 이후 여기서 출력하면 됨
+
+
+	// TODO: 채팅 메세지 보내는법
+	// std::string my_chat_msg;
+	// Send(Create_c2s_CHAT(my_chat_msg));
+
+	return true;
+}

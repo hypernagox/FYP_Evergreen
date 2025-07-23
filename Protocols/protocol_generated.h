@@ -214,6 +214,12 @@ struct s2c_DASHBuilder;
 struct s2c_ARROW_RAIN;
 struct s2c_ARROW_RAINBuilder;
 
+struct c2s_CHAT;
+struct c2s_CHATBuilder;
+
+struct s2c_CHAT;
+struct s2c_CHATBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -4228,6 +4234,146 @@ inline ::flatbuffers::Offset<s2c_ARROW_RAIN> Creates2c_ARROW_RAIN(
   builder_.add_body_angle(body_angle);
   builder_.add_atk_type(atk_type);
   return builder_.Finish();
+}
+
+struct c2s_CHAT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef c2s_CHATBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_CHAT_MSG = 4
+  };
+  const ::flatbuffers::String *chat_msg() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_CHAT_MSG);
+  }
+  ::flatbuffers::String *mutable_chat_msg() {
+    return GetPointer<::flatbuffers::String *>(VT_CHAT_MSG);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_CHAT_MSG) &&
+           verifier.VerifyString(chat_msg()) &&
+           verifier.EndTable();
+  }
+};
+
+struct c2s_CHATBuilder {
+  typedef c2s_CHAT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_chat_msg(::flatbuffers::Offset<::flatbuffers::String> chat_msg) {
+    fbb_.AddOffset(c2s_CHAT::VT_CHAT_MSG, chat_msg);
+  }
+  explicit c2s_CHATBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<c2s_CHAT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<c2s_CHAT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<c2s_CHAT> Createc2s_CHAT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<::flatbuffers::String> chat_msg = 0) {
+  c2s_CHATBuilder builder_(_fbb);
+  builder_.add_chat_msg(chat_msg);
+  return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<c2s_CHAT> Createc2s_CHATDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const char *chat_msg = nullptr) {
+  auto chat_msg__ = chat_msg ? _fbb.CreateString(chat_msg) : 0;
+  return Nagox::Protocol::Createc2s_CHAT(
+      _fbb,
+      chat_msg__);
+}
+
+struct s2c_CHAT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_CHATBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_CHAT_USER_ID = 4,
+    VT_CHAR_USER_NAME = 6,
+    VT_CHAR_MSG = 8
+  };
+  uint32_t chat_user_id() const {
+    return GetField<uint32_t>(VT_CHAT_USER_ID, 0);
+  }
+  bool mutate_chat_user_id(uint32_t _chat_user_id = 0) {
+    return SetField<uint32_t>(VT_CHAT_USER_ID, _chat_user_id, 0);
+  }
+  const ::flatbuffers::String *char_user_name() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_CHAR_USER_NAME);
+  }
+  ::flatbuffers::String *mutable_char_user_name() {
+    return GetPointer<::flatbuffers::String *>(VT_CHAR_USER_NAME);
+  }
+  const ::flatbuffers::String *char_msg() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_CHAR_MSG);
+  }
+  ::flatbuffers::String *mutable_char_msg() {
+    return GetPointer<::flatbuffers::String *>(VT_CHAR_MSG);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_CHAT_USER_ID, 4) &&
+           VerifyOffset(verifier, VT_CHAR_USER_NAME) &&
+           verifier.VerifyString(char_user_name()) &&
+           VerifyOffset(verifier, VT_CHAR_MSG) &&
+           verifier.VerifyString(char_msg()) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_CHATBuilder {
+  typedef s2c_CHAT Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_chat_user_id(uint32_t chat_user_id) {
+    fbb_.AddElement<uint32_t>(s2c_CHAT::VT_CHAT_USER_ID, chat_user_id, 0);
+  }
+  void add_char_user_name(::flatbuffers::Offset<::flatbuffers::String> char_user_name) {
+    fbb_.AddOffset(s2c_CHAT::VT_CHAR_USER_NAME, char_user_name);
+  }
+  void add_char_msg(::flatbuffers::Offset<::flatbuffers::String> char_msg) {
+    fbb_.AddOffset(s2c_CHAT::VT_CHAR_MSG, char_msg);
+  }
+  explicit s2c_CHATBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_CHAT> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_CHAT>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_CHAT> Creates2c_CHAT(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t chat_user_id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> char_user_name = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> char_msg = 0) {
+  s2c_CHATBuilder builder_(_fbb);
+  builder_.add_char_msg(char_msg);
+  builder_.add_char_user_name(char_user_name);
+  builder_.add_chat_user_id(chat_user_id);
+  return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_CHAT> Creates2c_CHATDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t chat_user_id = 0,
+    const char *char_user_name = nullptr,
+    const char *char_msg = nullptr) {
+  auto char_user_name__ = char_user_name ? _fbb.CreateString(char_user_name) : 0;
+  auto char_msg__ = char_msg ? _fbb.CreateString(char_msg) : 0;
+  return Nagox::Protocol::Creates2c_CHAT(
+      _fbb,
+      chat_user_id,
+      char_user_name__,
+      char_msg__);
 }
 
 }  // namespace Protocol

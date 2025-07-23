@@ -773,3 +773,23 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ARROW_RAIN(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_ARROW_RAIN);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHAT(
+    const uint32_t chat_user_id,
+    const std::string_view& char_user_name,
+    const std::string_view& char_msg,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto chat_user_id_value = chat_user_id;
+    const auto char_user_name_offset = builder.CreateString(char_user_name);
+    const auto char_msg_offset = builder.CreateString(char_msg);
+   const auto serializeds2c_CHAT = Nagox::Protocol::Creates2c_CHAT(
+    builder,    chat_user_id_value
+,     char_user_name_offset
+,     char_msg_offset
+    );
+    builder.Finish(serializeds2c_CHAT);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_CHAT);
+}
