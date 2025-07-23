@@ -298,6 +298,8 @@ void TutorialGuardQuest::InitQuestField() noexcept
 		Vector3(-174.05774F, 78.48746F, -9.923426F),
 		Vector3(-158.33324F, 77.9395F, 5.0919523F) }
 		);
+	SetQuestBeginPos(Vector3(-282.8635F, 87.840515F, -25.212923F));
+	SetClearTreePos(Vector3(-122.421486F, 82.32489F, -22.810806F));
 }
 
 void TutorialGuardQuest::SetMonsters(const XVector<Vector3> points) noexcept
@@ -626,6 +628,7 @@ void NPCGuardQuest2::InitQuestField() noexcept
 		,Vector3(122.89287F,87.17902F,116.92817F)
 		});
 	SetQuestBeginPos(Vector3(312.29892F, 85.07235F, 138.55077F));
+	SetClearTreePos(Vector3(89.6872F, 86.92489F, 138.31534F));
 }
 
 void NPCGuardQuest2::SetMonsters(const XVector<Vector3> points) noexcept
@@ -673,9 +676,57 @@ void CombinationBattleQuest::InitQuestField() noexcept
 		AddMonster(EntityFactory::CreateBear, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 	SetQuestBeginPos(Vector3(-36.739315F, 88.53785F, -354.69366F));
+	SetClearTreePos(Vector3(-34.637226F, 88.03863F, -359.1566F));
 }
 
 void NexusQuest::InitQuestField() noexcept
 {
+	const Vector3 mon_quest_pos[]
+	{
+	Vector3(207.82861F,77.72283F,-164.34373F)
+	,Vector3(206.4992F,77.31081F,-166.62779F)
+	,Vector3(206.00076F,76.829346F,-171.13225F)
+	,Vector3(204.66998F,76.92762F,-173.41866F)
+	,Vector3(203.15009F,76.819534F,-176.03006F)
+	,Vector3(201.7591F,76.76104F,-178.42007F)
+	,Vector3(200.08871F,76.62771F,-181.29012F)
+	,Vector3(199.07039F,76.53045F,-183.03981F)
+	,Vector3(197.95093F,76.54014F,-184.96318F)
+	,Vector3(196.5174F,76.7166F,-187.42622F)
+	,Vector3(195.27068F,77.10168F,-189.56836F)
+	,Vector3(197.11964F,76.869576F,-190.64452F)
+	,Vector3(197.21936F,76.47365F,-192.65926F)
+	,Vector3(199.44353F,76.177185F,-193.95377F)
+	,Vector3(200.81409F,75.98913F,-196.9807F)
+	,Vector3(203.08162F,75.895065F,-198.30042F)
+	,Vector3(205.05515F,75.886696F,-201.09853F)
+	,Vector3(193.97398F,76.430374F,-215.34503F)
+	,Vector3(188.4889F,76.77984F,-218.47409F)
+	,Vector3(183.18085F,76.70461F,-216.40794F)
+	,Vector3(182.55853F,76.70893F,-216.36768F)
+	,Vector3(176.56999F,76.75001F,-215.99039F)
+	,Vector3(175.7817F,76.60048F,-211.26678F)
+	,Vector3(179.42958F,76.35997F,-206.92198F)
+	,Vector3(175.96071F,76.60201F,-203.65468F)
+	,Vector3(188.34216F,76.51983F,-200.45242F)
+	,Vector3(184.49542F,76.78032F,-193.2892F)
+	};
+	const auto num = (int)(sizeof(mon_quest_pos) / sizeof(mon_quest_pos[0]));
+	const auto num_half = num / 2;
+	for (int i = 0; i < num_half; ++i)
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
+		AddMonster(EntityFactory::CreateMonster, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
+	}
+	for (int i = num_half; i < num; ++i)
+	{
+		EntityBuilder b;
+		b.group_type = Nagox::Enum::GROUP_TYPE::GROUP_TYPE_MONSTER;
+		b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
+		AddMonster(EntityFactory::CreateBear, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
+	}
 	SetQuestBeginPos(Vector3(148.24475F, 77.23696F, -187.04926F));
+	SetClearTreePos(Vector3(133.60077F, 79.136566F, -247.11813F));
 }

@@ -6,6 +6,7 @@
 
 template<typename T>
 using Vector = std::vector<T>;
+using String = std::string;
 
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 

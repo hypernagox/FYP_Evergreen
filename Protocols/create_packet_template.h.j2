@@ -11,9 +11,11 @@
 {% if namespace_prefix == 'NagiocpX::' %}
 template<typename T>
 using Vector = NagiocpX::XVector<T>;
+using String = NagiocpX::XString;
 {% else %}
 template<typename T>
 using Vector = std::vector<T>;
+using String = std::string;
 {% endif %}
 
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
@@ -24,10 +26,14 @@ static inline flatbuffers::FlatBufferBuilder* const GetBuilder() noexcept { retu
 {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> Create_{{ table.name }}(
     {% if table.fields|length > 0 %}
     {% for field in table.fields %}
-    {% if "::" in field.type %}
-    const {{ field.type }}& {{ field.name }},
+    {% set actual_type = field.type %}
+    {% if "Vector<string>" in field.type %}
+    {% set actual_type = field.type.replace("string", "String") %}
+    {% endif %}
+    {% if "::" in actual_type %}
+    const {{ actual_type }}& {{ field.name }},
     {% else %}
-    const {{ field.type }} {{ field.name }},
+    const {{ actual_type }} {{ field.name }},
     {% endif %}
     {% endfor %}
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()

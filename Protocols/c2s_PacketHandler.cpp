@@ -424,7 +424,8 @@ const bool Handle_c2s_INVITE_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketS
 	const auto leader = session->QueryPartyLeader();
 	if (!leader)return true;
 	// 파티장이 타겟 유저에게 자신의 아이디와 현재 퀘스트 아이디를 보낸다
-	target_user->GetSession()->SendAsync(Create_s2c_INVITE_PARTY_QUEST(pSession_->GetSessionID(), leader->GetCurPartyQuestID()));
+	// + 파티장의 이름도 알려준다 예:) Nagox님이 초대하였습니다.
+	target_user->GetSession()->SendAsync(Create_s2c_INVITE_PARTY_QUEST(pSession_->GetSessionID(), leader->GetCurPartyQuestID(),session->m_userName));
 	return true;
 }
 
@@ -454,7 +455,8 @@ const bool Handle_c2s_PARTY_JOIN_REQUEST(const NagiocpX::S_ptr<NagiocpX::PacketS
 	const auto party_leader_session = party_leader->GetClientSession();
 	if (party_leader_session->QueryPartyLeader() && !GetClientSession(pSession_)->GetCurPartySystem())
 	{
-		auto pkt = Create_s2c_PARTY_JOIN_REQUEST(pSession_->GetSessionID());
+		// XX님이 파티가입을 신청하였습니다. 를 위해서 이름을 넣어준다.
+		auto pkt = Create_s2c_PARTY_JOIN_REQUEST(pSession_->GetSessionID(), GetClientSession(pSession_)->m_userName);
 		party_leader_session->SendAsync(std::move(pkt));
 	}
 	return true;

@@ -35,10 +35,11 @@ static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendB
 {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> Create_{{ table.name }}(
     {% if table.fields|length > 0 %}
     {% for field in table.fields %}
-    {% if "::" in field.type %}
-    const {{ field.type }}& {{ field.name }},
+    {% set type_fixed = field.type.replace("Vector<string>", "Vector<String>") %}
+    {% if "::" in type_fixed %}
+    const {{ type_fixed }}& {{ field.name }},
     {% else %}
-    const {{ field.type }} {{ field.name }},
+    const {{ type_fixed }} {{ field.name }},
     {% endif %}
     {% endfor %}
     flatbuffers::FlatBufferBuilder* const builder_ptr
@@ -49,31 +50,35 @@ static {{ namespace_prefix }}S_ptr<{{ namespace_prefix }}SendBuffer> CreateSendB
     auto& builder = *builder_ptr;
     builder.Clear();
     {% for field in table.fields %}
-    {% if field.type == "std::string_view" %}
+    {% set type_fixed = field.type.replace("Vector<string>", "Vector<String>") %}
+    {% if type_fixed in ["std::string_view", "std::string", "String", "NagiocpX::XString"] %}
     const auto {{ field.name }}_offset = builder.CreateString({{ field.name }});
-    {% elif "Vector" in field.type %}
-    {% if "::Struct::" in field.type %}
+    {% elif type_fixed == "Vector<String>" %}
+    const auto {{ field.name }}_offset = builder.CreateVectorOfStrings({{ field.name }});
+    {% elif "Vector" in type_fixed %}
+        {% if "::Struct::" in type_fixed %}
     const auto {{ field.name }}_offset = builder.CreateVectorOfStructs({{ field.name }});
-    {% else %}
+        {% else %}
     const auto {{ field.name }}_offset = builder.CreateVector({{ field.name }});
-    {% endif %}
-    {% elif "::Struct" in field.type %}
+        {% endif %}
+    {% elif "::Struct" in type_fixed %}
     const auto {{ field.name }}_offset = &{{ field.name }};
     {% else %}
     const auto {{ field.name }}_value = {{ field.name }};
     {% endif %}
     {% endfor %}
-    const auto serialized{{ table.name }} = Nagox::Protocol::Create{{ table.name }}(
-        builder
-        {% if table.fields|length > 0 %},{% endif %}
-        {% for field in table.fields %}
-        {% if field.type == "std::string_view" %}
-        {{ field.name }}_offset{% elif "Vector" in field.type %}
-        {{ field.name }}_offset{% elif "::Struct" in field.type %}
-        {{ field.name }}_offset{% else %}
-        {{ field.name }}_value{% endif %}{% if not loop.last %},
-        {% endif %}
-        {% endfor %}
+   const auto serialized{{ table.name }} = Nagox::Protocol::Create{{ table.name }}(
+    builder{% if table.fields|length > 0 %},{% endif %}
+    {% for field in table.fields %}
+    {% set type_fixed = field.type.replace("Vector<string>", "Vector<String>") %}
+    {% if type_fixed in ["std::string_view", "std::string", "String", "NagiocpX::XString", "Vector<String>"] %}
+    {{ field.name }}_offset
+    {% elif "Vector" in type_fixed or "::Struct" in type_fixed %}
+    {{ field.name }}_offset
+    {% else %}
+    {{ field.name }}_value
+    {% endif %}{% if not loop.last %}, {% endif %}
+    {% endfor %}
     );
     builder.Finish(serialized{{ table.name }});
 

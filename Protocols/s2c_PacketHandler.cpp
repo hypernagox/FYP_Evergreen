@@ -40,6 +40,17 @@ flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
 	return &buillder;
 }
 
+static inline std::string GetOriginString(const auto pkt_string)noexcept {
+	std::string str;
+	str.reserve(pkt_string->size());
+	for (const auto ch : *pkt_string)str.push_back(ch);
+	return str;
+}
+
+static inline std::wstring GetOriginWString(const auto pkt_string)noexcept {
+	return Common::DataRegistry::Str2Wstr(GetOriginString(pkt_string));
+}
+
 #define Mgr(type)	(type::GetInst())
 
 const bool Handle_s2c_LOGIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_LOGIN& pkt_)
@@ -479,9 +490,10 @@ const bool Handle_s2c_INVITE_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::Packe
 	// 여기서 다른 파티장으로 부터 파티 초대가 온다.
 
 	// 팝업 메시지 송출
+	auto party_leader_name = GetOriginWString(pkt_.target_party_leader_name());
 	INSTANCE(GameGUIFacade)->RequestPopup->ShowPopup(
 		L"파티 초대 알림",
-		L"ID " + std::to_wstring(pkt_.target_party_leader_id()) + L" 님이 파티에 초대하였습니다.",
+		L"ID " + party_leader_name + L" 님이 파티에 초대하였습니다.",
 		[id = pkt_.target_party_leader_id()]() {
 			Send(Create_c2s_INVITE_PARTY_RESULT(id, true));
 		},
@@ -498,7 +510,7 @@ const bool Handle_s2c_INVITE_PARTY_RESULT(const NetHelper::S_ptr<NetHelper::Pack
 	// TODO: 내가 파티장이면 수락 여부에 대한 정보가,
 	// 내가 초대 당한 사람이면 거절하면 안옴
 	// 아직은 그냥 가서 떄리면 무조건 신청이고, 신청당한 사람은 무조건 수락
-
+	
 	if (pSession_->GetSessionID() == pkt_.target_party_leader_id())
 	{
 		if (pkt_.invite_result())
@@ -545,9 +557,10 @@ const bool Handle_s2c_PARTY_JOIN_REQUEST(const NetHelper::S_ptr<NetHelper::Packe
 	// 내가 파티장 일 때 다른 사람의 파티요청이 여기로 온다
 
 	// 팝업 메시지 송출
+	auto target_user_name = GetOriginWString(pkt_.target_user_name());
 	INSTANCE(GameGUIFacade)->RequestPopup->ShowPopup(
 		L"가입 요청 알림",
-		L"ID " + std::to_wstring(pkt_.target_user_id()) + L" 님이 파티에 가입 요청을 하였습니다.",
+		L"ID " + target_user_name + L" 님이 파티에 가입 요청을 하였습니다.",
 		[lid = pSession_->GetSessionID(), id = pkt_.target_user_id()]() {
 			Send(Create_c2s_PARTY_JOIN_REQUEST_RESULT(lid, id, true));
 		},
@@ -586,7 +599,7 @@ const bool Handle_s2c_PARTY_JOIN_REQUEST_RESULT(const NetHelper::S_ptr<NetHelper
 
 const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_JOIN_NEW_PLAYER& pkt_)
 {
-	std::wstring name = std::to_wstring(pkt_.target_user_id());
+	std::wstring name = GetOriginWString(pkt_.target_user_name());
 	INSTANCE(GameGUIFacade)->LogFloat->AddText(L"ID " + name + L" 님이 파티에 참여하였습니다.");
 	INSTANCE(GameGUIFacade)->PartyStatus->AddPartyMember(pkt_.target_user_id());
 	return true;
@@ -627,7 +640,8 @@ const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>
 	else
 	{
 		// 나 자신을 제외한 어떤 파티 멤버가 탈퇴한 경우 (탈퇴 멤버가 파티장일 수도 있음)
-		output_msg = L"ID " + std::to_wstring(pkt_.out_user_id()) + L" 님이 파티를 탈퇴하였습니다.";
+		auto name = GetOriginWString(pkt_.out_user_name());
+		output_msg = L"ID " + name + L" 님이 파티를 탈퇴하였습니다.";
 		partyStatusGUI->RemovePartyMember(pkt_.out_user_id());
 		partyStatusGUI->SetPartyLeader(pkt_.cur_leader_id());
 	}
@@ -665,11 +679,17 @@ const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::Packet
 
 const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_MEMBERS_INFORMATION& pkt_)
 {
+	// TODO: 다른 파티원들의 이름이 온다.
 	for (const auto other_members : *pkt_.party_member_ids())
 	{
 		std::cout << "파티원들 ID: " << other_members << '\n';
 	}
-
+	std::vector<std::string> names;
+	for (const auto other_member_name : *pkt_.party_member_names())
+	{
+		auto name = GetOriginString(other_member_name);
+		std::cout << "파티원들 Name: " << name << '\n';
+	}
 	std::vector<uint32_t> partyMemberIDs(pkt_.party_member_ids()->cbegin(), pkt_.party_member_ids()->cend());
 	partyMemberIDs.emplace_back(pSession_->GetSessionID());
 	auto partyStatus = INSTANCE(GameGUIFacade)->PartyStatus;

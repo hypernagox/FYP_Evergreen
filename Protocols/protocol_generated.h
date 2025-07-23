@@ -2502,7 +2502,8 @@ struct s2c_INVITE_PARTY_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::T
   typedef s2c_INVITE_PARTY_QUESTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_TARGET_PARTY_LEADER_ID = 4,
-    VT_TARGET_PARTY_QUEST_ID = 6
+    VT_TARGET_PARTY_QUEST_ID = 6,
+    VT_TARGET_PARTY_LEADER_NAME = 8
   };
   uint32_t target_party_leader_id() const {
     return GetField<uint32_t>(VT_TARGET_PARTY_LEADER_ID, 0);
@@ -2516,10 +2517,18 @@ struct s2c_INVITE_PARTY_QUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::T
   bool mutate_target_party_quest_id(int32_t _target_party_quest_id = 0) {
     return SetField<int32_t>(VT_TARGET_PARTY_QUEST_ID, _target_party_quest_id, 0);
   }
+  const ::flatbuffers::String *target_party_leader_name() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_TARGET_PARTY_LEADER_NAME);
+  }
+  ::flatbuffers::String *mutable_target_party_leader_name() {
+    return GetPointer<::flatbuffers::String *>(VT_TARGET_PARTY_LEADER_NAME);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_TARGET_PARTY_LEADER_ID, 4) &&
            VerifyField<int32_t>(verifier, VT_TARGET_PARTY_QUEST_ID, 4) &&
+           VerifyOffset(verifier, VT_TARGET_PARTY_LEADER_NAME) &&
+           verifier.VerifyString(target_party_leader_name()) &&
            verifier.EndTable();
   }
 };
@@ -2533,6 +2542,9 @@ struct s2c_INVITE_PARTY_QUESTBuilder {
   }
   void add_target_party_quest_id(int32_t target_party_quest_id) {
     fbb_.AddElement<int32_t>(s2c_INVITE_PARTY_QUEST::VT_TARGET_PARTY_QUEST_ID, target_party_quest_id, 0);
+  }
+  void add_target_party_leader_name(::flatbuffers::Offset<::flatbuffers::String> target_party_leader_name) {
+    fbb_.AddOffset(s2c_INVITE_PARTY_QUEST::VT_TARGET_PARTY_LEADER_NAME, target_party_leader_name);
   }
   explicit s2c_INVITE_PARTY_QUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -2548,11 +2560,26 @@ struct s2c_INVITE_PARTY_QUESTBuilder {
 inline ::flatbuffers::Offset<s2c_INVITE_PARTY_QUEST> Creates2c_INVITE_PARTY_QUEST(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t target_party_leader_id = 0,
-    int32_t target_party_quest_id = 0) {
+    int32_t target_party_quest_id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> target_party_leader_name = 0) {
   s2c_INVITE_PARTY_QUESTBuilder builder_(_fbb);
+  builder_.add_target_party_leader_name(target_party_leader_name);
   builder_.add_target_party_quest_id(target_party_quest_id);
   builder_.add_target_party_leader_id(target_party_leader_id);
   return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_INVITE_PARTY_QUEST> Creates2c_INVITE_PARTY_QUESTDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_party_leader_id = 0,
+    int32_t target_party_quest_id = 0,
+    const char *target_party_leader_name = nullptr) {
+  auto target_party_leader_name__ = target_party_leader_name ? _fbb.CreateString(target_party_leader_name) : 0;
+  return Nagox::Protocol::Creates2c_INVITE_PARTY_QUEST(
+      _fbb,
+      target_party_leader_id,
+      target_party_quest_id,
+      target_party_leader_name__);
 }
 
 struct c2s_INVITE_PARTY_RESULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
@@ -2742,7 +2769,8 @@ inline ::flatbuffers::Offset<c2s_PARTY_JOIN_REQUEST> Createc2s_PARTY_JOIN_REQUES
 struct s2c_PARTY_JOIN_REQUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_PARTY_JOIN_REQUESTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_TARGET_USER_ID = 4
+    VT_TARGET_USER_ID = 4,
+    VT_TARGET_USER_NAME = 6
   };
   uint32_t target_user_id() const {
     return GetField<uint32_t>(VT_TARGET_USER_ID, 0);
@@ -2750,9 +2778,17 @@ struct s2c_PARTY_JOIN_REQUEST FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::T
   bool mutate_target_user_id(uint32_t _target_user_id = 0) {
     return SetField<uint32_t>(VT_TARGET_USER_ID, _target_user_id, 0);
   }
+  const ::flatbuffers::String *target_user_name() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_TARGET_USER_NAME);
+  }
+  ::flatbuffers::String *mutable_target_user_name() {
+    return GetPointer<::flatbuffers::String *>(VT_TARGET_USER_NAME);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
+           VerifyOffset(verifier, VT_TARGET_USER_NAME) &&
+           verifier.VerifyString(target_user_name()) &&
            verifier.EndTable();
   }
 };
@@ -2763,6 +2799,9 @@ struct s2c_PARTY_JOIN_REQUESTBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_target_user_id(uint32_t target_user_id) {
     fbb_.AddElement<uint32_t>(s2c_PARTY_JOIN_REQUEST::VT_TARGET_USER_ID, target_user_id, 0);
+  }
+  void add_target_user_name(::flatbuffers::Offset<::flatbuffers::String> target_user_name) {
+    fbb_.AddOffset(s2c_PARTY_JOIN_REQUEST::VT_TARGET_USER_NAME, target_user_name);
   }
   explicit s2c_PARTY_JOIN_REQUESTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -2777,10 +2816,23 @@ struct s2c_PARTY_JOIN_REQUESTBuilder {
 
 inline ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST> Creates2c_PARTY_JOIN_REQUEST(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint32_t target_user_id = 0) {
+    uint32_t target_user_id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> target_user_name = 0) {
   s2c_PARTY_JOIN_REQUESTBuilder builder_(_fbb);
+  builder_.add_target_user_name(target_user_name);
   builder_.add_target_user_id(target_user_id);
   return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST> Creates2c_PARTY_JOIN_REQUESTDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_user_id = 0,
+    const char *target_user_name = nullptr) {
+  auto target_user_name__ = target_user_name ? _fbb.CreateString(target_user_name) : 0;
+  return Nagox::Protocol::Creates2c_PARTY_JOIN_REQUEST(
+      _fbb,
+      target_user_id,
+      target_user_name__);
 }
 
 struct c2s_PARTY_JOIN_REQUEST_RESULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
@@ -2913,7 +2965,8 @@ inline ::flatbuffers::Offset<s2c_PARTY_JOIN_REQUEST_RESULT> Creates2c_PARTY_JOIN
 struct s2c_PARTY_JOIN_NEW_PLAYER FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_PARTY_JOIN_NEW_PLAYERBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_TARGET_USER_ID = 4
+    VT_TARGET_USER_ID = 4,
+    VT_TARGET_USER_NAME = 6
   };
   uint32_t target_user_id() const {
     return GetField<uint32_t>(VT_TARGET_USER_ID, 0);
@@ -2921,9 +2974,17 @@ struct s2c_PARTY_JOIN_NEW_PLAYER FLATBUFFERS_FINAL_CLASS : private ::flatbuffers
   bool mutate_target_user_id(uint32_t _target_user_id = 0) {
     return SetField<uint32_t>(VT_TARGET_USER_ID, _target_user_id, 0);
   }
+  const ::flatbuffers::String *target_user_name() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_TARGET_USER_NAME);
+  }
+  ::flatbuffers::String *mutable_target_user_name() {
+    return GetPointer<::flatbuffers::String *>(VT_TARGET_USER_NAME);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_TARGET_USER_ID, 4) &&
+           VerifyOffset(verifier, VT_TARGET_USER_NAME) &&
+           verifier.VerifyString(target_user_name()) &&
            verifier.EndTable();
   }
 };
@@ -2934,6 +2995,9 @@ struct s2c_PARTY_JOIN_NEW_PLAYERBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_target_user_id(uint32_t target_user_id) {
     fbb_.AddElement<uint32_t>(s2c_PARTY_JOIN_NEW_PLAYER::VT_TARGET_USER_ID, target_user_id, 0);
+  }
+  void add_target_user_name(::flatbuffers::Offset<::flatbuffers::String> target_user_name) {
+    fbb_.AddOffset(s2c_PARTY_JOIN_NEW_PLAYER::VT_TARGET_USER_NAME, target_user_name);
   }
   explicit s2c_PARTY_JOIN_NEW_PLAYERBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -2948,10 +3012,23 @@ struct s2c_PARTY_JOIN_NEW_PLAYERBuilder {
 
 inline ::flatbuffers::Offset<s2c_PARTY_JOIN_NEW_PLAYER> Creates2c_PARTY_JOIN_NEW_PLAYER(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint32_t target_user_id = 0) {
+    uint32_t target_user_id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> target_user_name = 0) {
   s2c_PARTY_JOIN_NEW_PLAYERBuilder builder_(_fbb);
+  builder_.add_target_user_name(target_user_name);
   builder_.add_target_user_id(target_user_id);
   return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_PARTY_JOIN_NEW_PLAYER> Creates2c_PARTY_JOIN_NEW_PLAYERDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t target_user_id = 0,
+    const char *target_user_name = nullptr) {
+  auto target_user_name__ = target_user_name ? _fbb.CreateString(target_user_name) : 0;
+  return Nagox::Protocol::Creates2c_PARTY_JOIN_NEW_PLAYER(
+      _fbb,
+      target_user_id,
+      target_user_name__);
 }
 
 struct c2s_QUEST_START FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
@@ -3103,7 +3180,8 @@ struct s2c_PARTY_OUT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_PARTY_OUTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_OUT_USER_ID = 4,
-    VT_CUR_LEADER_ID = 6
+    VT_CUR_LEADER_ID = 6,
+    VT_OUT_USER_NAME = 8
   };
   uint32_t out_user_id() const {
     return GetField<uint32_t>(VT_OUT_USER_ID, 0);
@@ -3117,10 +3195,18 @@ struct s2c_PARTY_OUT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_cur_leader_id(uint32_t _cur_leader_id = 0) {
     return SetField<uint32_t>(VT_CUR_LEADER_ID, _cur_leader_id, 0);
   }
+  const ::flatbuffers::String *out_user_name() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_OUT_USER_NAME);
+  }
+  ::flatbuffers::String *mutable_out_user_name() {
+    return GetPointer<::flatbuffers::String *>(VT_OUT_USER_NAME);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint32_t>(verifier, VT_OUT_USER_ID, 4) &&
            VerifyField<uint32_t>(verifier, VT_CUR_LEADER_ID, 4) &&
+           VerifyOffset(verifier, VT_OUT_USER_NAME) &&
+           verifier.VerifyString(out_user_name()) &&
            verifier.EndTable();
   }
 };
@@ -3134,6 +3220,9 @@ struct s2c_PARTY_OUTBuilder {
   }
   void add_cur_leader_id(uint32_t cur_leader_id) {
     fbb_.AddElement<uint32_t>(s2c_PARTY_OUT::VT_CUR_LEADER_ID, cur_leader_id, 0);
+  }
+  void add_out_user_name(::flatbuffers::Offset<::flatbuffers::String> out_user_name) {
+    fbb_.AddOffset(s2c_PARTY_OUT::VT_OUT_USER_NAME, out_user_name);
   }
   explicit s2c_PARTY_OUTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -3149,11 +3238,26 @@ struct s2c_PARTY_OUTBuilder {
 inline ::flatbuffers::Offset<s2c_PARTY_OUT> Creates2c_PARTY_OUT(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     uint32_t out_user_id = 0,
-    uint32_t cur_leader_id = 0) {
+    uint32_t cur_leader_id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> out_user_name = 0) {
   s2c_PARTY_OUTBuilder builder_(_fbb);
+  builder_.add_out_user_name(out_user_name);
   builder_.add_cur_leader_id(cur_leader_id);
   builder_.add_out_user_id(out_user_id);
   return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<s2c_PARTY_OUT> Creates2c_PARTY_OUTDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t out_user_id = 0,
+    uint32_t cur_leader_id = 0,
+    const char *out_user_name = nullptr) {
+  auto out_user_name__ = out_user_name ? _fbb.CreateString(out_user_name) : 0;
+  return Nagox::Protocol::Creates2c_PARTY_OUT(
+      _fbb,
+      out_user_id,
+      cur_leader_id,
+      out_user_name__);
 }
 
 struct s2c_PARTY_QUEST_CLEAR FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
@@ -3216,7 +3320,8 @@ inline ::flatbuffers::Offset<s2c_PARTY_QUEST_CLEAR> Creates2c_PARTY_QUEST_CLEAR(
 struct s2c_PARTY_MEMBERS_INFORMATION FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_PARTY_MEMBERS_INFORMATIONBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_PARTY_MEMBER_IDS = 4
+    VT_PARTY_MEMBER_IDS = 4,
+    VT_PARTY_MEMBER_NAMES = 6
   };
   const ::flatbuffers::Vector<uint32_t> *party_member_ids() const {
     return GetPointer<const ::flatbuffers::Vector<uint32_t> *>(VT_PARTY_MEMBER_IDS);
@@ -3224,10 +3329,19 @@ struct s2c_PARTY_MEMBERS_INFORMATION FLATBUFFERS_FINAL_CLASS : private ::flatbuf
   ::flatbuffers::Vector<uint32_t> *mutable_party_member_ids() {
     return GetPointer<::flatbuffers::Vector<uint32_t> *>(VT_PARTY_MEMBER_IDS);
   }
+  const ::flatbuffers::Vector<::flatbuffers::Offset<::flatbuffers::String>> *party_member_names() const {
+    return GetPointer<const ::flatbuffers::Vector<::flatbuffers::Offset<::flatbuffers::String>> *>(VT_PARTY_MEMBER_NAMES);
+  }
+  ::flatbuffers::Vector<::flatbuffers::Offset<::flatbuffers::String>> *mutable_party_member_names() {
+    return GetPointer<::flatbuffers::Vector<::flatbuffers::Offset<::flatbuffers::String>> *>(VT_PARTY_MEMBER_NAMES);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_PARTY_MEMBER_IDS) &&
            verifier.VerifyVector(party_member_ids()) &&
+           VerifyOffset(verifier, VT_PARTY_MEMBER_NAMES) &&
+           verifier.VerifyVector(party_member_names()) &&
+           verifier.VerifyVectorOfStrings(party_member_names()) &&
            verifier.EndTable();
   }
 };
@@ -3238,6 +3352,9 @@ struct s2c_PARTY_MEMBERS_INFORMATIONBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_party_member_ids(::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> party_member_ids) {
     fbb_.AddOffset(s2c_PARTY_MEMBERS_INFORMATION::VT_PARTY_MEMBER_IDS, party_member_ids);
+  }
+  void add_party_member_names(::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<::flatbuffers::String>>> party_member_names) {
+    fbb_.AddOffset(s2c_PARTY_MEMBERS_INFORMATION::VT_PARTY_MEMBER_NAMES, party_member_names);
   }
   explicit s2c_PARTY_MEMBERS_INFORMATIONBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -3252,19 +3369,24 @@ struct s2c_PARTY_MEMBERS_INFORMATIONBuilder {
 
 inline ::flatbuffers::Offset<s2c_PARTY_MEMBERS_INFORMATION> Creates2c_PARTY_MEMBERS_INFORMATION(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    ::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> party_member_ids = 0) {
+    ::flatbuffers::Offset<::flatbuffers::Vector<uint32_t>> party_member_ids = 0,
+    ::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<::flatbuffers::String>>> party_member_names = 0) {
   s2c_PARTY_MEMBERS_INFORMATIONBuilder builder_(_fbb);
+  builder_.add_party_member_names(party_member_names);
   builder_.add_party_member_ids(party_member_ids);
   return builder_.Finish();
 }
 
 inline ::flatbuffers::Offset<s2c_PARTY_MEMBERS_INFORMATION> Creates2c_PARTY_MEMBERS_INFORMATIONDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    const std::vector<uint32_t> *party_member_ids = nullptr) {
+    const std::vector<uint32_t> *party_member_ids = nullptr,
+    const std::vector<::flatbuffers::Offset<::flatbuffers::String>> *party_member_names = nullptr) {
   auto party_member_ids__ = party_member_ids ? _fbb.CreateVector<uint32_t>(*party_member_ids) : 0;
+  auto party_member_names__ = party_member_names ? _fbb.CreateVector<::flatbuffers::Offset<::flatbuffers::String>>(*party_member_names) : 0;
   return Nagox::Protocol::Creates2c_PARTY_MEMBERS_INFORMATION(
       _fbb,
-      party_member_ids__);
+      party_member_ids__,
+      party_member_names__);
 }
 
 struct c2s_CHANGE_HARVEST_STATE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

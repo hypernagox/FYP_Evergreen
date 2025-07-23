@@ -30,10 +30,10 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_LOGIN(
     builder.Clear();
     const auto id_offset = builder.CreateString(id);
     const auto pw_offset = builder.CreateString(pw);
-    const auto serializedc2s_LOGIN = Nagox::Protocol::Createc2s_LOGIN(
-        builder
-,        id_offset,
-        pw_offset    );
+   const auto serializedc2s_LOGIN = Nagox::Protocol::Createc2s_LOGIN(
+    builder,    id_offset
+,     pw_offset
+    );
     builder.Finish(serializedc2s_LOGIN);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_LOGIN);
@@ -49,11 +49,11 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_REGISTER_ACCOUNT(
     const auto id_offset = builder.CreateString(id);
     const auto pw_offset = builder.CreateString(pw);
     const auto class_type_offset = builder.CreateString(class_type);
-    const auto serializedc2s_REGISTER_ACCOUNT = Nagox::Protocol::Createc2s_REGISTER_ACCOUNT(
-        builder
-,        id_offset,
-        pw_offset,
-        class_type_offset    );
+   const auto serializedc2s_REGISTER_ACCOUNT = Nagox::Protocol::Createc2s_REGISTER_ACCOUNT(
+    builder,    id_offset
+,     pw_offset
+,     class_type_offset
+    );
     builder.Finish(serializedc2s_REGISTER_ACCOUNT);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REGISTER_ACCOUNT);
@@ -63,9 +63,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PING_PONG(
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
-    const auto serializedc2s_PING_PONG = Nagox::Protocol::Createc2s_PING_PONG(
-        builder
-    );
+   const auto serializedc2s_PING_PONG = Nagox::Protocol::Createc2s_PING_PONG(
+    builder    );
     builder.Finish(serializedc2s_PING_PONG);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PING_PONG);
@@ -81,11 +80,11 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ENTER(
     const auto pos_offset = &pos;
     const auto player_type_value = player_type;
     const auto channel_num_value = channel_num;
-    const auto serializedc2s_ENTER = Nagox::Protocol::Createc2s_ENTER(
-        builder
-,        pos_offset,
-        player_type_value,
-        channel_num_value    );
+   const auto serializedc2s_ENTER = Nagox::Protocol::Createc2s_ENTER(
+    builder,    pos_offset
+,     player_type_value
+,     channel_num_value
+    );
     builder.Finish(serializedc2s_ENTER);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ENTER);
@@ -105,13 +104,13 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_MOVE(
     const auto accel_offset = &accel;
     const auto body_angle_value = body_angle;
     const auto time_stamp_value = time_stamp;
-    const auto serializedc2s_MOVE = Nagox::Protocol::Createc2s_MOVE(
-        builder
-,        pos_offset,
-        vel_offset,
-        accel_offset,
-        body_angle_value,
-        time_stamp_value    );
+   const auto serializedc2s_MOVE = Nagox::Protocol::Createc2s_MOVE(
+    builder,    pos_offset
+,     vel_offset
+,     accel_offset
+,     body_angle_value
+,     time_stamp_value
+    );
     builder.Finish(serializedc2s_MOVE);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_MOVE);
@@ -127,11 +126,11 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PLAYER_ATTACK(
     const auto body_angle_value = body_angle;
     const auto atk_pos_offset = &atk_pos;
     const auto atk_type_value = atk_type;
-    const auto serializedc2s_PLAYER_ATTACK = Nagox::Protocol::Createc2s_PLAYER_ATTACK(
-        builder
-,        body_angle_value,
-        atk_pos_offset,
-        atk_type_value    );
+   const auto serializedc2s_PLAYER_ATTACK = Nagox::Protocol::Createc2s_PLAYER_ATTACK(
+    builder,    body_angle_value
+,     atk_pos_offset
+,     atk_type_value
+    );
     builder.Finish(serializedc2s_PLAYER_ATTACK);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PLAYER_ATTACK);
@@ -141,9 +140,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PLAYER_DEATH(
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
-    const auto serializedc2s_PLAYER_DEATH = Nagox::Protocol::Createc2s_PLAYER_DEATH(
-        builder
-    );
+   const auto serializedc2s_PLAYER_DEATH = Nagox::Protocol::Createc2s_PLAYER_DEATH(
+    builder    );
     builder.Finish(serializedc2s_PLAYER_DEATH);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PLAYER_DEATH);
@@ -155,9 +153,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_REQUEST_QUEST(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto quest_id_value = quest_id;
-    const auto serializedc2s_REQUEST_QUEST = Nagox::Protocol::Createc2s_REQUEST_QUEST(
-        builder
-,        quest_id_value    );
+   const auto serializedc2s_REQUEST_QUEST = Nagox::Protocol::Createc2s_REQUEST_QUEST(
+    builder,    quest_id_value
+    );
     builder.Finish(serializedc2s_REQUEST_QUEST);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REQUEST_QUEST);
@@ -171,10 +169,10 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ACQUIRE_ITEM(
     builder.Clear();
     const auto get_user_id_value = get_user_id;
     const auto item_id_value = item_id;
-    const auto serializedc2s_ACQUIRE_ITEM = Nagox::Protocol::Createc2s_ACQUIRE_ITEM(
-        builder
-,        get_user_id_value,
-        item_id_value    );
+   const auto serializedc2s_ACQUIRE_ITEM = Nagox::Protocol::Createc2s_ACQUIRE_ITEM(
+    builder,    get_user_id_value
+,     item_id_value
+    );
     builder.Finish(serializedc2s_ACQUIRE_ITEM);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ACQUIRE_ITEM);
@@ -188,10 +186,10 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_REQUEST_QUICK_SLOT(
     builder.Clear();
     const auto item_id_value = item_id;
     const auto quick_slot_idx_value = quick_slot_idx;
-    const auto serializedc2s_REQUEST_QUICK_SLOT = Nagox::Protocol::Createc2s_REQUEST_QUICK_SLOT(
-        builder
-,        item_id_value,
-        quick_slot_idx_value    );
+   const auto serializedc2s_REQUEST_QUICK_SLOT = Nagox::Protocol::Createc2s_REQUEST_QUICK_SLOT(
+    builder,    item_id_value
+,     quick_slot_idx_value
+    );
     builder.Finish(serializedc2s_REQUEST_QUICK_SLOT);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REQUEST_QUICK_SLOT);
@@ -203,9 +201,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_USE_QUICK_SLOT_ITEM(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto quick_slot_idx_value = quick_slot_idx;
-    const auto serializedc2s_USE_QUICK_SLOT_ITEM = Nagox::Protocol::Createc2s_USE_QUICK_SLOT_ITEM(
-        builder
-,        quick_slot_idx_value    );
+   const auto serializedc2s_USE_QUICK_SLOT_ITEM = Nagox::Protocol::Createc2s_USE_QUICK_SLOT_ITEM(
+    builder,    quick_slot_idx_value
+    );
     builder.Finish(serializedc2s_USE_QUICK_SLOT_ITEM);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_USE_QUICK_SLOT_ITEM);
@@ -217,9 +215,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CRAFT_ITEM(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto recipe_id_value = recipe_id;
-    const auto serializedc2s_CRAFT_ITEM = Nagox::Protocol::Createc2s_CRAFT_ITEM(
-        builder
-,        recipe_id_value    );
+   const auto serializedc2s_CRAFT_ITEM = Nagox::Protocol::Createc2s_CRAFT_ITEM(
+    builder,    recipe_id_value
+    );
     builder.Finish(serializedc2s_CRAFT_ITEM);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CRAFT_ITEM);
@@ -231,9 +229,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_REGISTER_PARTY_QUEST(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto quest_id_value = quest_id;
-    const auto serializedc2s_REGISTER_PARTY_QUEST = Nagox::Protocol::Createc2s_REGISTER_PARTY_QUEST(
-        builder
-,        quest_id_value    );
+   const auto serializedc2s_REGISTER_PARTY_QUEST = Nagox::Protocol::Createc2s_REGISTER_PARTY_QUEST(
+    builder,    quest_id_value
+    );
     builder.Finish(serializedc2s_REGISTER_PARTY_QUEST);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_REGISTER_PARTY_QUEST);
@@ -245,9 +243,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_ACQUIRE_PARTY_LIST(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto target_quest_id_value = target_quest_id;
-    const auto serializedc2s_ACQUIRE_PARTY_LIST = Nagox::Protocol::Createc2s_ACQUIRE_PARTY_LIST(
-        builder
-,        target_quest_id_value    );
+   const auto serializedc2s_ACQUIRE_PARTY_LIST = Nagox::Protocol::Createc2s_ACQUIRE_PARTY_LIST(
+    builder,    target_quest_id_value
+    );
     builder.Finish(serializedc2s_ACQUIRE_PARTY_LIST);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_ACQUIRE_PARTY_LIST);
@@ -259,9 +257,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_INVITE_PARTY_QUEST(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto target_user_id_value = target_user_id;
-    const auto serializedc2s_INVITE_PARTY_QUEST = Nagox::Protocol::Createc2s_INVITE_PARTY_QUEST(
-        builder
-,        target_user_id_value    );
+   const auto serializedc2s_INVITE_PARTY_QUEST = Nagox::Protocol::Createc2s_INVITE_PARTY_QUEST(
+    builder,    target_user_id_value
+    );
     builder.Finish(serializedc2s_INVITE_PARTY_QUEST);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_INVITE_PARTY_QUEST);
@@ -275,10 +273,10 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_INVITE_PARTY_RESULT(
     builder.Clear();
     const auto target_party_leader_id_value = target_party_leader_id;
     const auto is_accept_value = is_accept;
-    const auto serializedc2s_INVITE_PARTY_RESULT = Nagox::Protocol::Createc2s_INVITE_PARTY_RESULT(
-        builder
-,        target_party_leader_id_value,
-        is_accept_value    );
+   const auto serializedc2s_INVITE_PARTY_RESULT = Nagox::Protocol::Createc2s_INVITE_PARTY_RESULT(
+    builder,    target_party_leader_id_value
+,     is_accept_value
+    );
     builder.Finish(serializedc2s_INVITE_PARTY_RESULT);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_INVITE_PARTY_RESULT);
@@ -292,10 +290,10 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PARTY_JOIN_REQUEST(
     builder.Clear();
     const auto target_party_leader_id_value = target_party_leader_id;
     const auto target_party_quest_id_value = target_party_quest_id;
-    const auto serializedc2s_PARTY_JOIN_REQUEST = Nagox::Protocol::Createc2s_PARTY_JOIN_REQUEST(
-        builder
-,        target_party_leader_id_value,
-        target_party_quest_id_value    );
+   const auto serializedc2s_PARTY_JOIN_REQUEST = Nagox::Protocol::Createc2s_PARTY_JOIN_REQUEST(
+    builder,    target_party_leader_id_value
+,     target_party_quest_id_value
+    );
     builder.Finish(serializedc2s_PARTY_JOIN_REQUEST);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PARTY_JOIN_REQUEST);
@@ -311,11 +309,11 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PARTY_JOIN_REQUEST_RESULT(
     const auto target_party_leader_id_value = target_party_leader_id;
     const auto target_user_id_value = target_user_id;
     const auto request_result_value = request_result;
-    const auto serializedc2s_PARTY_JOIN_REQUEST_RESULT = Nagox::Protocol::Createc2s_PARTY_JOIN_REQUEST_RESULT(
-        builder
-,        target_party_leader_id_value,
-        target_user_id_value,
-        request_result_value    );
+   const auto serializedc2s_PARTY_JOIN_REQUEST_RESULT = Nagox::Protocol::Createc2s_PARTY_JOIN_REQUEST_RESULT(
+    builder,    target_party_leader_id_value
+,     target_user_id_value
+,     request_result_value
+    );
     builder.Finish(serializedc2s_PARTY_JOIN_REQUEST_RESULT);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PARTY_JOIN_REQUEST_RESULT);
@@ -325,9 +323,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_QUEST_START(
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
-    const auto serializedc2s_QUEST_START = Nagox::Protocol::Createc2s_QUEST_START(
-        builder
-    );
+   const auto serializedc2s_QUEST_START = Nagox::Protocol::Createc2s_QUEST_START(
+    builder    );
     builder.Finish(serializedc2s_QUEST_START);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_QUEST_START);
@@ -337,9 +334,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_QUEST_END(
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
-    const auto serializedc2s_QUEST_END = Nagox::Protocol::Createc2s_QUEST_END(
-        builder
-    );
+   const auto serializedc2s_QUEST_END = Nagox::Protocol::Createc2s_QUEST_END(
+    builder    );
     builder.Finish(serializedc2s_QUEST_END);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_QUEST_END);
@@ -349,9 +345,8 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_PARTY_OUT(
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
-    const auto serializedc2s_PARTY_OUT = Nagox::Protocol::Createc2s_PARTY_OUT(
-        builder
-    );
+   const auto serializedc2s_PARTY_OUT = Nagox::Protocol::Createc2s_PARTY_OUT(
+    builder    );
     builder.Finish(serializedc2s_PARTY_OUT);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_PARTY_OUT);
@@ -363,9 +358,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_HARVEST_STATE(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto harvest_id_value = harvest_id;
-    const auto serializedc2s_CHANGE_HARVEST_STATE = Nagox::Protocol::Createc2s_CHANGE_HARVEST_STATE(
-        builder
-,        harvest_id_value    );
+   const auto serializedc2s_CHANGE_HARVEST_STATE = Nagox::Protocol::Createc2s_CHANGE_HARVEST_STATE(
+    builder,    harvest_id_value
+    );
     builder.Finish(serializedc2s_CHANGE_HARVEST_STATE);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_HARVEST_STATE);
@@ -379,10 +374,10 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_EQUIPMENT(
     builder.Clear();
     const auto equipment_type_value = equipment_type;
     const auto equip_id_value = equip_id;
-    const auto serializedc2s_CHANGE_EQUIPMENT = Nagox::Protocol::Createc2s_CHANGE_EQUIPMENT(
-        builder
-,        equipment_type_value,
-        equip_id_value    );
+   const auto serializedc2s_CHANGE_EQUIPMENT = Nagox::Protocol::Createc2s_CHANGE_EQUIPMENT(
+    builder,    equipment_type_value
+,     equip_id_value
+    );
     builder.Finish(serializedc2s_CHANGE_EQUIPMENT);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_EQUIPMENT);
@@ -394,9 +389,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHANGE_CHANNEL(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto dest_channel_id_value = dest_channel_id;
-    const auto serializedc2s_CHANGE_CHANNEL = Nagox::Protocol::Createc2s_CHANGE_CHANNEL(
-        builder
-,        dest_channel_id_value    );
+   const auto serializedc2s_CHANGE_CHANNEL = Nagox::Protocol::Createc2s_CHANGE_CHANNEL(
+    builder,    dest_channel_id_value
+    );
     builder.Finish(serializedc2s_CHANGE_CHANNEL);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_CHANGE_CHANNEL);
@@ -408,9 +403,9 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_DASH(
     auto& builder = *builder_ptr;
     builder.Clear();
     const auto target_pos_offset = &target_pos;
-    const auto serializedc2s_DASH = Nagox::Protocol::Createc2s_DASH(
-        builder
-,        target_pos_offset    );
+   const auto serializedc2s_DASH = Nagox::Protocol::Createc2s_DASH(
+    builder,    target_pos_offset
+    );
     builder.Finish(serializedc2s_DASH);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::c2s_DASH);

@@ -6,6 +6,7 @@
 
 template<typename T>
 using Vector = NagiocpX::XVector<T>;
+using String = NagiocpX::XString;
 
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 

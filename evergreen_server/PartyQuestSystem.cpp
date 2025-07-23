@@ -173,12 +173,20 @@ PARTY_ACCEPT_RESULT PartyQuestSystem::AcceptNewMember(S_ptr<ContentsEntity> new_
 	}
 	if (!sessions.empty())
 	{
+		const auto new_mem_session = new_mem->GetClientSession();
+		const auto& new_mem_name = new_mem_session->m_userName;
+		XVector<XString> other_member_names;
+		// 새로 들어온 파티원의 아이디와 이름을 기존 파티원들에게 전부 보낸다
+		auto pkt = Create_s2c_PARTY_JOIN_NEW_PLAYER(target_user_id, new_mem_name);
 		for (const auto& other_player : sessions)
 		{
-			other_player->GetSession()->SendAsync(Create_s2c_PARTY_JOIN_NEW_PLAYER(target_user_id));
+			const auto other_session = other_player->GetClientSession();
+			other_session->SendAsync(pkt);
 			other_member_ids.emplace_back(other_player->GetObjectID());
+			other_member_names.emplace_back(other_session->m_userName);
 		}
-		new_mem->GetSession()->SendAsync(Create_s2c_PARTY_MEMBERS_INFORMATION(std::move(other_member_ids)));
+		// 새 멤버에겐 기존 유저들의 id와 이름 목록을 보낸다.
+		new_mem->GetSession()->SendAsync(Create_s2c_PARTY_MEMBERS_INFORMATION(std::move(other_member_ids),std::move(other_member_names)));
 	}
 	return res;
 }
@@ -295,12 +303,15 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 				m_prev_field->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 			);
 		}
+		const auto& out_user_name = owner->GetClientSession()->m_userName;
+		// 나간 유저의 아이디를 기입해서 보낸다.
+		auto pkt = Create_s2c_PARTY_OUT(obj_id, cur_leader_id, out_user_name);
+		for (const auto& remain_player : sessions)
+		{
+			remain_player->GetSession()->SendAsync(pkt);
+		}
 	}
-	auto pkt = Create_s2c_PARTY_OUT(obj_id, cur_leader_id);
-	for (const auto& remain_player : sessions)
-	{
-		remain_player->GetSession()->SendAsync(pkt);
-	}
+	
 }
 
 bool PartyQuestSystem::QueryPartyLeader(ContentsEntity* const owner) const noexcept

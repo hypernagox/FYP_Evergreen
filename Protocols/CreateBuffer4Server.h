@@ -6,6 +6,7 @@
 
 template<typename T>
 using Vector = NagiocpX::XVector<T>;
+using String = NagiocpX::XString;
 
 extern flatbuffers::FlatBufferBuilder* const CreateBuilder() noexcept;
 
@@ -135,6 +136,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_ACQUIRE_PARTY_LIST(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_INVITE_PARTY_QUEST(
     const uint32_t target_party_leader_id,
     const int32_t target_party_quest_id,
+    const std::string_view& target_party_leader_name,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_INVITE_PARTY_RESULT(
@@ -145,6 +147,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_INVITE_PARTY_RESULT(
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_REQUEST(
     const uint32_t target_user_id,
+    const std::string_view& target_user_name,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_REQUEST_RESULT(
@@ -154,6 +157,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_REQUEST_RESULT(
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_JOIN_NEW_PLAYER(
     const uint32_t target_user_id,
+    const std::string_view& target_user_name,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_QUEST_END(
@@ -165,6 +169,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_START(
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_OUT(
     const uint32_t out_user_id,
     const uint32_t cur_leader_id,
+    const std::string_view& out_user_name,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_CLEAR(
@@ -174,6 +179,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_CLEAR(
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_MEMBERS_INFORMATION(
     const Vector<uint32_t> party_member_ids,
+    const Vector<String> party_member_names,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHANGE_HARVEST_STATE(

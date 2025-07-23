@@ -43,6 +43,10 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 			const auto cur_dmg = std::max(dmg_ - owner->GetComp<StatusSystem>()->GetDEF(), 0);
 			owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), owner->GetComp<HP>()->GetCurHP() - cur_dmg, hit_count));
 			m_hp -= cur_dmg;
+			if (m_hp <= 0)
+			{
+				m_hp = 10;
+			}
 		}
 		else
 		{

@@ -30,7 +30,7 @@ namespace NagiocpX
 
 		monster_entity->AddComp<PositionComponent>();
 
-		bt_timer->SetTickInterval(100);
+		bt_timer->SetTickInterval(50);
 		
 		
 		const auto s1 = bt_root->AddChild<SequenceNode>();
@@ -232,7 +232,7 @@ namespace NagiocpX
 
 		monster_entity->AddComp<PositionComponent>();
 
-		bt_timer->SetTickInterval(100);
+		bt_timer->SetTickInterval(50);
 
 
 		const auto s1 = bt_root->AddChild<SequenceNode>();

@@ -154,14 +154,14 @@
     <Filter Include="ClientSession\QuestRoom\BossRoom\BossBehaviorNode">
       <UniqueIdentifier>{41eb2450-ae2d-4b43-ac70-07da39ebd5d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="predefine\main">
+    <Filter Include="main">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>predefine\main</Filter>
+      <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="ClientSession.cpp">
       <Filter>ClientSession</Filter>
