@@ -41,7 +41,7 @@ NodeStatus SelectPattern::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	// TODO: 적당한 유저 찾기
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1)
+		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle)
 	);
 	if (player_list.empty())return NodeStatus::FAILURE;
 	boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx] -= DT;
@@ -95,14 +95,14 @@ NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	const auto DT = bt_root_timer->GetFloatDT();
 	constexpr const float BOSS_SPEED = 10.f;
-	constexpr const float MELLE_ATK_DIST = 2.f;
+	constexpr const float MELLE_ATK_DIST = 5.f;
 
 	
 	m_accTime = 5.f;
 	const auto target_pos_comp = boss_storage_node->m_cur_target->GetComp<PositionComponent>();
 	const auto boss_pos_comp = owner_comp_sys->GetComp<PositionComponent>();
 	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
+		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle));
 	const auto target_pos = target_pos_comp->pos;
 	const auto boss_pos = boss_pos_comp->pos;
 	boss_storage_node->m_cur_target_acc[boss_storage_node->m_cur_target_idx] -= DT;
@@ -188,7 +188,7 @@ NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 	boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
 	
 	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1)
+		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle)
 	);
 
 	return NodeStatus::RUNNING;
@@ -205,11 +205,13 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	const auto dy = dest_pos.y - cur_pos.y;
 	const auto dz = dest_pos.z - cur_pos.z;
 
+	const auto dir = CommonMath::Normalized(dest_pos - cur_pos);
 	
 	const float m_attack_range = 10.f;	
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+	boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
 	bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1)
+		Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle)
 	);
 	// TODO: 사거리 및 횟수
 	if (m_attack_range * m_attack_range <= dx * dx + dy * dy + dz * dz) 
@@ -340,7 +342,7 @@ NodeStatus ResetPos::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTi
 			//const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 			boss_entity->GetComp<PositionComponent>()->pos = g_reset_pos;
 			bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
+				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle));
 			m_delay_flag = false;
 			return NodeStatus::SUCCESS;
 		}
@@ -349,7 +351,7 @@ NodeStatus ResetPos::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTi
 			const auto boss_pos_comp = owner_comp_sys->GetComp<PositionComponent>();
 			const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 			bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
+				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle));
 			return NodeStatus::RUNNING;
 		}
 	}
@@ -362,7 +364,7 @@ NodeStatus ResetPos::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTi
 	boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
 
 	m_delay_flag = true;
-	std::cout << CalculateDelayTime(boss_entity->GetComp<PositionComponent>()->pos, target_pos) << std::endl;
+	//std::cout << CalculateDelayTime(boss_entity->GetComp<PositionComponent>()->pos, target_pos) << std::endl;
 	m_accTime2 = std::max(CalculateDelayTime(boss_entity->GetComp<PositionComponent>()->pos, target_pos), 5.f);
 	if (boss_storage_node->m_prev_fire)
 	{
@@ -382,6 +384,7 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	// TODO: 적당한 유저 찾기	
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	if (player_list.empty())return NodeStatus::FAILURE;
+	if(!boss_storage_node->m_cur_target)return NodeStatus::FAILURE;
 	const auto DT = bt_root_timer->GetFloatDT();
 	m_accTime -= DT;
 	if (count == 0 && 0.f >= m_accTime)
@@ -398,7 +401,7 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 
 	proj.timer->m_radius = 0.125f;
 	proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos);
-
+	const auto boss_pos = boss_entity->GetComp<PositionComponent>()->pos;
 	for (const auto users : player_list)
 	{
 		
@@ -410,6 +413,11 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 		proj.timer->m_max_dist = 100.f;
 		proj.timer->SelectObjList(player_list);
 		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
+		const auto cur_dir = CommonMath::Normalized(boss_storage_node->m_cur_target->GetComp<PositionComponent>()->pos - boss_pos);
+		boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(cur_dir.x, cur_dir.z) * 180.f / 3.141592f;
+
+		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+			Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle));
 	}
 	
 	m_accTime = .5f;
@@ -417,7 +425,7 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	if (count == 0)
 	{
 		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-			Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
+			Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle));
 		m_accTime = 5.f;
 	}
 	return NodeStatus::RUNNING;
@@ -434,7 +442,7 @@ NodeStatus SetMeteorPos::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 			m_delay_flag = false;
 			const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 			bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1));
+				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle));
 			return NodeStatus::SUCCESS;
 		}
 		else

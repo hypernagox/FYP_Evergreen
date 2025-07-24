@@ -686,6 +686,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_MOVE(
     const Nagox::Struct::Vec3& target_pos,
     const float boss_speed,
     const Nagox::Enum::BOSS_MOVE_TYPE& boss_move_type,
+    const float boss_angle,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
@@ -693,10 +694,12 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_MOVE(
     const auto target_pos_offset = &target_pos;
     const auto boss_speed_value = boss_speed;
     const auto boss_move_type_value = boss_move_type;
+    const auto boss_angle_value = boss_angle;
    const auto serializeds2c_BOSS_MOVE = Nagox::Protocol::Creates2c_BOSS_MOVE(
     builder,    target_pos_offset
 ,     boss_speed_value
 ,     boss_move_type_value
+,     boss_angle_value
     );
     builder.Finish(serializeds2c_BOSS_MOVE);
 

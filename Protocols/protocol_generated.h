@@ -3886,7 +3886,8 @@ struct s2c_BOSS_MOVE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_TARGET_POS = 4,
     VT_BOSS_SPEED = 6,
-    VT_BOSS_MOVE_TYPE = 8
+    VT_BOSS_MOVE_TYPE = 8,
+    VT_BOSS_ANGLE = 10
   };
   const Nagox::Struct::Vec3 *target_pos() const {
     return GetStruct<const Nagox::Struct::Vec3 *>(VT_TARGET_POS);
@@ -3906,11 +3907,18 @@ struct s2c_BOSS_MOVE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   bool mutate_boss_move_type(Nagox::Enum::BOSS_MOVE_TYPE _boss_move_type = static_cast<Nagox::Enum::BOSS_MOVE_TYPE>(0)) {
     return SetField<uint8_t>(VT_BOSS_MOVE_TYPE, static_cast<uint8_t>(_boss_move_type), 0);
   }
+  float boss_angle() const {
+    return GetField<float>(VT_BOSS_ANGLE, 0.0f);
+  }
+  bool mutate_boss_angle(float _boss_angle = 0.0f) {
+    return SetField<float>(VT_BOSS_ANGLE, _boss_angle, 0.0f);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_TARGET_POS, 4) &&
            VerifyField<float>(verifier, VT_BOSS_SPEED, 4) &&
            VerifyField<uint8_t>(verifier, VT_BOSS_MOVE_TYPE, 1) &&
+           VerifyField<float>(verifier, VT_BOSS_ANGLE, 4) &&
            verifier.EndTable();
   }
 };
@@ -3928,6 +3936,9 @@ struct s2c_BOSS_MOVEBuilder {
   void add_boss_move_type(Nagox::Enum::BOSS_MOVE_TYPE boss_move_type) {
     fbb_.AddElement<uint8_t>(s2c_BOSS_MOVE::VT_BOSS_MOVE_TYPE, static_cast<uint8_t>(boss_move_type), 0);
   }
+  void add_boss_angle(float boss_angle) {
+    fbb_.AddElement<float>(s2c_BOSS_MOVE::VT_BOSS_ANGLE, boss_angle, 0.0f);
+  }
   explicit s2c_BOSS_MOVEBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -3943,8 +3954,10 @@ inline ::flatbuffers::Offset<s2c_BOSS_MOVE> Creates2c_BOSS_MOVE(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     const Nagox::Struct::Vec3 *target_pos = nullptr,
     float boss_speed = 0.0f,
-    Nagox::Enum::BOSS_MOVE_TYPE boss_move_type = Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1) {
+    Nagox::Enum::BOSS_MOVE_TYPE boss_move_type = Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1,
+    float boss_angle = 0.0f) {
   s2c_BOSS_MOVEBuilder builder_(_fbb);
+  builder_.add_boss_angle(boss_angle);
   builder_.add_boss_speed(boss_speed);
   builder_.add_target_pos(target_pos);
   builder_.add_boss_move_type(boss_move_type);
