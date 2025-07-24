@@ -434,6 +434,7 @@
     <ClCompile Include="BezierMovement.cpp" />
     <ClCompile Include="ChannelSwitchGUI.cpp" />
     <ClCompile Include="DamageCountGUI.cpp" />
+    <ClCompile Include="DialogueGUI.cpp" />
     <ClCompile Include="DropItem.cpp" />
     <ClCompile Include="DropItemAcquireRenderer.cpp" />
     <ClCompile Include="DropItemRenderer.cpp" />
@@ -548,6 +549,7 @@
     <ClInclude Include="CustomStateTransition.hpp" />
     <ClInclude Include="DamageCountGUI.h" />
     <ClInclude Include="define.h" />
+    <ClInclude Include="DialogueGUI.h" />
     <ClInclude Include="DropItem.h" />
     <ClInclude Include="DropItemAcquireRenderer.h" />
     <ClInclude Include="DropItemRenderer.h" />

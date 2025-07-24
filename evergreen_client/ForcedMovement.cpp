@@ -43,7 +43,7 @@ void ForcedMovement::Update()noexcept
 	}
 }
 
-void ForcedMovement::CheckDash() noexcept
+bool ForcedMovement::CheckDash() noexcept
 {
 	if (!speed_flag && INSTANCE(Input)->GetKeyDown(Keyboard::Space))
 	{
@@ -61,11 +61,14 @@ void ForcedMovement::CheckDash() noexcept
 		);
 		m_dir = CommonMath::Normalized(m_dest - prev_pos);
 		const auto c = m_dir.Dot(vel);
-		if (0.f >= c)return;
+		if (0.f >= c)
+			return false;
 		m_bIsForcedMovement = true;
 		speed_flag = true;
 		Send(Create_c2s_DASH(ToFlatVec3(m_dest)));
+		return true;
 	}
+	return false;
 }
 
 void ForcedMovement::SetForcedMovement(const Vector3& dest_pos) noexcept

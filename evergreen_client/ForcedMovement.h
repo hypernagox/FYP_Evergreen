@@ -8,7 +8,7 @@ public:
 	CONSTRUCTOR_SERVER_COMPONENT(ForcedMovement)
 public:
 	virtual void Update()noexcept override;
-	void CheckDash()noexcept;
+	bool CheckDash()noexcept;
 public:
 	const auto IsForcedMovement()const noexcept { return m_bIsForcedMovement; }
 	void SetForcedMovement(const Vector3& dest_pos)noexcept;

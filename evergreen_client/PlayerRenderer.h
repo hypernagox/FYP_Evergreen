@@ -27,6 +27,7 @@ public:
 		RunRightBackward,
 		Attack,
 		AttackEnd,
+		Dash,
 		Hit,
 		Death,
 		Size,
@@ -61,6 +62,7 @@ public:
 	void UpdateViewDirection(float deltaTime);
 	void OnAnimationStateChange(const AnimationState& state);
 	void Attack() { *m_stateMachine->GetConditionRefBool("Attack") = true; }
+	void Dash() { *m_stateMachine->GetConditionRefBool("Dash") = true; }
 	void Hit() { *m_stateMachine->GetConditionRefBool("Hit") = true; }
 	void Death() { *m_stateMachine->GetConditionRefBool("Death") = true; }
 	bool TrySetState(AnimationState state) { return m_stateMachine->TrySetState(state); }

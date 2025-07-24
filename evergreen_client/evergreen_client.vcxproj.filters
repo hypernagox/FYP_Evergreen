@@ -327,6 +327,9 @@
     <ClCompile Include="WorldSpaceGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="DialogueGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -556,6 +559,9 @@
     </ClInclude>
     <ClInclude Include="DropItemAcquireRenderer.h">
       <Filter>NetEntity\ContentsEntity\DropItem</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogueGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

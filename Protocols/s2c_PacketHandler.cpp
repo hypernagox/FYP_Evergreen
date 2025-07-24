@@ -889,6 +889,14 @@ const bool Handle_s2c_DASH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 			fm->SetForcedMovement(ToOriginVec3(pkt_.target_pos()));
 		}
 	}
+	if (const auto renderer = dash_obj_ptr->GetComponent<PlayerRenderer>())
+	{
+		// 패킷을 받은 사람이 본인이 아닐 때
+		if (dash_obj_ptr->GetComponent<AuthenticPlayer>() == nullptr)
+		{
+			renderer->Dash();
+		}
+	}
 	return true;
 }
 
