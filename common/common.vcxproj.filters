@@ -341,5 +341,8 @@
     <None Include="..\resource\json\Armor.json">
       <Filter>Json\Data</Filter>
     </None>
+    <None Include="..\resource\json\Dialogue.json">
+      <Filter>Json\Data</Filter>
+    </None>
   </ItemGroup>
 </Project>

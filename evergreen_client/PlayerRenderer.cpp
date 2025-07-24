@@ -24,6 +24,9 @@ void PlayerRenderer::OnInitialize()
 	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::AttackEnd, AnimationState::Idle, m_renderer);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::AttackEnd, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Dash, m_stateMachine->GetConditionRefBool("Dash"), true);
+	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::Dash, AnimationState::Idle, m_renderer);
+
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
@@ -50,6 +53,7 @@ void PlayerRenderer::OnInitialize()
 		m_stateMachine->AddTransition<Common::IntStateTransition<AnimationState, std::equal_to<int>>>(AnimationState::RunIntermediate, runState, m_stateMachine->GetConditionRefInt("MoveAngle"), i);
 		m_stateMachine->AddTransition<Common::IntStateTransition<AnimationState, std::not_equal_to<int>>>(runState, AnimationState::RunIntermediate, m_stateMachine->GetConditionRefInt("MoveAngle"), i);
 		m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(runState, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
+		m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(runState, AnimationState::Dash, m_stateMachine->GetConditionRefBool("Dash"), true);
 		m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(runState, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
 	}
 
@@ -257,6 +261,13 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 				break;
 		}
 		*m_stateMachine->GetConditionRefBool("Attack") = false;
+		break;
+	case AnimationState::Dash:
+		if (m_characterType == CharacterType::Archer)
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"archer\\AnimationJog\\archer_dash.yac")), false, true);
+		else
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_slide.yac")), false, true);
+		*m_stateMachine->GetConditionRefBool("Dash") = false;
 		break;
 	case AnimationState::Hit:
 		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_hit.yac")), false, true);

@@ -317,8 +317,8 @@ void AuthenticPlayer::OnInitialize()
 	input_handler->AddKeyFunc(Keyboard::D2, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 1);
 	input_handler->AddKeyFunc(Keyboard::D3, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 2);
 	input_handler->AddKeyFunc(Keyboard::D0, KEY_STATE::KET_TAP, &AuthenticPlayer::ToggleDebugCamera, this);
+	input_handler->AddKeyFunc(Keyboard::N, KEY_STATE::KET_TAP, []() { Send( Create_c2s_QUEST_END()); });
 
-	//input_handler->AddKeyFunc(Keyboard::Space, KEY_STATE::KET_TAP, &AuthenticPlayer::DoAttack, this);
 	input_handler->AddKeyFunc(Keyboard::CapsLock, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuest, this);
 
 	input_handler->AddKeyFunc(Keyboard::Enter, KEY_STATE::KET_TAP, &AuthenticPlayer::ToggleLogFloatGUI, this);
@@ -362,6 +362,8 @@ const bool AuthenticPlayer::CanAttack() const noexcept
 		return false;
 	// 죽는모션도 마찬가지임
 	if (PlayerRenderer::AnimationState::Death == m_playerRenderer->GetCurrentState())
+		return false;
+	if (PlayerRenderer::AnimationState::Dash == m_playerRenderer->GetCurrentState())
 		return false;
 	return true;
 }
@@ -407,7 +409,13 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	m_bSendFlag = input_handler->IsKeyHit();
 
 	const auto fm = sceneObject->GetComponent<ServerObject>()->GetComp<ForcedMovement>();
-	fm->CheckDash();
+	if (fm->CheckDash() && PlayerRenderer::AnimationState::Dash != m_playerRenderer->GetCurrentState())
+	{
+		m_playerRenderer->Dash();
+		soundEffectInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\dash.wav"))->CreateInstance();
+		soundEffectInstance->SetVolume(0.5f);
+		soundEffectInstance->Play();
+	}
 	if (fm->IsForcedMovement())
 	{
 		fm->Update();

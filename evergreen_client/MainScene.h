@@ -42,8 +42,19 @@ private:
 	unsigned int m_currentChannelID = 0;
 	bool m_needCharacterSelection = false;
 	bool m_register_account = false;
-	bool m_isRegisterSuccess = false;
 
+
+	enum class RegisterStatus
+	{
+		None = 0,        // 로그인 이전 상태
+		Success = 1,     // 로그인 성공 상태
+		Failure = 2      // 로그인 실패 상태
+	};
+	// 로그인 상태를 나타내는 변수
+	// 0: 로그인 이전 상태
+	// 1: 로그인 성공 상태
+	// 2: 로그인 실패 상태
+	RegisterStatus m_registerStatus = RegisterStatus::None;
 
 	std::string m_userId = "localuser";
 	std::string m_userPw;
