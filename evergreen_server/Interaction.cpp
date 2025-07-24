@@ -39,7 +39,7 @@ bool ClearTreeInteraction::DoInteraction(ContentsEntity* const pEntity_) noexcep
 	auto temp = pos;
 	NAVIGATION->GetNavMesh(m_nav_mesh_type)->findRandomPointAroundCircle(
 		&pos.x,
-		0.0125f,
+		0.125f,
 		&temp.x
 	);
 	item_table->GetOwnerEntityRaw()->GetComp<PositionComponent>()->pos = temp;

@@ -429,22 +429,22 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		transform->SetLocalPosition(temp);
 		GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
 	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
-	{
-		const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();
-		std::cout << std::format("Vector3( {}F,{}F,{}F ) \n", pos.x, pos.y, pos.z);
-		
-		const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
-		GuideSystem::GetInst()->ToggleFlag();
-	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::K))
-	{
-		GuideSystem::GetInst()->ToggleFlag();
-		if (GuideSystem::GetInst()->temp_force_pos == Vector3::Zero)
-			GuideSystem::GetInst()->temp_force_pos = Vector3(-120.55993F, 76.17661F, 4.4105754F);
-		else
-			GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
-	}
+	//if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
+	//{
+	//	const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();
+	//	std::cout << std::format("Vector3( {}F,{}F,{}F ) \n", pos.x, pos.y, pos.z);
+	//	
+	//	const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
+	//	GuideSystem::GetInst()->ToggleFlag();
+	//}
+	//if (INSTANCE(Input)->GetKeyDown(Keyboard::K))
+	//{
+	//	GuideSystem::GetInst()->ToggleFlag();
+	//	if (GuideSystem::GetInst()->temp_force_pos == Vector3::Zero)
+	//		GuideSystem::GetInst()->temp_force_pos = Vector3(-120.55993F, 76.17661F, 4.4105754F);
+	//	else
+	//		GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
+	//}
 
 	// TODO: 튜토리얼 호위퀘스트는 특정 위치에서 상호작용으로 하기
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::O))

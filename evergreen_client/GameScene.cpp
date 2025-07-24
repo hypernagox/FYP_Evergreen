@@ -404,6 +404,8 @@ void GameScene::OnAttach()
                 guideToPartyTextRenderer->SetRaycastTarget(false);
                 guideToPartyButton->SetClickCallback([this]() {
                     // TODO: 파티 게시판 길안내 토글
+                    GuideSystem::GetInst()->ToggleFlag();
+                    GuideSystem::GetInst()->temp_force_pos = Vector3(-120.55993F, 76.17661F, 4.4105754F);
 					}); 
 
                 guideToPartyObj->AddChild(guideToPartyText);
@@ -424,6 +426,8 @@ void GameScene::OnAttach()
                 guideToHarvestTextRenderer->SetRaycastTarget(false);
                 guideToHarvestButton->SetClickCallback([this]() {
                     // TODO: 채집물 길안내 토글
+                    GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
+                    GuideSystem::GetInst()->ToggleFlag();
                     });
 
                 guideToHarvestObj->AddChild(guideToHarvestText);
