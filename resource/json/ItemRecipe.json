@@ -1,32 +1,32 @@
 {
   "Recipe_2": {
-    "Foxtail": 1,
+    "Coin": 1,
     "Result Item": "Master Sword",
     "Result Num Of Item": 1
   },
   "Recipe_3": {
-    "Foxtail": 1,
+    "Coin": 1,
     "Result Item": "Sword Excalibur",
     "Result Num Of Item": 1
   },
   "Recipe_4": {
-    "Foxtail": 1,
+    "Coin": 1,
     "Result Item": "Staff Priest",
     "Result Num Of Item": 1
   },
   "Recipe_5": {
-    "Foxtail": 1,
+    "Coin": 1,
     "Timber": 1,
     "Result Item": "Bow",
     "Result Num Of Item": 1
   },
   "Recipe_7": {
-    "Foxtail": 1,
+    "Coin": 1,
     "Result Item": "Zelda Armor 2",
     "Result Num Of Item": 1
   },
   "Recipe_9": {
-    "Foxtail": 1,
+    "Coin": 1,
     "Result Item": "Priest Armor 2",
     "Result Num Of Item": 1
   }

@@ -77,14 +77,14 @@ int main()
 			, NagiocpX::NetAddress{ IP_ADDR[USE_AWS_FLAG],7777}
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 2500
+			, 2000
 		);
 	
 	
 	std::thread t1{ [pClientService]() {NAGOX_ASSERT(pClientService->Start()); } };
 	
 	Mgr(ThreadMgr)->Launch(
-		  2
+		  8
 		, &con_init
 	);
 

@@ -406,30 +406,6 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	const auto input_handler = sceneObject->GetComponent<InputHandler>();
 	m_bSendFlag = input_handler->IsKeyHit();
 
-	//static float acc1 = 5.f;
-	//static float acc2 = 0.f;
-	//static bool speed_flag = false;
-	//acc1 = std::max(acc1 - DT, 0.f);
-	//if (!speed_flag && INSTANCE(Input)->GetKeyDown(Keyboard::Space))
-	//{
-	//	speed_flag = true;
-	//	acc2 = .125f;
-	//	GetSceneObject()->GetComponent<EntityMovement>()->SetFriction(0.f);
-	//	const auto v = GetSceneObject()->GetComponent<EntityMovement>()->GetVelocity();
-	//	GetSceneObject()->GetComponent<EntityMovement>()->SetVelocity(v * 5.f);
-	//	GetSceneObject()->GetComponent<EntityMovement>()->m_factor = 10.f;
-	//}
-	//if (speed_flag)
-	//{
-	//	acc2 -= DT;
-	//	if (acc2 <= 0.f)
-	//	{
-	//		GetSceneObject()->GetComponent<EntityMovement>()->SetFriction(20.f);
-	//		GetSceneObject()->GetComponent<EntityMovement>()->m_factor = 1.f;
-	//		speed_flag = false;
-	//		acc1 = 5.f;
-	//	}
-	//}
 	const auto fm = sceneObject->GetComponent<ServerObject>()->GetComp<ForcedMovement>();
 	fm->CheckDash();
 	if (fm->IsForcedMovement())
@@ -462,8 +438,10 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 			GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
 	}
 
+	// TODO: 튜토리얼 호위퀘스트는 특정 위치에서 상호작용으로 하기
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::O))
 	{
+		Send(Create_c2s_REGISTER_PARTY_QUEST(0));
 		Send(Create_c2s_REQUEST_QUEST(Common::CommonQuestTable::GetCommonQuestInfo(L"여우 곰 잡기").quest_id));
 	}
 

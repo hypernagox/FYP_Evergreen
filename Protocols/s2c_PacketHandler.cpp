@@ -32,6 +32,7 @@
 #include "MainScene.h"
 #include "MonsterBoss.h"
 #include "PlayerTagGUI.h"
+#include "TutorialUI.h"
 
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
@@ -436,6 +437,8 @@ const bool Handle_s2c_USE_QUICK_SLOT_ITEM(const NetHelper::S_ptr<NetHelper::Pack
 
 const bool Handle_s2c_CRAFT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CRAFT_ITEM& pkt_)
 {
+	extern bool g_tutorial_craft_clear;
+	g_tutorial_craft_clear = true;
 	// TODO: 레시피 사용 요청에 대한 답변패킷이 여기로 옴
 	// 서버에서는 이미 인벤토리에 이런저런 수정사항이 반영 된 상태,
 	// 사용한 레시피 아이디 하나만 주면 그 레시피를 찾아서 내가 지금 뭐가 몇 개 없어지고
@@ -461,7 +464,8 @@ const bool Handle_s2c_CRAFT_ITEM(const NetHelper::S_ptr<NetHelper::PacketSession
 const bool Handle_s2c_REGISTER_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REGISTER_PARTY_QUEST& pkt_)
 {
 	// 클라이언트의 파티퀘스트 생성 또는 파티는 있는데 대상 퀘스트를 바꾸는 시도에 대한 답변
-	std::cout << "현재 파티퀘스트 ID: " << pkt_.quest_id() << std::endl;
+	const auto party_quest_id = pkt_.quest_id();
+	std::cout << "현재 파티퀘스트 ID: " << party_quest_id << std::endl;
 
 	std::vector<uint32_t> partyMemberIDs;
 	partyMemberIDs.emplace_back(pSession_->GetSessionID());
@@ -471,6 +475,13 @@ const bool Handle_s2c_REGISTER_PARTY_QUEST(const NetHelper::S_ptr<NetHelper::Pac
 
 	INSTANCE(GameGUIFacade)->PartyStatus->InitializeContents(partyMemberIDs, partyMemberNames);
 
+	// TODO: 튜토리얼 호위퀘스트의 경우 상호작용으로 다른방식으로 파티원이 혼자인 파티퀘스트를 REGISTER하고 그의 답변으로
+	// 응답이 왔을 때  내가 0번퀘스트 (튜토리얼 호위퀘스트)를 요청했었다면 그대로 퀘스트 실행 후 파티 인터페이스는 감추기
+	if (0 == party_quest_id)
+	{
+		TutorialUI::StartTutorialGUI();
+		INSTANCE(GameGUIFacade)->PartyStatus->RequestQuestStart();
+	}
 	return true;
 }
 
@@ -617,6 +628,13 @@ const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {}, L"퀘스트를 종료하는 중 ...");
 	GuideSystem::GetInst()->DisableClearTree();
+
+	// TODO: 0번 퀘스트가 클리어되었다면 (튜토리얼 호위퀘스트였다면 파티창 꺼주기
+	Send(Create_c2s_PARTY_OUT());
+	
+	extern bool g_tutorial_end_clear;
+	g_tutorial_end_clear = true;
+
 	return true;
 }
 
@@ -657,8 +675,11 @@ const bool Handle_s2c_PARTY_OUT(const NetHelper::S_ptr<NetHelper::PacketSession>
 
 const bool Handle_s2c_PARTY_QUEST_CLEAR(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_CLEAR& pkt_)
 {
-	extern bool g_first_clear;
-	g_first_clear = true;
+	extern bool g_tutorial_clear;
+	if (0 == pkt_.party_quest_id())
+	{
+		g_tutorial_clear = true;
+	}
 	// TODO: 여기서 깨진 퀘스트 ID로 보스방인지 아닌지 구분, ID로 어떤 파퀘가 깨졌는지 여기서 체크함
 	// if 지금 깬 파티퀘스트가 보스방퀘면? 나가면 네비메시를 바꾼다
 	//ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);

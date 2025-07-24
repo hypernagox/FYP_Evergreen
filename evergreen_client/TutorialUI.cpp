@@ -6,40 +6,105 @@
 
 using namespace udsdx;
 
-bool g_first_clear = false;
+bool g_tutorial_clear = false;
+bool g_tutorial_craft_clear = false;
+bool g_tutorial_end_clear = false;
 
 void TutorialUI::OnInitialize()
 {
 	auto object = GetSceneObject();
 
 	{
+		// WASD
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::WASD];
 		gui = std::make_shared<WASDTutorial>();
-		gui->Init(object);
+		gui->Init(object,UI_TYPE::WASD, L"gui\\tutorial\\WASD.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
 
 	{
+		// ATTACK
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::ATTACK];
 		gui = std::make_shared<AttackTutorial>();
-		gui->Init(object);
+		gui->Init(object,UI_TYPE::ATTACK, L"gui\\tutorial\\Attack.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
 
 	{
-		auto& gui = m_tutorialUIs[(int)UI_TYPE::INVENTORY];
-		gui = std::make_shared<InventoryTutorial>();
-		gui->Init(object);
+		// SKILL
+		auto& gui = m_tutorialUIs[(int)UI_TYPE::SKILL];
+		gui = std::make_shared<SkillTutorial>();
+		// TODO: 리소스 및 경로
+		gui->Init(object, UI_TYPE::SKILL, L"gui\\tutorial\\WASD.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
 
+	{
+		// DASH
+		auto& gui = m_tutorialUIs[(int)UI_TYPE::DASH];
+		gui = std::make_shared<DashTutorial>();
+		// TODO: 리소스 및 경로
+		gui->Init(object, UI_TYPE::DASH, L"gui\\tutorial\\WASD.png");
+		gui->m_gui->SetActive(false);
+		object->AddChild(gui->m_gui);
+	}
+
+	{
+		// QUEST_1
+		auto& gui = m_tutorialUIs[(int)UI_TYPE::QUEST_1];
+		gui = std::make_shared<QuestTutorial>();
+		gui->Init(object, UI_TYPE::QUEST_1, L"gui\\tutorial\\Quest_1.png");
+		gui->m_gui->SetActive(false);
+		object->AddChild(gui->m_gui);
+	}
+
+	{
+		// CLEAR_TREE
+		auto& gui = m_tutorialUIs[(int)UI_TYPE::CLEAR_TREE];
+		gui = std::make_shared<ClearTreeTutorial>();
+		// TODO: 리소스 및 경로
+		gui->Init(object, UI_TYPE::CLEAR_TREE, L"gui\\tutorial\\WASD.png");
+		gui->m_gui->SetActive(false);
+		object->AddChild(gui->m_gui);
+	}
+
+	{
+		// CRAFT
+		auto& gui = m_tutorialUIs[(int)UI_TYPE::CRAFT];
+		gui = std::make_shared<CraftTutorial>();
+		// TODO: 리소스 및 경로
+		gui->Init(object, UI_TYPE::CRAFT, L"gui\\tutorial\\WASD.png");
+		gui->m_gui->SetActive(false);
+		object->AddChild(gui->m_gui);
+	}
+
+	{
+		// INVENTORY
+		auto& gui = m_tutorialUIs[(int)UI_TYPE::INVENTORY];
+		gui = std::make_shared<InventoryTutorial>();
+		gui->Init(object, UI_TYPE::INVENTORY, L"gui\\tutorial\\Inventory.png");
+		gui->m_gui->SetActive(false);
+		object->AddChild(gui->m_gui);
+	}
+
+	{
+		// END_TUTORIAL
+		auto& gui = m_tutorialUIs[(int)UI_TYPE::END_TUTORIAL_QUEST];
+		gui = std::make_shared<EndTutorialQuestTutorial>();
+		// TODO 새 리소스 및 경로
+		gui->Init(object, UI_TYPE::END_TUTORIAL_QUEST, L"gui\\tutorial\\WASD.png");
+		gui->m_gui->SetActive(false);
+		object->AddChild(gui->m_gui);
+	}
+
+	// ----------------------- 튜토리얼은 끝 --------------------------
 	{
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::NAVI_ITEM];
 		gui = std::make_shared<NaviItemTutorial>();
-		gui->Init(object);
+		gui->Init(object, UI_TYPE::NAVI_ITEM, L"gui\\tutorial\\Navi_item.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -47,7 +112,7 @@ void TutorialUI::OnInitialize()
 	{
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::NAVI_VILLAGE];
 		gui = std::make_shared<NaviVillageTutorial>();
-		gui->Init(object);
+		gui->Init(object, UI_TYPE::NAVI_VILLAGE, L"gui\\tutorial\\Navi_village.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -55,15 +120,7 @@ void TutorialUI::OnInitialize()
 	{
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::PARTY];
 		gui = std::make_shared<PartyTutorial>();
-		gui->Init(object);
-		gui->m_gui->SetActive(false);
-		object->AddChild(gui->m_gui);
-	}
-
-	{
-		auto& gui = m_tutorialUIs[(int)UI_TYPE::QUEST_1];
-		gui = std::make_shared<QuestTutorial>();
-		gui->Init(object);
+		gui->Init(object, UI_TYPE::PARTY, L"gui\\tutorial\\Party.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -80,8 +137,25 @@ void TutorialUI::OnInitialize()
 	object->AddChild(m_tutorialMark);
 }
 
+void TutorialUIElementBase::Init(const std::shared_ptr<udsdx::SceneObject>& object, const UI_TYPE ui_type, const std::wstring_view path) noexcept
+{
+	m_gui = SceneObject::MakeShared();
+	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
+	m_type = ui_type;
+
+	auto uiRenderer = m_gui->AddComponent<GUIImage>();
+
+	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(path)), true);
+	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
+}
+
+
 void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
+	if (!m_start_flag)
+	{
+		return;
+	}
 	if (m_cur_gui)
 	{
 		if (!m_waitFlag)
@@ -92,6 +166,7 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 			{
 				m_cur_gui->m_gui->SetActive(false);
 				m_tutorialMark->SetActive(false);
+				m_start_flag = false;
 				return;
 			}
 			if (prev_type != cur_type && !m_waitFlag)
@@ -121,16 +196,9 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 	}
 }
 
-void WASDTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
+void TutorialUI::StartTutorialGUI()
 {
-	m_gui = SceneObject::MakeShared();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
-	m_type = UI_TYPE::WASD;
-
-	auto uiRenderer = m_gui->AddComponent<GUIImage>();
-
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\WASD.png")), true);
-	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
+	m_start_flag = true;
 }
 
 UI_TYPE WASDTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -164,62 +232,48 @@ UI_TYPE WASDTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 	}
 }
 
-void InventoryTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
-{
-	m_gui = SceneObject::MakeShared();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
-	m_type = UI_TYPE::INVENTORY;
-	auto uiRenderer = m_gui->AddComponent<GUIImage>();
-
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Inventory.png")), true);
-	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
-}
-
 UI_TYPE InventoryTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {	
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::I))
 	{
-		return UI_TYPE::NAVI_VILLAGE;
+		return UI_TYPE::END_TUTORIAL_QUEST;
 	}
 	return m_type;
-}
-
-void NaviItemTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
-{
-	m_gui = SceneObject::MakeShared();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
-	m_type = UI_TYPE::NAVI_ITEM;
-	auto uiRenderer = m_gui->AddComponent<GUIImage>();
-
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Navi_item.png")), true);
-	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 }
 
 UI_TYPE NaviItemTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	{
-		return UI_TYPE::INVENTORY;
+		return UI_TYPE::NAVI_VILLAGE;
 	}
 	return m_type;
-}
-
-void NaviVillageTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
-{
-	m_gui = SceneObject::MakeShared();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
-	m_type = UI_TYPE::NAVI_VILLAGE;
-
-	auto uiRenderer = m_gui->AddComponent<GUIImage>();
-
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Navi_village.png")), true);
-	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 }
 
 
 UI_TYPE NaviVillageTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::K))
+	{
+		return UI_TYPE::PARTY;
+	}
+	return m_type;
+}
+
+UI_TYPE QuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
+{
+	if (g_tutorial_clear)
+	{
+		g_tutorial_clear = false;
+		return UI_TYPE::CLEAR_TREE;
+	}
+	return m_type;
+}
+
+UI_TYPE PartyTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
+{
+	
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::E))
 	{
 		m_flag = true;
 	}
@@ -234,65 +288,62 @@ UI_TYPE NaviVillageTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene
 	return m_type;
 }
 
-void QuestTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
+UI_TYPE AttackTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	m_gui = SceneObject::MakeShared();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
-	m_type = UI_TYPE::QUEST_1;
-
-	auto uiRenderer = m_gui->AddComponent<GUIImage>();
-
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Quest_1.png")), true);
-	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
+	if (INSTANCE(Input)->GetMouseLeftButtonDown())
+	{
+		return UI_TYPE::SKILL;
+	}
+	else return m_type;
 }
 
-UI_TYPE QuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
+UI_TYPE SkillTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	if (g_first_clear)
+	if (INSTANCE(Input)->GetMouseRightButtonDown())
 	{
-		return UI_TYPE::NAVI_ITEM;
+		return UI_TYPE::DASH;
 	}
 	return m_type;
 }
 
-void PartyTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
+UI_TYPE DashTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	m_gui = SceneObject::MakeShared();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
-	m_type = UI_TYPE::PARTY;
-
-	auto uiRenderer = m_gui->AddComponent<GUIImage>();
-
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Party.png")), true);
-	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
-}
-
-UI_TYPE PartyTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
-{
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::Q))
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::Space))
 	{
 		return UI_TYPE::QUEST_1;
 	}
 	return m_type;
 }
 
-void AttackTutorial::Init(const std::shared_ptr<udsdx::SceneObject>& object)
+UI_TYPE ClearTreeTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	m_gui = SceneObject::MakeShared();
-	m_gui->GetTransform()->SetLocalPosition(Vector3(0, 500.0f, 0.0f));
-	m_type = UI_TYPE::ATTACK;
-
-	auto uiRenderer = m_gui->AddComponent<GUIImage>();
-
-	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\Attack.png")), true);
-	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::E))
+	{
+		--m_e_count;
+		if (0 == m_e_count)
+		{
+			return UI_TYPE::CRAFT;
+		}
+	}
+	return m_type;
 }
 
-UI_TYPE AttackTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
+UI_TYPE CraftTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	if (INSTANCE(Input)->GetMouseLeftButtonDown())
+	if (g_tutorial_craft_clear)
 	{
-		return UI_TYPE::PARTY;
+		g_tutorial_craft_clear = false;
+		return UI_TYPE::INVENTORY;
 	}
-	else return m_type;
+	return m_type;
+}
+
+UI_TYPE EndTutorialQuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
+{
+	if (g_tutorial_end_clear)
+	{
+		g_tutorial_end_clear = false;
+		return UI_TYPE::NAVI_ITEM;
+	}
+	return m_type;
 }

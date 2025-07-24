@@ -57,7 +57,7 @@ ServerSession::~ServerSession()
 void ServerSession::OnConnected()
 {
 	//std::cout << "Im Dummy !" << std::endl;
-	SendAsync(Create_c2s_LOGIN("Hello"));
+	SendAsync(Create_c2s_LOGIN("Dummy",""));
 }
 
 void ServerSession::OnSend(c_int32 len)noexcept

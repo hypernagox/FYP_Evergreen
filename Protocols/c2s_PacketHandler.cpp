@@ -44,6 +44,12 @@ static inline ClientSession* GetClientSession(const S_ptr<PacketSession>& sessio
 const bool Handle_c2s_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_LOGIN& pkt_)
 {
 	GetClientSession(pSession_)->m_userName = *pkt_.id();
+	if (pkt_.pw()->empty())
+	{
+		pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp()
+			, Nagox::Enum::LOGIN_RESULT_NONE, {}, {}, -1, -1, {});
+		return true;
+	}
 	if(!Mgr(DBMgr)->IsNotConnectQueryServer())
 	{
 		DB_PlayerLogin d{ pSession_ };
@@ -100,6 +106,46 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	std::cout << (int)pkt_.channel_num() << std::endl;
 	Field::GetField(pkt_.channel_num())->EnterFieldWithFloatXY(pos.x + 512.f, pos.z + 512.f, entity);
 
+	if ("Dummy" == GetClientSession(pSession_)->m_userName)
+	{
+		std::string type = {};
+		switch (pkt_.player_type())
+		{
+		case Nagox::Enum::PLAYER_TYPE_WARRIOR:
+		{
+			type = "Warrior";
+		}
+		break;
+		case Nagox::Enum::PLAYER_TYPE_PRIEST:
+		{
+			type = "Priest";
+
+		}
+		break;
+		case Nagox::Enum::PLAYER_TYPE_ARCHER:
+		{
+			type = "Archer";
+		}
+		break;
+		default:
+			break;
+		}
+		if (type.empty())
+		{
+			return true;
+		}
+		const auto init_weapon = GET_DATA(std::string, "Player", type, "InitWeaponKey");
+		const auto m_weapon_id = DATA_TABLE->GetWeaponIDInt(init_weapon);
+		const auto init_armor = GET_DATA(std::string, "Player", type, "InitArmorKey");
+		const auto m_armor_id = DATA_TABLE->GetArmorIDInt(init_armor);
+		const auto inventory = entity->GetComp<Inventory>();
+		const auto equip_sys = inventory->GetEquipmentSystem();
+		equip_sys->SwapEquipment(entity, Nagox::Enum::EQUIPMENT_TYPE_WEAPON, m_weapon_id, false);
+		equip_sys->SwapEquipment(entity, Nagox::Enum::EQUIPMENT_TYPE_ARMOR, m_armor_id, false);
+
+
+		return true;
+	}
 	if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_WARRIOR)
 	{
 		entity->GetComp<StatusSystem>()->SetSkill<WarriorDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);

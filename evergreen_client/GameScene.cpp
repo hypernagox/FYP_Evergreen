@@ -45,6 +45,26 @@
 #include "EnvironmentRenderer.h"
 #include "PopupGUIManager.h"
 #include "MainScene.h"
+#include <imm.h>
+#pragma comment(lib, "imm32.lib")
+
+static inline void SetInputToEnglish(const HWND hWnd)noexcept
+{
+    if (const HIMC hIMC = ImmGetContext(hWnd))
+    {
+        ImmSetConversionStatus(hIMC, IME_CMODE_ALPHANUMERIC, 0);
+        ImmReleaseContext(hWnd, hIMC);
+    }
+}
+
+static inline void SetInputToKorean(const HWND hWnd) noexcept
+{
+    if (const HIMC hIMC = ImmGetContext(hWnd))
+    {
+        ImmSetConversionStatus(hIMC, IME_CMODE_NATIVE, 0);
+        ImmReleaseContext(hWnd, hIMC);
+    }
+}
 
 using namespace udsdx;
 
@@ -54,6 +74,21 @@ extern EnvironmentParameters g_dungeonEnvironmentParam;
 // 성긴 동기화 방식 스레드 간 채팅 내용 비동기 통신
 static std::queue<std::wstring> g_chatQueue;
 static std::mutex g_chatQueueMutex;
+
+WNDPROC g_OrigEditProc = nullptr;
+
+LRESULT CALLBACK ChatEditProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (WM_KEYDOWN == msg && VK_RETURN == wParam)
+    {
+        if (const HWND hDlg = GetParent(hWnd))
+        {
+            PostMessage(hDlg, WM_COMMAND, IDOK, 0);
+            return 0;
+        }
+    }
+    return CallWindowProc(g_OrigEditProc, hWnd, msg, wParam, lParam);
+}
 
 INT_PTR CALLBACK ChatDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -82,8 +117,10 @@ INT_PTR CALLBACK ChatDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 
         SetWindowPos(hDlg, HWND_TOP, newX, newY, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 
-        HWND hEdit = GetDlgItem(hDlg, IDC_CHAT);
+        const HWND hEdit = GetDlgItem(hDlg, IDC_CHAT);
         SetFocus(hEdit);
+        SetInputToKorean(hEdit);
+        g_OrigEditProc = (WNDPROC)SetWindowLongPtr(hEdit, GWLP_WNDPROC, (LONG_PTR)ChatEditProc);
 
         return FALSE;
     }
@@ -101,7 +138,8 @@ INT_PTR CALLBACK ChatDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
                 g_chatQueue.emplace(context);
             g_chatQueueMutex.unlock();
 
-            EndDialog(hDlg, LOWORD(wParam));
+            EndDialog(hDlg, IDOK);
+            SetInputToEnglish(UpdownStudio::GetMainHWND());
             return TRUE;
         }
         else if (LOWORD(wParam) == IDCANCEL)

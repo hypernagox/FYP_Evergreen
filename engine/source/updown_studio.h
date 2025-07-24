@@ -58,5 +58,6 @@ namespace udsdx
 		static LRESULT CALLBACK ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		static void RegisterIOUpdateCallback(std::function<void()> callback);
 		static void RegisterUpdateCallback(std::function<void(const Time&)> callback);
+		static inline const auto GetMainHWND()noexcept { return m_hWnd; }
 	};
 }

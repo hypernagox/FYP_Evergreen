@@ -45,7 +45,9 @@ const bool Handle_s2c_LOGIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	//const auto vv = Vector3{ -30.0f, 0.0f, -30.0f } + dir[NagiocpX::my_rand() % 4] * 10.f;
 	//const auto v = Nagox::Struct::Vec3{ 75.0f, 0.0f, 25.0f };
 	static constinit std::atomic_int channel_num = 0;
-	pSession_ << Create_c2s_ENTER(F_VEC3(pos),Nagox::Enum::PLAYER_TYPE_WARRIOR,channel_num.fetch_add(1) % 10);
+	//pSession_ << Create_c2s_ENTER(F_VEC3(pos),Nagox::Enum::PLAYER_TYPE_WARRIOR,channel_num.fetch_add(1) % 10);
+	const auto type = dist1024(rng) % 3;
+	pSession_ << Create_c2s_ENTER(F_VEC3(pos), (Nagox::Enum::PLAYER_TYPE)(type), 0);
 	session->m_id = pkt_.obj_id();
 	session->pos = pos;
 
@@ -137,6 +139,11 @@ const bool Handle_s2c_PLAYER_DEATH(const NagiocpX::S_ptr<NagiocpX::PacketSession
 }
 
 const bool Handle_s2c_REQUEST_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_REQUEST_QUEST& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_PROCESS_COMMON_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_PROCESS_COMMON_QUEST& pkt_)
 {
 	return true;
 }
@@ -245,6 +252,41 @@ const bool Handle_s2c_FORCED_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>
 }
 
 const bool Handle_s2c_BOSS_ROOM_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_ROOM_ENTER& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_BOSS_FLY(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_FLY& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_BOSS_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_MOVE& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_BOSS_PROJ_MARK(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_PROJ_MARK& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_HEAL(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_HEAL& pkt_)
+{
+	return false;
+}
+
+const bool Handle_s2c_DASH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_DASH& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_ARROW_RAIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_ARROW_RAIN& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_CHAT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHAT& pkt_)
 {
 	return true;
 }
