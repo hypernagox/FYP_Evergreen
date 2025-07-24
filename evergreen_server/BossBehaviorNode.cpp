@@ -225,7 +225,7 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	{
 		--m_count;
 		auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(1);
-		if (rand() & 1)
+		//if (rand() & 1)
 		{
 			//proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos) - CommonMath::Normalized(Vector3{ dx,dy,dz }) * 0.1f;
 			proj.timer->m_pos = owner_comp_sys->GetComp<PositionComponent>()->pos + Vector3{ 0,10,0 };
@@ -237,15 +237,15 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 			//proj.timer->m_speed = CommonMath::Normalized(Vector3{ dx,dy,dz }) * 10.f;
 			proj.timer->m_radius = 2.f;
 		}
-		else
-		{
-			proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos) - CommonMath::Normalized(Vector3{ dx,dy,dz }) * 0.1f;
-			proj.timer->m_proj_type = 1;
-			proj.timer->m_accDist = 99.9f;
-			proj.timer->SelectObjList(bt_root_timer->GetTempVecForInsightObj());
-			proj.timer->m_speed = CommonMath::Normalized(Vector3{ dx,dy,dz }) * 10.f;
-			proj.timer->m_radius = 2.f;
-		}
+		//else
+		//{
+		//	proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos) - CommonMath::Normalized(Vector3{ dx,dy,dz }) * 0.1f;
+		//	proj.timer->m_proj_type = 1;
+		//	proj.timer->m_accDist = 99.9f;
+		//	proj.timer->SelectObjList(bt_root_timer->GetTempVecForInsightObj());
+		//	proj.timer->m_speed = CommonMath::Normalized(Vector3{ dx,dy,dz }) * 10.f;
+		//	proj.timer->m_radius = 2.f;
+		//}
 		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
 		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), boss_storage_node->m_cur_target->GetObjectID(), 1));
 		// TODO: ÁøÂ¥ HP±ð±â
@@ -386,7 +386,7 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	m_accTime -= DT;
 	if (count == 0 && 0.f >= m_accTime)
 	{
-		count = 5;
+		count = 30;
 		m_accTime = 2.f;
 		return NodeStatus::SUCCESS;
 	}
@@ -396,6 +396,7 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	}
 	const auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(10);
 
+	proj.timer->m_radius = 0.125f;
 	proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos);
 
 	for (const auto users : player_list)
@@ -405,8 +406,8 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 		auto dir = users->GetComp<PositionComponent>()->pos - proj.timer->m_pos;
 		dir.Normalize();
 
-		proj.timer->m_speed = dir * 20.f;
-
+		proj.timer->m_speed = dir * 50.f;
+		proj.timer->m_max_dist = 100.f;
 		proj.timer->SelectObjList(player_list);
 		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
 	}
@@ -498,7 +499,8 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 			&fire_pos.x);
 
 		const auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(10);
-
+		proj.timer->m_radius = 0.125f;
+		proj.timer->m_max_dist = 100.f;
 		proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos);
 
 		auto dir = fire_pos - proj.timer->m_pos;

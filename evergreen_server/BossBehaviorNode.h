@@ -88,7 +88,7 @@ public:
 public:
 
 	float m_accTime = 2.f;
-	int count = 5;
+	int count = 30;
 };
 
 class ResetPos

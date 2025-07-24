@@ -37,7 +37,7 @@ void TutorialUI::OnInitialize()
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::SKILL];
 		gui = std::make_shared<SkillTutorial>();
 		// TODO: 리소스 및 경로
-		gui->Init(object, UI_TYPE::SKILL, L"gui\\tutorial\\WASD.png");
+		gui->Init(object, UI_TYPE::SKILL, L"gui\\tutorial\\right_skill.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -47,7 +47,7 @@ void TutorialUI::OnInitialize()
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::DASH];
 		gui = std::make_shared<DashTutorial>();
 		// TODO: 리소스 및 경로
-		gui->Init(object, UI_TYPE::DASH, L"gui\\tutorial\\WASD.png");
+		gui->Init(object, UI_TYPE::DASH, L"gui\\tutorial\\space_dash.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -56,7 +56,7 @@ void TutorialUI::OnInitialize()
 		// QUEST_1
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::QUEST_1];
 		gui = std::make_shared<QuestTutorial>();
-		gui->Init(object, UI_TYPE::QUEST_1, L"gui\\tutorial\\Quest_1.png");
+		gui->Init(object, UI_TYPE::QUEST_1, L"gui\\tutorial\\npc_guard.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -66,7 +66,7 @@ void TutorialUI::OnInitialize()
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::CLEAR_TREE];
 		gui = std::make_shared<ClearTreeTutorial>();
 		// TODO: 리소스 및 경로
-		gui->Init(object, UI_TYPE::CLEAR_TREE, L"gui\\tutorial\\WASD.png");
+		gui->Init(object, UI_TYPE::CLEAR_TREE, L"gui\\tutorial\\clear_tree.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -76,7 +76,7 @@ void TutorialUI::OnInitialize()
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::CRAFT];
 		gui = std::make_shared<CraftTutorial>();
 		// TODO: 리소스 및 경로
-		gui->Init(object, UI_TYPE::CRAFT, L"gui\\tutorial\\WASD.png");
+		gui->Init(object, UI_TYPE::CRAFT, L"gui\\tutorial\\craft_item.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -85,7 +85,7 @@ void TutorialUI::OnInitialize()
 		// INVENTORY
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::INVENTORY];
 		gui = std::make_shared<InventoryTutorial>();
-		gui->Init(object, UI_TYPE::INVENTORY, L"gui\\tutorial\\Inventory.png");
+		gui->Init(object, UI_TYPE::INVENTORY, L"gui\\tutorial\\inventory_tutorial.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -95,7 +95,7 @@ void TutorialUI::OnInitialize()
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::END_TUTORIAL_QUEST];
 		gui = std::make_shared<EndTutorialQuestTutorial>();
 		// TODO 새 리소스 및 경로
-		gui->Init(object, UI_TYPE::END_TUTORIAL_QUEST, L"gui\\tutorial\\WASD.png");
+		gui->Init(object, UI_TYPE::END_TUTORIAL_QUEST, L"gui\\tutorial\\tutorial_out.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -104,7 +104,7 @@ void TutorialUI::OnInitialize()
 	{
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::NAVI_ITEM];
 		gui = std::make_shared<NaviItemTutorial>();
-		gui->Init(object, UI_TYPE::NAVI_ITEM, L"gui\\tutorial\\Navi_item.png");
+		gui->Init(object, UI_TYPE::NAVI_ITEM, L"gui\\tutorial\\harvest_navi.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -112,7 +112,7 @@ void TutorialUI::OnInitialize()
 	{
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::NAVI_VILLAGE];
 		gui = std::make_shared<NaviVillageTutorial>();
-		gui->Init(object, UI_TYPE::NAVI_VILLAGE, L"gui\\tutorial\\Navi_village.png");
+		gui->Init(object, UI_TYPE::NAVI_VILLAGE, L"gui\\tutorial\\find_quest.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}
@@ -120,7 +120,7 @@ void TutorialUI::OnInitialize()
 	{
 		auto& gui = m_tutorialUIs[(int)UI_TYPE::PARTY];
 		gui = std::make_shared<PartyTutorial>();
-		gui->Init(object, UI_TYPE::PARTY, L"gui\\tutorial\\Party.png");
+		gui->Init(object, UI_TYPE::PARTY, L"gui\\tutorial\\create_quest.png");
 		gui->m_gui->SetActive(false);
 		object->AddChild(gui->m_gui);
 	}

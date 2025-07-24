@@ -433,7 +433,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	{
 		GuideSystem::GetInst()->ToggleFlag();
 		if (GuideSystem::GetInst()->temp_force_pos == Vector3::Zero)
-			GuideSystem::GetInst()->temp_force_pos = { -119.499115f,75,13.64f };
+			GuideSystem::GetInst()->temp_force_pos = Vector3(-120.55993F, 76.17661F, 4.4105754F);
 		else
 			GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
 	}

@@ -34,9 +34,9 @@ NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 	}
 
 	const auto delta = m_speed * dt;
-	m_accDist += delta.LengthSquared();
+	m_accDist += delta.Length();
 	if (isHit)return NagiocpX::ROUTINE_RESULT::STOP;
-	if (MAX_DIST <= m_accDist)return NagiocpX::ROUTINE_RESULT::STOP;
+	if (m_max_dist <= m_accDist)return NagiocpX::ROUTINE_RESULT::STOP;
 	m_pos = m_pos + m_speed * dt;
 	return NagiocpX::ROUTINE_RESULT::STILL_RUNNIG;
 }
