@@ -45,6 +45,8 @@
 #include "EnvironmentRenderer.h"
 #include "PopupGUIManager.h"
 #include "MainScene.h"
+#include "GUISimpleButton.h"
+
 #include <imm.h>
 #pragma comment(lib, "imm32.lib")
 
@@ -371,7 +373,7 @@ void GameScene::OnAttach()
         auto minimapImage = minimapObj->AddComponent<GUIImage>();
         minimapImage->SetTexture(m_minimapRenderer->GetRenderTargetTexture());
         minimapImage->SetSize(Vector2(360.0f, 360.0f));
-        minimapObj->GetTransform()->SetLocalPosition(Vector3(-1060.0f, -480.0f, 0.0f));
+        minimapObj->GetTransform()->SetLocalPosition(Vector3(-1060.0f, -420.0f, 0.0f));
 
         {
             auto minimapBackground = SceneObject::MakeShared();
@@ -387,6 +389,46 @@ void GameScene::OnAttach()
 
             minimapObj->AddChild(minimapBackground);
             minimapObj->AddChild(minimapMarkerObj);
+
+            {
+                auto guideToPartyObj = SceneObject::MakeShared();
+                guideToPartyObj->GetTransform()->SetLocalPosition(Vector3(-100.0f, -210.0f, 0.0f));
+                auto guideToPartyButton = guideToPartyObj->AddComponent<GUISimpleButton>();
+                guideToPartyButton->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
+                guideToPartyButton->SetSize(Vector2(160.0f, 40.0f));
+
+                auto guideToPartyText = SceneObject::MakeShared();
+                auto guideToPartyTextRenderer = guideToPartyText->AddComponent<GUIText>();
+                guideToPartyTextRenderer->SetText(L"파티 게시판 안내");
+                guideToPartyTextRenderer->SetFont(resource->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
+                guideToPartyTextRenderer->SetRaycastTarget(false);
+                guideToPartyButton->SetClickCallback([this]() {
+                    // TODO: 파티 게시판 길안내 토글
+					}); 
+
+                guideToPartyObj->AddChild(guideToPartyText);
+                minimapObj->AddChild(guideToPartyObj);
+            }
+
+            {
+                auto guideToHarvestObj = SceneObject::MakeShared();
+                guideToHarvestObj->GetTransform()->SetLocalPosition(Vector3(60.0f, -210.0f, 0.0f));
+                auto guideToHarvestButton = guideToHarvestObj->AddComponent<GUISimpleButton>();
+                guideToHarvestButton->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
+                guideToHarvestButton->SetSize(Vector2(160.0f, 40.0f));
+
+                auto guideToHarvestText = SceneObject::MakeShared();
+                auto guideToHarvestTextRenderer = guideToHarvestText->AddComponent<GUIText>();
+                guideToHarvestTextRenderer->SetText(L"채집물 안내");
+                guideToHarvestTextRenderer->SetFont(resource->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
+                guideToHarvestTextRenderer->SetRaycastTarget(false);
+                guideToHarvestButton->SetClickCallback([this]() {
+                    // TODO: 채집물 길안내 토글
+                    });
+
+                guideToHarvestObj->AddChild(guideToHarvestText);
+                minimapObj->AddChild(guideToHarvestObj);
+            }
         }
 
         m_playerInterfaceGroup->AddChild(minimapObj);

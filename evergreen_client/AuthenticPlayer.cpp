@@ -317,6 +317,7 @@ void AuthenticPlayer::OnInitialize()
 	input_handler->AddKeyFunc(Keyboard::D2, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 1);
 	input_handler->AddKeyFunc(Keyboard::D3, KEY_STATE::KET_TAP, &AuthenticPlayer::UseQuickSlotItem, this, 2);
 	input_handler->AddKeyFunc(Keyboard::D0, KEY_STATE::KET_TAP, &AuthenticPlayer::ToggleDebugCamera, this);
+	input_handler->AddKeyFunc(Keyboard::N, KEY_STATE::KET_TAP, []() { Send( Create_c2s_QUEST_END()); });
 
 	input_handler->AddKeyFunc(Keyboard::CapsLock, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuest, this);
 
