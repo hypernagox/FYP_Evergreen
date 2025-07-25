@@ -45,5 +45,6 @@ private:
 	std::mutex m_clear_tree_mutex;
 	int8_t m_num_of_reward_count = 5;
 	NAVI_MESH_TYPE m_nav_mesh_type = NAVI_MESH_TYPE::MAIN_WORLD;
+	uint64_t m_last_get_time = 0;
 };
 

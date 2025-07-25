@@ -65,17 +65,20 @@ public:
 		m_clear_tree_obj->SetActive(true);
 		m_clear_tree_obj->GetTransform()->SetLocalPosition(tree_pos);
 		SetGuidePathInternal(tree_pos);
+		SetClearTreeInteraction(true);
 		return m_clear_tree_obj;
 	}
 	void DisableClearTree()noexcept {
 		m_guide_active_flag = false;
 		temp_force_pos = Vector3::Zero;
 		ResetGuideObjects();
+		SetClearTreeInteraction(false);
 		m_clear_tree_obj->SetActive(false);
 	}
 	void SetClearTree(std::shared_ptr<udsdx::SceneObject> clear_tree)noexcept {
 		m_clear_tree_obj.swap(clear_tree);
 	}
+	void SetClearTreeInteraction(const bool active_flag)noexcept;
 private:
 	void SetGuidePathInternal(const Vector3& target_pos);
 private:

@@ -9,6 +9,8 @@ using namespace udsdx;
 bool g_tutorial_clear = false;
 bool g_tutorial_craft_clear = false;
 bool g_tutorial_end_clear = false;
+bool g_tutorial_navi_item = false;
+bool g_tutorial_find_quest = false;
 
 void TutorialUI::OnInitialize()
 {
@@ -125,7 +127,7 @@ void TutorialUI::OnInitialize()
 		object->AddChild(gui->m_gui);
 	}
 
-	m_tutorialUIs[(int)UI_TYPE::WASD]->m_gui->SetActive(true);
+	m_tutorialUIs[(int)UI_TYPE::WASD]->m_gui->SetActive(false);
 	m_cur_gui = m_tutorialUIs[(int)UI_TYPE::WASD];
 
 	m_tutorialMark = SceneObject::MakeShared();
@@ -199,6 +201,7 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 void TutorialUI::StartTutorialGUI()
 {
 	m_start_flag = true;
+	m_tutorialUIs[(int)UI_TYPE::WASD]->m_gui->SetActive(true);
 }
 
 UI_TYPE WASDTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -243,8 +246,9 @@ UI_TYPE InventoryTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 UI_TYPE NaviItemTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
+	if (g_tutorial_navi_item)
 	{
+		g_tutorial_navi_item = false;
 		return UI_TYPE::NAVI_VILLAGE;
 	}
 	return m_type;
@@ -253,8 +257,9 @@ UI_TYPE NaviItemTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 
 UI_TYPE NaviVillageTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::K))
+	if (g_tutorial_find_quest)
 	{
+		g_tutorial_find_quest = false;
 		return UI_TYPE::PARTY;
 	}
 	return m_type;

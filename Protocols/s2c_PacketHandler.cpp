@@ -737,7 +737,17 @@ const bool Handle_s2c_CHANGE_HARVEST_STATE(const NetHelper::S_ptr<NetHelper::Pac
 {
 	// TODO: 여기서 대상이 될 채집물을 찾아서 주면 서버오버헤드는 감소
 	//std::cout << "채집 ID: " << pkt_.harvest_mesh_type() << '\n';
-	GuideSystem::GetInst()->SetHarvestState(pkt_.harvest_id(), pkt_.harvest_mesh_type(), pkt_.is_active());
+	const auto harvest_id = pkt_.harvest_id();
+	if (0 == harvest_id)
+	{
+		GuideSystem::GetInst()->ToggleFlag();
+		GuideSystem::GetInst()->SetClearTreeInteraction(false);
+	}
+	else
+	{
+		GuideSystem::GetInst()->SetHarvestState(harvest_id, pkt_.harvest_mesh_type(), pkt_.is_active());
+	}
+	
 	return true;
 }
 

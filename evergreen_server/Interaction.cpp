@@ -31,15 +31,18 @@ bool HarvestInteraction::DoInteraction(ContentsEntity* const pEntity_) noexcept
 bool ClearTreeInteraction::DoInteraction(ContentsEntity* const pEntity_) noexcept
 {
 	const auto pos = pEntity_->GetComp<PositionComponent>()->pos;
+	const auto cur_time = GetTickCount64();
 	NagiocpX::LockGuard lock{ m_clear_tree_mutex };
 	if (0 >= m_num_of_reward_count)return false;
+	if (500 > (cur_time - m_last_get_time))return false;
+	m_last_get_time = cur_time;
 	const auto owner = GetOwnerEntity();
 	--m_num_of_reward_count;
 	const auto item_table = owner->GetComp<DropTable>();
 	auto temp = pos;
 	NAVIGATION->GetNavMesh(m_nav_mesh_type)->findRandomPointAroundCircle(
 		&pos.x,
-		0.125f,
+		0.125f * .1f,
 		&temp.x
 	);
 	item_table->GetOwnerEntityRaw()->GetComp<PositionComponent>()->pos = temp;

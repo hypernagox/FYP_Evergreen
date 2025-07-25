@@ -264,6 +264,7 @@ void GameScene::OnAttach()
             ShowDialogue(m_npcObj, "Test", [this]() {
                 m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
                 // TODO: 대화 완료 시 로직이 여기서 수행됨
+                Send(Create_c2s_REGISTER_PARTY_QUEST(0));
                 });
             });
         AddActiveObject(m_npcObj, GameSceneType::Default);
@@ -444,6 +445,8 @@ void GameScene::OnAttach()
                 guideToPartyTextRenderer->SetRaycastTarget(false);
                 guideToPartyButton->SetClickCallback([this]() {
                     // TODO: 파티 게시판 길안내 토글
+                    extern bool g_tutorial_find_quest;
+                    g_tutorial_find_quest = true;
                     GuideSystem::GetInst()->ToggleFlag();
                     GuideSystem::GetInst()->temp_force_pos = Vector3(-120.55993F, 76.17661F, 4.4105754F);
 					}); 
@@ -466,6 +469,8 @@ void GameScene::OnAttach()
                 guideToHarvestTextRenderer->SetRaycastTarget(false);
                 guideToHarvestButton->SetClickCallback([this]() {
                     // TODO: 채집물 길안내 토글
+                    extern bool g_tutorial_navi_item;
+                    g_tutorial_navi_item = true;
                     GuideSystem::GetInst()->temp_force_pos = Vector3::Zero;
                     GuideSystem::GetInst()->ToggleFlag();
                     });

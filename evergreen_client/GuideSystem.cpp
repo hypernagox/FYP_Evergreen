@@ -202,10 +202,16 @@ void GuideSystem::UpdateGuideSystem()
 	float min_dist = std::numeric_limits<float>::max();
 	for (const auto& obj : m_mapHarvest)
 	{
-		const auto dist = Vector3::DistanceSquared(pos, obj->GetTransform()->GetLocalPosition());
-		if (dist <= min_dist) {
-			v1 = obj->GetTransform()->GetLocalPosition();
-			min_dist = dist;
+		if (const auto interaction = obj->GetComponent<InteractiveEntity>())
+		{
+			if (!interaction->GetActive())continue;
+			const auto obj_pos = obj->GetTransform()->GetLocalPosition();
+			const auto dist = Vector3::DistanceSquared(pos, obj_pos);
+			if (dist < min_dist)
+			{
+				v1 = obj_pos;
+				min_dist = dist;
+			}
 		}
 	}
 	if (temp_force_pos != Vector3::Zero)
@@ -217,6 +223,11 @@ void GuideSystem::UpdateGuideSystem()
 		ResetGuideObjects();
 		SetGuidePathInternal(v1);
 	}
+}
+
+void GuideSystem::SetClearTreeInteraction(const bool active_flag) noexcept
+{
+	m_clear_tree_obj->GetComponent<InteractiveEntity>()->SetActive(active_flag);
 }
 
 void GuideSystem::SetGuidePathInternal(const Vector3& target_pos)

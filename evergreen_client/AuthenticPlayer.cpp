@@ -462,14 +462,14 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		m_dialogueCameraFactor = std::lerp(m_dialogueCameraFactor, m_dialogueViewTarget != nullptr ? 1.0f : 0.0f, time.deltaTime * 4.0f);
 
 
-	//if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
-	//{
-	//	const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();
-	//	std::cout << std::format("Vector3( {}F,{}F,{}F ) \n", pos.x, pos.y, pos.z);
-	//	
-	//	const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
-	//	GuideSystem::GetInst()->ToggleFlag();
-	//}
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
+	{
+		const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();
+		std::cout << std::format("Vector3( {}F,{}F,{}F ) \n", pos.x, pos.y, pos.z);
+		
+		//const Vector3 end = { -119.499115f,75,13.64f }; // 마을 중앙
+		//GuideSystem::GetInst()->ToggleFlag();
+	}
 	//if (INSTANCE(Input)->GetKeyDown(Keyboard::K))
 	//{
 	//	GuideSystem::GetInst()->ToggleFlag();
@@ -482,7 +482,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	// TODO: 튜토리얼 호위퀘스트는 특정 위치에서 상호작용으로 하기
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::O))
 	{
-		Send(Create_c2s_REGISTER_PARTY_QUEST(0));
+		//Send(Create_c2s_REGISTER_PARTY_QUEST(0));
 		Send(Create_c2s_REQUEST_QUEST(Common::CommonQuestTable::GetCommonQuestInfo(L"여우 곰 잡기").quest_id));
 	}
 
