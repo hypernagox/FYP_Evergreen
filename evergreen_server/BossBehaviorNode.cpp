@@ -226,18 +226,19 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	if (0.f >= m_accTime)
 	{
 		--m_count;
-		auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(1);
 		//if (rand() & 1)
 		{
+			auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(1);
 			//proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos) - CommonMath::Normalized(Vector3{ dx,dy,dz }) * 0.1f;
 			proj.timer->m_pos = owner_comp_sys->GetComp<PositionComponent>()->pos + Vector3{ 0,10,0 };
 			proj.timer->m_proj_type = 1;
 			//proj.timer->m_accDist = 99.9f;
 			//proj.timer->m_
 			proj.timer->SelectObjList(bt_root_timer->GetTempVecForInsightObj());
-			proj.timer->m_speed = Vector3{ 0,-1,0 }*10.f;
+			proj.timer->m_speed = Vector3{ 0,-1,0 }*7.5f;
 			//proj.timer->m_speed = CommonMath::Normalized(Vector3{ dx,dy,dz }) * 10.f;
-			proj.timer->m_radius = 2.f;
+			proj.timer->m_radius = 3.f;
+			proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
 		}
 		//else
 		//{
@@ -248,7 +249,7 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		//	proj.timer->m_speed = CommonMath::Normalized(Vector3{ dx,dy,dz }) * 10.f;
 		//	proj.timer->m_radius = 2.f;
 		//}
-		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
+		
 		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(), Create_s2c_MONSTER_ATTACK(owner_comp_sys->GetOwnerEntity()->GetObjectID(), boss_storage_node->m_cur_target->GetObjectID(), 1));
 		// TODO: ÁøÂ¥ HP±ð±â
 		m_accTime = 2.f;
@@ -397,15 +398,14 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	{
 		return NodeStatus::RUNNING;
 	}
-	const auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(10);
-
-	proj.timer->m_radius = 0.125f;
-	proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos);
 	const auto boss_pos = boss_entity->GetComp<PositionComponent>()->pos;
 	for (const auto users : player_list)
 	{
 		
+		const auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(10);
 
+		proj.timer->m_radius = 0.125f;
+		proj.timer->m_pos = boss_pos;
 		auto dir = users->GetComp<PositionComponent>()->pos - proj.timer->m_pos;
 		dir.Normalize();
 

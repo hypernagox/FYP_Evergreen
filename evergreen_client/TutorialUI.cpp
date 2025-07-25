@@ -3,6 +3,7 @@
 #include "scene_object.h"
 #include "gui_image.h"
 #include "input.h"
+#include "GuideSystem.h"
 
 using namespace udsdx;
 
@@ -214,17 +215,14 @@ UI_TYPE WASDTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 	{
 		m_keyFlag.emplace('A');
 	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::S))
-	{
-		m_keyFlag.emplace('S');
-	}
+	
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::D))
 	{
 		m_keyFlag.emplace('D');
 	}
 
 	const auto n = m_keyFlag.size();
-	if (n == 4)
+	if (n == 3)
 	{
 		m_keyFlag.clear();
 		return UI_TYPE::ATTACK;
@@ -327,6 +325,8 @@ UI_TYPE ClearTreeTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 		--m_e_count;
 		if (0 == m_e_count)
 		{
+			GuideSystem::GetInst()->ToggleFlag();
+			GuideSystem::GetInst()->temp_force_pos = Vector3(-123.62704F, 75.79371F, 15.156882F);
 			return UI_TYPE::CRAFT;
 		}
 	}

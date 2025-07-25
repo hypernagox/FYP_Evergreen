@@ -84,7 +84,11 @@ const bool Handle_c2s_REGISTER_ACCOUNT(const NagiocpX::S_ptr<NagiocpX::PacketSes
 		d.m_class_type = Common::DataRegistry::Str2Wstr(*pkt_.class_type());
 		RequestQuery(d);
 	}
-
+	else
+	{
+		pSession_ << Create_s2c_LOGIN((uint32_t)pSession_->GetSessionID(), Mgr(TimeMgr)->GetServerTimeStamp()
+			, Nagox::Enum::LOGIN_RESULT_SUCCESS, {}, {}, -1, -1, "Archer");
+	}
 	return true;
 }
 

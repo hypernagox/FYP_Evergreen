@@ -728,5 +728,5 @@ void NexusQuest::InitQuestField() noexcept
 		AddMonster(EntityFactory::CreateBear, b, mon_quest_pos[i], NAVI_MESH_TYPE::MAIN_WORLD);
 	}
 	SetQuestBeginPos(Vector3(148.24475F, 77.23696F, -187.04926F));
-	SetClearTreePos(Vector3(133.60077F, 79.136566F, -247.11813F));
+	SetClearTreePos(Vector3(138.19017F, 79.193085F, -188.67932F));
 }

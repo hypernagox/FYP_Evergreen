@@ -294,6 +294,7 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 	if (target_entity)
 	{
 		const auto owner = target_entity;
+		const auto owner_session = owner->GetClientSession();
 		if (owner->IsValid() && owner->GetCurCluster()->GetClusterFieldInfo().curFieldPtr->GetFieldID() == -1)
 		{
 			const auto pos = owner->GetComp<PositionComponent>()->pos;
@@ -302,7 +303,10 @@ void PartyQuestSystem::OutMember(const uint32_t obj_id)
 				owner,
 				m_prev_field->CalculateClusterXY(pos.x + 512.f, pos.z + 512.f)
 			);
+			owner_session->SendAsync(Create_s2c_QUEST_END());
+			owner_session->SendAsync(Create_s2c_FORCED_MOVE(owner->GetObjectID(), ToFlatVec(Vector3(-103.19971F, 75.85828F, 11.403826F))));
 		}
+		
 		const auto& out_user_name = owner->GetClientSession()->m_userName;
 		// 나간 유저의 아이디를 기입해서 보낸다.
 		auto pkt = Create_s2c_PARTY_OUT(obj_id, cur_leader_id, out_user_name);

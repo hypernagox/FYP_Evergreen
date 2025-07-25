@@ -45,6 +45,7 @@ bool ClearTreeInteraction::DoInteraction(ContentsEntity* const pEntity_) noexcep
 		0.125f * .1f,
 		&temp.x
 	);
+	temp.y -= 1.f;
 	item_table->GetOwnerEntityRaw()->GetComp<PositionComponent>()->pos = temp;
 	item_table->m_bHasLifeSpan = false;
 	item_table->TryCreateItem();

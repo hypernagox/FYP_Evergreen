@@ -44,6 +44,7 @@ NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 void PlayerProjectile::StartRoutine() noexcept
 {
 	// TODO 투사체 종류
+	m_pos.y += 1.f;
 	auto pkt = Create_s2c_FIRE_PROJ(
 		m_owner->GetObjectID(),
 		m_proj_id,

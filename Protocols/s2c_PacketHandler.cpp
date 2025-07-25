@@ -373,7 +373,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
 		auto s = SceneObject::MakeShared();
 		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
-		s->GetTransform()->SetLocalScale(proj_rad);
+		s->GetTransform()->SetLocalScale(proj_rad/2.f);
 	
 		auto gizmoRenderer = s->AddComponent<MeshRenderer>();
 		gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
