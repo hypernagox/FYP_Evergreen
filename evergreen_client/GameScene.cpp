@@ -263,6 +263,7 @@ void GameScene::OnAttach()
             m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\Talking.yac")), true, true);
             ShowDialogue(m_npcObj, "Test", [this]() {
                 m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
+                // TODO: 대화 완료 시 로직이 여기서 수행됨
                 });
             });
         AddActiveObject(m_npcObj, GameSceneType::Default);
