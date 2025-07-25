@@ -26,7 +26,9 @@ public:
 	bool AddHarvest(uint32_t server_id, uint32_t harvest_id, bool is_active);
 	void RemoveHarvest(uint32_t server_id);
 	void ClearHarvest() noexcept;
-
+	const auto IsHarvest(const uint32_t harvest_server_id)noexcept {
+		return m_mapHarvestID.contains(harvest_server_id);
+	}
 	udsdx::SceneObject* GetHarvest(const uint32_t server_id)const noexcept {
 		const auto iter = m_mapHarvestID.find(server_id);
 		if (m_mapHarvestID.end() == iter)

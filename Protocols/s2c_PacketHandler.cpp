@@ -155,11 +155,13 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 
 const bool Handle_s2c_REMOVE_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_REMOVE_OBJECT& pkt_)
 {
-	if (pkt_.obj_id() == g_npcid)
+	const auto obj_id = pkt_.obj_id();
+	
+	if (GuideSystem::GetInst()->IsHarvest(obj_id))
 	{
-		//std::cout << "NPC 퇴장\n";
+		return true;
 	}
-	Mgr(ServerObjectMgr)->RemoveObject(pkt_.obj_id());
+	Mgr(ServerObjectMgr)->RemoveObject(obj_id);
 	return true;
 }
 
