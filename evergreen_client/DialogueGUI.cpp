@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "DialogueGUI.h"
 #include "GUISimpleButton.h"
+#include "PopupGUIManager.h"
+#include "InputHandler.h"
 
 using namespace udsdx;
 
@@ -59,6 +61,19 @@ void DialogueGUI::OnInitialize()
 	m_dialogueSound->Pause();
 
 	m_panel->SetActive(false);
+
+	auto inputHandler = GetSceneObject()->AddComponent<InputHandler>();
+	inputHandler->AddKeyFunc(Keyboard::Space, KET_TAP, &DialogueGUI::OnDialogueNext, this);
+	inputHandler->AddKeyFunc(Keyboard::Enter, KET_TAP, &DialogueGUI::OnDialogueNext, this);
+}
+
+void DialogueGUI::OnInactive()
+{
+	m_dialogueSound->Pause();
+	if (m_onDialogueEndCallback)
+	{
+		m_onDialogueEndCallback();
+	}
 }
 
 void DialogueGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -97,19 +112,25 @@ void DialogueGUI::ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target
 	m_nameText->GetComponent<GUIText>()->SetText(name);
 	m_panel->SetActive(true);
 
-	OnDialogueNext();
+	m_dialogueSound->Resume();
+	m_currentDialogue = m_dialogueCache.front();
+	m_dialogueCache.pop();
+
+	m_charTimer = 0.0f;
 }
 
 void DialogueGUI::OnDialogueNext()
 {
+	int charCount = static_cast<int>(std::ceil(CharPerSecond * m_charTimer));
+	if (charCount < m_currentDialogue.size())
+	{
+		m_charTimer = 1e+4f;
+		return;
+	}
 	if (m_dialogueCache.empty())
 	{
 		m_panel->SetActive(false);
-		m_dialogueSound->Pause();
-		if (m_onDialogueEndCallback)
-		{
-			m_onDialogueEndCallback();
-		}
+		GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Pop(GetSceneObject());
 		return;
 	}
 

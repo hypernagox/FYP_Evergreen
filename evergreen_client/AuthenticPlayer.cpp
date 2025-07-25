@@ -206,13 +206,25 @@ void AuthenticPlayer::CraftItem(int recipeIndex)
 	DebugConsole::Log("아이템 조합 요청");
 }
 
+void AuthenticPlayer::SetDialogueViewTarget(const std::shared_ptr<SceneObject>& target)
+{
+	m_dialogueViewTarget = target;
+	m_dialogueViewTimer = target != nullptr ? 0.5f : 0.0f;
+}
+
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
 	// Region: Camera Rotation Control
 	float t = std::min(deltaTime * 16.0f, 1.0f);
 	m_cameraAngleAxisSmooth.x = udsdx::LerpAngle(m_cameraAngleAxisSmooth.x, m_cameraAngleAxis.x, t);
 	m_cameraAngleAxisSmooth.y = udsdx::LerpAngle(m_cameraAngleAxisSmooth.y, m_cameraAngleAxis.y, t);
-	m_cameraAnchor->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(m_cameraAngleAxisSmooth * DEG2RAD));
+	Quaternion cameraRotation = Quaternion::CreateFromYawPitchRoll(m_cameraAngleAxisSmooth * DEG2RAD);
+
+	// If a dialogue view target is set, adjust the camera rotation
+	Quaternion targetRotation = Quaternion::CreateFromYawPitchRoll(m_dialogueViewAngleAxis + Vector3::Up * PIDIV4);
+	cameraRotation = Quaternion::Slerp(cameraRotation, targetRotation, m_dialogueCameraFactor);
+
+	m_cameraAnchor->GetTransform()->SetLocalRotation(cameraRotation);
 
 	// Region: Mouse Scrolling Control
 	int mouseScroll = INSTANCE(Input)->GetMouseScroll();
@@ -225,8 +237,13 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 
 	// Region: Camera Anchor Position Control
 	Vector3 playerPosition = GetSceneObject()->GetTransform()->GetLocalPosition();
-	Vector3 anchorPosition = playerPosition + Vector3::Up * 1.5f;
-	Vector3 interpolatedAnchorPosition = Vector3::Lerp(m_cameraAnchorLastPosition, anchorPosition, deltaTime * 8.0f);
+	Vector3 targetPosition = playerPosition + Vector3::Up * 1.5f;
+	if (m_dialogueViewTarget != nullptr)
+	{
+		// If a dialogue view target is set, adjust the camera anchor position to focus on it
+		targetPosition = Vector3::Lerp(targetPosition, m_dialogueViewTarget->GetTransform()->GetWorldPosition() + Vector3::Up * 1.5f, 0.5f);
+	}
+	Vector3 interpolatedAnchorPosition = Vector3::Lerp(m_cameraAnchorLastPosition, targetPosition, deltaTime * 8.0f);
 	m_cameraAnchor->GetTransform()->SetLocalPosition(interpolatedAnchorPosition - playerPosition);
 	m_cameraAnchorLastPosition = m_cameraAnchor->GetTransform()->GetWorldPosition();
 
@@ -372,7 +389,16 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 {
 	Transform* transform = GetSceneObject()->GetTransform();
 
+	if (m_dialogueViewTarget != nullptr)
+	{
+		Vector3 delta = m_dialogueViewTarget->GetTransform()->GetWorldPosition() - GetSceneObject()->GetTransform()->GetLocalPosition();
+		delta.Normalize();
+		m_dialogueViewAngleAxis = Vector3(-std::asin(delta.y), std::atan2(delta.x, delta.z), 0.0f);
+	}
+
 	Quaternion playerRotation = Quaternion::CreateFromYawPitchRoll(m_rendererBodyAngleY * DEG2RAD + PI, 0.0f, 0.0f);
+	playerRotation = Quaternion::Slerp(playerRotation, Quaternion::CreateFromYawPitchRoll(m_dialogueViewAngleAxis.y + PI, 0.0f, 0.0f), m_dialogueViewFactor);
+
 	m_playerRenderer->SetRotation(playerRotation);
 	m_entityMovement->SetForward(Vector3::Transform(Vector3::Forward, playerRotation));
 	m_entityMovement->SetAcceleration(Vector3::Zero);
@@ -400,8 +426,8 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 
 	const bool vec3int_equal = vPrevState.x == m_vCurState.x && vPrevState.y == m_vCurState.y && vPrevState.z == m_vCurState.z;
 
-	float yaw = m_cameraAngleAxis.y;
-	float pitch = m_cameraAngleAxis.x;
+	float yaw = udsdx::LerpAngle(m_cameraAngleAxis.y, m_dialogueViewAngleAxis.y * RAD2DEG, m_dialogueViewFactor);
+	float pitch = udsdx::LerpAngle(m_cameraAngleAxis.x, m_dialogueViewAngleAxis.x * RAD2DEG, m_dialogueViewFactor);
 	m_playerRenderer->SetViewDirection(yaw, pitch);
 
 	auto sceneObject = GetSceneObject();
@@ -429,6 +455,13 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		transform->SetLocalPosition(temp);
 		GetSceneObject()->GetComponent<EntityMovement>()->prev_pos = temp;
 	}
+
+	m_dialogueViewTimer -= time.deltaTime;
+	m_dialogueViewFactor = std::lerp(m_dialogueViewFactor, m_dialogueViewTarget != nullptr ? 1.0f : 0.0f, time.deltaTime * 4.0f);
+	if (m_dialogueViewTimer <= 0.0f)
+		m_dialogueCameraFactor = std::lerp(m_dialogueCameraFactor, m_dialogueViewTarget != nullptr ? 1.0f : 0.0f, time.deltaTime * 4.0f);
+
+
 	//if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	//{
 	//	const auto pos = GetSceneObject()->GetTransform()->GetLocalPosition();

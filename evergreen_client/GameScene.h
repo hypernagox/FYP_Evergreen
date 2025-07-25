@@ -39,6 +39,10 @@ public:
 	void RequestChangeGameScene(GameSceneType type);
 	void ChangeGameScene(GameSceneType type);
 	void AddMinimapMark(const Vector3& position);
+
+	void ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback = nullptr);
+	void OnDialogueEnd();
+
 	std::vector<InteractiveEntity*> GetInteractiveEntities() const;
 
 	udsdx::Camera* GetMainCamera() const;
@@ -55,6 +59,8 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_spectatorObj;
 	std::shared_ptr<udsdx::SceneObject> m_environmentLightObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftTableObj;
+	std::shared_ptr<udsdx::SceneObject> m_jobBoardObj;
+	std::shared_ptr<udsdx::SceneObject> m_npcObj;
 
 	std::shared_ptr<udsdx::SceneObject> m_interfaceGroup;
 	std::shared_ptr<udsdx::SceneObject> m_playerInterfaceGroup;
@@ -64,7 +70,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_equipmentObj;
 	std::shared_ptr<udsdx::SceneObject> m_tutorialObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftObj;
-	std::shared_ptr<udsdx::SceneObject> m_jobBoardObj;
+	std::shared_ptr<udsdx::SceneObject> m_dialogueGUIObj;
 	std::shared_ptr<udsdx::SceneObject> m_pauseMenuObj;
 	std::shared_ptr<udsdx::SceneObject> m_partyListObj;
 	std::shared_ptr<udsdx::SceneObject> m_channelSwitchObj;

@@ -33,6 +33,7 @@
 #include "DamageCountGUI.h"
 #include "ChannelSwitchGUI.h"
 #include "TransitionOverlayGUI.h"
+#include "DialogueGUI.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -242,6 +243,44 @@ void GameScene::OnAttach()
         interactiveEntity->SetInteractionCallback([this]() { m_popupGUIManager->Append(m_partyListObj, m_partyListObj->GetComponent<QuestGUI>()->GetQuestListPanel()); });
 
         AddActiveObject(m_jobBoardObj, GameSceneType::Default);
+    }
+
+    {
+        m_npcObj = SceneObject::MakeShared();
+        m_npcObj->GetTransform()->SetLocalPosition(start_pos + Vector3::Backward * 3.0f);
+        m_npcObj->GetTransform()->SetLocalScale(0.05f);
+
+        auto npcRenderer = m_npcObj->AddComponent<RiggedMeshRenderer>();
+        npcRenderer->SetMesh(resource->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"npc\\npc_tpose.yrms")));
+        npcRenderer->SetMaterial(udsdx::Material(resource->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"npc\\npc_diffuse_0.png"))), 1);
+        npcRenderer->SetMaterial(udsdx::Material(resource->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"npc\\npc_diffuse_1.png"))), 0);
+        npcRenderer->SetMaterial(udsdx::Material(resource->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"npc\\npc_diffuse_2.png"))), 2);
+        npcRenderer->SetAnimation(resource->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
+
+        auto interactiveEntity = m_npcObj->AddComponent<InteractiveEntity>();
+        interactiveEntity->SetInteractionText(L"NPC와 대화하기");
+        interactiveEntity->SetInteractionCallback([this]() {
+            m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\Talking.yac")), true, true);
+            ShowDialogue(m_npcObj, "Test", [this]() {
+                m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
+                });
+            });
+        AddActiveObject(m_npcObj, GameSceneType::Default);
+    }
+
+    {
+        auto tempObj = SceneObject::MakeShared();
+        tempObj->GetTransform()->SetLocalPosition(Vector3(-138.212f, 82.813f, -31.091f));
+        tempObj->GetTransform()->SetLocalScale(0.5f);
+
+        auto npcRenderer = tempObj->AddComponent<MeshRenderer>();
+        npcRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"quad.yms")));
+        npcRenderer->SetMaterial(udsdx::Material(resource->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"temp.png"))));
+
+        auto interactiveEntity = tempObj->AddComponent<InteractiveEntity>();
+        interactiveEntity->SetInteractionText(L"NPC와 대화하기");
+        interactiveEntity->SetInteractionCallback([this, tempObj]() { ShowDialogue(tempObj, "Peeper"); });
+        AddActiveObject(tempObj, GameSceneType::Default);
     }
 
     {
@@ -489,6 +528,10 @@ void GameScene::OnAttach()
         auto partyStatusObj = SceneObject::MakeShared();
         auto partyStatusComp = partyStatusObj->AddComponent<PartyStatusGUI>();
         m_playerInterfaceGroup->AddChild(partyStatusObj);
+
+        m_dialogueGUIObj = SceneObject::MakeShared();
+        auto dialogueGUIComp = m_dialogueGUIObj->AddComponent<DialogueGUI>();
+        m_interfaceGroup->AddChild(m_dialogueGUIObj);
 
         m_pauseMenuObj = SceneObject::MakeShared();
         m_pauseMenuObj->SetActive(false);
@@ -835,6 +878,38 @@ void GameScene::ChangeGameScene(GameSceneType type)
 void GameScene::AddMinimapMark(const Vector3& position)
 {
     m_minimapMarks.emplace_back(position);
+}
+
+void GameScene::ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback)
+{
+    m_heroComponent->SetDialogueViewTarget(target);
+
+    m_heroObj->GetComponent<InputHandler>()->SetActive(false);
+    m_spectatorObj->GetComponent<InputHandler>()->SetActive(false);
+
+    m_popupGUIManager->Append(m_dialogueGUIObj);
+
+    auto dialogueGUIComp = m_dialogueGUIObj->GetComponent<DialogueGUI>();
+    dialogueGUIComp->ShowDialogue(target, dialogueKey);
+    dialogueGUIComp->SetOnDialogueEndCallback([this, endDialogueCallback]() {
+        OnDialogueEnd();
+        if (endDialogueCallback)
+        {
+            endDialogueCallback();
+        }
+        });
+
+    m_playerInterfaceGroup->SetActive(false);
+}
+
+void GameScene::OnDialogueEnd()
+{
+    m_heroComponent->SetDialogueViewTarget(nullptr);
+
+    m_heroObj->GetComponent<InputHandler>()->SetActive(!m_bSpectatorMode);
+    m_spectatorObj->GetComponent<InputHandler>()->SetActive(m_bSpectatorMode);
+
+    m_playerInterfaceGroup->SetActive(true);
 }
 
 std::vector<InteractiveEntity*> GameScene::GetInteractiveEntities() const

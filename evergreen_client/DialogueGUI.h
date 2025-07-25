@@ -6,8 +6,10 @@ class DialogueGUI : public udsdx::Component
 {
 public:
 	void OnInitialize() override;
+	void OnInactive() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey);
+	void SetOnDialogueEndCallback(std::function<void()> callback) { m_onDialogueEndCallback = callback; }
 
 private:
 	static constexpr float CharPerSecond = 30.0f;

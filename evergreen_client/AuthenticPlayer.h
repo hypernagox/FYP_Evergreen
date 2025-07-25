@@ -77,6 +77,13 @@ private:
 
 	PlayerCraftGUI* m_playerCraftGUI = nullptr;
 
+	std::shared_ptr<SceneObject> m_dialogueViewTarget = nullptr;
+	float m_dialogueViewTimer = 0.0f;
+	// 0 is no dialogue view, 1 is full dialogue view
+	Vector3 m_dialogueViewAngleAxis = Vector3::Zero;
+	float m_dialogueViewFactor = 0.0f;
+	float m_dialogueCameraFactor = 0.0f;
+
 private:
 	void MoveByView(const Vector3& vDelta);
 	void UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime);
@@ -117,8 +124,10 @@ public:
 	void UseQuickSlotItem(int index);
 	void CraftItem(int recipeIndex);
 
+	// Setting target to nullptr will reset the view target
+	void SetDialogueViewTarget(const std::shared_ptr<SceneObject>& target);
+
 	const auto GetPlayerRenderer()noexcept { return m_playerRenderer; }
-public:
 	const auto& GetStatusGUI()const noexcept { return m_playerStatusGUI; }
 };
 
