@@ -113,6 +113,7 @@ void AuthenticPlayer::OnHit(int afterHP)
 		m_iCurHP = m_iMaxHP;
 	if (m_playerStatusGUI)
 		m_playerStatusGUI->SetCurrentHealth(m_iCurHP);
+	m_playerRenderer->Hit();
 }
 
 void AuthenticPlayer::OnModifyInventory(uint8_t itemID, int delta)

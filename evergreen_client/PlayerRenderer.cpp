@@ -30,6 +30,8 @@ void PlayerRenderer::OnInitialize()
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
 	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Idle, m_renderer);
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Death, m_stateMachine->GetConditionRefBool("Death"), true);
@@ -270,7 +272,10 @@ void PlayerRenderer::OnAnimationStateChange(const AnimationState& state)
 		*m_stateMachine->GetConditionRefBool("Dash") = false;
 		break;
 	case AnimationState::Hit:
-		m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_hit.yac")), false, true);
+		if (m_characterType == CharacterType::Archer)
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"archer\\AnimationJog\\archer_react.yac")), false, true);
+		else
+			m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"Zelda\\zelda_hit.yac")), false, true);
 		*m_stateMachine->GetConditionRefBool("Hit") = false;
 		break;
 	case AnimationState::Death:

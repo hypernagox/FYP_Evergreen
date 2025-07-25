@@ -159,6 +159,10 @@ const bool Handle_s2c_REMOVE_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	
 	if (GuideSystem::GetInst()->IsHarvest(obj_id))
 	{
+		uint32_t harvestID = GuideSystem::GetInst()->GetHarvestID(obj_id);
+		if (harvestID >= 0) {
+			GuideSystem::GetInst()->SetHarvestState(obj_id, harvestID, false);
+		}
 		return true;
 	}
 	Mgr(ServerObjectMgr)->RemoveObject(obj_id);
@@ -226,14 +230,13 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 		// TODO: 스킬의 연타 횟수가 패킷으로 오거나 json으로 몇 연타인지 미리 정의
 		damageCount->AddCountObject(hit_obj_ptr->GetTransform()->GetLocalPosition(), static_cast<unsigned int>(before_hp) - hit_after_hp, hit_count);
 	}
-	if (const auto player = hit_obj_ptr->GetComponent<PlayerRenderer>())
-	{
-		if (player->GetComponent<PlayerRenderer>()->TrySetState(PlayerRenderer::AnimationState::Hit))
-			player->GetComponent<PlayerRenderer>()->Hit();
-	}
 	if (const auto player = hit_obj_ptr->GetComponent<AuthenticPlayer>())
 	{
 		player->OnHit(pkt_.hit_after_hp());
+	}
+	else if (const auto player = hit_obj_ptr->GetComponent<PlayerRenderer>())
+	{
+		player->GetComponent<PlayerRenderer>()->Hit();
 	}
 	//std::cout << std::format("HIT ID: {}, DMG: {}\n", hit_obj_id, 1);
 	return true;

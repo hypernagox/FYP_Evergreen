@@ -29,6 +29,14 @@ public:
 	const auto IsHarvest(const uint32_t harvest_server_id)noexcept {
 		return m_mapHarvestID.contains(harvest_server_id);
 	}
+
+	uint32_t GetHarvestID(const uint32_t server_id)const noexcept {
+		const auto iter = m_mapHarvestID.find(server_id);
+		if (m_mapHarvestID.end() == iter)
+			return -1;
+		return iter->second;
+	}
+
 	udsdx::SceneObject* GetHarvest(const uint32_t server_id)const noexcept {
 		const auto iter = m_mapHarvestID.find(server_id);
 		if (m_mapHarvestID.end() == iter)

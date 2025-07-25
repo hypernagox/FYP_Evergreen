@@ -10,10 +10,10 @@ private:
 	struct RecipeGUI
 	{
 		std::shared_ptr<udsdx::SceneObject> Panel;
-		std::shared_ptr<udsdx::SceneObject> OutputSlotBackground;
 		std::shared_ptr<udsdx::SceneObject> OutputSlotContents;
-		std::shared_ptr<udsdx::SceneObject> OutputSlotText;
+		std::shared_ptr<udsdx::SceneObject> OutputNameText;
 		std::shared_ptr<udsdx::SceneObject> CraftButton;
+		std::shared_ptr<udsdx::SceneObject> CraftButtonText;
 		std::vector<std::shared_ptr<udsdx::SceneObject>> InputSlotBackground;
 		std::vector<std::shared_ptr<udsdx::SceneObject>> InputSlotContents;
 		std::vector<std::shared_ptr<udsdx::SceneObject>> InputSlotText;
