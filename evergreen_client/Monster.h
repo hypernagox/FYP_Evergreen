@@ -49,6 +49,20 @@ public:
 	const auto& GetRenderObjTransform()const noexcept { return m_rendererObj->GetTransform(); }
 	void OnAttackToPlayer();
 	virtual void OnAnimationStateChange(AnimationState from, AnimationState to);
+	virtual void OnDeath() {}
 	int GetHP() const { return m_hp; }
 	void OnHit(int afterHealth);
+};
+
+class MonsterRemains : public Component
+{
+public:
+	void OnInitialize() override;
+	void InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, AnimationClip* deathAnimation);
+	void Update(const Time& time, Scene& scene) override;
+
+private:
+	std::shared_ptr<SceneObject> m_rendererObj;
+	RiggedMeshRenderer* m_renderer = nullptr;
+	float m_lifeTime = 1.0f;
 };

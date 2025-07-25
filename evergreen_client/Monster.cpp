@@ -3,6 +3,7 @@
 #include "EntityMovement.h"
 #include "MonsterHPPanel.h"
 #include "GameScene.h"
+#include "SphereParticleEmitter.h"
 
 void Monster::OnInitialize()
 {
@@ -70,8 +71,93 @@ void Monster::OnHit(int afterHealth)
 	m_hpPanel->SetHPFraction(static_cast<float>(afterHealth) / m_maxHP);
 	m_hitfactor = 1.0f;
 
+	{
+		auto hitParticleObj = SceneObject::MakeShared();
+		hitParticleObj->GetTransform()->SetLocalPosition(GetTransform()->GetLocalPosition() + Vector3::Up);
+		{
+			auto particleEmitter = hitParticleObj->AddComponent<SphereParticleEmitter>();
+			particleEmitter->SetColor(Vector3(1.0f, 0.8326f, 0.0f) * 10.0f);
+			particleEmitter->SetDrawCount(16);
+			particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\hit_triangle.png")));
+			particleEmitter->GetEmitterParameter().LifeTimeMin = 0.2f;
+			particleEmitter->GetEmitterParameter().LifeTimeMax = 0.3f;
+			particleEmitter->GetEmitterParameter().SizeMin = Vector2(0.2f, 0.2f);
+			particleEmitter->GetEmitterParameter().SizeMax = Vector2(2.0f, 0.2f);
+			particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
+			particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+			particleEmitter->SetEmitLoop(false);
+			particleEmitter->SetOrientedByDirection(true);
+			particleEmitter->SetAutoDestroy(true);
+			particleEmitter->Play();
+		}
+
+		auto starParticleObj = SceneObject::MakeShared();
+		starParticleObj->GetTransform()->SetLocalPosition(GetTransform()->GetLocalPosition() + Vector3::Up);
+		{
+			auto particleEmitter = starParticleObj->AddComponent<SphereParticleEmitter>();
+			particleEmitter->SetColor(Vector3(1.0f, 0.8326f, 0.0f) * 4.0f);
+			particleEmitter->SetDrawCount(16);
+			particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\star.png")));
+			particleEmitter->GetEmitterParameter().LifeTimeMin = 0.4f;
+			particleEmitter->GetEmitterParameter().LifeTimeMax = 0.6f;
+			particleEmitter->GetEmitterParameter().SpeedMin = 4.0f;
+			particleEmitter->GetEmitterParameter().SpeedMax = 6.0f;
+			particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.25f;
+			particleEmitter->GetEmitterParameter().SizeMin = Vector2(0.2f, 0.2f);
+			particleEmitter->GetEmitterParameter().SizeMax = Vector2(0.2f, 0.2f);
+			particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * -0.25f;
+			particleEmitter->GetEmitterParameter().RotationMin = 3.0f;
+			particleEmitter->GetEmitterParameter().RotationMax = 6.0f;
+			particleEmitter->GetEmitterParameter().RotationLifeExp = 0.25f;
+			particleEmitter->SetEmitLoop(false);
+			particleEmitter->SetAutoDestroy(true);
+			particleEmitter->Play();
+		}
+
+		if (Scene* scene = GetSceneObject()->GetScene())
+		{
+			scene->AddObject(hitParticleObj);
+			scene->AddObject(starParticleObj);
+		}
+	}
+
 	if (m_hp <= 0)
 	{
 		GetSceneObject()->SetActive(false);
+		OnDeath();
+	}
+}
+
+void MonsterRemains::OnInitialize()
+{
+	m_rendererObj = SceneObject::MakeShared();
+	m_renderer = m_rendererObj->AddComponent<RiggedMeshRenderer>();
+	GetSceneObject()->AddChild(m_rendererObj);
+}
+
+void MonsterRemains::InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, AnimationClip* deathAnimation)
+{
+	m_renderer->SetMesh(renderer->GetMesh());
+	m_renderer->SetMaterial(renderer->GetMaterial());
+	m_renderer->SetAnimation(deathAnimation, false, true);
+
+	GetTransform()->SetLocalPosition(bodyTransform->GetWorldPosition());
+	GetTransform()->SetLocalRotation(bodyTransform->GetWorldRotation());
+	m_rendererObj->GetTransform()->SetLocalScale(bodyTransform->GetLocalScale());
+}
+
+void MonsterRemains::Update(const Time& time, Scene& scene)
+{
+	if (!m_renderer->IsAnimationPlaying())
+	{
+		m_lifeTime -= time.deltaTime;
+		if (m_lifeTime <= 0.0f)
+		{
+			GetSceneObject()->RemoveFromParent();
+		}
+		else
+		{
+			GetTransform()->SetLocalScale(std::powf(m_lifeTime, 0.25f));
+		}
 	}
 }

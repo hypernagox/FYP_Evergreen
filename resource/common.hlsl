@@ -349,8 +349,8 @@ float3 DiffuseLight(VertexOut pin)
 
 float3 ApplyFog(float3 col, float3 worldPos)
 {
-    float distance = max(0.0f, length(worldPos - gEyePosW) - gFogDistanceStart);
-	float3 direction = normalize(worldPos - gEyePosW);
+    float distance = max(0.0f, length(worldPos - gEyePosW.xyz) - gFogDistanceStart);
+	float3 direction = normalize(worldPos - gEyePosW.xyz);
     float sunAmount = max(dot(direction, -gDirLight), 0.0f);
 
 	float fogAmount = saturate((gFogHeightFalloff * gFogDensity) * exp(-(gEyePosW.y + gFogDistanceStart * direction.y) / gFogDensity) * (1.0f - exp(-distance * direction.y / gFogDensity)) / direction.y);

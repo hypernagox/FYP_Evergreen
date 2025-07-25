@@ -150,7 +150,7 @@ void GS(point VertexOut input[1], uint primitiveID : SV_PRIMITIVEID, inout Trian
         output.PosH = mul(output.PosW, gViewProj);
         output.PrevPosH = mul(output.PosW, gPrevViewProj);
         output.Tex = input[0].Tex + float2(i / 2, 1 - i % 2) * 0.5f;
-        output.NormalV = normalize(mul(look, gView));
+        output.NormalV = normalize(mul(look, (float3x3)gView));
         outStream.Append(output);
     }
 }

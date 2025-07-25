@@ -27,6 +27,14 @@ void PlayerSelect::OnInitialize()
 	}
 	GetSceneObject()->AddChild(m_characterObjects[2]);
 
+	auto cilynderObj = SceneObject::MakeShared();
+	cilynderObj->GetTransform()->SetLocalPosition(Vector3(0.0f, -5.5f, 20.0f));
+	cilynderObj->GetTransform()->SetLocalScale(Vector3(15.0f, 1.0f, 15.0f));
+	auto cilynderRenderer = cilynderObj->AddComponent<MeshRenderer>();
+	cilynderRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"cylinder.yms")));
+	cilynderRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+	GetSceneObject()->AddChild(cilynderObj);
+
 	SetShowingCharacter(0);
 }
 

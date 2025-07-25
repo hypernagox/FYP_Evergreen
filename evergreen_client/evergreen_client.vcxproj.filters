@@ -112,6 +112,9 @@
     <Filter Include="NetEntity\ServerObject\ServerComponent\ForcedMovement">
       <UniqueIdentifier>{8e0c3ea1-e477-445c-a07d-8af87d62b989}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Particle">
+      <UniqueIdentifier>{b42fe936-cfa2-4027-a0f2-6963fd9768c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="func.cpp">
@@ -329,6 +332,9 @@
     </ClCompile>
     <ClCompile Include="DialogueGUI.cpp">
       <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereParticleEmitter.cpp">
+      <Filter>Particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -563,6 +569,9 @@
     <ClInclude Include="DialogueGUI.h">
       <Filter>Gui</Filter>
     </ClInclude>
+    <ClInclude Include="SphereParticleEmitter.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\enum.fbs">
@@ -603,6 +612,15 @@
       <Filter>Resource Files</Filter>
     </FxCompile>
     <FxCompile Include="ps_minimapmark_pass.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="vs_sphere_particle_emitter.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="gs_sphere_particle_emitter.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="ps_sphere_particle_emitter.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

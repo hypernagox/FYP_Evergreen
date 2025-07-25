@@ -105,9 +105,9 @@ void PlayerRenderer::InitializeArcher()
 	m_transformBody = m_bodyObj->GetTransform();
 	m_rendererObj->AddChild(m_bodyObj);
 
-	m_rendererObj->GetTransform()->SetLocalScale(m_rendererObj->GetTransform()->GetLocalScale() * 2.25f);
+	m_rendererObj->GetTransform()->SetLocalScale(m_rendererObj->GetTransform()->GetLocalScale() * 2.0f);
 
-	m_transformBody->SetLocalPositionY(-5.5f);
+	m_transformBody->SetLocalPositionY(-3.0f);
 
 	m_characterType = CharacterType::Archer;
 	OnAnimationStateChange(AnimationState::Idle);

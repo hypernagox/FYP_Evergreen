@@ -35,7 +35,7 @@ namespace udsdx
 		CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetRTVView() const { return m_targetViewCpuRtv; }
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetRenderTargetSrv() const { return m_targetViewGpuSrv; }
 		ID3D12Resource*				  GetRenderTargetResource() const { return m_targetBuffer.Get(); }
-		ID3D12RootSignature* GetRootSignature() const { return m_renderRootSignature.Get(); }
+		ID3D12RootSignature*		  GetRootSignature() const { return m_renderRootSignature.Get(); }
 
 	public:
 		static constexpr UINT NUM_GBUFFERS = 3;

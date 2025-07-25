@@ -283,7 +283,7 @@ namespace udsdx
 		param.Renderer->PassBufferPreparation(param);
 
 		pCommandList->SetGraphicsRootSignature(param.RootSignature);
-		pCommandList->OMSetRenderTargets(1, &param.RenderTargetView, true, &param.Renderer->GetDepthBufferDsv());
+		pCommandList->OMSetRenderTargets(1, &param.Renderer->GetRenderTargetRTVView(), true, &param.Renderer->GetDepthBufferDsv());
 
 		pCommandList->RSSetViewports(1, &param.Viewport);
 		pCommandList->RSSetScissorRects(1, &param.ScissorRect);

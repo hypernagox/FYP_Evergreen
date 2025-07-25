@@ -7,7 +7,7 @@ float4 PSDeferred(VertexOut pin) : SV_Target
     float PI = 3.14159265358979323846f;
 
     float4 gbuffer1 = gBuffer1.Sample(gsamPointClamp, pin.TexC);
-    float2 gbuffer2 = gBuffer2.Sample(gsamPointClamp, pin.TexC);
+    float2 gbuffer2 = gBuffer2.Sample(gsamPointClamp, pin.TexC).rg;
     float4 gbuffer3 = gBuffer3.Sample(gsamPointClamp, pin.TexC);
 
 	float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
@@ -83,7 +83,7 @@ PixelOut PS(VertexOut pin)
 {
 	PixelOut pOut;
 
-    float3 normalW = normalize(pin.NormalW);
+    float3 normalW = normalize(pin.NormalW.xyz);
 
     // Normal mapping
     float4 normalMapSample = gNormalTex.Sample(gSampler, pin.Tex);

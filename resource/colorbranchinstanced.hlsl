@@ -113,7 +113,7 @@ PixelOut PS(VertexOut pin)
 {
 	PixelOut pOut;
 
-    float3 normalW = normalize(pin.NormalW);
+    float3 normalW = normalize(pin.NormalW.xyz);
 
     // Normal mapping
     float4 normalMapSample = gNormalTex.Sample(gSampler, pin.Tex);

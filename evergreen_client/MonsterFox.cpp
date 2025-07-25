@@ -12,6 +12,18 @@ void MonsterFox::OnInitialize()
 	InitializeMonster("Fox");
 }
 
+void MonsterFox::OnDeath()
+{
+	auto remainObject = SceneObject::MakeShared();
+	auto remainComponent = remainObject->AddComponent<MonsterRemains>();
+	remainComponent->InitializeMonster(m_rendererObj->GetTransform(), m_renderer, INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"fox\\fox_die.yac")));
+	
+	if (Scene* scene = GetSceneObject()->GetScene())
+	{
+		scene->AddObject(remainObject);
+	}
+}
+
 void MonsterFox::OnAnimationStateChange(AnimationState from, AnimationState to)
 {
 	switch (to)
