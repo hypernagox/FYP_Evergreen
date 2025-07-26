@@ -24,6 +24,7 @@ namespace udsdx
 			descriptorParam.SrvCpuHandle,
 			descriptorParam.SrvGpuHandle
 		);
+		m_spriteFont->SetDefaultCharacter(L'?');
 
 		auto eventFinishied = uploadBatch.End(INSTANCE(Core)->GetCommandQueue());
 		eventFinishied.wait();
