@@ -3,9 +3,7 @@
 #include "pch.h"
 #include "Monster.h"
 
-using namespace udsdx;
-
-class MonsterBear : public Monster
+class MonsterSheep : public Monster
 {
 public:
 	Transform* m_transformBody;
@@ -14,3 +12,4 @@ public:
 	void OnDeath() override;
 	virtual void OnAnimationStateChange(AnimationState from, AnimationState to) override;
 };
+

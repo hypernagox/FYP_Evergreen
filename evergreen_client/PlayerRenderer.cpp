@@ -26,13 +26,15 @@ void PlayerRenderer::OnInitialize()
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Dash, m_stateMachine->GetConditionRefBool("Dash"), true);
 	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::Dash, AnimationState::Idle, m_renderer);
-
-	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
-
+	
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::HitEnd, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Attack, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
-	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Idle, m_renderer);
+
+	m_stateMachine->AddTransition<Common::TimerStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::HitEnd, 0.25f);
+	m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::HitEnd, AnimationState::Idle, m_renderer);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::HitEnd, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 
 	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Hit, AnimationState::Death, m_stateMachine->GetConditionRefBool("Death"), true);
 

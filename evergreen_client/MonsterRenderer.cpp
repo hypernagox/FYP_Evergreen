@@ -9,12 +9,10 @@ using namespace udsdx;
 void MonsterRenderer::OnInitialize()
 {
 	m_rendererObject = udsdx::SceneObject::MakeShared();
-	m_rendererObject->GetTransform()->SetLocalScale(Vector3::One * GET_DATA(float, "GlobalValues", "CharacterScale", "Value"));
 
-	auto renderer = m_rendererObject->AddComponent<udsdx::RiggedMeshRenderer>();
-	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"sheep\\sheep_max.yrms")));
-	renderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"sheep\\sheep_BaseColor.png"))), 0);
-	renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"sheep\\sheep_run.yac")), true);
+	auto renderer = m_rendererObject->AddComponent<udsdx::MeshRenderer>();
+	renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"Sphere.yms")));
+	renderer->SetMaterial(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
 
 	GetSceneObject()->AddChild(m_rendererObject);
 }

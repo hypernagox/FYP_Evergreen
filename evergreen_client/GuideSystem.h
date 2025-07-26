@@ -73,7 +73,7 @@ public:
 		m_guide_active_flag = true;
 		temp_force_pos = tree_pos;
 		m_clear_tree_obj->SetActive(true);
-		m_clear_tree_obj->GetTransform()->SetLocalPosition(tree_pos);
+		m_clear_tree_obj->GetTransform()->SetLocalPosition(tree_pos + Vector3::Down * 0.5f);
 		SetGuidePathInternal(tree_pos);
 		SetClearTreeInteraction(true);
 		return m_clear_tree_obj;

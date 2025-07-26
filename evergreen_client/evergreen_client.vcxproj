@@ -488,6 +488,7 @@
     <ClCompile Include="MonsterFox.cpp" />
     <ClCompile Include="MonsterHPPanel.cpp" />
     <ClCompile Include="MonsterRenderer.cpp" />
+    <ClCompile Include="MonsterSheep.cpp" />
     <ClCompile Include="MoveInterpolator.cpp" />
     <ClCompile Include="MovePacketSender.cpp" />
     <ClCompile Include="ObjectIdentifier.cpp" />
@@ -585,6 +586,7 @@
     <ClInclude Include="MonsterFox.h" />
     <ClInclude Include="MonsterHPPanel.h" />
     <ClInclude Include="MonsterRenderer.h" />
+    <ClInclude Include="MonsterSheep.h" />
     <ClInclude Include="MoveInterpolator.h" />
     <ClInclude Include="MovePacketSender.h" />
     <ClInclude Include="ObjectIdentifier.h" />

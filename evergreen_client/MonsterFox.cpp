@@ -16,7 +16,7 @@ void MonsterFox::OnDeath()
 {
 	auto remainObject = SceneObject::MakeShared();
 	auto remainComponent = remainObject->AddComponent<MonsterRemains>();
-	remainComponent->InitializeMonster(m_rendererObj->GetTransform(), m_renderer, INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"fox\\fox_die.yac")));
+	remainComponent->InitializeMonster(m_rendererObj->GetTransform(), m_renderer, &INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"fox\\fox_die.yac"))->GetAnimation());
 	
 	if (Scene* scene = GetSceneObject()->GetScene())
 	{

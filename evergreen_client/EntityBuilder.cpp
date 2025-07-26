@@ -4,6 +4,7 @@
 #include "EntityMovement.h"
 #include "PlayerRenderer.h"
 #include "MonsterFox.h"
+#include "MonsterSheep.h"
 #include "MonsterBear.h"
 #include "MonsterBoss.h"
 #include "MoveInterpolator.h"
@@ -90,7 +91,6 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 		auto monsterComponent = instance->AddComponent<MonsterBoss>();
 		GET_BOSS = instance;
 		return instance;
-		break;
 	}
 	
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_FOX:
@@ -105,12 +105,18 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
 		return instance;
-		break;
 	}
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_SHEEP:
 	{
-		// TODO: 剧 积己
-		break;
+		auto instance = udsdx::SceneObject::MakeShared();
+		instance->GetTransform()->SetLocalPosition(b->obj_pos);
+		auto serverComponent = instance->AddComponent<ServerObject>();
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		auto monsterComponent = instance->AddComponent<MonsterSheep>();
+
+		serverComponent->SetObjID(builder->obj_id);
+		moveInterpolator->InitInterpolator(b->obj_pos);
+		return instance;
 	}
 	case Nagox::Enum::MONSTER_TYPE::MONSTER_TYPE_BEAR:
 	{
@@ -151,12 +157,9 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 
 		auto renderer = instance->AddComponent<MonsterRenderer>();
 		return instance;
-		break;
 	}
-	default:
-		return nullptr; // TODO: 抗寇贸府
-		break;
 	}
+	return nullptr; // TODO: 抗寇贸府
 }
 
 std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderBase* builder)

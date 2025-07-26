@@ -26,6 +26,7 @@ protected:
 public:
 	void OnInitialize() override;
 	void Update(const Time& time, Scene& scene) override;
+	void OnDeath() override;
 	void UpdateFlightMovement(float deltaTime);
 	void OnTakeoffAtPosition(const Vector3& pos);
 	void OnLandingAtPosition(const Vector3& pos);

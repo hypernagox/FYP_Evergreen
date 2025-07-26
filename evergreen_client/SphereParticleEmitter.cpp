@@ -105,7 +105,7 @@ void SphereParticleEmitter::PostUpdate(const udsdx::Time& time, udsdx::Scene& sc
 
 void SphereParticleEmitter::Render(udsdx::RenderParam& param, int parameter)
 {
-	unsigned int flags = m_emitLoop | (m_orientedByDirection << 1);
+	unsigned int flags = static_cast<unsigned int>(m_emitLoop) | (static_cast<unsigned int>(m_orientedByDirection) << 1);
 
 	ObjectConstants objectConstants;
 	objectConstants.World = m_transformCache.Transpose();

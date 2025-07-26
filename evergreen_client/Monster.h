@@ -58,11 +58,13 @@ class MonsterRemains : public Component
 {
 public:
 	void OnInitialize() override;
-	void InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, AnimationClip* deathAnimation);
+	void OnActive() override;
+	void InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, const Animation* deathAnimation);
 	void Update(const Time& time, Scene& scene) override;
 
 private:
 	std::shared_ptr<SceneObject> m_rendererObj;
 	RiggedMeshRenderer* m_renderer = nullptr;
+	std::unique_ptr<SoundEffectInstance> m_soundInstance;
 	float m_lifeTime = 1.0f;
 };

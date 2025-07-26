@@ -13,6 +13,18 @@ void MonsterBear::OnInitialize()
 	InitializeMonster("Bear");
 }
 
+void MonsterBear::OnDeath()
+{
+	auto remainObject = SceneObject::MakeShared();
+	auto remainComponent = remainObject->AddComponent<MonsterRemains>();
+	remainComponent->InitializeMonster(m_rendererObj->GetTransform(), m_renderer, &INSTANCE(Resource)->Load<AnimationClip>(RESOURCE_PATH(L"bear\\bear_die.yac"))->GetAnimation());
+
+	if (Scene* scene = GetSceneObject()->GetScene())
+	{
+		scene->AddObject(remainObject);
+	}
+}
+
 void MonsterBear::OnAnimationStateChange(AnimationState from, AnimationState to)
 {
 	switch (to)

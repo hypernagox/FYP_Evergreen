@@ -80,6 +80,18 @@ void MonsterBoss::Update(const Time& time, Scene& scene)
     Monster::Update(time, scene);
 }
 
+void MonsterBoss::OnDeath()
+{
+    auto remainObject = SceneObject::MakeShared();
+    auto remainComponent = remainObject->AddComponent<MonsterRemains>();
+    remainComponent->InitializeMonster(m_rendererObj->GetTransform(), m_renderer, &m_animation->GetAnimation("Death"));
+
+    if (Scene* scene = GetSceneObject()->GetScene())
+    {
+        scene->AddObject(remainObject);
+    }
+}
+
 void MonsterBoss::UpdateFlightMovement(float deltaTime)
 {
     m_flightTime += deltaTime;

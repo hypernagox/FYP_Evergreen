@@ -135,10 +135,21 @@ void MonsterRemains::OnInitialize()
 	GetSceneObject()->AddChild(m_rendererObj);
 }
 
-void MonsterRemains::InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, AnimationClip* deathAnimation)
+void MonsterRemains::OnActive()
 {
-	m_renderer->SetMesh(renderer->GetMesh());
-	m_renderer->SetMaterial(renderer->GetMaterial());
+	m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\monster_death.wav"))->CreateInstance();
+	m_soundInstance->SetVolume(0.3f);
+	m_soundInstance->Play();
+}
+
+void MonsterRemains::InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, const Animation* deathAnimation)
+{
+	auto mesh = renderer->GetMesh();
+	int submeshCount = static_cast<int>(mesh->GetSubmeshes().size());
+
+	m_renderer->SetMesh(mesh);
+	for (int submeshIndex = 0; submeshIndex < submeshCount; ++submeshIndex)
+		m_renderer->SetMaterial(renderer->GetMaterial(submeshIndex), submeshIndex);
 	m_renderer->SetAnimation(deathAnimation, false, true);
 
 	GetTransform()->SetLocalPosition(bodyTransform->GetWorldPosition());

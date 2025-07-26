@@ -4,6 +4,11 @@
     "hp": 10,
     "DropItem": "Foxtail"
   },
+  "Sheep": {
+    "Name": "양",
+    "hp": 10,
+    "DropItem": "Meat"
+  },
   "Bear": {
     "Name": "곰",
     "hp": 10,
