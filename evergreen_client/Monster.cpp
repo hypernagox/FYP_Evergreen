@@ -114,10 +114,29 @@ void Monster::OnHit(int afterHealth)
 			particleEmitter->Play();
 		}
 
+		auto ringParticleObj = SceneObject::MakeShared();
+		ringParticleObj->GetTransform()->SetLocalPosition(GetTransform()->GetLocalPosition() + Vector3::Up);
+		{
+			auto particleEmitter = ringParticleObj->AddComponent<SphereParticleEmitter>();
+			particleEmitter->SetColor(Vector3(1.0f, 1.0f, 1.0f) * 2.0f);
+			particleEmitter->SetDrawCount(1);
+			particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\ring.png")));
+			particleEmitter->GetEmitterParameter().LifeTimeMin = 0.5f;
+			particleEmitter->GetEmitterParameter().LifeTimeMax = 0.5f;
+			particleEmitter->GetEmitterParameter().SizeMin = Vector2(2.0f, 2.0f);
+			particleEmitter->GetEmitterParameter().SizeMax = Vector2(2.0f, 2.0f);
+			particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.2f;
+			particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+			particleEmitter->SetEmitLoop(false);
+			particleEmitter->SetAutoDestroy(true);
+			particleEmitter->Play();
+		}
+
 		if (Scene* scene = GetSceneObject()->GetScene())
 		{
 			scene->AddObject(hitParticleObj);
 			scene->AddObject(starParticleObj);
+			scene->AddObject(ringParticleObj);
 		}
 	}
 

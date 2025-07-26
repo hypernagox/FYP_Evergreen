@@ -33,7 +33,7 @@ public:
 	void OnTogglePlayerMode(bool spectatorMode);
 	void AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj);
 	void AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj, GameSceneType type);
-	void AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj);
+	void AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj, bool front = false);
 	bool GetSpectatorMode() const { return m_bSpectatorMode; }
 	std::shared_ptr<udsdx::SceneObject> GetHeroObject() const { return m_heroObj; }
 	void RequestChangeGameScene(GameSceneType type);

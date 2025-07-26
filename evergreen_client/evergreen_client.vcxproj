@@ -432,6 +432,7 @@
     </ClCompile>
     <ClCompile Include="AuthenticPlayer.cpp" />
     <ClCompile Include="BezierMovement.cpp" />
+    <ClCompile Include="BossStatusGUI.cpp" />
     <ClCompile Include="ChannelSwitchGUI.cpp" />
     <ClCompile Include="DamageCountGUI.cpp" />
     <ClCompile Include="DialogueGUI.cpp" />
@@ -547,6 +548,7 @@
     <ClInclude Include="..\Protocols\struct_generated.h" />
     <ClInclude Include="AuthenticPlayer.h" />
     <ClInclude Include="BezierMovement.h" />
+    <ClInclude Include="BossStatusGUI.h" />
     <ClInclude Include="ChannelSwitchGUI.h" />
     <ClInclude Include="CustomStateTransition.hpp" />
     <ClInclude Include="DamageCountGUI.h" />

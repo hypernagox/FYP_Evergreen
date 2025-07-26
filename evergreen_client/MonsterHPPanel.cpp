@@ -19,7 +19,7 @@ void MonsterHPPanel::OnInitialize()
 
 	m_levelObject = SceneObject::MakeShared();
 	auto levelRenderer = m_levelObject->AddComponent<GUIText>();
-	levelRenderer->SetText(L"10");
+	levelRenderer->SetText(std::to_wstring(rand() % 6 + 5));
 	levelRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
 	m_levelObject->GetTransform()->SetLocalPosition(Vector3(-62.0f, 14.0f, 0.0f));
 

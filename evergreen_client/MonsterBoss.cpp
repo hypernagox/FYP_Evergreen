@@ -2,6 +2,8 @@
 #include "MonsterBoss.h"
 #include "EntityMovement.h"
 #include "ServerObject.h"
+#include "BossStatusGUI.h"
+#include "GameScene.h"
 
 void MonsterBoss::OnInitialize()
 {
@@ -65,7 +67,28 @@ void MonsterBoss::OnInitialize()
 
     m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossLanding, AnimationState::Idle, m_renderer);
 
+    m_bossStatusGUI = SceneObject::MakeShared();
+    auto bossStatusComponent = m_bossStatusGUI->AddComponent<BossStatusGUI>();
+
     InitializeMonster("Boss");
+}
+
+void MonsterBoss::OnAttach()
+{
+    auto scene = GetSceneObject()->GetScene();
+    if (scene != nullptr)
+    {
+        auto gameScene = dynamic_cast<GameScene*>(scene);
+        if (gameScene != nullptr)
+        {
+            gameScene->AddInterfaceObject(m_bossStatusGUI, true);
+        }
+    }
+}
+
+void MonsterBoss::OnDetach()
+{
+    m_bossStatusGUI->RemoveFromParent();
 }
 
 void MonsterBoss::Update(const Time& time, Scene& scene)
@@ -78,6 +101,12 @@ void MonsterBoss::Update(const Time& time, Scene& scene)
     }
 
     Monster::Update(time, scene);
+}
+
+void MonsterBoss::OnHit(int afterHealth)
+{
+    Monster::OnHit(afterHealth);
+    m_bossStatusGUI->GetComponent<BossStatusGUI>()->SetHPFraction(static_cast<float>(afterHealth) / m_maxHP);
 }
 
 void MonsterBoss::OnDeath()

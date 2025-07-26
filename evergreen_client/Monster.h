@@ -51,7 +51,7 @@ public:
 	virtual void OnAnimationStateChange(AnimationState from, AnimationState to);
 	virtual void OnDeath() {}
 	int GetHP() const { return m_hp; }
-	void OnHit(int afterHealth);
+	virtual void OnHit(int afterHealth);
 };
 
 class MonsterRemains : public Component

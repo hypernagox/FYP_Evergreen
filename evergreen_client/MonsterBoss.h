@@ -15,6 +15,7 @@ protected:
 	AnimationClip* m_animation;
 	AnimationClip* m_flightAnimation;
 	ServerObject* m_serverObject;
+	std::shared_ptr<SceneObject> m_bossStatusGUI;
 
 	bool m_isFlyMovement = false;
 	bool m_isTakeoff = false;
@@ -25,7 +26,10 @@ protected:
 
 public:
 	void OnInitialize() override;
+	void OnAttach() override;
+	void OnDetach() override;
 	void Update(const Time& time, Scene& scene) override;
+	void OnHit(int afterHealth) override;
 	void OnDeath() override;
 	void UpdateFlightMovement(float deltaTime);
 	void OnTakeoffAtPosition(const Vector3& pos);

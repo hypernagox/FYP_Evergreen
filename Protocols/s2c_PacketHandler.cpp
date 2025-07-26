@@ -133,11 +133,7 @@ const bool Handle_s2c_APPEAR_OBJECT(const NetHelper::S_ptr<NetHelper::PacketSess
 	}
 	else if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_DROP_ITEM)
 	{
-		static std::unique_ptr<SoundEffectInstance> g_appearSound;
-		g_appearSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\item_drop.wav"))->CreateInstance();
-		auto distance = Vector3::Distance(Mgr(ServerObjectMgr)->GetMainHero()->GetTransform()->GetLocalPosition(), ::ToOriginVec3(pkt_.appear_pos()));
-		g_appearSound->SetVolume(1.0f / (distance * 0.1f + 2.0f));
-		g_appearSound->Play();
+		// std::cout << "아이템 등장\n";
 	}
 	else if (pkt_.group_type() == Nagox::Enum::GROUP_TYPE_HARVEST)
 	{

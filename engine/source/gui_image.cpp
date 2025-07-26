@@ -16,20 +16,35 @@ namespace udsdx
 		{
 			Matrix4x4 m = GetTransform()->GetWorldSRTMatrix();
 
-			// 각 축 벡터 추출
-			Vector3 xAxis(m._11, m._21, m._31);  // 첫 번째 열
-			Vector3 yAxis(m._12, m._22, m._32);  // 두 번째 열
+			Vector3 xAxis(m._11, m._21, m._31);
+			Vector3 yAxis(m._12, m._22, m._32);
 
-			// 벡터 길이로 스케일 계산
 			float scaleX = xAxis.Length();
 			float scaleY = yAxis.Length();
 
 			Vector2Int textureSize = m_texture->GetSize();
+			RECT sourceRect = { 0, 0, textureSize.x, textureSize.y };
+			switch (m_fillType)
+			{
+			case udsdx::GUIImage::FillType::FillHorizontalRight:
+				sourceRect.right = static_cast<LONG>(textureSize.x * m_fillAmount);
+				break;
+			case udsdx::GUIImage::FillType::FillHorizontalLeft:
+				sourceRect.left = static_cast<LONG>(textureSize.x * (1.0f - m_fillAmount));
+				break;
+			case udsdx::GUIImage::FillType::FillVerticalUp:
+				sourceRect.top = static_cast<LONG>(textureSize.y * (1.0f - m_fillAmount));
+				break;
+			case udsdx::GUIImage::FillType::FillVerticalDown:
+				sourceRect.bottom = static_cast<LONG>(textureSize.y * m_fillAmount);
+				break;
+			}
+
 			param.SpriteBatchNonPremultipliedAlpha->Draw(
 				m_texture->GetSrvGpu(),
 				XMUINT2(textureSize.x, textureSize.y),
 				position,
-				nullptr,
+				&sourceRect,
 				m_color,
 				0.0f,
 				Vector2(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y)) * 0.5f,

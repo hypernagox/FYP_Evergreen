@@ -17,6 +17,7 @@ void PlayerStatusGUI::OnInitialize()
         m_healthFillRenderer = m_healthFill->AddComponent<GUIImage>();
         m_healthFill->GetTransform()->SetLocalPosition(Vector3(-702.5f, -630.0f, 0.0f));
         m_healthFillRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\health_fill.png")), true);
+        m_healthFillRenderer->SetFillType(GUIImage::FillType::FillHorizontalRight);
         m_healthFillWidthCache = static_cast<float>(m_healthFillRenderer->GetSize().x);
     }
 
@@ -44,10 +45,7 @@ void PlayerStatusGUI::SetCurrentHealth(int value)
 {
 	m_currentHealth = value;
     float factor = std::clamp(static_cast<float>(m_currentHealth) / static_cast<float>(m_maxHealth), 0.0f, 1.0f);
-    Vector2 size = m_healthFillRenderer->GetSize();
-    size.x = m_healthFillWidthCache * factor;
-    m_healthFillRenderer->SetSize(size);
-    m_healthFill->GetTransform()->SetLocalPosition(Vector3(-702.5f + (size.x - m_healthFillWidthCache) / 2.0f, -630.0f, 0.0f));
+    m_healthFillRenderer->SetFillAmount(factor);
     m_textRenderer->SetText(std::format(L"{0:02} / {1:02}", m_currentHealth, m_maxHealth));
 }
 

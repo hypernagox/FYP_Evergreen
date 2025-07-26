@@ -339,6 +339,9 @@
     <ClCompile Include="MonsterSheep.cpp">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="BossStatusGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -577,6 +580,9 @@
     </ClInclude>
     <ClInclude Include="MonsterSheep.h">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="BossStatusGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

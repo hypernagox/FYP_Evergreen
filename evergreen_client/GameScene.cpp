@@ -830,9 +830,16 @@ void GameScene::AddActiveObject(const std::shared_ptr<udsdx::SceneObject>& obj, 
     m_activeObjectSubGroups[static_cast<std::uint8_t>(type)]->AddChild(obj);
 }
 
-void GameScene::AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj)
+void GameScene::AddInterfaceObject(const std::shared_ptr<udsdx::SceneObject>& obj, bool front)
 {
-    m_playerInterfaceBackGroup->AddChild(obj);
+    if (front)
+    {
+        m_playerInterfaceGroup->AddChild(obj);
+    }
+    else
+    {
+        m_playerInterfaceBackGroup->AddChild(obj);
+    }
 }
 
 void GameScene::RequestChangeGameScene(GameSceneType type)

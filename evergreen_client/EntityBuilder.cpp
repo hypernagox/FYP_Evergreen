@@ -204,10 +204,13 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 		// 기존 인자인 owner_id(줍는 플레이어)에 더해 프로토콜에서 주울 아이템의 id를 추가적으로 정의해주어야 한다.
 		if (Scene* target = instance->GetScene())
 		{
+			// 아이템 획득 이펙트 생성
 			std::shared_ptr<SceneObject> acquireObject = SceneObject::MakeShared();
 			auto renderer = acquireObject->AddComponent<DropItemAcquireRenderer>();
 			renderer->Initialize(instance->GetComponentsInChildren<MeshRenderer>()[0]);
 			target->AddObject(acquireObject);
+
+			instance->SetActive(false);
 		}
 		 Send(Create_c2s_ACQUIRE_ITEM(owner_id, id));
 		});
