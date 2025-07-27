@@ -78,7 +78,7 @@ int main()
 			, NagiocpX::NetAddress{ IP_ADDR[USE_AWS_FLAG],7777}
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 2000
+			, 1000
 		);
 	
 	

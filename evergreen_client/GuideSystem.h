@@ -65,6 +65,7 @@ public:
 			ResetGuideObjects();
 		}
 	}
+	void InActiveFlag()noexcept { m_guide_active_flag = false; }
 	Vector3 temp_force_pos = {};
 public:
 	const auto& GetClearTree()const noexcept { return m_clear_tree_obj; }

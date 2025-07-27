@@ -228,7 +228,7 @@ const bool Handle_s2c_NOTIFY_HIT_DMG(const NetHelper::S_ptr<NetHelper::PacketSes
 		const auto hit_count = pkt_.hit_count();
 		auto damageCount = INSTANCE(GameGUIFacade)->DamageCount;
 		// TODO: 스킬의 연타 횟수가 패킷으로 오거나 json으로 몇 연타인지 미리 정의
-		damageCount->AddCountObject(hit_obj_ptr->GetTransform()->GetLocalPosition(), static_cast<unsigned int>(before_hp) - hit_after_hp, hit_count);
+		damageCount->AddCountObject(hit_obj_ptr->GetTransform()->GetLocalPosition(), (static_cast<unsigned int>(before_hp) - hit_after_hp), hit_count);
 	}
 	if (const auto player = hit_obj_ptr->GetComponent<AuthenticPlayer>())
 	{
@@ -647,6 +647,7 @@ const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>
 const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_PARTY_QUEST_START& pkt_)
 {
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
+	GuideSystem::GetInst()->InActiveFlag();
 	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {}, L"퀘스트를 시작하는 중 ...");
 	return true;
 }

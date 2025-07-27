@@ -11,7 +11,7 @@
   },
   "Bear": {
     "Name": "곰",
-    "hp": 10,
+    "hp": 20,
     "DropItem": "Meat"
   },
   "Boss": {
