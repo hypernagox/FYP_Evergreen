@@ -68,6 +68,7 @@ public:
 	void Death() { *m_stateMachine->GetConditionRefBool("Death") = true; }
 	bool TrySetState(AnimationState state) { return m_stateMachine->TrySetState(state); }
 	AnimationState GetCurrentState() const { return m_stateMachine->GetCurrentState(); }
+	CharacterType GetCharacterType() const { return m_characterType; }
 	bool GetIsRunning() const;
 
 	void SetPlayerWeapon(int weaponID);

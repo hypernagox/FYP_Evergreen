@@ -40,6 +40,7 @@ public:
 	void ChangeGameScene(GameSceneType type);
 	void AddMinimapMark(const Vector3& position, int index);
 	void OnQuestEnd();
+	void PlayMusic(std::wstring_view resourcePath);
 
 	void ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback = nullptr);
 	void OnDialogueEnd();
@@ -85,6 +86,7 @@ private:
 	std::unique_ptr<MinimapRenderer> m_minimapRenderer;
 	std::vector<std::pair<Vector3, int>> m_minimapMarks;
 	std::unique_ptr<SoundEffectInstance> m_ambienceSound;
+	std::unique_ptr<SoundEffectInstance> m_bgmSound;
 
 	int m_currentChannelID = 0;
 };

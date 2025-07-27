@@ -10,6 +10,7 @@ class MainScene : public udsdx::Scene
 public:
 	MainScene();
 	void OnAttach() override;
+	void OnDetach() override;
 
 	// 멀티플레이어 버튼을 클릭했을 때 호출되는 함수
 	void OnLoginDialog();
@@ -44,6 +45,7 @@ private:
 	bool m_needCharacterSelection = false;
 	bool m_register_account = false;
 
+	std::unique_ptr<SoundEffectInstance> m_bgmSound;
 
 	enum class RegisterStatus
 	{

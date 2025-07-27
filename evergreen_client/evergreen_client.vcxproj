@@ -434,6 +434,7 @@
     <ClCompile Include="BezierMovement.cpp" />
     <ClCompile Include="BossStatusGUI.cpp" />
     <ClCompile Include="ChannelSwitchGUI.cpp" />
+    <ClCompile Include="CylinderParticleEmitter.cpp" />
     <ClCompile Include="DamageCountGUI.cpp" />
     <ClCompile Include="DialogueGUI.cpp" />
     <ClCompile Include="DropItem.cpp" />
@@ -552,6 +553,7 @@
     <ClInclude Include="BossStatusGUI.h" />
     <ClInclude Include="ChannelSwitchGUI.h" />
     <ClInclude Include="CustomStateTransition.hpp" />
+    <ClInclude Include="CylinderParticleEmitter.h" />
     <ClInclude Include="DamageCountGUI.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DialogueGUI.h" />
@@ -657,7 +659,7 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">GS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Geometry</ShaderType>
     </FxCompile>
-    <FxCompile Include="gs_sphere_particle_emitter.hlsl">
+    <FxCompile Include="gs_particle_emitter.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">GS</EntryPointName>
@@ -693,7 +695,7 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">PS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="ps_sphere_particle_emitter.hlsl">
+    <FxCompile Include="ps_particle_emitter.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">PS</EntryPointName>
@@ -704,6 +706,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">PS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="vs_cylinder_particle_emitter.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug-Usenet|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release-Usenet|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">VS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="vs_minimapmark_pass.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS</EntryPointName>

@@ -37,6 +37,7 @@ public:
 	SphereParticleEmitterParameter& GetEmitterParameter() { return m_emitterParameter; }
 	void SetEmitLoop(bool loop) { m_emitLoop = loop; }
 	void SetOrientedByDirection(bool oriented) { m_orientedByDirection = oriented; }
+	void SetVerticalBillboard(bool vertical) { m_verticalBillboard = vertical; }
 	void SetAutoDestroy(bool autoDestroy) { m_autoDestroy = autoDestroy; }
 	void Play();
 
@@ -50,6 +51,7 @@ private:
 	udsdx::Vector3 m_color = udsdx::Vector3(1.0f, 1.0f, 1.0f);
 	bool m_emitLoop = true;
 	bool m_orientedByDirection = false;
+	bool m_verticalBillboard = false;
 	bool m_isPlaying = false;
 	bool m_autoDestroy = false;
 };

@@ -193,7 +193,16 @@ void MainScene::OnAttach()
     INSTANCE(Core)->GetRenderOptionsRef().FogHeightFalloff = 0.08f;
     INSTANCE(Core)->GetRenderOptionsRef().FogDistanceStart = 60.0f;
 
+    m_bgmSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\bgm_title.wav"))->CreateInstance();
+    m_bgmSound->SetVolume(0.5f);
+    m_bgmSound->Play(true);
+
     EnterCharacterSelection(false);
+}
+
+void MainScene::OnDetach()
+{
+    m_bgmSound->Stop();
 }
 
 void MainScene::OnLoginDialog()

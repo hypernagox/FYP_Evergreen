@@ -54,7 +54,7 @@ void AuthenticPlayer::MoveByView(const Vector3& vDelta)
 	
 	//TODO: 매직넘버
 	if (m_entityMovement->GetVelocity().LengthSquared() == 0.f && 0.f == m_entityMovement->GetAcceleration().LengthSquared())
-		m_entityMovement->AddVelocity(vWorldDelta *= .1f);
+		m_entityMovement->AddVelocity(vWorldDelta * 0.1f);
 	else
 		m_entityMovement->AddAcceleration(vWorldDelta);
 	
@@ -278,7 +278,8 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	}
 
 	// Region: Camera FOV Control
-	m_pCamera->SetFov(std::lerp(m_pCamera->GetFov(), focused ? 30.0f * DEG2RAD : m_fovBase, deltaTime * 8.0f));
+	m_fovAdd = std::lerp(m_fovAdd, 0.0f, deltaTime * 4.0f);
+	m_pCamera->SetFov(m_fovBase + m_fovAdd);
 }
 
 void AuthenticPlayer::UpdateCameraTransformDebug(Transform* pCameraTransfrom, float deltaTime)
@@ -360,6 +361,24 @@ void AuthenticPlayer::DoAttack(const Nagox::Enum::SKILL_TYPE skill_type)
 			Create_c2s_PLAYER_ATTACK(rad, ToFlatVec3(GetSceneObject()->GetTransform()->GetLocalPosition())
 			, skill_type)
 		);
+	}
+
+	switch (m_playerType)
+	{
+	case 0:
+		attackSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\attack_warrior.wav"))->CreateInstance();
+		break;
+	case 1:
+		attackSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\attack_priest.wav"))->CreateInstance();
+		break;
+	case 2:
+		attackSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\attack_archer.wav"))->CreateInstance();
+		break;
+	}
+	if (attackSFXInstance)
+	{
+		attackSFXInstance->SetVolume(0.5f);
+		attackSFXInstance->Play();
 	}
 }
 
@@ -445,6 +464,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		soundEffectInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\dash.wav"))->CreateInstance();
 		soundEffectInstance->SetVolume(0.5f);
 		soundEffectInstance->Play();
+		m_fovAdd = 0.2f;
 	}
 	if (fm->IsForcedMovement())
 	{

@@ -15,6 +15,7 @@ static ComPtr<ID3D12PipelineState> InitPipelineState(ComPtr<ID3D12Device> device
 	psoDesc.InputLayout.NumElements = 0;
 	psoDesc.pRootSignature = INSTANCE(Core)->GetRootSignature();
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 	psoDesc.DepthStencilState.DepthEnable = true;
@@ -36,8 +37,8 @@ static ComPtr<ID3D12PipelineState> InitPipelineState(ComPtr<ID3D12Device> device
 	psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	auto vsByteCode = DX::ReadData(L"compiled_shaders\\vs_sphere_particle_emitter.cso");
-	auto gsByteCode = DX::ReadData(L"compiled_shaders\\gs_sphere_particle_emitter.cso");
-	auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_sphere_particle_emitter.cso");
+	auto gsByteCode = DX::ReadData(L"compiled_shaders\\gs_particle_emitter.cso");
+	auto psByteCode = DX::ReadData(L"compiled_shaders\\ps_particle_emitter.cso");
 
 	psoDesc.VS =
 	{
@@ -81,7 +82,7 @@ void SphereParticleEmitter::Update(const udsdx::Time& time, udsdx::Scene& scene)
 	if (m_isPlaying)
 	{
 		m_emitterParameter.ElapsedTime += time.deltaTime;
-		if (m_emitterParameter.ElapsedTime >= m_emitterParameter.LifeTimeMax)
+		if (m_emitterParameter.ElapsedTime >= m_emitterParameter.LifeTimeMax && !m_emitLoop)
 		{
 			m_isPlaying = false;
 			m_emitterParameter.ElapsedTime = 0.0f;
@@ -105,7 +106,10 @@ void SphereParticleEmitter::PostUpdate(const udsdx::Time& time, udsdx::Scene& sc
 
 void SphereParticleEmitter::Render(udsdx::RenderParam& param, int parameter)
 {
-	unsigned int flags = static_cast<unsigned int>(m_emitLoop) | (static_cast<unsigned int>(m_orientedByDirection) << 1);
+	unsigned int flags =
+		static_cast<unsigned int>(m_emitLoop) |
+		static_cast<unsigned int>(m_orientedByDirection) << 1 |
+		static_cast<unsigned int>(m_verticalBillboard) << 2;
 
 	ObjectConstants objectConstants;
 	objectConstants.World = m_transformCache.Transpose();

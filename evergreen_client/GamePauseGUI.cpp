@@ -17,23 +17,23 @@ void GamePauseGUI::OnInitialize()
 	GetSceneObject()->AddChild(m_panel);
 
 	{
-		auto verticalPanel = SceneObject::MakeShared();
-		verticalPanel->GetTransform()->SetLocalPosition(Vector3(640.0f, 0.0f, 0.0f));
-		auto verticalPanelRenderer = verticalPanel->AddComponent<GUIImage>();
+		m_verticalPanel[0] = SceneObject::MakeShared();
+		m_verticalPanel[0]->GetTransform()->SetLocalPosition(Vector3(640.0f, 0.0f, 0.0f));
+		auto verticalPanelRenderer = m_verticalPanel[0]->AddComponent<GUIImage>();
 		verticalPanelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\alpha_gradient_black.png")));
 		verticalPanelRenderer->SetSize(Vector2(1280.0f, 1440.0f));
 		verticalPanelRenderer->SetColor(Vector4(1.0f, 1.0f, 1.0f, 0.75f));
-		m_panel->AddChild(verticalPanel);
+		m_panel->AddChild(m_verticalPanel[0]);
 	}
 
 	{
-		auto verticalPanel = SceneObject::MakeShared();
-		verticalPanel->GetTransform()->SetLocalPosition(Vector3(-640.0f, 0.0f, 0.0f));
-		auto verticalPanelRenderer = verticalPanel->AddComponent<GUIImage>();
+		m_verticalPanel[1] = SceneObject::MakeShared();
+		m_verticalPanel[1]->GetTransform()->SetLocalPosition(Vector3(-640.0f, 0.0f, 0.0f));
+		auto verticalPanelRenderer = m_verticalPanel[1]->AddComponent<GUIImage>();
 		verticalPanelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\alpha_gradient_black_flip.png")));
 		verticalPanelRenderer->SetSize(Vector2(1280.0f, 1440.0f));
 		verticalPanelRenderer->SetColor(Vector4(1.0f, 1.0f, 1.0f, 0.75f));
-		m_panel->AddChild(verticalPanel);
+		m_panel->AddChild(m_verticalPanel[1]);
 	}
 
 	{
@@ -105,4 +105,18 @@ void GamePauseGUI::OnInitialize()
 		exitText->SetRaycastTarget(false);
 		m_panel->AddChild(m_exitButton);
 	}
+}
+
+void GamePauseGUI::OnActive()
+{
+	m_activeFactor = 0.0f;
+	m_verticalPanel[0]->GetComponent<GUIImage>()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+	m_verticalPanel[1]->GetComponent<GUIImage>()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+}
+
+void GamePauseGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
+{
+	m_activeFactor = std::lerp(m_activeFactor, 1.0f, time.deltaTime * 8.0f);
+	m_verticalPanel[0]->GetComponent<GUIImage>()->SetColor(Vector4(1.0f, 1.0f, 1.0f, m_activeFactor * 0.75f));
+	m_verticalPanel[1]->GetComponent<GUIImage>()->SetColor(Vector4(1.0f, 1.0f, 1.0f, m_activeFactor * 0.75f));
 }

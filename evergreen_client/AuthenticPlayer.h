@@ -32,12 +32,14 @@ private:
 	float m_rendererBodyAngleY = 0.0f;
 
 	std::unique_ptr<SoundEffectInstance> soundEffectInstance;
+	std::unique_ptr<SoundEffectInstance> attackSFXInstance;
 
 	float m_fMoveSpeed = 50.0f;
 	float m_fMoveTime = 0.0f;
 	float m_fCamSensivity = 0.1f;
 
 	float m_fovBase = 75.0f * DEG2RAD;
+	float m_fovAdd = 0.0f;
 
 	int m_iMaxHP = 5; // TODO: Magic Number
 	int m_iCurHP = 5;

@@ -345,6 +345,9 @@
     <ClCompile Include="OptionsGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="CylinderParticleEmitter.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -590,6 +593,9 @@
     <ClInclude Include="OptionsGUI.h">
       <Filter>Gui</Filter>
     </ClInclude>
+    <ClInclude Include="CylinderParticleEmitter.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Protocols\enum.fbs">
@@ -635,10 +641,13 @@
     <FxCompile Include="vs_sphere_particle_emitter.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="gs_sphere_particle_emitter.hlsl">
+    <FxCompile Include="gs_particle_emitter.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="ps_sphere_particle_emitter.hlsl">
+    <FxCompile Include="ps_particle_emitter.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="vs_cylinder_particle_emitter.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

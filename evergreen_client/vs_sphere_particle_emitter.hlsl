@@ -23,13 +23,16 @@ VertexOut VS(uint vid : SV_VERTEXID)
 	float speed = lerp(gSpeedMin, gSpeedMax, rand3(vid * VIDMUL).y + 0.5f);
 
 	// Transform position to homogeneous clip space
-	vout.PosW = float4(gWorld[3].xyz, 1.0f);
+	float4 posL = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if (gSpeedLifeExp < 0.0f) {
-		vout.PosW.xyz += vout.Normal * speed * vout.Life * pow(1.0f - lifeFactor, -gSpeedLifeExp);
+		posL.xyz += vout.Normal * speed * vout.Life * pow(1.0f - lifeFactor, -gSpeedLifeExp);
 	}
 	else {
-	    vout.PosW.xyz += vout.Normal * speed * vout.Life * pow(lifeFactor, gSpeedLifeExp);
+	    posL.xyz += vout.Normal * speed * vout.Life * pow(lifeFactor, gSpeedLifeExp);
 	}
+
+	vout.PosW = mul(posL, gWorld);
+	vout.PosW.w = 1.0f;
 
 	return vout;
 }

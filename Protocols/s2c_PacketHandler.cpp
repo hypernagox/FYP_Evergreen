@@ -34,6 +34,9 @@
 #include "PlayerTagGUI.h"
 #include "TutorialUI.h"
 
+#include "SphereParticleEmitter.h"
+#include "CylinderParticleEmitter.h"
+
 thread_local flatbuffers::FlatBufferBuilder buillder{ 256 };
 
 flatbuffers::FlatBufferBuilder* const CreateBuilder()noexcept {
@@ -356,15 +359,98 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	const auto proj_rad = pkt_.radius();
 	if (pkt_.proj_type() == 0)
 	{
+		Vector3 normal = ::ToOriginVec3(pkt_.vel());
+		normal.Normalize();
+
 		const auto shoot_obj_id = pkt_.shoot_obj_id();
 		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
 		auto s = SceneObject::MakeShared();
 		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
+		s->GetTransform()->SetLocalRotation(Quaternion::LookRotation(normal, Vector3::Up));
 		s->GetTransform()->SetLocalScale(0.25f);
 
-		auto gizmoRenderer = s->AddComponent<MeshRenderer>();
-		gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
-		gizmoRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+		if (auto ownerObject = Mgr(ServerObjectMgr)->GetServerObj(shoot_obj_id))
+		{
+			if (auto player = ownerObject->GetSceneObject()->GetComponent<PlayerRenderer>())
+			{
+				switch (player->GetCharacterType())
+				{
+					case PlayerRenderer::CharacterType::Priest:
+					{
+						{
+							auto particleEmitter = s->AddComponent<SphereParticleEmitter>();
+							particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\splat.png")));
+							particleEmitter->SetColor(Vector3(0.07058824f, 0.2431373f, 0.6470588f) * 20.0f);
+							particleEmitter->SetDrawCount(16);
+							particleEmitter->GetEmitterParameter().LifeTimeMin = 0.5f;
+							particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
+							particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 0.5f;
+							particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 0.5f;
+							particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.5f;
+							particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
+							particleEmitter->GetEmitterParameter().RotationMin = -PIDIV2;
+							particleEmitter->GetEmitterParameter().RotationMax = PIDIV2;
+							particleEmitter->GetEmitterParameter().RotationLifeExp = 0.5f;
+							particleEmitter->SetEmitLoop(true);
+							particleEmitter->SetOrientedByDirection(false);
+							particleEmitter->SetAutoDestroy(false);
+							particleEmitter->Play();
+						}
+
+						{
+							auto particleTrailObj = SceneObject::MakeShared();
+							particleTrailObj->GetTransform()->SetLocalScale(1.0f, 1.0f, 1.0f);
+
+							auto particleEmitter = particleTrailObj->AddComponent<CylinderParticleEmitter>();
+							particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\wisp.png")));
+							particleEmitter->SetColor(Vector3(0.07058824f, 0.2431373f, 0.6470588f) * 20.0f);
+							particleEmitter->SetDrawCount(64);
+							particleEmitter->GetEmitterParameter().LifeTimeMin = 0.2f;
+							particleEmitter->GetEmitterParameter().LifeTimeMax = 0.4f;
+							particleEmitter->GetEmitterParameter().SpeedMin = 0.0f;
+							particleEmitter->GetEmitterParameter().SpeedMax = 160.0f;
+							particleEmitter->GetEmitterParameter().SpeedLifeExp = 1.0f;
+							particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 0.1f;
+							particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 0.2f;
+							particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
+							particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
+							particleEmitter->GetEmitterParameter().RotationMin = -PI2;
+							particleEmitter->GetEmitterParameter().RotationMax = PI2;
+							particleEmitter->GetEmitterParameter().RotationLifeExp = 0.5f;
+							particleEmitter->SetEmitLoop(true);
+							particleEmitter->SetOrientedByDirection(false);
+							particleEmitter->SetAutoDestroy(false);
+							particleEmitter->Play();
+
+							s->AddChild(particleTrailObj);
+						}
+					}
+					break;
+					case PlayerRenderer::CharacterType::Archer:
+					{
+						auto particleEmitter = s->AddComponent<CylinderParticleEmitter>();
+						particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\hit_triangle_reversed.png")));
+						particleEmitter->SetColor(Vector3::One * 4.0f);
+						particleEmitter->SetDrawCount(1);
+						particleEmitter->GetEmitterParameter().LifeTimeMin = 1.0f;
+						particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
+						particleEmitter->GetEmitterParameter().SpeedMin = 0.0f;
+						particleEmitter->GetEmitterParameter().SpeedMax = 0.0f;
+						particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.5f;
+						particleEmitter->GetEmitterParameter().SizeMin = Vector2(40.0f, 0.1f);
+						particleEmitter->GetEmitterParameter().SizeMax = Vector2(40.0f, 0.1f);
+						particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2(1.0f, 0.0f);
+						particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
+						particleEmitter->SetEmitLoop(false);
+						particleEmitter->SetAutoDestroy(false);
+						particleEmitter->SetVerticalBillboard(true);
+						particleEmitter->SetOrientedByDirection(true);
+						particleEmitter->Play();
+					}
+					break;
+				}
+			}
+		}
 
 		auto so = s->AddComponent<ServerObject>();
 		const auto proj = so->AddComp<Projectile>();
@@ -634,6 +720,7 @@ const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>
 		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 		ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Default);
 		ServerObjectMgr::GetInst()->GetTargetScene()->OnQuestEnd();
+		ServerObjectMgr::GetInst()->GetTargetScene()->PlayMusic(RESOURCE_PATH(L"audio\\bgm_field.wav"));
 		}, L"퀘스트를 종료하는 중 ...");
 	GuideSystem::GetInst()->DisableClearTree();
 
@@ -652,6 +739,7 @@ const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::Packet
 	GuideSystem::GetInst()->InActiveFlag();
 	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {
 		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
+		ServerObjectMgr::GetInst()->GetTargetScene()->PlayMusic(RESOURCE_PATH(L"audio\\bgm_battle.wav"));
 		}, L"퀘스트를 시작하는 중 ...");
 	return true;
 }
@@ -888,12 +976,69 @@ const bool Handle_s2c_HEAL(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 	const auto healed_user_id = pkt_.target_obj_id();
 	const auto heal_val = pkt_.heal_val();
 	const auto healed_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(healed_user_id);
+
+	static std::unique_ptr<SoundEffectInstance> g_effectSound;
+	g_effectSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\heal_skill.wav"))->CreateInstance();
+	g_effectSound->SetVolume(0.5f);
+	g_effectSound->Play();
+
 	if (!healed_obj_ptr)
 	{
 		return true;
 	}
-	auto damageCount = INSTANCE(GameGUIFacade)->DamageCount;
-	damageCount->AddCountObject(healed_obj_ptr->GetTransform()->GetLocalPosition(), -1);
+
+	{
+		auto particleObject = SceneObject::MakeShared();
+		particleObject->GetTransform()->SetLocalPosition(healed_obj_ptr->GetTransform()->GetLocalPosition());
+		particleObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, -PIDIV2, 0.0f));
+
+		auto particleEmitter = particleObject->AddComponent<CylinderParticleEmitter>();
+		particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\cross.png")));
+		particleEmitter->SetColor(Vector3(0.5f, 1.0f, 0.0f) * 10.0f);
+		particleEmitter->SetDrawCount(16);
+		particleEmitter->GetEmitterParameter().LifeTimeMin = 0.6f;
+		particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
+		particleEmitter->GetEmitterParameter().SpeedMin = 0.5f;
+		particleEmitter->GetEmitterParameter().SpeedMax = 4.0f;
+		particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.5f;
+		particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 0.2f;
+		particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 0.3f;
+		particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
+		particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+		particleEmitter->SetEmitLoop(false);
+		particleEmitter->SetAutoDestroy(true);
+		particleEmitter->SetOrientedByDirection(false);
+		particleEmitter->Play();
+
+		ServerObjectMgr::GetInst()->GetTargetScene()->AddObject(particleObject);
+	}
+
+	{
+		auto particleObject = SceneObject::MakeShared();
+		particleObject->GetTransform()->SetLocalPosition(healed_obj_ptr->GetTransform()->GetLocalPosition());
+		particleObject->GetTransform()->SetLocalScale(0.1f);
+
+		auto particleEmitter = particleObject->AddComponent<CylinderParticleEmitter>();
+		particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\runic.png")));
+		particleEmitter->SetColor(Vector3(0.5f, 1.0f, 0.0f) * 4.0f);
+		particleEmitter->SetDrawCount(1);
+		particleEmitter->GetEmitterParameter().LifeTimeMin = 1.0f;
+		particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
+		particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 2.0f;
+		particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 2.0f;
+		particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
+		particleEmitter->GetEmitterParameter().RotationMin = -PI2;
+		particleEmitter->GetEmitterParameter().RotationMax = PI2;
+		particleEmitter->GetEmitterParameter().RotationLifeExp = 0.25f;
+		particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
+		particleEmitter->SetEmitLoop(false);
+		particleEmitter->SetAutoDestroy(true);
+		particleEmitter->SetVerticalBillboard(true);
+		particleEmitter->Play();
+
+		ServerObjectMgr::GetInst()->GetTargetScene()->AddObject(particleObject);
+	}
+
 	return true;
 }
 
@@ -927,48 +1072,57 @@ const bool Handle_s2c_ARROW_RAIN(const NetHelper::S_ptr<NetHelper::PacketSession
 {
 	constexpr const int arrowCount = 10;
 
-	const Vector3 offsets[arrowCount] =
-	{
-		Vector3(-2.0f, 22.0f, -1.0f),
-		Vector3(-1.0f, 18.5f, 1.0f),
-		Vector3(0.0f, 25.0f, 0.0f),
-		Vector3(1.2f, 21.0f, -0.8f),
-		Vector3(-1.5f, 20.0f, 1.5f),
-		Vector3(0.8f, 23.5f, 1.2f),
-		Vector3(-2.3f, 17.5f, -1.4f),
-		Vector3(0.5f, 24.0f, -1.8f),
-		Vector3(-0.7f, 19.0f, 0.9f),
-		Vector3(1.7f, 26.0f, 0.3f)
-	};
-
-	constexpr const float speeds[arrowCount] =
-	{
-		55.0f, 48.0f, 25.0f, 42.0f, 30.0f,
-		52.0f, 28.0f, 46.0f, 35.0f, 50.0f
-	};
-	//std::cout << "패킷옴";
 	const Vector3 center = ToOriginVec3(pkt_.atk_pos());
+	const Vector3 spawnPos = center + Vector3::Up * 5.0f;
 
-	for (int i = 0; i < arrowCount; ++i)
 	{
-		const Vector3 spawnPos = center + offsets[i] - Vector3{ 0,5, 0 };
-		const Vector3 velocity = Vector3(0.0f, -1.0f, 0.0f) * speeds[i];
+		auto particleObject = SceneObject::MakeShared();
+		particleObject->GetTransform()->SetLocalPosition(spawnPos);
+		particleObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, PIDIV2, 0.0f));
+		particleObject->GetTransform()->SetLocalScale(1.5f);
 
-		
-		
-		auto s = SceneObject::MakeShared();
-		s->GetTransform()->SetLocalPosition(spawnPos);
-		s->GetTransform()->SetLocalScale(.5f);
+		auto particleEmitter = particleObject->AddComponent<CylinderParticleEmitter>();
+		particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\hit_triangle.png")));
+		particleEmitter->SetColor(Vector3::One * 10.0f);
+		particleEmitter->SetDrawCount(16);
+		particleEmitter->GetEmitterParameter().LifeTimeMin = 0.8f;
+		particleEmitter->GetEmitterParameter().LifeTimeMax = 0.8f;
+		particleEmitter->GetEmitterParameter().SizeMin = Vector2(5.0f, 0.1f);
+		particleEmitter->GetEmitterParameter().SizeMax = Vector2(10.0f, 0.1f);
+		particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2(1.0f, -0.5f);
+		particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+		particleEmitter->SetEmitLoop(false);
+		particleEmitter->SetAutoDestroy(true);
+		particleEmitter->SetOrientedByDirection(true);
+		particleEmitter->Play();
 
-		auto gizmoRenderer = s->AddComponent<MeshRenderer>();
-		gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
-		gizmoRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
-		s->SetActive(true);
-		auto so = s->AddComponent<ServerObject>();
-		const auto proj = so->AddComp<Projectile>();
-		proj->m_speed = velocity;
-		//so->SetObjID((uint32_t)pkt_.proj_id());
-		Mgr(ServerObjectMgr)->AddObject(s);
+		ServerObjectMgr::GetInst()->GetTargetScene()->AddObject(particleObject);
+	}
+
+	{
+		auto particleObject = SceneObject::MakeShared();
+		particleObject->GetTransform()->SetLocalPosition(spawnPos);
+		particleObject->GetTransform()->SetLocalScale(0.1f);
+
+		auto particleEmitter = particleObject->AddComponent<CylinderParticleEmitter>();
+		particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\aura_ray.png")));
+		particleEmitter->SetColor(Vector3::One * 20.0f);
+		particleEmitter->SetDrawCount(1);
+		particleEmitter->GetEmitterParameter().LifeTimeMin = 1.0f;
+		particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
+		particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 4.0f;
+		particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 4.0f;
+		particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
+		particleEmitter->GetEmitterParameter().RotationMin = -PI2;
+		particleEmitter->GetEmitterParameter().RotationMax = PI2;
+		particleEmitter->GetEmitterParameter().RotationLifeExp = 0.25f;
+		particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
+		particleEmitter->SetEmitLoop(false);
+		particleEmitter->SetAutoDestroy(true);
+		particleEmitter->SetVerticalBillboard(true);
+		particleEmitter->Play();
+
+		ServerObjectMgr::GetInst()->GetTargetScene()->AddObject(particleObject);
 	}
 
 	return true;
