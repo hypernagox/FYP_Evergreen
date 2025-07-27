@@ -38,7 +38,7 @@ public:
 	std::shared_ptr<udsdx::SceneObject> GetHeroObject() const { return m_heroObj; }
 	void RequestChangeGameScene(GameSceneType type);
 	void ChangeGameScene(GameSceneType type);
-	void AddMinimapMark(const Vector3& position);
+	void AddMinimapMark(const Vector3& position, int index);
 	void OnQuestEnd();
 
 	void ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback = nullptr);
@@ -83,7 +83,7 @@ private:
 	bool m_bSpectatorMode = false;
 
 	std::unique_ptr<MinimapRenderer> m_minimapRenderer;
-	std::vector<Vector3> m_minimapMarks;
+	std::vector<std::pair<Vector3, int>> m_minimapMarks;
 	std::unique_ptr<SoundEffectInstance> m_ambienceSound;
 
 	int m_currentChannelID = 0;

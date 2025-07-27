@@ -14,6 +14,8 @@ private:
 
 public:
 	void OnInitialize() override;
+	void OnActive() override;
+	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void SetPanelGraphic(bool isEnter);
 	void SwitchChannelPage(int page);
 	void InitializeChannel(int channel);

@@ -433,7 +433,7 @@ void GameScene::OnAttach()
 
             {
                 auto guideToPartyObj = SceneObject::MakeShared();
-                guideToPartyObj->GetTransform()->SetLocalPosition(Vector3(-100.0f, -210.0f, 0.0f));
+                guideToPartyObj->GetTransform()->SetLocalPosition(Vector3(-80.0f, -210.0f, 0.0f));
                 auto guideToPartyButton = guideToPartyObj->AddComponent<GUISimpleButton>();
                 guideToPartyButton->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
                 guideToPartyButton->SetSize(Vector2(160.0f, 40.0f));
@@ -457,7 +457,7 @@ void GameScene::OnAttach()
 
             {
                 auto guideToHarvestObj = SceneObject::MakeShared();
-                guideToHarvestObj->GetTransform()->SetLocalPosition(Vector3(60.0f, -210.0f, 0.0f));
+                guideToHarvestObj->GetTransform()->SetLocalPosition(Vector3(80.0f, -210.0f, 0.0f));
                 auto guideToHarvestButton = guideToHarvestObj->AddComponent<GUISimpleButton>();
                 guideToHarvestButton->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
                 guideToHarvestButton->SetSize(Vector2(160.0f, 40.0f));
@@ -886,11 +886,13 @@ void GameScene::ChangeGameScene(GameSceneType type)
             INSTANCE(Core)->GetRenderOptionsRef().FogHeightFalloff = 0.015f;
 			break;
 	}
+
+    m_heroComponent->FixCameraAnchor();
 }
 
-void GameScene::AddMinimapMark(const Vector3& position)
+void GameScene::AddMinimapMark(const Vector3& position, int index)
 {
-    m_minimapMarks.emplace_back(position);
+    m_minimapMarks.emplace_back(position, index);
 }
 
 void GameScene::OnQuestEnd()

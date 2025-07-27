@@ -108,6 +108,16 @@ void PlayerCraftGUI::OnInitialize()
 	}
 }
 
+void PlayerCraftGUI::OnActive()
+{
+	m_panel->GetTransform()->SetLocalPositionY(-50.0f);
+}
+
+void PlayerCraftGUI::Update(const Time& time, Scene& scene)
+{
+	m_panel->GetTransform()->SetLocalPositionY(std::lerp(m_panel->GetTransform()->GetLocalPosition().y, 0.0f, time.deltaTime * 16.0f));
+}
+
 void PlayerCraftGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table)
 {
 	// 골라진 레시피 아이디

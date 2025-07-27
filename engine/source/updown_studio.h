@@ -14,6 +14,7 @@
 #include "font.h"
 
 #include "shadow_map.h"
+#include "screen_space_ao.h"
 #include "deferred_renderer.h"
 #include "shader_compile.h"
 #include "animation_clip.h"

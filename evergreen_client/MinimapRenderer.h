@@ -17,7 +17,7 @@ public:
 	void OnDetach();
 
 public:
-	void PassRender(udsdx::RenderParam& renderParam, const std::vector<Vector3>& marks);
+	void PassRender(udsdx::RenderParam& renderParam, const std::vector<std::pair<Vector3, int>>& marks);
 
 public:
 	udsdx::Texture* GetRenderTargetTexture() const { return m_renderTargetTexture.get(); }
@@ -52,7 +52,7 @@ private:
 
 	udsdx::Mesh* m_minimapMesh = nullptr;
 	std::unique_ptr<udsdx::Texture> m_renderTargetTexture;
-	udsdx::Texture* m_markTexture = nullptr;
+	std::array<udsdx::Texture*, 3> m_markTextures;
 
 	udsdx::Matrix4x4 m_worldMatrix;
 	udsdx::Matrix4x4 m_viewMatrix;

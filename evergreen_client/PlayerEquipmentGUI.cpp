@@ -56,6 +56,16 @@ void PlayerEquipmentGUI::OnInitialize()
 	UpdateSlotContents(nullptr, 1, -1);
 }
 
+void PlayerEquipmentGUI::OnActive()
+{
+	m_panel->GetTransform()->SetLocalPositionY(-50.0f);
+}
+
+void PlayerEquipmentGUI::Update(const Time& time, Scene& scene)
+{
+	m_panel->GetTransform()->SetLocalPositionY(std::lerp(m_panel->GetTransform()->GetLocalPosition().y, 0.0f, time.deltaTime * 16.0f));
+}
+
 void PlayerEquipmentGUI::UpdateSlotContents(AuthenticPlayer* target, int index, int id)
 {
 	itemIDCache[index] = id;

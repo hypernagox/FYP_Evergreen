@@ -8,14 +8,14 @@ void PlayerStatusGUI::OnInitialize()
     {
         m_healthBackground = SceneObject::MakeShared();
         auto uiRenderer = m_healthBackground->AddComponent<GUIImage>();
-        m_healthBackground->GetTransform()->SetLocalPosition(Vector3(-720.0f, -630.0f, 0.0f));
+        m_healthBackground->GetTransform()->SetLocalPosition(Vector3(-665.0f, -630.0f, 0.0f));
         uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\health_background.png")), true);
     }
 
     {
         m_healthFill = SceneObject::MakeShared();
         m_healthFillRenderer = m_healthFill->AddComponent<GUIImage>();
-        m_healthFill->GetTransform()->SetLocalPosition(Vector3(-702.5f, -630.0f, 0.0f));
+        m_healthFill->GetTransform()->SetLocalPosition(Vector3(-647.5f, -630.0f, 0.0f));
         m_healthFillRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\health_fill.png")), true);
         m_healthFillRenderer->SetFillType(GUIImage::FillType::FillHorizontalRight);
         m_healthFillWidthCache = static_cast<float>(m_healthFillRenderer->GetSize().x);
@@ -23,7 +23,7 @@ void PlayerStatusGUI::OnInitialize()
 
     {
         m_textObj = SceneObject::MakeShared();
-        m_textObj->GetTransform()->SetLocalPosition(Vector3(-702.5f, -630.0f, 0.0f));
+        m_textObj->GetTransform()->SetLocalPosition(Vector3(-647.5f, -630.0f, 0.0f));
         m_textRenderer = m_textObj->AddComponent<GUIText>();
         m_textRenderer->SetText(L"## / ##");
         m_textRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));

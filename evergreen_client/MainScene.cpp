@@ -11,6 +11,7 @@
 #include "EnvironmentRenderer.h"
 #include "GameGUIFacade.h"
 #include "GameScene.h"
+#include "OptionsGUI.h"
 
 using namespace udsdx;
 
@@ -139,6 +140,7 @@ void MainScene::OnAttach()
         m_mainMenuObj = SceneObject::MakeShared();
         auto mainMenuComp = m_mainMenuObj->AddComponent<MainMenuGUI>();
         mainMenuComp->SetEnterGameCallback([this]() { OnLoginDialog(); });
+        mainMenuComp->SetOptionsCallback([this]() { m_popupGUIManager->Append(m_optionsObj); });
         mainMenuComp->SetExitGameCallback([this]() { ExitGame(); });
         m_interfaceGroup->AddChild(m_mainMenuObj);
 
@@ -173,6 +175,11 @@ void MainScene::OnAttach()
                 EnterCharacterSelection(false);
             });
         m_interfaceGroup->AddChild(m_playerSelectObj);
+
+        m_optionsObj = SceneObject::MakeShared();
+        auto optionsComp = m_optionsObj->AddComponent<OptionsGUI>();
+        m_optionsObj->SetActive(false);
+        m_interfaceGroup->AddChild(m_optionsObj);
 
         auto transitionOverlayObj = SceneObject::MakeShared();
         m_transitionOverlayGUI = transitionOverlayObj->AddComponent<TransitionOverlayGUI>();

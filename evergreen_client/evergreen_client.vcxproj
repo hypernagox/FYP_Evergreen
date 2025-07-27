@@ -488,11 +488,12 @@
     <ClCompile Include="MonsterBoss.cpp" />
     <ClCompile Include="MonsterFox.cpp" />
     <ClCompile Include="MonsterHPPanel.cpp" />
-    <ClCompile Include="MonsterRenderer.cpp" />
+    <ClCompile Include="NPCRenderer.cpp" />
     <ClCompile Include="MonsterSheep.cpp" />
     <ClCompile Include="MoveInterpolator.cpp" />
     <ClCompile Include="MovePacketSender.cpp" />
     <ClCompile Include="ObjectIdentifier.cpp" />
+    <ClCompile Include="OptionsGUI.cpp" />
     <ClCompile Include="PartyStatusGUI.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -587,11 +588,12 @@
     <ClInclude Include="MonsterBoss.h" />
     <ClInclude Include="MonsterFox.h" />
     <ClInclude Include="MonsterHPPanel.h" />
-    <ClInclude Include="MonsterRenderer.h" />
+    <ClInclude Include="NPCRenderer.h" />
     <ClInclude Include="MonsterSheep.h" />
     <ClInclude Include="MoveInterpolator.h" />
     <ClInclude Include="MovePacketSender.h" />
     <ClInclude Include="ObjectIdentifier.h" />
+    <ClInclude Include="OptionsGUI.h" />
     <ClInclude Include="PartyStatusGUI.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerCraftGUI.h" />

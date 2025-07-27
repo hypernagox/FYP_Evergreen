@@ -18,7 +18,9 @@ MinimapRenderer::MinimapRenderer(ID3D12Device* device, UINT width, UINT height) 
 	m_renderTargetTexture = std::make_unique<udsdx::Texture>(m_renderTarget.Get(), m_srvCpuHandle, m_srvGpuHandle);
 	SetViewMatrix(udsdx::Vector3(0.0f, 100.0f, 0.0f), udsdx::Vector3(0.0f, -1.0f, 0.0f));
 
-	m_markTexture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap\\monster_normal_icon.png"));
+	m_markTextures[0] = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap\\monster_normal_icon.png"));
+	m_markTextures[1] = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap\\monster_boss_icon.png"));
+	m_markTextures[2] = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap\\player_icon.png"));
 }
 
 MinimapRenderer::~MinimapRenderer()
@@ -268,7 +270,7 @@ void MinimapRenderer::OnDetach()
 	INSTANCE(Core)->ApplyDescriptorParameters(rootParam);
 }
 
-void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam, const std::vector<Vector3>& marks)
+void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam, const std::vector<std::pair<Vector3, int>>& marks)
 {
 	CD3DX12_RESOURCE_BARRIER barrier[2];
 	barrier[0] = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -299,7 +301,6 @@ void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam, const std::vec
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_worldMatrix, 0);
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_viewMatrix, 16);
 	pCommandList->SetGraphicsRoot32BitConstants(0, 16, &m_projectionMatrix, 32);
-	pCommandList->SetGraphicsRootDescriptorTable(1, m_markTexture->GetSrvGpu());
 
 	// Draw the minimap mesh
 	auto vbv = m_minimapMesh->VertexBufferView();
@@ -323,15 +324,16 @@ void MinimapRenderer::PassRender(udsdx::RenderParam& renderParam, const std::vec
 	pCommandList->IASetIndexBuffer(nullptr);
 	pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	std::vector<Vector3> sortedMarks = marks;
+	std::vector<std::pair<Vector3, int>> sortedMarks = marks;
 	Vector3 forward = Vector3(m_viewMatrix.m[2][0], m_viewMatrix.m[2][1], m_viewMatrix.m[2][2]);
-	std::sort(sortedMarks.begin(), sortedMarks.end(), [&forward](const Vector3& lhs, const Vector3& rhs) {
-		return lhs.Dot(forward) > rhs.Dot(forward); // Sort by projection onto the forward vector
+	std::sort(sortedMarks.begin(), sortedMarks.end(), [&forward](const auto& lhs, const auto& rhs) {
+		return lhs.first.Dot(forward) > rhs.first.Dot(forward); // Sort by projection onto the forward vector
 	});
-	for (const auto& mark : sortedMarks)
+	for (const auto& [markPosition, markIndex] : sortedMarks)
 	{
-		XMMATRIX worldMatrix = XMMatrixTranspose(XMMatrixTranslation(mark.x, mark.y, mark.z));
+		XMMATRIX worldMatrix = XMMatrixTranspose(XMMatrixTranslation(markPosition.x, markPosition.y, markPosition.z));
 		pCommandList->SetGraphicsRoot32BitConstants(0, 16, &worldMatrix, 0);
+		pCommandList->SetGraphicsRootDescriptorTable(1, m_markTextures[markIndex]->GetSrvGpu());
 
 		pCommandList->DrawInstanced(1, 1, 0, 0);
 	}

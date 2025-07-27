@@ -2,6 +2,7 @@
 #include "PlayerInventoryGUI.h"
 #include "AuthenticPlayer.h"
 #include "GUISimpleButton.h"
+#include "PopupGUIManager.h"
 
 using namespace udsdx;
 
@@ -49,11 +50,25 @@ void PlayerInventoryGUI::OnInitialize()
 	text->SetText(L"000 000 000");
 	text->SetAlignment(GUIText::Alignment::Right);
 	m_panel->AddChild(m_coinText);
+
+	auto exitButton = SceneObject::MakeShared();
+	auto exitButtonRenderer = exitButton->AddComponent<GUISimpleButton>();
+	exitButton->GetTransform()->SetLocalPosition(Vector3(138.0f, 226.0f, 0.0f));
+	exitButtonRenderer->SetSize(Vector2(50.0f, 50.0f));
+	exitButtonRenderer->SetClickCallback([&]() {
+		GetSceneObject()->GetComponentInParent<PopupGUIManager>()->Pop(GetSceneObject());
+		});
+	m_panel->AddChild(exitButton);
 }
 
-void PlayerInventoryGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
+void PlayerInventoryGUI::OnActive()
 {
-	Component::Update(time, scene);
+	m_panel->GetTransform()->SetLocalPositionY(-50.0f);
+}
+
+void PlayerInventoryGUI::Update(const Time& time, Scene& scene)
+{
+	m_panel->GetTransform()->SetLocalPositionY(std::lerp(m_panel->GetTransform()->GetLocalPosition().y, 0.0f, time.deltaTime * 16.0f));
 }
 
 void PlayerInventoryGUI::UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table)

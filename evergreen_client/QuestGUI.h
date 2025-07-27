@@ -25,6 +25,8 @@ private:
 
 public:
 	void OnInitialize() override;
+	void OnActive() override;
+	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 
 	void RequestPartyList(int questID);
 	void FetchQuestList();

@@ -33,6 +33,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_mainMenuObj;
 	std::shared_ptr<udsdx::SceneObject> m_playerSelectObj;
 	std::shared_ptr<udsdx::SceneObject> m_channelSwitchObj;
+	std::shared_ptr<udsdx::SceneObject> m_optionsObj;
 
 	PopupGUIManager* m_popupGUIManager;
 	TransitionOverlayGUI* m_transitionOverlayGUI;

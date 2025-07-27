@@ -8,7 +8,8 @@ class PlayerEquipmentGUI : public udsdx::Component
 {
 public:
 	void OnInitialize() override;
-
+	void OnActive() override;
+	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void UpdateSlotContents(AuthenticPlayer* target, int index, int id);
 
 private:

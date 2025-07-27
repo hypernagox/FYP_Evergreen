@@ -65,6 +65,7 @@ namespace udsdx
 		ID3D12RootSignature* GetRootSignature() const;
 		DeferredRenderer* GetRenderer() const;
 		ShadowMap* GetShadowMap() const;
+		ScreenSpaceAO* GetScreenSpaceAO() const;
 		MonoUploadBuffer* GetMonoUploadBuffer() const;
 
 		FrameResource* CurrentFrameResource() const;

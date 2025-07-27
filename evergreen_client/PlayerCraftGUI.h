@@ -21,6 +21,8 @@ private:
 
 public:
 	void OnInitialize() override;
+	void OnActive() override;
+	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void UpdateSlotContents(AuthenticPlayer* target, const std::vector<int>& table);
 
 private:

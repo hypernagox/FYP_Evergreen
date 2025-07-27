@@ -207,7 +207,7 @@
     <ClCompile Include="DropItemRenderer.cpp">
       <Filter>NetEntity\ContentsEntity\DropItem</Filter>
     </ClCompile>
-    <ClCompile Include="MonsterRenderer.cpp">
+    <ClCompile Include="NPCRenderer.cpp">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClCompile>
     <ClCompile Include="FocusAgentGUI.cpp">
@@ -342,6 +342,9 @@
     <ClCompile Include="BossStatusGUI.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
+    <ClCompile Include="OptionsGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -446,7 +449,7 @@
     <ClInclude Include="DropItemRenderer.h">
       <Filter>NetEntity\ContentsEntity\DropItem</Filter>
     </ClInclude>
-    <ClInclude Include="MonsterRenderer.h">
+    <ClInclude Include="NPCRenderer.h">
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
     <ClInclude Include="FocusAgentGUI.h">
@@ -582,6 +585,9 @@
       <Filter>NetEntity\ContentsEntity\Monster</Filter>
     </ClInclude>
     <ClInclude Include="BossStatusGUI.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsGUI.h">
       <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>

@@ -42,7 +42,7 @@ void Monster::Update(const Time& time, Scene& scene)
 
 	if (GameScene* gameScene = dynamic_cast<GameScene*>(&scene))
 	{
-		gameScene->AddMinimapMark(GetTransform()->GetLocalPosition());
+		gameScene->AddMinimapMark(GetTransform()->GetLocalPosition(), GetMarkIndex());
 	}
 
 	m_renderer->SetBoneModifier("Bip001 Spine1", Matrix4x4::CreateFromYawPitchRoll(0.0f, 0.0f, -PIDIV4 * m_hitfactor));
@@ -154,10 +154,12 @@ void MonsterRemains::OnInitialize()
 	GetSceneObject()->AddChild(m_rendererObj);
 }
 
+std::unique_ptr<SoundEffectInstance> MonsterRemains::m_soundInstance;
+
 void MonsterRemains::OnActive()
 {
 	m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\monster_death.wav"))->CreateInstance();
-	m_soundInstance->SetVolume(0.3f);
+	m_soundInstance->SetVolume(0.1f);
 	m_soundInstance->Play();
 }
 

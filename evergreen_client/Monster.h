@@ -52,6 +52,7 @@ public:
 	virtual void OnDeath() {}
 	int GetHP() const { return m_hp; }
 	virtual void OnHit(int afterHealth);
+	virtual int GetMarkIndex() const { return 0; } // Default implementation, can be overridden by derived classes
 };
 
 class MonsterRemains : public Component
@@ -65,6 +66,6 @@ public:
 private:
 	std::shared_ptr<SceneObject> m_rendererObj;
 	RiggedMeshRenderer* m_renderer = nullptr;
-	std::unique_ptr<SoundEffectInstance> m_soundInstance;
+	static std::unique_ptr<SoundEffectInstance> m_soundInstance;
 	float m_lifeTime = 1.0f;
 };

@@ -71,6 +71,12 @@ void MainMenuGUI::OnInitialize()
 		auto buttonComponent = m_optionsButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
 		buttonComponent->SetSize(Vector2(245.0f, 65.0f));
+		buttonComponent->SetClickCallback([this]() {
+			if (m_optionsCallback)
+			{
+				m_optionsCallback();
+			}
+			});
 
 		auto resumeText = m_optionsButton->AddComponent<GUIText>();
 		resumeText->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));

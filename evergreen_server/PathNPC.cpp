@@ -101,7 +101,6 @@ void PathNPC::InitPathNPC(const XVector<Vector3> points)
 	//const auto& vecPath = m_navAgent->GetAgentConcreate()->
 	//	GetNavMesh()->GetPathVertices(begin, end, step);
 	m_navAgent->SetPos(points[0]);
-	m_speed = 10.f;
 
 	if (auto num = pvec.size())
 	{

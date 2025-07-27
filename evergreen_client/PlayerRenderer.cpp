@@ -4,6 +4,7 @@
 #include "ServerObject.h"
 #include "AuthenticPlayer.h"
 #include "../common/json.hpp"
+#include "GameScene.h"
 
 void PlayerRenderer::OnInitialize()
 {
@@ -141,6 +142,11 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 	m_stateMachine->Update(time.deltaTime);
 
 	UpdateViewDirection(time.deltaTime);
+
+	if (GameScene* gameScene = dynamic_cast<GameScene*>(&scene))
+	{
+		gameScene->AddMinimapMark(GetTransform()->GetLocalPosition(), 2);
+	}
 }
 
 void PlayerRenderer::SetViewDirection(float yaw, float pitch)

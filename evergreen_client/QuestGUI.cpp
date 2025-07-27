@@ -72,7 +72,6 @@ void QuestGUI::OnInitialize()
 			m_questList[i].DescriptionText->SetRaycastTarget(false);
 			m_questList[i].DescriptionText->SetAlignment(GUIText::Alignment::UpperLeft);
 			m_questList[i].DescriptionText->SetText(L"## Quest Description ##");
-			m_questList[i].DescriptionText->SetColor(Color(0.125f, 0.125f, 0.125f, 1.0f));
 
 			questContentObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 140.0f - i * 80.0f, 0.0f));
 			questImageObj->GetTransform()->SetLocalPosition(Vector3(-160.0f, 0.0f, 0.0f));
@@ -240,6 +239,16 @@ void QuestGUI::OnInitialize()
 	FetchQuestList();
 	UpdateQuestPage(0);
 	UpdatePartyPage(0);
+}
+
+void QuestGUI::OnActive()
+{
+	m_questListPanel->GetTransform()->SetLocalPositionY(-50.0f);
+}
+
+void QuestGUI::Update(const Time& time, Scene& scene)
+{
+	m_questListPanel->GetTransform()->SetLocalPositionY(std::lerp(m_questListPanel->GetTransform()->GetLocalPosition().y, 0.0f, time.deltaTime * 16.0f));
 }
 
 void QuestGUI::RequestPartyList(int questID)

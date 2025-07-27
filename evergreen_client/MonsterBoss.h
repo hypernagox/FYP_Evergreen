@@ -37,4 +37,5 @@ public:
 	void OnLandingAtPosition(const Vector3& pos);
 	void SetFlightViewAngle(float angle);
 	virtual void OnAnimationStateChange(AnimationState from, AnimationState to) override;
+	virtual int GetMarkIndex() const override { return 1; }
 };

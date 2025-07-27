@@ -11,7 +11,7 @@
 #include "DropItem.h"
 #include "DropItemRenderer.h"
 #include "../common/json.hpp"
-#include "MonsterRenderer.h"
+#include "NPCRenderer.h"
 #include "GizmoCylinderRenderer.h"
 #include "ServerObjectMgr.h"
 #include "GuideSystem.h"
@@ -155,7 +155,7 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_Monster(EntityBuil
 
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
-		auto renderer = instance->AddComponent<MonsterRenderer>();
+		auto renderer = instance->AddComponent<NPCRenderer>();
 		return instance;
 	}
 	}
@@ -170,15 +170,13 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderB
 	auto instance = udsdx::SceneObject::MakeShared();
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
 
-	instance->AddComponent<EntityMovement>();
 	auto serverComponent = instance->AddComponent<ServerObject>();
 	serverComponent->SetObjID(builder->obj_id);
 
 	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 	moveInterpolator->InitInterpolator(b->obj_pos);
 
-	// TODO: 원거리 공격 몬스터가 NPC로 생성된다. Create_Moster로 통합하여 타입별로 컴포넌트 생성을 다양화시키는 방향
-	auto renderer = instance->AddComponent<MonsterRenderer>();
+	auto renderer = instance->AddComponent<NPCRenderer>();
 	return instance;
 }
 

@@ -1194,6 +1194,11 @@ namespace udsdx
 		return m_shadowMap.get();
 	}
 
+	ScreenSpaceAO* Core::GetScreenSpaceAO() const
+	{
+		return m_screenSpaceAO.get();
+	}
+
 	MonoUploadBuffer* Core::GetMonoUploadBuffer() const
 	{
 		return m_monoUploadBuffer.get();

@@ -17,6 +17,35 @@ void GamePauseGUI::OnInitialize()
 	GetSceneObject()->AddChild(m_panel);
 
 	{
+		auto verticalPanel = SceneObject::MakeShared();
+		verticalPanel->GetTransform()->SetLocalPosition(Vector3(640.0f, 0.0f, 0.0f));
+		auto verticalPanelRenderer = verticalPanel->AddComponent<GUIImage>();
+		verticalPanelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\alpha_gradient_black.png")));
+		verticalPanelRenderer->SetSize(Vector2(1280.0f, 1440.0f));
+		verticalPanelRenderer->SetColor(Vector4(1.0f, 1.0f, 1.0f, 0.75f));
+		m_panel->AddChild(verticalPanel);
+	}
+
+	{
+		auto verticalPanel = SceneObject::MakeShared();
+		verticalPanel->GetTransform()->SetLocalPosition(Vector3(-640.0f, 0.0f, 0.0f));
+		auto verticalPanelRenderer = verticalPanel->AddComponent<GUIImage>();
+		verticalPanelRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\alpha_gradient_black_flip.png")));
+		verticalPanelRenderer->SetSize(Vector2(1280.0f, 1440.0f));
+		verticalPanelRenderer->SetColor(Vector4(1.0f, 1.0f, 1.0f, 0.75f));
+		m_panel->AddChild(verticalPanel);
+	}
+
+	{
+		auto titleImage = SceneObject::MakeShared();
+		titleImage->GetTransform()->SetLocalPosition(Vector3(0.0f, 419.0f, 0.0f));
+		auto titleImageRenderer = titleImage->AddComponent<GUIImage>();
+		titleImageRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\title.png")));
+		titleImageRenderer->SetSize(Vector2(780.0f, 520.0f));
+		m_panel->AddChild(titleImage);
+	}
+
+	{
 		m_resumeButton = SceneObject::MakeShared();
 		m_resumeButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -240.0f, 0.0f));
 
@@ -36,7 +65,7 @@ void GamePauseGUI::OnInitialize()
 
 	{
 		m_channelSwitchButton = SceneObject::MakeShared();
-		m_channelSwitchButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -300.0f, 0.0f));
+		m_channelSwitchButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -320.0f, 0.0f));
 
 		auto buttonComponent = m_channelSwitchButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));
@@ -58,7 +87,7 @@ void GamePauseGUI::OnInitialize()
 
 	{
 		m_exitButton = SceneObject::MakeShared();
-		m_exitButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -360.0f, 0.0f));
+		m_exitButton->GetTransform()->SetLocalPosition(Vector3(0.0f, -400.0f, 0.0f));
 
 		auto buttonComponent = m_exitButton->AddComponent<GUISimpleButton>();
 		buttonComponent->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\quest_box.png")));

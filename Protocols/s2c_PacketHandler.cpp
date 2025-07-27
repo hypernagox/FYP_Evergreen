@@ -628,11 +628,13 @@ const bool Handle_s2c_PARTY_JOIN_NEW_PLAYER(const NetHelper::S_ptr<NetHelper::Pa
 
 const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_QUEST_END& pkt_)
 {
-	ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Default);
-	ServerObjectMgr::GetInst()->GetTargetScene()->OnQuestEnd();
 	ServerObjectMgr::GetInst()->GetMainHero()->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
-	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {}, L"퀘스트를 종료하는 중 ...");
+	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {
+		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
+		ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Default);
+		ServerObjectMgr::GetInst()->GetTargetScene()->OnQuestEnd();
+		}, L"퀘스트를 종료하는 중 ...");
 	GuideSystem::GetInst()->DisableClearTree();
 
 	// TODO: 0번 퀘스트가 클리어되었다면 (튜토리얼 호위퀘스트였다면 파티창 꺼주기
@@ -648,7 +650,9 @@ const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::Packet
 {
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	GuideSystem::GetInst()->InActiveFlag();
-	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {}, L"퀘스트를 시작하는 중 ...");
+	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {
+		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
+		}, L"퀘스트를 시작하는 중 ...");
 	return true;
 }
 

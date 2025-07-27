@@ -70,6 +70,16 @@ void ChannelSwitchGUI::OnInitialize()
 	SwitchChannelPage(m_currentPage);
 }
 
+void ChannelSwitchGUI::OnActive()
+{
+	m_panel->GetTransform()->SetLocalPositionY(-50.0f);
+}
+
+void ChannelSwitchGUI::Update(const Time& time, Scene& scene)
+{
+	m_panel->GetTransform()->SetLocalPositionY(std::lerp(m_panel->GetTransform()->GetLocalPosition().y, 0.0f, time.deltaTime * 16.0f));
+}
+
 void ChannelSwitchGUI::SetPanelGraphic(bool isEnter)
 {
 	auto uiRenderer = m_panel->AddComponent<GUIImage>();
