@@ -135,10 +135,12 @@ void ServerSession::SendMovePacketRoutine() noexcept
 
 void ServerSession::UpdateMove() noexcept
 {
+	const auto nav_mesh = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD);
+	const auto nav_q = nav_mesh->GetNavMeshQuery();
 	++m_moveCount;
 	//pos += dir * 4.f * 0.5f;
 	
-	NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
+	//NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
 
 	//++dir_count;
 	//if (10 < dir_count)
@@ -157,7 +159,14 @@ void ServerSession::UpdateMove() noexcept
 		// µµÂø
 		vel = {};
 		accel = {};
-		NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
+		const auto cell = nav_mesh->GetNaviCell(pos);
+		auto prev_pos = pos;
+		CommonMath::InverseZ(prev_pos);
+		const auto status = nav_q->closestPointOnPoly(cell.GetPolyRef(), &prev_pos.x, &pos.x, nullptr);
+		if (dtStatusSucceed(status))
+		{
+			CommonMath::InverseZ(pos);
+		}
 		//SendAsync(Create_c2s_CHANGE_HARVEST_STATE());
 		//SendAsync(Create_c2s_ACQUIRE_ITEM(0));
 		SetPath();
@@ -169,8 +178,15 @@ void ServerSession::UpdateMove() noexcept
 	accel = vel;
 	pos += dir_;
 
-	NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
 
+	const auto cell = nav_mesh->GetNaviCell(pos);
+	auto prev_pos = pos;
+	CommonMath::InverseZ(prev_pos);
+	const auto status = nav_q->closestPointOnPoly(cell.GetPolyRef(), &prev_pos.x, &pos.x, nullptr);
+	if (dtStatusSucceed(status))
+	{
+		CommonMath::InverseZ(pos);
+	}
 	
 	m_curDistAcc += dir_.Length();
 	//m_curDistAcc += m_navAgent->ApplyPostPosition(m_vecDirDists[m_cur_idx].first, m_speed, (cur_time - m_last_update_timestamp) * 0.001f);

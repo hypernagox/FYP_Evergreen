@@ -319,7 +319,7 @@ bool ArcherSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
 			
 			if (CommonMath::IsInDistanceDX(npcPosComp->pos, centerPos, 10.f))
 			{
-				npc_hp->PostDoDmg(5, player, 5);
+				npc_hp->PostDoDmg(1, player, 5);
 			}
 			
 		}

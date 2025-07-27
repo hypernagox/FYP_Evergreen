@@ -8,35 +8,47 @@
 #include "EntityMovement.h"
 #include "GizmoCylinderRenderer.h"
 #include "InteractiveEntity.h"
+#include "ServerObjectMgr.h"
 
 using namespace udsdx;
 
 GuideSystem::GuideSystem()
 {
 	// 교체 필요
-	SetPathObjMaker([](const std::vector<Vector3>& v) {
+	static const auto mesh_res = INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"path_arrow.yms"));
+	static const auto material_res = INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotexpath.hlsl"));
+	SetPathObjMaker([&](const std::vector<Vector3>& v)noexcept {
 		
-		for (int i = 1; i < v.size(); ++i) {
+		const int diff = (int)v.size() - (int)m_guide_objects.size();
+		if (0 < diff)
+		{
+			for (int i = 0; i < diff; ++i) 
+			{
+				auto s = udsdx::SceneObject::MakeShared();
+				auto meshRenderer = s->AddComponent<udsdx::MeshRenderer>();
+				meshRenderer->SetCastShadow(false);
+				meshRenderer->SetMesh(mesh_res);
+				meshRenderer->SetMaterial(material_res);
+				GuideSystem::GetInst()->m_guide_objects.emplace_back(s);
+				GuideSystem::GetInst()->m_targetScene->AddObject(s);
+				m_guide_objects[i]->GetTransform()->SetLocalScale(Vector3::One * 0.5f);
+			}
+		}
+		const auto num = (int)m_guide_objects.size();
+		for (int i = 1; i < num; ++i)
+		{
 			Vector3 wv = wv = v[i] - v[i - 1];
 			wv.Normalize();
 			Vector3 vv = Vector3::Up;
 			Vector3 uv = vv.Cross(wv);
 			uv.Normalize();
 			vv = wv.Cross(uv);
-			Matrix4x4 m = Matrix4x4(uv, vv, wv);
+			const Matrix4x4 m = Matrix4x4(uv, vv, wv);
 
 			const auto position = v[i];
-			auto s = udsdx::SceneObject::MakeShared();
-			auto meshRenderer = s->AddComponent<udsdx::MeshRenderer>();
-			meshRenderer->SetCastShadow(false);
-			meshRenderer->SetMesh(INSTANCE(udsdx::Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(L"path_arrow.yms")));
-			meshRenderer->SetMaterial(INSTANCE(udsdx::Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornotexpath.hlsl")));
-			auto transform = s->GetTransform();
+			const auto transform = m_guide_objects[i]->GetTransform();
 			transform->SetLocalPosition(position + Vector3::Up * 0.5f);
 			transform->SetLocalRotation(Quaternion::CreateFromRotationMatrix(m));
-			transform->SetLocalScale(Vector3::One * 0.5f);
-			GuideSystem::GetInst()->m_guide_objects.emplace_back(s);
-			GuideSystem::GetInst()->m_targetScene->AddObject(s);
 		}
 		});
 }
@@ -140,9 +152,9 @@ const bool GuideSystem::SetHarvestState(const uint32_t server_id, const uint32_t
 	// 아직 이 클라는 채집물이 없는 상황
 	// 채집물 인액티브 패킷은 무시되고, 어피어오브젝트를 받았을 때 패킷 제작 시 넣은 정보가 액티브여서 오차 발생
 	// 만약 내가 모르는 채집물인데 채집물 상태변화 패킷이 와버렸다면 버리지말고 기억
-	std::cout << "SetHarvestState: server_id: " << server_id
-		<< ", harvest_id: " << harvest_id
-		<< ", is_active: " << is_active << std::endl;
+	//std::cout << "SetHarvestState: server_id: " << server_id
+	//	<< ", harvest_id: " << harvest_id
+	//	<< ", is_active: " << is_active << std::endl;
 	if (0 > harvest_id || m_mapHarvest.size() <= static_cast<size_t>(harvest_id))
 		return false; // 유효하지 않은 harvest_id
 	const auto harvest = m_mapHarvest[harvest_id].get();
@@ -242,7 +254,13 @@ void GuideSystem::SetGuidePathInternal(const Vector3& target_pos)
 	Vector3 temp = pos;
 	navi->SetCellPos(DT, pos, pos, temp);
 	// TODO: 점 사이 사이 간격의 길이가 매직넘버
-	const auto& v = NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetPathVertices(
-		pos, target_pos, 1.0f);
-	m_path_obj_maker(v);
+	if (const auto main_hero = ServerObjectMgr::GetInst()->GetMainHero())
+	{
+		if (const auto nav_mesh = main_hero->GetNaviAgent()->GetNavMesh())
+		{
+			const auto& v = nav_mesh->GetPathVertices(
+				pos, target_pos, 2.0f);
+			m_path_obj_maker(v);
+		}
+	}
 }

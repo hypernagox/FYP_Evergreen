@@ -212,13 +212,13 @@ namespace NagiocpX
 
 		monster_entity->GetComp<SphereCollider>()->GetCollider()->m_offSet.y += 1.f;
 
-		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int,"Monster", "Fox", "hp")); // TODO 매직넘버
+		monster_entity->AddComp<HP>()->InitHP(GET_DATA(int,"Monster", "Sheep", "hp")); // TODO 매직넘버
 		monster_entity->AddComp<MonsterDeath>();
 
 		// TODO: 필요할때만 딜리터 설정하기
 		monster_entity->SetDeleter<Regenerator>(15000, agent->GetPosComp()->pos);
 
-		monster_entity->AddComp<DropTable>()->SetItemType("Fox");
+		monster_entity->AddComp<DropTable>()->SetItemType("Sheep");
 
 		return monster_entity;
 	}

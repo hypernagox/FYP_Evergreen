@@ -473,6 +473,7 @@ const bool Handle_c2s_INVITE_PARTY_QUEST(const NagiocpX::S_ptr<NagiocpX::PacketS
 	//if (!session->IsPartyLeader())return true;
 	const auto leader = session->QueryPartyLeader();
 	if (!leader)return true;
+	if (target_user->GetClientSession()->GetCurPartySystem())return true;
 	// 파티장이 타겟 유저에게 자신의 아이디와 현재 퀘스트 아이디를 보낸다
 	// + 파티장의 이름도 알려준다 예:) Nagox님이 초대하였습니다.
 	target_user->GetSession()->SendAsync(Create_s2c_INVITE_PARTY_QUEST(pSession_->GetSessionID(), leader->GetCurPartyQuestID(),session->m_userName));

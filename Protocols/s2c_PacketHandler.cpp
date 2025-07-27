@@ -761,7 +761,7 @@ const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::
 {
 	std::string user_name;
 	for (const auto ch : *pkt_.user_name())user_name.push_back(ch);
-	std::cout << "User Name: " << user_name << std::endl;
+	//std::cout << "User Name: " << user_name << std::endl;
 	if (const auto obj = ServerObjectMgr::GetInst()->GetServerObj(pkt_.obj_id()))
 	{
 		if (const auto renderer = obj->GetComponent<PlayerRenderer>())
