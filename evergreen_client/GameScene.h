@@ -39,6 +39,7 @@ public:
 	void RequestChangeGameScene(GameSceneType type);
 	void ChangeGameScene(GameSceneType type);
 	void AddMinimapMark(const Vector3& position);
+	void OnQuestEnd();
 
 	void ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback = nullptr);
 	void OnDialogueEnd();

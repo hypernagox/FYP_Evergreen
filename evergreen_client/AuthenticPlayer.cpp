@@ -296,10 +296,12 @@ void AuthenticPlayer::TryClickScreen(int mouse)
 	{
 	case 0: // 왼쪽 마우스 버튼
 		m_playerRenderer->Attack();
+		m_playerStatusGUI->UseSkill(0);
 		DoAttack(Nagox::Enum::SKILL_TYPE_DEFAULT);
 		break;
 	case 1: // 오른쪽 마우스 버튼
 		m_playerRenderer->Attack();
+		m_playerStatusGUI->UseSkill(1);
 		DoAttack(Nagox::Enum::SKILL_TYPE_SKILL_1);
 	}
 	//std::cout << "공격 시도\n";
@@ -439,6 +441,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	if (fm->CheckDash() && PlayerRenderer::AnimationState::Dash != m_playerRenderer->GetCurrentState())
 	{
 		m_playerRenderer->Dash();
+		m_playerStatusGUI->UseSkill(2);
 		soundEffectInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\dash.wav"))->CreateInstance();
 		soundEffectInstance->SetVolume(0.5f);
 		soundEffectInstance->Play();

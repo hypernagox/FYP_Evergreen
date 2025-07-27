@@ -322,11 +322,21 @@ void PlayerRenderer::SetPlayerWeapon(int weaponID)
 
 	toolRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::Mesh>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "Model"))));
 	toolRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Weapon", weaponName, "ModelDiffuse")))));
-	toolRenderer->SetPropLocalTransform(
-		Matrix4x4::CreateScale(scaleJson["X"], scaleJson["Y"], scaleJson["Z"]) *
-		Matrix4x4::CreateFromYawPitchRoll(rotationJson["Y"] * DEG2RAD, rotationJson["X"] * DEG2RAD, rotationJson["Z"] * DEG2RAD) *
-		Matrix4x4::CreateTranslation(positionJson["X"], positionJson["Y"], positionJson["Z"])
-		);
+
+	Vector3 scale = Vector3(scaleJson["X"], scaleJson["Y"], scaleJson["Z"]);
+	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(rotationJson["Y"] * DEG2RAD, rotationJson["X"] * DEG2RAD, rotationJson["Z"] * DEG2RAD);
+	Vector3 position = Vector3(positionJson["X"], positionJson["Y"], positionJson["Z"]);
+	Quaternion postRotation = Quaternion::Identity;
+
+	if (m_characterType == CharacterType::Archer)
+	{
+		scale *= 0.5f;
+		postRotation = Quaternion::CreateFromYawPitchRoll(PIDIV2, 0.0f, PIDIV2);
+		position *= 0.5f;
+		position += Vector3(1.0f, -1.0f, 0.0f);
+	}
+
+	toolRenderer->SetPropLocalTransform(Matrix4x4::CreateScale(scale) *	Matrix4x4::CreateFromQuaternion(rotation) *	Matrix4x4::CreateTranslation(position) * Matrix4x4::CreateFromQuaternion(postRotation));
 }
 
 void PlayerRenderer::SetPlayerArmor(int armorID)

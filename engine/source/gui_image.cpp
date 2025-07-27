@@ -10,8 +10,6 @@ namespace udsdx
 {
 	void GUIImage::Render(RenderParam& param)
 	{
-		float ratio = param.Viewport.Height / RefScreenSize.y;
-		Vector3 position = GetTransform()->GetWorldPosition() * Vector3(ratio, -ratio, 1.0f) + Vector3(param.Viewport.Width / 2.0f, param.Viewport.Height / 2.0f, 0.0f);
 		if (m_texture != nullptr)
 		{
 			Matrix4x4 m = GetTransform()->GetWorldSRTMatrix();
@@ -24,6 +22,7 @@ namespace udsdx
 
 			Vector2Int textureSize = m_texture->GetSize();
 			RECT sourceRect = { 0, 0, textureSize.x, textureSize.y };
+			Vector2 offset = Vector3::Zero;
 			switch (m_fillType)
 			{
 			case udsdx::GUIImage::FillType::FillHorizontalRight:
@@ -31,14 +30,19 @@ namespace udsdx
 				break;
 			case udsdx::GUIImage::FillType::FillHorizontalLeft:
 				sourceRect.left = static_cast<LONG>(textureSize.x * (1.0f - m_fillAmount));
+				offset.x = -static_cast<float>(textureSize.x) * (1.0f - m_fillAmount);
 				break;
 			case udsdx::GUIImage::FillType::FillVerticalUp:
 				sourceRect.top = static_cast<LONG>(textureSize.y * (1.0f - m_fillAmount));
+				offset.y = -static_cast<float>(textureSize.y) * (1.0f - m_fillAmount);
 				break;
 			case udsdx::GUIImage::FillType::FillVerticalDown:
 				sourceRect.bottom = static_cast<LONG>(textureSize.y * m_fillAmount);
 				break;
 			}
+
+			float ratio = param.Viewport.Height / RefScreenSize.y;
+			Vector3 position = GetTransform()->GetWorldPosition() * Vector3(ratio, -ratio, 1.0f) + Vector3(param.Viewport.Width / 2.0f, param.Viewport.Height / 2.0f, 0.0f);
 
 			param.SpriteBatchNonPremultipliedAlpha->Draw(
 				m_texture->GetSrvGpu(),
@@ -47,7 +51,7 @@ namespace udsdx
 				&sourceRect,
 				m_color,
 				0.0f,
-				Vector2(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y)) * 0.5f,
+				Vector2(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y)) * 0.5f + offset,
 				Vector2(scaleX * m_size.x / textureSize.x, scaleY * m_size.y / textureSize.y) * ratio
 			);
 		}

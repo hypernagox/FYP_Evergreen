@@ -137,6 +137,7 @@ void TutorialUI::OnInitialize()
 	auto uiRenderer = m_tutorialMark->AddComponent<GUIImage>();
 	uiRenderer->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\tutorial\\qmark.png")), true);
 	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
+	m_tutorialMark->SetActive(false);
 	object->AddChild(m_tutorialMark);
 }
 
@@ -203,6 +204,7 @@ void TutorialUI::StartTutorialGUI()
 {
 	m_start_flag = true;
 	m_tutorialUIs[(int)UI_TYPE::WASD]->m_gui->SetActive(true);
+	m_tutorialMark->SetActive(true);
 }
 
 UI_TYPE WASDTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)

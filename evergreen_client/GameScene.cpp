@@ -261,7 +261,7 @@ void GameScene::OnAttach()
         interactiveEntity->SetInteractionText(L"NPC와 대화하기");
         interactiveEntity->SetInteractionCallback([this]() {
             m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\Talking.yac")), true, true);
-            ShowDialogue(m_npcObj, "Test", [this]() {
+            ShowDialogue(m_npcObj, "Tutorial", [this]() {
                 m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
                 // TODO: 대화 완료 시 로직이 여기서 수행됨
                 Send(Create_c2s_REGISTER_PARTY_QUEST(0));
@@ -891,6 +891,20 @@ void GameScene::ChangeGameScene(GameSceneType type)
 void GameScene::AddMinimapMark(const Vector3& position)
 {
     m_minimapMarks.emplace_back(position);
+}
+
+void GameScene::OnQuestEnd()
+{
+    m_npcObj->GetTransform()->SetLocalPosition(-125.733f, 75.717f, 14.932f);
+    m_npcObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, 0.0f, 0.0f));
+
+    auto interactiveEntity = m_npcObj->GetComponent<InteractiveEntity>();
+    interactiveEntity->SetInteractionCallback([this]() {
+        m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\Talking.yac")), true, true);
+        ShowDialogue(m_npcObj, "Chief", [this]() {
+            m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
+            });
+        });
 }
 
 void GameScene::ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback)
