@@ -23,6 +23,7 @@ protected:
 	Vector3 m_flightEndPosition = Vector3::Zero;
 	float m_flightTime = 0.0f;
 	float m_flightTimeTotal = 0.0f;
+	float m_flightViewAngle = 0.0f;
 
 public:
 	void OnInitialize() override;
@@ -34,5 +35,6 @@ public:
 	void UpdateFlightMovement(float deltaTime);
 	void OnTakeoffAtPosition(const Vector3& pos);
 	void OnLandingAtPosition(const Vector3& pos);
+	void SetFlightViewAngle(float angle);
 	virtual void OnAnimationStateChange(AnimationState from, AnimationState to) override;
 };

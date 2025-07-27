@@ -862,6 +862,7 @@ const bool Handle_s2c_BOSS_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>
 	const auto boss_angle = pkt_.boss_angle();
 	//std::cout << std::format("x:{},y:{},z{}\n", target_pos.x, target_pos.y, target_pos.z);
 	boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateNewMoveDataOnlyPos(target_pos);
+	boss_ptr->GetComponent<MonsterBoss>()->SetFlightViewAngle(boss_angle);
 	
 	return true;
 }

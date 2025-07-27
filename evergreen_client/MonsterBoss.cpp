@@ -99,6 +99,10 @@ void MonsterBoss::Update(const Time& time, Scene& scene)
     {
         UpdateFlightMovement(time.deltaTime);
     }
+    else if (m_isTakeoff)
+    {
+        m_entityMovement->SetRotation(Quaternion::Slerp(m_entityMovement->GetRotation(), Quaternion::CreateFromYawPitchRoll(m_flightViewAngle * DEG2RAD + PI, 0.0f, 0.0f), time.deltaTime * 2.0f));
+    }
 
     Monster::Update(time, scene);
 }
@@ -176,6 +180,11 @@ void MonsterBoss::OnLandingAtPosition(const Vector3& pos)
     m_flightTimeTotal = (m_flightEndPosition - m_flightStartPosition).Length() / 10.0f;
     m_isTakeoff = false;
     m_isFlyMovement = true;
+}
+
+void MonsterBoss::SetFlightViewAngle(float angle)
+{
+    m_flightViewAngle = angle;
 }
 
 void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)

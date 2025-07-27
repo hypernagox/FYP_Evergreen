@@ -38,6 +38,7 @@ public:
 public:
     virtual void Update()noexcept override;
     void UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_)noexcept;
+    void UpdateNewMoveData(const Vector3& position, float viewAngleY)noexcept;
     void UpdateNewMoveDataOnlyPos(const Vector3& dest_pos)noexcept;
     void UpdateForcedMoveData(const Vector3& pos)noexcept;
     void InitInterpolator(const Vector3& v) {

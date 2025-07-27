@@ -74,6 +74,14 @@ void MoveInterpolator::UpdateNewMoveData(const Nagox::Protocol::s2c_MOVE& pkt_) 
 	//root_obj->GetTransform()->SetLocalPosition(move_data.pos);
 }
 
+void MoveInterpolator::UpdateNewMoveData(const Vector3& position, float viewAngleY) noexcept
+{
+	auto move_data = m_interpolator.GetInterPolatedData();
+	m_interpolator.UpdateNewData(MoveData{ position, viewAngleY, {}, {} });
+	m_interpolator.GetCurData().pos = move_data.pos;
+	m_interpolator.GetCurData().body_angleY = move_data.body_angleY;
+}
+
 void MoveInterpolator::UpdateNewMoveDataOnlyPos(const Vector3& dest_pos) noexcept
 {
 	const auto owner_player = m_owner->GetSceneObject()->GetComponent<EntityMovement>();
