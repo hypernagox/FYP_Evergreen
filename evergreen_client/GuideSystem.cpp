@@ -259,7 +259,7 @@ void GuideSystem::SetGuidePathInternal(const Vector3& target_pos)
 		if (const auto nav_mesh = main_hero->GetNaviAgent()->GetNavMesh())
 		{
 			const auto& v = nav_mesh->GetPathVertices(
-				pos, target_pos, 2.0f);
+				pos, target_pos, 1.0f);
 			m_path_obj_maker(v);
 		}
 	}
