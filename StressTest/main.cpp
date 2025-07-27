@@ -56,7 +56,8 @@ constexpr const bool USE_AWS_FLAG = false;
 
 constexpr const static inline wchar_t IP_ADDR[][256]
 {
-	 L"127.0.0.1",
+	// L"192.168.71.136"
+	L"127.0.0.1",
 	L"43.203.153.176"
 };
 
@@ -77,7 +78,7 @@ int main()
 			, NagiocpX::NetAddress{ IP_ADDR[USE_AWS_FLAG],7777}
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 2000
+			, 1000
 		);
 	
 	

@@ -186,8 +186,11 @@ bool WarriorSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcep
 							const auto& victim_pos = owner->GetComp<PositionComponent>()->pos;
 							const auto dir = CommonMath::Normalized(victim_pos - atk_pos);
 							ClusterPredicate c;
-							owner->GetQueueabler()->EnqueueAsync(&NaviAgent::ForcedMovement, navi_agent, dir, 10.f);
-							owner->GetComp<ClusterInfoHelper>()->BroadcastCluster(c.ClusterPredicate::CreateMovePacket(owner));
+							if (Nagox::Enum::MONSTER_TYPE_BOSS != owner->GetDetailType())
+							{
+								owner->GetQueueabler()->EnqueueAsync(&NaviAgent::ForcedMovement, navi_agent, dir, 10.f);
+								owner->GetComp<ClusterInfoHelper>()->BroadcastCluster(c.ClusterPredicate::CreateMovePacket(owner));
+							}
 						}
 						owner->GetComp<HP>()->PostDoDmg(1, pOwner->SharedFromThis(), 5);
 						isHit = true;
@@ -319,7 +322,7 @@ bool ArcherSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
 			
 			if (CommonMath::IsInDistanceDX(npcPosComp->pos, centerPos, 10.f))
 			{
-				npc_hp->PostDoDmg(5, player, 5);
+				npc_hp->PostDoDmg(1, player, 5);
 			}
 			
 		}

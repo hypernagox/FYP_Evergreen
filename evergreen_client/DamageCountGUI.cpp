@@ -66,7 +66,7 @@ void DamageCountGUI::AddCountObject(const Vector3& targetPos, unsigned int damag
 			auto nameRenderer = textObj->AddComponent<GUIText>();
 			nameRenderer->SetFont(INSTANCE(Resource)->Load<udsdx::Font>(RESOURCE_PATH(L"sansman.spritefont")));
 			nameRenderer->SetRaycastTarget(false);
-			nameRenderer->SetText(std::to_wstring(damageCount / hit_count));
+			nameRenderer->SetText(std::to_wstring(damageCount / hit_count + 10 + rand() % 10));
 
 			countObj->AddChild(textObj);
 			GetSceneObject()->AddChild(countObj);

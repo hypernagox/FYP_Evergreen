@@ -322,8 +322,8 @@ void TutorialGuardQuest::SetMonsters(const XVector<Vector3> points) noexcept
 void NPCGuardQuestBase::SetPathNPC(XVector<Vector3> path) noexcept
 {
 	EntityBuilder b;
-	b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
-	b.obj_type = Nagox::Enum::MONSTER_TYPE_BEAR;
+	b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
+	b.obj_type = 0; // TODO: NPC종류 세분화
 	const auto m = EntityFactory::CreatePathNPC(b);
 	const auto m2 = m;
 	//EnterFieldNPC(m);

@@ -104,11 +104,12 @@ public:
 		
 		for (int c = 0; c < 20; ++c)
 		{
-			for (int i = 0; i < 5000/20; ++i)
+			uint64_t idx = 0;
+			for (int i = 0; i < 5000/10; ++i)
 			{
 				EntityBuilder b;
 				b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
-				b.obj_type = Nagox::Enum::MONSTER_TYPE_FOX;
+				b.obj_type = (idx++ % 3);
 				const auto m = EntityFactory::CreateSheep(b);
 				const auto m2 = m.get();
 				static_cast<Regenerator*>(m->GetDeleter())->m_targetField = Field::GetField(c)->SharedFromThis<Field>();
