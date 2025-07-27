@@ -290,7 +290,7 @@ void GameScene::OnAttach()
         auto treeRenderer = treeObj->AddComponent<MeshRenderer>();
         
         treeObj->GetTransform()->SetLocalScale(Vector3::One * 0.01f);
-        treeObj->GetTransform()->SetLocalPosition(Vector3(-20.861689F, 72.62489F, 46.038242F));
+        treeObj->GetTransform()->SetLocalPosition(Vector3::Zero);
         treeObj->SetActive(true);
         
         treeRenderer->SetMesh(resource->Load<udsdx::Mesh>(RESOURCE_PATH(L"goldentree\\tree.yms")));
