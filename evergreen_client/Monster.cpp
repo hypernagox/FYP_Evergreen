@@ -84,35 +84,35 @@ void Monster::OnHit(int afterHealth)
 			particleEmitter->GetEmitterParameter().SizeMin = Vector2(0.2f, 0.2f);
 			particleEmitter->GetEmitterParameter().SizeMax = Vector2(2.0f, 0.2f);
 			particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
-			particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+			particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
 			particleEmitter->SetEmitLoop(false);
 			particleEmitter->SetOrientedByDirection(true);
 			particleEmitter->SetAutoDestroy(true);
 			particleEmitter->Play();
 		}
 
-		auto starParticleObj = SceneObject::MakeShared();
-		starParticleObj->GetTransform()->SetLocalPosition(GetTransform()->GetLocalPosition() + Vector3::Up);
-		{
-			auto particleEmitter = starParticleObj->AddComponent<SphereParticleEmitter>();
-			particleEmitter->SetColor(Vector3(1.0f, 0.8326f, 0.0f) * 4.0f);
-			particleEmitter->SetDrawCount(16);
-			particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\star.png")));
-			particleEmitter->GetEmitterParameter().LifeTimeMin = 0.4f;
-			particleEmitter->GetEmitterParameter().LifeTimeMax = 0.6f;
-			particleEmitter->GetEmitterParameter().SpeedMin = 4.0f;
-			particleEmitter->GetEmitterParameter().SpeedMax = 6.0f;
-			particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.25f;
-			particleEmitter->GetEmitterParameter().SizeMin = Vector2(0.2f, 0.2f);
-			particleEmitter->GetEmitterParameter().SizeMax = Vector2(0.2f, 0.2f);
-			particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * -0.25f;
-			particleEmitter->GetEmitterParameter().RotationMin = 3.0f;
-			particleEmitter->GetEmitterParameter().RotationMax = 6.0f;
-			particleEmitter->GetEmitterParameter().RotationLifeExp = 0.25f;
-			particleEmitter->SetEmitLoop(false);
-			particleEmitter->SetAutoDestroy(true);
-			particleEmitter->Play();
-		}
+		//auto starParticleObj = SceneObject::MakeShared();
+		//starParticleObj->GetTransform()->SetLocalPosition(GetTransform()->GetLocalPosition() + Vector3::Up);
+		//{
+		//	auto particleEmitter = starParticleObj->AddComponent<SphereParticleEmitter>();
+		//	particleEmitter->SetColor(Vector3(1.0f, 0.8326f, 0.0f) * 4.0f);
+		//	particleEmitter->SetDrawCount(16);
+		//	particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\star.png")));
+		//	particleEmitter->GetEmitterParameter().LifeTimeMin = 0.4f;
+		//	particleEmitter->GetEmitterParameter().LifeTimeMax = 0.6f;
+		//	particleEmitter->GetEmitterParameter().SpeedMin = 4.0f;
+		//	particleEmitter->GetEmitterParameter().SpeedMax = 6.0f;
+		//	particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.25f;
+		//	particleEmitter->GetEmitterParameter().SizeMin = Vector2(0.2f, 0.2f);
+		//	particleEmitter->GetEmitterParameter().SizeMax = Vector2(0.2f, 0.2f);
+		//	particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * -0.25f;
+		//	particleEmitter->GetEmitterParameter().RotationMin = 3.0f;
+		//	particleEmitter->GetEmitterParameter().RotationMax = 6.0f;
+		//	particleEmitter->GetEmitterParameter().RotationLifeExp = 0.25f;
+		//	particleEmitter->SetEmitLoop(false);
+		//	particleEmitter->SetAutoDestroy(true);
+		//	particleEmitter->Play();
+		//}
 
 		auto ringParticleObj = SceneObject::MakeShared();
 		ringParticleObj->GetTransform()->SetLocalPosition(GetTransform()->GetLocalPosition() + Vector3::Up);
@@ -123,10 +123,10 @@ void Monster::OnHit(int afterHealth)
 			particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\ring.png")));
 			particleEmitter->GetEmitterParameter().LifeTimeMin = 0.5f;
 			particleEmitter->GetEmitterParameter().LifeTimeMax = 0.5f;
-			particleEmitter->GetEmitterParameter().SizeMin = Vector2(2.0f, 2.0f);
-			particleEmitter->GetEmitterParameter().SizeMax = Vector2(2.0f, 2.0f);
+			particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 1.0f;
+			particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 1.0f;
 			particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.2f;
-			particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+			particleEmitter->GetEmitterParameter().AlphaLifeExp = -0.75f;
 			particleEmitter->SetEmitLoop(false);
 			particleEmitter->SetAutoDestroy(true);
 			particleEmitter->Play();
@@ -135,7 +135,7 @@ void Monster::OnHit(int afterHealth)
 		if (Scene* scene = GetSceneObject()->GetScene())
 		{
 			scene->AddObject(hitParticleObj);
-			scene->AddObject(starParticleObj);
+			// scene->AddObject(starParticleObj);
 			scene->AddObject(ringParticleObj);
 		}
 	}

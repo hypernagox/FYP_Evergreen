@@ -43,8 +43,8 @@ PixelOut PS(VertexOut pin)
     float3 normalW = normalize(pin.NormalW.xyz);
 	float2 uvMapped = pin.Tex * 128.0f;
 
-	float4 texSplat0 = gSrcSplatmap0.Sample(gSampler, pin.Tex);
-	float4 texSplat1 = gSrcSplatmap1.Sample(gSampler, pin.Tex);
+	float4 texSplat0 = gSrcSplatmap0.SampleLevel(gSampler, pin.Tex, 0);
+	float4 texSplat1 = gSrcSplatmap1.SampleLevel(gSampler, pin.Tex, 0);
 
 	float4 aSample0 = gSrcTex0.Sample(gSampler, uvMapped);
 	float4 aSample1 = gSrcTex1.Sample(gSampler, uvMapped);

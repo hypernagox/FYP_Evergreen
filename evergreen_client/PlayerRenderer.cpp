@@ -58,6 +58,7 @@ void PlayerRenderer::OnInitialize()
 		m_stateMachine->AddTransition<Common::IntStateTransition<AnimationState, std::not_equal_to<int>>>(runState, AnimationState::RunIntermediate, m_stateMachine->GetConditionRefInt("MoveAngle"), i);
 		m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(runState, AnimationState::Attack, m_stateMachine->GetConditionRefBool("Attack"), true);
 		m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(runState, AnimationState::Dash, m_stateMachine->GetConditionRefBool("Dash"), true);
+		m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(runState, AnimationState::Hit, m_stateMachine->GetConditionRefBool("Hit"), true);
 		m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(runState, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("MoveSpeed"), 0.0f);
 	}
 

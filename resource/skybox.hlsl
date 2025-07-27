@@ -44,7 +44,7 @@ VertexOut VS(uint vid : SV_VertexID)
     ConstructVSOutput(vin, vout);
 	vout.Tex = gTexCoords[vid];
 	// Quad covering screen in NDC space.
-	vout.PosH = float4(2.0f * vout.Tex.x - 1.0f, 1.0f - 2.0f * vout.Tex.y, 1.0f - 1e-4f, 1.0f);
+	vout.PosH = float4(2.0f * vout.Tex.x - 1.0f, 1.0f - 2.0f * vout.Tex.y, asfloat(0x3F7FFFFF), 1.0f);
 	vout.NormalW = float4(-gDirLight, 0.0f);
     return vout;
 }

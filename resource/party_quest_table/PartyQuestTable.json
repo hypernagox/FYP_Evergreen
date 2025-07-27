@@ -47,6 +47,6 @@
   {
     "name": "보스퀘스트",
     "description": "보스를 잡으세요.",
-    "icon": "gui\\party_ui\\party_monster_fox.png"
+    "icon": "gui\\party_ui\\party_monster_boss.png"
   }
 ]
