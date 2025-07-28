@@ -366,7 +366,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
 		auto s = SceneObject::MakeShared();
 		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
-		s->GetTransform()->SetLocalRotation(Quaternion::LookRotation(normal, Vector3::Up));
+		s->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(std::atan2f(normal.x, normal.z), -std::asinf(normal.y), 0.0f));
 		s->GetTransform()->SetLocalScale(0.25f);
 
 		if (auto ownerObject = Mgr(ServerObjectMgr)->GetServerObj(shoot_obj_id))
@@ -408,7 +408,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 							particleEmitter->GetEmitterParameter().LifeTimeMin = 0.2f;
 							particleEmitter->GetEmitterParameter().LifeTimeMax = 0.4f;
 							particleEmitter->GetEmitterParameter().SpeedMin = 0.0f;
-							particleEmitter->GetEmitterParameter().SpeedMax = 160.0f;
+							particleEmitter->GetEmitterParameter().SpeedMax = -160.0f;
 							particleEmitter->GetEmitterParameter().SpeedLifeExp = 1.0f;
 							particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 0.1f;
 							particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 0.2f;
@@ -437,8 +437,8 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 						particleEmitter->GetEmitterParameter().SpeedMin = 0.0f;
 						particleEmitter->GetEmitterParameter().SpeedMax = 0.0f;
 						particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.5f;
-						particleEmitter->GetEmitterParameter().SizeMin = Vector2(40.0f, 0.1f);
-						particleEmitter->GetEmitterParameter().SizeMax = Vector2(40.0f, 0.1f);
+						particleEmitter->GetEmitterParameter().SizeMin = Vector2(-40.0f, 0.1f);
+						particleEmitter->GetEmitterParameter().SizeMax = Vector2(-40.0f, 0.1f);
 						particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2(1.0f, 0.0f);
 						particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
 						particleEmitter->SetEmitLoop(false);
@@ -448,6 +448,56 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 						particleEmitter->Play();
 					}
 					break;
+				}
+			}
+			else
+			{
+				{
+					auto particleEmitter = s->AddComponent<SphereParticleEmitter>();
+					particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\splat.png")));
+					particleEmitter->SetColor(Vector3(1.0f, 0.5800727f, 0.3920972f) * 4.0f);
+					particleEmitter->SetDrawCount(16);
+					particleEmitter->GetEmitterParameter().LifeTimeMin = 0.5f;
+					particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
+					particleEmitter->GetEmitterParameter().SizeMin = Vector2::One;
+					particleEmitter->GetEmitterParameter().SizeMax = Vector2::One;
+					particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.5f;
+					particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
+					particleEmitter->GetEmitterParameter().RotationMin = -PIDIV2;
+					particleEmitter->GetEmitterParameter().RotationMax = PIDIV2;
+					particleEmitter->GetEmitterParameter().RotationLifeExp = 0.5f;
+					particleEmitter->SetEmitLoop(true);
+					particleEmitter->SetOrientedByDirection(false);
+					particleEmitter->SetAutoDestroy(false);
+					particleEmitter->Play();
+				}
+
+				{
+					auto particleTrailObj = SceneObject::MakeShared();
+					particleTrailObj->GetTransform()->SetLocalScale(2.0f, 2.0f, 1.0f);
+
+					auto particleEmitter = particleTrailObj->AddComponent<CylinderParticleEmitter>();
+					particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\wisp.png")));
+					particleEmitter->SetColor(Vector3(1.0f, 0.5800727f, 0.3920972f) * 4.0f);
+					particleEmitter->SetDrawCount(64);
+					particleEmitter->GetEmitterParameter().LifeTimeMin = 0.2f;
+					particleEmitter->GetEmitterParameter().LifeTimeMax = 0.4f;
+					particleEmitter->GetEmitterParameter().SpeedMin = 0.0f;
+					particleEmitter->GetEmitterParameter().SpeedMax = -80.0f;
+					particleEmitter->GetEmitterParameter().SpeedLifeExp = 1.0f;
+					particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 0.1f;
+					particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 0.2f;
+					particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
+					particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
+					particleEmitter->GetEmitterParameter().RotationMin = -PI2;
+					particleEmitter->GetEmitterParameter().RotationMax = PI2;
+					particleEmitter->GetEmitterParameter().RotationLifeExp = 0.5f;
+					particleEmitter->SetEmitLoop(true);
+					particleEmitter->SetOrientedByDirection(false);
+					particleEmitter->SetAutoDestroy(false);
+					particleEmitter->Play();
+
+					s->AddChild(particleTrailObj);
 				}
 			}
 		}
@@ -460,21 +510,21 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	}
 	else if (pkt_.proj_type() == 1)
 	{
-		const auto shoot_obj_id = pkt_.shoot_obj_id();
-		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
-		auto s = SceneObject::MakeShared();
-		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
-		s->GetTransform()->SetLocalScale(proj_rad/2.f);
+		//const auto shoot_obj_id = pkt_.shoot_obj_id();
+		//const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
+		//auto s = SceneObject::MakeShared();
+		//s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
+		//s->GetTransform()->SetLocalScale(proj_rad/2.f);
 	
-		auto gizmoRenderer = s->AddComponent<MeshRenderer>();
-		gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
-		gizmoRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
+		//auto gizmoRenderer = s->AddComponent<MeshRenderer>();
+		//gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
+		//gizmoRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
 	
-		auto so = s->AddComponent<ServerObject>();
-		const auto proj = so->AddComp<Projectile>();
-		proj->m_speed = ::ToOriginVec3(pkt_.vel());
-		so->SetObjID((uint32_t)pkt_.proj_id());
-		Mgr(ServerObjectMgr)->AddObject(s);
+		//auto so = s->AddComponent<ServerObject>();
+		//const auto proj = so->AddComp<Projectile>();
+		//proj->m_speed = ::ToOriginVec3(pkt_.vel());
+		//so->SetObjID((uint32_t)pkt_.proj_id());
+		//Mgr(ServerObjectMgr)->AddObject(s);
 	}
 
 	return true;

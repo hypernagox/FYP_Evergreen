@@ -47,6 +47,7 @@ protected:
 public:
 	CharacterType m_characterType = CharacterType::Warrior;
 	int m_attackState = 0;
+	float m_particleTimer = 0.0f;
 	Transform* m_transformBody;
 
 	void OnInitialize() override;

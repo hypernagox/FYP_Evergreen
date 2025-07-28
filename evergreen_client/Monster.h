@@ -60,12 +60,14 @@ class MonsterRemains : public Component
 public:
 	void OnInitialize() override;
 	void OnActive() override;
-	void InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, const Animation* deathAnimation);
+	void InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, const Animation* deathAnimation, bool boss = false);
 	void Update(const Time& time, Scene& scene) override;
 
 private:
 	std::shared_ptr<SceneObject> m_rendererObj;
 	RiggedMeshRenderer* m_renderer = nullptr;
 	static std::unique_ptr<SoundEffectInstance> m_soundInstance;
+	std::unique_ptr<SoundEffectInstance> m_additionalSoundInstance;
 	float m_lifeTime = 1.0f;
+	bool m_isBoss = false;
 };

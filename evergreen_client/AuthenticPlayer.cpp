@@ -213,6 +213,12 @@ void AuthenticPlayer::SetDialogueViewTarget(const std::shared_ptr<SceneObject>& 
 	m_dialogueViewTimer = target != nullptr ? 0.5f : 0.0f;
 }
 
+void AuthenticPlayer::SetCinematicViewTarget(const std::shared_ptr<SceneObject>& target)
+{
+	m_cinematicViewTarget = target;
+	m_cinematicViewTimer = 3.0f;
+}
+
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
 	// Region: Camera Rotation Control
@@ -243,6 +249,10 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	{
 		// If a dialogue view target is set, adjust the camera anchor position to focus on it
 		targetPosition = Vector3::Lerp(targetPosition, m_dialogueViewTarget->GetTransform()->GetWorldPosition() + Vector3::Up * 1.5f, 0.5f);
+	}
+	if (m_cinematicViewTarget != nullptr)
+	{
+		targetPosition = Vector3::Lerp(targetPosition, m_cinematicViewTarget->GetTransform()->GetWorldPosition(), std::clamp(m_cinematicViewTimer, 0.0f, 1.0f));
 	}
 	Vector3 interpolatedAnchorPosition = Vector3::Lerp(m_cameraAnchorLastPosition, targetPosition, deltaTime * 8.0f);
 	m_cameraAnchor->GetTransform()->SetLocalPosition(interpolatedAnchorPosition - playerPosition);
@@ -484,7 +494,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	m_dialogueViewFactor = std::lerp(m_dialogueViewFactor, m_dialogueViewTarget != nullptr ? 1.0f : 0.0f, time.deltaTime * 4.0f);
 	if (m_dialogueViewTimer <= 0.0f)
 		m_dialogueCameraFactor = std::lerp(m_dialogueCameraFactor, m_dialogueViewTarget != nullptr ? 1.0f : 0.0f, time.deltaTime * 4.0f);
-
+	m_cinematicViewTimer -= time.deltaTime;
 
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	{

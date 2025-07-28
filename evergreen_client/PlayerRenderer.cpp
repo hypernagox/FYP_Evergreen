@@ -5,6 +5,7 @@
 #include "AuthenticPlayer.h"
 #include "../common/json.hpp"
 #include "GameScene.h"
+#include "SphereParticleEmitter.h"
 
 void PlayerRenderer::OnInitialize()
 {
@@ -136,16 +137,50 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 		moveAngleInt = static_cast<int>(moveAngle * 4.0f / PI + 12.5f) % 8;
 	}
 
-	float magnitude = Vector2(acceleration.x, acceleration.z).LengthSquared();
+	float magnitude = Vector2(acceleration.x, acceleration.z).Length();
 	*m_stateMachine->GetConditionRefFloat("MoveSpeed") = magnitude;
 	*m_stateMachine->GetConditionRefInt("MoveAngle") = moveAngleInt;
 	m_stateMachine->Update(time.deltaTime);
 
 	UpdateViewDirection(time.deltaTime);
 
+	m_particleTimer -= magnitude * time.deltaTime;
 	if (GameScene* gameScene = dynamic_cast<GameScene*>(&scene))
 	{
 		gameScene->AddMinimapMark(GetTransform()->GetLocalPosition(), 2);
+
+		if (m_particleTimer <= 0.0f)
+		{
+			m_particleTimer = 20.0f;
+
+			{
+				auto particleObject = SceneObject::MakeShared();
+				particleObject->GetTransform()->SetLocalPosition(GetTransform()->GetWorldPosition());
+
+				auto particleEmitter = particleObject->AddComponent<SphereParticleEmitter>();
+				particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\smoke.png")));
+				particleEmitter->SetColor(Vector3(1.0f, 1.0f, 1.0f));
+				particleEmitter->SetDrawCount(5);
+				particleEmitter->GetEmitterParameter().LifeTimeMin = 0.6f;
+				particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
+				particleEmitter->GetEmitterParameter().SpeedMin = 0.1f;
+				particleEmitter->GetEmitterParameter().SpeedMax = 0.5f;
+				particleEmitter->GetEmitterParameter().SpeedLifeExp = 1.0f;
+				particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 0.05f;
+				particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 0.1f;
+				particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * -1.0f;
+				particleEmitter->GetEmitterParameter().AlphaLifeExp = 0.75f;
+				particleEmitter->GetEmitterParameter().RotationMin = -PI2;
+				particleEmitter->GetEmitterParameter().RotationMax = PI2;
+				particleEmitter->GetEmitterParameter().RotationLifeExp = 0.25f;
+				particleEmitter->SetEmitLoop(false);
+				particleEmitter->SetAutoDestroy(true);
+				particleEmitter->SetOrientedByDirection(false);
+				particleEmitter->Play();
+
+				gameScene->AddObject(particleObject);
+			}
+		}
 	}
 }
 

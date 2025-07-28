@@ -24,6 +24,10 @@ protected:
 	float m_flightTime = 0.0f;
 	float m_flightTimeTotal = 0.0f;
 	float m_flightViewAngle = 0.0f;
+	float m_wingTimer = 0.0f;
+
+	std::unique_ptr<SoundEffectInstance> m_soundInstance;
+	std::unique_ptr<SoundEffectInstance> m_wingSoundInstance;
 
 public:
 	void OnInitialize() override;

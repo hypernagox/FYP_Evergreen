@@ -597,75 +597,6 @@ void GameScene::OnAttach()
     m_ambienceSound->Play(true);
 
     ChangeGameScene(GameSceneType::Default);
-
-    {
-        auto particleObject = SceneObject::MakeShared();
-        particleObject->GetTransform()->SetLocalPosition(start_pos + Vector3(0.0f, 1.0f, 0.0f));
-
-        {
-            auto particleEmitter = particleObject->AddComponent<SphereParticleEmitter>();
-            particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\splat.png")));
-            particleEmitter->SetColor(Vector3(0.07058824f, 0.2431373f, 0.6470588f) * 20.0f);
-            particleEmitter->SetDrawCount(16);
-            particleEmitter->GetEmitterParameter().LifeTimeMin = 0.5f;
-            particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
-            particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 0.5f;
-            particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 0.5f;
-            particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
-            particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
-            particleEmitter->GetEmitterParameter().RotationMin = -PIDIV2;
-            particleEmitter->GetEmitterParameter().RotationMax = PIDIV2;
-            particleEmitter->GetEmitterParameter().RotationLifeExp = 0.5f;
-            particleEmitter->SetEmitLoop(true);
-            particleEmitter->SetOrientedByDirection(false);
-            particleEmitter->SetAutoDestroy(false);
-            particleEmitter->Play();
-        }
-
-        {
-            auto particleEmitter = particleObject->AddComponent<CylinderParticleEmitter>();
-            particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\runic.png")));
-            particleEmitter->SetColor(Vector3::One * 20.0f);
-            particleEmitter->SetDrawCount(1);
-            particleEmitter->GetEmitterParameter().LifeTimeMin = 1.0f;
-            particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
-            particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 4.0f;
-            particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 4.0f;
-            particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
-            particleEmitter->GetEmitterParameter().RotationMin = -PI2;
-            particleEmitter->GetEmitterParameter().RotationMax = PI2;
-            particleEmitter->GetEmitterParameter().RotationLifeExp = 0.25f;
-            particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
-            particleEmitter->SetAutoDestroy(false);
-            particleEmitter->SetVerticalBillboard(true);
-            particleEmitter->Play();
-        }
-
-        AddObject(particleObject);
-    }
-
-    {
-        auto particleObject = SceneObject::MakeShared();
-        particleObject->GetTransform()->SetLocalPosition(start_pos + Vector3(0.0f, 1.0f, 0.0f));
-        particleObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, -PIDIV2, 0.0f));
-        particleObject->GetTransform()->SetLocalScale(1.5f);
-
-        auto particleEmitter = particleObject->AddComponent<CylinderParticleEmitter>();
-        particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\hit_triangle.png")));
-        particleEmitter->SetColor(Vector3::One * 10.0f);
-        particleEmitter->SetDrawCount(16);
-        particleEmitter->GetEmitterParameter().LifeTimeMin = 0.8f;
-        particleEmitter->GetEmitterParameter().LifeTimeMax = 0.8f;
-        particleEmitter->GetEmitterParameter().SizeMin = Vector2(5.0f, 0.1f);
-        particleEmitter->GetEmitterParameter().SizeMax = Vector2(10.0f, 0.1f);
-        particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2(1.0f, -0.5f);
-        particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
-        particleEmitter->SetAutoDestroy(false);
-        particleEmitter->SetOrientedByDirection(true);
-        particleEmitter->Play();
-
-        AddObject(particleObject);
-    }
 }
 
 void GameScene::OnDetach()
@@ -988,6 +919,11 @@ void GameScene::PlayMusic(std::wstring_view resourcePath)
     m_bgmSound = INSTANCE(Resource)->Load<AudioClip>(resourcePath)->CreateInstance();
     m_bgmSound->SetVolume(0.5f);
     m_bgmSound->Play(true);
+}
+
+void GameScene::SetBossMonsterCinematic(const std::shared_ptr<udsdx::SceneObject>& bossMonsterObj)
+{
+    m_heroComponent->SetCinematicViewTarget(bossMonsterObj);
 }
 
 void GameScene::ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback)

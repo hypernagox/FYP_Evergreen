@@ -86,6 +86,9 @@ private:
 	float m_dialogueViewFactor = 0.0f;
 	float m_dialogueCameraFactor = 0.0f;
 
+	std::shared_ptr<SceneObject> m_cinematicViewTarget = nullptr;
+	float m_cinematicViewTimer = 0.0f;
+
 private:
 	void MoveByView(const Vector3& vDelta);
 	void UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime);
@@ -128,6 +131,7 @@ public:
 
 	// Setting target to nullptr will reset the view target
 	void SetDialogueViewTarget(const std::shared_ptr<SceneObject>& target);
+	void SetCinematicViewTarget(const std::shared_ptr<SceneObject>& target);
 
 	const auto GetPlayerRenderer()noexcept { return m_playerRenderer; }
 	const auto& GetStatusGUI()const noexcept { return m_playerStatusGUI; }

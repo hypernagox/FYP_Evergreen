@@ -82,6 +82,7 @@ void MonsterBoss::OnAttach()
         if (gameScene != nullptr)
         {
             gameScene->AddInterfaceObject(m_bossStatusGUI, true);
+            gameScene->SetBossMonsterCinematic(GetSceneObject());
         }
     }
 }
@@ -96,12 +97,18 @@ void MonsterBoss::Update(const Time& time, Scene& scene)
     m_eventTimer.Update(time.deltaTime);
 
     if (m_isFlyMovement)
-    {
         UpdateFlightMovement(time.deltaTime);
-    }
-    else if (m_isTakeoff)
+    if (m_isTakeoff)
     {
-        m_entityMovement->SetRotation(Quaternion::Slerp(m_entityMovement->GetRotation(), Quaternion::CreateFromYawPitchRoll(m_flightViewAngle * DEG2RAD + PI, 0.0f, 0.0f), time.deltaTime * 2.0f));
+        if (!m_isFlyMovement)
+            m_entityMovement->SetRotation(Quaternion::Slerp(m_entityMovement->GetRotation(), Quaternion::CreateFromYawPitchRoll(m_flightViewAngle * DEG2RAD + PI, 0.0f, 0.0f), time.deltaTime * 2.0f));
+        m_wingTimer -= time.deltaTime;
+        if (m_wingTimer <= 0.0f)
+        {
+            m_wingTimer = 1.0f;
+            m_wingSoundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_wing.wav"))->CreateInstance();
+            m_wingSoundInstance->Play();
+        }
     }
 
     Monster::Update(time, scene);
@@ -117,7 +124,7 @@ void MonsterBoss::OnDeath()
 {
     auto remainObject = SceneObject::MakeShared();
     auto remainComponent = remainObject->AddComponent<MonsterRemains>();
-    remainComponent->InitializeMonster(m_rendererObj->GetTransform(), m_renderer, &m_animation->GetAnimation("Death"));
+    remainComponent->InitializeMonster(m_rendererObj->GetTransform(), m_renderer, &m_animation->GetAnimation("Death"), true);
 
     if (Scene* scene = GetSceneObject()->GetScene())
     {
@@ -133,6 +140,9 @@ void MonsterBoss::UpdateFlightMovement(float deltaTime)
         if (m_isTakeoff)
         {
             m_entityMovement->SetPosition(m_flightEndPosition);
+            m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_attack.wav"))->CreateInstance();
+            m_soundInstance->SetVolume(0.5f);
+            m_soundInstance->Play();
         }
         else
         {
@@ -211,6 +221,10 @@ void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)
         break;
     case AnimationState::Attack:
         m_renderer->SetAnimation(m_animation, "Attack 2", false, true);
+        {
+            m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_impact.wav"))->CreateInstance();
+            m_soundInstance->Play();
+        }
         break;
     }
 

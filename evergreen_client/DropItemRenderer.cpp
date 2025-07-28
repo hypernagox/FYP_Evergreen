@@ -2,8 +2,11 @@
 #include "DropItemRenderer.h"
 #include "ServerObjectMgr.h"
 #include "ServerObject.h"
+#include "SphereParticleEmitter.h"
 
 std::default_random_engine DropItemRenderer::randomEngine{};
+
+using namespace udsdx;
 
 void DropItemRenderer::OnInitialize()
 {
@@ -14,6 +17,28 @@ void DropItemRenderer::OnInitialize()
 
 	auto urd = std::uniform_real_distribution(0.0f, udsdx::PI2);
 	m_rotationOffset = urd(randomEngine);
+
+	auto ringParticleObj = SceneObject::MakeShared();
+	ringParticleObj->GetTransform()->SetLocalPosition(Vector3::Up * 0.5f);
+	{
+		auto particleEmitter = ringParticleObj->AddComponent<SphereParticleEmitter>();
+		particleEmitter->SetColor(Vector3(1.0f, 1.0f, 0.5f) * 2.0f);
+		particleEmitter->SetDrawCount(1);
+		particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\aura_ray.png")));
+		particleEmitter->GetEmitterParameter().LifeTimeMin = 4.0f;
+		particleEmitter->GetEmitterParameter().LifeTimeMax = 4.0f;
+		particleEmitter->GetEmitterParameter().RotationMin = -PIDIV4;
+		particleEmitter->GetEmitterParameter().RotationMax = PIDIV4;
+		particleEmitter->GetEmitterParameter().RotationLifeExp = 1.0f;
+		particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 1.0f;
+		particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 1.0f;
+		particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.25f;
+		particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+		particleEmitter->SetEmitLoop(true);
+		particleEmitter->SetAutoDestroy(false);
+		particleEmitter->Play();
+	}
+	GetSceneObject()->AddChild(ringParticleObj);
 }
 
 void DropItemRenderer::OnActive()

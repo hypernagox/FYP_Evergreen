@@ -158,13 +158,27 @@ std::unique_ptr<SoundEffectInstance> MonsterRemains::m_soundInstance;
 
 void MonsterRemains::OnActive()
 {
-	m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\monster_death.wav"))->CreateInstance();
-	m_soundInstance->SetVolume(0.1f);
-	m_soundInstance->Play();
+	if (m_isBoss)
+	{
+		m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_death.wav"))->CreateInstance();
+		m_soundInstance->SetVolume(1.0f);
+		m_soundInstance->Play();
+
+		m_additionalSoundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_tumble.wav"))->CreateInstance();
+		m_additionalSoundInstance->SetVolume(1.0f);
+		m_additionalSoundInstance->Play();
+	}
+	else
+	{
+		m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\monster_death.wav"))->CreateInstance();
+		m_soundInstance->SetVolume(0.1f);
+		m_soundInstance->Play();
+	}
 }
 
-void MonsterRemains::InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, const Animation* deathAnimation)
+void MonsterRemains::InitializeMonster(Transform* bodyTransform, RiggedMeshRenderer* renderer, const Animation* deathAnimation, bool boss)
 {
+	m_isBoss = boss;
 	auto mesh = renderer->GetMesh();
 	int submeshCount = static_cast<int>(mesh->GetSubmeshes().size());
 
