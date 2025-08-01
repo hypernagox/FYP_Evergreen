@@ -69,5 +69,6 @@ void HP::DoHeal(const int heal_) noexcept
 {
 	const auto owner = GetOwnerEntityRaw();
 	if (!owner->IsValid())return;
-	m_hp = std::min(m_hp + heal_, m_maxHP); // TODO 힐 후 해야 할 일 + 최대 상한치 검사
+	m_hp = std::min(m_hp + heal_, m_maxHP);
+	owner->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), m_hp, 1));
 }

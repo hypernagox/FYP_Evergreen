@@ -77,7 +77,7 @@ void PathNPC::UpdateMove()
 	m_last_update_timestamp = cur_time;
 
 	owner->GetQueueabler()->EnqueueAsyncTimer(
-		100,
+		1,
 		&PathNPC::UpdateMove,
 		this
 	);
@@ -85,7 +85,7 @@ void PathNPC::UpdateMove()
 
 void PathNPC::InitPathNPC(const XVector<Vector3> points)
 {
-	const float step = 2.f;
+	const float step = .5f;
 	const Vector3 begin = Vector3(-270.50497F, 86.48416F, -23.966377F);
 	//const Vector3 end = Vector3(-120.628365, 75.83887, 12.696598); // ¸¶À» Áß¾Ó
 	const auto num = (int)points.size();
