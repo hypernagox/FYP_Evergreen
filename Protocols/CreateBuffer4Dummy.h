@@ -129,3 +129,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_CHAT(
     const std::string_view& chat_msg,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_c2s_SHOOT_CATAPULT(
+    const Nagox::Struct::Vec3& catapult_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

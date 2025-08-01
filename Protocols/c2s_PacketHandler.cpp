@@ -708,4 +708,28 @@ const bool Handle_c2s_CHAT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSess
 	return true;
 }
 
+const bool Handle_c2s_SHOOT_CATAPULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_SHOOT_CATAPULT& pkt_)
+{
+	const auto owner = pSession_->GetOwnerEntity();
+	const auto cur_field = owner->GetCurField();
+	if (-1 != cur_field->GetFieldID())return true;
+	const auto& npcs = owner->GetComp<NagiocpX::MoveBroadcaster>()->GetViewListNPC();
+	const auto player_pos = owner->GetComp<PositionComponent>()->pos;
+	for (const auto& npc : npcs)
+	{
+		if (npc->GetPrimaryGroupType() != Nagox::Enum::GROUP_TYPE::GROUP_TYPE_NPC)continue;
+		if (npc->GetDetailType() != Nagox::Enum::NPC_TYPE::NPC_TYPE_CATAPULT)continue;
+		const auto& npc_pos = npc->GetComp<PositionComponent>()->pos;
+		//if ((CommonMath::IsInDistanceDX(player_pos, harvest_pos, HARVEST_INTERACTION_DIST) && harvest_id == h->GetObjectID())
+		//	|| harvest_id == 0)
+		{
+			if (npc->GetComp<Interaction>()->DoInteraction(owner))
+			{
+				break;
+			}
+		}
+	}
+	return true;
+}
+
 

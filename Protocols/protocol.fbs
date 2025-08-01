@@ -421,3 +421,13 @@ table s2c_CHAT
     char_user_name : string;
     char_msg : string;
 }
+
+table c2s_SHOOT_CATAPULT
+{
+    catapult_pos: Nagox.Struct.Vec3;
+}
+
+table s2c_SHOOT_CATAPULT
+{
+    catapult_pos: Nagox.Struct.Vec3;
+}

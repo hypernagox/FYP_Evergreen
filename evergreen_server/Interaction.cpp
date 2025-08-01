@@ -6,6 +6,9 @@
 #include "PositionComponent.h"
 #include "NavigationMesh.h"
 #include "Navigator.h"
+#include "BossBehaviorNode.h"
+#include "TickTimer.h"
+#include "Cluster.h"
 
 bool HarvestInteraction::DoInteraction(ContentsEntity* const pEntity_) noexcept
 {
@@ -54,5 +57,21 @@ bool ClearTreeInteraction::DoInteraction(ContentsEntity* const pEntity_) noexcep
 		owner->SetDetailType(HARVEST_STATE::UNAVAILABLE);
 		owner->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastAllCluster(Create_s2c_CHANGE_HARVEST_STATE(0, false, m_interaction_type));
 	}
+	return true;
+}
+
+bool Catapult::DoInteraction(ContentsEntity* const pEntity_) noexcept
+{
+	if (!m_boss_ptr)return false;
+	if (!m_meteor_node)return false;
+	if (!m_meteor_node->m_now_meteor)return false;
+	if (true == m_meteor_node->m_hit_catapult.exchange(true)) return false;
+
+	const auto target_pos = Vector3(-47.336597F, 18.003374F, -244.53511F);
+	const auto dir = CommonMath::Normalized(target_pos - m_boss_ptr->GetComp<PositionComponent>()->pos);
+	m_boss_ptr->GetComp<PositionComponent>()->pos = target_pos;
+	m_boss_ptr->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
+	m_boss_ptr->GetCurCluster()->Broadcast(Create_s2c_SHOOT_CATAPULT(ToFlatVec(target_pos)));
+	m_boss_ptr->GetCurCluster()->Broadcast(Create_s2c_BOSS_FLY(ToFlatVec(target_pos), Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_2));
 	return true;
 }

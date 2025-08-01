@@ -167,6 +167,42 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderB
 	// TODO: 이제부턴 진짜 NPC임
 	const auto b = static_cast<DefaultEntityBuilder*>(builder);
 
+	switch (b->obj_type)
+	{
+	case Nagox::Enum::NPC_TYPE::NPC_TYPE_CHIEF:
+	{
+		auto instance = udsdx::SceneObject::MakeShared();
+		instance->GetTransform()->SetLocalPosition(b->obj_pos);
+
+		auto serverComponent = instance->AddComponent<ServerObject>();
+		serverComponent->SetObjID(builder->obj_id);
+
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		moveInterpolator->InitInterpolator(b->obj_pos);
+
+		auto renderer = instance->AddComponent<NPCRenderer>();
+		return instance;
+	}
+	break;
+	// TODO: 투석기 그리기
+	case Nagox::Enum::NPC_TYPE::NPC_TYPE_CATAPULT:
+	{
+		auto instance = udsdx::SceneObject::MakeShared();
+		instance->GetTransform()->SetLocalPosition(b->obj_pos);
+
+		auto serverComponent = instance->AddComponent<ServerObject>();
+		serverComponent->SetObjID(builder->obj_id);
+
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		moveInterpolator->InitInterpolator(b->obj_pos);
+
+		auto renderer = instance->AddComponent<NPCRenderer>();
+		return instance;
+	}
+	break;
+	default:
+		break;
+	}
 	auto instance = udsdx::SceneObject::MakeShared();
 	instance->GetTransform()->SetLocalPosition(b->obj_pos);
 

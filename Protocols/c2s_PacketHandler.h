@@ -34,6 +34,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     c2s_CHANGE_CHANNEL = 1023,
     c2s_DASH = 1024,
     c2s_CHAT = 1025,
+    c2s_SHOOT_CATAPULT = 1026,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -78,6 +79,7 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_DASH = 1038,
     s2c_ARROW_RAIN = 1039,
     s2c_CHAT = 1040,
+    s2c_SHOOT_CATAPULT = 1041,
 };
 
 class NagiocpX::PacketSession;
@@ -113,6 +115,7 @@ const bool Handle_c2s_CHANGE_EQUIPMENT(const NagiocpX::S_ptr<NagiocpX::PacketSes
 const bool Handle_c2s_CHANGE_CHANNEL(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CHANGE_CHANNEL& pkt_);
 const bool Handle_c2s_DASH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_DASH& pkt_);
 const bool Handle_c2s_CHAT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_CHAT& pkt_);
+const bool Handle_c2s_SHOOT_CATAPULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_SHOOT_CATAPULT& pkt_);
 
 class c2s_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -145,6 +148,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::c2s_CHANGE_CHANNEL, Nagox::Protocol::c2s_CHANGE_CHANNEL, Handle_c2s_CHANGE_CHANNEL>();
         RegisterHandler<HANDLE_PKT_ID::c2s_DASH, Nagox::Protocol::c2s_DASH, Handle_c2s_DASH>();
         RegisterHandler<HANDLE_PKT_ID::c2s_CHAT, Nagox::Protocol::c2s_CHAT, Handle_c2s_CHAT>();
+        RegisterHandler<HANDLE_PKT_ID::c2s_SHOOT_CATAPULT, Nagox::Protocol::c2s_SHOOT_CATAPULT, Handle_c2s_SHOOT_CATAPULT>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

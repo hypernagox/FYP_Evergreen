@@ -323,7 +323,7 @@ void NPCGuardQuestBase::SetPathNPC(XVector<Vector3> path) noexcept
 {
 	EntityBuilder b;
 	b.group_type = Nagox::Enum::GROUP_TYPE_NPC;
-	b.obj_type = 0; // TODO: NPC종류 세분화
+	b.obj_type = Nagox::Enum::NPC_TYPE::NPC_TYPE_CHIEF;
 	const auto m = EntityFactory::CreatePathNPC(b);
 	const auto m2 = m;
 	//EnterFieldNPC(m);

@@ -124,6 +124,36 @@ inline const char *EnumNamePLAYER_TYPE(PLAYER_TYPE e) {
   return EnumNamesPLAYER_TYPE()[index];
 }
 
+enum NPC_TYPE : uint8_t {
+  NPC_TYPE_CHIEF = 0,
+  NPC_TYPE_CATAPULT = 1,
+  NPC_TYPE_MIN = NPC_TYPE_CHIEF,
+  NPC_TYPE_MAX = NPC_TYPE_CATAPULT
+};
+
+inline const NPC_TYPE (&EnumValuesNPC_TYPE())[2] {
+  static const NPC_TYPE values[] = {
+    NPC_TYPE_CHIEF,
+    NPC_TYPE_CATAPULT
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesNPC_TYPE() {
+  static const char * const names[3] = {
+    "CHIEF",
+    "CATAPULT",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameNPC_TYPE(NPC_TYPE e) {
+  if (::flatbuffers::IsOutRange(e, NPC_TYPE_CHIEF, NPC_TYPE_CATAPULT)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesNPC_TYPE()[index];
+}
+
 enum MONSTER_TYPE : uint8_t {
   MONSTER_TYPE_FOX = 0,
   MONSTER_TYPE_SHEEP = 1,

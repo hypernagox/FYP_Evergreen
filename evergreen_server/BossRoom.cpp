@@ -7,6 +7,7 @@
 #include "HP.h"
 #include "Collider_Common.h"
 #include "Death.h"
+#include "Interaction.h"
 
 using namespace NagiocpX;
 
@@ -72,17 +73,17 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 	}
 
 	// 원거리 파이어볼
-	{
-
-		const auto fire_node = bt_root->AddChild<SequenceNode>();
-		const auto choice_atk = fire_node->AddChild<SelectPattern>();
-		choice_atk->m_probability = .6f;
-		choice_atk->m_origin_prob = .6f;
-		const auto fire_ball_node = fire_node->AddChild<SequenceNode>();
-		fire_ball_node->AddChild<SelectJumpPoint>();
-		fire_ball_node->AddChild<ShootFireBall>();
-		fire_ball_node->AddChild<ResetPos>();
-	}
+	//{
+	//
+	//	const auto fire_node = bt_root->AddChild<SequenceNode>();
+	//	const auto choice_atk = fire_node->AddChild<SelectPattern>();
+	//	choice_atk->m_probability = .6f;
+	//	choice_atk->m_origin_prob = .6f;
+	//	const auto fire_ball_node = fire_node->AddChild<SequenceNode>();
+	//	fire_ball_node->AddChild<SelectJumpPoint>();
+	//	fire_ball_node->AddChild<ShootFireBall>();
+	//	fire_ball_node->AddChild<ResetPos>();
+	//}
 
 	// 중앙 메테오
 	{
@@ -92,8 +93,19 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 		//choice_atk->m_probability = .6f;
 		//choice_atk->m_origin_prob = .6f;
 		meteor_node->AddChild<SetMeteorPos>();
-		meteor_node->AddChild<FireMeteor>();
+		const auto fire_meteor_node = meteor_node->AddChild<FireMeteor>();
 		meteor_node->AddChild<ResetPos>();
+
+
+		auto catapult_entity = NagiocpX::CreateContentsEntity(Nagox::Enum::GROUP_TYPE_NPC, Nagox::Enum::NPC_TYPE_CATAPULT);
+		const auto catapult = catapult_entity->AddComp<Catapult>();
+		const auto pos_comp = catapult_entity->AddComp<PositionComponent>();
+		pos_comp->pos = Vector3(-47.336597F, 18.003374F, -244.53511F);
+		const auto catapult_pos = pos_comp->pos;
+		catapult->m_boss_ptr = boss_entity;
+		catapult->m_meteor_node = fire_meteor_node;
+		
+		EnterFieldWithFloatXYNPC(catapult_pos.x + 512.f, catapult_pos.z + 512.f, catapult_entity);
 	}
 	return boss_entity;
 }

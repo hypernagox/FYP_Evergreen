@@ -25,6 +25,12 @@ enum PLAYER_TYPE : ubyte
     ARCHER = 2
 }
 
+enum NPC_TYPE : ubyte
+{
+   CHIEF = 0,
+   CATAPULT = 1
+}
+
 enum MONSTER_TYPE : ubyte
 {   FOX = 0,
     SHEEP = 1,

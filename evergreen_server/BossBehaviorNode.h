@@ -129,4 +129,8 @@ public:
 	int count = 30;
 	float m_accTime = .3f;
 	float m_accTime2 = 2.5f;
+
+	std::atomic_bool m_now_meteor = false;
+	std::atomic_bool m_hit_catapult = false;
+	float m_accCatapultTime = 10.f;
 };

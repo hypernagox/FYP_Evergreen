@@ -1194,3 +1194,9 @@ const bool Handle_s2c_CHAT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 
 	return true;
 }
+
+const bool Handle_s2c_SHOOT_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_SHOOT_CATAPULT& pkt_)
+{
+	// TODO: 서버에서 보스가 투석기를 맞았다고 알려주는 패킷
+	return true;
+}

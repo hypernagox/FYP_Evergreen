@@ -519,7 +519,10 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		//Send(Create_c2s_REGISTER_PARTY_QUEST(0));
 		Send(Create_c2s_REQUEST_QUEST(Common::CommonQuestTable::GetCommonQuestInfo(L"여우 곰 잡기").quest_id));
 	}
-
+	if (INSTANCE(Input)->GetKeyDown(Keyboard::E))
+	{
+		Send(Create_c2s_SHOOT_CATAPULT(ToFlatVec3(Vector3{}))); // TODO: 정확한 위치
+	}
 	GuideSystem::GetInst()->UpdateGuideSystem();
 	// 무브패킷 센드 업데이트
 	m_bSendFlag |=

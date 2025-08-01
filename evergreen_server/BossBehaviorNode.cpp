@@ -473,7 +473,26 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	if (player_list.empty())return NodeStatus::FAILURE;
 	const auto DT = bt_root_timer->GetFloatDT();
-	
+	if (m_hit_catapult)
+	{
+		m_accCatapultTime -= DT;
+		if (0.f < m_accCatapultTime)
+		{
+			bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+				Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle));
+			return NodeStatus::RUNNING;
+		}
+		else
+		{
+			m_now_meteor.store(false);
+			count = 30;
+			m_accTime = .5f;
+			m_accTime2 = 2.5f;
+			m_accCatapultTime = 10.f;
+			m_hit_catapult.store(false);
+			return NodeStatus::SUCCESS;
+		}
+	}
 	m_accTime2 -= DT;
 	if (0.f < m_accTime2)
 	{
@@ -481,11 +500,14 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	}
 	if (0 == count)
 	{
+		m_now_meteor.store(false);
 		count = 30;
 		m_accTime = .5f;
 		m_accTime2 = 2.5f;
+		m_accCatapultTime = 30.f;
 		return NodeStatus::SUCCESS;
 	}
+	m_now_meteor.store(true);
 	m_accTime -= DT;
 	if (0.f < m_accTime)
 	{

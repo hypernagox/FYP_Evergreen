@@ -48,3 +48,15 @@ private:
 	uint64_t m_last_get_time = 0;
 };
 
+class Catapult
+	:public Interaction
+{
+public:
+	Catapult(const auto pOwner) :Interaction{ pOwner } {}
+public:
+	virtual bool DoInteraction(ContentsEntity* const pEntity_)noexcept override;
+public:
+	S_ptr<ContentsEntity> m_boss_ptr = {};
+	class FireMeteor* m_meteor_node = nullptr;
+};
+
