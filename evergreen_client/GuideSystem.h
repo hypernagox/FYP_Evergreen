@@ -60,6 +60,7 @@ public:
 	const bool SetHarvestState(const uint32_t server_id, const uint32_t harvest_id, const bool is_active)noexcept;
 
 	void UpdateGuideSystem();
+	void DisableFlag()noexcept { m_guide_active_flag = false; ResetGuideObjects(); }
 	void ToggleFlag() {
 		if (false == (m_guide_active_flag = !m_guide_active_flag)) {
 			ResetGuideObjects();
@@ -90,6 +91,13 @@ public:
 		m_clear_tree_obj.swap(clear_tree);
 	}
 	void SetClearTreeInteraction(const bool active_flag)noexcept;
+public:
+	void SetCatapultPos(const Vector3& catapult_pos)noexcept {
+		ToggleFlag();
+		m_guide_active_flag = true;
+		temp_force_pos = catapult_pos;
+		SetGuidePathInternal(catapult_pos);
+	}
 private:
 	void SetGuidePathInternal(const Vector3& target_pos);
 private:
@@ -113,5 +121,6 @@ private:
 
 
 	std::shared_ptr<udsdx::SceneObject> m_clear_tree_obj;
+	float m_pathFactor = 1.f;
 };
 

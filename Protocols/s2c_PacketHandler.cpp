@@ -983,7 +983,7 @@ const bool Handle_s2c_BOSS_FLY(const NetHelper::S_ptr<NetHelper::PacketSession>&
 		component->OnLandingAtPosition(target_pos);
 		break;
 	}
-
+	GuideSystem::GetInst()->DisableFlag();
 	// TODO: 이렇게 옮기는게 아니라 뭔가 애니메이션 후 옮기기
 	// 서버도 이거 시간 맞춰서 타이머 돌려서 클라에서 이동 다 되었다고 판단 될때까지 다른 패킷은 보류 할 것
 	//boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateForcedMoveData(target_pos);
@@ -1198,5 +1198,13 @@ const bool Handle_s2c_CHAT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 const bool Handle_s2c_SHOOT_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_SHOOT_CATAPULT& pkt_)
 {
 	// TODO: 서버에서 보스가 투석기를 맞았다고 알려주는 패킷
+	GuideSystem::GetInst()->DisableFlag();
+	return true;
+}
+
+const bool Handle_s2c_NOTIFY_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_CATAPULT& pkt_)
+{
+	// TODO: 투석기가 사용가능해졌다는 UI 알림 필요
+	GuideSystem::GetInst()->SetCatapultPos(ToOriginVec3(pkt_.catapult_pos()));
 	return true;
 }

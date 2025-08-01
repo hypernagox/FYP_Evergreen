@@ -50,6 +50,7 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_ARROW_RAIN = 1039,
     s2c_CHAT = 1040,
     s2c_SHOOT_CATAPULT = 1041,
+    s2c_NOTIFY_CATAPULT = 1042,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -131,6 +132,7 @@ const bool Handle_s2c_DASH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSess
 const bool Handle_s2c_ARROW_RAIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_ARROW_RAIN& pkt_);
 const bool Handle_s2c_CHAT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHAT& pkt_);
 const bool Handle_s2c_SHOOT_CATAPULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_SHOOT_CATAPULT& pkt_);
+const bool Handle_s2c_NOTIFY_CATAPULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_CATAPULT& pkt_);
 
 class s2c_DummyPacketHandler {
     using PacketHandlerFunc = const bool (*)(const NagiocpX::S_ptr<NagiocpX::PacketSession>&, const BYTE* const, const int32_t);
@@ -179,6 +181,7 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_ARROW_RAIN, Nagox::Protocol::s2c_ARROW_RAIN, Handle_s2c_ARROW_RAIN>();
         RegisterHandler<HANDLE_PKT_ID::s2c_CHAT, Nagox::Protocol::s2c_CHAT, Handle_s2c_CHAT>();
         RegisterHandler<HANDLE_PKT_ID::s2c_SHOOT_CATAPULT, Nagox::Protocol::s2c_SHOOT_CATAPULT, Handle_s2c_SHOOT_CATAPULT>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_NOTIFY_CATAPULT, Nagox::Protocol::s2c_NOTIFY_CATAPULT, Handle_s2c_NOTIFY_CATAPULT>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

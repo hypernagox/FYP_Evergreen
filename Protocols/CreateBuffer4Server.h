@@ -247,3 +247,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_SHOOT_CATAPULT(
     const Nagox::Struct::Vec3& catapult_pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_CATAPULT(
+    const Nagox::Struct::Vec3& catapult_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
+)noexcept;

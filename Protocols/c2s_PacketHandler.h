@@ -80,6 +80,7 @@ enum class CREATE_PKT_ID : uint16_t {
     s2c_ARROW_RAIN = 1039,
     s2c_CHAT = 1040,
     s2c_SHOOT_CATAPULT = 1041,
+    s2c_NOTIFY_CATAPULT = 1042,
 };
 
 class NagiocpX::PacketSession;

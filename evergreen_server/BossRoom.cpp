@@ -100,7 +100,7 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 		auto catapult_entity = NagiocpX::CreateContentsEntity(Nagox::Enum::GROUP_TYPE_NPC, Nagox::Enum::NPC_TYPE_CATAPULT);
 		const auto catapult = catapult_entity->AddComp<Catapult>();
 		const auto pos_comp = catapult_entity->AddComp<PositionComponent>();
-		pos_comp->pos = Vector3(-47.336597F, 18.003374F, -244.53511F);
+		pos_comp->pos = Vector3(-61.653553F, 30.55081F, -287.9226F);
 		const auto catapult_pos = pos_comp->pos;
 		catapult->m_boss_ptr = boss_entity;
 		catapult->m_meteor_node = fire_meteor_node;

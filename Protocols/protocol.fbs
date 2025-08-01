@@ -431,3 +431,8 @@ table s2c_SHOOT_CATAPULT
 {
     catapult_pos: Nagox.Struct.Vec3;
 }
+
+table s2c_NOTIFY_CATAPULT
+{
+    catapult_pos: Nagox.Struct.Vec3;
+}

@@ -230,6 +230,15 @@ void GuideSystem::UpdateGuideSystem()
 	{
 		v1 = temp_force_pos;
 	}
+	const auto path_len_sq = Vector3::DistanceSquared(pos, v1);
+	if (20.f * 20.f < path_len_sq)
+	{
+		m_pathFactor = 4.f;
+	}
+	else
+	{
+		m_pathFactor = 1.f;
+	}
 	if (v1 != Vector3::Zero)
 	{
 		ResetGuideObjects();
@@ -259,7 +268,7 @@ void GuideSystem::SetGuidePathInternal(const Vector3& target_pos)
 		if (const auto nav_mesh = main_hero->GetNaviAgent()->GetNavMesh())
 		{
 			const auto& v = nav_mesh->GetPathVertices(
-				pos, target_pos, 1.0f);
+				pos, target_pos, m_pathFactor);
 			m_path_obj_maker(v);
 		}
 	}

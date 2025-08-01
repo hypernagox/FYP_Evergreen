@@ -487,7 +487,7 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 			m_now_meteor.store(false);
 			count = 30;
 			m_accTime = .5f;
-			m_accTime2 = 2.5f;
+			m_accTime2 = 3.5f;
 			m_accCatapultTime = 10.f;
 			m_hit_catapult.store(false);
 			return NodeStatus::SUCCESS;
@@ -503,11 +503,18 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		m_now_meteor.store(false);
 		count = 30;
 		m_accTime = .5f;
-		m_accTime2 = 2.5f;
+		m_accTime2 = 3.5f;
 		m_accCatapultTime = 30.f;
 		return NodeStatus::SUCCESS;
 	}
-	m_now_meteor.store(true);
+
+	if (!m_now_meteor)
+	{
+		m_now_meteor.store(true);
+		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+			Create_s2c_NOTIFY_CATAPULT(ToFlatVec(Vector3(-61.653553F, 30.55081F, -287.9226F))));
+	}
+	
 	m_accTime -= DT;
 	if (0.f < m_accTime)
 	{

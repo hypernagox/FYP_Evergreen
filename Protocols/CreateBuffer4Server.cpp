@@ -810,3 +810,17 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_SHOOT_CATAPULT(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_SHOOT_CATAPULT);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_CATAPULT(
+    const Nagox::Struct::Vec3& catapult_pos,
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+    const auto catapult_pos_offset = &catapult_pos;
+   const auto serializeds2c_NOTIFY_CATAPULT = Nagox::Protocol::Creates2c_NOTIFY_CATAPULT(
+    builder,    catapult_pos_offset
+    );
+    builder.Finish(serializeds2c_NOTIFY_CATAPULT);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_NOTIFY_CATAPULT);
+}

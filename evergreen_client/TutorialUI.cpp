@@ -287,6 +287,7 @@ UI_TYPE PartyTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 		m_accTime += DT;
 		if (TutorialUI::TUTORIAL_UI_REMAIN_TIME <= m_accTime)
 		{
+			GuideSystem::GetInst()->DisableFlag();
 			return UI_TYPE::END;
 		}
 	}
