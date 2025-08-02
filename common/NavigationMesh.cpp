@@ -366,7 +366,7 @@ namespace Common
 		return 1;
 	}
 
-	thread_local std::vector<DirectX::SimpleMath::Vector3> path_result = {};
+	thread_local std::vector<DirectX::SimpleMath::Vector3> path_result(64);
 
 	const std::vector<DirectX::SimpleMath::Vector3>& NavigationMesh::GetPathVertices(
 		const DirectX::SimpleMath::Vector3& start,
@@ -374,7 +374,7 @@ namespace Common
 		const float step
 	)
 	{
-		constexpr const int MAX_PATH_COUNT = 128;
+		constexpr const int MAX_PATH_COUNT = 64;
 		extern thread_local std::vector<DirectX::SimpleMath::Vector3> path_result;
 		path_result.clear();
 

@@ -32,6 +32,7 @@ namespace NagiocpX
 				else bo.delay();
 			}
 			else return;
-		} while (!IocpCore::IsTimeOut(end_tick));
+		} while (true);
+		//while (!IocpCore::IsTimeOut(end_tick));
 	}
 }

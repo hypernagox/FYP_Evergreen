@@ -28,7 +28,7 @@ namespace NagiocpX
 	private:
 		const HANDLE m_iocpHandle;
 
-		static constexpr const DWORD IOCP_POOL_TIME_OUT_MS = 1;
+		static constexpr const DWORD IOCP_POOL_TIME_OUT_MS = 10;
 
 		enum { WORKER_TICK = 32 };
 	};
