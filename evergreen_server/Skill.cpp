@@ -298,8 +298,8 @@ bool ArcherSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
 			continue;
 
 		const float dot = rotatedForward.Dot(CommonMath::Normalized(toTarget));
-		if (dot < 0.5f) 
-			continue;
+		//if (dot < 0.5f) 
+		//	continue;
 
 		if (distSq < minDistSq)
 		{

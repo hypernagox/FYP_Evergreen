@@ -148,7 +148,7 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 		equip_sys->SwapEquipment(entity, Nagox::Enum::EQUIPMENT_TYPE_ARMOR, m_armor_id, false);
 
 
-		return true;
+		//return true;
 	}
 	if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_WARRIOR)
 	{
@@ -160,8 +160,7 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	else if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_PRIEST)
 	{
 		entity->GetComp<StatusSystem>()->SetSkill<PriestDefaultAttack>(Nagox::Enum::SKILL_TYPE_DEFAULT);
-		entity->GetComp<StatusSystem>()->SetSkill<PriestSkill_1>(Nagox::Enum::SKILL_TYPE_SKILL_1);
-
+		entity->GetComp<StatusSystem>()->SetSkill<PriestSkill_1>(Nagox::Enum::SKILL_TYPE_SKILL_1)->SetCoolDown(1000);
 	}
 	else if (pkt_.player_type() == Nagox::Enum::PLAYER_TYPE_ARCHER)
 	{
@@ -204,7 +203,7 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 const bool Handle_c2s_MOVE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::c2s_MOVE& pkt_)
 {
 	if (pSession_->GetOwnerEntity()->IsPendingClusterEntry())return true;
-	DO_BENCH_GLOBAL_THIS_FUNC;
+	//DO_BENCH_GLOBAL_THIS_FUNC;
 	//if(pSession_->GetObjectID()!=1)
 	
 	//std::cout << "move" << std::endl;

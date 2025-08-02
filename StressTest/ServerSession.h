@@ -16,17 +16,17 @@ public:
 	void UpdateTimeStamp(const uint64_t old_time_stamp)noexcept { m_accDelayMs += (::GetTickCount64() - old_time_stamp); }
 public:
 	void StartMovePacket()noexcept;
-	Vector3 GetNearestHarvestPoint()noexcept;
+	//Vector3 GetNearestHarvestPoint()noexcept;
 
-	void UpdateHarvest(const uint32_t id, const Vector3& pos, const  bool is_active) {
-		std::scoped_lock lk{ m_lk };
-		m_h[id] = std::make_pair(pos, is_active);
-	}
-	void UpdateHarvest(const uint32_t id,const  bool is_active) {
-		std::scoped_lock lk{ m_lk };
-		if (!m_h.contains(id))return;
-		m_h[id].second = is_active;
-	}
+	//void UpdateHarvest(const uint32_t id, const Vector3& pos, const  bool is_active) {
+	//	std::scoped_lock lk{ m_lk };
+	//	m_h[id] = std::make_pair(pos, is_active);
+	//}
+	//void UpdateHarvest(const uint32_t id,const  bool is_active) {
+	//	std::scoped_lock lk{ m_lk };
+	//	if (!m_h.contains(id))return;
+	//	m_h[id].second = is_active;
+	//}
 	void SetPath()noexcept;
 	Vector3 GetKthNearestHarvestPoint(const size_t k) noexcept;
 private:
@@ -57,8 +57,8 @@ public:
 	ClientSession* m_owner_system_session = nullptr;
 
 
-	XHashMap<uint32_t, std::pair<Vector3, bool>> m_h;
-	std::mutex m_lk;
+	//XHashMap<uint32_t, std::pair<Vector3, bool>> m_h;
+	//std::mutex m_lk;
 private:
 
 };

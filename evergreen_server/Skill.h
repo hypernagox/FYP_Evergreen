@@ -24,7 +24,7 @@ protected:
 		const auto diff = cur_time - m_last_used_time;
 		const bool res = diff >= m_cool_down;
 		if (!res) {
-			std::cout << "남은 쿨타임: " << (float)(m_cool_down - diff) / 1000.f << "초\n";
+			//std::cout << "남은 쿨타임: " << (float)(m_cool_down - diff) / 1000.f << "초\n";
 		}
 		return res;
 		//return cur_time - m_last_used_time >= m_cool_down;

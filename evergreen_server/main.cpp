@@ -28,8 +28,6 @@ constexpr const int32_t NUM_OF_NPC = 200001;
 constexpr const int32_t NUM_OF_MAX_USER = 2050;
 constexpr const uint32_t NUM_OF_CHANNELS = 60;
 
-extern std::vector<DirectX::BoundingBox> boxes;
-
 void DrawMiniMap()noexcept
 {
 	constexpr const float MAP_WIDTH = 1024.f;
@@ -105,7 +103,7 @@ public:
 		for (int c = 0; c < 20; ++c)
 		{
 			uint64_t idx = 0;
-			for (int i = 0; i < 5000/10; ++i)
+			for (int i = 0; i < 5000/5; ++i)
 			{
 				EntityBuilder b;
 				b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;

@@ -20,7 +20,7 @@ const Vector3 g_jump_shoot_pos[]
 	Vector3(-52.685413F,14.0523615F,-211.08817F),
 	Vector3(-30.660482F,14.17017F,-214.1239F)
 };
-constexpr const size_t g_num_of_rand_pos = sizeof(g_jump_shoot_pos) / sizeof(g_jump_shoot_pos[0]); \
+constexpr const size_t g_num_of_rand_pos = sizeof(g_jump_shoot_pos) / sizeof(g_jump_shoot_pos[0]);
 const Vector3 g_reset_pos = Vector3(-47.336597F, 18.003374F, -244.53511F);
 
 

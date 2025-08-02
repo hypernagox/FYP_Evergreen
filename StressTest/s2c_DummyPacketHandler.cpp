@@ -64,9 +64,9 @@ const bool Handle_s2c_PING_PONG(const NagiocpX::S_ptr<NagiocpX::PacketSession>& 
 
 const bool Handle_s2c_APPEAR_OBJECT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_APPEAR_OBJECT& pkt_)
 {
-	if (pkt_.group_type() != Nagox::Enum::GROUP_TYPE_HARVEST)return true;
-	const auto session = static_cast<ServerSession*>(pSession_.get());
-	session->UpdateHarvest(pkt_.obj_id(), O_VEC3(pkt_.appear_pos()), HARVEST_STATE::AVAILABLE == static_cast<HARVEST_STATE>(pkt_.obj_type_info()));
+	//if (pkt_.group_type() != Nagox::Enum::GROUP_TYPE_HARVEST)return true;
+	//const auto session = static_cast<ServerSession*>(pSession_.get());
+	//session->UpdateHarvest(pkt_.obj_id(), O_VEC3(pkt_.appear_pos()), HARVEST_STATE::AVAILABLE == static_cast<HARVEST_STATE>(pkt_.obj_type_info()));
 	return true;
 }
 
@@ -236,8 +236,8 @@ const bool Handle_s2c_PARTY_MEMBERS_INFORMATION(const NagiocpX::S_ptr<NagiocpX::
 const bool Handle_s2c_CHANGE_HARVEST_STATE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHANGE_HARVEST_STATE& pkt_)
 {
 
-	const auto session = static_cast<ServerSession*>(pSession_.get());
-	session->UpdateHarvest(pkt_.harvest_id(), pkt_.is_active());
+	//const auto session = static_cast<ServerSession*>(pSession_.get());
+	//session->UpdateHarvest(pkt_.harvest_id(), pkt_.is_active());
 	return true;
 }
 
@@ -273,7 +273,7 @@ const bool Handle_s2c_BOSS_PROJ_MARK(const NagiocpX::S_ptr<NagiocpX::PacketSessi
 
 const bool Handle_s2c_HEAL(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_HEAL& pkt_)
 {
-	return false;
+	return true;
 }
 
 const bool Handle_s2c_DASH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_DASH& pkt_)
@@ -287,6 +287,16 @@ const bool Handle_s2c_ARROW_RAIN(const NagiocpX::S_ptr<NagiocpX::PacketSession>&
 }
 
 const bool Handle_s2c_CHAT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHAT& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_SHOOT_CATAPULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_SHOOT_CATAPULT& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_NOTIFY_CATAPULT(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_CATAPULT& pkt_)
 {
 	return true;
 }

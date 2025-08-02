@@ -61,9 +61,11 @@ constexpr const static inline wchar_t IP_ADDR[][256]
 	L"43.203.153.176"
 };
 
+void* custom_dt_alloc(size_t size, dtAllocHint) { return ::je_malloc(size); }
 
 int main()
 {
+	dtAllocSetCustom(custom_dt_alloc, ::je_free);
 	ContentsInitiator con_init;
 	//g_heightMap = std::make_shared<HeightMap>(RESOURCE_PATH(L"terrain_height.raw"), 4096, 4096);
 	Mgr(CoreGlobal)->Init();
@@ -78,7 +80,7 @@ int main()
 			, NagiocpX::NetAddress{ IP_ADDR[USE_AWS_FLAG],7777}
 			, NagiocpX::xnew<ServerSession>
 			, s2c_DummyPacketHandler::GetPacketHandlerList()
-			, 1000
+			, 1600
 		);
 	
 	

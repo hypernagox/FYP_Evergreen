@@ -6,6 +6,7 @@
 #include "Cluster.h"
 #include "QuestSystem.h"
 #include "StatusSystem.h"
+#include "ClusterInfoHelper.h"
 
 void HP::PostDoDmg(const int dmg_, NagiocpX::S_ptr<NagiocpX::ContentsEntity> atkObject, const int hit_count) noexcept
 {
@@ -36,7 +37,8 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 				owner
 			);
 			//std::cout << "µ¥¹ÌÁö :" << result_dmg << "!!\n";
-			atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), origin_hp - result_dmg, hit_count));
+			atkObject->GetComp<NagiocpX::ClusterInfoHelper>()->BroadcastCluster(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), origin_hp - result_dmg, hit_count));
+			//atkObject->GetCurCluster()->Broadcast(Create_s2c_NOTIFY_HIT_DMG(owner->GetObjectID(), origin_hp - result_dmg, hit_count));
 		}
 		else if (owner->GetSession())
 		{

@@ -12,12 +12,15 @@ extern Nagox::Struct::Vec3 F_VEC3(const Vector3& v);
 static inline std::mt19937 rng{ std::random_device{}() };
 static inline std::uniform_int_distribution<int> dist_harvest(0, 1023);
 
+thread_local XVector<std::pair<float, Vector3>> dist_list;
+
 Vector3 ServerSession::GetKthNearestHarvestPoint(const size_t k) noexcept
 {
 	const Vector3 cur_pos = pos;
 	const auto& infos = HarvestLoader::GetHarvestPos();
 
-	XVector<std::pair<float, Vector3>> dist_list;
+	extern thread_local XVector<std::pair<float, Vector3>> dist_list;
+	dist_list.clear();
 	dist_list.reserve(infos.size());
 	for (const auto& info : infos)
 	{
@@ -81,46 +84,48 @@ void ServerSession::StartMovePacket() noexcept
 	Mgr(TaskTimerMgr)->ReserveAsyncTask(delay_time, &ServerSession::SendMovePacketRoutine, SharedFromThis<ServerSession>());
 }
 
-Vector3 ServerSession::GetNearestHarvestPoint() noexcept
-{
-	const auto cur_pos = pos;
-	Vector3 nearest = cur_pos;
-	float minDistSq = std::numeric_limits<float>::max();
-	{
-		std::scoped_lock lk{ m_lk };
-		for (const auto& info : m_h)
-		{
-			if (!info.second.second)continue;
-			const float dx = cur_pos.x - info.second.first.x;
-			const float dy = cur_pos.y - info.second.first.y;
-			const float dz = cur_pos.z - info.second.first.z;
-			const float distSq = dx * dx + dy * dy + dz * dz;
+//Vector3 ServerSession::GetNearestHarvestPoint() noexcept
+//{
+//	const auto cur_pos = pos;
+//	Vector3 nearest = cur_pos;
+//	float minDistSq = std::numeric_limits<float>::max();
+//	{
+//		std::scoped_lock lk{ m_lk };
+//		for (const auto& info : m_h)
+//		{
+//			if (!info.second.second)continue;
+//			const float dx = cur_pos.x - info.second.first.x;
+//			const float dy = cur_pos.y - info.second.first.y;
+//			const float dz = cur_pos.z - info.second.first.z;
+//			const float distSq = dx * dx + dy * dy + dz * dz;
+//
+//			if (distSq < minDistSq)
+//			{
+//				minDistSq = distSq;
+//				nearest = info.second.first;
+//			}
+//		}
+//	}
+//	if (nearest == cur_pos)
+//	{
+//		nearest = GetKthNearestHarvestPoint(dist_harvest(rng) % 30);
+//	}
+//
+//	return nearest;
+//}
 
-			if (distSq < minDistSq)
-			{
-				minDistSq = distSq;
-				nearest = info.second.first;
-			}
-		}
-	}
-	if (nearest == cur_pos)
+constexpr const auto GetYawDeg = [](const Vector3& dir) noexcept
 	{
-		nearest = GetKthNearestHarvestPoint(dist_harvest(rng) % 30);
-	}
-
-	return nearest;
-}
+		constexpr float RAD2DEG = 180.0f / 3.14159265358979323846f;
+		return std::atan2(dir.x, dir.z) * RAD2DEG;
+	};
 
 void ServerSession::SendMovePacketRoutine() noexcept
 {
 	UpdateMove();
 	//CommonMath::GetYawFromQuaternion()
 
-	constexpr const auto GetYawDeg = [](const Vector3& dir) noexcept
-		{
-			constexpr float RAD2DEG = 180.0f / 3.14159265358979323846f;
-			return std::atan2(dir.x, dir.z) * RAD2DEG;
-		};
+	
 
 	SendAsync(Create_c2s_MOVE(F_VEC3(pos), F_VEC3(vel), F_VEC3(accel), GetYawDeg(vel), ::GetTickCount64()));
 
@@ -153,7 +158,14 @@ void ServerSession::UpdateMove() noexcept
 	const auto cur_time = GetTickCount64();
 	const auto owner = GetOwnerEntity();
 	const auto dt = (cur_time - m_last_update_timestamp) * 0.001f;
-
+	const auto rand_val = rand() % 3;
+	if (rand_val == 0)
+	{
+		const auto type = rand_val & 1 ? Nagox::Enum::SKILL_TYPE_DEFAULT : Nagox::Enum::SKILL_TYPE_SKILL_1;
+		SendAsync(
+			Create_c2s_PLAYER_ATTACK(GetYawDeg(vel), (F_VEC3(pos)), type)
+		);
+	}
 	if (m_cur_idx == m_vecDirDists.size())
 	{
 		// µµÂø
@@ -167,7 +179,9 @@ void ServerSession::UpdateMove() noexcept
 		{
 			CommonMath::InverseZ(pos);
 		}
-		//SendAsync(Create_c2s_CHANGE_HARVEST_STATE());
+		
+		SendAsync(Create_c2s_CHANGE_HARVEST_STATE(0));
+		
 		//SendAsync(Create_c2s_ACQUIRE_ITEM(0));
 		SetPath();
 		return;
@@ -217,7 +231,7 @@ void ServerSession::SetPath() noexcept
 	m_cur_idx = 0;
 	m_vecDirDists.clear();
 
-	const float step = 5.f;
+	constexpr const float step = 1.f;
 
 	NAVIGATION->GetNavMesh(NAVI_MESH_TYPE::MAIN_WORLD)->GetNaviCell(pos);
 	
@@ -236,7 +250,7 @@ void ServerSession::SetPath() noexcept
 		{
 			m_vecDirDists.emplace_back(
 				CommonMath::Normalized(vecPath[i + 1] - vecPath[i]),
-				std::min(Vector3::Distance(vecPath[i], vecPath[i + 1]), step)
+				(Vector3::Distance(vecPath[i], vecPath[i + 1]))
 			);
 		}
 		m_last_update_timestamp = GetTickCount64();
