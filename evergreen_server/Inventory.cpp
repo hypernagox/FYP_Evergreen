@@ -115,7 +115,7 @@ Item* Inventory::AddDropItem(const DropItem* const drop_item_info) noexcept
 Item* Inventory::AddItem(const int item_id, const int stack_size, const bool bSend2QueryServer) noexcept
 {
 	const auto item_detail_type = (int8_t)item_id;
-	const auto item_stack_size = (int8_t)stack_size;
+	const auto item_stack_size = stack_size;
 	if (bSend2QueryServer)
 	{
 		s2q_ADD_OR_UPDATE_ITEM pkt;

@@ -32,6 +32,9 @@ enum class UI_TYPE
 	
 
 
+	BOSS_CATAPULT,
+
+
 	END,
 };
 
@@ -45,6 +48,9 @@ public:
 	virtual void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 public:
 	static void StartTutorialGUI();
+	static void DisableAllUI()noexcept;
+public:
+	static void ToggleBossCatapultGUI(const bool flag)noexcept;
 public:
 	static inline std::shared_ptr<TutorialUIElementBase> m_cur_gui;
 	static inline bool m_waitFlag = false;
@@ -71,6 +77,13 @@ public:
 	
 };
 
+class BossCatapultGUI
+	:public TutorialUIElementBase
+{
+public:
+	virtual UI_TYPE Update(const udsdx::Time& time, udsdx::Scene& scene) override;
+public:
+};
 
 class WASDTutorial
 	:public TutorialUIElementBase

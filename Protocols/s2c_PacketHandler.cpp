@@ -772,10 +772,17 @@ const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>
 		ServerObjectMgr::GetInst()->GetTargetScene()->OnQuestEnd();
 		ServerObjectMgr::GetInst()->GetTargetScene()->PlayMusic(RESOURCE_PATH(L"audio\\bgm_field.wav"));
 		}, L"퀘스트를 종료하는 중 ...");
+
+	extern bool g_tutorial_clear;
+	if (!g_tutorial_clear)
+	{
+		TutorialUI::DisableAllUI();
+	}
 	GuideSystem::GetInst()->DisableClearTree();
 
 	// TODO: 0번 퀘스트가 클리어되었다면 (튜토리얼 호위퀘스트였다면 파티창 꺼주기
 	Send(Create_c2s_PARTY_OUT());
+
 	
 	extern bool g_tutorial_end_clear;
 	g_tutorial_end_clear = true;
@@ -983,7 +990,7 @@ const bool Handle_s2c_BOSS_FLY(const NetHelper::S_ptr<NetHelper::PacketSession>&
 		component->OnLandingAtPosition(target_pos);
 		break;
 	}
-	GuideSystem::GetInst()->DisableFlag();
+	
 	// TODO: 이렇게 옮기는게 아니라 뭔가 애니메이션 후 옮기기
 	// 서버도 이거 시간 맞춰서 타이머 돌려서 클라에서 이동 다 되었다고 판단 될때까지 다른 패킷은 보류 할 것
 	//boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateForcedMoveData(target_pos);
@@ -1007,6 +1014,11 @@ const bool Handle_s2c_BOSS_MOVE(const NetHelper::S_ptr<NetHelper::PacketSession>
 	boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateNewMoveDataOnlyPos(target_pos);
 	boss_ptr->GetComponent<MonsterBoss>()->SetFlightViewAngle(boss_angle);
 	
+
+	{
+		GuideSystem::GetInst()->DisableFlag();
+		TutorialUI::ToggleBossCatapultGUI(false);
+	}
 	return true;
 }
 
@@ -1199,6 +1211,7 @@ const bool Handle_s2c_SHOOT_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSes
 {
 	// TODO: 서버에서 보스가 투석기를 맞았다고 알려주는 패킷
 	GuideSystem::GetInst()->DisableFlag();
+	TutorialUI::ToggleBossCatapultGUI(false);
 	return true;
 }
 
@@ -1206,5 +1219,6 @@ const bool Handle_s2c_NOTIFY_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSe
 {
 	// TODO: 투석기가 사용가능해졌다는 UI 알림 필요
 	GuideSystem::GetInst()->SetCatapultPos(ToOriginVec3(pkt_.catapult_pos()));
+	TutorialUI::ToggleBossCatapultGUI(true);
 	return true;
 }

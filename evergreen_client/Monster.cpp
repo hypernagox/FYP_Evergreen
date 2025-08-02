@@ -171,7 +171,7 @@ void MonsterRemains::OnActive()
 	else
 	{
 		m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\monster_death.wav"))->CreateInstance();
-		m_soundInstance->SetVolume(0.1f);
+		m_soundInstance->SetVolume(1.f);
 		m_soundInstance->Play();
 	}
 }

@@ -139,6 +139,16 @@ void TutorialUI::OnInitialize()
 	uiRenderer->SetSize(uiRenderer->GetSize() * 0.4f);
 	m_tutorialMark->SetActive(false);
 	object->AddChild(m_tutorialMark);
+
+	// ≈ıºÆ±‚ GUI
+	{
+		auto& gui = m_tutorialUIs[(int)UI_TYPE::BOSS_CATAPULT];
+		gui = std::make_shared<BossCatapultGUI>();
+		gui->Init(object, UI_TYPE::BOSS_CATAPULT, L"gui\\tutorial\\boss_catapult_gui.png");
+		gui->m_gui->SetActive(false);
+		gui->m_gui->GetTransform()->SetLocalPosition(Vector3(0, 400.0f, 0.0f));
+		object->AddChild(gui->m_gui);
+	}
 }
 
 void TutorialUIElementBase::Init(const std::shared_ptr<udsdx::SceneObject>& object, const UI_TYPE ui_type, const std::wstring_view path) noexcept
@@ -171,6 +181,7 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 				m_cur_gui->m_gui->SetActive(false);
 				m_tutorialMark->SetActive(false);
 				m_start_flag = false;
+				g_tutorial_clear = false;
 				return;
 			}
 			if (prev_type != cur_type && !m_waitFlag)
@@ -182,6 +193,7 @@ void TutorialUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
 		}
 		else
 		{
+			if (!m_cur_gui->m_gui->GetActive())return;
 			m_accTime += DT;
 			if (TUTORIAL_UI_REMAIN_TIME <= m_accTime)
 			{
@@ -204,7 +216,24 @@ void TutorialUI::StartTutorialGUI()
 {
 	m_start_flag = true;
 	m_tutorialUIs[(int)UI_TYPE::WASD]->m_gui->SetActive(true);
+	m_cur_gui = m_tutorialUIs[(int)UI_TYPE::WASD];
 	m_tutorialMark->SetActive(true);
+}
+
+void TutorialUI::DisableAllUI() noexcept
+{
+	for (const auto& ui : m_tutorialUIs)
+	{
+		if (!ui)continue;
+		ui->m_gui->SetActive(false);
+	}
+	if (m_cur_gui)m_cur_gui->m_gui->SetActive(false);
+	m_tutorialMark->SetActive(false);
+}
+
+void TutorialUI::ToggleBossCatapultGUI(const bool flag) noexcept
+{
+	m_tutorialUIs[(int)UI_TYPE::BOSS_CATAPULT]->m_gui->SetActive(flag);
 }
 
 UI_TYPE WASDTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
@@ -269,7 +298,6 @@ UI_TYPE QuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	if (g_tutorial_clear)
 	{
-		g_tutorial_clear = false;
 		return UI_TYPE::CLEAR_TREE;
 	}
 	return m_type;
@@ -328,6 +356,7 @@ UI_TYPE ClearTreeTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 		--m_e_count;
 		if (0 == m_e_count)
 		{
+			m_e_count = 3;
 			GuideSystem::GetInst()->ToggleFlag();
 			GuideSystem::GetInst()->temp_force_pos = Vector3(-123.62704F, 75.79371F, 15.156882F);
 			return UI_TYPE::CRAFT;
@@ -354,4 +383,9 @@ UI_TYPE EndTutorialQuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& 
 		return UI_TYPE::NAVI_ITEM;
 	}
 	return m_type;
+}
+
+UI_TYPE BossCatapultGUI::Update(const udsdx::Time& time, udsdx::Scene& scene)
+{
+	return UI_TYPE::BOSS_CATAPULT;
 }
