@@ -62,8 +62,8 @@ void MonsterBoss::OnInitialize()
 
     m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossTakeoff, AnimationState::BossFlyIdle, m_renderer);
 
-    m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::BossFlyIdle, AnimationState::BossFlyRun, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
-    m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::BossFlyRun, AnimationState::BossFlyIdle, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
+    m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::BossFlyIdle, AnimationState::BossFlyRun, m_stateMachine->GetConditionRefFloat("Speed"), 0.0f);
+    m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::BossFlyRun, AnimationState::BossFlyIdle, m_stateMachine->GetConditionRefFloat("Speed"), 0.0f);
 
     m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossLanding, AnimationState::Idle, m_renderer);
 
@@ -140,11 +140,9 @@ void MonsterBoss::UpdateFlightMovement(float deltaTime)
         if (m_isTakeoff)
         {
             m_entityMovement->SetPosition(m_flightEndPosition);
-            m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_attack.wav"))->CreateInstance();
-            m_soundInstance->SetVolume(0.5f);
-            m_soundInstance->Play();
+            m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_attack.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
         }
-        else
+        else if (m_stateMachine->GetCurrentState() != AnimationState::BossFlyDeath)
         {
             m_stateMachine->SetState(AnimationState::BossLanding);
         }
@@ -183,11 +181,35 @@ void MonsterBoss::OnTakeoffAtPosition(const Vector3& pos)
 // 착륙하는 패턴:
 // 먼저 해당 위치에서 y 좌표를 +5 만큼 더해준 위치로 이동(SmoothStep)하면서 Fly 애니메이션을 재생하고, Landing 애니메이션 재생.
 // 이동이 모두 끝나면 pos 위치로 이동해야함.
+//
+// 보스가 기절한 상태에서 해당 함수가 호출되는 것은, 기절이 해제되는 경우로 해당 로직을 처리해야 한다.
 void MonsterBoss::OnLandingAtPosition(const Vector3& pos)
 {
+    if (m_stateMachine->GetCurrentState() == AnimationState::BossFlyDeath)
+    {
+        m_stateMachine->SetState(AnimationState::Idle);
+        m_serverObject->SetActive(true);
+        m_entityMovement->SetActive(true);
+    }
+    else
+    {
+        m_flightStartPosition = m_entityMovement->GetPosition();
+        m_flightEndPosition = pos + Vector3::Up * 5.0f;
+        m_flightTimeTotal = (m_flightEndPosition - m_flightStartPosition).Length() / 10.0f;
+        m_isTakeoff = false;
+        m_isFlyMovement = true;
+    }
+}
+
+// 보스가 비행 중 투석기에 맞아 떨어지는 패턴:
+//
+void MonsterBoss::OnCatapultHit(const Vector3& hitPosition)
+{
+    m_stateMachine->SetState(AnimationState::BossFlyDeath);
+
     m_flightStartPosition = m_entityMovement->GetPosition();
-    m_flightEndPosition = pos + Vector3::Up * 5.0f;
-    m_flightTimeTotal = (m_flightEndPosition - m_flightStartPosition).Length() / 10.0f;
+    m_flightEndPosition = hitPosition;
+    m_flightTimeTotal = 0.733f;
     m_isTakeoff = false;
     m_isFlyMovement = true;
 }
@@ -199,6 +221,7 @@ void MonsterBoss::SetFlightViewAngle(float angle)
 
 void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)
 {
+    std::cout << "MonsterBoss::OnAnimationStateChange: " << static_cast<int>(from) << " -> " << static_cast<int>(to) << std::endl;
     switch (to)
     {
     case AnimationState::BossTakeoff:
@@ -213,6 +236,9 @@ void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)
     case AnimationState::BossFlyRun:
 		m_renderer->SetAnimation(m_animation, "Fly", true, false);
 		break;
+    case AnimationState::BossFlyDeath:
+        m_renderer->SetAnimation(m_flightAnimation, "Fly Death 3", false, true);
+        break;
     case AnimationState::Idle:
         m_renderer->SetAnimation(m_animation, "Idle", true, false);
         break;

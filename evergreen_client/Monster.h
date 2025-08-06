@@ -23,6 +23,7 @@ protected:
 		BossFlyIdle,
 		BossFlyRun,
 		BossFlyAttack,
+		BossFlyDeath,
 		Size
 	};
 

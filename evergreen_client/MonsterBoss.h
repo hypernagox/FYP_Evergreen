@@ -35,6 +35,7 @@ public:
 	void OnDetach() override;
 	void Update(const Time& time, Scene& scene) override;
 	void OnHit(int afterHealth) override;
+	void OnCatapultHit(const Vector3& hitPosition);
 	void OnDeath() override;
 	void UpdateFlightMovement(float deltaTime);
 	void OnTakeoffAtPosition(const Vector3& pos);

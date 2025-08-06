@@ -796,7 +796,19 @@ const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::Packet
 	GuideSystem::GetInst()->InActiveFlag();
 	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {
 		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
-		ServerObjectMgr::GetInst()->GetTargetScene()->PlayMusic(RESOURCE_PATH(L"audio\\bgm_battle.wav"));
+		auto targetScene = ServerObjectMgr::GetInst()->GetTargetScene();
+
+		// TODO: 퀘스트가 어떤 종류인지에 따라 재생할 음악이 달라야 한다.
+		// 현재는 SceneType에 따라 구분하고 있으나, 받는 패킷의 순서에 따라 실행 결과가 다르므로,
+		// 해당 코드 영역에서 어떤 퀘스트로 진입하는지 알 필요가 있다.
+		if (targetScene->GetGameSceneType() == GameScene::GameSceneType::Dungeon)
+		{
+			targetScene->PlayMusic(RESOURCE_PATH(L"audio\\bgm_boss.wav"));
+		}
+		else
+		{
+			targetScene->PlayMusic(RESOURCE_PATH(L"audio\\bgm_battle.wav"));
+		}
 		}, L"퀘스트를 시작하는 중 ...");
 	return true;
 }
@@ -916,7 +928,6 @@ const bool Handle_s2c_NOTIFY_USER_DETAIL_INFO(const NetHelper::S_ptr<NetHelper::
 	{
 		if (const auto renderer = obj->GetComponent<PlayerRenderer>())
 		{
-			// TODO: 플레이어 이름 변경을 위한 네임태그 컴포넌트 수집
 			renderer->SetPlayerWeapon(pkt_.weapon_id());
 			renderer->SetPlayerArmor(pkt_.armor_id());
 		}
@@ -991,11 +1002,13 @@ const bool Handle_s2c_BOSS_FLY(const NetHelper::S_ptr<NetHelper::PacketSession>&
 		break;
 	}
 	
+	const char* boss_fly_type_str = "";
+
 	// TODO: 이렇게 옮기는게 아니라 뭔가 애니메이션 후 옮기기
 	// 서버도 이거 시간 맞춰서 타이머 돌려서 클라에서 이동 다 되었다고 판단 될때까지 다른 패킷은 보류 할 것
 	//boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateForcedMoveData(target_pos);
 	std::cout << std::format("x:{},y:{},z{}\n", target_pos.x, target_pos.y, target_pos.z);
-	std::cout << "보스 비행 타입: " << boss_fly_type << std::endl;
+	std::cout << "보스 비행 타입: " << (boss_fly_type == Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_1 ? "BOSS_FLY_TYPE_1" : "BOSS_FLY_TYPE_2") << std::endl;
 	// boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>()->UpdateNewMoveDataOnlyPos(target_pos);
 	return true;
 }
@@ -1039,19 +1052,17 @@ const bool Handle_s2c_HEAL(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 	const auto heal_val = pkt_.heal_val();
 	const auto healed_obj_ptr = Mgr(ServerObjectMgr)->GetServerObj(healed_user_id);
 
-	static std::unique_ptr<SoundEffectInstance> g_effectSound;
-	g_effectSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\heal_skill.wav"))->CreateInstance();
-	g_effectSound->SetVolume(0.5f);
-	g_effectSound->Play();
-
 	if (!healed_obj_ptr)
 	{
 		return true;
 	}
 
+	static std::unique_ptr<SoundEffectInstance> g_effectSound;
+	g_effectSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\heal_skill.wav"))->CreateInstance3D(healed_obj_ptr->GetTransform()->GetWorldPosition());
+
 	{
 		auto particleObject = SceneObject::MakeShared();
-		particleObject->GetTransform()->SetLocalPosition(healed_obj_ptr->GetTransform()->GetLocalPosition());
+		particleObject->GetTransform()->SetLocalPosition(healed_obj_ptr->GetTransform()->GetWorldPosition());
 		particleObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, -PIDIV2, 0.0f));
 
 		auto particleEmitter = particleObject->AddComponent<CylinderParticleEmitter>();
@@ -1077,7 +1088,7 @@ const bool Handle_s2c_HEAL(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 
 	{
 		auto particleObject = SceneObject::MakeShared();
-		particleObject->GetTransform()->SetLocalPosition(healed_obj_ptr->GetTransform()->GetLocalPosition());
+		particleObject->GetTransform()->SetLocalPosition(healed_obj_ptr->GetTransform()->GetWorldPosition());
 		particleObject->GetTransform()->SetLocalScale(0.1f);
 
 		auto particleEmitter = particleObject->AddComponent<CylinderParticleEmitter>();
@@ -1209,9 +1220,17 @@ const bool Handle_s2c_CHAT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 
 const bool Handle_s2c_SHOOT_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_SHOOT_CATAPULT& pkt_)
 {
+	std::cout << "보스 투석기 공격 패킷 수신" << std::endl;
 	// TODO: 서버에서 보스가 투석기를 맞았다고 알려주는 패킷
 	GuideSystem::GetInst()->DisableFlag();
 	TutorialUI::ToggleBossCatapultGUI(false);
+
+	const auto& boss_ptr = GET_BOSS;
+	if (const auto comp = boss_ptr->GetComponent<MonsterBoss>())
+	{
+		comp->OnCatapultHit(ToOriginVec3(pkt_.catapult_pos()));
+	}
+
 	return true;
 }
 

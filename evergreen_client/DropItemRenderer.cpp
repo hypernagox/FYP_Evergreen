@@ -46,10 +46,7 @@ void DropItemRenderer::OnActive()
 	auto listener = ServerObjectMgr::GetInst()->GetMainHero();
 	if (nullptr != listener)
 	{
-		m_appearSound = INSTANCE(udsdx::Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\item_drop.wav"))->CreateInstance();
-		auto distance = Vector3::Distance(listener->GetTransform()->GetLocalPosition(), GetTransform()->GetLocalPosition());
-		m_appearSound->SetVolume(1.0f / (distance * 0.1f + 2.0f));
-		m_appearSound->Play();
+		m_appearSound = INSTANCE(udsdx::Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\item_drop.wav"))->CreateInstance3D(GetTransform()->GetLocalPosition());
 	}
 }
 

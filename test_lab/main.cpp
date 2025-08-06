@@ -94,15 +94,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
     
     m_characterObject = SceneObject::MakeShared();
-    m_characterObject->GetTransform()->SetLocalPositionY(-1.375f);
     // m_characterObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(0.0f, PI, 0.0f));
     auto meshRenderer = m_characterObject->AddComponent<RiggedMeshRenderer>();
 
-    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\archer.yrms"));
-    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\char_1.png")), 0);
-    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\char_2.png")), 1);
-    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\char_3.png")), 2);
-    // meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\biped_attack1.yac"), true);
+    meshRenderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(L"resource\\catapult\\catapult.yrms"));
+    meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\catapult\\Catapult_BaseColor.png")), 0);
+    meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\catapult\\idle.yac"), true);
 
      g_scene->AddObject(m_characterObject);
 
@@ -154,7 +151,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
          }
 
          dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_animations.yac"), "Fly", true, false);
-         dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_animations_flight.yac"), "Run Landing", true, false);
+         dragonRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\dragon\\dragon_animations_flight.yac"), "Fly Death 3", true, false);
 
          g_scene->AddObject(dragonObject);
      }

@@ -593,7 +593,7 @@ namespace udsdx
 		m_scene->PostUpdate(m_timeMeasure->GetTime());
 
 		// Toggle ImGui elements with F12 key (Debug feature)
-		if (INSTANCE(Input)->GetKeyDown(Keyboard::F12))
+		if (INSTANCE(Input)->GetKeyDown(Keyboard::F3))
 		{
 			m_drawImGUIElements = !m_drawImGUIElements;
 		}

@@ -160,19 +160,13 @@ void MonsterRemains::OnActive()
 {
 	if (m_isBoss)
 	{
-		m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_death.wav"))->CreateInstance();
-		m_soundInstance->SetVolume(1.0f);
-		m_soundInstance->Play();
+		m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_death.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
 
-		m_additionalSoundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_tumble.wav"))->CreateInstance();
-		m_additionalSoundInstance->SetVolume(1.0f);
-		m_additionalSoundInstance->Play();
+		m_additionalSoundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_tumble.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
 	}
 	else
 	{
-		m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\monster_death.wav"))->CreateInstance();
-		m_soundInstance->SetVolume(1.f);
-		m_soundInstance->Play();
+		m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\monster_death.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition(), 0.5f);
 	}
 }
 

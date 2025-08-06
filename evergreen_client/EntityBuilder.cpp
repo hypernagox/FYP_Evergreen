@@ -183,7 +183,6 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderB
 		auto renderer = instance->AddComponent<NPCRenderer>();
 		return instance;
 	}
-	break;
 	// TODO: 투석기 그리기
 	case Nagox::Enum::NPC_TYPE::NPC_TYPE_CATAPULT:
 	{
@@ -196,24 +195,45 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_NPC(EntityBuilderB
 		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
 		moveInterpolator->InitInterpolator(b->obj_pos);
 
+		auto rendererObject = SceneObject::MakeShared();
+		rendererObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PIDIV2, 0.0f, 0.0f));
+		instance->AddChild(rendererObject);
+
+		auto renderer = rendererObject->AddComponent<RiggedMeshRenderer>();
+
+		udsdx::Material mat = udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(RESOURCE_PATH(L"colornormal.hlsl")));
+		mat.SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"catapult\\Catapult_BaseColor.png")), 0);
+		mat.SetSourceTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"catapult\\Catapult_Normal.png")), 1);
+
+		renderer->SetMaterial(mat);
+		renderer->SetMesh(INSTANCE(Resource)->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"catapult\\catapult.yrms")));
+		renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"catapult\\idle.yac")), true);
+		instance->AddComponent<EntityMovement>();
+
+		auto interactiveEntity = instance->AddComponent<InteractiveEntity>();
+		interactiveEntity->SetInteractionText(L"투석기 활성화");
+		interactiveEntity->SetInteractionCallback([renderer]() {
+			Send(Create_c2s_SHOOT_CATAPULT(ToFlatVec3(Vector3{}))); // TODO: 정확한 위치
+			static std::unique_ptr<SoundEffectInstance> g_effectSound;
+			g_effectSound = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\catapult.wav"))->CreateInstance3D(renderer->GetTransform()->GetWorldPosition());
+			renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"catapult\\throw.yac")), false, true);
+			});
+
+		return instance;
+	}
+	default:
+		auto instance = udsdx::SceneObject::MakeShared();
+		instance->GetTransform()->SetLocalPosition(b->obj_pos);
+
+		auto serverComponent = instance->AddComponent<ServerObject>();
+		serverComponent->SetObjID(builder->obj_id);
+
+		auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
+		moveInterpolator->InitInterpolator(b->obj_pos);
+
 		auto renderer = instance->AddComponent<NPCRenderer>();
 		return instance;
 	}
-	break;
-	default:
-		break;
-	}
-	auto instance = udsdx::SceneObject::MakeShared();
-	instance->GetTransform()->SetLocalPosition(b->obj_pos);
-
-	auto serverComponent = instance->AddComponent<ServerObject>();
-	serverComponent->SetObjID(builder->obj_id);
-
-	auto moveInterpolator = serverComponent->AddComp<MoveInterpolator>();
-	moveInterpolator->InitInterpolator(b->obj_pos);
-
-	auto renderer = instance->AddComponent<NPCRenderer>();
-	return instance;
 }
 
 std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBuilderBase* builder)

@@ -72,9 +72,7 @@ void DamageCountGUI::AddCountObject(const Vector3& targetPos, unsigned int damag
 			GetSceneObject()->AddChild(countObj);
 
 			m_countObjects.emplace_back(1.0f, countObj, textObj, targetPos + offset, velocity);
-			m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\hit_light.wav"))->CreateInstance();
-			m_soundInstance->SetVolume(0.5f);
-			m_soundInstance->Play();
+			m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\hit_light.wav"))->CreateInstance3D(targetPos);
 
 			});
 	}

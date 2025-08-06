@@ -19,6 +19,7 @@
 #include "post_process_outline.h"
 #include "gui_element.h"
 #include "debug_console.h"
+#include "audio.h"
 
 namespace udsdx
 {
@@ -144,6 +145,12 @@ namespace udsdx
 		}
 
 		param.CommandList->SetGraphicsRootSignature(param.RootSignature);
+
+		if (!m_renderCameraQueue.empty())
+		{
+			Transform* listenerTransform = m_renderCameraQueue[0]->GetTransform();
+			INSTANCE(Audio)->UpdateAudioListener(listenerTransform->GetWorldPosition(), listenerTransform->GetWorldRotation());
+		}
 
 		// Shadow map rendering pass
 		if (!m_renderLightQueue.empty() && !m_renderCameraQueue.empty())

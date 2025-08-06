@@ -13,6 +13,7 @@ namespace udsdx
 
 	public:
 		std::unique_ptr<DirectX::SoundEffectInstance> CreateInstance();
+		std::unique_ptr<DirectX::SoundEffectInstance> CreateInstance3D(const Vector3& position, float volume = 1.0f);
 
 	private:
 		std::unique_ptr<DirectX::SoundEffect> m_soundEffect;

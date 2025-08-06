@@ -376,18 +376,17 @@ void AuthenticPlayer::DoAttack(const Nagox::Enum::SKILL_TYPE skill_type)
 	switch (m_playerType)
 	{
 	case 0:
-		attackSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\attack_warrior.wav"))->CreateInstance();
+		attackSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\attack_warrior.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
 		break;
 	case 1:
-		attackSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\attack_priest.wav"))->CreateInstance();
+		attackSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\attack_priest.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
 		break;
 	case 2:
-		attackSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\attack_archer.wav"))->CreateInstance();
+		attackSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\attack_archer.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
 		break;
 	}
 	if (attackSFXInstance)
 	{
-		attackSFXInstance->SetVolume(0.5f);
 		attackSFXInstance->Play();
 	}
 }
@@ -471,9 +470,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	{
 		m_playerRenderer->Dash();
 		m_playerStatusGUI->UseSkill(2);
-		soundEffectInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\dash.wav"))->CreateInstance();
-		soundEffectInstance->SetVolume(0.5f);
-		soundEffectInstance->Play();
+		soundEffectInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\dash.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
 		m_fovAdd = 0.2f;
 	}
 	if (fm->IsForcedMovement())
@@ -519,10 +516,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 		//Send(Create_c2s_REGISTER_PARTY_QUEST(0));
 		Send(Create_c2s_REQUEST_QUEST(Common::CommonQuestTable::GetCommonQuestInfo(L"여우 곰 잡기").quest_id));
 	}
-	if (INSTANCE(Input)->GetKeyDown(Keyboard::E))
-	{
-		Send(Create_c2s_SHOOT_CATAPULT(ToFlatVec3(Vector3{}))); // TODO: 정확한 위치
-	}
+
 	GuideSystem::GetInst()->UpdateGuideSystem();
 	// 무브패킷 센드 업데이트
 	m_bSendFlag |=

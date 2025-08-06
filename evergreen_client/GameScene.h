@@ -42,6 +42,7 @@ public:
 	void OnQuestEnd();
 	void PlayMusic(std::wstring_view resourcePath);
 	void SetBossMonsterCinematic(const std::shared_ptr<udsdx::SceneObject>& bossMonsterObj);
+	GameSceneType GetGameSceneType() const { return m_sceneType; }
 
 	void ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback = nullptr);
 	void OnDialogueEnd();

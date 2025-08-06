@@ -81,7 +81,7 @@ void PlayerInventoryGUI::UpdateSlotContents(AuthenticPlayer* target, const std::
 		if (table[id] > 0)
 		{
 			const std::string& key = DATA_TABLE->GetItemName(id);
-			udsdx::Texture* texture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring,"Item", key, "Icon")));
+			udsdx::Texture* texture = INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(GET_DATA(std::wstring, "Item", key, "Icon")));
 			m_slotBackground[counter]->GetComponent<GUISimpleButton>()->SetClickCallback([this, target, id]() {
 				SelectInventorySlot(target, id);
 			});
