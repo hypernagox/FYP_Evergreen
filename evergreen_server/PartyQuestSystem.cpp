@@ -42,7 +42,7 @@ bool PartyQuestSystem::MissionStart()
 		return false;
 	}
 
-	auto pkt = Create_s2c_PARTY_QUEST_START();
+	auto pkt = Create_s2c_PARTY_QUEST_START(m_curQuestID);
 
 	{
 		EXCLUSIVE_LOCK(m_partyLock);

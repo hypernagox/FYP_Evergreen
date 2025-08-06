@@ -530,12 +530,15 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_QUEST_END(
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_QUEST_END);
 }
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_PARTY_QUEST_START(
+    const uint32_t quest_id,
     flatbuffers::FlatBufferBuilder* const builder_ptr
 )noexcept {
     auto& builder = *builder_ptr;
     builder.Clear();
+    const auto quest_id_value = quest_id;
    const auto serializeds2c_PARTY_QUEST_START = Nagox::Protocol::Creates2c_PARTY_QUEST_START(
-    builder    );
+    builder,    quest_id_value
+    );
     builder.Finish(serializeds2c_PARTY_QUEST_START);
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_PARTY_QUEST_START);

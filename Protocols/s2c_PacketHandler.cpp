@@ -794,6 +794,7 @@ const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::Packet
 {
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	GuideSystem::GetInst()->InActiveFlag();
+	const auto quest_id = pkt_.quest_id();
 	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {
 		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 		ServerObjectMgr::GetInst()->GetTargetScene()->PlayMusic(RESOURCE_PATH(L"audio\\bgm_battle.wav"));
