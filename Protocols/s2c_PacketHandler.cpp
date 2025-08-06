@@ -795,14 +795,10 @@ const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::Packet
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	GuideSystem::GetInst()->InActiveFlag();
 	const auto quest_id = pkt_.quest_id();
-	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {
+	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([quest_id]() {
 		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 		auto targetScene = ServerObjectMgr::GetInst()->GetTargetScene();
-
-		// TODO: 퀘스트가 어떤 종류인지에 따라 재생할 음악이 달라야 한다.
-		// 현재는 SceneType에 따라 구분하고 있으나, 받는 패킷의 순서에 따라 실행 결과가 다르므로,
-		// 해당 코드 영역에서 어떤 퀘스트로 진입하는지 알 필요가 있다.
-		if (targetScene->GetGameSceneType() == GameScene::GameSceneType::Dungeon)
+		if (quest_id == 9)
 		{
 			targetScene->PlayMusic(RESOURCE_PATH(L"audio\\bgm_boss.wav"));
 		}
