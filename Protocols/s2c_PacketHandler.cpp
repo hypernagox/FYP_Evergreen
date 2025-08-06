@@ -357,7 +357,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	// 0번이 투사체
 	// 1번이 지금 보스 범위공격으로 생각중
 	const auto proj_rad = pkt_.radius();
-	if (pkt_.proj_type() == 0)
+	if (pkt_.proj_type() == 0 || pkt_.proj_type() == 2)
 	{
 		Vector3 normal = ::ToOriginVec3(pkt_.vel());
 		normal.Normalize();
@@ -794,6 +794,7 @@ const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::Packet
 {
 	ServerObjectMgr::GetInst()->GetMainHero()->GetComp<MovePacketSender>()->SetSendInterval(0.1f);
 	GuideSystem::GetInst()->InActiveFlag();
+	const auto quest_id = pkt_.quest_id();
 	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {
 		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 		auto targetScene = ServerObjectMgr::GetInst()->GetTargetScene();

@@ -48,6 +48,7 @@ public:
 public:
 	float m_accTime = 5.f;
 	bool flag = true;
+	float m_dist = 5.f;
 };
 
 // TODO: 리피터 노드가될수도 또는 다양한 근접공격
@@ -132,5 +133,16 @@ public:
 
 	std::atomic_bool m_now_meteor = false;
 	std::atomic_bool m_hit_catapult = false;
-	float m_accCatapultTime = 10.f;
+	float m_accCatapultTime = 5.f;
+};
+
+class FireBreath
+	:public ActionNode
+{
+public:
+	NodeStatus Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
+	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
+public:
+	float m_accTime = 0.01f;
+	int count = 50;
 };

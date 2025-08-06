@@ -58,19 +58,40 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 
 	bt_timer->SetTickInterval(1);
 	bt_timer->SetBTRevaluateInterval(UINT32_MAX);
+
+
 	// 근거리공격
 	{
-		
+
 		const auto melee_node = bt_root->AddChild<SequenceNode>();
 		const auto choice_atk = melee_node->AddChild<SelectPattern>();
 		choice_atk->m_count = 2;
-		choice_atk->m_probability = .9f;
-		choice_atk->m_origin_prob = .9f;
+		choice_atk->m_probability = .8f;
+		choice_atk->m_origin_prob = .8f;
 		const auto melee_atk_node = melee_node->AddChild<SequenceNode>();
 		melee_atk_node->AddChild<SelectTarget>();
-		melee_atk_node->AddChild<MoveToTarget>();
+		melee_atk_node->AddChild<MoveToTarget>()->m_dist;
 		melee_atk_node->AddChild<MeleeAtack>();
 	}
+
+
+	// 브레스공격
+	{
+
+		const auto melee_node = bt_root->AddChild<SequenceNode>();
+		const auto choice_atk = melee_node->AddChild<SelectPattern>();
+		choice_atk->m_count = 1;
+		choice_atk->m_probability = .8f;
+		choice_atk->m_origin_prob = .8f;
+		const auto melee_atk_node = melee_node->AddChild<SequenceNode>();
+		melee_atk_node->AddChild<SelectTarget>();
+		melee_atk_node->AddChild<MoveToTarget>()->m_dist;
+		melee_atk_node->AddChild<FireBreath>();
+	}
+
+	
+
+
 
 	// 원거리 파이어볼
 	//{
@@ -86,26 +107,26 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 	//}
 
 	// 중앙 메테오
-	{
-		 
-		const auto meteor_node = bt_root->AddChild<SequenceNode>();
-		//const auto choice_atk = meteor_node->AddChild<SelectPattern>();
-		//choice_atk->m_probability = .6f;
-		//choice_atk->m_origin_prob = .6f;
-		meteor_node->AddChild<SetMeteorPos>();
-		const auto fire_meteor_node = meteor_node->AddChild<FireMeteor>();
-		meteor_node->AddChild<ResetPos>();
-
-
-		auto catapult_entity = NagiocpX::CreateContentsEntity(Nagox::Enum::GROUP_TYPE_NPC, Nagox::Enum::NPC_TYPE_CATAPULT);
-		const auto catapult = catapult_entity->AddComp<Catapult>();
-		const auto pos_comp = catapult_entity->AddComp<PositionComponent>();
-		pos_comp->pos = Vector3(-61.653553F, 30.55081F, -287.9226F);
-		const auto catapult_pos = pos_comp->pos;
-		catapult->m_boss_ptr = boss_entity;
-		catapult->m_meteor_node = fire_meteor_node;
-		
-		EnterFieldWithFloatXYNPC(catapult_pos.x + 512.f, catapult_pos.z + 512.f, catapult_entity);
-	}
+	//{
+	//	 
+	//	const auto meteor_node = bt_root->AddChild<SequenceNode>();
+	//	//const auto choice_atk = meteor_node->AddChild<SelectPattern>();
+	//	//choice_atk->m_probability = .6f;
+	//	//choice_atk->m_origin_prob = .6f;
+	//	meteor_node->AddChild<SetMeteorPos>();
+	//	const auto fire_meteor_node = meteor_node->AddChild<FireMeteor>();
+	//	meteor_node->AddChild<ResetPos>();
+	//
+	//
+	//	auto catapult_entity = NagiocpX::CreateContentsEntity(Nagox::Enum::GROUP_TYPE_NPC, Nagox::Enum::NPC_TYPE_CATAPULT);
+	//	const auto catapult = catapult_entity->AddComp<Catapult>();
+	//	const auto pos_comp = catapult_entity->AddComp<PositionComponent>();
+	//	pos_comp->pos = Vector3(-61.653553F, 30.55081F, -287.9226F);
+	//	const auto catapult_pos = pos_comp->pos;
+	//	catapult->m_boss_ptr = boss_entity;
+	//	catapult->m_meteor_node = fire_meteor_node;
+	//	
+	//	EnterFieldWithFloatXYNPC(catapult_pos.x + 512.f, catapult_pos.z + 512.f, catapult_entity);
+	//}
 	return boss_entity;
 }

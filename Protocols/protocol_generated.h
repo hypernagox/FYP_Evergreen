@@ -3193,8 +3193,18 @@ inline ::flatbuffers::Offset<c2s_PARTY_OUT> Createc2s_PARTY_OUT(
 
 struct s2c_PARTY_QUEST_START FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_PARTY_QUEST_STARTBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_QUEST_ID = 4
+  };
+  uint32_t quest_id() const {
+    return GetField<uint32_t>(VT_QUEST_ID, 0);
+  }
+  bool mutate_quest_id(uint32_t _quest_id = 0) {
+    return SetField<uint32_t>(VT_QUEST_ID, _quest_id, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<uint32_t>(verifier, VT_QUEST_ID, 4) &&
            verifier.EndTable();
   }
 };
@@ -3203,6 +3213,9 @@ struct s2c_PARTY_QUEST_STARTBuilder {
   typedef s2c_PARTY_QUEST_START Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_quest_id(uint32_t quest_id) {
+    fbb_.AddElement<uint32_t>(s2c_PARTY_QUEST_START::VT_QUEST_ID, quest_id, 0);
+  }
   explicit s2c_PARTY_QUEST_STARTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -3215,8 +3228,10 @@ struct s2c_PARTY_QUEST_STARTBuilder {
 };
 
 inline ::flatbuffers::Offset<s2c_PARTY_QUEST_START> Creates2c_PARTY_QUEST_START(
-    ::flatbuffers::FlatBufferBuilder &_fbb) {
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint32_t quest_id = 0) {
   s2c_PARTY_QUEST_STARTBuilder builder_(_fbb);
+  builder_.add_quest_id(quest_id);
   return builder_.Finish();
 }
 
