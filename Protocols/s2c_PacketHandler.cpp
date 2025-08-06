@@ -357,7 +357,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	// 0번이 투사체
 	// 1번이 지금 보스 범위공격으로 생각중
 	const auto proj_rad = pkt_.radius();
-	if (pkt_.proj_type() == 0)
+	if (pkt_.proj_type() == 0 || pkt_.proj_type() == 2)
 	{
 		Vector3 normal = ::ToOriginVec3(pkt_.vel());
 		normal.Normalize();

@@ -95,7 +95,7 @@ NodeStatus MoveToTarget::Tick(const ComponentSystemNPC* const owner_comp_sys, Ti
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	const auto DT = bt_root_timer->GetFloatDT();
 	constexpr const float BOSS_SPEED = 10.f;
-	constexpr const float MELLE_ATK_DIST = 5.f;
+	const float MELLE_ATK_DIST = m_dist;
 
 	
 	m_accTime = 5.f;
@@ -242,6 +242,7 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		}
 		//else
 		//{
+		//	auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(1);
 		//	proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos) - CommonMath::Normalized(Vector3{ dx,dy,dz }) * 0.1f;
 		//	proj.timer->m_proj_type = 1;
 		//	proj.timer->m_accDist = 99.9f;
@@ -488,7 +489,7 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 			count = 30;
 			m_accTime = .5f;
 			m_accTime2 = 3.5f;
-			m_accCatapultTime = 10.f;
+			m_accCatapultTime = 5.f;
 			m_hit_catapult.store(false);
 			return NodeStatus::SUCCESS;
 		}
@@ -558,5 +559,76 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	}
 	--count;
 	m_accTime = .3f;
+	return NodeStatus::RUNNING;
+}
+
+NodeStatus FireBreath::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
+{
+	const auto boss_storage_node = static_cast<BossStorageNode* const>(bt_root_timer->GetRootNode());
+	const auto& player_list = bt_root_timer->GetTempVecForInsightObj();
+	// TODO: 적당한 유저 찾기	
+	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
+	//if (player_list.empty())return NodeStatus::FAILURE;
+	if (!boss_storage_node->m_cur_target)return NodeStatus::FAILURE;
+	const auto DT = bt_root_timer->GetFloatDT();
+	m_accTime -= DT;
+	if (count == 0 && 0.f >= m_accTime)
+	{
+		count = 50;
+		m_accTime = .01f;
+		return NodeStatus::SUCCESS;
+	}
+	if (count == 0 || 0.f < m_accTime)
+	{
+		return NodeStatus::RUNNING;
+	}
+	const auto boss_pos = boss_entity->GetComp<PositionComponent>()->pos;
+	//for (const auto users : player_list)
+	{
+		const Vector3 user_pos = boss_storage_node->m_cur_target->GetComp<PositionComponent>()->pos;
+		const Vector3 to_target_dir = user_pos - boss_pos;
+		Vector3 dir = to_target_dir;
+		dir.Normalize();
+
+		constexpr float spread_deg = 15.0f;
+		const float random_offset_deg = ((rand() % 1000) / 1000.0f) * spread_deg * 2.0f - spread_deg;
+		const float random_offset_rad = DirectX::XMConvertToRadians(random_offset_deg);
+
+		const float cos_theta = cosf(random_offset_rad);
+		const float sin_theta = sinf(random_offset_rad);
+
+		Vector3 spread_dir;
+		spread_dir.x = dir.x * cos_theta - dir.z * sin_theta;
+		spread_dir.y = dir.y; // Y는 그대로 유지
+		spread_dir.z = dir.x * sin_theta + dir.z * cos_theta;
+		spread_dir.Normalize();
+
+		const auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(10);
+		proj.timer->m_proj_type = 2;
+		proj.timer->m_radius = 0.125f;
+		proj.timer->m_pos = boss_pos;
+		proj.timer->m_speed = spread_dir * 50.f + Vector3{ 0,3,0 };
+		proj.timer->m_max_dist = 100.f;
+		proj.timer->SelectObjList(player_list);
+		proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
+		
+
+		const auto cur_dir = CommonMath::Normalized(boss_storage_node->m_cur_target->GetComp<PositionComponent>()->pos - boss_pos);
+		boss_entity->GetComp<PositionComponent>()->body_angle = atan2f(cur_dir.x, cur_dir.z) * 180.f / 3.141592f;
+
+		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+			Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos),
+				20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1,
+				boss_entity->GetComp<PositionComponent>()->body_angle));
+	}
+
+	m_accTime = .01f;
+	--count;
+	if (count == 0)
+	{
+		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
+			Create_s2c_BOSS_MOVE(ToFlatVec(boss_entity->GetComp<PositionComponent>()->pos), 20.f, Nagox::Enum::BOSS_MOVE_TYPE_BOSS_MOVE_TYPE_1, boss_entity->GetComp<PositionComponent>()->body_angle));
+		m_accTime = .01f;
+	}
 	return NodeStatus::RUNNING;
 }

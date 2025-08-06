@@ -15,7 +15,7 @@ void Projectile::SelectObjList(const XVector<const ContentsEntity*>& vec_) noexc
 NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 {
 	// TODO: 개 쌉 하드코딩 + 매직넘버
-	DO_BENCH_GLOBAL_THIS_FUNC;
+	//DO_BENCH_GLOBAL_THIS_FUNC;
 	m_timer.Update();
 	const auto dt = m_timer.GetDT();
 	const auto pos = m_pos;
@@ -35,7 +35,7 @@ NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 
 	const auto delta = m_speed * dt;
 	m_accDist += delta.Length();
-	if (isHit)return NagiocpX::ROUTINE_RESULT::STOP;
+	if (isHit && 2!= m_proj_type)return NagiocpX::ROUTINE_RESULT::STOP;
 	if (m_max_dist <= m_accDist)return NagiocpX::ROUTINE_RESULT::STOP;
 	m_pos = m_pos + m_speed * dt;
 	return NagiocpX::ROUTINE_RESULT::STILL_RUNNIG;
