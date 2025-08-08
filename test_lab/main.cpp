@@ -101,7 +101,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     meshRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<udsdx::Shader>(L"resource\\nprcolor.hlsl"), res->Load<udsdx::Texture>(L"resource\\catapult\\Catapult_BaseColor.png")), 0);
     meshRenderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(L"resource\\catapult\\idle.yac"), true);
 
-     g_scene->AddObject(m_characterObject);
+     // g_scene->AddObject(m_characterObject);
 
      {
          auto dragonObject = SceneObject::MakeShared();
