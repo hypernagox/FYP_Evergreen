@@ -229,6 +229,12 @@ struct s2c_SHOOT_CATAPULTBuilder;
 struct s2c_NOTIFY_CATAPULT;
 struct s2c_NOTIFY_CATAPULTBuilder;
 
+struct s2c_BOSS_CHANGE_PHASE;
+struct s2c_BOSS_CHANGE_PHASEBuilder;
+
+struct s2c_BOSS_READY_TO_BREATH;
+struct s2c_BOSS_READY_TO_BREATHBuilder;
+
 struct c2s_LOGIN FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef c2s_LOGINBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -4542,6 +4548,64 @@ inline ::flatbuffers::Offset<s2c_NOTIFY_CATAPULT> Creates2c_NOTIFY_CATAPULT(
     const Nagox::Struct::Vec3 *catapult_pos = nullptr) {
   s2c_NOTIFY_CATAPULTBuilder builder_(_fbb);
   builder_.add_catapult_pos(catapult_pos);
+  return builder_.Finish();
+}
+
+struct s2c_BOSS_CHANGE_PHASE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_BOSS_CHANGE_PHASEBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_BOSS_CHANGE_PHASEBuilder {
+  typedef s2c_BOSS_CHANGE_PHASE Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit s2c_BOSS_CHANGE_PHASEBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_BOSS_CHANGE_PHASE> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_BOSS_CHANGE_PHASE>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_BOSS_CHANGE_PHASE> Creates2c_BOSS_CHANGE_PHASE(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  s2c_BOSS_CHANGE_PHASEBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct s2c_BOSS_READY_TO_BREATH FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef s2c_BOSS_READY_TO_BREATHBuilder Builder;
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct s2c_BOSS_READY_TO_BREATHBuilder {
+  typedef s2c_BOSS_READY_TO_BREATH Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  explicit s2c_BOSS_READY_TO_BREATHBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<s2c_BOSS_READY_TO_BREATH> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<s2c_BOSS_READY_TO_BREATH>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<s2c_BOSS_READY_TO_BREATH> Creates2c_BOSS_READY_TO_BREATH(
+    ::flatbuffers::FlatBufferBuilder &_fbb) {
+  s2c_BOSS_READY_TO_BREATHBuilder builder_(_fbb);
   return builder_.Finish();
 }
 

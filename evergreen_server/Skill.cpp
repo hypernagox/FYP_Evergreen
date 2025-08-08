@@ -242,7 +242,7 @@ bool PriestSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
 			const auto other_pos = user->GetComp<PositionComponent>()->pos;
 			if (CommonMath::IsInDistanceDX(other_pos, owner_pos, 5.f))
 			{
-				user->GetComp<HP>()->PostDoHeal(3);
+				user->GetComp<HP>()->PostDoHeal(300);
 				healed_user_ids.emplace_back(user->GetObjectID());
 			}
 			users.emplace_back(std::move(user));
@@ -253,7 +253,7 @@ bool PriestSkill_1::ExecuteSkill(StatusSystem* const use_entity_system) noexcept
 			{
 				auto heal_pkt = Create_s2c_HEAL(
 					healed_user_id,
-					3
+					300
 				);
 				user->GetSession()->SendAsync(heal_pkt);
 				pOwner->GetSession()->SendAsync(std::move(heal_pkt));

@@ -47,7 +47,7 @@ void HP::DoDmg(const int dmg_, const NagiocpX::S_ptr<NagiocpX::ContentsEntity> a
 			m_hp -= cur_dmg;
 			if (m_hp <= 0)
 			{
-				m_hp = 10;
+				m_hp = 1000;
 			}
 		}
 		else

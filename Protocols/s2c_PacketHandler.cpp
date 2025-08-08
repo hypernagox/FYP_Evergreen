@@ -357,7 +357,10 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	// 0번이 투사체
 	// 1번이 지금 보스 범위공격으로 생각중
 	const auto proj_rad = pkt_.radius();
-	if (pkt_.proj_type() == 0 || pkt_.proj_type() == 2)
+	// TODO: 1이 디폴트 평타?
+	// 2가 많은 파이어볼 공격
+	// 현재 이부분은 적절하지않아서 논의 필요
+	if (pkt_.proj_type() == 0 || pkt_.proj_type() == 2 || pkt_.proj_type() == 1)
 	{
 		Vector3 normal = ::ToOriginVec3(pkt_.vel());
 		normal.Normalize();
@@ -510,23 +513,10 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 	}
 	else if (pkt_.proj_type() == 1)
 	{
-		//const auto shoot_obj_id = pkt_.shoot_obj_id();
-		//const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
-		//auto s = SceneObject::MakeShared();
-		//s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
-		//s->GetTransform()->SetLocalScale(proj_rad/2.f);
-	
-		//auto gizmoRenderer = s->AddComponent<MeshRenderer>();
-		//gizmoRenderer->SetMesh(INSTANCE(Resource)->Load<Mesh>(RESOURCE_PATH(L"sphere.yms")));
-		//gizmoRenderer->SetMaterial(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"colornotex.hlsl")));
-	
-		//auto so = s->AddComponent<ServerObject>();
-		//const auto proj = so->AddComp<Projectile>();
-		//proj->m_speed = ::ToOriginVec3(pkt_.vel());
-		//so->SetObjID((uint32_t)pkt_.proj_id());
-		//Mgr(ServerObjectMgr)->AddObject(s);
+		// TODO: 보스 브레스의 투사체?라고 부를만한 것
+		
 	}
-
+	
 	return true;
 }
 
@@ -1236,5 +1226,20 @@ const bool Handle_s2c_NOTIFY_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSe
 	// TODO: 투석기가 사용가능해졌다는 UI 알림 필요
 	GuideSystem::GetInst()->SetCatapultPos(ToOriginVec3(pkt_.catapult_pos()));
 	TutorialUI::ToggleBossCatapultGUI(true);
+	return true;
+}
+
+const bool Handle_s2c_BOSS_CHANGE_PHASE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_CHANGE_PHASE& pkt_)
+{
+	// 보스의 페이즈 전환 시작 시 여기로 패킷이 온다.
+	std::cout << "보스 페이즈 전환 !\n";
+	return true;
+}
+
+const bool Handle_s2c_BOSS_READY_TO_BREATH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_READY_TO_BREATH& pkt_)
+{
+	// TODO: 보스의 브레스 애니메이션 전조증상
+	// 이건 브레스 준비이고 실제로 브레스 발사는 위의 FIRE_PROJ에서 보스보다 조금 뒤쪽에서 투사체를 발사시키는 방식으로 온다.
+	std::cout << "보스 브레스 준비 !\n";
 	return true;
 }

@@ -436,3 +436,11 @@ table s2c_NOTIFY_CATAPULT
 {
     catapult_pos: Nagox.Struct.Vec3;
 }
+
+table s2c_BOSS_CHANGE_PHASE
+{
+}
+
+table s2c_BOSS_READY_TO_BREATH
+{
+}

@@ -2,6 +2,14 @@
 #include "BehaviorTree.hpp"
 #include "PositionComponent.h"
 
+enum class BOSS_PHASE
+{
+	PHASE_1,
+	PHASE_2,
+
+	END
+};
+
 class BossStorageNode
 	:public SelectorNode
 {
@@ -11,6 +19,8 @@ public:
 	int m_cur_target_idx = 0;
 	float m_cur_target_acc[3]{ 5.f,5.f,5.f };
 	bool m_prev_fire = false;
+public:
+	std::atomic<BOSS_PHASE> m_boss_phase{ BOSS_PHASE::PHASE_1 };
 };
 
 class SelectPattern
@@ -25,6 +35,8 @@ public:
 	float m_origin_prob = .5f;
 	int m_count = 0;
 	int max_count = 3;
+	bool m_bIsBreath = false;
+	bool m_bIsFirstBreath = true;
 };
 
 class SelectTarget
@@ -89,7 +101,7 @@ public:
 public:
 
 	float m_accTime = 2.f;
-	int count = 30;
+	int count = 5;
 };
 
 class ResetPos
@@ -145,4 +157,16 @@ public:
 public:
 	float m_accTime = 0.01f;
 	int count = 50;
+	float m_accReadyTime = 2.f;
+};
+
+class PhaseCheckNode
+	:public ActionNode
+{
+public:
+	NodeStatus Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker)noexcept override;
+	virtual void Reset(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer)noexcept {}
+public:
+	volatile bool m_bIsChangedPhase = false;
+	float m_accPhaseChangeTime = 10.f;
 };
