@@ -14,7 +14,7 @@ public:
 	class NaviAgent* m_navAgent = nullptr;
 	XVector<std::pair<Vector3, float>> m_vecDirDists;
 	int m_cur_idx = 0;
-	float m_speed = 3.0f;
+	float m_speed = 5.0f;
 	float m_curDistAcc = 0.f;
 	std::shared_ptr<PartyQuestSystem> m_owner_system = nullptr;
 	uint64_t m_last_update_timestamp = ::GetTickCount64();

@@ -1,7 +1,7 @@
 {
   "Fox": {
     "Name": "여우",
-    "hp": 10,
+    "hp": 5,
     "DropItem": "Foxtail"
   },
   "Sheep": {
@@ -11,7 +11,7 @@
   },
   "Bear": {
     "Name": "곰",
-    "hp": 20,
+    "hp": 5,
     "DropItem": "Meat"
   },
   "Boss": {
