@@ -827,3 +827,25 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_NOTIFY_CATAPULT(
 
     return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_NOTIFY_CATAPULT);
 }
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_CHANGE_PHASE(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+   const auto serializeds2c_BOSS_CHANGE_PHASE = Nagox::Protocol::Creates2c_BOSS_CHANGE_PHASE(
+    builder    );
+    builder.Finish(serializeds2c_BOSS_CHANGE_PHASE);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_BOSS_CHANGE_PHASE);
+}
+NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_READY_TO_BREATH(
+    flatbuffers::FlatBufferBuilder* const builder_ptr
+)noexcept {
+    auto& builder = *builder_ptr;
+    builder.Clear();
+   const auto serializeds2c_BOSS_READY_TO_BREATH = Nagox::Protocol::Creates2c_BOSS_READY_TO_BREATH(
+    builder    );
+    builder.Finish(serializeds2c_BOSS_READY_TO_BREATH);
+
+    return CreateSendBuffer(builder, CREATE_PKT_ID::s2c_BOSS_READY_TO_BREATH);
+}

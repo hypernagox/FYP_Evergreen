@@ -22,6 +22,7 @@ public:
 	Vector3 m_speed = {};
 	NagiocpX::Timer m_timer;
 	uint8_t m_proj_type = 0;
+	int16_t m_dmg = 2;
 	float m_max_dist = 20.f;
 };
 

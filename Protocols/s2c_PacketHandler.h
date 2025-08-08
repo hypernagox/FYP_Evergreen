@@ -51,6 +51,8 @@ enum class HANDLE_PKT_ID : uint16_t {
     s2c_CHAT = 1040,
     s2c_SHOOT_CATAPULT = 1041,
     s2c_NOTIFY_CATAPULT = 1042,
+    s2c_BOSS_CHANGE_PHASE = 1043,
+    s2c_BOSS_READY_TO_BREATH = 1044,
 };
 
 enum class CREATE_PKT_ID : uint16_t {
@@ -133,6 +135,8 @@ const bool Handle_s2c_ARROW_RAIN(const NetHelper::S_ptr<NetHelper::PacketSession
 const bool Handle_s2c_CHAT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_CHAT& pkt_);
 const bool Handle_s2c_SHOOT_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_SHOOT_CATAPULT& pkt_);
 const bool Handle_s2c_NOTIFY_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_NOTIFY_CATAPULT& pkt_);
+const bool Handle_s2c_BOSS_CHANGE_PHASE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_CHANGE_PHASE& pkt_);
+const bool Handle_s2c_BOSS_READY_TO_BREATH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_READY_TO_BREATH& pkt_);
 
 class s2c_PacketHandler {
     using PacketHandlerFunc = const bool (*)(const NetHelper::S_ptr<NetHelper::PacketSession>&, const BYTE* const, const int32_t);
@@ -182,6 +186,8 @@ public:
         RegisterHandler<HANDLE_PKT_ID::s2c_CHAT, Nagox::Protocol::s2c_CHAT, Handle_s2c_CHAT>();
         RegisterHandler<HANDLE_PKT_ID::s2c_SHOOT_CATAPULT, Nagox::Protocol::s2c_SHOOT_CATAPULT, Handle_s2c_SHOOT_CATAPULT>();
         RegisterHandler<HANDLE_PKT_ID::s2c_NOTIFY_CATAPULT, Nagox::Protocol::s2c_NOTIFY_CATAPULT, Handle_s2c_NOTIFY_CATAPULT>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_CHANGE_PHASE, Nagox::Protocol::s2c_BOSS_CHANGE_PHASE, Handle_s2c_BOSS_CHANGE_PHASE>();
+        RegisterHandler<HANDLE_PKT_ID::s2c_BOSS_READY_TO_BREATH, Nagox::Protocol::s2c_BOSS_READY_TO_BREATH, Handle_s2c_BOSS_READY_TO_BREATH>();
         for (auto& fpHandlerFunc : g_fpPacketHandler) {
             if (nullptr == fpHandlerFunc)
                 fpHandlerFunc = Handle_Invalid;

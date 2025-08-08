@@ -7,6 +7,7 @@
 #include "Projectile.h"
 #include "NaviAgent_Common.h"
 #include "NavigationMesh.h"
+#include "HP.h"
 
 using namespace NagiocpX;
 
@@ -51,6 +52,14 @@ NodeStatus SelectPattern::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 		boss_storage_node->m_cur_target_idx = (boss_storage_node->m_cur_target_idx + 1) % player_list.size();
 	}
 	boss_storage_node->m_cur_target = player_list[boss_storage_node->m_cur_target_idx]->SharedFromThis();
+	if (BOSS_PHASE::PHASE_2 == boss_storage_node->m_boss_phase)
+	{
+		if (m_bIsBreath && m_bIsFirstBreath)
+		{
+			m_bIsFirstBreath = false;
+			return NodeStatus::SUCCESS;
+		}
+	}
 	if (r < m_probability)
 	{
 		//if (max_count == m_count++)
@@ -228,14 +237,16 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		--m_count;
 		//if (rand() & 1)
 		{
+			owner_comp_sys->GetComp<ClusterInfoHelper>()->BroadcastAllCluster(Create_s2c_BOSS_READY_TO_BREATH());
 			auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(1);
 			//proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos) - CommonMath::Normalized(Vector3{ dx,dy,dz }) * 0.1f;
-			proj.timer->m_pos = owner_comp_sys->GetComp<PositionComponent>()->pos + Vector3{ 0,10,0 };
+			proj.timer->m_dmg = 173;
+			proj.timer->m_pos = owner_comp_sys->GetComp<PositionComponent>()->pos - dir * 10.f;
 			proj.timer->m_proj_type = 1;
 			//proj.timer->m_accDist = 99.9f;
 			//proj.timer->m_
 			proj.timer->SelectObjList(bt_root_timer->GetTempVecForInsightObj());
-			proj.timer->m_speed = Vector3{ 0,-1,0 }*7.5f;
+			proj.timer->m_speed = dir * 7.5f;
 			//proj.timer->m_speed = CommonMath::Normalized(Vector3{ dx,dy,dz }) * 10.f;
 			proj.timer->m_radius = 3.f;
 			proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();
@@ -256,7 +267,7 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		m_accTime = 2.f;
 		if (m_count == 0)
 		{
-			std::uniform_int_distribution<> uid{ 1,5 };
+			std::uniform_int_distribution<> uid{ 1,3 };
 			m_count = uid(LRandEngine);
 			return NodeStatus::SUCCESS;
 		}
@@ -391,7 +402,7 @@ NodeStatus ShootFireBall::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 	m_accTime -= DT;
 	if (count == 0 && 0.f >= m_accTime)
 	{
-		count = 30;
+		count = 5;
 		m_accTime = 2.f;
 		return NodeStatus::SUCCESS;
 	}
@@ -570,12 +581,20 @@ NodeStatus FireBreath::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	const auto boss_entity = owner_comp_sys->GetOwnerEntity();
 	//if (player_list.empty())return NodeStatus::FAILURE;
 	if (!boss_storage_node->m_cur_target)return NodeStatus::FAILURE;
+	if(BOSS_PHASE::PHASE_1 == boss_storage_node->m_boss_phase)return NodeStatus::FAILURE;
+
 	const auto DT = bt_root_timer->GetFloatDT();
 	m_accTime -= DT;
+	m_accReadyTime -= DT;
+	if (0.f < m_accReadyTime)
+	{
+		return NodeStatus::RUNNING;
+	}
 	if (count == 0 && 0.f >= m_accTime)
 	{
 		count = 50;
 		m_accTime = .01f;
+		m_accReadyTime = 2.f;
 		return NodeStatus::SUCCESS;
 	}
 	if (count == 0 || 0.f < m_accTime)
@@ -631,4 +650,35 @@ NodeStatus FireBreath::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		m_accTime = .01f;
 	}
 	return NodeStatus::RUNNING;
+}
+
+NodeStatus PhaseCheckNode::Tick(const ComponentSystemNPC* const owner_comp_sys, TickTimerBT* const bt_root_timer, const NagiocpX::S_ptr<NagiocpX::ContentsEntity>& awaker) noexcept
+{
+	if (0.f >= m_accPhaseChangeTime && m_bIsChangedPhase)return NodeStatus::FAILURE;
+	const auto boss_storage_node = static_cast<BossStorageNode* const>(bt_root_timer->GetRootNode());
+	const auto hp_comp = owner_comp_sys->GetComp<HP>();
+	const auto boss_max_hp = hp_comp->GetMaxHP();
+	const auto boss_cur_hp = hp_comp->GetCurHP();
+	if (boss_cur_hp <= boss_max_hp / 2)
+	{
+		const auto DT = bt_root_timer->GetFloatDT();
+		m_accPhaseChangeTime -= DT;
+
+		if (false == m_bIsChangedPhase)
+		{
+			m_bIsChangedPhase = true;
+			owner_comp_sys->GetComp<ClusterInfoHelper>()->BroadcastAllCluster(Create_s2c_BOSS_CHANGE_PHASE());
+		}
+	
+		if (0.f >= m_accPhaseChangeTime)
+		{
+			boss_storage_node->m_boss_phase.store(BOSS_PHASE::PHASE_2);
+		}
+		else
+		{
+			return NodeStatus::RUNNING;
+		}
+	}
+	return NodeStatus::FAILURE;
+
 }

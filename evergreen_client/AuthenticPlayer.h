@@ -41,8 +41,11 @@ private:
 	float m_fovBase = 75.0f * DEG2RAD;
 	float m_fovAdd = 0.0f;
 
-	int m_iMaxHP = 5; // TODO: Magic Number
-	int m_iCurHP = 5;
+	// TODO: 내 임의로 1000으로 바꾸어 놓은 것
+	// 다른부분에서도 뭔가 더해줘야할 조치가 있다면
+	// 수정이 필요함
+	int m_iMaxHP = 1000; // TODO: Magic Number
+	int m_iCurHP = 1000;
 
 	// 플레이어의 아이템 ID별 소지 개수를 나타내는 자료구조
 	// ex) m_inventory[x] = y: id가 x인 아이템을 y개 소지하고 있다.

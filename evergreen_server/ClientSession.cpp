@@ -38,7 +38,7 @@ void ClientSession::OnConnected()
 	const auto pOwner = GetOwnerEntity();
 
 	pOwner->AddIocpComponent<NagiocpX::Queueabler>();
-	pOwner->AddComp<HP>()->InitHP(5); // TODO 매직넘버
+	pOwner->AddComp<HP>()->InitHP(1000); // TODO 매직넘버
 	pOwner->AddComp<PlayerDeath>();
 	pOwner->AddComp<QuestSystem>();
 	pOwner->AddComp<NagiocpX::TimerHandler>();

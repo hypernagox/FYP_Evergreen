@@ -23,12 +23,14 @@ NagiocpX::ROUTINE_RESULT Projectile::Routine() noexcept
 	const DirectX::BoundingSphere s{ pos,m_radius };
 	const auto& owner = m_owner;
 
+	const auto dmg = m_dmg;
+
 	for (const auto& [obj,col] : m_obj_list)
 	{
 		if (obj->GetPrimaryGroupType() == Nagox::Enum::GROUP_TYPE_HARVEST)continue;
 		if (col->GetCollider()->IsIntersect(s))
 		{
-			obj->GetComp<HP>()->PostDoDmg(2, owner);
+			obj->GetComp<HP>()->PostDoDmg(dmg, owner);
 			isHit = true;
 		}
 	}
