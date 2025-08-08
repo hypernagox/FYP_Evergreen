@@ -43,6 +43,7 @@ namespace udsdx
 
 			float ratio = param.Viewport.Height / RefScreenSize.y;
 			Vector3 position = GetTransform()->GetWorldPosition() * Vector3(ratio, -ratio, 1.0f) + Vector3(param.Viewport.Width / 2.0f, param.Viewport.Height / 2.0f, 0.0f);
+			Quaternion rotation = GetTransform()->GetWorldRotation();
 
 			param.SpriteBatchNonPremultipliedAlpha->Draw(
 				m_texture->GetSrvGpu(),
@@ -50,7 +51,7 @@ namespace udsdx
 				position,
 				&sourceRect,
 				m_color,
-				0.0f,
+				-rotation.ToEuler().z,
 				Vector2(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y)) * 0.5f + offset,
 				Vector2(scaleX * m_size.x / textureSize.x, scaleY * m_size.y / textureSize.y) * ratio
 			);

@@ -431,8 +431,19 @@ void GameScene::OnAttach()
             minimapMarkerRenderer->SetTexture(resource->Load<udsdx::Texture>(RESOURCE_PATH(L"gui\\minimap_marker.png")));
             minimapMarkerRenderer->SetSize(Vector2(32.0f, 32.0f));
 
+            auto minimapDirectionObj = SceneObject::MakeShared();
+            minimapDirectionObj->GetTransform()->SetLocalPosition(Vector3(0.0f, 190.0f, 0.0f));
+            auto minimapDirectionText = minimapDirectionObj->AddComponent<GUIText>();
+            minimapDirectionText->SetText(L"N");
+            minimapDirectionText->SetFont(resource->Load<udsdx::Font>(RESOURCE_PATH(L"pretendard.spritefont")));
+            minimapDirectionText->SetRaycastTarget(false);
+
+            m_minimapDirectionAnchor = SceneObject::MakeShared();
+
             minimapObj->AddChild(minimapBackground);
             minimapObj->AddChild(minimapMarkerObj);
+            minimapObj->AddChild(m_minimapDirectionAnchor);
+            m_minimapDirectionAnchor->AddChild(minimapDirectionObj);
 
             {
                 auto guideToPartyObj = SceneObject::MakeShared();
@@ -682,6 +693,7 @@ void GameScene::Update(const Time& time)
     Vector3 playerForward = Vector3::Transform(Vector3::Backward, GetMainCamera()->GetTransform()->GetWorldRotation());
     Vector3 playerForwardXZ = Vector3(playerForward.x, 0.0f, playerForward.z);
     playerForwardXZ.Normalize();
+    m_minimapDirectionAnchor->GetTransform()->SetLocalRotation(Quaternion::CreateFromAxisAngle(Vector3::Backward, std::atan2(playerForwardXZ.x, playerForwardXZ.z)));
     playerForwardXZ.y -= 0.5f;
     playerForwardXZ.Normalize();
     m_minimapRenderer->SetViewMatrix(playerPosition, playerForwardXZ);

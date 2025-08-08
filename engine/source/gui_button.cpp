@@ -8,6 +8,7 @@ namespace udsdx
 	{
 		float ratio = param.Viewport.Height / RefScreenSize.y;
 		Vector3 position = GetTransform()->GetWorldPosition() * Vector3(ratio, -ratio, 1.0f) + Vector3(param.Viewport.Width / 2.0f, param.Viewport.Height / 2.0f, 0.0f);
+		Quaternion rotation = GetTransform()->GetWorldRotation();
 		Vector4 color = Colors::White;
 		if (!m_interactable)
 		{
@@ -33,7 +34,7 @@ namespace udsdx
 				position,
 				nullptr,
 				color,
-				0.0f,
+				-rotation.ToEuler().z,
 				Vector2(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y)) * 0.5f,
 				Vector2(m_size.x / textureSize.x, m_size.y / textureSize.y) * ratio
 			);
