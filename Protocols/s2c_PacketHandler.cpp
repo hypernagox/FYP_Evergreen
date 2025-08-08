@@ -446,7 +446,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 						particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
 						particleEmitter->SetEmitLoop(false);
 						particleEmitter->SetAutoDestroy(false);
-						particleEmitter->SetVerticalBillboard(true);
+						particleEmitter->SetHorizontalBillboard(true);
 						particleEmitter->SetOrientedByDirection(true);
 						particleEmitter->Play();
 					}
@@ -1093,7 +1093,7 @@ const bool Handle_s2c_HEAL(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 		particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
 		particleEmitter->SetEmitLoop(false);
 		particleEmitter->SetAutoDestroy(true);
-		particleEmitter->SetVerticalBillboard(true);
+		particleEmitter->SetHorizontalBillboard(true);
 		particleEmitter->Play();
 
 		ServerObjectMgr::GetInst()->GetTargetScene()->AddObject(particleObject);
@@ -1130,8 +1130,6 @@ const bool Handle_s2c_DASH(const NetHelper::S_ptr<NetHelper::PacketSession>& pSe
 
 const bool Handle_s2c_ARROW_RAIN(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_ARROW_RAIN& pkt_)
 {
-	constexpr const int arrowCount = 10;
-
 	const Vector3 center = ToOriginVec3(pkt_.atk_pos());
 	const Vector3 spawnPos = center + Vector3::Up * 5.0f;
 
@@ -1154,6 +1152,7 @@ const bool Handle_s2c_ARROW_RAIN(const NetHelper::S_ptr<NetHelper::PacketSession
 		particleEmitter->SetEmitLoop(false);
 		particleEmitter->SetAutoDestroy(true);
 		particleEmitter->SetOrientedByDirection(true);
+		particleEmitter->SetVerticalBillboard(true);
 		particleEmitter->Play();
 
 		ServerObjectMgr::GetInst()->GetTargetScene()->AddObject(particleObject);
@@ -1179,7 +1178,7 @@ const bool Handle_s2c_ARROW_RAIN(const NetHelper::S_ptr<NetHelper::PacketSession
 		particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
 		particleEmitter->SetEmitLoop(false);
 		particleEmitter->SetAutoDestroy(true);
-		particleEmitter->SetVerticalBillboard(true);
+		particleEmitter->SetHorizontalBillboard(true);
 		particleEmitter->Play();
 
 		ServerObjectMgr::GetInst()->GetTargetScene()->AddObject(particleObject);

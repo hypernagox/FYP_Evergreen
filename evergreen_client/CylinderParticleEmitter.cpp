@@ -107,7 +107,8 @@ void CylinderParticleEmitter::Render(udsdx::RenderParam& param, int parameter)
 	unsigned int flags =
 		static_cast<unsigned int>(m_emitLoop) |
 		static_cast<unsigned int>(m_orientedByDirection) << 1 |
-		static_cast<unsigned int>(m_verticalBillboard) << 2;
+		static_cast<unsigned int>(m_horizontalBillboard) << 2 |
+		static_cast<unsigned int>(m_verticalBillboard) << 3;
 
 	ObjectConstants objectConstants;
 	objectConstants.World = m_transformCache.Transpose();

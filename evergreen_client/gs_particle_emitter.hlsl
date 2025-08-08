@@ -68,7 +68,12 @@ void GS(point GeometryIn input[1], inout TriangleStream<GeometryOut> triStream)
     float3 right = float3(1.0f, 0.0f, 0.0f);
     float3 up = float3(0.0f, 0.0f, 1.0f);
 
-    if (!(flags & 4))
+    if (flags & 8)
+    {
+        up = float3(0.0f, 1.0f, 0.0f);
+        right = normalize(cross(up, float3(gView[0][2], gView[1][2], gView[2][2])));
+    }
+    else if (!(flags & 4))
     {
         right = normalize(float3(gView[0][0], gView[1][0], gView[2][0]));
         up    = normalize(float3(gView[0][1], gView[1][1], gView[2][1]));

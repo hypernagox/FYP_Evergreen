@@ -106,8 +106,7 @@ void MonsterBoss::Update(const Time& time, Scene& scene)
         if (m_wingTimer <= 0.0f)
         {
             m_wingTimer = 1.0f;
-            m_wingSoundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_wing.wav"))->CreateInstance();
-            m_wingSoundInstance->Play();
+            m_wingSoundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_wing.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
         }
     }
 
