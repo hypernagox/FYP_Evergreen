@@ -9,7 +9,7 @@ void CS(int3 id : SV_DispatchThreadID)
 	{
 		for (int x = 0; x < MAX_BLUR_RADIUS; ++x)
 		{
-			float2 sample = gSource.Load(int3(id.xy * MAX_BLUR_RADIUS + int2(x, y), 0));
+			float2 sample = gSource.Load(int3(id.xy * MAX_BLUR_RADIUS + int2(x, y), 0)).xy;
 			if (dot(sample, sample) > dot(maxSample, maxSample))
 			{
 				maxSample = sample;

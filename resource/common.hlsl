@@ -195,6 +195,14 @@ float2 PackNormal(float3 n)
 	return normalize(n.xy) * sqrt(n.z * 0.5f + 0.5f);
 }
 
+float2 PackMotion(float4 posH, float4 prevPosH)
+{
+	float2 motion = (posH.xy / posH.w) - (prevPosH.xy / prevPosH.w);
+	motion *= gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
+	motion /= max(length(motion), 1.0f);
+	return motion;
+}
+
 float GetDitherThreshold(float2 fragCoord)
 {
     int x = (int)fmod(fragCoord.x, 8.0);

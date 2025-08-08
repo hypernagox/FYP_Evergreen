@@ -19,18 +19,26 @@ Texture2D gDepth : register(t2);
 Texture2D gNeighborMax : register(t3);
 SamplerState gSamPoint : register(s0);
 		
-static const uint gSampleCount = 16;
+static const uint gSampleCount = 8;
 
-// discontinuous pseudorandom uniformly distributed in [-0.5, +0.5]^3
-float3 rand3(float3 c) {
-	float j = 4096.0f * sin(dot(c, float3(17.0f, 59.4f, 15.0f)));
-	float3 r;
-	r.z = frac(512.0f * j);
-	j *= 0.125f;
-	r.x = frac(512.0f * j);
-	j *= 0.125f;
-	r.y = frac(512.0f * j);
-	return r - 0.5f;
+static const float Bayer8x8[64] =
+{
+    0.0000, 0.7500, 0.1875, 0.9375, 0.0469, 0.7969, 0.2344, 0.9844,
+    0.5000, 0.2500, 0.6875, 0.4375, 0.5469, 0.2969, 0.7344, 0.4844,
+    0.1250, 0.8750, 0.0625, 0.8125, 0.1719, 0.9219, 0.1094, 0.8594,
+    0.6250, 0.3750, 0.5625, 0.3125, 0.6719, 0.4219, 0.6094, 0.3594,
+    0.0312, 0.7812, 0.2188, 0.9688, 0.0156, 0.7656, 0.2031, 0.9531,
+    0.5312, 0.2812, 0.7188, 0.4688, 0.5156, 0.2656, 0.7031, 0.4531,
+    0.1562, 0.9062, 0.0938, 0.8438, 0.1406, 0.8906, 0.0781, 0.8281,
+    0.6562, 0.4062, 0.5938, 0.3438, 0.6406, 0.3906, 0.5781, 0.3281
+};
+
+float GetDitherThreshold(float2 fragCoord)
+{
+    int x = (int)fmod(fragCoord.x, 8.0);
+    int y = (int)fmod(fragCoord.y, 8.0);
+    int index = y * 8 + x;
+    return Bayer8x8[index];
 }
 
 float NdcDepthToViewDepth(float z_ndc)
@@ -39,20 +47,24 @@ float NdcDepthToViewDepth(float z_ndc)
 	return viewZ;
 }
 
-float Cone(float x, float r)
+// Depth comapare function returns two weights: background and foreground that sum one
+float2 DepthComp(float centerDepth, float sampleDepth, float depthScale)
 {
-	return saturate(1.0f - abs(x) / r);
+    return saturate(0.5f + float2(depthScale, -depthScale) * (sampleDepth - centerDepth));
 }
 
-float Cylinder(float x, float r)
+// Spread compare function similar to depth compare
+float2 SpreadComp(float offsetLen, float centerSpreadLen, float sampleSpreadLen)
 {
-	return 1.0f - smoothstep(r * 0.95f, r * 1.05f, abs(x));
+	return saturate(float2(centerSpreadLen, sampleSpreadLen) - max(offsetLen - 1.0f, 0.0f));
 }
 
-float SoftDepthComp(float lhs, float rhs)
+// DepthComp and SpreadComp are used together as follows to get the weight for a sample
+float SampleWeight(float centerDepth, float sampleDepth, float offsetLen, float centerSpreadLen, float sampleSpreadLen, float depthScale)
 {
-	const float ext = 1e-3f;
-	return saturate(1.0f - (lhs - rhs) / ext);
+    float2 depthComp = DepthComp(centerDepth, sampleDepth, depthScale);
+	float2 spreadComp = SpreadComp(offsetLen, centerSpreadLen, sampleSpreadLen);
+	return dot(depthComp, spreadComp);
 }
 
 float4 PS(VertexOut pin) : SV_Target
@@ -69,37 +81,28 @@ float4 PS(VertexOut pin) : SV_Target
 		return gSource.Sample(gSamPoint, pin.TexC);
 	}
 
-	float2 vx = gMotion.Sample(gSamPoint, pin.TexC).xy * MAX_BLUR_RADIUS;
-	vx.y = -vx.y;
+	float lvx = length(gMotion.Sample(gSamPoint, pin.TexC).xy) * MAX_BLUR_RADIUS;
 
-	float weight = 1.0f / max(length(vx), 1.0f);
-	float4 color = gSource.Sample(gSamPoint, pin.TexC) * weight;
-
+	float4 sampleSum = 0.0f;
 	float depthSrc = NdcDepthToViewDepth(gDepth.Sample(gSamPoint, pin.TexC).r);
-	float bias = rand3(float3(pin.TexC, 0.0f)).x;
+	float bias = GetDitherThreshold(pin.PosH.xy);
 
 	[unroll]
 	for (uint i = 0; i < gSampleCount; ++i)
 	{
-		if (i == (gSampleCount - 1) / 2)
-		{
-			continue;
-		}
-
-		float t = lerp(-1.0f, 1.0f, (i + bias + 1.0f) / (gSampleCount + 1.0f));
+		float t = lerp(-1.0f, 1.0f, (i + bias) / gSampleCount);
 		float2 texDest = pin.TexC + vn * rcpro * t;
 		float depthDst = NdcDepthToViewDepth(gDepth.Sample(gSamPoint, texDest).r);
 
-		float d = length(vn) * t;
-		float2 vy = gMotion.Sample(gSamPoint, texDest) * MAX_BLUR_RADIUS;
-		vy.y = -vy.y;
-        float y =	SoftDepthComp(depthDst, depthSrc) * Cone(d, length(vy)) +
-					SoftDepthComp(depthSrc, depthDst) * Cone(d, length(vx)) +
-					Cylinder(d, length(vy)) * Cylinder(d, length(vx)) * 2.0f;
+		float ld = abs(length(vn) * t);
+		float lvy = length(gMotion.Sample(gSamPoint, texDest).xy) * MAX_BLUR_RADIUS;
+		float stepScale = gSampleCount / length(vn) * 0.5f;
+        float y = SampleWeight(depthSrc, depthDst, ld * stepScale * 0.5f, lvx * stepScale, lvy * stepScale, 1e+4f);
 
-		weight += y;
-		color += gSource.Sample(gSamPoint, texDest) * y; 
+		sampleSum += float4(gSource.Sample(gSamPoint, texDest).rgb, 1.0f) * y;
 	}
 
-	return color / weight;
+	sampleSum.rgba *= 1.0f / gSampleCount;
+	float3 final = sampleSum.rgb + gSource.Sample(gSamPoint, pin.TexC).rgb * (1.0f - sampleSum.a);
+	return float4(final, 1.0f);
 }

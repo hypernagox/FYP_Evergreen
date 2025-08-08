@@ -58,7 +58,7 @@ void NPCRenderer::OnAnimationStateChange(AnimationState from, AnimationState to)
 		m_rendererObject->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
 		break;
 	case NPCRenderer::AnimationState::Run:
-		m_rendererObject->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_walk.yac")), true, true);
+		m_rendererObject->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_run.yac")), true, true);
 		break;
 	}
 }

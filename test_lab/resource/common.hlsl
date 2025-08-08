@@ -195,6 +195,14 @@ float2 PackNormal(float3 n)
 	return normalize(n.xy) * sqrt(n.z * 0.5f + 0.5f);
 }
 
+float2 PackMotion(float4 posH, float4 prevPosH)
+{
+	float2 motion = (posH.xy / posH.w) - (prevPosH.xy / prevPosH.w);
+	motion *= gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
+	motion /= max(length(motion), 1.0f);
+	return motion;
+}
+
 float GetDitherThreshold(float2 fragCoord)
 {
     int x = (int)fmod(fragCoord.x, 8.0);
@@ -349,8 +357,8 @@ float3 DiffuseLight(VertexOut pin)
 
 float3 ApplyFog(float3 col, float3 worldPos)
 {
-    float distance = max(0.0f, length(worldPos - gEyePosW) - gFogDistanceStart);
-	float3 direction = normalize(worldPos - gEyePosW);
+    float distance = max(0.0f, length(worldPos - gEyePosW.xyz) - gFogDistanceStart);
+	float3 direction = normalize(worldPos - gEyePosW.xyz);
     float sunAmount = max(dot(direction, -gDirLight), 0.0f);
 
 	float fogAmount = saturate((gFogHeightFalloff * gFogDensity) * exp(-(gEyePosW.y + gFogDistanceStart * direction.y) / gFogDensity) * (1.0f - exp(-distance * direction.y / gFogDensity)) / direction.y);

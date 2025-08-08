@@ -306,16 +306,16 @@ namespace udsdx
 			param.RenderPostProcessBloom->Pass(param);
 		}
 
-		// FXAA pass
-		if (param.RenderOptions->DrawFXAA)
-		{
-			param.RenderPostProcessFXAA->Pass(param);
-		}
-
 		// Motion blur pass
 		if (param.RenderOptions->DrawMotionBlur)
 		{
 			param.RenderMotionBlur->Pass(param, cameraCbv);
+		}
+
+		// FXAA pass
+		if (param.RenderOptions->DrawFXAA)
+		{
+			param.RenderPostProcessFXAA->Pass(param);
 		}
 
 		// Post-process outline pass

@@ -11,7 +11,7 @@ void CS(int3 id : SV_DispatchThreadID)
 		[unroll]
 		for (int x = -1; x <= 1; ++x)
 		{
-			float2 sample = gSource.Load(int3(id.xy + int2(x, y), 0));
+			float2 sample = gSource.Load(int3(id.xy + int2(x, y), 0)).xy;
 			if (dot(sample, sample) > dot(maxSample, maxSample))
 			{
 				maxSample = sample;

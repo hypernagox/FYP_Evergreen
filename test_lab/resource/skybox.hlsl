@@ -54,12 +54,10 @@ PixelOut PS(VertexOut pin)
     float3 delta = normalize(PosW.xyz - gEyePosW.xyz);
 	float2 uv = DirectionToEnvironmentUV(delta);
     float4 texColor = gMainTex.SampleLevel(gSampler, uv, 0);
-    float4 posDelta = PosNDC - PrevPosH;
 
     pOut.Buffer1 = texColor;
     pOut.Buffer2 = PackNormal(normal);
-    pOut.Buffer3.xy = posDelta.xy * gMotionBlurFactor * 0.5f * gRenderTargetSize / gMotionBlurRadius;
-	pOut.Buffer3.xy /= max(length(pOut.Buffer3.xy), 1.0f);
+    pOut.Buffer3.xy = PackMotion(PosNDC, pin.PrevPosH);
     return pOut;
 }
 
