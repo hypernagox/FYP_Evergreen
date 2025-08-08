@@ -4,7 +4,7 @@
 
 struct SphereParticleEmitterParameter
 {
-	float ElapsedTime = 0.0f;
+	float BeginTime = 0.0f;
 	float RotationMin = 0.0f;
 	float RotationMax = 0.0f;
 	float RotationLifeExp = 0.0f;

@@ -12,19 +12,19 @@ VertexOut VS(uint vid : SV_VERTEXID)
 {
 	VertexOut vout;
 
-	vout.Life = lerp(gLifeTimeMin, gLifeTimeMax, rand3(vid * VIDMUL + 0.1f).x + 0.5f);
+	vout.Life = lerp(gLifeTimeMin, gLifeTimeMax, rand3(vid * VIDMUL - gEmitTime).x + 0.5f);
 	vout.Vid = vid;
 
-	float currentLife = fmod(gElapsedTime, vout.Life);
+	float currentLife = fmod(gTime - gEmitTime, vout.Life);
 	float lifeFactor = currentLife / vout.Life;
 
 	// Calculate position based on the sphere emitter parameters
 	vout.Normal = float3(0.0f, 0.0f, 1.0f);
-	float speed = lerp(gSpeedMin, gSpeedMax, rand3(vid * VIDMUL).y + 0.5f);
+	float speed = lerp(gSpeedMin, gSpeedMax, rand3(vid * VIDMUL - gEmitTime).y + 0.5f);
 
 	// Transform position to homogeneous clip space
 	float4 posL = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	posL.xy = normalize(rand3(vid * VIDMUL)).xy;
+	posL.xy = normalize(rand3(vid * VIDMUL - gEmitTime)).xy;
 	if (gSpeedLifeExp < 0.0f) {
 		posL.xyz += vout.Normal * speed * vout.Life * pow(1.0f - lifeFactor, -gSpeedLifeExp);
 	}

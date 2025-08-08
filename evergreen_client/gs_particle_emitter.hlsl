@@ -28,14 +28,15 @@ static const float4x4 gTex =
 void GS(point GeometryIn input[1], inout TriangleStream<GeometryOut> triStream)
 {
     uint flags = asuint(gWorld[3][3]);
-    if (gElapsedTime > input[0].Life && !(flags & 1)) {
+    float elapsedTime = gTime - gEmitTime;
+    if (elapsedTime > input[0].Life && !(flags & 1)) {
        return;
     }
 
-	float currentLife = fmod(gElapsedTime, input[0].Life);
+	float currentLife = fmod(elapsedTime, input[0].Life);
 	float lifeFactor = currentLife / input[0].Life;
 
-    float2 size = lerp(gSizeMin, gSizeMax, rand3(input[0].Vid * VIDMUL).y + 0.5f);
+    float2 size = lerp(gSizeMin, gSizeMax, rand3(input[0].Vid * VIDMUL - gEmitTime).y + 0.5f);
     if (gSizeLifeExp.x < 0.0f) {
        size.x *= pow(1.0f - lifeFactor, -gSizeLifeExp.x);
     }
@@ -55,7 +56,7 @@ void GS(point GeometryIn input[1], inout TriangleStream<GeometryOut> triStream)
 	else {
 		alpha *= pow(lifeFactor, gAlphaLifeExp.x);
 	}
-    float rotation = lerp(gRotationMin, gRotationMax, rand3(input[0].Vid * VIDMUL).z + 0.5f);
+    float rotation = lerp(gRotationMin, gRotationMax, rand3(input[0].Vid * VIDMUL - gEmitTime).z + 0.5f);
     if (gRotationLifeExp < 0.0f) {
 		rotation *= pow(1.0f - lifeFactor, -gRotationLifeExp);
 	}

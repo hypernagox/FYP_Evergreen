@@ -81,11 +81,9 @@ void CylinderParticleEmitter::Update(const udsdx::Time& time, udsdx::Scene& scen
 {
 	if (m_isPlaying)
 	{
-		m_emitterParameter.ElapsedTime += time.deltaTime;
-		if (m_emitterParameter.ElapsedTime >= m_emitterParameter.LifeTimeMax && !m_emitLoop)
+		if (time.totalTime - m_emitterParameter.BeginTime >= m_emitterParameter.LifeTimeMax && !m_emitLoop)
 		{
 			m_isPlaying = false;
-			m_emitterParameter.ElapsedTime = 0.0f;
 			if (m_autoDestroy)
 			{
 				GetSceneObject()->RemoveFromParent();
@@ -137,5 +135,5 @@ void CylinderParticleEmitter::UpdateTransformCache()
 void CylinderParticleEmitter::Play()
 {
 	m_isPlaying = true;
-	m_emitterParameter.ElapsedTime = 0.0f;
+	m_emitterParameter.BeginTime = ET;
 }

@@ -1,7 +1,7 @@
 cbuffer cbPerObject : register(b0)
 {
     float4x4 gWorld;
-	float gElapsedTime;
+	float gEmitTime;
 	float gRotationMin;
 	float gRotationMax;
 	float gRotationLifeExp;
@@ -28,6 +28,19 @@ cbuffer cbPerCamera : register(b1)
     float4 gEyePosW;
     float2 gRenderTargetSize;
 }
+
+cbuffer cbPerFrame : register(b4)
+{
+    float gTime;
+    float gDeltaTime;
+    float gMotionBlurFactor;
+    float gMotionBlurRadius;
+	float4 gFogColor;
+	float4 gFogSunColor;
+	float gFogDensity;
+	float gFogHeightFalloff;
+	float gFogDistanceStart;
+};
 
 Texture2D gMainTex : register(t0);
 SamplerState gSampler : register(s0);
