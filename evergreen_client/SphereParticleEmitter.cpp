@@ -81,7 +81,7 @@ void SphereParticleEmitter::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {
 	if (m_isPlaying)
 	{
-		if (time.totalTime - m_emitterParameter.BeginTime >= m_emitterParameter.LifeTimeMax && !m_emitLoop)
+		if (time.totalTime - m_emitterParameter.EmitTime >= m_emitterParameter.LifeTimeMax && !m_emitLoop)
 		{
 			m_isPlaying = false;
 			if (m_autoDestroy)
@@ -136,5 +136,5 @@ void SphereParticleEmitter::UpdateTransformCache()
 void SphereParticleEmitter::Play()
 {
 	m_isPlaying = true;
-	m_emitterParameter.BeginTime = ET;
+	m_emitterParameter.EmitTime = ET;
 }
