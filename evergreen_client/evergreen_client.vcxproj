@@ -433,6 +433,7 @@
     <ClCompile Include="AuthenticPlayer.cpp" />
     <ClCompile Include="BezierMovement.cpp" />
     <ClCompile Include="BossStatusGUI.cpp" />
+    <ClCompile Include="CatapultProjectile.cpp" />
     <ClCompile Include="ChannelSwitchGUI.cpp" />
     <ClCompile Include="CylinderParticleEmitter.cpp" />
     <ClCompile Include="DamageCountGUI.cpp" />
@@ -551,6 +552,7 @@
     <ClInclude Include="AuthenticPlayer.h" />
     <ClInclude Include="BezierMovement.h" />
     <ClInclude Include="BossStatusGUI.h" />
+    <ClInclude Include="CatapultProjectile.h" />
     <ClInclude Include="ChannelSwitchGUI.h" />
     <ClInclude Include="CustomStateTransition.hpp" />
     <ClInclude Include="CylinderParticleEmitter.h" />

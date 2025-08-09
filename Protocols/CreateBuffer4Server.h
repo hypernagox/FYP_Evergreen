@@ -245,6 +245,7 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_CHAT(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_SHOOT_CATAPULT(
+    const uint64_t catapult_id,
     const Nagox::Struct::Vec3& catapult_pos,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;

@@ -1211,11 +1211,16 @@ const bool Handle_s2c_SHOOT_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSes
 	GuideSystem::GetInst()->DisableFlag();
 	TutorialUI::ToggleBossCatapultGUI(false);
 
-	const auto& boss_ptr = GET_BOSS;
-	if (const auto comp = boss_ptr->GetComponent<MonsterBoss>())
+	Vector3 beginPosition = Vector3::Zero;
+	if (const auto catapult_obj = Mgr(ServerObjectMgr)->GetServerObj(pkt_.catapult_id()))
 	{
-		comp->OnCatapultHit(ToOriginVec3(pkt_.catapult_pos()));
+		beginPosition = catapult_obj->GetTransform()->GetWorldPosition();
+		beginPosition += Vector3::Up * 3.5f;
 	}
+	Vector3 fallPosition = ToOriginVec3(pkt_.catapult_pos());
+	
+	const auto& boss_ptr = GET_BOSS;
+	ServerObjectMgr::GetInst()->GetTargetScene()->CatapultShootToBoss(beginPosition, boss_ptr, fallPosition, 0.6f, 1.6f);
 
 	return true;
 }
@@ -1231,6 +1236,11 @@ const bool Handle_s2c_NOTIFY_CATAPULT(const NetHelper::S_ptr<NetHelper::PacketSe
 const bool Handle_s2c_BOSS_CHANGE_PHASE(const NetHelper::S_ptr<NetHelper::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_CHANGE_PHASE& pkt_)
 {
 	// 보스의 페이즈 전환 시작 시 여기로 패킷이 온다.
+	const auto& boss_ptr = GET_BOSS;
+	if (const auto comp = boss_ptr->GetComponent<MonsterBoss>())
+	{
+		comp->OnPhaseChange();
+	}
 	std::cout << "보스 페이즈 전환 !\n";
 	return true;
 }
@@ -1239,6 +1249,11 @@ const bool Handle_s2c_BOSS_READY_TO_BREATH(const NetHelper::S_ptr<NetHelper::Pac
 {
 	// TODO: 보스의 브레스 애니메이션 전조증상
 	// 이건 브레스 준비이고 실제로 브레스 발사는 위의 FIRE_PROJ에서 보스보다 조금 뒤쪽에서 투사체를 발사시키는 방식으로 온다.
+	const auto& boss_ptr = GET_BOSS;
+	if (const auto comp = boss_ptr->GetComponent<MonsterBoss>())
+	{
+		comp->OnBreathAttack();
+	}
 	std::cout << "보스 브레스 준비 !\n";
 	return true;
 }

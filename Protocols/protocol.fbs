@@ -429,6 +429,7 @@ table c2s_SHOOT_CATAPULT
 
 table s2c_SHOOT_CATAPULT
 {
+    catapult_id : uint64;
     catapult_pos: Nagox.Struct.Vec3;
 }
 

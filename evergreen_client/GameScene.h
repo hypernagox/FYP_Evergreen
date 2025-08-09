@@ -2,6 +2,7 @@
 
 #include "pch.h"
 #include "MinimapRenderer.h"
+#include "EventTimer.h"
 
 class AuthenticPlayer;
 class InteractiveEntity;
@@ -48,10 +49,12 @@ public:
 	void OnDialogueEnd();
 
 	std::vector<InteractiveEntity*> GetInteractiveEntities() const;
+	void CatapultShootToBoss(const Vector3& fromPosition, const std::shared_ptr<udsdx::SceneObject>& targetObject, const Vector3& fallPosition, float beginTime, float endTime);
 
 	udsdx::Camera* GetMainCamera() const;
 
 private:
+	EventTimer m_eventTimer;
 	GameSceneType m_sceneType = GameSceneType::Default;
 	std::shared_ptr<udsdx::SceneObject> m_activeObjectGroup;
 	std::array<std::shared_ptr<udsdx::SceneObject>, 2> m_activeObjectSubGroups;
@@ -65,6 +68,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_craftTableObj;
 	std::shared_ptr<udsdx::SceneObject> m_jobBoardObj;
 	std::shared_ptr<udsdx::SceneObject> m_npcObj;
+	std::shared_ptr<udsdx::SceneObject> m_catapultProjectileObj;
 
 	std::shared_ptr<udsdx::SceneObject> m_interfaceGroup;
 	std::shared_ptr<udsdx::SceneObject> m_playerInterfaceGroup;

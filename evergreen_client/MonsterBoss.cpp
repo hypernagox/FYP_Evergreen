@@ -4,6 +4,7 @@
 #include "ServerObject.h"
 #include "BossStatusGUI.h"
 #include "GameScene.h"
+#include "CylinderParticleEmitter.h"
 
 void MonsterBoss::OnInitialize()
 {
@@ -64,6 +65,10 @@ void MonsterBoss::OnInitialize()
 
     m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::BossFlyIdle, AnimationState::BossFlyRun, m_stateMachine->GetConditionRefFloat("Speed"), 0.0f);
     m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::BossFlyRun, AnimationState::BossFlyIdle, m_stateMachine->GetConditionRefFloat("Speed"), 0.0f);
+
+    m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossSwingLeft, AnimationState::BossSwingRight, m_renderer);
+    m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossSwingRight, AnimationState::BossBreathe, m_renderer);
+    m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossBreathe, AnimationState::Idle, m_renderer);
 
     m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossLanding, AnimationState::Idle, m_renderer);
 
@@ -213,6 +218,103 @@ void MonsterBoss::OnCatapultHit(const Vector3& hitPosition)
     m_isFlyMovement = true;
 }
 
+void MonsterBoss::OnPhaseChange()
+{
+    m_stateMachine->SetState(AnimationState::BossSwingLeft);
+}
+
+void MonsterBoss::OnBreathAttack()
+{
+    m_stateMachine->SetState(AnimationState::BossBreathe);
+}
+
+void MonsterBoss::AppendBreatheEmitter()
+{
+    Vector3 bossPosition = GetTransform()->GetWorldPosition();
+    Quaternion bossRotation = GetTransform()->GetWorldRotation();
+
+    auto bossParticleAnchor = SceneObject::MakeShared();
+    bossParticleAnchor->GetTransform()->SetLocalPosition(bossPosition + Vector3::Transform(Vector3(0.0f, 1.7574f, -3.5323f), bossRotation));
+    bossParticleAnchor->GetTransform()->SetLocalRotation(Quaternion::Concatenate(bossRotation, Quaternion::CreateFromYawPitchRoll(PI, 0.0f, 0.0f)));
+    
+    if (Scene* scene = GetSceneObject()->GetScene())
+    {
+		scene->AddObject(bossParticleAnchor);
+	}
+
+    {
+        auto particleEmitterObj = SceneObject::MakeShared();
+        particleEmitterObj->GetTransform()->SetLocalScale(Vector3(0.01f, 0.01f, 1.0f));
+        auto particleEmitter = particleEmitterObj->AddComponent<CylinderParticleEmitter>();
+        particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\clouds.png")));
+        particleEmitter->SetColor(Vector3(1.0f, 1.0f, 1.0f) * 1.0f);
+        particleEmitter->SetDrawCount(16);
+        particleEmitter->GetEmitterParameter().LifeTimeMin = 1.0f;
+        particleEmitter->GetEmitterParameter().LifeTimeMax = 2.0f;
+        particleEmitter->GetEmitterParameter().SpeedMin = 4.0f;
+        particleEmitter->GetEmitterParameter().SpeedMax = 8.0f;
+        particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.5f;
+        particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 2.0f;
+        particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 4.0f;
+        particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.5f;
+        particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+        particleEmitter->SetEmitLoop(false);
+        particleEmitter->SetAutoDestroy(true);
+        particleEmitter->SetOrientedByDirection(false);
+        particleEmitter->Play();
+
+        bossParticleAnchor->AddChild(particleEmitterObj);
+    }
+
+    {
+        auto particleEmitterObj = SceneObject::MakeShared();
+        particleEmitterObj->GetTransform()->SetLocalScale(Vector3(0.01f, 0.01f, 1.0f));
+        auto particleEmitter = particleEmitterObj->AddComponent<CylinderParticleEmitter>();
+        particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\clouds.png")));
+        particleEmitter->SetColor(Vector3(1.0f, 0.6f, 0.0f) * 10.0f);
+        particleEmitter->SetDrawCount(16);
+        particleEmitter->GetEmitterParameter().LifeTimeMin = 0.5f;
+        particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
+        particleEmitter->GetEmitterParameter().SpeedMin = 0.1f;
+        particleEmitter->GetEmitterParameter().SpeedMax = 8.0f;
+        particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.5f;
+        particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 1.0f;
+        particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 2.0f;
+        particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.5f;
+        particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+        particleEmitter->SetEmitLoop(false);
+        particleEmitter->SetAutoDestroy(true);
+        particleEmitter->SetOrientedByDirection(false);
+        particleEmitter->Play();
+
+        bossParticleAnchor->AddChild(particleEmitterObj);
+    }
+
+    {
+        auto particleEmitterObj = SceneObject::MakeShared();
+        particleEmitterObj->GetTransform()->SetLocalScale(Vector3(0.01f, 0.01f, 1.0f));
+        auto particleEmitter = particleEmitterObj->AddComponent<CylinderParticleEmitter>();
+        particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\clouds.png")));
+        particleEmitter->SetColor(Vector3(1.0f, 0.1f, 0.0f) * 10.0f);
+        particleEmitter->SetDrawCount(16);
+        particleEmitter->GetEmitterParameter().LifeTimeMin = 0.25f;
+        particleEmitter->GetEmitterParameter().LifeTimeMax = 0.5f;
+        particleEmitter->GetEmitterParameter().SpeedMin = 0.1f;
+        particleEmitter->GetEmitterParameter().SpeedMax = 8.0f;
+        particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.5f;
+        particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 1.0f;
+        particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 2.0f;
+        particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.5f;
+        particleEmitter->GetEmitterParameter().AlphaLifeExp = -1.0f;
+        particleEmitter->SetEmitLoop(false);
+        particleEmitter->SetAutoDestroy(true);
+        particleEmitter->SetOrientedByDirection(false);
+        particleEmitter->Play();
+
+        bossParticleAnchor->AddChild(particleEmitterObj);
+    }
+}
+
 void MonsterBoss::SetFlightViewAngle(float angle)
 {
     m_flightViewAngle = angle;
@@ -237,6 +339,22 @@ void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)
 		break;
     case AnimationState::BossFlyDeath:
         m_renderer->SetAnimation(m_flightAnimation, "Fly Death 3", false, true);
+        break;
+    case AnimationState::BossSwingLeft:
+        m_renderer->SetAnimation(m_animation, "Tail Whip L", false, true);
+        break;
+    case AnimationState::BossSwingRight:
+        m_renderer->SetAnimation(m_animation, "Tail Whip R", false, true);
+        break;
+    case AnimationState::BossBreathe:
+        m_renderer->SetAnimation(m_animation, "Breathe Fire", false, true);
+        m_eventTimer.RegisterEvent(0.5f, [this]() {
+            if (m_stateMachine->GetCurrentState() != AnimationState::BossBreathe)
+            {
+                return;
+            }
+            AppendBreatheEmitter();
+            });
         break;
     case AnimationState::Idle:
         m_renderer->SetAnimation(m_animation, "Idle", true, false);

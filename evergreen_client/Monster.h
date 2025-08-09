@@ -24,6 +24,9 @@ protected:
 		BossFlyRun,
 		BossFlyAttack,
 		BossFlyDeath,
+		BossSwingLeft,
+		BossSwingRight,
+		BossBreathe,
 		Size
 	};
 

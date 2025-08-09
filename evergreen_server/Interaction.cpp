@@ -71,7 +71,7 @@ bool Catapult::DoInteraction(ContentsEntity* const pEntity_) noexcept
 	const auto dir = CommonMath::Normalized(target_pos - m_boss_ptr->GetComp<PositionComponent>()->pos);
 	m_boss_ptr->GetComp<PositionComponent>()->pos = target_pos;
 	m_boss_ptr->GetComp<PositionComponent>()->body_angle = atan2f(dir.x, dir.z) * 180.f / 3.141592f;
-	m_boss_ptr->GetCurCluster()->Broadcast(Create_s2c_SHOOT_CATAPULT(ToFlatVec(target_pos)));
+	m_boss_ptr->GetCurCluster()->Broadcast(Create_s2c_SHOOT_CATAPULT(GetOwnerObjectID(), ToFlatVec(target_pos)));
 	// m_boss_ptr->GetCurCluster()->Broadcast(Create_s2c_BOSS_FLY(ToFlatVec(target_pos), Nagox::Enum::BOSS_FLY_TYPE_BOSS_FLY_TYPE_2));
 	return true;
 }

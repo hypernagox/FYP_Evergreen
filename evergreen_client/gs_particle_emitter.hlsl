@@ -24,7 +24,7 @@ static const float4x4 gTex =
 	    0.5f, 0.5f, 0.0f, 1.0f
 };
 
-[maxvertexcount(6)]
+[maxvertexcount(4)]
 void GS(point GeometryIn input[1], inout TriangleStream<GeometryOut> triStream)
 {
     uint flags = asuint(gWorld[3][3]);
@@ -112,9 +112,9 @@ void GS(point GeometryIn input[1], inout TriangleStream<GeometryOut> triStream)
         float2(1, 1)
     };
 
-    int indices[6] = { 0, 1, 2, 3, 2, 1 };
+    int indices[4] = { 0, 1, 2, 3 };
 
-    for (int ind = 0; ind < 6; ++ind)
+    for (int ind = 0; ind < 4; ++ind)
     {
         int idx = indices[ind];
         GeometryOut output;

@@ -4466,8 +4466,15 @@ inline ::flatbuffers::Offset<c2s_SHOOT_CATAPULT> Createc2s_SHOOT_CATAPULT(
 struct s2c_SHOOT_CATAPULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_SHOOT_CATAPULTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_CATAPULT_POS = 4
+    VT_CATAPULT_ID = 4,
+    VT_CATAPULT_POS = 6
   };
+  uint64_t catapult_id() const {
+    return GetField<uint64_t>(VT_CATAPULT_ID, 0);
+  }
+  bool mutate_catapult_id(uint64_t _catapult_id = 0) {
+    return SetField<uint64_t>(VT_CATAPULT_ID, _catapult_id, 0);
+  }
   const Nagox::Struct::Vec3 *catapult_pos() const {
     return GetStruct<const Nagox::Struct::Vec3 *>(VT_CATAPULT_POS);
   }
@@ -4476,6 +4483,7 @@ struct s2c_SHOOT_CATAPULT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<uint64_t>(verifier, VT_CATAPULT_ID, 8) &&
            VerifyField<Nagox::Struct::Vec3>(verifier, VT_CATAPULT_POS, 4) &&
            verifier.EndTable();
   }
@@ -4485,6 +4493,9 @@ struct s2c_SHOOT_CATAPULTBuilder {
   typedef s2c_SHOOT_CATAPULT Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_catapult_id(uint64_t catapult_id) {
+    fbb_.AddElement<uint64_t>(s2c_SHOOT_CATAPULT::VT_CATAPULT_ID, catapult_id, 0);
+  }
   void add_catapult_pos(const Nagox::Struct::Vec3 *catapult_pos) {
     fbb_.AddStruct(s2c_SHOOT_CATAPULT::VT_CATAPULT_POS, catapult_pos);
   }
@@ -4501,8 +4512,10 @@ struct s2c_SHOOT_CATAPULTBuilder {
 
 inline ::flatbuffers::Offset<s2c_SHOOT_CATAPULT> Creates2c_SHOOT_CATAPULT(
     ::flatbuffers::FlatBufferBuilder &_fbb,
+    uint64_t catapult_id = 0,
     const Nagox::Struct::Vec3 *catapult_pos = nullptr) {
   s2c_SHOOT_CATAPULTBuilder builder_(_fbb);
+  builder_.add_catapult_id(catapult_id);
   builder_.add_catapult_pos(catapult_pos);
   return builder_.Finish();
 }

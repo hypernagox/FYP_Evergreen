@@ -348,6 +348,9 @@
     <ClCompile Include="CylinderParticleEmitter.cpp">
       <Filter>Particle</Filter>
     </ClCompile>
+    <ClCompile Include="CatapultProjectile.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -595,6 +598,9 @@
     </ClInclude>
     <ClInclude Include="CylinderParticleEmitter.h">
       <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="CatapultProjectile.h">
+      <Filter>Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

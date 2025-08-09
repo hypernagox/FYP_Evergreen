@@ -34,6 +34,7 @@
 #include "ChannelSwitchGUI.h"
 #include "TransitionOverlayGUI.h"
 #include "DialogueGUI.h"
+#include "MonsterBoss.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -50,6 +51,7 @@
 
 #include "SphereParticleEmitter.h"
 #include "CylinderParticleEmitter.h"
+#include "CatapultProjectile.h"
 
 #include <imm.h>
 #pragma comment(lib, "imm32.lib")
@@ -380,6 +382,11 @@ void GameScene::OnAttach()
 
         AddObject(skyboxObj);
     }
+
+    m_catapultProjectileObj = SceneObject::MakeShared();
+    m_catapultProjectileObj->AddComponent<CatapultProjectile>();
+    AddObject(m_catapultProjectileObj);
+
 #pragma endregion
 
 #pragma region GUI Initialization
@@ -619,6 +626,8 @@ void GameScene::OnDetach()
 
 void GameScene::Update(const Time& time)
 {
+    m_eventTimer.Update(time.deltaTime);
+
     if (!m_pauseMenuObj->GetActive())
     {
         if (INSTANCE(Input)->GetKeyDown(Keyboard::I))
@@ -973,6 +982,48 @@ void GameScene::OnDialogueEnd()
 std::vector<InteractiveEntity*> GameScene::GetInteractiveEntities() const
 {
 	return m_activeObjectGroup->GetComponentsInChildren<InteractiveEntity>();
+}
+
+void GameScene::CatapultShootToBoss(const Vector3& fromPosition, const std::shared_ptr<udsdx::SceneObject>& targetObject, const Vector3& fallPosition, float beginTime, float endTime)
+{
+    m_eventTimer.RegisterEvent(beginTime, [this, fromPosition, targetObject, duration = endTime - beginTime]() {
+        if (auto component = m_catapultProjectileObj->GetComponent<CatapultProjectile>())
+        {
+            component->ShootProjectile(fromPosition, targetObject, duration);
+		}
+		});
+    m_eventTimer.RegisterEvent(endTime, [this, targetObject, fallPosition]() {
+        if (auto component = targetObject->GetComponent<MonsterBoss>())
+        {
+            component->OnCatapultHit(fallPosition);
+
+            auto particleEmitterObj = SceneObject::MakeShared();
+            particleEmitterObj->GetTransform()->SetLocalPosition(targetObject->GetTransform()->GetWorldPosition());
+
+            auto particleEmitter = particleEmitterObj->AddComponent<SphereParticleEmitter>();
+            particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\clouds_grease.png")));
+            particleEmitter->SetColor(Vector3::One);
+            particleEmitter->SetDrawCount(32);
+            particleEmitter->GetEmitterParameter().LifeTimeMin = 0.5f;
+            particleEmitter->GetEmitterParameter().LifeTimeMax = 1.0f;
+            particleEmitter->GetEmitterParameter().SpeedMin = 5.0f;
+            particleEmitter->GetEmitterParameter().SpeedMax = 10.0f;
+            particleEmitter->GetEmitterParameter().SpeedLifeExp = 0.5f;
+            particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 2.5f;
+            particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 5.0f;
+            particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.5f;
+            particleEmitter->GetEmitterParameter().AlphaLifeExp = -2.0f;
+            particleEmitter->GetEmitterParameter().RotationMin = -PIDIV2;
+            particleEmitter->GetEmitterParameter().RotationMax = PIDIV2;
+            particleEmitter->GetEmitterParameter().RotationLifeExp = 0.5f;
+            particleEmitter->SetEmitLoop(false);
+            particleEmitter->SetOrientedByDirection(false);
+            particleEmitter->SetAutoDestroy(true);
+            particleEmitter->Play();
+
+            AddObject(particleEmitterObj);
+        }
+        });
 }
 
 Camera* GameScene::GetMainCamera() const
