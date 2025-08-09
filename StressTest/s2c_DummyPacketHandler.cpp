@@ -300,3 +300,13 @@ const bool Handle_s2c_NOTIFY_CATAPULT(const NagiocpX::S_ptr<NagiocpX::PacketSess
 {
 	return true;
 }
+
+const bool Handle_s2c_BOSS_CHANGE_PHASE(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_CHANGE_PHASE& pkt_)
+{
+	return true;
+}
+
+const bool Handle_s2c_BOSS_READY_TO_BREATH(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSession_, const Nagox::Protocol::s2c_BOSS_READY_TO_BREATH& pkt_)
+{
+	return true;
+}
