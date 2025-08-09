@@ -22,6 +22,8 @@
 #include "PathFinder_Common.h"
 #include "PartyQuestTable.h"
 #include "CommonQuestTable.h"
+#include "HP.h"
+#include "DropTable.h"
 
 using namespace NagiocpX;
 constexpr const int32_t NUM_OF_NPC = 200001;
@@ -108,7 +110,30 @@ public:
 				EntityBuilder b;
 				b.group_type = Nagox::Enum::GROUP_TYPE_MONSTER;
 				b.obj_type = (idx++ % 3);
-				const auto m = EntityFactory::CreateSheep(b);
+				const auto m = EntityFactory::CreateDefaultMonster(b);
+				switch (b.obj_type)
+				{
+				case Nagox::Enum::MONSTER_TYPE_FOX:
+				{
+					m->AddComp<HP>()->InitHP(GET_DATA(int, "Monster", "Fox", "hp"));
+					m->AddComp<DropTable>()->SetItemType("Fox");
+				}
+				break;
+				case Nagox::Enum::MONSTER_TYPE_SHEEP:
+				{
+					m->AddComp<HP>()->InitHP(GET_DATA(int, "Monster", "Sheep", "hp"));
+					m->AddComp<DropTable>()->SetItemType("Sheep");
+				}
+				break;
+				case Nagox::Enum::MONSTER_TYPE_BEAR:
+				{
+					m->AddComp<HP>()->InitHP(GET_DATA(int, "Monster", "Bear", "hp"));
+					m->AddComp<DropTable>()->SetItemType("Bear");
+				}
+				break;
+				default:
+					break;
+				}
 				const auto m2 = m.get();
 				static_cast<Regenerator*>(m->GetDeleter())->m_targetField = Field::GetField(c)->SharedFromThis<Field>();
 				Field::GetField(c)->EnterFieldWithFloatXYNPC(PositionComponent::GetXZWithOffsetGlobal(m2), m);
