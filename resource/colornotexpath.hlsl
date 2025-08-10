@@ -25,7 +25,7 @@ PixelOut PS(VertexOut pin)
     float4 texColor = 1.0f;
     float4 posH = mul(pin.PosW, gViewProj);
     
-    float zFactor = saturate(0.1f * gProj[3][2] / (posH.z - gProj[2][2]));
+    float zFactor = saturate(0.1f * gProj[3][2] / (posH.z / posH.w - gProj[2][2]));
     clip(zFactor - GetDitherThreshold(pin.PosH.xy));
      
     pOut.Buffer1 = texColor;
