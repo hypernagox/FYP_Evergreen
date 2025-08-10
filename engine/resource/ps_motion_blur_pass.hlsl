@@ -96,8 +96,8 @@ float4 PS(VertexOut pin) : SV_Target
 
 		float ld = abs(length(vn) * t);
 		float lvy = length(gMotion.Sample(gSamPoint, texDest).xy) * MAX_BLUR_RADIUS;
-		float stepScale = gSampleCount / length(vn) * 0.5f;
-        float y = SampleWeight(depthSrc, depthDst, ld * stepScale * 0.5f, lvx * stepScale, lvy * stepScale, 1e+4f);
+		const float stepScale = 0.5f;
+        float y = SampleWeight(depthSrc, depthDst, ld * stepScale, lvx * stepScale, lvy * stepScale, 1e+3f);
 
 		sampleSum += float4(gSource.Sample(gSamPoint, texDest).rgb, 1.0f) * y;
 	}
