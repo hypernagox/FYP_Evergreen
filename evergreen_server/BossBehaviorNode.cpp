@@ -237,7 +237,8 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		--m_count;
 		//if (rand() & 1)
 		{
-			owner_comp_sys->GetComp<ClusterInfoHelper>()->BroadcastAllCluster(Create_s2c_BOSS_READY_TO_BREATH());
+			owner_comp_sys->GetComp<ClusterInfoHelper>()->BroadcastAllCluster(Create_s2c_BOSS_READY_TO_BREATH(
+				boss_entity->GetComp<PositionComponent>()->body_angle));
 			auto proj = NagiocpX::TimerHandler::CreateTimerWithoutHandle<MonProjectile>(1);
 			//proj.timer->m_pos = (owner_comp_sys->GetComp<PositionComponent>()->pos) - CommonMath::Normalized(Vector3{ dx,dy,dz }) * 0.1f;
 			proj.timer->m_dmg = 173;
@@ -246,7 +247,7 @@ NodeStatus MeleeAtack::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 			//proj.timer->m_accDist = 99.9f;
 			//proj.timer->m_
 			proj.timer->SelectObjList(bt_root_timer->GetTempVecForInsightObj());
-			proj.timer->m_speed = dir * 7.5f;
+			proj.timer->m_speed = dir * 70.5f;
 			//proj.timer->m_speed = CommonMath::Normalized(Vector3{ dx,dy,dz }) * 10.f;
 			proj.timer->m_radius = 3.f;
 			proj.timer->m_owner = owner_comp_sys->GetOwnerEntity()->SharedFromThis();

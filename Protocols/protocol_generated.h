@@ -4595,8 +4595,18 @@ inline ::flatbuffers::Offset<s2c_BOSS_CHANGE_PHASE> Creates2c_BOSS_CHANGE_PHASE(
 
 struct s2c_BOSS_READY_TO_BREATH FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef s2c_BOSS_READY_TO_BREATHBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_BODY_ANGLE = 4
+  };
+  float body_angle() const {
+    return GetField<float>(VT_BODY_ANGLE, 0.0f);
+  }
+  bool mutate_body_angle(float _body_angle = 0.0f) {
+    return SetField<float>(VT_BODY_ANGLE, _body_angle, 0.0f);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<float>(verifier, VT_BODY_ANGLE, 4) &&
            verifier.EndTable();
   }
 };
@@ -4605,6 +4615,9 @@ struct s2c_BOSS_READY_TO_BREATHBuilder {
   typedef s2c_BOSS_READY_TO_BREATH Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_body_angle(float body_angle) {
+    fbb_.AddElement<float>(s2c_BOSS_READY_TO_BREATH::VT_BODY_ANGLE, body_angle, 0.0f);
+  }
   explicit s2c_BOSS_READY_TO_BREATHBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -4617,8 +4630,10 @@ struct s2c_BOSS_READY_TO_BREATHBuilder {
 };
 
 inline ::flatbuffers::Offset<s2c_BOSS_READY_TO_BREATH> Creates2c_BOSS_READY_TO_BREATH(
-    ::flatbuffers::FlatBufferBuilder &_fbb) {
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    float body_angle = 0.0f) {
   s2c_BOSS_READY_TO_BREATHBuilder builder_(_fbb);
+  builder_.add_body_angle(body_angle);
   return builder_.Finish();
 }
 

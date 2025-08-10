@@ -444,4 +444,5 @@ table s2c_BOSS_CHANGE_PHASE
 
 table s2c_BOSS_READY_TO_BREATH
 {
+    body_angle : float;
 }

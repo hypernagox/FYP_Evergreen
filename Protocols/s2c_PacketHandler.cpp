@@ -1250,6 +1250,9 @@ const bool Handle_s2c_BOSS_READY_TO_BREATH(const NetHelper::S_ptr<NetHelper::Pac
 	// TODO: 보스의 브레스 애니메이션 전조증상
 	// 이건 브레스 준비이고 실제로 브레스 발사는 위의 FIRE_PROJ에서 보스보다 조금 뒤쪽에서 투사체를 발사시키는 방식으로 온다.
 	const auto& boss_ptr = GET_BOSS;
+	const auto body_angle = pkt_.body_angle(); // 발사각
+	
+
 	if (const auto comp = boss_ptr->GetComponent<MonsterBoss>())
 	{
 		comp->OnBreathAttack();

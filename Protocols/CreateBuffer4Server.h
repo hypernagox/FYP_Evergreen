@@ -257,5 +257,6 @@ NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_CHANGE_PHASE(
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
 NagiocpX::S_ptr<NagiocpX::SendBuffer> Create_s2c_BOSS_READY_TO_BREATH(
+    const float body_angle,
     flatbuffers::FlatBufferBuilder* const builder_ptr = GetBuilder()
 )noexcept;
