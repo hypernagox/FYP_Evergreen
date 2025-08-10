@@ -525,7 +525,7 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	{
 		m_now_meteor.store(true);
 		bt_root_timer->BroadcastObjInSight(bt_root_timer->GetTempVecForInsightObj(),
-			Create_s2c_NOTIFY_CATAPULT(ToFlatVec(Vector3(-61.653553F, 30.55081F, -287.9226F))));
+			Create_s2c_NOTIFY_CATAPULT(ToFlatVec(Vector3(-59.153553F, 30.0F, -287.9226F))));
 	}
 	
 	m_accTime -= DT;

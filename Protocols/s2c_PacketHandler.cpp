@@ -453,7 +453,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 					break;
 				}
 			}
-			else
+			else if (pkt_.proj_type() != 1) // 보스가 쏘는 투사체 중 브레스나 근접 공격을 제외
 			{
 				{
 					auto particleEmitter = s->AddComponent<SphereParticleEmitter>();
@@ -1251,8 +1251,12 @@ const bool Handle_s2c_BOSS_READY_TO_BREATH(const NetHelper::S_ptr<NetHelper::Pac
 	// 이건 브레스 준비이고 실제로 브레스 발사는 위의 FIRE_PROJ에서 보스보다 조금 뒤쪽에서 투사체를 발사시키는 방식으로 온다.
 	const auto& boss_ptr = GET_BOSS;
 	const auto body_angle = pkt_.body_angle(); // 발사각
-	
 
+	if (const auto interpolator = boss_ptr->GetComponent<ServerObject>()->GetComp<MoveInterpolator>())
+	{
+		std::cout << "보스 브레스 준비 각도: " << body_angle << std::endl;
+		interpolator->UpdateNewMoveData(boss_ptr->GetTransform()->GetWorldPosition(), body_angle);
+	}
 	if (const auto comp = boss_ptr->GetComponent<MonsterBoss>())
 	{
 		comp->OnBreathAttack();
