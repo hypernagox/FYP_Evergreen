@@ -68,7 +68,7 @@ NodeStatus SelectPattern::Tick(const ComponentSystemNPC* const owner_comp_sys, T
 			m_probability = m_origin_prob;
 			//return NodeStatus::FAILURE;
 		}
-		m_probability = std::max(0.f, m_probability - 0.5f);
+		m_probability = std::max(0.f, m_probability - 1.0f);
 		return NodeStatus::SUCCESS;
 	}
 	else
