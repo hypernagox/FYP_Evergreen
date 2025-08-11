@@ -111,8 +111,6 @@ void MainScene::OnAttach()
 
     {
         m_mainMenuCameraObject = SceneObject::MakeShared();
-        m_mainMenuCameraObject->GetTransform()->SetLocalPosition(Vector3(0.0f, 120.0f, 0.0f));
-        m_mainMenuCameraObject->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PIDIV4, PIDIV4, 0));
 
         m_characterSelectObject = SceneObject::MakeShared();
         auto playerSelect = m_characterSelectObject->AddComponent<PlayerSelect>();
@@ -126,7 +124,11 @@ void MainScene::OnAttach()
         bezierMovement->LoadSpline(RESOURCE_PATH(L"environment\\CameraPathSpline.json"));
         bezierMovement->SetSpeed(16.0f);
 
-        AddObject(m_mainMenuCameraObject);
+        auto mainMenuCameraAnchor = SceneObject::MakeShared();
+        // mainMenuCameraAnchor->GetTransform()->SetLocalPosition(-138.2419f, 80.703f, 0.942f);
+
+        AddObject(mainMenuCameraAnchor);
+        mainMenuCameraAnchor->AddChild(m_mainMenuCameraObject);
     }
 
     {

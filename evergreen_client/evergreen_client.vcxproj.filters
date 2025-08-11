@@ -351,6 +351,9 @@
     <ClCompile Include="CatapultProjectile.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
+    <ClCompile Include="RegionFloatGUI.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h">
@@ -601,6 +604,9 @@
     </ClInclude>
     <ClInclude Include="CatapultProjectile.h">
       <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="RegionFloatGUI.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

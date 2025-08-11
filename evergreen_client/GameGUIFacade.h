@@ -9,6 +9,7 @@ class PartyStatusGUI;
 class DamageCountGUI;
 class TransitionOverlayGUI;
 class PopupGUIManager;
+class RegionFloatGUI;
 
 class GameGUIFacade
 {
@@ -23,5 +24,6 @@ public:
 	DamageCountGUI* DamageCount = nullptr;
 	TransitionOverlayGUI* TransitionOverlay = nullptr;
 	PopupGUIManager* PopupManager = nullptr;
+	RegionFloatGUI* RegionFloat = nullptr;
 };
 

@@ -28,6 +28,9 @@ private:
 public:
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void LoadSpline(const std::wstring& filePath);
+	float GetSplineLength(bool loop = false) const;
+	void SetViewTarget(const std::shared_ptr<udsdx::SceneObject>& target) { m_viewTarget = target; }
+	void Play();
 
 	void SetSpeed(float speed) { m_speed = speed; }
 	float GetSpeed() const { return m_speed; }
@@ -37,4 +40,5 @@ private:
 	float m_speed = 1.0f;
 
 	Spline m_spline;
+	std::shared_ptr<udsdx::SceneObject> m_viewTarget = nullptr;
 };

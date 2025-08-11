@@ -77,9 +77,11 @@ public:
 	static const std::wstring& GetPartyQuestDescription(const int party_quest_id) noexcept { return m_id_to_description[party_quest_id]; }
 	static const std::wstring& GetPartyQuestIcon(const int party_quest_id) noexcept { return m_id_to_icon[party_quest_id]; }
 	static const size_t GetPartyQuestSize() noexcept { return m_id_to_name.size(); }
+	static const nlohmann::json& GetPartyQuestJson(const int party_quest_id) noexcept { return m_id_to_json[party_quest_id]; }
 private:
 	static inline std::map<int, std::wstring> m_id_to_name;
 	static inline std::map<std::wstring, int> m_name_to_id;
 	static inline std::map<int, std::wstring> m_id_to_description;
 	static inline std::map<int, std::wstring> m_id_to_icon;
+	static inline std::map<int, nlohmann::json> m_id_to_json;
 };

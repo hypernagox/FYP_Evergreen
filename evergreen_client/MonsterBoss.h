@@ -7,6 +7,7 @@
 using namespace udsdx;
 
 class ServerObject;
+class AuthenticPlayer;
 
 class MonsterBoss : public Monster
 {
@@ -16,6 +17,9 @@ protected:
 	AnimationClip* m_flightAnimation;
 	ServerObject* m_serverObject;
 	std::shared_ptr<SceneObject> m_bossStatusGUI;
+
+	std::shared_ptr<SceneObject> m_bossCinematicCameraAnchor;
+	std::shared_ptr<SceneObject> m_bossCinematicCamera;
 
 	bool m_isFlyMovement = false;
 	bool m_isTakeoff = false;
@@ -46,4 +50,5 @@ public:
 	void SetFlightViewAngle(float angle);
 	virtual void OnAnimationStateChange(AnimationState from, AnimationState to) override;
 	virtual int GetMarkIndex() const override { return 1; }
+	void ShowCinematicCamera(AuthenticPlayer* player, float duration, bool fadeIn);
 };

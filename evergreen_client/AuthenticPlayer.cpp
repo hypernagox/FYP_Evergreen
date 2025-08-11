@@ -213,14 +213,17 @@ void AuthenticPlayer::SetDialogueViewTarget(const std::shared_ptr<SceneObject>& 
 	m_dialogueViewTimer = target != nullptr ? 0.5f : 0.0f;
 }
 
-void AuthenticPlayer::SetCinematicViewTarget(const std::shared_ptr<SceneObject>& target)
+void AuthenticPlayer::SetCinematicViewTarget(const std::shared_ptr<SceneObject>& target, float duration, bool fadeIn)
 {
 	m_cinematicViewTarget = target;
-	m_cinematicViewTimer = 3.0f;
+	m_cinematicViewTimer = duration;
+	m_cinematicViewFactor = fadeIn ? 0.0f : 1.0f;
 }
 
 void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float deltaTime)
 {
+	float cinematicViewFactorSmooth = SmoothStep(m_cinematicViewFactor);
+
 	// Region: Camera Rotation Control
 	float t = std::min(deltaTime * 16.0f, 1.0f);
 	m_cameraAngleAxisSmooth.x = udsdx::LerpAngle(m_cameraAngleAxisSmooth.x, m_cameraAngleAxis.x, t);
@@ -230,8 +233,6 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	// If a dialogue view target is set, adjust the camera rotation
 	Quaternion targetRotation = Quaternion::CreateFromYawPitchRoll(m_dialogueViewAngleAxis + Vector3::Up * PIDIV4);
 	cameraRotation = Quaternion::Slerp(cameraRotation, targetRotation, m_dialogueCameraFactor);
-
-	m_cameraAnchor->GetTransform()->SetLocalRotation(cameraRotation);
 
 	// Region: Mouse Scrolling Control
 	int mouseScroll = INSTANCE(Input)->GetMouseScroll();
@@ -245,6 +246,8 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	// Region: Camera Anchor Position Control
 	Vector3 playerPosition = GetSceneObject()->GetTransform()->GetLocalPosition();
 	Vector3 targetPosition = playerPosition + Vector3::Up * 1.5f;
+	Vector3 interpolatedAnchorPosition = Vector3::Lerp(m_cameraAnchorLastPosition, targetPosition, deltaTime * 8.0f);
+	Vector3 finalPosition = interpolatedAnchorPosition;
 	if (m_dialogueViewTarget != nullptr)
 	{
 		// If a dialogue view target is set, adjust the camera anchor position to focus on it
@@ -252,10 +255,12 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	}
 	if (m_cinematicViewTarget != nullptr)
 	{
-		targetPosition = Vector3::Lerp(targetPosition, m_cinematicViewTarget->GetTransform()->GetWorldPosition(), std::clamp(m_cinematicViewTimer, 0.0f, 1.0f));
+		finalPosition = Vector3::Lerp(finalPosition, m_cinematicViewTarget->GetTransform()->GetWorldPosition(), cinematicViewFactorSmooth);
+		cameraRotation = Quaternion::Slerp(cameraRotation, m_cinematicViewTarget->GetTransform()->GetWorldRotation(), cinematicViewFactorSmooth);
 	}
-	Vector3 interpolatedAnchorPosition = Vector3::Lerp(m_cameraAnchorLastPosition, targetPosition, deltaTime * 8.0f);
-	m_cameraAnchor->GetTransform()->SetLocalPosition(interpolatedAnchorPosition - playerPosition);
+
+	m_cameraAnchor->GetTransform()->SetLocalPosition(finalPosition - playerPosition);
+	m_cameraAnchor->GetTransform()->SetLocalRotation(cameraRotation);
 	m_cameraAnchorLastPosition = m_cameraAnchor->GetTransform()->GetWorldPosition();
 
 	// Region: Camera Z Distance / Screen Offset Control
@@ -266,7 +271,8 @@ void AuthenticPlayer::UpdateCameraTransform(Transform* pCameraTransfrom, float d
 	float tParam = m_fMoveTime * 0.5f;
 	float mParam = 0.04f;
 	m_cameraXOffsetSmooth = std::lerp(m_cameraXOffsetSmooth, focused ? 0.25f : 0.0f, deltaTime * 8.0f);
-	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam + m_cameraXOffsetSmooth, sin(tParam * 2.0f) * mParam, m_cameraDistanceSmooth));
+	float finalCameraDistance = std::lerp(m_cameraDistanceSmooth, 0.0f, cinematicViewFactorSmooth);
+	pCameraTransfrom->SetLocalPosition(Vector3(sin(tParam) * mParam + m_cameraXOffsetSmooth, sin(tParam * 2.0f) * mParam, finalCameraDistance));
 
 	// Region: Camera Position Postprocess
 	if (m_environment)
@@ -492,6 +498,7 @@ void AuthenticPlayer::Update(const Time& time, Scene& scene)
 	if (m_dialogueViewTimer <= 0.0f)
 		m_dialogueCameraFactor = std::lerp(m_dialogueCameraFactor, m_dialogueViewTarget != nullptr ? 1.0f : 0.0f, time.deltaTime * 4.0f);
 	m_cinematicViewTimer -= time.deltaTime;
+	m_cinematicViewFactor = std::clamp(std::min(m_cinematicViewFactor + time.deltaTime, m_cinematicViewTimer), 0.0f, 1.0f);
 
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::P))
 	{

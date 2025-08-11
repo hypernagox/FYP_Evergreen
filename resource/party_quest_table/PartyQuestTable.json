@@ -2,7 +2,8 @@
   {
     "name": "튜토리얼호위퀘스트",
     "description": "촌장을 마을까지 호위하세요.",
-    "icon": "gui\\party_ui\\party_monster_npc.png"
+    "icon": "gui\\party_ui\\party_monster_npc.png",
+    "cinematic_path": "party_quest_table\\CameraPathSpline_0.json"
   },
   {
     "name": "호위퀘스트1",
@@ -42,7 +43,9 @@
   {
     "name": "신전퀘스트",
     "description": "신전에 등장하는 몬스터를 모두 처치하세요.",
-    "icon": "gui\\party_ui\\party_monster_fox.png"
+    "icon": "gui\\party_ui\\party_monster_fox.png",
+    "cinematic_path": "party_quest_table\\CameraPathSpline_8.json",
+    "cinematic_target": { "x": 193.7461, "y": 76.2811, "z": -195.3305 }
   },
   {
     "name": "보스퀘스트",

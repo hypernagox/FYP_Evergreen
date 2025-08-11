@@ -42,7 +42,10 @@ public:
 	void ChangeGameScene(GameSceneType type);
 	void AddMinimapMark(const Vector3& position, int index);
 	void PlayMusic(std::wstring_view resourcePath);
-	void SetBossMonsterCinematic(const std::shared_ptr<udsdx::SceneObject>& bossMonsterObj);
+	void SetCinematicCamera(std::wstring_view path, float speed);
+	void SetCinematicCamera(std::wstring_view path, const Vector3& targetWorldPosition, float speed);
+	void SetCinematicCamera(std::wstring_view path, const std::shared_ptr<udsdx::SceneObject>& targetObject, float speed);
+
 	GameSceneType GetGameSceneType() const { return m_sceneType; }
 
 	void ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback = nullptr);
@@ -69,6 +72,8 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_craftTableObj;
 	std::shared_ptr<udsdx::SceneObject> m_jobBoardObj;
 	std::shared_ptr<udsdx::SceneObject> m_catapultProjectileObj;
+	std::shared_ptr<udsdx::SceneObject> m_cinematicCameraObj;
+	std::shared_ptr<udsdx::SceneObject> m_cinematicTargetObj;
 
 	std::shared_ptr<udsdx::SceneObject> m_interfaceGroup;
 	std::shared_ptr<udsdx::SceneObject> m_playerInterfaceGroup;

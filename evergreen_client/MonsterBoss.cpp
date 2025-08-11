@@ -5,6 +5,7 @@
 #include "BossStatusGUI.h"
 #include "GameScene.h"
 #include "CylinderParticleEmitter.h"
+#include "AuthenticPlayer.h"
 
 void MonsterBoss::OnInitialize()
 {
@@ -72,6 +73,15 @@ void MonsterBoss::OnInitialize()
     m_bossStatusGUI = SceneObject::MakeShared();
     auto bossStatusComponent = m_bossStatusGUI->AddComponent<BossStatusGUI>();
 
+    m_bossCinematicCameraAnchor = SceneObject::MakeShared();
+    m_bossCinematicCameraAnchor->GetTransform()->SetLocalPosition(Vector3(0.0f, 1.0f, 0.0f));
+
+    m_bossCinematicCamera = SceneObject::MakeShared();
+    m_bossCinematicCamera->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.0f, -5.0f));
+
+    GetSceneObject()->AddChild(m_bossCinematicCameraAnchor);
+    m_bossCinematicCameraAnchor->AddChild(m_bossCinematicCamera);
+
     InitializeMonster("Boss");
 }
 
@@ -84,7 +94,7 @@ void MonsterBoss::OnAttach()
         if (gameScene != nullptr)
         {
             gameScene->AddInterfaceObject(m_bossStatusGUI, true);
-            gameScene->SetBossMonsterCinematic(GetSceneObject());
+            ShowCinematicCamera(gameScene->GetHeroObject()->GetComponent<AuthenticPlayer>(), 3.0f, false);
         }
     }
 }
@@ -97,6 +107,7 @@ void MonsterBoss::OnDetach()
 void MonsterBoss::Update(const Time& time, Scene& scene)
 {
     m_eventTimer.Update(time.deltaTime);
+    m_bossCinematicCameraAnchor->GetTransform()->SetLocalRotation(m_bossCinematicCameraAnchor->GetTransform()->GetLocalRotation() * Quaternion::CreateFromYawPitchRoll(time.deltaTime * 0.5f, 0.0f, 0.0f));
 
     if (m_isFlyMovement)
         UpdateFlightMovement(time.deltaTime);
@@ -218,6 +229,16 @@ void MonsterBoss::OnCatapultHit(const Vector3& hitPosition)
 void MonsterBoss::OnPhaseChange()
 {
     m_stateMachine->SetState(AnimationState::BossPhaseChange);
+    
+    auto scene = GetSceneObject()->GetScene();
+    if (scene != nullptr)
+    {
+        auto gameScene = dynamic_cast<GameScene*>(scene);
+        if (gameScene != nullptr)
+        {
+            ShowCinematicCamera(gameScene->GetHeroObject()->GetComponent<AuthenticPlayer>(), 6.0f, true);
+        }
+    }
 }
 
 void MonsterBoss::OnBreathAttack()
@@ -384,4 +405,10 @@ void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)
     }
 
 	Monster::OnAnimationStateChange(from, to);
+}
+
+void MonsterBoss::ShowCinematicCamera(AuthenticPlayer* player, float duration, bool fadeIn)
+{
+    m_bossCinematicCameraAnchor->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-45.0f * DEG2RAD, 5.0f * DEG2RAD, 0.0f));
+    player->SetCinematicViewTarget(m_bossCinematicCamera, duration, fadeIn);
 }

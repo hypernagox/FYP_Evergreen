@@ -34,8 +34,10 @@
 #include "ChannelSwitchGUI.h"
 #include "TransitionOverlayGUI.h"
 #include "DialogueGUI.h"
+#include "RegionFloatGUI.h"
 #include "MonsterBoss.h"
 #include "NPCRenderer.h"
+#include "BezierMovement.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -395,6 +397,13 @@ void GameScene::OnAttach()
     m_catapultProjectileObj->AddComponent<CatapultProjectile>();
     AddObject(m_catapultProjectileObj);
 
+    m_cinematicCameraObj = SceneObject::MakeShared();
+    m_cinematicCameraObj->AddComponent<BezierMovement>();
+    AddObject(m_cinematicCameraObj);
+
+    m_cinematicTargetObj = SceneObject::MakeShared();
+    AddObject(m_cinematicTargetObj);
+
 #pragma endregion
 
 #pragma region GUI Initialization
@@ -532,6 +541,10 @@ void GameScene::OnAttach()
         logFloatComp->AddText(L"Welcome to the game!");
         m_playerInterfaceGroup->AddChild(logFloatObj);
 
+        auto regionFloatObj = SceneObject::MakeShared();
+        auto regionFloatComp = regionFloatObj->AddComponent<RegionFloatGUI>();
+        m_playerInterfaceGroup->AddChild(regionFloatObj);
+
         m_tutorialObj = SceneObject::MakeShared();
         m_tutorialObj->AddComponent<TutorialUI>();
         m_tutorialObj->SetActive(false);
@@ -605,6 +618,7 @@ void GameScene::OnAttach()
         INSTANCE(GameGUIFacade)->DamageCount = damageCountRenderer;
         INSTANCE(GameGUIFacade)->TransitionOverlay = transitionOverlayComp;
         INSTANCE(GameGUIFacade)->PopupManager = m_popupGUIManager;
+        INSTANCE(GameGUIFacade)->RegionFloat = regionFloatComp;
     }
 #pragma endregion
 
@@ -944,9 +958,30 @@ void GameScene::PlayMusic(std::wstring_view resourcePath)
     m_bgmSound->Play(true);
 }
 
-void GameScene::SetBossMonsterCinematic(const std::shared_ptr<udsdx::SceneObject>& bossMonsterObj)
+void GameScene::SetCinematicCamera(std::wstring_view path, float speed)
 {
-    m_heroComponent->SetCinematicViewTarget(bossMonsterObj);
+    BezierMovement* bezierMovement = m_cinematicCameraObj->GetComponent<BezierMovement>();
+    bezierMovement->LoadSpline(path.data());
+    bezierMovement->SetSpeed(speed);
+    bezierMovement->Play();
+    float duration = bezierMovement->GetSplineLength(false) / speed;
+    m_heroComponent->SetCinematicViewTarget(m_cinematicCameraObj, duration, false);
+    bezierMovement->SetViewTarget(nullptr);
+}
+
+void GameScene::SetCinematicCamera(std::wstring_view path, const Vector3& targetWorldPosition, float speed)
+{
+    SetCinematicCamera(path, speed);
+    m_cinematicTargetObj->GetTransform()->SetLocalPosition(targetWorldPosition);
+    BezierMovement* bezierMovement = m_cinematicCameraObj->GetComponent<BezierMovement>();
+    bezierMovement->SetViewTarget(m_cinematicTargetObj);
+}
+
+void GameScene::SetCinematicCamera(std::wstring_view path, const std::shared_ptr<udsdx::SceneObject>& targetObject, float speed)
+{
+    SetCinematicCamera(path, speed);
+    BezierMovement* bezierMovement = m_cinematicCameraObj->GetComponent<BezierMovement>();
+    bezierMovement->SetViewTarget(targetObject);
 }
 
 void GameScene::ShowDialogue(const std::shared_ptr<udsdx::SceneObject>& target, std::string_view dialogueKey, std::function<void()> endDialogueCallback)

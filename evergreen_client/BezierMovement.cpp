@@ -49,12 +49,24 @@ void BezierMovement::Update(const Time& time, Scene& scene)
 	// Normalize the tangent vector
 	tangent.Normalize();
 
+	Quaternion rotation = Quaternion::Identity;
 	// Calculate the rotation quaternion
-	const float smoothT = t * t * 3.0f - t * t * t * 2.0f;
-	const Matrix4x4 cpTransform = Matrix4x4::CreateFromQuaternion(Quaternion::Slerp(m_spline.ControlPoints[targetIndex].Rotation, m_spline.ControlPoints[nextIndex].Rotation, smoothT));
-	Vector3 up = Vector3::TransformNormal(Vector3::Up, cpTransform);
-	Vector3 right = up.Cross(tangent);
-	Quaternion rotation = Quaternion::CreateFromRotationMatrix(Matrix4x4(right, up, tangent));
+	if (m_viewTarget != nullptr)
+	{
+		Vector3 viewDirection = m_viewTarget->GetTransform()->GetWorldPosition() - position;
+		viewDirection.Normalize();
+		Vector3 right = Vector3::Up.Cross(viewDirection);
+		Vector3 up = viewDirection.Cross(right);
+		rotation = Quaternion::CreateFromRotationMatrix(Matrix4x4(right, up, viewDirection));
+	}
+	else
+	{
+		const float smoothT = t * t * 3.0f - t * t * t * 2.0f;
+		const Matrix4x4 cpTransform = Matrix4x4::CreateFromQuaternion(Quaternion::Slerp(m_spline.ControlPoints[targetIndex].Rotation, m_spline.ControlPoints[nextIndex].Rotation, smoothT));
+		Vector3 up = Vector3::TransformNormal(Vector3::Up, cpTransform);
+		Vector3 right = up.Cross(tangent);
+		rotation = Quaternion::CreateFromRotationMatrix(Matrix4x4(right, up, tangent));
+	}
 
 	// Set the position and rotation of the object
 	transform->SetLocalPosition(position);
@@ -99,4 +111,21 @@ void BezierMovement::LoadSpline(const std::wstring& filePath)
 			lastPosition = position;
 		}
 	}
+}
+
+float BezierMovement::GetSplineLength(bool loop) const
+{
+	if (loop)
+	{
+		return *(m_spline.LengthToStep.end() - 1);
+	}
+	else
+	{
+		return *(m_spline.LengthToStep.end() - NumSteps - 1);
+	}
+}
+
+void BezierMovement::Play()
+{
+	m_currentTime = 0.0f;
 }

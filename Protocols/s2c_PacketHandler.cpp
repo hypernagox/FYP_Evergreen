@@ -33,6 +33,7 @@
 #include "MonsterBoss.h"
 #include "PlayerTagGUI.h"
 #include "TutorialUI.h"
+#include "RegionFloatGUI.h"
 
 #include "SphereParticleEmitter.h"
 #include "CylinderParticleEmitter.h"
@@ -797,6 +798,22 @@ const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::Packet
 			targetScene->PlayMusic(RESOURCE_PATH(L"audio\\bgm_battle.wav"));
 			ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::DefaultQuest);
 		}
+		auto& json = PartyQuestTable::GetPartyQuestJson(quest_id);
+		if (json.contains("cinematic_path"))
+		{
+			const float speed = 24.0f;
+			if (json.contains("cinematic_target"))
+			{
+				Vector3 targetPos = Vector3(json["cinematic_target"]["x"], json["cinematic_target"]["y"], json["cinematic_target"]["z"]);
+				ServerObjectMgr::GetInst()->GetTargetScene()->SetCinematicCamera(RESOURCE_PATH(Common::DataRegistry::Str2Wstr(json["cinematic_path"])), targetPos, speed);
+			}
+			else
+			{
+				ServerObjectMgr::GetInst()->GetTargetScene()->SetCinematicCamera(RESOURCE_PATH(Common::DataRegistry::Str2Wstr(json["cinematic_path"])), speed);
+			}
+		}
+		auto& questName = PartyQuestTable::GetPartyQuestStr(quest_id);
+		INSTANCE(GameGUIFacade)->RegionFloat->Float(questName);
 		}, L"퀘스트를 시작하는 중 ...");
 	return true;
 }

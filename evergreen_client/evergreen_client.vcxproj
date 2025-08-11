@@ -516,6 +516,7 @@
     <ClCompile Include="PositionSetter.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="QuestGUI.cpp" />
+    <ClCompile Include="RegionFloatGUI.cpp" />
     <ClCompile Include="RequestPopupGUI.cpp" />
     <ClCompile Include="ServerComponent.cpp" />
     <ClCompile Include="ServerObject.cpp" />
@@ -612,6 +613,7 @@
     <ClInclude Include="PositionSetter.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="QuestGUI.h" />
+    <ClInclude Include="RegionFloatGUI.h" />
     <ClInclude Include="RequestPopupGUI.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ServerComponent.h" />

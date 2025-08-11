@@ -375,5 +375,6 @@ void PartyQuestTable::InitPartyQuestTable(const std::wstring_view path) noexcept
 		m_id_to_name[static_cast<int>(i)] = std::move(wide_str);
 		m_id_to_description[static_cast<int>(i)] = Common::DataRegistry::Str2Wstr(j[i]["description"]);
 		m_id_to_icon[static_cast<int>(i)] = Common::DataRegistry::Str2Wstr(j[i]["icon"]);
+		m_id_to_json[static_cast<int>(i)] = j[i];
 	}
 }
