@@ -498,7 +498,7 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 		else
 		{
 			m_now_meteor.store(false);
-			count = 30;
+			count = 100;
 			m_accTime = .5f;
 			m_accTime2 = 3.5f;
 			m_accCatapultTime = 5.f;
@@ -514,7 +514,7 @@ NodeStatus FireMeteor::Tick(const ComponentSystemNPC* const owner_comp_sys, Tick
 	if (0 == count)
 	{
 		m_now_meteor.store(false);
-		count = 30;
+		count = 100;
 		m_accTime = .5f;
 		m_accTime2 = 3.5f;
 		m_accCatapultTime = 30.f;
