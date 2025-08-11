@@ -15,6 +15,7 @@ public:
 	enum class GameSceneType : std::uint8_t
 	{
 		Default,
+		DefaultQuest,
 		Dungeon
 	};
 
@@ -40,7 +41,6 @@ public:
 	void RequestChangeGameScene(GameSceneType type);
 	void ChangeGameScene(GameSceneType type);
 	void AddMinimapMark(const Vector3& position, int index);
-	void OnQuestEnd();
 	void PlayMusic(std::wstring_view resourcePath);
 	void SetBossMonsterCinematic(const std::shared_ptr<udsdx::SceneObject>& bossMonsterObj);
 	GameSceneType GetGameSceneType() const { return m_sceneType; }
@@ -57,7 +57,7 @@ private:
 	EventTimer m_eventTimer;
 	GameSceneType m_sceneType = GameSceneType::Default;
 	std::shared_ptr<udsdx::SceneObject> m_activeObjectGroup;
-	std::array<std::shared_ptr<udsdx::SceneObject>, 2> m_activeObjectSubGroups;
+	std::array<std::shared_ptr<udsdx::SceneObject>, 3> m_activeObjectSubGroups;
 
 	std::shared_ptr<udsdx::SceneObject> m_defaultEnvironmentObject;
 	std::shared_ptr<udsdx::SceneObject> m_dungeonEnvironmentObject;
@@ -67,7 +67,6 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_environmentLightObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftTableObj;
 	std::shared_ptr<udsdx::SceneObject> m_jobBoardObj;
-	std::shared_ptr<udsdx::SceneObject> m_npcObj;
 	std::shared_ptr<udsdx::SceneObject> m_catapultProjectileObj;
 
 	std::shared_ptr<udsdx::SceneObject> m_interfaceGroup;

@@ -12,6 +12,7 @@ protected:
 		// General states
 		Idle,
 		Run,
+		Chat,
 		Size
 	};
 
@@ -19,6 +20,7 @@ public:
 	void OnInitialize() override;
 	void Update(const udsdx::Time& time, udsdx::Scene& scene) override;
 	void OnAnimationStateChange(AnimationState from, AnimationState to);
+	void ChangeChatState(bool state);
 
 private:
 	std::shared_ptr<udsdx::SceneObject> m_rendererObject;

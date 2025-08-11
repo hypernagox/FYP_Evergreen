@@ -35,6 +35,7 @@
 #include "TransitionOverlayGUI.h"
 #include "DialogueGUI.h"
 #include "MonsterBoss.h"
+#include "NPCRenderer.h"
 
 #include "GizmoBoxRenderer.h"
 #include "GizmoCylinderRenderer.h"
@@ -251,28 +252,37 @@ void GameScene::OnAttach()
     }
 
     {
-        m_npcObj = SceneObject::MakeShared();
-        m_npcObj->GetTransform()->SetLocalPosition(start_pos + Vector3::Backward * 3.0f);
-        m_npcObj->GetTransform()->SetLocalScale(0.05f);
+        auto npcObj = SceneObject::MakeShared();
+        npcObj->GetTransform()->SetLocalPosition(start_pos + Vector3(0.0f, 0.225f, 3.0f));
+        auto npcRenderer = npcObj->AddComponent<NPCRenderer>();
 
-        auto npcRenderer = m_npcObj->AddComponent<RiggedMeshRenderer>();
-        npcRenderer->SetMesh(resource->Load<udsdx::RiggedMesh>(RESOURCE_PATH(L"npc\\npc_tpose.yrms")));
-        npcRenderer->SetMaterial(udsdx::Material(resource->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"npc\\npc_diffuse_0.png"))), 1);
-        npcRenderer->SetMaterial(udsdx::Material(resource->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"npc\\npc_diffuse_1.png"))), 0);
-        npcRenderer->SetMaterial(udsdx::Material(resource->Load<udsdx::Shader>(RESOURCE_PATH(L"nprcolor.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"npc\\npc_diffuse_2.png"))), 2);
-        npcRenderer->SetAnimation(resource->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
-
-        auto interactiveEntity = m_npcObj->AddComponent<InteractiveEntity>();
+        auto interactiveEntity = npcObj->AddComponent<InteractiveEntity>();
         interactiveEntity->SetInteractionText(L"NPC와 대화하기");
-        interactiveEntity->SetInteractionCallback([this]() {
-            m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\Talking.yac")), true, true);
-            ShowDialogue(m_npcObj, "Tutorial", [this]() {
-                m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
-                // TODO: 대화 완료 시 로직이 여기서 수행됨
+        interactiveEntity->SetInteractionCallback([this, npcObj]() {
+            npcObj->GetComponent<NPCRenderer>()->ChangeChatState(true);
+            ShowDialogue(npcObj, "Tutorial", [this, npcObj]() {
+                npcObj->GetComponent<NPCRenderer>()->ChangeChatState(false);
                 Send(Create_c2s_REGISTER_PARTY_QUEST(0));
                 });
             });
-        AddActiveObject(m_npcObj, GameSceneType::Default);
+        AddActiveObject(npcObj, GameSceneType::Default);
+    }
+
+    {
+        auto npcObj = SceneObject::MakeShared();
+        npcObj->GetTransform()->SetLocalPosition(-125.733f, 75.942f, 14.932f);
+        npcObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, 0.0f, 0.0f));
+        auto npcRenderer = npcObj->AddComponent<NPCRenderer>();
+
+        auto interactiveEntity = npcObj->AddComponent<InteractiveEntity>();
+        interactiveEntity->SetInteractionText(L"NPC와 대화하기");
+        interactiveEntity->SetInteractionCallback([this, npcObj]() {
+            npcObj->GetComponent<NPCRenderer>()->ChangeChatState(true);
+            ShowDialogue(npcObj, "Chief", [this, npcObj]() {
+                npcObj->GetComponent<NPCRenderer>()->ChangeChatState(false);
+                });
+            });
+        AddActiveObject(npcObj, GameSceneType::Default);
     }
 
     {
@@ -886,12 +896,15 @@ void GameScene::ChangeGameScene(GameSceneType type)
     m_defaultEnvironmentObject->SetActive(false);
     m_dungeonEnvironmentObject->SetActive(false);
 
-    m_activeObjectSubGroups[0]->SetActive(type == GameSceneType::Default);
-    m_activeObjectSubGroups[1]->SetActive(type == GameSceneType::Dungeon);
+    for (size_t i = 0; i < m_activeObjectSubGroups.size(); ++i)
+    {
+		m_activeObjectSubGroups[i]->SetActive(i == static_cast<size_t>(type));
+	}
 
     switch (type)
 	{
 		case GameSceneType::Default:
+        case GameSceneType::DefaultQuest:
             m_heroServerObject->SetNavigationMesh(NAVI_MESH_TYPE::MAIN_WORLD);
             m_defaultEnvironmentObject->SetActive(true);
             m_minimapRenderer->SetMinimapMesh(m_defaultEnvironmentObject->GetComponent<EnvironmentRenderer>()->GetTerrainMesh());
@@ -919,20 +932,6 @@ void GameScene::ChangeGameScene(GameSceneType type)
 void GameScene::AddMinimapMark(const Vector3& position, int index)
 {
     m_minimapMarks.emplace_back(position, index);
-}
-
-void GameScene::OnQuestEnd()
-{
-    m_npcObj->GetTransform()->SetLocalPosition(-125.733f, 75.717f, 14.932f);
-    m_npcObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, 0.0f, 0.0f));
-
-    auto interactiveEntity = m_npcObj->GetComponent<InteractiveEntity>();
-    interactiveEntity->SetInteractionCallback([this]() {
-        m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\Talking.yac")), true, true);
-        ShowDialogue(m_npcObj, "Chief", [this]() {
-            m_npcObj->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_Idle.yac")), true, true);
-            });
-        });
 }
 
 void GameScene::PlayMusic(std::wstring_view resourcePath)

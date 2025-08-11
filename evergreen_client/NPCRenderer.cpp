@@ -26,6 +26,8 @@ void NPCRenderer::OnInitialize()
 
 	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::Idle, AnimationState::Run, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
 	m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::Run, AnimationState::Idle, m_stateMachine->GetConditionRefFloat("Speed"), 1e-3f);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Idle, AnimationState::Chat, m_stateMachine->GetConditionRefBool("Chat"), true);
+	m_stateMachine->AddTransition<Common::BoolStateTransition<AnimationState>>(AnimationState::Chat, AnimationState::Idle, m_stateMachine->GetConditionRefBool("Chat"), false);
 
 	m_stateMachine->AddOnStateChangeCallback([this](AnimationState from, AnimationState to) { this->OnAnimationStateChange(from, to); });
 
@@ -60,5 +62,13 @@ void NPCRenderer::OnAnimationStateChange(AnimationState from, AnimationState to)
 	case NPCRenderer::AnimationState::Run:
 		m_rendererObject->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\npc_run.yac")), true, true);
 		break;
+	case NPCRenderer::AnimationState::Chat:
+		m_rendererObject->GetComponent<RiggedMeshRenderer>()->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"npc\\Talking.yac")), true, true);
+		break;
 	}
+}
+
+void NPCRenderer::ChangeChatState(bool state)
+{
+	*m_stateMachine->GetConditionRefBool("Chat") = state;
 }

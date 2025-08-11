@@ -759,7 +759,6 @@ const bool Handle_s2c_QUEST_END(const NetHelper::S_ptr<NetHelper::PacketSession>
 	INSTANCE(GameGUIFacade)->TransitionOverlay->AppendTransition([]() {
 		ServerObjectMgr::GetInst()->GetMainHero()->GetSceneObject()->GetComponent<AuthenticPlayer>()->FixCameraAnchor();
 		ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Default);
-		ServerObjectMgr::GetInst()->GetTargetScene()->OnQuestEnd();
 		ServerObjectMgr::GetInst()->GetTargetScene()->PlayMusic(RESOURCE_PATH(L"audio\\bgm_field.wav"));
 		}, L"퀘스트를 종료하는 중 ...");
 
@@ -791,10 +790,12 @@ const bool Handle_s2c_PARTY_QUEST_START(const NetHelper::S_ptr<NetHelper::Packet
 		if (quest_id == 9)
 		{
 			targetScene->PlayMusic(RESOURCE_PATH(L"audio\\bgm_boss.wav"));
+			ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::Dungeon);
 		}
 		else
 		{
 			targetScene->PlayMusic(RESOURCE_PATH(L"audio\\bgm_battle.wav"));
+			ServerObjectMgr::GetInst()->GetTargetScene()->ChangeGameScene(GameScene::GameSceneType::DefaultQuest);
 		}
 		}, L"퀘스트를 시작하는 중 ...");
 	return true;
