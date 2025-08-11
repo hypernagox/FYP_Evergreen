@@ -38,6 +38,7 @@ protected:
 	std::shared_ptr<SceneObject> m_rendererObj;
 	std::shared_ptr<SceneObject> m_bodyObj;
 	std::unique_ptr<Common::StateMachine<AnimationState>> m_stateMachine;
+	std::unique_ptr<SoundEffectInstance> footStepSFXInstance;
 
 	float m_viewYaw = 0.0f;
 	float m_viewPitch = 0.0f;

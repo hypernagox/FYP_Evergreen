@@ -66,10 +66,7 @@ void MonsterBoss::OnInitialize()
     m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::greater<float>>>(AnimationState::BossFlyIdle, AnimationState::BossFlyRun, m_stateMachine->GetConditionRefFloat("Speed"), 0.0f);
     m_stateMachine->AddTransition<Common::FloatStateTransition<AnimationState, std::less_equal<float>>>(AnimationState::BossFlyRun, AnimationState::BossFlyIdle, m_stateMachine->GetConditionRefFloat("Speed"), 0.0f);
 
-    m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossSwingLeft, AnimationState::BossSwingRight, m_renderer);
-    m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossSwingRight, AnimationState::BossBreathe, m_renderer);
     m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossBreathe, AnimationState::Idle, m_renderer);
-
     m_stateMachine->AddTransition<Common::AnimationStateTransition<AnimationState>>(AnimationState::BossLanding, AnimationState::Idle, m_renderer);
 
     m_bossStatusGUI = SceneObject::MakeShared();
@@ -220,7 +217,7 @@ void MonsterBoss::OnCatapultHit(const Vector3& hitPosition)
 
 void MonsterBoss::OnPhaseChange()
 {
-    m_stateMachine->SetState(AnimationState::BossSwingLeft);
+    m_stateMachine->SetState(AnimationState::BossPhaseChange);
 }
 
 void MonsterBoss::OnBreathAttack()
@@ -340,11 +337,8 @@ void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)
     case AnimationState::BossFlyDeath:
         m_renderer->SetAnimation(m_flightAnimation, "Fly Death 3", false, true);
         break;
-    case AnimationState::BossSwingLeft:
-        m_renderer->SetAnimation(m_animation, "Tail Whip L", false, true);
-        break;
-    case AnimationState::BossSwingRight:
-        m_renderer->SetAnimation(m_animation, "Tail Whip R", false, true);
+    case AnimationState::BossPhaseChange:
+        m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"dragon\\dragon_animation_phase.yac")), false, true);
         break;
     case AnimationState::BossBreathe:
         m_renderer->SetAnimation(m_animation, "Breathe Fire", false, true);

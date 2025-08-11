@@ -125,9 +125,11 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 {
 	EntityMovement* entityMovement = GetComponent<EntityMovement>();
 	Vector3 acceleration = Vector3::Zero;
+	Vector3 velocity = Vector3::Zero;
 	if (entityMovement != nullptr)
 	{
 		acceleration = entityMovement->GetAcceleration();
+		velocity = entityMovement->GetVelocity();
 	}
 	int moveAngleInt = -1;
 	if (acceleration.LengthSquared() > 0.1f)
@@ -137,7 +139,7 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 		moveAngleInt = static_cast<int>(moveAngle * 4.0f / PI + 12.5f) % 8;
 	}
 
-	float magnitude = Vector2(acceleration.x, acceleration.z).Length();
+	float magnitude = Vector2(velocity.x, velocity.z).Length();
 	*m_stateMachine->GetConditionRefFloat("MoveSpeed") = magnitude;
 	*m_stateMachine->GetConditionRefInt("MoveAngle") = moveAngleInt;
 	m_stateMachine->Update(time.deltaTime);
@@ -151,7 +153,7 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 
 		if (m_particleTimer <= 0.0f)
 		{
-			m_particleTimer = 20.0f;
+			m_particleTimer = 2.0f;
 
 			{
 				auto particleObject = SceneObject::MakeShared();
@@ -180,6 +182,8 @@ void PlayerRenderer::Update(const Time& time, Scene& scene)
 
 				gameScene->AddObject(particleObject);
 			}
+
+			footStepSFXInstance = INSTANCE(Resource)->Load<AudioClip>(RESOURCE_PATH(L"audio\\footstep.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
 		}
 	}
 }
