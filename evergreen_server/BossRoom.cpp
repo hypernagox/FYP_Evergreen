@@ -100,17 +100,17 @@ S_ptr<ContentsEntity> BossRoom::CreateBoss() noexcept
 	}
 
 	// 원거리 파이어볼
-	{
-	
-		const auto fire_node = bt_root->AddChild<SequenceNode>();
-		const auto choice_atk = fire_node->AddChild<SelectPattern>();
-		choice_atk->m_probability = .6f;
-		choice_atk->m_origin_prob = .6f;
-		const auto fire_ball_node = fire_node->AddChild<SequenceNode>();
-		fire_ball_node->AddChild<SelectJumpPoint>();
-		fire_ball_node->AddChild<ShootFireBall>();
-		fire_ball_node->AddChild<ResetPos>();
-	}
+	//{
+	//
+	//	const auto fire_node = bt_root->AddChild<SequenceNode>();
+	//	const auto choice_atk = fire_node->AddChild<SelectPattern>();
+	//	choice_atk->m_probability = .6f;
+	//	choice_atk->m_origin_prob = .6f;
+	//	const auto fire_ball_node = fire_node->AddChild<SequenceNode>();
+	//	fire_ball_node->AddChild<SelectJumpPoint>();
+	//	fire_ball_node->AddChild<ShootFireBall>();
+	//	fire_ball_node->AddChild<ResetPos>();
+	//}
 
 	// 중앙 메테오
 	{
