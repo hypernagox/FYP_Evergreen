@@ -65,6 +65,7 @@ private:
 	std::shared_ptr<udsdx::SceneObject> m_heroObj;
 	std::shared_ptr<udsdx::SceneObject> m_spectatorObj;
 	std::shared_ptr<udsdx::SceneObject> m_environmentLightObj;
+	std::shared_ptr<udsdx::SceneObject> m_skyboxObj;
 	std::shared_ptr<udsdx::SceneObject> m_craftTableObj;
 	std::shared_ptr<udsdx::SceneObject> m_jobBoardObj;
 	std::shared_ptr<udsdx::SceneObject> m_catapultProjectileObj;

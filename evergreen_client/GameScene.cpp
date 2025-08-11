@@ -201,8 +201,6 @@ void GameScene::OnAttach()
 #pragma region Environment Initialization
     m_environmentLightObj = SceneObject::MakeShared();
     auto playerLight = m_environmentLightObj->AddComponent<LightDirectional>();
-    Vector3 n = Vector3::Transform(Vector3::Up, Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, -1.0f), 75.0f - 105.0f * 0.5f));
-    m_environmentLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PIDIV4, 0) * Quaternion::CreateFromAxisAngle(n, 0.0f));
 
     AddObject(m_environmentLightObj);
 
@@ -384,13 +382,13 @@ void GameScene::OnAttach()
     }
 
     {
-        auto skyboxObj = SceneObject::MakeShared();
-        auto skyboxRenderer = skyboxObj->AddComponent<InlineMeshRenderer>();
+        m_skyboxObj = SceneObject::MakeShared();
+        auto skyboxRenderer = m_skyboxObj->AddComponent<InlineMeshRenderer>();
         skyboxRenderer->SetMaterial(udsdx::Material(resource->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")), resource->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"))));
         skyboxRenderer->SetVertexCount(6);
         skyboxRenderer->SetCastShadow(false);
 
-        AddObject(skyboxObj);
+        AddObject(m_skyboxObj);
     }
 
     m_catapultProjectileObj = SceneObject::MakeShared();
@@ -901,6 +899,7 @@ void GameScene::ChangeGameScene(GameSceneType type)
 		m_activeObjectSubGroups[i]->SetActive(i == static_cast<size_t>(type));
 	}
 
+    auto skyboxRenderer = m_skyboxObj->GetComponent<InlineMeshRenderer>();
     switch (type)
 	{
 		case GameSceneType::Default:
@@ -910,6 +909,8 @@ void GameScene::ChangeGameScene(GameSceneType type)
             m_minimapRenderer->SetMinimapMesh(m_defaultEnvironmentObject->GetComponent<EnvironmentRenderer>()->GetTerrainMesh());
             m_minimapRenderer->SetMinimapEnvironment(g_defaultEnvironmentParam);
             m_heroComponent->SetEnvironment(&g_defaultEnvironmentParam);
+            skyboxRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox.jpg"))));
+            m_environmentLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-PIDIV4, PIDIV4, 0));
 
             INSTANCE(Core)->GetRenderOptionsRef().FogDensity = 15.85f;
             INSTANCE(Core)->GetRenderOptionsRef().FogHeightFalloff = 0.08f;
@@ -920,6 +921,8 @@ void GameScene::ChangeGameScene(GameSceneType type)
             m_minimapRenderer->SetMinimapMesh(m_dungeonEnvironmentObject->GetComponent<EnvironmentRenderer>()->GetTerrainMesh());
             m_minimapRenderer->SetMinimapEnvironment(g_dungeonEnvironmentParam);
             m_heroComponent->SetEnvironment(&g_dungeonEnvironmentParam);
+            skyboxRenderer->SetMaterial(udsdx::Material(INSTANCE(Resource)->Load<Shader>(RESOURCE_PATH(L"skybox.hlsl")), INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"Skybox_boss.jpg"))));
+            m_environmentLightObj->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(PI + 60.0f * DEG2RAD, 30.0f * DEG2RAD, 0));
 
             INSTANCE(Core)->GetRenderOptionsRef().FogDensity = 10.0f;
             INSTANCE(Core)->GetRenderOptionsRef().FogHeightFalloff = 0.015f;
