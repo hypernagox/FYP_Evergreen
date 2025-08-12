@@ -268,7 +268,7 @@ UI_TYPE InventoryTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 {	
 	if (INSTANCE(Input)->GetKeyDown(Keyboard::I))
 	{
-		return UI_TYPE::END_TUTORIAL_QUEST;
+		return UI_TYPE::NAVI_ITEM;
 	}
 	return m_type;
 }
@@ -357,8 +357,6 @@ UI_TYPE ClearTreeTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 		if (0 == m_e_count)
 		{
 			m_e_count = 3;
-			//GuideSystem::GetInst()->ToggleFlag();
-			//GuideSystem::GetInst()->temp_force_pos = Vector3(-123.62704F, 75.79371F, 15.156882F);
 			return UI_TYPE::END_TUTORIAL_QUEST;
 		}
 	}
@@ -380,7 +378,9 @@ UI_TYPE EndTutorialQuestTutorial::Update(const udsdx::Time& time, udsdx::Scene& 
 	if (g_tutorial_end_clear)
 	{
 		g_tutorial_end_clear = false;
-		return UI_TYPE::NAVI_ITEM;
+		GuideSystem::GetInst()->ToggleFlag();
+		GuideSystem::GetInst()->temp_force_pos = Vector3(-123.62704F, 75.79371F, 15.156882F);
+		return UI_TYPE::CRAFT;
 	}
 	return m_type;
 }
