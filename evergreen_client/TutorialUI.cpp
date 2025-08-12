@@ -357,9 +357,9 @@ UI_TYPE ClearTreeTutorial::Update(const udsdx::Time& time, udsdx::Scene& scene)
 		if (0 == m_e_count)
 		{
 			m_e_count = 3;
-			GuideSystem::GetInst()->ToggleFlag();
-			GuideSystem::GetInst()->temp_force_pos = Vector3(-123.62704F, 75.79371F, 15.156882F);
-			return UI_TYPE::CRAFT;
+			//GuideSystem::GetInst()->ToggleFlag();
+			//GuideSystem::GetInst()->temp_force_pos = Vector3(-123.62704F, 75.79371F, 15.156882F);
+			return UI_TYPE::END_TUTORIAL_QUEST;
 		}
 	}
 	return m_type;
