@@ -106,8 +106,12 @@ void MonsterBoss::OnDetach()
 
 void MonsterBoss::Update(const Time& time, Scene& scene)
 {
+    m_cinematicShakeTime += time.deltaTime;
+    float cinematicShakeFactor = std::clamp(10.0f * (m_cinematicShakeTime - 3.7f), 0.0f, 1.0f) - std::clamp(0.5f * (m_cinematicShakeTime - 6.0f), 0.0f, 1.0f);
+
     m_eventTimer.Update(time.deltaTime);
     m_bossCinematicCameraAnchor->GetTransform()->SetLocalRotation(m_bossCinematicCameraAnchor->GetTransform()->GetLocalRotation() * Quaternion::CreateFromYawPitchRoll(time.deltaTime * 0.5f, 0.0f, 0.0f));
+    m_bossCinematicCamera->GetTransform()->SetLocalPositionY(std::sinf(time.totalTime * 64.0f) * cinematicShakeFactor * 0.1f);
 
     if (m_isFlyMovement)
         UpdateFlightMovement(time.deltaTime);
@@ -224,6 +228,8 @@ void MonsterBoss::OnCatapultHit(const Vector3& hitPosition)
     m_flightTimeTotal = 0.733f;
     m_isTakeoff = false;
     m_isFlyMovement = true;
+
+    m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_fall.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
 }
 
 void MonsterBoss::OnPhaseChange()
@@ -236,7 +242,7 @@ void MonsterBoss::OnPhaseChange()
         auto gameScene = dynamic_cast<GameScene*>(scene);
         if (gameScene != nullptr)
         {
-            ShowCinematicCamera(gameScene->GetHeroObject()->GetComponent<AuthenticPlayer>(), 6.0f, true);
+            ShowCinematicCamera(gameScene->GetHeroObject()->GetComponent<AuthenticPlayer>(), 6.0f, true, true);
         }
     }
 }
@@ -359,10 +365,12 @@ void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)
         m_renderer->SetAnimation(m_flightAnimation, "Fly Death 3", false, true);
         break;
     case AnimationState::BossPhaseChange:
+        m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_phase.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
         m_renderer->SetAnimation(INSTANCE(Resource)->Load<udsdx::AnimationClip>(RESOURCE_PATH(L"dragon\\dragon_animation_phase.yac")), false, true);
         break;
     case AnimationState::BossBreathe:
         m_renderer->SetAnimation(m_animation, "Breathe Fire", false, true);
+        m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_breathe.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
         m_eventTimer.RegisterEvent(0.5f, [this]() {
             if (m_stateMachine->GetCurrentState() != AnimationState::BossBreathe)
             {
@@ -380,8 +388,7 @@ void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)
     case AnimationState::Attack:
         m_renderer->SetAnimation(m_animation, "Attack 2", false, true);
         {
-            m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_impact.wav"))->CreateInstance();
-            m_soundInstance->Play();
+            m_soundInstance = INSTANCE(Resource)->Load<udsdx::AudioClip>(RESOURCE_PATH(L"audio\\dragon_impact.wav"))->CreateInstance3D(GetTransform()->GetWorldPosition());
         }
         break;
     }
@@ -407,8 +414,17 @@ void MonsterBoss::OnAnimationStateChange(AnimationState from, AnimationState to)
 	Monster::OnAnimationStateChange(from, to);
 }
 
-void MonsterBoss::ShowCinematicCamera(AuthenticPlayer* player, float duration, bool fadeIn)
+void MonsterBoss::ShowCinematicCamera(AuthenticPlayer* player, float duration, bool fadeIn, bool cameraShake)
 {
     m_bossCinematicCameraAnchor->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(-45.0f * DEG2RAD, 5.0f * DEG2RAD, 0.0f));
     player->SetCinematicViewTarget(m_bossCinematicCamera, duration, fadeIn);
+
+    if (cameraShake)
+    {
+        m_cinematicShakeTime = 0.0f;
+    }
+    else
+    {
+        m_cinematicShakeTime = 10.0f;
+    }
 }

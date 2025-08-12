@@ -369,8 +369,9 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 		const auto shoot_obj_id = pkt_.shoot_obj_id();
 		const auto proj_type = pkt_.proj_type(); // TODO: 투사체의 타입 (아직 없음)
 		auto s = SceneObject::MakeShared();
+		Quaternion rotation = Quaternion::CreateFromYawPitchRoll(std::atan2f(normal.x, normal.z), -std::asinf(normal.y), 0.0f);
 		s->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()));
-		s->GetTransform()->SetLocalRotation(Quaternion::CreateFromYawPitchRoll(std::atan2f(normal.x, normal.z), -std::asinf(normal.y), 0.0f));
+		s->GetTransform()->SetLocalRotation(rotation);
 		s->GetTransform()->SetLocalScale(0.25f);
 
 		if (auto ownerObject = Mgr(ServerObjectMgr)->GetServerObj(shoot_obj_id))
@@ -433,6 +434,7 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 					case PlayerRenderer::CharacterType::Archer:
 					{
 						auto particleEmitter = s->AddComponent<CylinderParticleEmitter>();
+						s->GetTransform()->SetLocalScale(0.01f, 0.01f, 0.25f);
 						particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\hit_triangle_reversed.png")));
 						particleEmitter->SetColor(Vector3::One * 4.0f);
 						particleEmitter->SetDrawCount(1);
@@ -450,6 +452,29 @@ const bool Handle_s2c_FIRE_PROJ(const NetHelper::S_ptr<NetHelper::PacketSession>
 						particleEmitter->SetHorizontalBillboard(true);
 						particleEmitter->SetOrientedByDirection(true);
 						particleEmitter->Play();
+					}
+					{
+						auto ringParticleObj = SceneObject::MakeShared();
+						ringParticleObj->GetTransform()->SetLocalPosition(::ToOriginVec3(pkt_.pos()) + normal);
+						{
+							auto particleEmitter = ringParticleObj->AddComponent<SphereParticleEmitter>();
+							particleEmitter->SetColor(Vector3(1.0f, 1.0f, 1.0f) * 2.0f);
+							particleEmitter->SetDrawCount(1);
+							particleEmitter->SetTexture(INSTANCE(Resource)->Load<udsdx::Texture>(RESOURCE_PATH(L"particle\\aura_ray.png")));
+							particleEmitter->GetEmitterParameter().LifeTimeMin = 0.25f;
+							particleEmitter->GetEmitterParameter().LifeTimeMax = 0.25f;
+							particleEmitter->GetEmitterParameter().SizeMin = Vector2::One * 0.5f;
+							particleEmitter->GetEmitterParameter().SizeMax = Vector2::One * 0.5f;
+							particleEmitter->GetEmitterParameter().SizeLifeExp = Vector2::One * 0.2f;
+							particleEmitter->GetEmitterParameter().RotationMin = -PIDIV2;
+							particleEmitter->GetEmitterParameter().RotationMax = PIDIV2;
+							particleEmitter->GetEmitterParameter().RotationLifeExp = 0.5f;
+							particleEmitter->GetEmitterParameter().AlphaLifeExp = -0.75f;
+							particleEmitter->SetEmitLoop(false);
+							particleEmitter->SetAutoDestroy(true);
+							particleEmitter->Play();
+						}
+						ServerObjectMgr::GetInst()->GetTargetScene()->AddObject(ringParticleObj);
 					}
 					break;
 				}

@@ -29,6 +29,7 @@ protected:
 	float m_flightTimeTotal = 0.0f;
 	float m_flightViewAngle = 0.0f;
 	float m_wingTimer = 0.0f;
+	float m_cinematicShakeTime = 10.0f;
 
 	std::unique_ptr<SoundEffectInstance> m_soundInstance;
 	std::unique_ptr<SoundEffectInstance> m_wingSoundInstance;
@@ -50,5 +51,5 @@ public:
 	void SetFlightViewAngle(float angle);
 	virtual void OnAnimationStateChange(AnimationState from, AnimationState to) override;
 	virtual int GetMarkIndex() const override { return 1; }
-	void ShowCinematicCamera(AuthenticPlayer* player, float duration, bool fadeIn);
+	void ShowCinematicCamera(AuthenticPlayer* player, float duration, bool fadeIn, bool cameraShake = false);
 };
