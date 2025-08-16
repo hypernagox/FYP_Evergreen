@@ -18,9 +18,9 @@ public:
 	}
 	inline const bool IsOwnerValid()const noexcept { return m_bOwnerValidFlag.load(); }
 	void ProcessCleanUp()const noexcept;
-	void ShrinkToFit()noexcept {
-		m_contentsComponents.shrink_to_fit();
-		m_vecUpdateComponents.shrink_to_fit();
+	void ShrinkToFit()const noexcept {
+		const_cast<ComponentSystem*>(this)->m_contentsComponents.shrink_to_fit();
+		const_cast<ComponentSystem*>(this)->m_vecUpdateComponents.shrink_to_fit();
 	}
 protected:
 	void Update(const float dt_)const noexcept;

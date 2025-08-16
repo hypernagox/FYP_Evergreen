@@ -108,6 +108,11 @@ const bool Handle_c2s_ENTER(const NagiocpX::S_ptr<NagiocpX::PacketSession>& pSes
 	//Mgr(WorldMgr)->GetWorld(0)->EnterWorld(entity);
 	const auto pos = entity->GetComp<PositionComponent>()->pos;
 	std::cout << (int)pkt_.channel_num() << std::endl;
+
+	entity->GetComponentSystem()->ShrinkToFit();
+
+	// 여기 밑에서 하면 밑에 저건 큐에 넣는거라 다른 스레드랑 Data Race 발생 가능성 있음
+
 	Field::GetField(pkt_.channel_num())->EnterFieldWithFloatXY(pos.x + 512.f, pos.z + 512.f, entity);
 
 	if ("Dummy" == GetClientSession(pSession_)->m_userName)
