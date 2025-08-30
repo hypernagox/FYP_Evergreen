@@ -22,8 +22,8 @@ namespace NagiocpX
 		}
 		static const bool Dispatch(const HANDLE iocpHandle_)noexcept;
 		static inline const bool IsTimeOut(const uint64_t endTick)noexcept { 
-			//return false;
-			return ::GetTickCount64() >= endTick;
+			return false;
+			//return ::GetTickCount64() >= endTick;
 		}
 	private:
 		const HANDLE m_iocpHandle;
