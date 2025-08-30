@@ -42,7 +42,7 @@
 
 // #define TRACK_FUNC_LOG
 // #define TRACK_LOG
-#define USE_NAGOX_ASSERT
+//#define USE_NAGOX_ASSERT
 #define USE_PRINT_ERROR
 
 #ifdef TRACK_FUNC_LOG
@@ -69,8 +69,7 @@
 
 #else
 
-#define NAGOX_ASSERT(condition)
-
+#define NAGOX_ASSERT(condition)  do { (void)(condition); } while (0)
 #endif
 
 #ifdef USE_NAGOX_ASSERT
@@ -86,7 +85,7 @@
 
 #else
 
-#define NAGOX_ASSERT_LOG(condition, log)
+#define NAGOX_ASSERT_LOG(condition, log) do { (void)(condition); (void)(log); } while (0)
 
 #endif
 
