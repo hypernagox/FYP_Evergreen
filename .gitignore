@@ -404,5 +404,8 @@ FodyWeavers.xsd
 evergreen_client/UnityBuild
 AssimpLog.txt
 *.ddscache
-!resource/**/*.obj
-NavmeshVisualizer/
+
+# Ignore 3D model files
+*.obj
+*.fbx
+*.glb

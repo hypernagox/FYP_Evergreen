@@ -19,7 +19,7 @@ Texture2D gDepth : register(t2);
 Texture2D gNeighborMax : register(t3);
 SamplerState gSamPoint : register(s0);
 		
-static const uint gSampleCount = 8;
+static const uint gSampleCount = 16;
 
 static const float Bayer8x8[64] =
 {
@@ -60,28 +60,32 @@ float2 SpreadComp(float offsetLen, float centerSpreadLen, float sampleSpreadLen)
 }
 
 // DepthComp and SpreadComp are used together as follows to get the weight for a sample
-float SampleWeight(float centerDepth, float sampleDepth, float offsetLen, float centerSpreadLen, float sampleSpreadLen, float depthScale)
+float SampleWeight(float centerDepth, float sampleDepth, float offsetLen, float centerSpreadLen, float sampleSpreadLen, float depthScale, float2 weights)
 {
     float2 depthComp = DepthComp(centerDepth, sampleDepth, depthScale);
 	float2 spreadComp = SpreadComp(offsetLen, centerSpreadLen, sampleSpreadLen);
-	return dot(depthComp, spreadComp);
+	return dot(depthComp, spreadComp * weights);
 }
 
 float4 PS(VertexOut pin) : SV_Target
 {
-	uint dx, dy;
-	gSource.GetDimensions(dx, dy);
-	float2 rcpro = rcp(float2(dx, dy));
-
-	float2 vn = gNeighborMax.Sample(gSamPoint, pin.TexC).xy * MAX_BLUR_RADIUS;
-	vn.y = -vn.y;
+	float2 rcpro = rcp(gRenderTargetSize);
+	float2 vc = gMotion.Sample(gSamPoint, pin.TexC).xy * float2(MAX_BLUR_RADIUS, -MAX_BLUR_RADIUS);
+	float2 vn = gNeighborMax.Sample(gSamPoint, pin.TexC).xy * float2(MAX_BLUR_RADIUS, -MAX_BLUR_RADIUS);
 
 	if (length(vn) < 0.5f)
 	{
 		return gSource.Sample(gSamPoint, pin.TexC);
 	}
 
-	float lvx = length(gMotion.Sample(gSamPoint, pin.TexC).xy) * MAX_BLUR_RADIUS;
+	float2 wn = normalize(vn);
+	float2 wp = float2(-wn.y, wn.x);
+	if (dot(wp, vc) < 0)
+	{
+		wp = -wp;
+	}
+	float lvx = length(vc);
+	float2 wc = normalize(lerp(wp, normalize(vc), saturate((lvx - 0.5f) / 1.5f)));
 
 	float4 sampleSum = 0.0f;
 	float depthSrc = NdcDepthToViewDepth(gDepth.Sample(gSamPoint, pin.TexC).r);
@@ -91,13 +95,18 @@ float4 PS(VertexOut pin) : SV_Target
 	for (uint i = 0; i < gSampleCount; ++i)
 	{
 		float t = lerp(-1.0f, 1.0f, (i + bias) / gSampleCount);
-		float2 texDest = pin.TexC + vn * rcpro * t;
+		float2 d = vn;
+		float2 texDest = pin.TexC + d * rcpro * t;
 		float depthDst = NdcDepthToViewDepth(gDepth.Sample(gSamPoint, texDest).r);
 
-		float ld = abs(length(vn) * t);
-		float lvy = length(gMotion.Sample(gSamPoint, texDest).xy) * MAX_BLUR_RADIUS;
+		float2 vs = gMotion.Sample(gSamPoint, texDest).xy * float2(MAX_BLUR_RADIUS, -MAX_BLUR_RADIUS);
+		float wa = dot(wc, normalize(d));
+		float wb = abs(dot(normalize(vs), normalize(d)));
+
+		float ld = abs(length(d) * t);
+		float lvy = length(vs);
 		const float stepScale = 0.5f;
-        float y = SampleWeight(depthSrc, depthDst, ld * stepScale, lvx * stepScale, lvy * stepScale, 1e+3f);
+        float y = SampleWeight(depthSrc, depthDst, ld * stepScale, lvx * stepScale, lvy * stepScale, 1e+3f, 1.0f);
 
 		sampleSum += float4(gSource.Sample(gSamPoint, texDest).rgb, 1.0f) * y;
 	}

@@ -16,10 +16,10 @@ float4 PSDeferred(VertexOut pin) : SV_Target
     float4 PosW = mul(PosNDC, gViewProjInverse);
 	PosW /= PosW.w;
 
-    float3 albedo     = gbuffer1.rgb;
+    float3 albedo     = pow(gbuffer1.rgb, gamma);
 	float3 normalV    = ReconstructNormal(gbuffer2.xy);
     float3 normalWS   = normalize(mul(normalV, (float3x3)gViewInverse));
-    float  smoothness = 1.0f - gbuffer3.a;
+    float  smoothness = gbuffer3.a;
     float  metallic   = gbuffer3.b;
 
     float3 N = normalWS;
@@ -46,7 +46,7 @@ float4 PSDeferred(VertexOut pin) : SV_Target
     float G = G_V * G_L;
 
     // Fresnel Equation (Schlick's Approximation)
-    float3 F = F0 + (1.0f - F0) * pow(1.0f - saturate(dot(H, V)), 5.0f);
+    float3 F = F0 + (1.0f - F0) * pow(1.0f - saturate(dot(N, V)), 5.0f);
 
     // Specular Term
     float3 specular = (D * G * F) / (4.0f * max(NdotV, 0.001f) * max(NdotL, 0.001f));
@@ -60,11 +60,11 @@ float4 PSDeferred(VertexOut pin) : SV_Target
     float3 color = (diffuse + specular) * radiance * NdotL * ShadowValue(PosW, normalWS);
 
     // Ambient Term (you may replace with IBL or ambient light color)
-	float3 skyColor = pow(float3(0.357f, 0.404f, 0.467f), gamma);
+	float3 skyColor = pow(float3(0.2274f, 0.2274f, 0.2274f), gamma);
     float3 ambientDiffuse = skyColor * albedo;
-    float3 ambientSpecular = skyColor * F * (1.0F - smoothness); // Roughness 기반으로 감소
-    float3 ambient = (ambientDiffuse + ambientSpecular);
-    color += ambient;
+    float3 ambientSpecular = skyColor * F * (1.0f - smoothness); // Roughness 기반으로 감소
+    color += ambientSpecular;
+    color = ApplyFog(color, PosW);
 
     return float4(color, 1.0f);
 }
@@ -108,9 +108,9 @@ static float _HeightScaleModulated = 9.0f;
 static float _Speed = 0.2f;
 static float _UJump = 0.202f;
 static float _VJump = 0.202f;
-static float _Tiling = 10.0f;
+static float _Tiling = 32.0f;
 static float _FlowOffset = 0.0f;
-static float4 _Color = float4(0.1568f, 0.4549f, 0.6235f, 1.0f);
+static float4 _Color = float4(0.3568f, 0.6549f, 0.8235f, 1.0f);
 
 PixelOut PS(VertexOut pin)
 {
@@ -137,10 +137,10 @@ PixelOut PS(VertexOut pin)
     float4 posH = mul(pin.PosW, gViewProj);
      
     pOut.Buffer1 = (texA + texB) * _Color;
-    pOut.Buffer2 = PackNormal(mul(normalize(float3(-(dhA.x + dhB.x), 1.0f, -(dhA.y + dhB.y))), gView));
-
-    pOut.Buffer3.xy = PackMotion(posH, pin.PrevPosH);
-	pOut.Buffer3.zw = float2(0.0f, 0.75f);
+    pOut.Buffer2 = PackNormal(mul(normalize(float3(-(dhA.x + dhB.x), 1.0f, -(dhA.y + dhB.y))), (float3x3)gView));
+    
+    pOut.Buffer3.rg = PackMotion(posH, pin.PrevPosH);
+	pOut.Buffer3.zw = float2(0.0f, 0.7f);
 
     return pOut;
 }
