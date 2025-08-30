@@ -8,7 +8,6 @@ namespace NagiocpX
 		WSADATA wsaData;
 		NAGOX_ASSERT(::WSAStartup(MAKEWORD(2, 2), OUT & wsaData) == 0);
 
-		/* 런타임에 주소 얻어오는 API */
 		SOCKET dummySocket = CreateSocket();
 		NAGOX_ASSERT(BindWindowsFunction(dummySocket, WSAID_CONNECTEX, reinterpret_cast<LPVOID*>(&ConnectEx)));
 		NAGOX_ASSERT(BindWindowsFunction(dummySocket, WSAID_DISCONNECTEX, reinterpret_cast<LPVOID*>(&DisconnectEx)));

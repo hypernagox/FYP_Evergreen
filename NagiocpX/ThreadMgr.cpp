@@ -13,10 +13,6 @@
 #include "MoveBroadcaster.h"
 #include "GlobalEventQueue.h"
 
-/*------------------
-	ThreadMgr
--------------------*/
-
 namespace NagiocpX
 {
 	constinit extern thread_local int8_t LThreadContainerIndex;

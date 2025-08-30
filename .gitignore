@@ -405,3 +405,4 @@ evergreen_client/UnityBuild
 AssimpLog.txt
 *.ddscache
 !resource/**/*.obj
+NavmeshVisualizer/

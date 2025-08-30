@@ -106,10 +106,6 @@ namespace NagiocpX
 		void ReleaseIocpObject()noexcept { IocpEvent::ReleaseIocpObject<ContentsEntity>(); }
 	};
 
-	/*--------------
-		ConnectEvent
-	---------------*/
-
 	class ConnectEvent
 		:public IOEvent
 	{
@@ -118,10 +114,6 @@ namespace NagiocpX
 		~ConnectEvent()noexcept = default;
 	};
 
-	/*--------------
-		DisconnectEvent
-	---------------*/
-
 	class DisconnectEvent
 		:public IOEvent
 	{
@@ -129,11 +121,6 @@ namespace NagiocpX
 		DisconnectEvent()noexcept :IOEvent{ EVENT_TYPE::DISCONNECT } {}
 		~DisconnectEvent()noexcept = default;
 	};
-
-
-	/*--------------
-		AcceptEvent
-	---------------*/
 
 	class AcceptEvent
 		:public IOEvent
@@ -148,10 +135,6 @@ namespace NagiocpX
 		S_ptr<Session> m_pSession;
 	};
 
-	/*--------------
-		RecvEvent
-	---------------*/
-
 	class RecvEvent
 		:public IOEvent
 	{
@@ -159,10 +142,6 @@ namespace NagiocpX
 		RecvEvent()noexcept :IOEvent{ EVENT_TYPE::RECV } {}
 		~RecvEvent()noexcept = default;
 	};
-
-	/*--------------
-		SendEvent
-	---------------*/
 
 	class SendEvent
 		:public IOEvent

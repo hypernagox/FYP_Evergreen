@@ -14,7 +14,7 @@ namespace NagiocpX
 		uint16 GetPort()const noexcept { return ::ntohs(m_sockAddr.sin_port); }
 
 	public:
-		static IN_ADDR	Ip2Address(const WCHAR* const ip)noexcept;
+		static IN_ADDR Ip2Address(const WCHAR* const ip)noexcept;
 
 	private:
 		SOCKADDR_IN	m_sockAddr;

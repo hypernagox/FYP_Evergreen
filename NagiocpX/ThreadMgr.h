@@ -1,10 +1,6 @@
 #pragma once
 #include "Task.h"
 
-/*------------------
-	ThreadMgr
--------------------*/
-
 namespace NagiocpX
 {
 	class Initiator

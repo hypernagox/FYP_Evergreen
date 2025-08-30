@@ -1,10 +1,6 @@
 #include "NagiocpXPch.h"
 #include "NetAddress.h"
 
-/*--------------
-	NetAddress
----------------*/
-
 namespace NagiocpX
 {
 	NetAddress::NetAddress(SOCKADDR_IN sockAddr)noexcept : m_sockAddr{ sockAddr }
