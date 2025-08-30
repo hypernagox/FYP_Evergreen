@@ -23,7 +23,7 @@ PixelOut PS(VertexOut pin)
 {
 	PixelOut pOut;
 
-    float3 normalW = normalize(pin.NormalW);
+    float3 normalW = normalize(pin.NormalW.xyz);
 
     // Normal mapping
     float4 normalMapSample = gNormalTex.Sample(gSampler, pin.Tex);
@@ -36,7 +36,7 @@ PixelOut PS(VertexOut pin)
      
     pOut.Buffer1 = texColor;
     pOut.Buffer2 = PackNormal(normal);
-    pOut.Buffer3.xy = PackMotion(posH, pin.PrevPosH);
+    pOut.Buffer3.rg = PackMotion(posH, pin.PrevPosH);
     return pOut;
 }
 

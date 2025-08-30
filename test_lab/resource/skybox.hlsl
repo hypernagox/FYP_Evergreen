@@ -5,8 +5,16 @@
 float4 PSDeferred(VertexOut pin) : SV_Target
 {
 	float4 gBuffer1Color = gBuffer1.Sample(gsamPointClamp, pin.TexC);
-	gBuffer1Color.rgb = pow(gBuffer1Color.rgb, gamma);
-	return gBuffer1Color * 1.5f;
+	float3 fColor = pow(gBuffer1Color.rgb, gamma) * 1.5f;
+	
+	float depth = gBufferDSV.Sample(gsamPointClamp, pin.TexC).r;
+	// Compute world space position from depth value.
+	float4 PosNDC = float4(2.0f * pin.TexC.x - 1.0f, 1.0f - 2.0f * pin.TexC.y, depth, 1.0f);
+    float4 PosW = mul(PosNDC, gViewProjInverse);
+	PosW /= PosW.w;
+	
+	fColor = ApplyFog(fColor, PosW.xyz);
+	return float4(fColor, 1.0f);
 }
 
 #else
@@ -36,7 +44,7 @@ VertexOut VS(uint vid : SV_VertexID)
     ConstructVSOutput(vin, vout);
 	vout.Tex = gTexCoords[vid];
 	// Quad covering screen in NDC space.
-	vout.PosH = float4(2.0f * vout.Tex.x - 1.0f, 1.0f - 2.0f * vout.Tex.y, 1.0f - 1e-4f, 1.0f);
+	vout.PosH = float4(2.0f * vout.Tex.x - 1.0f, 1.0f - 2.0f * vout.Tex.y, asfloat(0x3F7FFFFF), 1.0f);
 	vout.NormalW = float4(-gDirLight, 0.0f);
     return vout;
 }
@@ -57,7 +65,7 @@ PixelOut PS(VertexOut pin)
 
     pOut.Buffer1 = texColor;
     pOut.Buffer2 = PackNormal(normal);
-    pOut.Buffer3.xy = PackMotion(PosNDC, pin.PrevPosH);
+    pOut.Buffer3.rg = PackMotion(PosNDC, PrevPosH);
     return pOut;
 }
 
