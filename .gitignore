@@ -409,3 +409,4 @@ AssimpLog.txt
 *.obj
 *.fbx
 *.glb
+NavmeshVisualizer/
