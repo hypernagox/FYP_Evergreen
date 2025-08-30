@@ -87,7 +87,7 @@ int main()
 	std::thread t1{ [pClientService]() {NAGOX_ASSERT(pClientService->Start()); } };
 	
 	Mgr(ThreadMgr)->Launch(
-		  8
+		  2
 		, &con_init
 	);
 
