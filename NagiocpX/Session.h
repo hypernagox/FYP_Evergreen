@@ -50,6 +50,11 @@ namespace NagiocpX
 			if (false == m_bIsSendRegistered && 
 				false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			{
+				// 1. 스레드 0이 큐에 넣고 컨텍스트 스위칭
+				// 2. 스레드 1이 큐에 넣고 Send 큐 Flush
+				// 3. 스레드 2가 컴플리션 루틴에서 플래그 해제
+				// 4. 스레드 0이 복귀 후 플래그 전환 성공
+				// 5. 스레드 0입장에선 방금 Send큐에 넣었지만 이 큐는 비어있다.
 				if (m_sendQueue.empty_single())
 					return RetrySend();
 				

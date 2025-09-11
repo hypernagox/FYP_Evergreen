@@ -204,6 +204,10 @@ namespace NagiocpX
 		const HANDLE iocpHandle = NagiocpX::GetIocpHandleGlobal();
 		for(;;) [[likely]]
 		{
+			// 1. IO 작업
+			// 2. 타이머 작업
+			// 3. 스레드풀에 등록된 작업
+			// 4. 클러스터 업데이트 작업
 			if (IocpCore::Dispatch(iocpHandle)) [[likely]]{
 				taskTimer.DistributeTask();
 				GlobalEventQueue::TryGlobalEvent();

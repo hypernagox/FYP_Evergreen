@@ -1,9 +1,5 @@
 #pragma once
 
-/*--------------
-	RecvBuffer
----------------*/
-
 namespace NagiocpX
 {
 	class RecvBuffer

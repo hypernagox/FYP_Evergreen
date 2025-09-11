@@ -1,9 +1,5 @@
 #pragma once
 
-/*--------------
-	SendBufferChunk
----------------*/
-
 namespace NagiocpX
 {
 	class SendBuffer;

@@ -302,6 +302,11 @@ namespace NagiocpX
 		InterlockedExchange8((CHAR*)&m_bIsSendRegistered, false);
 
 		// empty체크 후, 컨텍스트 스위칭... 이후 남이 send다하고 그다음 돌아와서 뒤늦게 플래그걸면 성공하는데 비어있음
+		// 
+		// 1. 스레드 0이 empty가 아님을 확인 후 컨텍스트 스위칭
+		// 2. 스레드 1이 send queue를 전부 flush 해버림
+		// 3. 스레드 0이 돌아와서 플래그를 전환
+		// 4. 스레드 0가 send할 것이 없어서 0바이트 send 시도하게됨
 		if (!m_sendQueue.empty_single() && false == InterlockedExchange8((CHAR*)&m_bIsSendRegistered, true))
 			RegisterSend(std::move(pThisSessionPtr));
 
