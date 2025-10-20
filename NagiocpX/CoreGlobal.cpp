@@ -13,6 +13,7 @@
 #include "Benchmarker.h"
 #include "Service.h"
 #include "ClusterUpdateQueue.h"
+#include "CrashDump.h"
 
 namespace NagiocpX
 {
@@ -31,6 +32,7 @@ namespace NagiocpX
 				sizeof(HeapFragValue)
 			);
 		}
+		InstallCrashHandlers();
 	}
 
 	CoreGlobal::~CoreGlobal()
