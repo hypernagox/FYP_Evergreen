@@ -212,6 +212,7 @@
     <ClInclude Include="Cluster.h" />
     <ClInclude Include="ComponentSystem.h" />
     <ClInclude Include="ContentsComponent.h" />
+    <ClInclude Include="CrashDump.h" />
     <ClInclude Include="DBBindRAII.h" />
     <ClInclude Include="DBConnectionHandle.h" />
     <ClInclude Include="DBEvent.h" />
@@ -299,6 +300,7 @@
     <ClCompile Include="Benchmarker.cpp" />
     <ClCompile Include="Cluster.cpp" />
     <ClCompile Include="ComponentSystem.cpp" />
+    <ClCompile Include="CrashDump.cpp" />
     <ClCompile Include="DBBindRAII.cpp" />
     <ClCompile Include="DBConnectionHandle.cpp" />
     <ClCompile Include="DBEvent.cpp" />

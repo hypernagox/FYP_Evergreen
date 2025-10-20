@@ -166,6 +166,9 @@
     <Filter Include="Manager\DeadLockDetector">
       <UniqueIdentifier>{b37477d9-fe30-4340-b44b-2b9a1311c9c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\CrashDump">
+      <UniqueIdentifier>{f4d16162-2047-461e-802a-0e19f6faf84b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -444,6 +447,9 @@
     <ClInclude Include="..\library\inc\imgui\imstb_truetype.h">
       <Filter>Manager\ImGUIMgr\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="CrashDump.h">
+      <Filter>Utils\CrashDump</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -625,6 +631,9 @@
     </ClCompile>
     <ClCompile Include="DBEvent.cpp">
       <Filter>DB\DBProtocols</Filter>
+    </ClCompile>
+    <ClCompile Include="CrashDump.cpp">
+      <Filter>Utils\CrashDump</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
