@@ -13,9 +13,17 @@ namespace udsdx
 	{
 		friend class SceneObject;
 
+	public:
+		// Get all component counts by type name
+		static const std::unordered_map<std::string, size_t>& GetComponentCounts();
+
 	protected:
 		Component();
 		virtual ~Component();
+
+		// Register/unregister component instance for tracking
+		void RegisterComponentInstance();
+		void UnregisterComponentInstance();
 
 	public:
 		// Called when the component is created and attached to a SceneObject
@@ -67,5 +75,9 @@ namespace udsdx
 		std::weak_ptr<SceneObject> m_object;
 		bool m_isActive = true;
 		bool m_isBegin = true;
+
+	private:
+		static std::unordered_map<std::string, size_t> s_componentCounts;
+		static std::mutex s_componentCountsMutex;
 	};
 }

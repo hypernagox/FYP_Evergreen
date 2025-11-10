@@ -489,6 +489,7 @@ namespace udsdx
 
 	void SceneObject::ComponentDeleter::operator()(Component* component) const
 	{
+		component->UnregisterComponentInstance();
 		delete component;
 	}
 }

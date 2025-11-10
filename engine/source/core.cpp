@@ -8,6 +8,7 @@
 #include "time_measure.h"
 #include "scene.h"
 #include "scene_object.h"
+#include "component.h"
 #include "mesh.h"
 #include "shader.h"
 #include "frame_debug.h"
@@ -1078,7 +1079,29 @@ namespace udsdx
 		ImGui::Text("Frame Per Second 100%%: %.3f FPS", 100.0f / frameTimesPsum[99]);
 		ImGui::Text("Frame Per Second 10%%:  %.3f FPS", 10.0f / frameTimesPsum[9]);
 		ImGui::Text("Frame Per Second 1%%:   %.3f FPS", 1.0f / frameTimesPsum[0]);
+
+		// Display instance counts
+		ImGui::Separator();
 		ImGui::Text("Allocated SceneObjects: %llu", g_sceneObjectCount);
+		ImGui::Text("Allocated Components:");
+		const auto& componentCounts = Component::GetComponentCounts();
+		if (componentCounts.empty())
+		{
+			ImGui::Text("  No components instantiated");
+		}
+		else
+		{
+			// Sort by count descending for better readability
+			std::vector<std::pair<std::string, size_t>> sortedCounts(componentCounts.begin(), componentCounts.end());
+			std::sort(sortedCounts.begin(), sortedCounts.end(),
+				[](const auto& a, const auto& b) { return a.second > b.second; });
+
+			for (const auto& [typeName, count] : sortedCounts)
+			{
+				ImGui::Text("  %s: %zu", typeName.c_str(), count);
+			}
+		}
+
 		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_PlotHistogramHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.5f));
 		ImGui::PlotHistogram("Frame Times", frameTimes.data(), static_cast<int>(frameTimes.size()), 0, nullptr, 0.0f, smoothMaxFrameTime, ImVec2(0.0f, 100.0f));

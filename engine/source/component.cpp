@@ -4,12 +4,42 @@
 
 namespace udsdx
 {
+	std::unordered_map<std::string, size_t> Component::s_componentCounts;
+	std::mutex Component::s_componentCountsMutex;
+
+	const std::unordered_map<std::string, size_t>& Component::GetComponentCounts()
+	{
+		return s_componentCounts;
+	}
+
 	Component::Component()
 	{
 	}
 
 	Component::~Component()
 	{
+	}
+
+	void Component::RegisterComponentInstance()
+	{
+		std::lock_guard<std::mutex> lock(s_componentCountsMutex);
+		const char* typeName = typeid(*this).name();
+		s_componentCounts[typeName]++;
+	}
+
+	void Component::UnregisterComponentInstance()
+	{
+		std::lock_guard<std::mutex> lock(s_componentCountsMutex);
+		const char* typeName = typeid(*this).name();
+		auto it = s_componentCounts.find(typeName);
+		if (it != s_componentCounts.end() && it->second > 0)
+		{
+			it->second--;
+			if (it->second == 0)
+			{
+				s_componentCounts.erase(it);
+			}
+		}
 	}
 
 	void Component::OnInitialize()

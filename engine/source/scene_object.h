@@ -71,6 +71,7 @@ namespace udsdx
 		{
 			std::unique_ptr<Component_T, ComponentDeleter> component = std::unique_ptr<Component_T, ComponentDeleter>(new Component_T());
 			Component_T* componentPtr = component.get();
+			componentPtr->RegisterComponentInstance();
 			componentPtr->m_object = shared_from_this();
 			m_components.emplace_back(std::move(component));
 			componentPtr->OnInitialize();
