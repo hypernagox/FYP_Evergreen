@@ -253,9 +253,12 @@ std::shared_ptr<udsdx::SceneObject> EntityBuilderBase::Create_DropItem(EntityBui
 	auto renderer = instance->AddComponent<DropItemRenderer>();
 	auto interactiveEntity = instance->AddComponent<InteractiveEntity>();
 	interactiveEntity->SetInteractionText(L"획득하기");
-	interactiveEntity->SetInteractionCallback([instance, owner_id, id = builder->obj_id]() {
+	interactiveEntity->SetInteractionCallback([instance_weak = std::weak_ptr(instance), owner_id, id = builder->obj_id]() {
 		// TODO: 플레이어가 상호작용을 통해 아이템을 주웠을 때의 코드 영역
 		// 기존 인자인 owner_id(줍는 플레이어)에 더해 프로토콜에서 주울 아이템의 id를 추가적으로 정의해주어야 한다.
+		if (instance_weak.expired())
+			return;
+		auto instance = instance_weak.lock();
 		if (Scene* target = instance->GetScene())
 		{
 			// 아이템 획득 이펙트 생성
