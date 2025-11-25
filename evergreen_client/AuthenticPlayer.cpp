@@ -356,6 +356,11 @@ void AuthenticPlayer::OnInitialize()
 	input_handler->AddKeyFunc(Keyboard::D0, KEY_STATE::KET_TAP, &AuthenticPlayer::ToggleDebugCamera, this);
 	input_handler->AddKeyFunc(Keyboard::N, KEY_STATE::KET_TAP, []() { Send( Create_c2s_QUEST_END()); });
 
+	input_handler->AddKeyFunc(Keyboard::T, KEY_STATE::KET_TAP, [&]() {
+		GetTransform()->SetLocalPosition(Vector3(-138.40898F, 78.22489F, 1.6593937F));
+		m_bSendFlag = true;
+		});
+
 	input_handler->AddKeyFunc(Keyboard::CapsLock, KEY_STATE::KET_TAP, &AuthenticPlayer::RequestQuest, this);
 
 	input_handler->AddKeyFunc(Keyboard::Enter, KEY_STATE::KET_TAP, &AuthenticPlayer::ToggleLogFloatGUI, this);
